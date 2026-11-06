@@ -1,136 +1,148 @@
 - version: 4.0.0
   date: '2026-11-06'
   tags:
+  - type: feature
+    label: Arcade-speletjies kan weer RetroAchievements verdien. RetroDB koppel nou net 'n arcade-speletjie as RetroAchievements sy presiese lêernaam ken, soos sf2 vir Street Fighter II, so dit raai nie meer volgens titels en koppel nie meer die verkeerde speletjie nie. Jou arcade-speletjies koppel die volgende keer as hul RetroAchievements-data herlaai word of hulle geskraap word
   - type: fix
-    label: Skermkiekie-hersiening stop nie meer halfpad wanneer een gestoorde skermkiekie veels te groot is om oop te maak nie; dit tel daardie prent as onleesbaar en gaan voort. Die inhoudslys van die hulpbladsy skakel nou na Emulators en Speel, en die ontwikkelaarnotas oor aanmelding, agtergrondtake, skraap, prente, opdaterings en foutantwoorde sê nou wat die program werklik doen
+    label: PlayStation-trofeesinkronisering herstel nou speletjiekoppelings wat dit vroeër verkeerd gemaak het, soos baie speletjies wat aan 'n onverwante speletjie genaamd "D" gekoppel is. 'n Koppeling wat jy self stel, word nooit deur 'n sinkronisering verander nie. Die volgende sinkronisering kontroleer alle ouer koppelings weer, so 'n paar byna-passings kan ontkoppel raak; koppel dié weer met die hand
   - type: fix
-    label: '''n Redigeerder wat ''n ROM Tools-skandering begin, kan dit nou onderbreek, hervat of kanselleer; ander mense se skanderings bly vir ''n admin om te stop. Etikette en lyste weier ''n ontbrekende naam of ''n slegte kleur met ''n duidelike boodskap in plaas van ''n foutbladsy, en om ''n wenslys-speletjie te hernoem na een wat jy reeds wens, word geweier, soos wanneer dit bygevoeg word. Clear RA Data vergeet nou ook of jou kopie prestasies verdien. ''n Trofee wat RetroDB nie meer aanbied nie, tel nie meer vir jou versamelaarsgradering nie. Windows-ROM-paaie pas nou by RetroAchievements-speletjies volgens lêernaam'
+    label: As jy 'n wagtende grootmaat-skraap voor 'n lopende een skuif, word die ou skraap se laaste speletjie nie meer by die nuwe een se tellings gevoeg nie. As jy op die wenslys op "Skraap alles" klik terwyl een reeds loop, sê dit nou so, in plaas daarvan om te beweer dit het begin
+  - type: accessibility
+    label: 'Met ''n skermleser sê die "loop"-knoppie nou net "1 speletjie loop" wanneer die telling verander, in plaas daarvan om elke paar sekondes ''n kaal syfer te lees. Sy lys maak oop as ''n venster met ''n naam en die wyser binne, sy Kill- en Next disk-knoppies sê op watter speletjie hulle werk, en ná Kill keer die wyser terug na ''n sinvolle plek. Elke speletjiekaart in die Biblioteek maak nou met die sleutelbord oop vanaf sy titel, en sy filterknoppies sê wat hulle filter, soos "Filter by Developer: Konami"'
+  - type: feature
+    label: Elke lid kan nou sy eie Steam-sleutel en Steam-ID onder Instellings → My Profiel byvoeg, en sy eie Steam-biblioteek en prestasies invoer. Tot nou toe kon net 'n admin dit doen
   - type: fix
-    label: Onderhoudsregstellings. 'n Veelskyf-argief wat nie uitgepak kan word nie, laat nie meer 'n halfgemaakte gids agter wat elke herpoging blokkeer nie. Bereken berging tel nou elke lêer binne 'n PS3-speletjiegids. Maak geskraapte data skoon verwyder prente net wanneer jy dit vra. 'n Biblioteekskandering wat 'n speletjie teëkom wat 'n ander skandering pas bygevoeg het, gaan voort met die res van daardie konsole se speletjies
+    label: As jy 'n speletjie se besonderhede stoor, stel dit nie meer 'n leë spelertelling op 1 nie, en merk dit nie meer die ouderdomsgraderings wat RetroDB vir jou uitgewerk het as deur jou getik nie. AI-vul behou 'n speletjie wat jy as Exclusive gemerk het, en behou enige verandering wat jy aan 'n speletjie maak terwyl dit op die KI se antwoord wag. 'n Skraap se geskiedenis lys nou net die besonderhede wat dit regtig gestoor het
   - type: fix
-    label: Om 'n rugsteun terug te sit is veiliger. Dit word nou in die biblioteekdatabasis geskryf soos die databasis self verwag, sodat 'n deel van RetroDB wat dit oop het die herstelde data sien in plaas van skade te riskeer. Om 'n speletjie te verwyder verwyder nou ook sy boksprente en sy wagende prent- en emulator-instellingsinskrywings, sodat 'n nuwe speletjie dit nooit kan erf nie. Twee instellings wat op dieselfde oomblik gestoor word, verloor nie meer een nie
+    label: Screenshot Review stop nie meer halfpad as een gestoorde skermkiekie te groot is om oop te maak nie; dit tel daardie prent as onleesbaar en gaan voort. Die hulpbladsy se inhoudslys skakel nou na Emulators en Speel, en die ontwikkelaarnotas oor aanmelding, agtergrondtake, skraap, prente, opdaterings en foutantwoorde sê nou wat die program werklik doen
   - type: fix
-    label: Prentregstellings. GIF's word nie meer deur die opskaler gestuur net om weggegooi te word nie. Die opskaler-model word teen sy gepubliseerde vingerafdruk nagegaan, en 'n slegte aflaai word weer gehaal in plaas daarvan om opskaling vir goed af te skakel. Logo's en prente met deurskynende dele behou hul deursigtigheid wanneer hulle vergroot word. Skakel om na WebP neem nou ook agterblaaie en logo's, en weier nie meer 'n groot biblioteek weens spasie wat dit nie nodig het nie. Twee kante van 'n boksleêr kan een prent deel, en om 'n boks met 'n beskadigde rekord te verwyder verwyder sy prente
+    label: '''n Redigeerder wat ''n ROM Tools-skandering begin, kan dit nou onderbreek, hervat of kanselleer; ander mense se skanderings bly vir ''n admin om te stop. Etikette en lyste weier ''n ontbrekende naam of ''n slegte kleur met ''n duidelike boodskap in plaas van ''n foutbladsy, en om ''n wenslys-speletjie te hernoem na een wat jy reeds wens, word geweier, soos om dit by te voeg. Clear RA Data vergeet nou ook of jou kopie prestasies verdien. ''n Trofee wat RetroDB nie meer aanbied nie, tel nie meer vir jou versamelaarsrang nie. Windows-ROM-paaie pas nou by RetroAchievements-speletjies volgens lêernaam'
   - type: fix
-    label: Invoer vanaf CLZ, Steam, Xbox en PlayStation behandel nie meer elke titel wat net in Japannees of 'n ander nie-Latynse skrif geskryf is as dieselfde speletjie nie, en voeg nie meer 'n speletjie sonder 'n id by nie. Die CLZ-voorskou voeg nie meer konsoles by voor jy die invoer bevestig nie, en 'n kyker wat na 'n Steam-, Xbox- of PlayStation-biblioteek kyk, voeg hulle ook nie meer by nie. Oor 'n Steam-speletjie wat uit die winkel verwyder is, word een keer gevra, nie met elke sinkronisering nie
+    label: Onderhoudsregstellings. 'n Multi-skyf-argief wat nie uitpak nie, laat nie meer 'n halfgemaakte gids agter wat elke herpoging blokkeer nie. Calculate Storage tel nou elke lêer in 'n PS3-speletjiegids. Clear Scraped Data verwyder prente net as jy daarom vra. 'n Biblioteekskandering wat 'n speletjie teëkom wat 'n ander skandering pas bygevoeg het, gaan voort met die res van daardie konsole se speletjies
   - type: fix
-    label: Analise groepeer nou baie meer konsoles onder hul vervaardiger in plaas van "Ander", en die kontroleskerm se lys Onlangs geskraap wys 'n speletjie wat jy weer geskraap het, nie net nuut bygevoegde speletjies nie
+    label: Om 'n rugsteun terug te sit is veiliger. Dit word nou in die biblioteekdatabasis geskryf soos die databasis self verwag, sodat 'n deel van RetroDB wat dit oop het die herstelde data sien in plaas van skade te riskeer. As jy 'n speletjie verwyder, verwyder dit nou ook sy boksprente en sy wagtende prent- en emulatorinstelling-inskrywings, sodat 'n nuwe speletjie dit nooit kan erf nie. Twee instellings wat op dieselfde oomblik gestoor word, verloor nie meer een daarvan nie
   - type: fix
-    label: Beheerderprente wat jy in die Museum byvoeg, bly behoue wanneer die losstaande weergawe opdateer. Wanneer 'n aanlyndiens by sy perk pouseer, word die tyd wanneer dit weer gevra sal word in jou eie tydsone gewys
+    label: Prentregstellings. GIF's gaan nie meer deur die opskaler net om weggegooi te word nie. Die opskaler-model word teen sy gepubliseerde vingerafdruk nagegaan, en 'n slegte aflaai word weer gehaal in plaas daarvan om opskaling vir goed af te skakel. Logo's en prente met deurskynende dele behou hul deursigtigheid wanneer hulle vergroot word. Convert to WebP neem nou ook agterblaaie en logo's, en weier nie meer 'n groot biblioteek vir ruimte wat dit nie nodig het nie. Twee kante van 'n boslêer kan een prent deel, en om 'n boks met 'n beskadigde rekord te verwyder, verwyder sy prente
   - type: fix
-    label: '''n Bonusskyf kan nie meer aan homself of aan ''n ander bonusskyf gekoppel word nie, en Outo-koppel koppel nie meer ''n skyf aan een wat dit in dieselfde lopie as bonusskyf merk nie'
+    label: Invoer vanaf CLZ, Steam, Xbox en PlayStation hanteer nie meer elke titel wat net in Japannees of 'n ander nie-Latynse skrif geskryf is as dieselfde speletjie nie, en voeg nie meer 'n speletjie sonder id by nie. Die CLZ-voorskou voeg nie meer konsole by voordat jy die invoer bevestig nie, en 'n kyker wat 'n Steam-, Xbox- of PlayStation-biblioteek bekyk, voeg hulle ook nie meer by nie. 'n Steam-speletjie wat uit die winkel verwyder is, word een keer gevra, nie met elke sinkronisering nie
   - type: fix
-    label: Die Biblioteek- en konsolebladsye tel nie meer arkade-BIOS-lêers as speletjies nie, nie in hul totale of die letterbalk nie. Soortgelyke speletjies, en die lys wat jy kry deur op 'n genre of uitgewer op 'n speletjie se bladsy te klik, wys nie meer die speletjie se eie streekweergawes, bonusskywe of BIOS-lêers nie
+    label: Analytics groepeer nou baie meer konsole onder hul vervaardiger in plaas van "Ander", en die dashboard se lys Recently Scraped wys 'n speletjie wat jy weer geskraap het, nie net nuut bygevoegde speletjies nie
   - type: fix
-    label: Kies alles sê nou so wanneer 'n baie groot lys kortgeknip word, in plaas daarvan om stilweg net 'n deel te kies
+    label: Beheerderprente wat jy in die Museum byvoeg, bly behoue wanneer die losstaande weergawe opdateer. Wanneer 'n aanlyndiens by sy limiet pouseer, word die tyd wanneer dit weer gevra sal word in jou eie tydsone gewys
   - type: fix
-    label: Biblioteekkaarte word nou opgedateer wanneer jou prestasie- of trofeevordering verander, en wanneer 'n speletjie speelbaar word of ophou speelbaar wees
+    label: '''n Bonusskyf kan nie meer aan homself of aan ''n ander bonusskyf gekoppel word nie, en Auto-link koppel nie meer ''n skyf aan een wat dit in dieselfde lopie as bonusskyf merk nie'
   - type: fix
-    label: Grootmaat-wysiging kan nie meer die verkeerde speletjies verander wanneer dit 'n slegte keuse ontvang nie, en 'n grootmaat-wysiging wat misluk merk nie meer die speletjies as deur jou gewysig nie
+    label: Die Biblioteek- en konsolebladsye tel nie meer arcade-BIOS-lêers as speletjies in hul totale of die letterbalk nie. Soortgelyke speletjies, en die lys wat jy kry deur op 'n genre of uitgewer op 'n speletjie se bladsy te klik, wys nie meer die speletjie se eie streekweergawes, bonusskywe of BIOS-lêers nie
   - type: fix
-    label: '''n HowLongToBeat-passing wat net 1% pas, word nie meer as ''n 100%-passing gewys nie, en ''n bladsy wat nie laai nie wys die foutbladsy in plaas van die rou foutteks'
+    label: Select all sê nou so wanneer 'n baie groot lys afgekap word, in plaas daarvan om stilweg net 'n deel te kies
+  - type: fix
+    label: Biblioteekkaarte werk nou by wanneer jou prestasie- of trofeevordering verander, en wanneer 'n speletjie speelbaar word of ophou speelbaar wees
+  - type: fix
+    label: Grootmaat-wysiging kan nie meer die verkeerde speletjies verander as dit 'n slegte keuse ontvang nie, en 'n grootmaat-wysiging wat misluk merk nie meer die speletjies as deur jou gewysig nie
+  - type: fix
+    label: '''n HowLongToBeat-treffer wat net ''n 1%-passing is, word nie meer as ''n 100%-treffer gewys nie, en ''n bladsy wat nie laai nie wys die foutbladsy in plaas van die rou foutteks'
   - type: security
-    label: As jy jou wagwoord verander, of 'n admin dit terugstel, word daardie rekening nou op elke ander toestel afgeteken. Daarom meld almal ná hierdie opdatering een keer weer aan. Die eerste-gebruik-opstelbladsy kry ook dieselfde beskerming teen ander webwerwe as elke ander bladsy
+    label: As jy jou wagwoord verander, of 'n admin dit terugstel, word daardie rekening nou op elke ander toestel afgeteken. Daarom meld almal ná hierdie opdatering een keer weer aan. Die eerste-keer-opstelbladsy kry ook dieselfde beskerming teen ander webwerwe as elke ander bladsy
   - type: fix
     label: '''n Prent wat as jou avatar geweier word, verwyder nie meer die avatar wat jy gehad het nie'
   - type: fix
-    label: Skraping is sagter op die aanlyndienste. 'n Diens wat aanhou misluk word 'n rukkie oorgeslaan wanneer gapings gevul word, soos dit reeds in soektogte was, en ScreenScraper-speletjie-opsoeke respekteer nou ook sy daaglikse perke
+    label: Skraapwerk is sagter op die aanlyndienste. 'n Diens wat aanhou misluk word 'n rukkie oorgeslaan wanneer gapings gevul word, soos dit reeds in soektogte was, en ScreenScraper-speletjieopsoeke respekteer nou ook sy daaglikse limiete
   - type: fix
-    label: '''n Skraap misluk nie meer op ''n speletjie waarvan die uitreikjaar onbekend is nie, soos "TBA", en ''n speletjie wat vir streke buite jou lys gelys is, soos "Brasilië, Korea", behou sy streek in plaas daarvan om jou verstek te word'
+    label: '''n Skraap misluk nie meer op ''n speletjie met ''n onbekende uitreikjaar nie, soos "TBA", en ''n speletjie wat vir streke buite jou lys gelys is, soos "Brazil, Korea", behou sy streek in plaas daarvan om jou verstek te word'
   - type: fix
-    label: ES-DE-gidse wat as ~/ geskryf is, werk nou, en 'n baie groot ES-DE-lêer word nie meer gekopieer nie. Voorgestelde streekweergawes sit nooit weer twee speletjies saam wat jy gesê het nie weergawes van mekaar is nie
+    label: ES-DE-gidse wat as ~/ geskryf is, werk nou, en 'n baie groot ES-DE-lêer word nie meer gekopieer nie. Voorgestelde streekweergawes sit nooit twee speletjies weer saam wat jy gesê het nie weergawes van mekaar is nie
   - type: security
-    label: RetroDB weier 'n paar meer private netwerkadresse wanneer prente van die web gehaal word, en volg 'n webadres se herleiding korrek
+    label: RetroDB weier nog 'n paar private netwerkadresse wanneer prente van die web gehaal word, en volg 'n webadres se herleiding korrek
   - type: fix
-    label: Die laaste skerms wat nog in Engels was, volg nou ook jou taal, insluitend die opstelkenner, Etikette, Lyste, Vergelyk speletjies, ROM Tools-instellings, die grootmaat-skraapry, die kontroleskerm se lys onderbroke take, die biblioteekkaartetikette en baie foutboodskappe
+    label: Die laaste skerms wat nog in Engels was, volg nou ook jou taal, insluitend die opstelloods, Tags, Lists, Compare Games, ROM Tools-instellings, die grootmaat-skraapry, die dashboard se lys onderbroke take, die biblioteekkaartetikette en baie foutboodskappe
   - type: security
-    label: '''n Stelselnaam wat webkode bevat, kan dit nie meer in die grootmaat-skraapry-venster uitvoer nie'
+    label: '''n Stelselnaam wat webkode bevat, kan dit nie meer in die grootmaat-skraapry-venster laat loop nie'
   - type: accessibility
-    label: Waar jy ook al op 'n bladsy is, word die sleutelbord se plek nou met 'n vet ring in jou tema se kleur gemerk, op elke knoppie, boks en skakel. Vroeër het baie kontroles net 'n flou lyn gewys, dieselfde as wanneer die muis daaroor gaan
+    label: Waar jy ook al op 'n bladsy is, word die sleutelbord se plek nou met 'n vet ring in jou temakleur gemerk, op elke knoppie, boks en skakel. Voorheen het baie kontroles net 'n flou lyn gewys, dieselfde as wanneer die muis daaroor gaan
   - type: accessibility
-    label: Die Genre-, Reeks-, Ontwikkelaar- en Uitgewer-skakels op biblioteekkaarte werk nou met die sleutelbord. Die "loop"-knoppie vir speletjies in die spel gaan ook met die sleutelbord oop, en Esc of 'n klik elders maak sy lys toe
+    label: Die Genre-, Series-, Developer- en Publisher-skakels op biblioteekkaarte werk nou met die sleutelbord. Die "loop"-knoppie vir speletjies wat speel maak ook met die sleutelbord oop, en Esc of 'n klik elders sluit sy lys
   - type: accessibility
-    label: Skermlesers noem nou elke etikketkleur en sê watter een gekies is, en lees trofeeprente as Platinum, Goud, Silwer en Brons in plaas van enkele letters. Terwyl 'n speletjie begin, beweeg Tab nie meer agter die beginskerm nie
+    label: Skermlesers noem nou elke etikketkleur en sê watter een gekies is, en lees trofeeprente as Platinum, Gold, Silver en Bronze in plaas van enkele letters. Terwyl 'n speletjie begin, beweeg Tab nie meer agter die beginskerm nie
   - type: fix
-    label: As 'n opdatering stop voordat dit lêers begin omruil, begin RetroDB nou die weergawe wat jy gehad het weer, in plaas daarvan om toe te bly
+    label: As 'n opdatering stop voordat dit lêers begin omruil, begin RetroDB nou weer die weergawe wat jy gehad het, in plaas daarvan om toe te bly
   - type: fix
-    label: As jy twee keer gelyktydig Speel druk, kan dit nie meer twee speletjies op die ingeboude speler begin nie. Wag vir 'n Core-aflaai gee nou ná 'n rukkie op, of wanneer RetroDB ophou antwoord, in plaas van vir ewig te wag, en die "loop reeds"-vraag gebruik RetroDB se eie dialoog
+    label: Om twee keer gelyktydig op Speel te druk, kan nie meer twee speletjies op die ingeboude speler begin nie. Wag vir 'n Core-aflaai gee nou ná 'n rukkie op, of wanneer RetroDB ophou antwoord, in plaas daarvan om vir ewig te wag, en die "reeds aan die loop"-vraag gebruik RetroDB se eie dialoog
   - type: fix
-    label: Kulkodes wat jy tydens spel aan- of afskakel, word vir die regte speletjie bewaar, nooit van 'n ander speletjie geneem waarvan die lêer dieselfde naam het nie. 'n Kulkode-probleem keer nooit dat 'n speletjie begin nie
+    label: Kulkodes wat jy tydens spel aan- of afskakel, word vir die regte speletjie behou, nooit geneem van 'n ander speletjie waarvan die lêer dieselfde naam het nie. 'n Kulkode-probleem keer nooit dat 'n speletjie begin nie
   - type: fix
-    label: RetroDB skryf 'n emulator se instellingslêer veiliger. 'n Instellingslêer wat 'n skakel is, bly 'n skakel, behou sy toestemmings, en behou letters wat dit nie kan lees nie, en 'n mislukte stoor laat geen verdwaalde lêer agter nie
+    label: RetroDB skryf 'n emulator se instellingslêer veiliger. 'n Instellingslêer wat 'n skakel is, bly 'n skakel, behou sy toestemmings, en behou letters wat dit nie kan lees nie, en 'n mislukte stoor laat geen vreemde lêer agter nie
   - type: fix
-    label: '''n Grootmaat-skraap wat jy af in die ry skuif, met ''n ander omruil of hervat terwyl een loop, gaan nie meer verlore wanneer RetroDB herbegin nie; die kontroleskerm bied dit aan, van waar dit gestop het. ''n Uitgeruilde skraap loop nie meer langs die nuwe een nie, en twee vinnige klikke op Hervat begin ''n taak een keer'
+    label: '''n Grootmaat-skraap wat jy af in die ry skuif, met ''n ander omruil of hervat terwyl een loop, gaan nie meer verlore wanneer RetroDB herbegin nie; die dashboard bied dit aan, vanwaar dit gestop het. ''n Uitgeruilde skraap bly nie meer langs die nuwe een loop nie, en twee vinnige klikke op Resume begin ''n taak een keer'
   - type: fix
-    label: Een speletjie se fout, soos die netwerk wat wegval, beëindig nie meer 'n hele AI-vul-lopie of 'n Maak boks en handleiding-streke reg-lopie nie; daardie speletjie tel as misluk en die res gaan voort. Om RetroDB te stop stop nou ook Core-aflaaie netjies
+    label: Een speletjie se fout, soos die netwerk wat wegval, beëindig nie meer 'n hele AI-vul-lopie of 'n Fix Box and Manual Regions-lopie nie; daardie speletjie tel as misluk en die res gaan voort. As RetroDB gestop word, stop dit nou ook Core-aflaaie netjies
   - type: fix
-    label: Wenslys-items bly nie meer vir ewig op "skraap" ná 'n fout of 'n herbegin nie, en twee Skraap alles-lopies vir dieselfde wenslys loop nie meer gelyktydig nie
+    label: Wenslys-items bly nie meer vir ewig op "skraap" ná 'n fout of herbegin nie, en twee Scrape All-lopies vir dieselfde wenslys loop nie meer gelyk nie
   - type: fix
-    label: '''n Skrip of ''n tweede kopie van RetroDB wat begin, merk nie meer die lopende bediener se take as onderbroke nie, en twee kopieë wat gelyk begin kan nie meer die databasis ''n weergawe terugsit nie'
+    label: '''n Skrip of ''n tweede kopie van RetroDB wat begin, merk nie meer die lopende bediener se take as onderbreek nie, en twee kopieë wat gelyk begin kan nie meer die databasis ''n weergawe terugsit nie'
   - type: fix
-    label: Om 'n PlayStation-sinkronisering te begin laat nie meer almal se vorderingsbalke wag terwyl dit by Sony aanmeld nie. Die daaglikse PlayStation-lewendhouer hernu 'n aanmelding nou net naby die einde van sy 10 dae, in plaas van elke dag
+    label: As 'n PlayStation-sinkronisering begin, laat dit nie meer almal se vorderingsbalke wag terwyl dit by Sony aanmeld nie. Die daaglikse PlayStation-lewendighouer hernu nou 'n aanmelding net naby die einde van sy 10 dae, in plaas van elke dag
   - type: fix
-    label: '''n Skraap skryf nie meer oor ''n verandering wat jy maak terwyl dit loop nie, en maak nie meer ''n genre, modus of aansig leeg waarvoor dit nie ''n naam het nie. Dit verander nie meer ''n gestoorde spelertal om by die speletjie se modusse te pas nie'
+    label: '''n Skraap oorskryf nie meer ''n verandering wat jy maak terwyl dit loop nie, en maak nie meer ''n genre, modus of aansig leeg waarvoor dit geen naam het nie. Dit verander nie meer ''n gestoorde spelertal om by die speletjie se modusse te pas nie'
   - type: fix
-    label: AI-vul verander nie meer wat jy self ingetik het nie, soos 'n uitgewer of genre wat jy met die hand reggemaak het; dit korrigeer net geskraapte waardes. Dit meld nie meer 'n waarde as verander nie wanneer dit dit net anders geskryf het, soos 4 spelers as "1-4" of dieselfde genres in 'n ander volgorde
+    label: AI-vul verander nie meer wat jy self getik het nie, soos 'n uitgewer of genre wat jy met die hand reggemaak het; dit maak net geskraapte waardes reg. Dit meld nie meer 'n waarde as verander as dit dit net anders geskryf het nie, soos 4 spelers as "1-4" of dieselfde genres in 'n ander volgorde
   - type: fix
-    label: '''n Beheerder wat jy vir ''n speletjie intik, bly behoue; die konsole se verstekbeheerder vervang nou net geskraapte en AI-waardes. ''n Ouderdomsgradering wat van ''n ander raad se AI-raaiskoot omgeskakel is, word nou ook as ''n raaiskoot gemerk'
+    label: '''n Beheerder wat jy vir ''n speletjie tik, word behou; die konsole se verstekbeheerder vervang nou net geskraapte en AI-waardes. ''n Ouderdomsgradering wat van ''n ander raad se AI-raaiskoot omgesit is, word nou ook as ''n raaiskoot gemerk'
   - type: fix
-    label: As jy 'n speletjie se wysigvenster stoor, maak dit nie meer velde leeg wat die venster nie wys nie. Terugstel op 'n speletjie se bladsy maak nou alles skoon wat dit sê dit doen, insluitend die aansig, uitgawe en ander name, verwyder die speletjie se prente en video's tensy 'n ander speletjie dit gebruik, en werk die biblioteekfilters dadelik by
+    label: As jy 'n speletjie se wysigvenster stoor, maak dit nie meer velde leeg wat die venster nie wys nie. Terugstel op 'n speletjie se bladsy maak nou alles skoon wat dit sê, insluitend die aansig, uitgawe en ander name, verwyder die speletjie se prente en video's tensy 'n ander speletjie dit gebruik, en werk die biblioteekfilters dadelik op
   - type: fix
     label: Maak geskraapte data skoon maak nou ook die aansig, 2D of 3D, en speletjiestruktuur skoon. 'n CLZ-invoer van 'n speletjie met net 'n jaar behou net die jaar, nie 1 Januarie nie
   - type: security
-    label: Steam-sinkronisering leen nie meer die Steam-sleutel uit Instellings vir elke huishoudlid nie. 'n Lid sonder 'n eie Steam-sleutel het die admin se Steam-biblioteek en prestasies onder sy rekening gekry. Die sleutel in Instellings dien nou net admins
+    label: Steam-sinkronisering leen nie meer die Steam-sleutel uit Instellings vir elke huishoudlid nie. 'n Lid sonder eie Steam-sleutel het die admin se Steam-biblioteek en prestasies onder sy rekening gekry. Die sleutel in Instellings dien nou net admins
   - type: fix
-    label: How Long to Beat se opsoek vir baie speletjies stoor nou die tye waarvan dit seker is. Voorheen het elke seker treffer misluk en niks is gestoor nie. RetroAchievements Refresh kontroleer nou ook elke speletjie se lêer teen die lys van RetroAchievements, soos 'n skraap, sodat 'n speletjie aan die presiese weergawe gekoppel word wat jy het
+    label: How Long to Beat se opsoek vir baie speletjies stoor nou die tye waarvan dit seker is. Vroeër het elke seker passing misluk en niks is gestoor nie. RetroAchievements-verfrissing kontroleer nou ook elke speletjie se lêer teen RetroAchievements se lys, soos 'n skraap doen, sodat 'n speletjie aan die presiese weergawe gekoppel word wat jy het
   - type: fix
-    label: Die boodskap dat 'n agtergrondtaak klaar is, verskyn weer, en 'n taak se vorderingskassie merk wanneer die bediener die taak ná 'n herbegin optel. Voorheen het nie een ooit verskyn nie
+    label: Die boodskap dat 'n agtergrondtaak klaar is, verskyn weer, en 'n taak se vorderingskassie let op wanneer die bediener die taak ná 'n herbegin optel. Vroeër het nie een ooit verskyn nie
   - type: fix
-    label: 'PlayStation-trofeë: ''n speletjie wat jy met die hand gekoppel het, bly gekoppel ná ''n volle sinkronisering, en ''n sinkronisering koppel nie meer ''n speletjie aan sy opvolger nie, soos "Doom" aan "Doom Eternal". Om PlayStation-speletjies in te voer koppel nou ''n speletjie wat reeds in jou biblioteek is, soos Steam- en Xbox-invoer, sodat sy trofeë daarop wys'
+    label: 'PlayStation-trofeë: ''n speletjie wat jy met die hand gekoppel het, bly gekoppel ná ''n volle sinkronisering, en ''n sinkronisering koppel nie meer ''n speletjie aan sy opvolger nie, soos "Doom" aan "Doom Eternal". Voer van PlayStation-speletjies koppel nou ''n speletjie wat reeds in jou biblioteek is, soos Steam- en Xbox-invoere doen, sodat sy trofeë daarop wys'
   - type: fix
-    label: Xbox wys nie meer jou gamertag as Unknown nadat sy aanmelding homself hernu nie, en 'n stadige of mislukte verbinding meld jou nie meer van Xbox af nie. Slegs as Microsoft die aanmelding weier, gebeur dit
+    label: Xbox wys nie meer jou gamertag as Onbekend nadat sy aanmelding homself hernu nie, en 'n ststadige of mislukte verbinding meld jou nie meer van Xbox af nie. Net as Microsoft die aanmelding weier, gebeur dit
   - type: fix
-    label: Twee mense kan nou elk 'n etiket met dieselfde naam hê; voorheen het die tweede met 'n fout misluk. Enige aangemelde gebruiker kan nou sy eie RPCS3-trofeë weer skandeer; voorheen kon net 'n admin dit doen, en almal anders het ou trofeë gesien totdat RetroDB herbegin het
+    label: Twee mense kan nou elk 'n etiket met dieselfde naam hê; vroeër het die tweede met 'n fout misluk. Enige aangemelde gebruiker kan nou sy eie RPCS3-trofeë herskandeer; vroeër kon net 'n admin, en almal anders het ou trofeë gesien tot RetroDB herbegin het
   - type: security
-    label: Jou aanmeldings bly privaat. Databasis-rugsteune kan nie meer deur ander rekeninge op die rekenaar gelees word nie, en 'n mislukte rugsteun verwyder nie meer die een voor dit nie. As jy 'n gebruiker verwyder of afskakel, word hulle ook van RetroAchievements in DuckStation en PCSX2 afgemeld. 'n RetroAchievements-aanmelding wat uit die speler se eie kieslys gestoor is, gaan nie meer oor na die volgende persoon wat speel nie. Logboeke en gestoorde taakfoute versteek RetroAchievements-tekens, 'n ander lid se PlayStation-fout word net aan hom getoon, en ou PlayStation- en Xbox-aanmeldlêers in gewone teks word verwyder
+    label: Jou aanmeldings bly privaat. Databasis-rugsteune kan nie meer deur ander rekeninge op die rekenaar gelees word nie, en 'n mislukte rugsteun verwyder nie meer die een voor dit nie. As jy 'n gebruiker verwyder of afskakel, meld dit hulle ook af by RetroAchievements in DuckStation en PCSX2. 'n RetroAchievements-aanmelding wat uit die speler se eie kieslys gestoor is, gaan nie meer oor na die volgende persoon wat speel nie. Logboeke en gestoorde taakfoute versteek RetroAchievements-tekens, 'n ander lid se PlayStation-fout word net aan hom gewys, en ou PlayStation- en Xbox-aanmeldlêers in gewone teks word verwyder
   - type: fix
-    label: RetroDB se eie toetse kan nie meer aan jou biblioteek raak terwyl hulle loop nie. Hulle gebruik altyd 'n weggooi-kopie van die databasis, prente en instellings, en weier om te begin as enige daarvan na jou regte lêers wys
+    label: RetroDB se eie toetse kan nie meer jou biblioteek aanraak terwyl hulle loop nie. Hulle gebruik altyd 'n weggooikopie van die databasis, prente en instellings, en weier om te begin as enige daarvan na jou regte lêers wys
   - type: fix
-    label: Clean orphaned files verwyder nie meer jou wenslys se prente nie. As jy 'n speletjie oopmaak, vergeet dit nie meer skermkiekies wat dit nie kan vind nie. Voorheen, met die prentskyf uitgetrek, het elke speletjie wat jy oopgemaak het sy hele skermkiekielys verloor; nou word die lys behou, en 'n ontbrekende prent word net versteek
+    label: Maak weeslêers skoon verwyder nie meer jou wenslys se prente nie. As jy 'n speletjie oopmaak, vergeet dit nie meer skermkiekies wat dit nie kan vind nie. Vroeër, met die prentaandrywing uitgetrek, het elke speletjie wat jy oopgemaak het sy hele skermkiekielys verloor; nou word die lys behou, en 'n ontbrekende prent word net versteek
   - type: fix
-    label: '''n Video- of handleiding-aflaai wat halfpad misluk, beskadig nie meer die kopie wat die speletjie reeds gehad het nie, en ''n mislukte aflaai laat nie meer ''n verborge halflêer in die media-vouer agter nie. Die agtergrond-opskaler stoor nie meer ''n ou prent oor ''n nuwer een wat intussen afgelaai is nie. Convert to WebP laat elke speletjie wat ''n prent deel steeds daarna wys, en raak nooit aan ''n lêer buite die prentvouers nie'
+    label: '''n Video- of handleidingaflaai wat halfpad misluk, beskadig nie meer die kopie wat die speletjie reeds gehad het nie, en ''n mislukte aflaai laat nie meer ''n versteekte halwe lêer in die media-vouer nie. Die agtergrond-opskaler stoor nie meer ''n ou prent oor ''n nuwer een wat intussen afgelaai is nie. Omskakel na WebP laat elke speletjie wat ''n prent deel daarna wys, en raak nooit ''n lêer buite die prentvouers aan nie'
   - type: fix
-    label: As jy 'n speletjie of 'n wenslysitem verwyder, word sy prente, video's en handleidings nou ook verwyder, maar dié wat 'n ander speletjie of wenslysitem nog gebruik, word behou. Gestoorde prente kan weer deur ander rekeninge op die rekenaar gelees word, en Resize Images tel 'n prent wat nie gestoor kon word nie as mislukt, nie as klaar nie
+    label: As jy 'n speletjie of wenslysitem verwyder, word sy prente, video's en handleidings ook verwyder, maar dié wat 'n ander speletjie of wenslysitem nog gebruik, word behou. Gestoorde prente kan weer deur ander rekeninge op die rekenaar gelees word, en Verander prentgrootte tel 'n prent wat nie gestoor kon word nie as mislukt, nie as klaar nie
   - type: fix
-    label: Duplicate Finder bied nie meer 'n werkende lêer vir verwydering aan nie. As daar volgens naam gesoek word, noem dit nie meer 'n speletjie se .cue- en .bin-kopieë duplikate van mekaar nie. Dit bied nooit 'n skyf se snitlêer aan nie, wat twee weergawes van 'n speletjie kan deel. Dit sal nie 'n skyf verwyder wat 'n snitlys lys nie. 'n Speletjie wie se lêer jy verwyder, skuif nou na die kopie wat jy hou, sodat dit in die biblioteek bly
+    label: Duplikaatvinder bied nie meer 'n werkende lêer vir verwydering aan nie. As dit volgens naam soek, noem dit nie meer 'n speletjie se .cue- en .bin-kopieë duplikate van mekaar nie. Dit bied nooit 'n skyf se snitlêer aan nie, wat twee weergawes van 'n speletjie kan deel. Dit sal nie 'n skyf verwyder wat 'n speellys lys nie. 'n Speletjie wie se lêer jy verwyder, skuif nou na die kopie wat jy hou, sodat dit in die biblioteek bly
   - type: fix
-    label: Organize Multi-Disc skryf nie meer oor 'n bestaande snitlys of 'n lêer wat reeds in die speletjie se vouer is nie; dit stop en sê watter een. Die snitlys wat dit maak, lys elke skyf se .cue, nie sy snitlêers nie. Speletjies wie se lêers dit skuif, volg hulle nou na die vouer, sodat Clean missing ROMs hulle nie meer verwyder nie
+    label: Organiseer multi-skyf oorskryf nie meer 'n bestaande speellys of 'n lêer wat reeds in die speletjie se vouer is nie; dit stop en sê watter. Die speellys wat dit maak, lys elke skyf se .cue, nie sy snitlêers nie. Speletjies wie se lêers dit skuif, volg hulle nou na die vouer, sodat Maak ontbrekende ROM's skoon hulle nie meer verwyder nie
   - type: fix
-    label: Om na CHD om te skakel met "delete originals" verwyder nou ook die skyf se snitlêers, maar behou 'n snit wat 'n ander .cue nog gebruik. Die speletjie en enige snitlys wat die ou skyf gelys het, wys nou na die nuwe .chd. As 'n speletjie se lêer hernoem word, werk dit nou die snitlys by wat dit lys, en 'n snitlêer wat 'n .cue nodig het, kan nie hernoem word nie. As jy lêers uit 'n zip verwyder, word net die lêers verwyder wat jy gekies het, selfs as 'n naam [ of ] bevat. Screenshot Dedup verwyder net die kopieë wat sy skandering gevind het, en hou altyd een
+    label: Omskakeling na CHD met "verwyder oorspronklikes" verwyder nou ook die skyf se snitlêers, maar behou 'n snit wat 'n ander .cue nog gebruik. Die speletjie en enige speellys wat die ou skyf gelys het, wys nou na die nuwe .chd. As jy 'n speletjie se lêer hernoem, werk dit nou die speellys op wat dit lys, en 'n snitlêer wat 'n .cue nodig het, kan nie hernoem word nie. Om lêers uit 'n zip te verwyder, verwyder net die lêers wat jy gekies het, selfs as 'n naam [ of ] bevat. Skermkiekie-ontdubbeling verwyder net die kopieë wat sy skandering gevind het, en behou altyd een
   - type: fix
-    label: How Long to Beat op 'n speletjie se bladsy soek na wat jy tik. Voorheen, as dit 'n titel nie kon vind nie, het dit eerder die speletjie se ander name gesoek, en dit kon 'n ander speletjie aanbied, soos 'n aanhangers-herskepping. Dit probeer steeds die ander name as die boks die speletjie se eie naam bevat
+    label: How Long to Beat op 'n speletjie se bladsy soek na wat jy tik. Vroeër het 'n titel wat dit nie kon vind nie veroorsaak dat dit die speletjie se ander name gesoek het, en dit kon 'n ander speletjie aanbied, soos 'n aanhangerhermaak. Dit probeer steeds die ander name as die blokkie die speletjie se eie naam bevat
   - type: fix
-    label: Die How Long to Beat-stappe in die hulphandleiding pas by die skerm. Hulle het gesê kies 'n treffer uit 'n lys; die bladsy wys een treffer met Stoor en Kanselleer. Die PlayStation-hulp sê nie meer die aanmelding duur ongeveer twee maande nie, aangesien RetroDB self weer aanmeld. Al 20 vertaalde handleidings het albei veranderinge
+    label: Die hulphandleiding se How Long to Beat-stappe pas by die skerm. Hulle het gesê kies 'n passing uit 'n lys; die bladsy wys een passing met Stoor en Kanselleer. Die PlayStation-hulp sê nie meer die aanmelding hou ongeveer twee maande nie, aangesien RetroDB self weer aanmeld. Al 20 vertaalde handleidings het albei veranderinge
   - type: fix
-    label: Elke letterbalk begin nou met 'n All-knoppie. Op die Biblioteek-, konsole- en PSN Trophies-bladsye wys die keuse van 'n letter net daardie letter se speletjies, en voorheen was daar geen knoppie om die res terug te bring nie. Op die ander prestasiebladsye gaan All terug na die eerste speletjie
+    label: Elke letterbalk begin nou met 'n Alles-knoppie. Op die Biblioteek-, konsole- en PSN-trofeebladsye wys 'n letter net daardie letter se speletjies, en vroeër was daar geen knoppie om die res terug te bring nie. Op die ander prestasiebladsye gaan Alles terug na die eerste speletjie
   - type: fix
-    label: '''n Nuwe PlayStation-aanmeldteken wat jy in Instellings plak, word nou dadelik gebruik. Voorheen het RetroDB die ou aanmelding gebruik totdat dit verval het, en Save & Test Connection het daardie ou aanmelding as werkend gerapporteer. ''n Teken wat Sony weier, vervang nie meer een wat werk nie'
+    label: '''n Nuwe PlayStation-aanmeldtoken wat jy in Instellings plak, word nou dadelik gebruik. Vroeër het RetroDB die ou aanmelding gebruik tot dit verval het, en Stoor en toets verbinding het daardie ou aanmelding as werkend gemeld. ''n Token wat Sony weier, vervang nie meer een wat werk nie'
   - type: enhancement
-    label: 'Die PlayStation-aanmelding in Instellings is makliker om aan die gang te hou. Die banier tel nie meer dae af waarop jy nooit hoef op te tree nie, omdat RetroDB self weer aanmeld; dit word net rooi as Sony jou gestoorde teken weier. Die Paste here-knoppie laat die blaaier nie meer vra om jou knipbord te lees nie: dit sit die wyser in die boks vir Ctrl+V. Die stappe sê nou om eers van PlayStation af te meld wanneer jy ''n teken vervang wat nog werk, en hul boodskappe kan vertaal word'
+    label: 'Die PlayStation-aanmelding in Instellings is makliker om aan die gang te hou. Die banier tel nie meer dae af waarop jy niks hoef te doen nie, want RetroDB meld self weer aan; dit word net rooi as Sony jou gestoorde token weier. Die Plak hier-knoppie laat die blaaier nie meer vra om jou klembord te lees nie: dit sit die wyser in die blokkie vir Ctrl+V. Die stappe sê nou om eers van PlayStation af te meld as jy ''n token vervang wat nog werk, en hulle boodskappe kan vertaal word'
   - type: enhancement
-    label: Opspringboodskappe en vraagkassies, soos "Settings saved" of "Delete this list?", kan nou op elke bladsy vertaal word. Voorheen het die meeste in Engels gebly, watter taal jy ook gekies het
+    label: Opsprongboodskappe en vraagkassies, soos "Instellings gestoor" of "Verwyder hierdie lys?", kan nou op elke bladsy vertaal word. Vroeër het die meeste in Engels gebly, watter taal jy ook al gekies het
   - type: enhancement
-    label: Die boodskappe wat sê hoekom 'n PlayStation-aanmelding misluk het, soos "Your NPSSO may have expired", kan nou vertaal word
+    label: Die boodskappe wat sê hoekom 'n PlayStation-aanmelding misluk het, soos "Jou NPSSO het dalk verval", kan nou vertaal word
   - type: fix
-    label: Die hulphandleiding in elke taal pas nou by die Engelse een. Dit kry Search Anywhere, Keeping a Title, MAME Names en die agterkant van die boks, en ouer paragrawe wat agtergebly het, is op datum
+    label: Die hulphandleiding in elke taal pas nou by die Engelse een. Dit kry Soek oral, Behou 'n titel, MAME-name en die agterkant van die boks, en ouer paragrawe wat agter geraak het, is op datum
   - type: fix
-    label: In Duits, Afrikaans en Spaans sê die Back-knoppie op 'n speletjie se omslag nou die agterkant van die boks, nie "gaan terug" nie
+    label: In Duits, Afrikaans en Spaans sê die Terug-knoppie op 'n speletjie se omslag nou die agterkant van die boks, nie "gaan terug" nie
   - type: feature
-    label: As jy Speel druk, vul die speletjie se logo op sy agtergrondprent nou die skerm terwyl die speletjie begin, of sy naam in groot letters as dit geen logo het nie. Dit verdwyn vanself wanneer die speletjie se venster oopgaan, of wanneer jy Esc druk of klik
+    label: As jy Speel druk, vul die speletjie se logo op sy agtergrondprent nou die skerm terwyl die speletjie begin, of sy naam in groot letters as dit nie 'n logo het nie. Dit verdwyn self as die speletjie se venster oopgaan, of as jy Esc druk of klik
   - type: feature
-    label: 'Die draaibare 3D-boks het nou die ware vorm van ''n PS5-houer: ronde hoeke en rande, die verhewe lip om die omslag, die lyn waar die twee helftes ontmoet, en die vingersleuf in die opmaakkant. Dit het ''n boks-lêer nodig van ''n Slipcase-weergawe wat die vorm skryf; voer die boks weer in om dit te kry. Ander bokse lyk soos voorheen'
+    label: 'Die draaibare 3D-boks het nou die egte vorm van ''n PS5-houer: ronde hoeke en rande, die verhoogde lip om die omslag, die lyn waar die twee helftes ontmoet, en die vingersleuf in die oopkant. Dit het ''n boks-lêer nodig van ''n Slipcase-weergawe wat die vorm skryf; voer die boks weer in om dit te kry. Ander bokse lyk soos voorheen'
   - type: enhancement
-    label: Refresh RetroAchievements het van Instellings na die RetroAchievements-bladsy skuif, en heet nou Find Games with Achievements. Elke knoppie daar het nou 'n reël wat sê wat dit doen, sodat Find Games en Sync Progress maklik uitgeken word. Met nog geen gekoppelde speletjies nie, wys die bladsy aan 'n admin die Find-knoppie in plaas van om na die volgende oortjie te gaan
+    label: Verfris RetroAchievements het van Instellings na die RetroAchievements-bladsy verskuif, en heet nou Vind speletjies met prestasies. Elke knoppie daar het nou 'n reël wat sê wat dit doen, sodat Vind speletjies en Sinkroniseer vordering maklik uitmekaar te ken is. Met nog geen speletjies gekoppel nie, wys die bladsy aan 'n admin die Vind-knoppie in plaas daarvan om na die volgende oortjie te gaan
   body: "<ul>\n  <li><strong>Die hulphandleiding is in elke taal op datum.</strong>\n    Afdelings wat net in die Engelse handleiding was, is nou vertaal.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'

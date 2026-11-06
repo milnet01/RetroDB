@@ -11514,7 +11514,9 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.258 Screen readers and keyboards: the running-games popover and the library cards (accessibility, S).
-- **Status**: todo
+- **Resolution** (2026-11-06): Done 2026-11-06 (079c6dca); walked in headless Chrome. Not checked:
+  Shift+Enter on a filter button.
+- **Status**: done
 - **Why**: cold a11y read of 557461fa (PASS-59-245), 2026-11-05. Its
   high finding (hidden indicator a Tab stop) was fixed in 632da447.
 - **Fix**:
@@ -11539,7 +11541,8 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.259 Bulk scrape hand-off: no counts from the old worker, and the token read under the lock (review-fix, S).
-- **Status**: todo
+- **Resolution** (2026-11-06): Done 2026-11-06 (132dc2c6).
+- **Status**: done
 - **Why**: cold read of 63151f2c (PASS-59-243), 2026-11-05. Its
   reproduced finding (a second swap lost a job) was fixed in aa4e2c8b.
 - **Fix**:
@@ -11561,7 +11564,12 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.260 PSN sync can correct a wrong automatic game link (review-fix, S).
-- **Status**: todo
+- **Resolution** (2026-11-06): Done 2026-11-06: psn_games.link_set_by_hand (migration 041). Old links
+  are checked again on the next sync (user, 2026-11-06). A read of the
+  live library found 238 of 691 links the matcher no longer confirms, 94
+  of them to a PS1 game named "D". Tag id reuse after 039: dismissed; a
+  tag id is kept only in game_tags, which cascades.
+- **Status**: done
 - **Why**: cold read of 597a2edb (PASS-59-241), 2026-11-05. Its high
   finding (migration 039 stopping the app) was fixed in da22c8d7.
 - **Fix**:
@@ -11620,7 +11628,14 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.263 Answer the audit's six open questions (investigate, S).
-- **Status**: todo
+- **Resolution** (2026-11-06): Answered 2026-11-06 (code read). Reset sends setup back open:
+  PASS-59-265. A PS3 serial that cannot be read is stored as '' and not
+  read again: fine. System type: PASS-59-266. RA "queued" is a
+  per-browser queue: PASS-59-268. Log viewer does not redact on read:
+  PASS-59-267. Collector trophies count imported games too, which their
+  wording allows; a design call, left as is unless the user wants
+  ROM-only milestones.
+- **Status**: done
 - **Why**: the 2026-11-04 audit raised these without checking them.
   Each needs a read, then a fix item or a recorded "fine as is".
 - **Questions**:
@@ -11660,6 +11675,48 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Dead line**: `routes/auth.py::api_login` clears
   `{ip}:login:{user_id}` on success, which no failure ever writes
   (auth.md §9). Remove it or count failures per user too.
+
+---
+
+#### Pass 59.265 Reset to defaults keeps setup done and the ROM path, so the sign-in-free setup pages stay shut (security, S).
+- **Status**: todo
+- **Why**: `settings_manager.reset_to_defaults` saves `DEFAULT_SETTINGS`
+  (`setup_completed` False, `rom_path` empty). With `config.ROM_PATH`
+  empty, as shipped, `/api/setup` and `/api/setup/browse-folders` answer
+  without a sign-in until an admin redoes setup. Checked 2026-11-06.
+- **Fix**: keep `setup_completed` and `rom_path` through a reset; the
+  reply's `restart_required` is also wrong (the redirect is at once).
+
+---
+
+#### Pass 59.266 One answer to which kind a system is, for the ROM naming check (fix, S).
+- **Status**: todo
+- **Why**: `game_utils.get_system_type` and `routes/systems.py`
+  `SYSTEM_TYPE_MAP` disagree on many folders (3ds, vita, thomson, mac,
+  zxnext, adam, virtualboy...). The naming report uses the first, so a
+  computer such as `mac` is checked for a Region tag, and a type set on
+  the Systems page is ignored.
+- **Fix**: one source, preferably `systems.type`.
+
+---
+
+#### Pass 59.267 The log viewer hides secrets in old log files too (security, S).
+- **Status**: todo
+- **Why**: `routes/scrape_logs.py` content, view and download send the
+  file as written; redaction happens only at write time, so a log from
+  before a pattern was added (RA `y`/`z`, ScreenScraper `sspassword`)
+  shows it in clear. Needs `system_functions`.
+- **Fix**: run `log_redactor.redact()` on what those routes send.
+
+---
+
+#### Pass 59.268 A RetroAchievements job that is busy says so, instead of claiming it queued (ux, S).
+- **Status**: todo
+- **Why**: RA sync and refresh routes reply `queued=True` and start
+  nothing; the queue lives in this browser's localStorage and runs only
+  while a page here polls. Other devices and users never see it.
+- **Fix**: queue on the server as bulk scrape does, or reword the
+  reply and toast to say busy, retry.
 
 ## Done index
 

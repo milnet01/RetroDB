@@ -2,6 +2,14 @@
   date: 2026-11-06
   tags:
   - type: feature
+    label: 'Arcade games can earn RetroAchievements again. RetroDB now links an arcade game only when RetroAchievements knows its exact file name, such as sf2 for Street Fighter II, so it no longer guesses from titles and links the wrong game. Your arcade games link the next time their RetroAchievements data is refreshed or they are scraped'
+  - type: fix
+    label: 'PlayStation trophy sync now corrects game links it made wrongly before, such as many games linked to an unrelated game called "D". A link you set yourself is never changed by a sync. The next sync checks all older links again, so a few near matches may come unlinked; link those again by hand'
+  - type: fix
+    label: 'Moving a waiting bulk scrape ahead of a running one no longer adds the old scrape''s last game to the new one''s counts. Clicking "Scrape all" on the wishlist while one is already running now says so, instead of claiming it started'
+  - type: accessibility
+    label: 'With a screen reader, the "running" button now says "1 game running" only when the count changes, instead of reading a bare number every few seconds. Its list opens as a named window with the cursor inside, its Kill and Next disk buttons say which game they act on, and after Kill the cursor returns to a sensible place. Each game card in the library now opens with the keyboard from its title, and its filter buttons say what they filter, such as "Filter by Developer: Konami"'
+  - type: feature
     label: Every member can now add their own Steam key and Steam ID under Settings → My Profile, and import their own Steam library and achievements. Until now only an admin could
   - type: fix
     label: Saving a game's details no longer sets an empty player count to 1, and no longer marks the age ratings RetroDB worked out for you as typed by you. AI Fill keeps a game you marked Exclusive, and keeps any change you make to a game while it is waiting for the AI's answer. A scrape's history now lists only the details it actually saved

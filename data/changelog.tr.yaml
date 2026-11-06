@@ -1,136 +1,148 @@
 - version: 4.0.0
   date: '2026-11-06'
   tags:
+  - type: feature
+    label: Arcade oyunları yeniden RetroAchievements başarımı kazanabilir. RetroDB artık bir arcade oyununu yalnızca RetroAchievements tam dosya adını biliyorsa bağlar (Street Fighter II için sf2 gibi). Böylece başlıklara bakarak tahmin yapıp yanlış oyunu bağlamaz. Arcade oyunlarınız, RetroAchievements verileri yenilendiğinde veya kazındığında bağlanır
   - type: fix
-    label: Ekran Görüntüsü İncelemesi, saklanan bir ekran görüntüsü açılamayacak kadar büyük olduğunda artık yarıda durmuyor; o görüntüyü okunamaz sayıp devam ediyor. Yardım sayfasının içindekiler listesi artık Emülatörler ve Oynama bölümlerine bağlanıyor; oturum açma, arka plan işleri, kazıma, görseller, güncellemeler ve hata yanıtları hakkındaki geliştirici notları da programın gerçekte ne yaptığını anlatıyor
+    label: PlayStation kupa eşitlemesi artık daha önce yanlış kurduğu oyun bağlantılarını düzeltir; örneğin "D" adlı alakasız bir oyuna bağlanmış birçok oyun gibi. Kendi kurduğunuz bir bağlantıyı eşitleme asla değiştirmez. Sonraki eşitleme eski tüm bağlantıları yeniden kontrol eder, bu yüzden birkaç yakın eşleşmenin bağlantısı kalkabilir; bunları elle yeniden bağlayın
   - type: fix
-    label: ROM Araçları taramasını başlatan bir düzenleyici artık taramayı duraklatabilir, sürdürebilir veya iptal edebilir; başkalarının taramalarını yalnızca yönetici durdurabilir. Etiketler ve listeler eksik adı ya da hatalı rengi hata sayfası yerine anlaşılır bir iletiyle reddediyor. İstek listesindeki bir oyunu zaten istediğiniz başka bir oyunun adına çevirmek de, eklemek gibi reddediliyor. RA Verilerini Temizle artık kopyanızın başarım kazanıp kazanmadığını da unutuyor. RetroDB'nin artık sunmadığı bir kupa, koleksiyoncu sıralamanıza sayılmıyor. Windows ROM yolları artık RetroAchievements oyunlarıyla dosya adına göre eşleşiyor
+    label: Bekleyen bir toplu kazımayı çalışan bir kazımanın önüne almak artık eski kazımanın son oyununu yeninin sayılarına eklemiyor. İstek Listesi'nde zaten bir kazıma çalışırken "Tümünü kazı"ya tıklamak artık başladığını söylemek yerine bunu belirtiyor
+  - type: accessibility
+    label: 'Ekran okuyucuyla, "çalışıyor" düğmesi artık birkaç saniyede bir yalın bir sayı okumak yerine yalnızca sayı değiştiğinde "1 oyun çalışıyor" diyor. Listesi, imleç içinde olacak şekilde adlandırılmış bir pencere olarak açılır; Sonlandır ve Sonraki disk düğmeleri hangi oyun üzerinde işlem yaptığını söyler ve Sonlandır''dan sonra imleç mantıklı bir yere döner. Kütüphanedeki her oyun kartı artık başlığından klavyeyle açılıyor ve filtre düğmeleri neyi filtrelediğini söylüyor, örneğin "Geliştiriciye göre filtrele: Konami"'
+  - type: feature
+    label: Her üye artık Ayarlar → Profilim altında kendi Steam anahtarını ve Steam kimliğini ekleyebilir, kendi Steam kütüphanesini ve başarımlarını içe aktarabilir. Şimdiye kadar bunu yalnızca yönetici yapabiliyordu
   - type: fix
-    label: Bakım düzeltmeleri. Açılamayan çok diskli bir arşiv artık yarım kalmış bir klasör bırakıp her yeniden denemeyi engellemiyor. Depolamayı Hesapla artık bir PS3 oyun klasöründeki tüm dosyaları sayıyor. Kazınan Verileri Temizle görselleri yalnızca siz isterseniz siliyor. Başka bir taramanın az önce eklediği bir oyuna rastlayan kütüphane taraması, o konsolun kalan oyunlarıyla devam ediyor
+    label: Bir oyunun ayrıntılarını kaydetmek artık boş oyuncu sayısını 1 yapmıyor ve RetroDB'nin sizin için bulduğu yaş derecelendirmelerini sizin yazdığınız gibi işaretlemiyor. Yapay Zeka Doldur, Özel olarak işaretlediğiniz oyunu korur ve bir oyun yapay zekanın yanıtını beklerken yaptığınız değişiklikleri de korur. Bir kazımanın geçmişi artık yalnızca gerçekten kaydettiği ayrıntıları listeler
   - type: fix
-    label: Yedek geri yüklemek artık daha güvenli. Yedek, veritabanının beklediği biçimde kütüphane veritabanına yazılıyor; böylece veritabanını açık tutan bir RetroDB bölümü zarar riski yerine geri yüklenen verileri görüyor. Bir oyunu silmek artık kutu görsellerini, bekleyen görsel ve emülatör ayarı kayıtlarını da siliyor; böylece yeni bir oyun bunları devralamaz. Aynı anda kaydedilen iki ayardan biri artık kaybolmuyor
+    label: Ekran Görüntüsü İncelemesi, saklanan bir ekran görüntüsü açılamayacak kadar büyük olduğunda artık yarıda durmuyor; o resmi okunamaz sayıp devam ediyor. Yardım sayfasının içindekiler listesi artık Emülatörler ve Oynama bölümlerine bağlanıyor; oturum açma, arka plan işleri, kazıma, resimler, güncellemeler ve hata yanıtları hakkındaki geliştirici notları da programın gerçekte yaptığını anlatıyor
   - type: fix
-    label: Görsel düzeltmeleri. GIF'ler artık sonra atılmak üzere büyütücüden geçirilmiyor. Büyütücü modeli yayımlanmış parmak iziyle doğrulanıyor ve hatalı indirme, büyütmeyi kalıcı olarak kapatmak yerine yeniden alınıyor. Logolar ve saydam bölümleri olan görseller büyütülünce saydamlığını koruyor. WebP'ye Dönüştür artık arka kapakları ve logoları da alıyor, büyük bir kütüphaneyi gereksiz yer gerekçesiyle reddetmiyor. Bir kutu dosyasının iki yüzü tek görseli paylaşabiliyor ve kaydı bozuk bir kutuyu kaldırmak görsellerini de kaldırıyor
+    label: ROM Araçları taramasını başlatan bir editör artık onu duraklatabilir, sürdürebilir veya iptal edebilir; başkalarının taramalarını durdurmak yöneticiye aittir. Etiketler ve listeler eksik adı veya hatalı rengi hata sayfası yerine açık bir iletiyle reddediyor; bir istek listesi oyununu zaten istediğiniz başka bir oyunun adına yeniden adlandırmak da eklemek gibi reddediliyor. RA Verilerini Temizle artık kopyanızın başarım kazanıp kazanmadığını da unutuyor. RetroDB'nin artık sunmadığı bir kupa koleksiyoncu sıralamanıza sayılmaz. Windows ROM yolları artık RetroAchievements oyunlarıyla dosya adına göre eşleşiyor
   - type: fix
-    label: CLZ, Steam, Xbox ve PlayStation içe aktarmaları artık yalnızca Japonca veya başka Latin dışı yazıyla yazılmış her başlığı aynı oyun saymıyor ve kimliksiz oyun eklemiyor. CLZ önizlemesi, içe aktarmayı onaylamadan konsol eklemiyor; Steam, Xbox veya PlayStation kütüphanesine bakan bir izleyici de artık ekleyemiyor. Mağazadan kaldırılan bir Steam oyunu her eşitlemede değil, yalnızca bir kez soruluyor
+    label: Bakım düzeltmeleri. Açılamayan çok diskli bir arşiv artık her yeniden denemeyi engelleyen yarım bir klasör bırakmıyor. Depolamayı Hesapla artık bir PS3 oyun klasöründeki her dosyayı sayıyor. Kazınan Verileri Temizle resimleri yalnızca siz isterseniz siler. Başka bir taramanın az önce eklediği bir oyunla karşılaşan kütüphane taraması, o konsolun kalan oyunlarıyla devam ediyor
   - type: fix
-    label: Analiz artık çok daha fazla konsolu "Diğer" yerine üreticisinin altında grupluyor; panonun Son Kazınanlar listesi de yalnızca yeni eklenenleri değil, yeniden kazıdığınız oyunu da gösteriyor
+    label: Yedeği geri yüklemek daha güvenli. Artık kütüphane veritabanına veritabanının kendi beklediği biçimde yazılıyor; böylece onu açık tutan RetroDB bölümü hasar riski yerine geri yüklenen veriyi görüyor. Bir oyunu silmek artık kutu resimlerini, bekleyen resim ve emülatör ayarı kayıtlarını da siliyor; böylece yeni bir oyun bunları devralamaz. Aynı anda kaydedilen iki ayardan biri artık kaybolmuyor
   - type: fix
-    label: Müzede eklediğiniz kontrolcü görselleri, bağımsız sürüm güncellendiğinde korunuyor. Çevrimiçi bir hizmet sınırında beklerken, ona tekrar ne zaman sorulacağı kendi saat diliminizde gösteriliyor
+    label: Resim düzeltmeleri. GIF'ler artık boşuna büyütücüden geçirilip atılmıyor. Büyütücü modeli yayımlanmış parmak iziyle denetleniyor ve hatalı indirme, büyütmeyi kalıcı olarak kapatmak yerine yeniden alınıyor. Logolar ve saydam bölümleri olan resimler büyütüldüğünde saydamlığını koruyor. WebP'ye Dönüştür artık arka kapakları ve logoları da alıyor ve büyük bir kütüphaneyi gereksiz yer isteği yüzünden reddetmiyor. Bir kutu dosyasının iki yüzü aynı resmi paylaşabilir ve hasarlı kaydı olan bir kutuyu kaldırmak resimlerini de kaldırır
   - type: fix
-    label: Bir bonus disk artık kendisine veya başka bir bonus diske bağlanamaz; Otomatik bağla da aynı çalıştırmada bonus disk olarak işaretlediği bir diske başka bir diski bağlamaz
+    label: CLZ, Steam, Xbox ve PlayStation içe aktarmaları artık yalnızca Japonca veya başka Latin dışı yazıyla yazılmış her başlığı aynı oyun saymıyor ve kimliksiz oyun eklemiyor. CLZ önizlemesi artık içe aktarmayı onaylamadan konsol eklemiyor; Steam, Xbox veya PlayStation kütüphanesine bakan bir izleyici de artık eklemiyor. Mağazadan kaldırılan bir Steam oyunu her eşitlemede değil, bir kez sorulur
   - type: fix
-    label: Kütüphane ve konsol sayfaları artık arcade BIOS dosyalarını toplamlarda ve harf çubuğunda oyun olarak saymıyor. Benzer oyunlar ile bir oyunun sayfasında tür veya yayıncıya tıklayınca çıkan liste, oyunun kendi bölgesel sürümlerini, bonus disklerini veya BIOS dosyalarını artık göstermiyor
+    label: Analizler artık birçok konsolu "Diğer" yerine üreticisinin altında gruplar ve panonun Son Kazınanlar listesi yalnızca yeni eklenen oyunları değil, yeniden kazıdığınız oyunu da gösterir
   - type: fix
-    label: Tümünü seç, çok büyük bir liste kısaltıldığında artık bunu belirtiyor; sessizce yalnızca bir kısmını seçmiyor
+    label: Müze'de eklediğiniz kontrolcü resimleri, bağımsız sürüm güncellendiğinde korunuyor. Çevrimiçi bir hizmet sınırında beklediğinde, yeniden soracağı zaman kendi saat diliminizde gösterilir
+  - type: fix
+    label: Bir bonus disk artık kendine veya başka bir bonus diske bağlanamaz ve Otomatik bağlama aynı çalıştırmada bir diski bonus disk olarak işaretlediği diske bağlamaz
+  - type: fix
+    label: Kütüphane ve konsol sayfaları artık arcade BIOS dosyalarını toplamlarda veya harf çubuğunda oyun saymıyor. Benzer oyunlar ile bir oyunun sayfasında tür veya yayıncıya tıklayınca çıkan liste artık oyunun kendi bölge sürümlerini, bonus disklerini veya BIOS dosyalarını göstermiyor
+  - type: fix
+    label: Tümünü seç artık çok büyük bir liste kısaltıldığında sessizce yalnızca bir kısmını seçmek yerine bunu söylüyor
   - type: fix
     label: Kütüphane kartları artık başarım veya kupa ilerlemeniz değiştiğinde ve bir oyun oynanabilir olduğunda ya da olmaktan çıktığında güncelleniyor
   - type: fix
-    label: Toplu düzenleme artık hatalı bir seçim gönderildiğinde yanlış oyunları değiştirmiyor; başarısız olan toplu düzenleme de oyunları sizin düzenlediğiniz olarak işaretlemiyor
+    label: Toplu düzenleme artık hatalı bir seçim gönderildiğinde yanlış oyunları değiştiremez ve başarısız olan bir toplu düzenleme oyunları sizin düzenlediğiniz olarak işaretlemez
   - type: fix
-    label: Yalnızca %1 uyan bir HowLongToBeat eşleşmesi artık %100 eşleşme gibi gösterilmiyor; yüklenemeyen bir sayfa da ham hata metni yerine hata sayfasını gösteriyor
+    label: Yalnızca %1 uyan bir HowLongToBeat eşleşmesi artık %100 eşleşme olarak gösterilmiyor ve yüklenemeyen bir sayfa ham hata metni yerine hata sayfasını gösteriyor
   - type: security
-    label: Parolanızı değiştirmek veya bir yöneticinin sıfırlaması artık o hesabın diğer tüm cihazlardaki oturumunu kapatıyor. Bu yüzden bu güncellemeden sonra herkes bir kez daha oturum açacak. İlk kurulum sayfası da artık diğer tüm sayfalarla aynı, başka sitelere karşı korumaya sahip
+    label: Parolanızı değiştirmek veya bir yöneticinin sıfırlaması artık o hesabın diğer tüm cihazlardaki oturumunu kapatır. Bu nedenle bu güncellemeden sonra herkes bir kez daha oturum açacak. İlk kurulum sayfası da diğer tüm sayfalar gibi diğer web sitelerine karşı aynı korumayı alıyor
   - type: fix
-    label: Avatar olarak reddedilen bir görsel artık mevcut avatarınızı silmiyor
+    label: Avatar olarak reddedilen bir resim artık mevcut avatarınızı silmiyor
   - type: fix
     label: Kazımalar çevrimiçi hizmetlere karşı daha nazik. Sürekli başarısız olan bir hizmet, aramalarda olduğu gibi boşlukları doldururken de bir süre atlanıyor ve ScreenScraper oyun aramaları artık günlük sınırlarına da uyuyor
   - type: fix
-    label: Kazıma artık çıkış yılı bilinmeyen, örneğin "TBA" olan bir oyunda başarısız olmuyor; listenizde olmayan bölgelerde yayımlanan, örneğin "Brezilya, Kore" gibi bir oyun da bölgesini varsayılanınıza çevirmek yerine koruyor
+    label: Bir kazıma artık çıkış yılı bilinmeyen, örneğin "TBA" olan bir oyunda başarısız olmuyor ve listenizin dışındaki bölgeler için yayımlanan bir oyun, örneğin "Brezilya, Kore", bölgesini varsayılanınız olmak yerine koruyor
   - type: fix
-    label: ~/ ile yazılan ES-DE klasörleri artık çalışıyor ve çok büyük bir ES-DE dosyası artık kopyalanmıyor. Önerilen bölgesel sürümler, birbirinin sürümü olmadığını söylediğiniz iki oyunu asla yeniden birleştirmiyor
+    label: ~/ ile yazılan ES-DE klasörleri artık çalışıyor ve çok büyük bir ES-DE dosyası artık kopyalanmıyor. Önerilen bölge sürümleri, birbirinin sürümü olmadığını söylediğiniz iki oyunu asla yeniden birleştirmez
   - type: security
-    label: RetroDB, web'den görsel alırken birkaç özel ağ adresini daha reddediyor ve bir web adresinin yönlendirmesini doğru izliyor
+    label: RetroDB, web'den resim alırken birkaç özel ağ adresini daha reddediyor ve bir web adresinin yönlendirmesini doğru izliyor
   - type: fix
-    label: Hâlâ İngilizce kalan son ekranlar da artık dilinizi izliyor; kurulum sihirbazı, Etiketler, Listeler, Oyunları Karşılaştır, ROM Araçları ayarları, toplu kazıma kuyruğu, panonun yarıda kalan işler listesi, kütüphane kartı etiketleri ve birçok hata iletisi bunların arasında
+    label: Hâlâ İngilizce kalan son ekranlar da artık dilinizi izliyor; kurulum sihirbazı, Etiketler, Listeler, Oyunları Karşılaştır, ROM Araçları ayarları, toplu kazıma kuyruğu, panonun yarıda kalan işler listesi, kütüphane kartı etiketleri ve birçok hata iletisi dahil
   - type: security
-    label: Web kodu içeren bir sistem adı artık toplu kazıma kuyruğu penceresinde çalıştırılamıyor
+    label: Web kodu içeren bir sistem adı artık toplu kazıma kuyruğu penceresinde çalıştırılamaz
   - type: accessibility
-    label: Sayfanın neresinde olursanız olun, klavyenin bulunduğu yer artık her düğmede, kutuda ve bağlantıda temanızın renginde kalın bir halkayla işaretleniyor. Önceden birçok denetim, fare üzerinden geçtiğinde olduğu gibi yalnızca soluk bir çizgi gösteriyordu
+    label: Sayfada nerede olursanız olun, klavyenin bulunduğu yer artık temanızın renginde kalın bir halkayla işaretleniyor; her düğmede, kutuda ve bağlantıda. Önceden birçok denetim, fare üzerinden geçtiğindekiyle aynı, yalnızca soluk bir çizgi gösteriyordu
   - type: accessibility
-    label: Kütüphane kartlarındaki Tür, Seri, Geliştirici ve Yayıncı bağlantıları artık klavyeyle çalışıyor. Oynanan oyunlar için "çalışıyor" düğmesi de klavyeyle açılıyor; Esc veya başka bir yere tıklamak listesini kapatıyor
+    label: Kütüphane kartlarındaki Tür, Seri, Geliştirici ve Yayıncı bağlantıları artık klavyeyle çalışıyor. Oynanan oyunlar için "çalışıyor" düğmesi de klavyeyle açılıyor ve Esc veya başka yere tıklamak listesini kapatıyor
   - type: accessibility
-    label: Ekran okuyucular artık her etiket rengini adlandırıyor ve hangisinin seçili olduğunu söylüyor; kupa görsellerini de tek harf yerine Platin, Altın, Gümüş ve Bronz olarak okuyor. Bir oyun başlarken Tab artık başlangıç ekranının arkasına geçmiyor
+    label: Ekran okuyucular artık her etiket rengini adlandırıyor ve hangisinin seçili olduğunu söylüyor; kupa resimlerini tek harf yerine Platin, Altın, Gümüş ve Bronz olarak okuyor. Bir oyun başlarken Tab artık başlangıç ekranının arkasına geçmiyor
   - type: fix
-    label: Bir güncelleme dosyaları değiştirmeye başlamadan durursa, RetroDB artık kapalı kalmak yerine önceki sürümünüzü yeniden başlatıyor
+    label: Bir güncelleme dosyaları değiştirmeye başlamadan durursa RetroDB artık kapalı kalmak yerine önceki sürümünüzü yeniden başlatıyor
   - type: fix
-    label: Oyna'ya aynı anda iki kez basmak artık yerleşik oyuncuda iki oyun başlatmıyor. Çekirdek indirmesini beklemek artık bir süre sonra veya RetroDB yanıt vermeyi bıraktığında vazgeçiyor, sonsuza kadar beklemiyor; "zaten çalışıyor" sorusu da RetroDB'nin kendi iletişim kutusunu kullanıyor
+    label: Oyna'ya aynı anda iki kez basmak artık yerleşik oynatıcıda iki oyun başlatamaz. Çekirdek indirmesini beklemek artık sonsuza kadar beklemek yerine bir süre sonra veya RetroDB yanıt vermeyi bıraktığında vazgeçiyor ve "zaten çalışıyor" sorusu RetroDB'nin kendi iletişim kutusunu kullanıyor
   - type: fix
-    label: Oyun sırasında açıp kapattığınız Hileler artık doğru oyun için saklanıyor; dosya adı aynı olan başka bir oyundan alınmıyor. Bir hile sorunu hiçbir zaman bir oyunun başlamasını engellemiyor
+    label: Oyun sırasında açıp kapattığınız hileler, dosya adı aynı olan başka bir oyundan alınmak yerine doğru oyun için saklanıyor. Bir hile sorunu hiçbir zaman oyunun başlamasını engellemez
   - type: fix
-    label: RetroDB bir emülatörün ayar dosyasını artık daha güvenli yazıyor. Bağlantı olan bir ayar dosyası bağlantı olarak kalıyor, izinlerini koruyor ve okuyamadığı harfleri saklıyor; başarısız bir kayıt da ortada artık dosya bırakmıyor
+    label: RetroDB bir emülatörün ayar dosyasını daha güvenli yazıyor. Bağlantı olan bir ayar dosyası bağlantı olarak kalır, izinlerini korur ve okuyamadığı harfleri korur; başarısız bir kayıt da ortada fazladan dosya bırakmaz
   - type: fix
-    label: Kuyrukta aşağı taşıdığınız, başka biriyle değiştirdiğiniz veya bir iş çalışırken sürdürdüğünüz toplu kazıma artık RetroDB yeniden başladığında kaybolmuyor; pano onu kaldığı yerden sunuyor. Değiştirilen bir kazıma yenisinin yanında çalışmaya devam etmiyor ve Sürdür'e hızlıca iki kez tıklamak işi yalnızca bir kez başlatıyor
+    label: Kuyrukta aşağı taşıdığınız, bir başkasıyla değiştirdiğiniz veya biri çalışırken sürdürdüğünüz toplu kazıma, RetroDB yeniden başladığında artık kaybolmuyor; pano onu kaldığı yerden sunuyor. Değiştirilen bir kazıma artık yenisinin yanında çalışmaya devam etmiyor ve Sürdür'e iki hızlı tıklama işi yalnızca bir kez başlatıyor
   - type: fix
-    label: Bir oyunun hatası, örneğin ağın kopması, artık tüm bir Yapay Zeka Doldur çalıştırmasını veya Kutu ve Kılavuz Bölgelerini Düzelt çalıştırmasını bitirmiyor; o oyun başarısız sayılıyor ve diğerleri devam ediyor. RetroDB'yi durdurmak artık çekirdek indirmelerini de düzgünce durduruyor
+    label: Ağın kopması gibi tek bir oyunun hatası artık tüm bir Yapay Zeka Doldur çalıştırmasını veya Kutu ve Kılavuz Bölgelerini Düzelt çalıştırmasını bitirmiyor; o oyun başarısız sayılıyor ve diğerleri devam ediyor. RetroDB'yi durdurmak artık çekirdek indirmelerini de düzgünce durduruyor
   - type: fix
-    label: İstek listesi öğeleri artık bir hata veya yeniden başlatma sonrası sonsuza kadar "kazınıyor" durumunda kalmıyor; aynı istek listesi için iki Tümünü Kazı çalıştırması da artık aynı anda çalışmıyor
+    label: İstek Listesi öğeleri artık bir hata veya yeniden başlatmadan sonra sonsuza kadar "kazınıyor" durumunda kalmıyor ve aynı istek listesi için iki Tümünü Kazı çalıştırması artık aynı anda çalışmıyor
   - type: fix
-    label: Bir betik veya RetroDB'nin ikinci bir kopyasının başlaması artık çalışan sunucunun işlerini yarıda kalmış olarak işaretlemiyor; aynı anda başlayan iki kopya da veritabanını bir sürüm geriye alamıyor
+    label: Bir betiğin veya RetroDB'nin ikinci bir kopyasının başlaması artık çalışan sunucunun işlerini yarıda kalmış olarak işaretlemiyor ve aynı anda başlayan iki kopya artık veritabanını bir sürüm geriye alamıyor
   - type: fix
-    label: PlayStation eşitlemesini başlatmak artık Sony'ye giriş yaparken herkesin ilerleme çubuklarını bekletmiyor. Günlük PlayStation canlı tutma işlemi artık oturumu her gün değil, yalnızca 10 günlük sürenin sonuna yakın yeniliyor
+    label: Bir PlayStation eşitlemesi başlatmak artık Sony'de oturum açarken herkesin ilerleme çubuklarını bekletmiyor. Günlük PlayStation canlı tutma işlemi artık oturumu her gün değil, yalnızca 10 günlük süresinin sonuna yakın yeniliyor
   - type: fix
-    label: Bir kazıma artık çalışırken yaptığınız değişikliğin üzerine yazmıyor ve adını bilmediği bir türü, modu veya görünümü boşaltmıyor. Saklanan oyuncu sayısını da oyunun modlarına uyacak şekilde değiştirmiyor
+    label: Bir kazıma çalışırken yaptığınız değişikliğin üzerine artık yazmaz ve adını bilmediği bir türü, modu ya da görünümü artık boşaltmaz. Kayıtlı oyuncu sayısını da artık oyunun modlarına uyacak şekilde değiştirmez
   - type: fix
-    label: Yapay Zeka Doldur artık kendi yazdığınız, örneğin elle düzelttiğiniz yayıncı veya türü değiştirmiyor; yalnızca kazınan değerleri düzeltiyor. Bir değeri yalnızca farklı yazdığında, örneğin 4 oyuncuyu "1-4" olarak veya aynı türleri başka sırayla yazdığında, artık değişmiş saymıyor
+    label: Yapay Zeka Doldur artık kendi yazdığınız şeyleri değiştirmez; elle düzelttiğiniz yayıncı ya da tür gibi. Yalnızca kazınan değerleri düzeltir. Bir değeri yalnızca farklı yazdığında, örneğin 4 oyuncuyu "1-4" ya da aynı türleri başka sırayla yazdığında, artık değişmiş olarak bildirmez
   - type: fix
-    label: Bir oyun için yazdığınız kontrolcü korunuyor; konsolun varsayılan kontrolcüsü artık yalnızca kazınan ve yapay zeka değerlerinin yerine geçiyor. Başka bir kurulun yapay zeka tahmininden dönüştürülen yaş derecelendirmesi de artık tahmin olarak işaretleniyor
+    label: Bir oyun için yazdığınız kontrolcü korunur; konsolun varsayılan kontrolcüsü artık yalnızca kazınan ve yapay zeka değerlerinin yerine geçer. Başka bir kurulun yapay zeka tahmininden dönüştürülen yaş derecelendirmesi de artık tahmin olarak işaretlenir
   - type: fix
-    label: Bir oyunun düzenleme penceresini kaydetmek artık pencerenin göstermediği alanları boşaltmıyor. Bir oyunun sayfasındaki Sıfırla artık söylediği her şeyi temizliyor; görünüm, sürüm ve diğer adlar dahil. Başka bir oyun kullanmıyorsa oyunun görsellerini ve videolarını siliyor ve kütüphane filtrelerini hemen güncelliyor
+    label: Bir oyunun düzenleme penceresini kaydetmek artık pencerede görünmeyen alanları boşaltmaz. Oyun sayfasındaki Sıfırla artık söylediği her şeyi temizler; görünüm, sürüm ve diğer adlar dahil. Başka bir oyun kullanmıyorsa oyunun resimlerini ve videolarını siler, kütüphane filtrelerini de hemen günceller
   - type: fix
-    label: Kazınan Verileri Temizle artık görünümü, 2B veya 3B bilgisini ve oyun yapısını da temizliyor. Yalnızca yılı olan bir oyunun CLZ içe aktarması 1 Ocak yerine yalnızca yılı koruyor
+    label: Kazınan Verileri Temizle artık görünümü, 2D veya 3D'yi ve oyun yapısını da temizler. Yalnızca yılı olan bir oyunun CLZ içe aktarımı 1 Ocak yerine yalnızca yılı korur
   - type: security
-    label: Steam eşitlemesi artık Ayarlar'daki Steam anahtarını her hane üyesi için ödünç almıyor. Kendi Steam anahtarı olmayan bir üye, hesabında yöneticinin Steam kütüphanesini ve başarımlarını alıyordu. Ayarlar'daki anahtar artık yalnızca yöneticilere hizmet ediyor
+    label: Steam eşitleme artık Ayarlar'daki Steam anahtarını her hane üyesi için kullanmaz. Kendi Steam anahtarı olmayan üye, hesabında yöneticinin Steam kütüphanesini ve başarımlarını alıyordu. Ayarlar'daki anahtar artık yalnızca yöneticilere hizmet eder
   - type: fix
-    label: How Long to Beat araması artık birçok oyun için emin olduğu süreleri kaydediyor. Önceden emin olunan her eşleşme başarısız oluyor ve hiçbir şey kaydedilmiyordu. RetroAchievements Yenile artık, tıpkı Kazı işlemi gibi, her oyunun dosyasını RetroAchievements listesiyle de karşılaştırıyor; böylece oyun sahip olduğunuz sürümle birebir eşleşiyor
+    label: How Long to Beat'in birçok oyun için aramasında artık emin olduğu süreler kaydedilir. Önceden emin olunan her eşleşme başarısız oluyor ve hiçbir şey kaydedilmiyordu. RetroAchievements Yenile artık kazıma gibi her oyunun dosyasını da RetroAchievements listesiyle karşılaştırır, böylece oyun sahip olduğunuz sürümle eşleşir
   - type: fix
-    label: Bir arka plan işinin bittiğini bildiren mesaj yeniden görünüyor ve işin ilerleme kutusu, sunucu yeniden başlatıldıktan sonra işi tekrar aldığında bunu fark ediyor. Önceden ikisi de hiç görünmüyordu
+    label: Arka plan işinin bittiğini bildiren mesaj yeniden görünüyor ve işin ilerleme kutusu, sunucu yeniden başlatmadan sonra işi aldığında bunu fark ediyor. Önceden ikisi de hiç görünmüyordu
   - type: fix
-    label: 'PlayStation kupaları: elle bağladığınız oyun tam eşitlemeden sonra bağlı kalıyor ve eşitleme artık bir oyunu devam oyununa bağlamıyor; örneğin "Doom" ile "Doom Eternal" gibi. PlayStation oyunlarını içe aktarmak artık, Steam ve Xbox içe aktarmaları gibi, Kütüphanenizde zaten olan oyunu bağlıyor; böylece kupaları o oyunda görünüyor'
+    label: 'PlayStation kupaları: elle bağladığınız oyun tam eşitlemeden sonra bağlı kalır ve eşitleme artık bir oyunu devam oyununa bağlamaz, örneğin "Doom" ile "Doom Eternal". PlayStation oyunlarını içe aktarmak artık Steam ve Xbox gibi kütüphanenizdeki oyunu bağlar, böylece kupalar üzerinde görünür'
   - type: fix
-    label: Xbox, oturumu kendiliğinden yenilendikten sonra artık oyuncu etiketinizi Bilinmiyor olarak göstermiyor ve yavaş ya da başarısız bir bağlantı artık sizi Xbox'tan çıkarmıyor. Bunu yalnızca Microsoft'un girişi reddetmesi yapar
+    label: Xbox artık oturumu kendini yenilediğinde oyuncu etiketinizi Bilinmiyor olarak göstermez ve yavaş ya da başarısız bağlantı sizi Xbox'tan çıkarmaz. Bunu yalnızca Microsoft'un girişi reddetmesi yapar
   - type: fix
-    label: İki kişi artık aynı adlı birer etikete sahip olabilir; önceden ikincisi hatayla başarısız oluyordu. Oturum açmış her kullanıcı artık kendi RPCS3 kupalarını yeniden tarayabilir; önceden yalnızca yönetici yapabiliyordu ve diğer herkes RetroDB yeniden başlatılana kadar eski kupaları görüyordu
+    label: İki kişi artık aynı adlı birer etikete sahip olabilir; önceden ikincisi hatayla başarısız oluyordu. Oturum açmış her kullanıcı artık kendi RPCS3 kupalarını yeniden tarayabilir; önceden yalnızca yönetici yapabiliyordu ve diğerleri RetroDB yeniden başlayana kadar eski kupaları görüyordu
   - type: security
-    label: Oturum bilgileriniz gizli kalır. Veritabanı yedekleri artık bilgisayardaki diğer hesaplar tarafından okunamıyor ve başarısız bir yedekleme artık bir öncekini silmiyor. Bir kullanıcıyı silmek veya kapatmak onu DuckStation ve PCSX2'deki RetroAchievements oturumundan da çıkarır. Oyuncunun kendi menüsünden kaydedilen RetroAchievements girişi artık sonraki oyuncuya geçmiyor. Günlükler ve kayıtlı iş hataları RetroAchievements belirteçlerini gizliyor, başka bir üyenin PlayStation hatası yalnızca ona gösteriliyor ve eski düz metin PlayStation ve Xbox giriş dosyaları kaldırılıyor
+    label: Oturum bilgileriniz gizli kalır. Veritabanı yedekleri artık bilgisayardaki diğer hesaplar tarafından okunamaz ve başarısız bir yedekleme bir önceki yedeği silmez. Bir kullanıcıyı silmek ya da kapatmak onu DuckStation ve PCSX2'deki RetroAchievements oturumundan da çıkarır. Oyuncunun kendi menüsünden kaydedilen RetroAchievements girişi artık sonraki oyuncuya geçmez. Günlükler ve kayıtlı iş hataları RetroAchievements jetonlarını gizler, başka bir üyenin PlayStation hatası yalnızca ona gösterilir ve eski düz metin PlayStation ve Xbox giriş dosyaları kaldırılır
   - type: fix
-    label: RetroDB'nin kendi denetimleri çalışırken artık Kütüphanenize dokunamaz. Her zaman veritabanının, resimlerin ve ayarların geçici bir kopyasını kullanırlar ve bunlardan biri gerçek dosyalarınızı gösteriyorsa başlamayı reddederler
+    label: RetroDB'nin kendi denetimleri çalışırken artık kütüphanenize dokunamaz. Her zaman veritabanının, resimlerin ve ayarların geçici bir kopyasını kullanırlar ve bunlardan biri gerçek dosyalarınızı gösteriyorsa başlamayı reddederler
   - type: fix
-    label: Yetim dosyaları temizle artık İstek Listenizin resimlerini silmiyor. Bir oyunu açmak artık bulamadığı ekran görüntülerini unutturmuyor. Önceden resim sürücüsü takılı değilken açtığınız her oyun tüm ekran görüntüsü listesini kaybediyordu; artık liste korunuyor ve eksik resim yalnızca gizleniyor
+    label: Yetim dosyaları temizle artık istek listenizin resimlerini silmez. Bir oyunu açmak artık bulamadığı ekran görüntülerini unutturmaz. Önceden resim sürücüsü takılı değilken açtığınız her oyun tüm ekran görüntüsü listesini kaybediyordu; artık liste korunur, eksik resim yalnızca gizlenir
   - type: fix
-    label: Yarıda başarısız olan bir video veya kılavuz indirmesi artık oyunun zaten sahip olduğu kopyaya zarar vermiyor ve başarısız bir indirme artık medya klasöründe gizli yarım dosya bırakmıyor. Arka plandaki büyütücü artık eski bir resmi, bu sırada indirilen daha yeni resmin üzerine kaydetmiyor. WebP'ye dönüştür, bir resmi paylaşan her oyunun ona bağlı kalmasını sağlar ve resim klasörleri dışındaki hiçbir dosyaya dokunmaz
+    label: Yarıda kalan bir video ya da kılavuz indirmesi artık oyunun mevcut kopyasına zarar vermez ve başarısız indirme medya klasöründe gizli yarım dosya bırakmaz. Arka plan büyütücü artık eski bir resmi, bu sırada indirilen yeni resmin üzerine kaydetmez. WebP'ye Dönüştür, bir resmi paylaşan her oyunu ona bağlı tutar ve resim klasörleri dışındaki hiçbir dosyaya dokunmaz
   - type: fix
-    label: Bir oyunu veya İstek Listesi öğesini silmek artık resimlerini, videolarını ve kılavuzlarını da siliyor, ancak başka bir oyunun veya İstek Listesi öğesinin hâlâ kullandıklarını tutuyor. Kaydedilen resimler yine bilgisayardaki diğer hesaplarca okunabiliyor ve Resimleri Yeniden Boyutlandır, kaydedemediği resmi tamamlandı değil başarısız sayıyor
+    label: Bir oyunu ya da istek listesi öğesini silmek artık resimlerini, videolarını ve kılavuzlarını da siler, ancak başka bir oyunun ya da istek listesi öğesinin hâlâ kullandıklarını tutar. Kaydedilen resimler yeniden bilgisayardaki diğer hesaplarca okunabilir ve Resimleri Yeniden Boyutlandır kaydedemediği resmi tamamlandı değil, başarısız sayar
   - type: fix
-    label: Yinelenenleri Bul artık çalışan bir dosyayı silinmek üzere önermiyor. Ada göre ararken artık bir oyunun .cue ve .bin dosyalarını birbirinin kopyası saymıyor. Bir oyunun iki sürümünün paylaşabileceği disk iz dosyasını asla önermiyor. Bir oynatma listesinde yer alan diski silmeyecek. Dosyasını sildiğiniz oyun artık tuttuğunuz kopyaya geçiyor, böylece Kütüphanede kalıyor
+    label: Yinelenenleri Bulucu artık çalışan bir dosyayı silmek için önermez. Ada göre ararken bir oyunun .cue ve .bin dosyalarını artık birbirinin kopyası saymaz. Bir oyunun iki sürümünün paylaşabildiği disk iz dosyasını hiç önermez. Bir oynatma listesinde yer alan diski silmez. Dosyasını sildiğiniz oyun artık tuttuğunuz kopyaya geçer, böylece kütüphanede kalır
   - type: fix
-    label: Çok Diskliyi Düzenle artık mevcut bir oynatma listesinin veya oyunun klasöründeki bir dosyanın üzerine yazmıyor; durur ve hangisi olduğunu söyler. Oluşturduğu oynatma listesi, iz dosyalarını değil her diskin .cue dosyasını listeler. Dosyaları taşınan oyunlar artık onlarla birlikte klasöre geçiyor, böylece Eksik ROM'ları temizle onları artık kaldırmıyor
+    label: Çoklu Diski Düzenle artık var olan bir oynatma listesinin ya da oyun klasöründeki bir dosyanın üzerine yazmaz; durur ve hangisi olduğunu söyler. Oluşturduğu oynatma listesi her diskin iz dosyalarını değil .cue dosyasını listeler. Dosyaları taşınan oyunlar artık klasöre onlarla birlikte gider, böylece Eksik ROM'ları temizle onları kaldırmaz
   - type: fix
-    label: '"Orijinalleri sil" ile CHD''ye dönüştürmek artık diskin iz dosyalarını da siliyor, ancak başka bir .cue''nun hâlâ kullandığı izi tutuyor. Oyun ve eski diski listeleyen her oynatma listesi artık yeni .chd dosyasını gösteriyor. Bir oyunun dosyasını yeniden adlandırmak artık onu listeleyen oynatma listesini güncelliyor ve bir .cue''nun gereksinim duyduğu iz dosyası yeniden adlandırılamaz. Zip''ten dosya kaldırmak, adında [ veya ] olsa bile yalnızca seçtiğiniz dosyaları kaldırır. Ekran Görüntüsü Tekilleştirme yalnızca taramasının bulduğu kopyaları siler ve her zaman birini tutar'
+    label: '"Orijinalleri sil" ile CHD''ye dönüştürmek artık diskin iz dosyalarını da siler, ancak başka bir .cue''nun hâlâ kullandığı izi tutar. Oyun ve eski diski listeleyen oynatma listeleri artık yeni .chd''yi gösterir. Bir oyunun dosyasını yeniden adlandırmak artık onu listeleyen oynatma listesini günceller ve bir .cue''nun ihtiyaç duyduğu iz dosyası yeniden adlandırılamaz. Zip''ten dosya kaldırmak, adda [ veya ] olsa bile yalnızca seçtiklerinizi kaldırır. Ekran Görüntüsü Tekilleştir yalnızca taramasının bulduğu kopyaları siler ve her zaman birini tutar'
   - type: fix
-    label: Bir oyunun sayfasındaki How Long to Beat, yazdığınız şeyi arar. Önceden bulamadığı bir başlık yerine oyunun diğer adlarını arıyordu ve hayran yapımı bir yeniden yapım gibi farklı bir oyun önerebiliyordu. Kutuda oyunun kendi adı olduğunda diğer adları yine dener
+    label: Bir oyunun sayfasındaki How Long to Beat yazdığınızı arar. Önceden bulamadığı bir başlık yerine oyunun diğer adlarını arıyordu ve hayran yapımı yeniden yapım gibi farklı bir oyun önerebiliyordu. Kutu oyunun kendi adını içerdiğinde diğer adları yine dener
   - type: fix
-    label: Yardım kılavuzundaki How Long to Beat adımları artık ekranla uyuşuyor. Listeden eşleşme seçmenizi söylüyorlardı; sayfa ise Kaydet ve İptal ile tek bir eşleşme gösteriyor. PlayStation yardımı artık, RetroDB kendiliğinden yeniden giriş yaptığı için, girişin yaklaşık iki ay sürdüğünü söylemiyor. Çevrilmiş 20 kılavuzun hepsi her iki değişikliği de içeriyor
+    label: Yardım kılavuzundaki How Long to Beat adımları artık ekrana uyuyor. Listeden eşleşme seçmeyi söylüyordu; sayfa Kaydet ve İptal ile tek bir eşleşme gösteriyor. PlayStation yardımı artık oturumun yaklaşık iki ay sürdüğünü söylemiyor, çünkü RetroDB kendiliğinden yeniden oturum açar. Çevrilen 20 kılavuzun hepsi iki değişikliği de içerir
   - type: fix
-    label: Her harf çubuğu artık bir Tümü düğmesiyle başlıyor. Kütüphane, konsol ve PSN Kupaları sayfalarında bir harf seçmek yalnızca o harfin oyunlarını gösteriyordu ve geri kalanını getirecek bir düğme yoktu. Diğer başarım sayfalarında Tümü ilk oyuna döner
+    label: Her harf çubuğu artık Tümü düğmesiyle başlar. Kütüphane, konsol ve PSN Kupaları sayfalarında bir harf seçmek yalnızca o harfin oyunlarını gösterir ve önceden gerisini geri getirecek düğme yoktu. Diğer başarım sayfalarında Tümü ilk oyuna döner
   - type: fix
-    label: Ayarlar'a yapıştırdığınız yeni PlayStation giriş belirteci artık hemen kullanılıyor. Önceden RetroDB eski girişi süresi dolana kadar kullanmaya devam ediyordu ve Kaydet ve Bağlantıyı Sına eski girişi çalışıyor diye bildiriyordu. Sony'nin reddettiği bir belirteç artık çalışan bir belirteçin yerini almıyor
+    label: Ayarlar'a yapıştırdığınız yeni PlayStation giriş jetonu artık hemen kullanılır. Önceden RetroDB eski girişi süresi dolana kadar kullanıyor ve Kaydet ve Bağlantıyı Sına eski girişi çalışıyor diye bildiriyordu. Sony'nin reddettiği jeton artık çalışanın yerine geçmez
   - type: enhancement
-    label: 'Ayarlar''daki PlayStation girişini sürdürmek artık daha kolay. RetroDB kendiliğinden yeniden giriş yaptığı için başlık artık işlem yapmanız gerekmeyen günleri saymıyor; yalnızca Sony kayıtlı belirtecinizi reddettiğinde kırmızıya dönüyor. Buraya yapıştır düğmesi artık tarayıcının panonuzu okumak için izin istemesine yol açmıyor: imleci Ctrl+V için kutuya koyuyor. Adımlar artık hâlâ çalışan bir belirteci değiştirirken önce PlayStation''dan çıkış yapmanızı söylüyor ve mesajları çevrilebiliyor'
+    label: 'Ayarlar''daki PlayStation girişini sürdürmek artık daha kolay. Başlık, RetroDB kendiliğinden yeniden oturum açtığı için işlem yapmanız gerekmeyen günleri artık saymaz; yalnızca Sony kayıtlı jetonunuzu reddettiğinde kırmızı olur. Buraya yapıştır düğmesi artık tarayıcının panonuzu okuma izni istemesine yol açmaz: imleci Ctrl+V için kutuya koyar. Adımlar artık hâlâ çalışan bir jetonu değiştirirken önce PlayStation''dan çıkış yapmanızı söyler ve mesajları çevrilebilir'
   - type: enhancement
-    label: '"Ayarlar kaydedildi" veya "Bu liste silinsin mi?" gibi açılır mesajlar ve soru kutuları artık her sayfada çevrilebiliyor. Önceden çoğu, seçtiğiniz dil ne olursa olsun İngilizce kalıyordu'
+    label: '"Ayarlar kaydedildi" ya da "Bu liste silinsin mi?" gibi açılır mesajlar ve soru kutuları artık her sayfada çevrilebilir. Önceden çoğu, hangi dili seçerseniz seçin İngilizce kalıyordu'
   - type: enhancement
-    label: '"NPSSO''nuzun süresi dolmuş olabilir" gibi PlayStation girişinin neden başarısız olduğunu söyleyen mesajlar artık çevrilebiliyor'
+    label: '"NPSSO''nuzun süresi dolmuş olabilir" gibi PlayStation girişinin neden başarısız olduğunu söyleyen mesajlar artık çevrilebilir'
   - type: fix
-    label: Her dildeki yardım kılavuzu artık İngilizce olanla uyuşuyor. Her Yerde Ara, Bir Başlığı Koruma, MAME Adları ve kutunun arkası ekleniyor; geride kalmış eski paragraflar güncelleniyor
+    label: Her dildeki yardım kılavuzu artık İngilizce olanla uyumlu. Her Yerde Ara, Bir Başlığı Tutma, MAME Adları ve kutunun arkası eklendi; geride kalan eski paragraflar güncellendi
   - type: fix
-    label: Almanca, Afrikaanca ve İspanyolcada, bir oyunun kapağındaki Geri düğmesi artık "geri git" değil, kutunun arkası anlamına geliyor
+    label: Almanca, Afrikaans ve İspanyolcada, oyun kapağındaki Geri düğmesi artık "geri git" değil, kutunun arkasını söylüyor
   - type: feature
-    label: Oyna'ya basmak artık oyun başlarken ekranı, arka plan resmi üzerinde oyunun logosuyla dolduruyor; logosu yoksa adını büyük harflerle gösteriyor. Oyunun penceresi açılınca ya da Esc'ye bastığınızda veya tıkladığınızda kendiliğinden kapanıyor
+    label: Oyna'ya basmak artık oyun başlarken ekranı oyunun logosuyla arka plan resmi üzerinde doldurur, logosu yoksa adını büyük harflerle gösterir. Oyunun penceresi açılınca ya da Esc'ye basınca veya tıklayınca kendiliğinden kaybolur
   - type: feature
-    label: 'Döndürülebilir 3D kutu artık gerçek bir PS5 kutusunun biçimine sahip: yuvarlak köşeler ve kenarlar, kapağın çevresindeki kabarık kenar, iki yarının birleştiği çizgi ve açılan yandaki parmak oyuğu. Biçimi yazan bir Slipcase sürümünden kutu dosyası gerekir; almak için kutuyu yeniden içe aktarın. Diğer kutular eskisi gibi görünür'
+    label: 'Döndürülebilir 3D kutu artık gerçek bir PS5 kutusunun şeklinde: yuvarlak köşeler ve kenarlar, kapağın çevresindeki yükselti, iki yarının birleştiği çizgi ve açılan kenardaki parmak girintisi. Şekli yazan bir Slipcase sürümünden kutu dosyası gerekir; almak için kutuyu yeniden içe aktarın. Diğer kutular eskisi gibi görünür'
   - type: enhancement
-    label: RetroAchievements'ı Yenile, Ayarlar'dan RetroAchievements sayfasına taşındı ve artık Başarımlı Oyunları Bul olarak adlandırılıyor. Oradaki her düğmede ne yaptığını anlatan bir satır var, böylece Oyunları Bul ile İlerlemeyi Eşitle kolayca ayırt edilir. Henüz bağlı oyun yokken sayfa, bir sonraki sekmeye geçmek yerine yöneticiye Bul düğmesini gösteriyor
+    label: RetroAchievements Yenile, Ayarlar'dan RetroAchievements sayfasına taşındı ve artık Başarımlı Oyunları Bul olarak adlandırılıyor. Oradaki her düğmenin ne yaptığını söyleyen bir satır var, böylece Oyunları Bul ile İlerlemeyi Eşitle kolayca ayırt edilir. Henüz bağlı oyun yokken sayfa, sonraki sekmeye geçmek yerine yöneticiye Bul düğmesini gösterir
   body: "<ul>\n  <li><strong>Yardım kılavuzu her dilde güncel.</strong>\n    Yalnızca İngilizce kılavuzda bulunan bölümler artık çevrildi.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'
