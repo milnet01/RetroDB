@@ -7,11 +7,12 @@
 ## Features
 
 ### Library & Metadata
-- **Multi-System Library** - Supports 150+ gaming platforms from Atari 2600 to PS5
-- **Hybrid Metadata Scraping** - Combines data from TheGamesDB, IGDB, RAWG, ScreenScraper, and ES-DE gamelists *(requires your own login/API key per source — see [API Keys](#api-keys))*
+- **Multi-System Library** - Consoles and computers from the Atari 2600 to the PS5, with one card per game across regional versions
+- **Hybrid Metadata Scraping** - Combines data from TheGamesDB, IGDB, RAWG, ScreenScraper, and ES-DE gamelists; Steam imports also fill from the Steam store *(requires your own login/API key per source — see [API Keys](#api-keys))*
 - **AI Fill** - Intelligent metadata gap-filling using Gemini, OpenAI, or Claude *(requires your own AI provider API key, which is paid/usage-billed — see [API Keys](#api-keys))*
 - **Multi-Rating System** - 9 international age rating systems (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd, CADPA) with cross-mapping
-- **Bulk Operations** - Bulk scraping, bulk editing, compare games, and queue management with job recovery
+- **Bulk Operations** - Bulk scraping, bulk editing, bulk AI Fill, compare games, and queue management with job recovery
+- **Rich Game Pages** - Game logos, a turnable 3D box (with Slipcase box import), manuals that turn like a book, release dates per region, and RPCS3 compatibility for PS3 games
 
 ### Achievements & Trophies
 - **RetroAchievements Integration** - Track achievement progress across retro games
@@ -19,22 +20,33 @@
 - **Xbox Achievements** - Import Xbox library and track gamerscore
 - **PS3/PSN Trophy Tracking** - RPCS3 local trophies and PSN API trophy sync
 
+### Playing
+- **Play Button** - Start a game from RetroDB with RetroArch or a standalone emulator (DuckStation, PCSX2, RPCS3 and others)
+- **Built-in Player** - Download RetroDB's own RetroArch from inside the app; cores download when a game needs them
+- **Emulator Setup** - Point RetroDB at your emulators and choose one per system
+- **Cheats** - Download cheat packs or import your own for RetroArch, DuckStation and PCSX2
+
 ### Organization
-- **Collections** - Tags, named lists with drag-and-drop ordering, and wishlist
+- **Collections** - Tags, named lists with drag-and-drop ordering, and a wishlist that scrapes itself
+- **Bonus Discs and Multi-Disc Games** - Link bonus discs to their game; build `.m3u` playlists for multi-disc games
 - **Collector Trophies** - Gamification system with milestone-based trophy unlocks
 - **Game Imports** - Import from CLZ Games (PDF), Steam, Xbox, and PlayStation Network
 
 ### Tools & Analytics
-- **ROM Tools** - Archive scanner, CHD converter/verifier, duplicate finder, multi-disc organizer
+- **ROM Tools** - Archive scanner, CHD converter/verifier, duplicate finder, multi-disc organizer, MAME Names
 - **ROM Reports** - Naming validation and standards compliance checking
-- **Analytics Dashboard** - 12-tab analytics with charts, export (PNG/CSV), and leaderboards
-- **Image Standardization** - AI upscaling (Real-ESRGAN) and Lanczos downscaling
+- **Analytics Dashboard** - Charts, export (PNG/CSV), and leaderboards
+- **Image Standardization** - AI upscaling (Real-ESRGAN) and Lanczos downscaling; Screenshot Review and duplicate screenshot finder
 - **Museum** - Interactive gaming system encyclopedia with AI-generated content
 
 ### UI & System
-- **7 Themes** - Cyberpunk, Matrix, Amber, Ocean, Cathedral (`christian` internal key), Blade Runner, and Elite (vector starfield) with animated canvas effects
-- **Multi-User Support** - Role-based access control (admin, editor, viewer)
-- **How Long to Beat** - Playtime estimates for your games
+- **Themes** - Cyberpunk, Matrix, Amber, Ocean, Cathedral (`christian` internal key), Blade Runner, and Elite (vector starfield) with animated canvas effects
+- **Languages** - The interface, help manual and changelog are translated; pick your language in Settings
+- **Multi-User Support** - Role-based access control (admin, editor, player, viewer); a player can view and launch games
+- **How Long to Beat** - Playtime estimates for your games, beside your own Steam play time
+- **Search Anywhere** - Find any game or console from every page
+- **Self-Updater** - An admin installs a new version from Settings; RetroDB backs up the database first and rolls back if the update fails
+- **Phone and Tablet Layout** - The pages fit a small screen
 - **Log Viewer** - Unified log browser across all categories
 - **Genre Normalization** - Automatic normalization with custom rules
 
@@ -47,7 +59,7 @@
 
 ## Quick Start
 
-> **End users:** download the source ZIP from Releases and follow the steps below. **Developers:** `git clone` the repo and see [CONTRIBUTING.md](CONTRIBUTING.md) for the dev setup instead.
+> **End users:** each release offers two downloads per platform (Linux, macOS, Windows). A **Standalone** zip needs no Python: unzip it and run `start.sh`, `start.command` or `start.bat`. The plain zip runs from source and needs the steps below. **Developers:** `git clone` the repo and see [CONTRIBUTING.md](CONTRIBUTING.md) for the dev setup instead.
 
 ### 1. Extract
 
@@ -59,7 +71,7 @@ Extract the RetroDB ZIP to a directory of your choice.
 python install.py
 ```
 
-This installs Python dependencies, creates config files from templates, and sets up required directories.
+This installs Python dependencies, creates config files from templates, and sets up required directories. On Linux, `./setup.sh` runs the same install in a graphical installer.
 
 ### 3. Launch
 
@@ -84,16 +96,20 @@ Open your browser to `http://localhost:5000` and follow the setup wizard.
 
 ### Optional Tools (for ROM Tools features)
 
-- **7-Zip** (`p7zip-full`) - Archive extraction
+- **unzip** - ZIP archive extraction
+- **7-Zip** (`p7zip-full`) - 7z archive extraction
 - **unrar** - RAR archive support
 - **chdman** (`mame-tools`) - CHD conversion and verification
 
 ## Configuration
 
-RetroDB uses two configuration files:
+RetroDB keeps its settings in three places:
 
-- **`config.py`** - Main settings (paths, API keys, server config). Created from `config.example.py` during install.
-- **`data/settings.json`** - User-editable settings changed via the web UI.
+- **`data/settings.json`** - Paths and preferences changed via the web UI.
+- **`data/scraper_settings.json`** - The install-wide scraper and AI keys entered under **Settings**.
+- **The database** - Each user's own sign-ins (PlayStation, Xbox, RetroAchievements).
+
+**`config.py`** holds server defaults and is created from `config.example.py` during install. You rarely need to edit it.
 
 Most settings can be configured through the web interface at **Settings** or during the first-run **Setup Wizard**.
 
@@ -116,6 +132,8 @@ enabling it.
 | ScreenScraper | https://www.screenscraper.fr | Metadata, 3D boxart, videos | Free account |
 | RetroAchievements | https://retroachievements.org/controlpanel.php | Achievement tracking | Free account |
 | Steam Web API | https://steamcommunity.com/dev/apikey | Steam import & achievements | Free |
+| PlayStation | https://ca.account.sony.com/api/v1/ssocookie | Trophy sync (an NPSSO sign-in token, per user) | Free account |
+| Xbox | https://portal.azure.com | Xbox import & achievements (a Microsoft app client ID and secret, then a Microsoft sign-in) | Needs an Azure account |
 | Google Gemini | https://aistudio.google.com/apikey | AI Fill & Museum | Free tier + paid |
 | OpenAI | https://platform.openai.com/api-keys | AI Fill & Museum | Paid (usage-billed) |
 | Anthropic Claude | https://console.anthropic.com/ | AI Fill & Museum | Paid (usage-billed) |
@@ -141,9 +159,13 @@ in [`docs/PROXY-DEPLOY.md`](docs/PROXY-DEPLOY.md). The full threat model is
 
 ## Updating
 
+An admin can update from **Settings**: RetroDB downloads the new version, checks it, backs up the database, installs it, restarts, and rolls back if anything fails.
+
+To update by hand instead:
+
 1. Back up your install. Three things to copy:
    - `database/` — the live SQLite DB lives here (`database/roms.db`).
-   - `data/` — settings (`settings.json`, `scraper_settings.json`, `rom_tools_config.json`, `psn_tokens.json`, `xbox_tokens.json`, `.secret_key`).
+   - `data/` — settings and your own files (`settings.json`, `scraper_settings.json`, `rom_tools_config.json`, `standalone_settings.json`, `.secret_key`, `cheats/`, `player/`).
    - `config.py` — at the project root; copy it separately.
 2. Extract the new version over the existing installation
 3. Run `python install.py` to install any new dependencies
