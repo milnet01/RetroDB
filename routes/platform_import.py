@@ -192,9 +192,9 @@ def api_steam_fetch_library():
     steam_id = str(data.get('steam_id') or steam_id or '').strip()
 
     if not steam_api_key:
-        return error(_('Steam API key not configured. Add it in Settings → API Keys.'), 400)
+        return error(_('No Steam key yet. Add yours under Settings → My Profile.'), 400)
     if not steam_id:
-        return error(_('Steam ID not configured. Add it in Settings → API Keys.'), 400)
+        return error(_('No Steam ID yet. Add yours under Settings → My Profile.'), 400)
 
     # Resolve vanity URL if not numeric
     if not steam_id.isdigit():

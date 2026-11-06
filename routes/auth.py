@@ -394,8 +394,15 @@ def api_user_settings():
     allowed_fields = [
         'rpcs3_trophy_path', 'ra_username', 'ra_api_key', 'theme_preference',
         'items_per_page', 'psn_username', 'psn_npsso', 'timezone',
-        'locale_preference',
+        'locale_preference', 'steam_api_key', 'steam_id',
     ]
+
+    # PASS-59-253 — the Steam sync job takes the number as it is stored.
+    if 'steam_id' in data:
+        data['steam_id'] = str(data['steam_id'] or '').strip()
+        if data['steam_id'] and not data['steam_id'].isdigit():
+            return error(_('Steam ID must be the number, not a profile name.'),
+                         code=422, field='steam_id')
 
     # Pass 43.1 — validate the locale at request time (not against a frozen
     # snapshot) so a catalog added after process start is accepted and a

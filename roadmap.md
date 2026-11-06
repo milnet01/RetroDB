@@ -11432,16 +11432,18 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.253 Each member can save their own Steam key and Steam ID in Profile (feature, S).
-- **Status**: todo
+- **Resolution** (2026-11-06): Done 2026-11-06. Profile has Steam key and Steam ID boxes; the ID must
+  be the number, since the sync job does not look up profile names.
+  Import errors now point to My Profile. The English help step changed;
+  the translated help pages still say "in Settings".
+- **Status**: done
 - **Why**: PASS-59-241 stopped a member with no Steam key getting the
   admin's library. `user_settings` has `steam_api_key` and `steam_id`
   columns, but nothing writes them: Profile offers RA and PSN only. So a
   non-admin cannot sync Steam at all now.
 - **Fix**: add both to `routes/auth.py` `allowed_fields` and to the
   Profile page; the key masked like the others.
-- **Waiting-on: user** (Add Steam boxes to Profile so every member can
-  sync their own Steam? Recommended: yes, before v4.0.0; it is small
-  and the shared key now serves admins only. 2026-11-05)
+- **Decided** (user, 2026-11-06): yes, add both boxes before v4.0.0.
 
 ---
 
@@ -11485,7 +11487,10 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.257 A scrape credits only what it wrote, and the edit form credits only what was typed (review-fix, M).
-- **Status**: todo
+- **Resolution** (2026-11-06): Done 2026-11-06 (7d454648). The reviewer's unconfirmed point held for
+  AI Fill: it now re-reads the row before writing. The scrape's own
+  read-then-write runs on one cursor milliseconds apart; left as is.
+- **Status**: done
 - **Why**: cold read of 97f77776 (PASS-59-242), 2026-11-05. The save
   check's high finding (own media clears) was fixed in ecd19a0a.
 - **Fix**:

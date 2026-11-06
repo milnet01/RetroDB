@@ -1133,7 +1133,9 @@ function saveUserSettings() {
         ra_username: document.getElementById('userRaUsername').value.trim(),
         ra_api_key: document.getElementById('userRaApiKey').value.trim(),
         psn_username: document.getElementById('userPsnUsername').value.trim(),
-        psn_npsso: document.getElementById('userPsnNpsso').value.trim()
+        psn_npsso: document.getElementById('userPsnNpsso').value.trim(),
+        steam_api_key: document.getElementById('userSteamApiKey').value.trim(),
+        steam_id: document.getElementById('userSteamId').value.trim()
     };
 
     fetch('/api/users/settings', {

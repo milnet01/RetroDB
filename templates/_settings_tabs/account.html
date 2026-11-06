@@ -215,6 +215,26 @@
             </div>
         </div>
 
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">🎮 {{ _('Steam') }}</h3>
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            {{ _('Add your own Steam key and Steam ID to import your Steam library and achievements.') }}
+        </p>
+
+        <div class="form-group mb-md">
+            <label class="form-label" for="userSteamApiKey">{{ _('Your Steam Web API Key') }}</label>
+            <input type="password" class="form-input" id="userSteamApiKey" autocomplete="off"
+                   value="{{ current_user_settings.steam_api_key if current_user_settings else '' }}">
+            <span class="field-tip">{% trans %}Get your key from <a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener noreferrer" style="color: var(--primary-cyan);">Steam's API key page</a>{% endtrans %}</span>
+        </div>
+
+        <div class="form-group mb-lg">
+            <label class="form-label" for="userSteamId">{{ _('Your Steam ID') }}</label>
+            <input type="text" class="form-input" id="userSteamId" inputmode="numeric"
+                   value="{{ current_user_settings.steam_id if current_user_settings else '' }}"
+                   placeholder="76561198012345678">
+            <span class="field-tip">{% trans %}The 17-digit number, not your profile name. Find it at <a href="https://steamid.io" target="_blank" rel="noopener noreferrer" style="color: var(--primary-cyan);">steamid.io</a>{% endtrans %}</span>
+        </div>
+
         <button type="button" class="btn btn-primary" data-on-click="saveUserSettings">
             {{ _('Save My Settings') }}
         </button>
