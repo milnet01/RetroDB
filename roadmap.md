@@ -11361,7 +11361,13 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.250 Docs and comments that say what the code does not (doc-fix, S).
-- **Status**: todo
+- **Resolution** (2026-11-06): 2026-11-06: done. Specs auth, jobs, scrapers, image-pipeline,
+  api-contracts, updater §6 and decision record 0003 now match the code;
+  stale comments fixed; help contents link added in every locale.
+  Image.open audit: only the Screenshot Review scan lacked the
+  DecompressionBombError catch — fixed with a test. Code findings left
+  over filed as PASS-59-264.
+- **Status**: done
 - **Why**: audit 2026-11-04, all lanes.
 - **Fix**:
   - `auth.md`: §7 session revocation (fixed by PASS-59-248 or reworded),
@@ -11628,6 +11634,27 @@ the cover zoom in Firefox before being reverted for the local fix.
   `test_store_date_and_genre_are_left_for_a_scrape`.
 - **Source**: audit 2026-11-04 open questions, carried from
   PASS-59-249 on 2026-11-06.
+
+---
+
+#### Pass 59.264 Failure replies at HTTP 200, and launch errors that show raw system text (audit-fix, S).
+- **Status**: todo
+- **Found by**: PASS-59-250, checking api-contracts.md §3.2 and
+  decision record 0003 against the routes.
+- **HTTP 200 failures** (§3.2 now lists them): `routes/museum.py`
+  `fetch_controller_image`, `upload_controller_image`,
+  `remove_controller_bg`; `achievements.api_achievements_sync_cancel`
+  on another user's job (should be 403); job start/pause/resume/cancel
+  routes that `return jsonify(result)`. Check each browser caller
+  before converting (record 0003). `/api/psn/status` stays 200.
+- **Raw text to the client**: `routes/launch.py::_launch_game` sends
+  `str(LauncherError)`, which `services/launcher/local.py` builds from
+  the OSError and the emulator path; `LaunchResolutionError` messages
+  are English and carry config values; `api_ra_sign_in` passes
+  RetroAchievements' own error text through untranslated.
+- **Dead line**: `routes/auth.py::api_login` clears
+  `{ip}:login:{user_id}` on success, which no failure ever writes
+  (auth.md §9). Remove it or count failures per user too.
 
 ## Done index
 
