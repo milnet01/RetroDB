@@ -149,20 +149,17 @@ class BulkScrapeJob:
             if conn:
                 conn.close()
 
-    def _count_no_match(self, game_id, enabled):
-        """Record a game nothing was found for.
+    def _no_match_counter(self, game_id, enabled):
+        """Record a game nothing was found for; returns the counter it goes in.
 
         With a source stopped at its limit that is no verdict on the game, so it
         stays unstamped for the next run to ask again (PASS-59-215).
         """
         if any(enabled.get(source) and service_limits.stopped(source)
                for source in service_limits.SCRAPE_SOURCES):
-            with self._lock:
-                self.skipped_count += 1
-            return
+            return 'skipped_count'
         self._stamp_bulk_scraped(game_id)
-        with self._lock:
-            self.failed_count += 1
+        return 'failed_count'
 
     def get_status(self):
         """Get current job status including queue info"""
@@ -313,8 +310,7 @@ class BulkScrapeJob:
             return queued_reply
 
         # Start background thread
-        self._thread = threading.Thread(target=self._run_scrape, daemon=True)
-        self._thread.start()
+        self._start_worker()
 
         return {
             'success': True,
@@ -509,8 +505,7 @@ class BulkScrapeJob:
                 logger.info(f"Restored partial progress for promoted job: {completed_before} done, continuing with {remaining_count} remaining")
 
         # Start the new job's background thread
-        self._thread = threading.Thread(target=self._run_scrape, daemon=True)
-        self._thread.start()
+        self._start_worker()
 
         return {'success': True, 'new_job_id': new_running_job['job_id']}
 
@@ -564,7 +559,8 @@ class BulkScrapeJob:
             if old_thread.is_alive():
                 logger.warning(
                     "Old bulk-scrape worker did not exit within 60s of cancel; "
-                    "proceeding with demote (state mixing possible)"
+                    "proceeding with demote (it stops at its next check, its "
+                    "run token being old)"
                 )
 
         # Start the new job
@@ -592,8 +588,7 @@ class BulkScrapeJob:
                 logger.info(f"Restored partial progress for promoted job: {completed_before} done, continuing with {remaining_count} remaining")
 
         # Start background thread
-        self._thread = threading.Thread(target=self._run_scrape, daemon=True)
-        self._thread.start()
+        self._start_worker()
 
         return {'success': True, 'new_job_id': new_running_job['job_id']}
 
@@ -686,8 +681,7 @@ class BulkScrapeJob:
                 self._persist_queued_entry(queued_job)
                 return True
 
-            self._thread = threading.Thread(target=self._run_scrape, daemon=True)
-            self._thread.start()
+            self._start_worker()
 
             logger.info(
                 f"Resumed bulk scrape for {system_name}: {resume_index}/{len(game_ids)} done "
@@ -750,8 +744,7 @@ class BulkScrapeJob:
             logger.info(f"Starting queued job {self.job_id} with {len(self.game_ids)} games for {self.system_name} ({len(self._queue)} remaining in queue, mode: {self.scrape_mode})")
 
         # Start background thread for the new job
-        self._thread = threading.Thread(target=self._run_scrape, daemon=True)
-        self._thread.start()
+        self._start_worker()
         return True
 
     def _persist_queued_entry(self, job):
@@ -794,6 +787,17 @@ class BulkScrapeJob:
         if not replaced:
             self._start_next_queued()
 
+    def _start_worker(self):
+        """Start the scrape thread for the job now set up. The thread carries
+        that job's token and fields, read under the lock, so a swap made
+        before it runs cannot hand it another job's (PASS-59-259)."""
+        with self._lock:
+            thread = threading.Thread(target=self._run_scrape, daemon=True)
+            thread.scrape_job = (self._run_token, list(self.game_ids),
+                                 self.scrape_mode, self.job_id)
+            self._thread = thread
+        thread.start()
+
     def _run_scrape(self):
         """Background thread that runs the actual scraping"""
         from scraper.scraper_manager import scraper_manager, load_scraper_settings, get_match_settings, passes_match_filter
@@ -802,14 +806,24 @@ class BulkScrapeJob:
 
         # Snapshot immutable job parameters at thread start — prevents corruption
         # if self is modified before this thread begins executing
-        _game_ids = list(self.game_ids)
-        _scrape_mode = self.scrape_mode
-        _job_id = self.job_id
-        _token = self._run_token
+        with self._lock:
+            # A test may call this directly, with no thread from _start_worker.
+            _token, _game_ids, _scrape_mode, _job_id = getattr(
+                threading.current_thread(), 'scrape_job', None) or (
+                self._run_token, list(self.game_ids), self.scrape_mode, self.job_id)
 
         def _replaced():
             # Another job took over (a swap that stopped waiting for us).
             return self._run_token != _token
+
+        def _count(field, game_id=None):
+            # A replaced worker's game in flight counts for no job (PASS-59-259).
+            with self._lock:
+                if _replaced():
+                    return
+                setattr(self, field, getattr(self, field) + 1)
+                if game_id is not None:
+                    self._recently_scraped.append(game_id)
 
         logger.info(f"Starting bulk scrape job {_job_id} with {len(_game_ids)} games")
 
@@ -940,20 +954,19 @@ class BulkScrapeJob:
                         conn.close()
                         if not game:
                             logger.warning(f"Game {game_id} not found, skipping")
-                            with self._lock:
-                                self.skipped_count += 1
+                            _count('skipped_count')
                             continue
                         game_dict = dict(game)
 
                     if not game_dict:
                         logger.warning(f"Game {game_id} not found, skipping")
-                        with self._lock:
-                            self.skipped_count += 1
+                        _count('skipped_count')
                         continue
                     title = game_dict.get('title', 'Unknown')
 
                     with self._lock:
-                        self.current_game_title = title
+                        if not _replaced():
+                            self.current_game_title = title
 
                     # Check 24-hour bulk scrape cooldown (skip in full_rescrape mode).
                     # All new timestamps are UTC-aware; treat pre-Pass-30 naive
@@ -969,8 +982,7 @@ class BulkScrapeJob:
                                 hours_ago = (datetime.now(timezone.utc) - last_dt).total_seconds() / 3600
                                 if hours_ago < 24:
                                     logger.info(f"Skipping {title} - bulk scraped {hours_ago:.1f}h ago (cooldown 24h)")
-                                    with self._lock:
-                                        self.skipped_count += 1
+                                    _count('skipped_count')
                                     continue
                             except (ValueError, TypeError):
                                 pass  # Invalid timestamp, proceed with scrape
@@ -981,8 +993,7 @@ class BulkScrapeJob:
                         if not missing:
                             logger.info(f"Skipping {title} - all metadata fields populated")
                             self._stamp_bulk_scraped(game_id)
-                            with self._lock:
-                                self.skipped_count += 1
+                            _count('skipped_count')
                             continue
                         logger.info(f"Fill-missing for {title} - missing: {', '.join(missing)}")
 
@@ -1029,7 +1040,7 @@ class BulkScrapeJob:
 
                         if not sorted_results:
                             logger.warning(f"No results passed match filter ({match_settings['mode']} mode) for {title}")
-                            self._count_no_match(game_id, enabled_scrapers)
+                            _count(self._no_match_counter(game_id, enabled_scrapers))
                             continue
 
                         # Find best match from enabled scraper
@@ -1085,22 +1096,18 @@ class BulkScrapeJob:
                             sources_used = ', '.join(result.get('sources_used', []))
                             logger.info(f"Updated {title} with {filled} fields from {sources_used}")
                             self._stamp_bulk_scraped(game_id)
-                            with self._lock:
-                                self.success_count += 1
-                                self._recently_scraped.append(game_id)
+                            _count('success_count', game_id)
                         else:
                             logger.info(f"No updates for {title}")
                             self._stamp_bulk_scraped(game_id)
-                            with self._lock:
-                                self.skipped_count += 1
+                            _count('skipped_count')
                     else:
                         logger.info(f"No results for {title}")
-                        self._count_no_match(game_id, enabled_scrapers)
+                        _count(self._no_match_counter(game_id, enabled_scrapers))
 
                 except Exception as e:
                     logger.error(f"Error scraping game {game_id}: {e}")
-                    with self._lock:
-                        self.failed_count += 1
+                    _count('failed_count')
                 finally:
                     apply_progress.timing_end()
 

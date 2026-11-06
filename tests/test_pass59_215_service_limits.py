@@ -272,20 +272,18 @@ class TestBulkScrapeStamp:
     def test_a_game_with_no_answer_while_a_source_is_stopped_can_be_tried_again(self, monkeypatch):
         job, stamped = self._job(monkeypatch)
         limits.stop(limits.THEGAMESDB, 60)
-        job._count_no_match(5, {'tgdb': True})
+        assert job._no_match_counter(5, {'tgdb': True}) == 'skipped_count'
         assert stamped == []
-        assert (job.failed_count, job.skipped_count) == (0, 1)
 
     def test_a_real_miss_is_stamped(self, monkeypatch):
         job, stamped = self._job(monkeypatch)
-        job._count_no_match(5, {'tgdb': True})
+        assert job._no_match_counter(5, {'tgdb': True}) == 'failed_count'
         assert stamped == [5]
-        assert (job.failed_count, job.skipped_count) == (1, 0)
 
     def test_a_stopped_source_that_is_switched_off_does_not_count(self, monkeypatch):
         job, stamped = self._job(monkeypatch)
         limits.stop(limits.THEGAMESDB, 60)
-        job._count_no_match(5, {'tgdb': False})
+        job._no_match_counter(5, {'tgdb': False})
         assert stamped == [5]
 
 

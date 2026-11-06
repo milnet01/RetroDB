@@ -820,7 +820,9 @@ def api_scrape_all_wishlist():
 
     from services.wishlist_scraper import scrape_unscraped_items_async
     # Admins re-scrape everyone's wishlist; everyone else re-scrapes their own.
-    scrape_unscraped_items_async(
+    started = scrape_unscraped_items_async(
         owner_id=None if g.user['role'] == 'admin' else g.user['id']
     )
+    if started is None:
+        return error(_('A scrape of these wishlist items is already running.'), 409)
     return success(scheduled=unscraped_count)

@@ -80,7 +80,7 @@ def test_a_source_switched_off_mid_run_is_off_for_the_next_game(db_path):
          patch.object(bulk_scrape_mod, 'persist_job_progress', return_value=None), \
          patch.object(bulk_scrape_mod, 'persist_job_complete', return_value=None), \
          patch.object(job, '_finish_worker'), \
-         patch.object(job, '_count_no_match', side_effect=lambda gid, enabled: seen.append(dict(enabled))), \
+         patch.object(job, '_no_match_counter', side_effect=lambda gid, enabled: seen.append(dict(enabled)) or 'failed_count'), \
          patch('scraper.scraper_manager.load_scraper_settings', side_effect=lambda: next(reads)), \
          patch('scraper.scraper_manager.get_match_settings', return_value={'mode': 'off'}), \
          patch('scraper.scraper_manager.scraper_manager.search_games', return_value=[]):
