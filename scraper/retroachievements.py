@@ -52,10 +52,12 @@ RA_CONSOLE_MAP = {
     'tg16': 8,
     'tg-16': 8,
     'pcenginecd': 76,   # PC Engine CD
-    # No 'neogeo': RA lists no such console, and 14 is the Neo Geo Pocket.
     'neogeocd': 56,     # Neo Geo CD
     'neogeocdjp': 56,
-    # MAME/Arcade (ID 27) excluded - limited RA support, causes over-matching
+    # Arcade sets: RA knows each by its file name alone, never its title
+    # (services/achievement_linking.py).
+    'mame': 27, 'mame-advmame': 27, 'fbneo': 27, 'fba': 27, 'arcade': 27,
+    'neogeo': 27,       # Neo Geo MVS sets are RA Arcade games
     'atari2600': 25,    # Atari 2600
     'atari7800': 51,    # Atari 7800
     'atarilynx': 13,    # Atari Lynx

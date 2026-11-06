@@ -9,11 +9,13 @@
 # jobs without dragging the trophies blueprint into the import graph.
 # =============================================================================
 
+import hashlib
 import re
 import unicodedata
 from functools import lru_cache
 
 from services import rom_identity
+from services.game_utils import ARCADE_SET_FOLDERS
 
 # Trademark / copyright glyphs stripped from titles before comparison.
 _TRADEMARK_CHARS = ('™', '®', '©')
@@ -414,9 +416,11 @@ def match_ra_game_for_file(game_title, rom_path, system_folder, ra_games, altern
     """(RA game or None, whether this copy can earn its achievements).
 
     On a plain-hash system the file's hash names the game, over any title
-    match. The second value is 1 for a listed hash, 0 for a title match with an
+    match. An arcade set is matched by its file name alone (`_arcade_match`). The second value is 1 for a listed hash, 0 for a title match with an
     unlisted one, and None when RetroDB cannot tell.
     """
+    if (system_folder or '').lower() in ARCADE_SET_FOLDERS:
+        return _arcade_match(rom_path, ra_games)
     title_match = match_ra_game(game_title, ra_rom_name(rom_path), ra_games, alternate_titles)
     if (system_folder or '').lower() not in PLAIN_MD5_FOLDERS or not rom_path:
         return title_match, None
@@ -429,6 +433,20 @@ def match_ra_game_for_file(game_title, rom_path, system_folder, ra_games, altern
         if md5 in (str(h).lower() for h in game.get('Hashes') or ()):
             return game, 1
     return title_match, (0 if title_match else None)
+
+
+def _arcade_match(rom_path, ra_games):
+    """RA knows an arcade set by the MD5 of its file name without the
+    extension, case and all. A title never links one: arcade titles are short
+    and many, so a title match took the wrong game."""
+    name = ra_rom_name(rom_path)
+    if not name:
+        return None, None
+    md5 = hashlib.md5(name.encode('utf-8'), usedforsecurity=False).hexdigest()
+    for game in ra_games:
+        if md5 in (str(h).lower() for h in game.get('Hashes') or ()):
+            return game, 1
+    return None, None
 
 
 def ra_link_info(ra_game):
