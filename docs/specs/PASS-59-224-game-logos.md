@@ -120,7 +120,7 @@ picked.
 - `game_logo` is in the initial `metadata` dict, the database pre-population,
   `_KEPT_MEDIA_FIELDS`, both `_media_dirs` maps, `_merge_esde`'s fill list,
   and `_save_game_row` as `game_logo = COALESCE(?, game_logo)`.
-- The ES-DE half: `apply_esde_metadata`'s SELECT, `existing` map and UPDATE.
+- The ES-DE half: `apply_esde_metadata`'s SELECT, `existing` map and UPDATE (that function was removed in PASS-59-249; ES-DE now merges through `_merge_esde`).
 - `services/wishlist_scraper.py::_empty_metadata` has no `game_logo` key. A
   merger downloads a logo only for a record that has the key
   (`metadata_merger._wants`), so the wishlist, which keeps none, fetches

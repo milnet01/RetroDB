@@ -36,8 +36,8 @@ same way.
    `apply_rawg_to_metadata`, `apply_screenscraper_to_metadata`), and
    every title write is `title = COALESCE(?, title)`:
    `scraper/hybrid_scraper.py::_save_game_row`,
-   `scraper/scrape_igdb.py`, `scraper/scrape_thegamesdb.py` and
-   `scraper/scrape_esde.py::apply_esde_metadata`. Nothing marks a title
+   `scraper/scrape_igdb.py` and `scraper/scrape_thegamesdb.py` (and, until
+   PASS-59-249 removed it, `scrape_esde.apply_esde_metadata`). Nothing marks a title
    as chosen: there is no lock or source column on `games`.
 3. **AI calls are per game.** `scrape_ai.py::get_game_details` sends one
    game per call. One multi-item prompt exists:
@@ -113,7 +113,7 @@ title      = CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END,
 sort_title = CASE WHEN title_locked = 1 THEN sort_title ELSE COALESCE(?, sort_title) END
 ```
 
-at the write sites `_save_game_row` and `apply_esde_metadata`, in both normal and Full
+at the write site `_save_game_row` (and `apply_esde_metadata`, removed in PASS-59-249), in both normal and Full
 Re-scrape modes. Scrapers still use a locked title for searching, as
 they use any stored title today.
 

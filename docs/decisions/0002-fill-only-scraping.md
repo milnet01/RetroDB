@@ -39,7 +39,9 @@ The contract, its audit-column carve-out and AI Fill's separate path are
 ## Consequences
 
 - Every scraper `UPDATE` wraps each value in `COALESCE(?, column)`.
-  `scraper/scrape_esde.py::apply_esde_metadata` is the model.
+  `scraper/hybrid_scraper.py::_save_game_row` is the model. (Until
+  PASS-59-249 this named `scrape_esde.apply_esde_metadata`, removed then as
+  unused.)
 - `tests/test_scrape_fill_only.py` pins the rule on the path every scrape takes
   ([`../specs/scrapers.md`](../specs/scrapers.md) § 5, *Test pin*).
 - A re-scrape cannot repair a wrong value. The user clears the field, or

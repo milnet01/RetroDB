@@ -286,17 +286,6 @@ def test_a_folder_rom_finds_media_named_with_its_whole_folder_name(library, late
     assert library.row()['boxart'] == '1_esde_covers.png'
 
 
-def test_the_direct_apply_does_not_replace_media_either(library):
-    library.gamelist(FATAL_RUN)
-    _file(os.path.join(library.media, 'videos', 'Fatal Run (USA).mp4'))
-    library.add_game(video='mine.mp4')
-
-    assert scrape_esde.apply_esde_metadata(1, {'name': 'Fatal Run'}, 'atari2600') is True
-
-    assert library.row()['video'] == 'mine.mp4'
-    assert not os.path.exists(os.path.join(library.static, 'videos', '1_esde.mp4'))
-
-
 def _theme(library, relative):
     _file(os.path.join(library.esde, 'themes', relative))
 

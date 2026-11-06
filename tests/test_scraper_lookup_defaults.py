@@ -59,43 +59,6 @@ def test_rawg_players_unknown_without_a_player_tag(monkeypatch):
     assert scrape_rawg.get_game_details(1)['players'] is None
 
 
-@pytest.fixture
-def esde_db(tmp_path, monkeypatch):
-    import sqlite3
-    from services import migrations
-    from scraper import scrape_esde
-    path = str(tmp_path / 'roms.db')
-    conn = sqlite3.connect(path)
-    migrations.apply_pending(conn)
-    conn.execute("INSERT INTO systems (id, name, folder) VALUES (1, 'NES', 'nes')")
-    conn.execute("INSERT INTO games (id, system_id, title, rom_path, players, modes) "
-                 "VALUES (1, 1, 'Contra', '/roms/nes/Contra (USA).nes', 2, "
-                 "'Single-Player, Local Multiplayer')")
-    conn.commit()
-    conn.close()
-
-    def connect():
-        c = sqlite3.connect(path)
-        c.row_factory = sqlite3.Row
-        return c
-
-    monkeypatch.setenv('HOME', str(tmp_path))
-    monkeypatch.setattr(scrape_esde, 'get_scraper_conn', connect)
-    monkeypatch.setattr(scrape_esde, '_get_esde_gamelists_path', lambda: None)
-    monkeypatch.setattr(scrape_esde, '_get_esde_media_path', lambda: None)
-    return connect
-
-
-def test_esde_row_without_players_keeps_curated_players_and_modes(esde_db):
-    from scraper import scrape_esde
-    assert scrape_esde.apply_esde_metadata(1, {'name': 'Contra'}) is True
-    c = esde_db()
-    row = c.execute("SELECT players, modes FROM games WHERE id = 1").fetchone()
-    c.close()
-    assert row['players'] == 2
-    assert row['modes'] == 'Single-Player, Local Multiplayer'
-
-
 def test_esde_full_path_match_beats_earlier_filename_match(monkeypatch):
     from scraper import scrape_esde
     games = [

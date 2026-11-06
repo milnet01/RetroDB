@@ -53,8 +53,7 @@ logger = logging.getLogger(__name__)
 def _allowed_esde_roots(gamelist_dir=None, esde_base=None, downloaded_media_base=None):
     """Return realpath roots that ES-DE media paths must sit under.
 
-    Lifted to module scope (was a closure inside apply_esde_metadata)
-    so the path-traversal guard is directly importable from tests.
+    At module scope so the path-traversal guard is importable from tests.
     """
     roots = []
     for p in (gamelist_dir, esde_base, downloaded_media_base,
@@ -70,9 +69,8 @@ def _allowed_esde_roots(gamelist_dir=None, esde_base=None, downloaded_media_base
 def _within_allowed_root(candidate, allowed_roots):
     """Return True iff `candidate` resolves under one of `allowed_roots`.
 
-    Lifted to module scope from apply_esde_metadata so the test suite
-    can exercise the Pass 25.1 ES-DE path-traversal guard without
-    reaching into a nested closure.
+    At module scope so the test suite can exercise the Pass 25.1 ES-DE
+    path-traversal guard directly.
     """
     try:
         resolved = os.path.realpath(candidate)
@@ -286,22 +284,6 @@ def normalize_external_platform_name(platform_name):
     
     # Return original with title case if no match
     return platform_name.title()
-
-
-def resolve_publisher_developer(value, value_type='publisher'):
-    """
-    Resolve publisher/developer - if numeric ID, try to look up or return None.
-    If text, cache it for future lookups.
-    
-    value_type: 'publisher' or 'developer'
-    """
-    if not value:
-        return None
-    
-    value = str(value).strip()
-    
-    # Digits alone can be a real name: 989 Studios is listed as "989".
-    return value
 
 
 def find_gamelist_xml(system_folder):
@@ -975,149 +957,6 @@ def copy_esde_media(db_game_id, game_data, system_folder=None, existing=None,
         if conn:
             conn.close()
     return copied
-
-
-def apply_esde_metadata(db_game_id, game_data, system_folder=None):
-    """Apply ES-DE data straight to a game's row: the single-source route.
-
-    Fill-only for media (a field that has a value keeps it); text from ES-DE
-    replaces text it has a value for. A hybrid scrape does not come here: it
-    merges through hybrid_scraper._merge_esde.
-    """
-    conn = None
-    try:
-        conn = get_scraper_conn()
-        c = conn.cursor()
-
-        c.execute("""
-            SELECT g.rom_path, g.boxart, g.boxart_3d, g.screenshots, g.fanart, g.video, g.manual,
-                   g.game_logo, g.boxart_back
-            FROM games g
-            WHERE g.id = ?
-        """, (db_game_id,))
-        result = c.fetchone()
-
-        if not result:
-            logger.error(f"Game {db_game_id} not found")
-            return False
-
-        rom_path, *media = tuple(result)
-        existing = dict(zip(('boxart', 'boxart_3d', 'screenshots', 'fanart', 'video', 'manual',
-                             'game_logo', 'boxart_back'), media))
-        rom_filename = os.path.basename((rom_path or '').rstrip('/'))
-        copied = copy_esde_media(db_game_id, game_data, system_folder, existing)
-        new_screenshots = copied.get('screenshots')
-        screenshots_str = None
-        if new_screenshots:
-            old = [s.strip() for s in (existing['screenshots'] or '').split(',') if s.strip()]
-            screenshots_str = ','.join(old + new_screenshots)
-
-        # Prepare metadata
-        esde_data = game_data.get('esde_data', game_data)
-
-        name = esde_data.get('name', '') or game_data.get('name', '')
-        description = esde_data.get('desc', '') or game_data.get('description', '')
-
-        # Resolve publisher/developer - skip numeric IDs
-        raw_developer = esde_data.get('developer', '') or game_data.get('developer', '')
-        raw_publisher = esde_data.get('publisher', '') or game_data.get('publisher', '')
-        developer = resolve_publisher_developer(raw_developer, 'developer')
-        publisher = resolve_publisher_developer(raw_publisher, 'publisher')
-
-        # Normalize genre to canonical hyphenated forms and players to the max
-        # int — consistent with the IGDB/TGDB apply paths. Without this, ES-DE
-        # gamelist genres ("Shoot 'Em Up") fragment the genre filter and a
-        # players range ("1-4") lands as a string in the INTEGER column.
-        from services.normalization import normalize_genre
-        from services.game_utils import normalize_players_value
-        genre = normalize_genre(esde_data.get('genre', '') or game_data.get('genre', ''))
-        # No default: a gamelist row without <players> must leave the column
-        # alone. A '1' default wrote players=1 / modes='Single-Player' through
-        # COALESCE over curated values on every ES-DE import (Pass 40.6 class).
-        players = normalize_players_value(esde_data.get('players') or game_data.get('players'))
-
-        # Format release date
-        release_date = (esde_date(esde_data.get('releasedate'))
-                        or source_date(game_data.get('release_date'), padded_months=True) or '')
-
-        logger.info(f"  Title: {name}")
-        logger.info(f"  Developer: {developer}")
-        logger.info(f"  Publisher: {publisher}")
-
-        # Extract region from ROM filename
-        region = extract_region_from_filename(rom_filename)
-
-        # Derive game modes from players (only when the gamelist gave a count)
-        from services.normalization import modes_from_player_count
-        modes = modes_from_player_count(esde_data.get('players') or game_data.get('players')) or None
-
-        # Pass 48.3 — only flip `scraped = 1` when ES-DE actually filled at least
-        # one metadata/media field. `region` is excluded from the test: it's
-        # derived from the ROM filename, not from ES-DE, so it's always present
-        # and would make the gate trivially true. Without this gate a game that
-        # ES-DE has no data for is marked scraped and silently dropped from later
-        # `WHERE scraped = 0` bulk passes. COALESCE(?, scraped) keeps the prior
-        # flag (0) when nothing was filled.
-        any_field_filled = any((
-            name, publisher, developer, release_date, genre, players, modes,
-            description, *copied.values(),
-        ))
-
-        # Update database - use COALESCE to preserve existing data if new data is empty
-        c.execute("""
-            UPDATE games SET
-                title = CASE WHEN title_locked = 1 THEN title ELSE COALESCE(?, title) END,
-                publisher = COALESCE(?, publisher),
-                developer = COALESCE(?, developer),
-                release_date = COALESCE(?, release_date),
-                genre = COALESCE(?, genre),
-                players = COALESCE(?, players),
-                modes = COALESCE(?, modes),
-                description = COALESCE(?, description),
-                boxart = COALESCE(?, boxart),
-                boxart_3d = COALESCE(?, boxart_3d),
-                screenshots = COALESCE(?, screenshots),
-                fanart = COALESCE(?, fanart),
-                video = COALESCE(?, video),
-                manual = COALESCE(?, manual),
-                game_logo = COALESCE(?, game_logo),
-                boxart_back = COALESCE(?, boxart_back),
-                region = COALESCE(?, region),
-                scraped = COALESCE(?, scraped)
-            WHERE id = ?
-        """, (
-            name if name else None,
-            publisher if publisher else None,
-            developer if developer else None,
-            release_date if release_date else None,
-            genre if genre else None,
-            players if players else None,
-            modes if modes else None,
-            description if description else None,
-            copied.get('boxart'),
-            copied.get('boxart_3d'),
-            screenshots_str,
-            copied.get('fanart'),
-            copied.get('video'),
-            copied.get('manual'),
-            copied.get('game_logo'),
-            copied.get('boxart_back'),
-            region,
-            1 if any_field_filled else None,
-            db_game_id
-        ))
-
-        conn.commit()
-
-        logger.info(f"Applied ES-DE metadata to game {db_game_id}")
-        return True
-
-    except Exception as e:
-        logger.error(f"Error applying ES-DE metadata: {e}")
-        return False
-    finally:
-        if conn:
-            conn.close()
 
 
 def import_system_logos():

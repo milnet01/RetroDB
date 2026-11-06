@@ -121,10 +121,6 @@ def test_rawg_alternate_names_only_from_a_one_console_record(monkeypatch):
     assert _rawg(monkeypatch, name='Sonic', platforms=one, alternative_names=names)['alternative_names'] == names
 
 
-def test_esde_keeps_a_company_named_in_digits():
-    assert scrape_esde.resolve_publisher_developer('989', 'publisher') == '989'
-
-
 def test_not_rated_is_no_esrb_rating():
     assert not metadata_normalizer.normalize_esrb_rating('NOT RATED')
 

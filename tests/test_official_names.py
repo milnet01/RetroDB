@@ -59,14 +59,6 @@ def _titles(connect):
         c.close()
 
 
-def _scrape_esde(connect, monkeypatch):
-    from scraper import scrape_esde
-    monkeypatch.setattr(scrape_esde, 'get_scraper_conn', connect)
-    monkeypatch.setattr(scrape_esde, '_get_esde_gamelists_path', lambda: None)
-    monkeypatch.setattr(scrape_esde, '_get_esde_media_path', lambda: None)
-    assert scrape_esde.apply_esde_metadata(1, {'name': SCRAPED_NAME}) is True
-
-
 def _scrape_hybrid(connect, monkeypatch):
     from scraper import hybrid_scraper
     from tests.test_pass38_save_game_row_helper import _full_metadata
@@ -77,7 +69,7 @@ def _scrape_hybrid(connect, monkeypatch):
     conn.close()
 
 
-SCRAPERS = {'esde': _scrape_esde, 'hybrid': _scrape_hybrid}
+SCRAPERS = {'hybrid': _scrape_hybrid}
 
 
 @pytest.mark.parametrize('site', SCRAPERS)

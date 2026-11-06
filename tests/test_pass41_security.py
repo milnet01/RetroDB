@@ -396,7 +396,7 @@ class TestPass41_3CSystemLogCategoryDropped:
 # 41.4.A — ES-DE screenshot append survives the post-apply DB→metadata sync
 # -----------------------------------------------------------------------------
 class TestPass41_4AEsdeScreenshotAppend:
-    """`apply_esde_metadata` appends scraped screenshots to the existing list
+    """The ES-DE apply appended scraped screenshots to the existing list
     in `games.screenshots`, then the orchestrator does a DB→metadata sync
     inside a `for field in [...]: if game.get(field) and not metadata.get(field):`
     loop. For `screenshots` the guard is False because metadata was

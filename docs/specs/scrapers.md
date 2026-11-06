@@ -111,11 +111,11 @@ ScreenScraper is asked about the user's own file before a title search, unless a
 **The rule (scraper UPDATEs):** every `?` bound to a metadata-source value
 in a scraper `UPDATE games` statement MUST be wrapped in
 `COALESCE(?, column_name)` so an empty value from the upstream preserves
-whatever's already in the column. Two places own a direct `UPDATE games`:
-the hybrid orchestrator's composite UPDATE in `hybrid_scraper`, and
-`scrape_esde.apply_esde_metadata`, which the ES-DE bulk import calls. Every
-other source writes through `scraper/metadata_merger.py::apply_*_to_metadata`,
-which feeds into the hybrid UPDATE.
+whatever's already in the column. One place owns a direct `UPDATE games`
+for a scrape: the hybrid orchestrator's composite UPDATE,
+`hybrid_scraper._save_game_row`. Every source writes through
+`scraper/metadata_merger.py::apply_*_to_metadata`, which feeds into it; ES-DE
+merges through `hybrid_scraper._merge_esde`.
 
 **Audit-column exception.** A handful of columns are bare by design,
 because they're status / audit data — overwriting them is the point. As
@@ -133,7 +133,7 @@ overwrite (because the user opted into AI fill).
 
 **The bug class scraper-COALESCE prevents:** bare `publisher = ?, developer = ?` in a scraper UPDATE means that a source's response that didn't return publisher/developer (very common — partial records) will silently NULL the column on every re-scrape. Pass 30.4 fixed the original instance for `publisher`/`developer`. Pass 40.6 closed the variant on `players` where the dict was initialised to `1` (so `COALESCE(1, players)` always returned 1 — the `COALESCE` was correct, the initialiser was wrong; fixed via `normalize_players_value` returning `int|None`). Pass 45.3 closed the same shape in AI Fill where bare `field = ?` writes after `int(float("0"))` were clobbering curated `players=4` with `0` — fixed by the `should_apply` skip-empty-int guard, not by adding COALESCE.
 
-**Canonical site:** `scraper/scrape_esde.py::apply_esde_metadata`, the ES-DE bulk import. A hybrid scrape merges ES-DE through `hybrid_scraper._merge_esde` instead. This SQL keeps an old value only when the new one is empty:
+**Canonical site:** `scraper/hybrid_scraper.py::_save_game_row`, which every scrape's save goes through. This SQL keeps an old value only when the new one is empty:
 
 ```sql
 UPDATE games SET

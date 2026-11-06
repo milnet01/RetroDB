@@ -232,7 +232,7 @@ Run-level, group J:
 
 | Finding | Verified | Disposition |
 |---|---|---|
-| `apply_esde_metadata` has no production caller; docs name it canonical | yes | |
+| `apply_esde_metadata` has no production caller; docs name it canonical | yes | fixed: removed, with `resolve_publisher_developer` (used only by it) and the tests of either; CLAUDE.md, scrapers.md and ADR 0002 name `_save_game_row`; the PASS-59-159 and PASS-59-224 specs note the removal. Its tests' behaviour is pinned on the hybrid path by `tests/test_scrape_fill_only.py` and `tests/test_official_names.py` |
 | Obsolete `#~` entries duplicate live msgids in every locale but `eo` | yes | |
 
 ## Open questions from the audit (not findings; to ask or file)
