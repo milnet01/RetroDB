@@ -10,11 +10,13 @@
 #   * `games.igdb_id` / `games.screenscraper_id` — suggestion signals, filled by
 #     scrapes and the Backfill Alternate Titles job.
 #
-# RetroDB never turns on `PRAGMA foreign_keys`, so the REFERENCES clauses below
-# document intent and enforce nothing. The triggers do the work instead: a
-# group never keeps fewer than two members when a row is deleted, becomes a
-# bonus disc, or moves to another system; and a deleted game's rejections go
-# with it. Links themselves are written only by services/version_groups.py.
+# RetroDB turns on `PRAGMA foreign_keys` on every connection (get_db() in
+# services/database.py), so the REFERENCES clauses below are enforced. The
+# triggers add what a foreign key cannot: a group never keeps fewer than two
+# members when a row is deleted, becomes a bonus disc, or moves to another
+# system. A deleted game's rejections go with it twice over: by the cascade
+# and by a trigger. Links themselves are written only by
+# services/version_groups.py.
 # =============================================================================
 
 import logging

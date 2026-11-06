@@ -755,10 +755,9 @@ def assign_request_id():
     """
     g.request_id = secrets.token_hex(4)
     g.request_start_time = time.perf_counter()
-    # Per-request CSP nonce — 128 bits, base64-url. Templates that embed
-    # inline <script> blocks may opt into the enforced CSP by adding
-    # nonce="{{ csp_nonce }}"; while the policy ships in report-only mode
-    # that migration can happen template-by-template without breaking pages.
+    # Per-request CSP nonce — 128 bits, base64-url. The CSP is enforced
+    # (see the Content-Security-Policy header above), so an inline <script>
+    # runs only if it carries nonce="{{ csp_nonce }}".
     g.csp_nonce = secrets.token_urlsafe(16)
 
 

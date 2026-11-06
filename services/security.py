@@ -55,8 +55,9 @@ def validate_settings_path(user_path, *, allow_empty=True):
 
     Accepts empty strings when allow_empty is True (unset path). Otherwise
     rejects anything that is not (a) absolute, (b) an existing directory,
-    (c) its own realpath (no symlink escape), (d) not a system root, and
-    (e) not the current user's home directory itself.
+    (c) free of a symlink as its last part (a symlinked parent folder is
+    allowed; the resolved path is what is returned), (d) not a system root,
+    and (e) not the current user's home directory itself.
 
     Returns (True, canonical_path) on success; (False, reason) on failure.
     """

@@ -290,7 +290,7 @@ echo
 if [ ${#FAILED[@]} -gt 0 ]; then
   printf '%s%s✗ CI-local FAILED — %d check(s):%s\n' "$BOLD" "$RED" "${#FAILED[@]}" "$RST"
   printf '   - %s\n' "${FAILED[@]}"
-  printf 'Push blocked. Fix the above, or override with: %sgit push --no-verify%s\n' "$BOLD" "$RST"
+  printf 'Push blocked. Fix the above and push again. Skipping needs the user'"'"'s say-so: %s.claude/rules/git-hooks.md%s\n' "$BOLD" "$RST"
   exit 1
 fi
 printf '%s%s✓ CI-local PASSED — safe to push.%s\n' "$BOLD" "$GREEN" "$RST"

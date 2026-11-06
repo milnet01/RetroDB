@@ -1,5 +1,5 @@
 # =============================================================================
-# RETRODB - Per-user platform OAuth token store (Pass 27.2)
+# RETRODB - Per-user platform token store (Pass 27.2)
 # =============================================================================
 # PSN and Xbox sync used to share one JSON file each (data/psn_tokens.json,
 # data/xbox_tokens.json) — installs with multiple users leaked the first user
@@ -27,7 +27,7 @@ def load_tokens(user_id, platform):
 
     Args:
         user_id: integer users.id of the owner.
-        platform: 'psn' or 'xbox'.
+        platform: 'psn', 'xbox' or 'retroachievements'.
     """
     if not user_id:
         return None

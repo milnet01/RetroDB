@@ -1051,7 +1051,7 @@ class TestPass41_11BMuseumGetIdempotent:
     Previously it ran `UPDATE controllers SET image = NULL WHERE id = ?`
     inside the view, violating RFC 7231 GET-idempotency and letting one
     user's page load rewrite globally-shared rows. The cleanup is now an
-    admin-only POST at `/api/museum/cleanup-controller-images`."""
+    admin-or-editor POST at `/api/museum/cleanup-controller-images`."""
 
     def test_get_view_does_not_update_controllers(self):
         body = read_source('routes/museum.py')

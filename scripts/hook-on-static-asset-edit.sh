@@ -20,15 +20,13 @@
 
 set -u
 
-PROJECT_ROOT="/mnt/Storage/Scripts/Linux/RetroDB"
-
 file=$(jq -r '.tool_input.file_path // .tool_response.filePath // empty' 2>/dev/null)
 case "$file" in
-    "$PROJECT_ROOT"/static/css/*|*/static/css/*)
+    */static/css/*)
         cmd="python3 build_css.py"
         kind="CSS"
         ;;
-    "$PROJECT_ROOT"/static/js/*|*/static/js/*)
+    */static/js/*)
         cmd="python3 build_js.py"
         kind="JS"
         ;;

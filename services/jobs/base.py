@@ -293,7 +293,7 @@ def _download_psn_trophy_image(npwr_id, image_url, trophy_id=None):
 # system simultaneously, doubling API load and racing on DB writes.
 #
 # `acquire_job_singleton_lock(name)` opens an `fcntl.flock(LOCK_EX |
-# LOCK_NB)` advisory lock on a sentinel file under `data/job_locks/`.
+# LOCK_NB)` advisory lock on a sentinel file in `job_locks/` beside the database file.
 # A successful acquire returns the open file descriptor; the caller
 # must keep the FD open for the lifetime of the run and pass it to
 # `release_job_singleton_lock(fd)` from a `finally:` clause when done.

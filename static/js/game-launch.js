@@ -214,6 +214,7 @@
         }
     }
 
-    // Expose for the inline onclick attribute on the button.
+    // Expose for the Play button's data-on-click="launchGame" (main.js wires
+    // it; the CSP blocks inline onclick).
     window.launchGame = launchGameImpl;
 })();

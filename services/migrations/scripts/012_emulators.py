@@ -65,4 +65,4 @@ def apply(conn):
     c.execute("CREATE INDEX IF NOT EXISTS idx_system_emulators_default ON system_emulators(system_id, is_default)")
 
     conn.commit()
-    logger.info("migration 010 applied: emulators + system_emulators + games override columns")
+    logger.info("migration 012 applied: emulators + system_emulators + games override columns")

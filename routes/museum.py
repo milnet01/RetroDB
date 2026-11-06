@@ -352,7 +352,7 @@ def museum_system(system_id):
     # image = NULL` from inside this view, meaning one user's page load
     # rewrote globally-visible state. Clear stale refs in the in-memory
     # render dict only; persistent cleanup runs from POST
-    # /api/museum/cleanup-controller-images (admin-only) below.
+    # /api/museum/cleanup-controller-images (admins and editors) below.
     for ctrl in controllers_raw:
         ctrl = dict(ctrl)
         if ctrl.get('image') and not _controller_image_file(ctrl['image']):
@@ -493,7 +493,7 @@ def cancel_generate():
 @bp.route('/api/museum/cleanup-controller-images', methods=['POST'])
 @editor_required
 def cleanup_controller_images():
-    """Pass 41.11.B — admin-triggered persistent cleanup of stale controller
+    """Pass 41.11.B — admin- or editor-triggered persistent cleanup of stale controller
     image references. The per-system museum page no longer mutates DB state
     inside its GET handler (it just nulls the in-memory render dict for
     missing files). Operators can invoke this endpoint to do the persistent

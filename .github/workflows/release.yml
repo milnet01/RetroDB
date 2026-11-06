@@ -110,7 +110,7 @@ jobs:
         env:
           # build_dist.py reads RETRODB_STAGING_DIR for the output dir
           # (Pass 39.6) — CI sets it here so we don't write to the
-          # maintainer's /mnt/Storage path that doesn't exist on the runner.
+          # maintainer's /mnt/Games path that doesn't exist on the runner.
           RETRODB_STAGING_DIR: /tmp/staging
         run: |
           mkdir -p /tmp/staging

@@ -606,7 +606,7 @@ def get_rating_crossmap_js():
 # =============================================================================
 # Infers age ratings from game metadata (genre, description, game structure,
 # perspective, franchise) when scrapers and AI fill cannot provide ratings.
-# Uses the existing maturity tier system to generate all 8 regional ratings.
+# Uses the existing maturity tier system to generate every regional rating.
 
 # Genre -> maturity tier mapping (conservative — errs toward higher rating)
 _GENRE_TIER = {
@@ -1399,7 +1399,7 @@ def generate_sort_title(title):
     Examples:
         "Final Fantasy IX" -> "Final Fantasy 09"
         "Final Fantasy VII" -> "Final Fantasy 07"
-        "Mega Man X2" -> "Mega Man X02"
+        "Mega Man X2" -> "Mega Man X2" (unchanged - no space before the 2)
         "I-Ninja" -> "I-Ninja" (NOT converted - single letter at start with hyphen)
         "V-Rally 3" -> "V-Rally 03" (NOT converted for V, but 3 is padded)
     """

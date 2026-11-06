@@ -12,7 +12,7 @@ Two distribution shapes:
                retrodb.spec; can ONLY produce the host platform's binary
                (PyInstaller has no cross-compile).
 
-Outputs to: /mnt/Storage/Scripts/Linux/Staging_Area/RetroDB/
+Outputs to: /mnt/Games/Scripts/Linux/Staging_Area/RetroDB/ (or RETRODB_STAGING_DIR)
 Filenames:  RetroDB-vX.Y.Z-Linux.zip            (source)
             RetroDB-vX.Y.Z-Linux-Standalone.zip (standalone)
 
