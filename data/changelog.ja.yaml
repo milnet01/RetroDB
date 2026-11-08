@@ -1,149 +1,233 @@
 - version: 4.0.0
-  date: '2026-11-06'
+  date: '2026-11-08'
   tags:
+  - type: performance
+    label: Claudeのウェブ検索を使ったAI補完は、より低コストになりました。Claudeは検索のたびに検索結果を読み直しますが、RetroDBはAnthropicに結果を保持しておくよう依頼するようになったため、読み直しの費用は10分の1以下です
+    en: AI Fill with Claude web search costs less. Claude reads the search results again after each search; RetroDB now asks Anthropic to keep them ready, and a re-read then costs a tenth of the price or less
+  - type: fix
+    label: すでに完了した取得、同期、画像ジョブをキャンセルすると、固まっていた進行状況ポップアップが消えるようになりました。すでに実行中のジョブを開始しようとすると、「ネットワークエラー」ではなく「SNESの取得はすでに実行中です」のような本当の理由が表示されます。ミュージアムのコントローラー画像のエラーも、何が起きたかを表示するようになりました。また、他のユーザーのRetroAchievements同期をキャンセルしようとすると、キャンセルしたふりをせず、そのユーザーのものだと表示します
+    en: Cancelling a scrape, sync or image job that has already finished now clears its stuck progress popup. Starting a job that is already running shows the real reason, such as "A scrape for SNES is already running", instead of "Network error". Controller image errors in the Museum now say what went wrong, and cancelling another user's RetroAchievements sync says it is theirs instead of pretending to cancel it
+  - type: security
+    label: ログビューアーが、古いログファイルでもパスワードやキーを隠すようになりました。RetroDBが特定のパスワード(ScreenScraperのものなど)を隠せるようになる前に書かれたログは、表示やダウンロードの際に平文で見えていました
+    en: The log viewer now hides passwords and keys in older log files too. Logs written before RetroDB learned to hide a particular password, such as ScreenScraper's, showed it in plain text when viewed or downloaded
+  - type: security
+    label: すべての設定を初期値に戻しても、ROMフォルダーとセットアップ完了の状態は保持されます。以前は、リセットすると、サインインなしで使える初回セットアップページが、管理者がセットアップを再実行するまで再び開いていました
+    en: Resetting all settings to their defaults now keeps your ROM folder and the fact that setup is done. Before, a reset reopened the first-time setup pages, which work without signing in, until an admin ran setup again
   - type: feature
-    label: 'アーケードゲームで再びRetroAchievementsの実績を獲得できるようになりました。RetroDBは、RetroAchievementsが正確なファイル名(例: ストリートファイターIIのsf2)を把握している場合にのみアーケードゲームを関連付けるようになり、タイトルからの推測による誤った関連付けはなくなりました。アーケードゲームは、次にRetroAchievementsのデータを更新したとき、または取得したときに関連付けられます'
+    label: アーケードゲームで再びRetroAchievementsの実績を獲得できます。RetroDBは、RetroAchievementsが正確なファイル名(『ストリートファイターII』ならsf2など)を把握している場合にのみアーケードゲームをリンクします。タイトルから推測して違うゲームをリンクすることはなくなりました。アーケードゲームは、RetroAchievementsのデータを次に更新したとき、または取得したときにリンクされます
+    en: Arcade games can earn RetroAchievements again. RetroDB now links an arcade game only when RetroAchievements knows its exact file name, such as sf2 for Street Fighter II, so it no longer guesses from titles and links the wrong game. Your arcade games link the next time their RetroAchievements data is refreshed or they are scraped
   - type: fix
-    label: PlayStationのトロフィー同期が、以前に誤って作成したゲームの関連付けを修正するようになりました。たとえば、多くのゲームが無関係な「D」というゲームに関連付けられていた問題です。自分で設定した関連付けは同期で変更されません。次回の同期ですべての古い関連付けを再確認するため、近似一致のいくつかは関連付けが外れることがあります。その場合は手動で関連付け直してください
+    label: PlayStationのトロフィー同期で、以前に誤って作られたゲームのリンクが修正されます。たとえば、多くのゲームが無関係の「D」というゲームにリンクされていたケースです。自分で設定したリンクは同期で変更されません。次回の同期ではすべての古いリンクを再確認するため、近い一致のいくつかはリンクが外れることがあります。その場合は手動で再度リンクしてください
+    en: PlayStation trophy sync now corrects game links it made wrongly before, such as many games linked to an unrelated game called "D". A link you set yourself is never changed by a sync. The next sync checks all older links again, so a few near matches may come unlinked; link those again by hand
   - type: fix
-    label: 待機中の一括取得を実行中のものより先に移動しても、前の取得の最後のゲームが新しい取得の件数に加算されなくなりました。すでに実行中のときにウィッシュリストで「すべて取得」をクリックすると、開始したと表示する代わりに、その旨が表示されます
+    label: 待機中の一括取得を実行中のものより前に移動しても、古い取得の最後のゲームが新しい取得の件数に加算されなくなりました。実行中に、ウィッシュリストで「すべて取得」をクリックすると、開始したと偽らず、すでに実行中であることを表示します
+    en: Moving a waiting bulk scrape ahead of a running one no longer adds the old scrape's last game to the new one's counts. Clicking "Scrape all" on the wishlist while one is already running now says so, instead of claiming it started
   - type: accessibility
-    label: 'スクリーンリーダーでは、「実行中」ボタンは数が変わったときだけ「1本のゲームが実行中」と読み上げ、数秒ごとに数字だけを読み上げることはなくなりました。一覧は名前付きのウィンドウとして開き、カーソルがその中に入ります。強制終了と次のディスクのボタンは対象のゲームを読み上げ、強制終了後はカーソルが適切な位置に戻ります。ライブラリの各ゲームカードは、タイトルからキーボードで開けるようになり、フィルターボタンも「デベロッパーで絞り込み: Konami」のように何を絞り込むか読み上げます'
+    label: 'スクリーンリーダーで、「実行中」ボタンは数が変わったときだけ「1ゲーム実行中」と読み上げ、数秒ごとに数字だけを読み上げることはなくなりました。一覧は名前付きウィンドウとして開き、カーソルがその中に入ります。強制終了と次のディスクのボタンは対象のゲーム名を読み上げ、強制終了後はカーソルが適切な場所に戻ります。ライブラリの各ゲームカードは、タイトルからキーボードで開けるようになり、フィルターボタンは「デベロッパーで絞り込み: Konami」のように何で絞り込むかを読み上げます'
+    en: 'With a screen reader, the "running" button now says "1 game running" only when the count changes, instead of reading a bare number every few seconds. Its list opens as a named window with the cursor inside, its Kill and Next disk buttons say which game they act on, and after Kill the cursor returns to a sensible place. Each game card in the library now opens with the keyboard from its title, and its filter buttons say what they filter, such as "Filter by Developer: Konami"'
   - type: feature
-    label: すべてのメンバーが、設定 → マイプロフィールで自分のSteamキーとSteam IDを追加し、自分のSteamライブラリと実績をインポートできるようになりました。これまでは管理者だけが可能でした
+    label: すべてのメンバーが、設定 → マイプロフィールで自分のSteamキーとSteam IDを追加し、自分のSteamライブラリと実績をインポートできるようになりました。これまでは管理者のみ可能でした
+    en: Every member can now add their own Steam key and Steam ID under Settings → My Profile, and import their own Steam library and achievements. Until now only an admin could
   - type: fix
-    label: ゲームの詳細を保存しても、空のプレイヤー数が1に設定されなくなり、RetroDBが判定した年齢レーティングがあなたの入力として記録されることもなくなりました。AI補完は「独占」にしたゲームを維持し、AIの回答待ちの間に行ったゲームへの変更も維持します。取得の履歴には、実際に保存された詳細だけが表示されます
+    label: ゲームの詳細を保存しても、空のプレイヤー数が1に設定されなくなり、RetroDBが判定した年齢レーティングが、あなたが入力したものとして記録されることもなくなりました。AI補完は、「独占」に設定したゲームを保持し、AIの回答を待っている間にゲームへ加えた変更も保持します。取得の履歴には、実際に保存された詳細だけが表示されます
+    en: Saving a game's details no longer sets an empty player count to 1, and no longer marks the age ratings RetroDB worked out for you as typed by you. AI Fill keeps a game you marked Exclusive, and keeps any change you make to a game while it is waiting for the AI's answer. A scrape's history now lists only the details it actually saved
   - type: fix
-    label: 保存されたスクリーンショットの1枚が大きすぎて開けない場合でも、スクリーンショットレビューが途中で止まらなくなりました。その画像は読み込み不可として数え、処理を続けます。ヘルプページの目次にエミュレーターとプレイへのリンクが加わり、サインイン、バックグラウンドジョブ、取得、画像、更新、エラー応答に関する開発者向けメモも、プログラムの実際の動作に合わせて修正されました
+    label: スクリーンショットレビューは、保存されている1枚があまりに大きくて開けない場合でも途中で止まらず、その画像を読み取り不可として数えて続行します。ヘルプページの目次に、エミュレーターとプレイへのリンクが追加されました。また、サインイン、バックグラウンドジョブ、取得、画像、アップデート、エラー応答に関する開発者向けメモが、プログラムの実際の動作に合わせて修正されました
+    en: Screenshot Review no longer stops halfway when one stored screenshot is far too large to open; it counts that picture as unreadable and carries on. The help page's contents list now links to Emulators and Playing, and the developer notes on sign-in, background jobs, scraping, pictures, updates and error replies now say what the program really does
   - type: fix
-    label: ROMツールのスキャンを開始した編集者は、一時停止、再開、キャンセルができるようになりました。他の人のスキャンは引き続き管理者のみが停止できます。タグとリストは、名前がない場合や色が不正な場合に、エラーページではなく分かりやすいメッセージで拒否します。ウィッシュリストのゲームを、すでに登録済みの別のゲームの名前に変更することも、追加時と同様に拒否されます。RAデータの消去では、あなたのコピーで実績を獲得できるかどうかの情報も消去されます。RetroDBが提示しなくなったトロフィーは、コレクターランクの集計に含まれなくなります。WindowsのROMパスは、ファイル名でRetroAchievementsのゲームと一致するようになりました
+    label: ROMツールのスキャンを開始した編集者は、それを一時停止、再開、キャンセルできるようになりました。他の人のスキャンの停止は引き続き管理者のみです。タグとリストは、名前がない場合や色が不正な場合に、エラーページではなく分かりやすいメッセージで拒否します。ウィッシュリストのゲームを、すでにウィッシュしている別のゲームの名前に変更することも、追加時と同様に拒否されます。RAデータの消去では、お持ちのコピーで実績を獲得できるかどうかも消去されます。RetroDBが提供しなくなったトロフィーは、コレクターランクに数えられなくなります。WindowsのROMパスは、ファイル名でRetroAchievementsのゲームと一致するようになりました
+    en: An editor who starts a ROM Tools scan can now pause, resume or cancel it; other people's scans stay an admin's to stop. Tags and lists refuse a missing name or a bad colour with a clear message instead of an error page, and renaming a wishlist game onto another one you already wish for is refused, as adding it is. Clear RA Data now also forgets whether your copy earns achievements. A trophy RetroDB no longer offers stops counting toward your collector rank. Windows ROM paths now match RetroAchievements games by file name
   - type: fix
-    label: メンテナンス修正です。展開に失敗した複数ディスクのアーカイブが、再試行をすべて妨げる中途半端なフォルダーを残さなくなりました。ストレージ計算は、PS3のゲームフォルダー内のすべてのファイルを数えるようになりました。取得データの消去は、指示したときだけ画像を削除します。別のスキャンが追加したばかりのゲームに出会っても、ライブラリスキャンはそのコンソールの残りのゲームの処理を続けます
+    label: メンテナンス修正です。複数ディスクのアーカイブの展開に失敗しても、再試行を妨げる中途半端なフォルダーが残らなくなりました。ストレージ計算は、PS3のゲームフォルダー内のすべてのファイルを数えるようになりました。取得データの消去は、指示したときだけ画像を削除します。ライブラリスキャンは、別のスキャンが追加したばかりのゲームに出会っても、そのコンソールの残りのゲームの処理を続けます
+    en: Maintenance fixes. A multi-disc archive that fails to unpack no longer leaves a half-made folder behind that blocks every retry. Calculate Storage now counts every file inside a PS3 game folder. Clear Scraped Data deletes pictures only when you ask it to. A library scan that meets a game another scan has just added carries on with the rest of that console's games
   - type: fix
-    label: バックアップの復元がより安全になりました。データベース自体が想定する方法でライブラリデータベースに書き込まれるため、それを開いているRetroDBの一部が、破損の危険なく復元後のデータを参照できます。ゲームを削除すると、そのボックス画像と、待機中の画像やエミュレーター設定のエントリーも削除され、新しいゲームに引き継がれることはありません。同時に保存した2つの設定の一方が失われることもなくなりました
+    label: バックアップの復元がより安全になりました。データベース自体が想定する方法でライブラリデータベースに書き込まれるため、それを開いているRetroDBの一部は、破損の恐れなく復元後のデータを参照できます。ゲームを削除すると、そのボックス画像、待機中の画像、エミュレーター設定のエントリーも削除されるため、新しいゲームがそれらを引き継ぐことはありません。同時に保存した2つの設定のどちらかが失われることもなくなりました
+    en: Restoring a backup is safer. It is now written into the library database the way the database itself expects, so a part of RetroDB that has it open sees the restored data instead of risking damage. Deleting a game now also deletes its box pictures and its waiting picture and emulator-setting entries, so a new game can never inherit them. Two settings saved at the same moment no longer lose one of them
   - type: fix
-    label: 画像の修正です。GIFは、アップスケーラーに通したあとで破棄されることがなくなりました。アップスケーラーのモデルは公開されているフィンガープリントで検証され、不正なダウンロードは、アップスケールを永久にオフにせず再取得されます。ロゴや透明部分のある画像は、拡大しても透明が保たれます。WebPに変換は、裏表紙とロゴにも対応し、不要な空き容量を理由に大きなライブラリを拒否することもなくなりました。ボックスファイルの2つの面で1つの画像を共有でき、破損したレコードのボックスを削除すると、その画像も削除されます
+    label: 画像の修正です。GIFを、アップスケーラーに通したあとで破棄する無駄がなくなりました。アップスケーラーのモデルは公開されているフィンガープリントで検証され、ダウンロードに失敗した場合は、アップスケールを永久に無効にせず再取得します。ロゴや透過部分のある画像は、拡大しても透過が保たれます。WebPへの変換は、背面カバーとロゴにも対応し、不要な空き容量を理由に大きなライブラリを拒否することもなくなりました。ボックスファイルの2つの面で1枚の画像を共有でき、レコードが壊れたボックスを削除すると、その画像も削除されます
+    en: Picture fixes. GIFs are no longer run through the upscaler only to be thrown away. The upscaler model is checked against its published fingerprint, and a bad download is fetched again instead of turning upscaling off for good. Logos and pictures with see-through parts keep their transparency when enlarged. Convert to WebP now takes back covers and logos too, and no longer refuses a large library for want of room it does not need. Two faces of a box file can share one picture, and removing a box with a damaged record removes its pictures
   - type: fix
-    label: CLZ、Steam、Xbox、PlayStationからのインポートで、日本語やその他のラテン文字以外だけで書かれたタイトルがすべて同じゲームとして扱われることはなくなり、IDのないゲームが追加されることもなくなりました。CLZのプレビューは、インポートを確定する前にコンソールを追加しなくなり、閲覧者がSteam、Xbox、PlayStationのライブラリを見ても追加されません。ストアから削除されたSteamのゲームについては、同期のたびではなく、1回だけ確認されます
+    label: CLZ、Steam、Xbox、PlayStationからのインポートで、日本語などラテン文字以外だけで書かれたタイトルがすべて同じゲームとして扱われることはなくなり、IDのないゲームも追加されません。CLZのプレビューは、インポートを確定する前にコンソールを追加しなくなり、Steam、Xbox、PlayStationのライブラリを閲覧しているだけの閲覧者も追加しなくなりました。ストアから削除されたSteamのゲームは、同期のたびではなく1回だけ確認されます
+    en: Imports from CLZ, Steam, Xbox and PlayStation no longer treat every title written only in Japanese or another non-Latin script as the same game, and no longer add a game with no id. The CLZ preview no longer adds consoles before you confirm the import, and a viewer looking at a Steam, Xbox or PlayStation library no longer adds them either. A Steam game removed from the store is asked about once, not on every sync
   - type: fix
-    label: 分析では、より多くのコンソールが「その他」ではなくメーカー別にまとめられます。また、ダッシュボードの最近取得した一覧には、新しく追加されたゲームだけでなく、再取得したゲームも表示されます
+    label: 分析では、はるかに多くのコンソールが「その他」ではなくメーカー別にまとめられます。ダッシュボードの最近取得したリストには、新しく追加されたゲームだけでなく、再取得したゲームも表示されます
+    en: Analytics now groups many more consoles under their maker instead of "Other", and the dashboard's Recently Scraped list shows a game you scraped again, not only newly added games
   - type: fix
-    label: ミュージアムで追加したコントローラーの画像は、スタンドアロン版が更新されても保持されます。オンラインサービスが上限で一時停止しているときは、再度問い合わせる時刻があなたのタイムゾーンで表示されます
+    label: ミュージアムで追加したコントローラー画像は、スタンドアロン版のアップデート時にも保持されます。オンラインサービスが上限で一時停止している場合、次に問い合わせる時刻があなたのタイムゾーンで表示されます
+    en: Controller pictures you add in the Museum are kept when the standalone version updates. When an online service pauses at its limit, the time it will be asked again is shown in your own time zone
   - type: fix
-    label: ボーナスディスクを自分自身や別のボーナスディスクに関連付けることはできなくなり、自動リンクも、同じ実行中にボーナスディスクと判定したディスクへは関連付けません
+    label: 特典ディスクを、自分自身や別の特典ディスクにリンクすることはできなくなりました。また、自動リンクは、同じ実行中に特典ディスクとしたディスクへ別のディスクをリンクしなくなりました
+    en: A bonus disc can no longer be linked to itself or to another bonus disc, and Auto-link no longer links a disc to one it marks as a bonus disc in the same run
   - type: fix
-    label: ライブラリとコンソールのページでは、アーケードのBIOSファイルが合計やアルファベットバーでゲームとして数えられなくなりました。類似ゲームや、ゲームページでジャンルまたはパブリッシャーをクリックして表示される一覧にも、そのゲーム自身の地域別バージョン、ボーナスディスク、BIOSファイルは表示されません
+    label: ライブラリとコンソールのページで、アーケードのBIOSファイルが合計数や文字バーでゲームとして数えられなくなりました。類似ゲームや、ゲームページでジャンルやパブリッシャーをクリックして表示される一覧にも、そのゲーム自身の地域別バージョン、特典ディスク、BIOSファイルは表示されません
+    en: The Library and console pages no longer count arcade BIOS files as games, in their totals or the letter bar. Similar games, and the list you get by clicking a genre or publisher on a game's page, no longer show the game's own regional versions, bonus discs or BIOS files
   - type: fix
-    label: 非常に大きな一覧が途中で打ち切られた場合、「すべて選択」は黙って一部だけを選択するのではなく、その旨を表示するようになりました
+    label: すべて選択は、非常に大きな一覧が途中で切られた場合、黙って一部だけを選択するのではなく、その旨を表示します
+    en: Select all now says so when a very large list is cut short, instead of quietly selecting only part of it
   - type: fix
-    label: ライブラリカードは、実績やトロフィーの進捗が変わったときや、ゲームがプレイ可能になったり不可になったりしたときに更新されます
+    label: ライブラリのカードは、実績やトロフィーの進行状況が変わったとき、およびゲームがプレイ可能になったりプレイできなくなったりしたときに更新されます
+    en: Library cards now update when your achievement or trophy progress changes, and when a game becomes playable or stops being playable
   - type: fix
-    label: 一括編集は、不正な選択が送られても誤ったゲームを変更しなくなり、失敗した一括編集でゲームがあなたによる編集済みと記録されることもなくなりました
+    label: 一括編集は、不正な選択を送られても別のゲームを変更しなくなり、失敗した一括編集でゲームが自分で編集したものとして記録されることもなくなりました
+    en: Bulk edit can no longer change the wrong games when it is sent a bad selection, and a bulk edit that fails no longer marks the games as edited by you
   - type: fix
-    label: HowLongToBeatで一致度が1%しかないものが100%一致と表示されなくなり、読み込みに失敗したページには、生のエラーテキストではなくエラーページが表示されます
+    label: 適合度がわずか1%のHowLongToBeatの一致が100%一致として表示されることはなくなり、読み込みに失敗したページは、生のエラーテキストではなくエラーページを表示します
+    en: A HowLongToBeat match that is only a 1% fit is no longer shown as a 100% match, and a page that fails to load shows the error page instead of the raw error text
   - type: security
-    label: パスワードを変更したとき、または管理者がリセットしたときに、そのアカウントは他のすべてのデバイスからサインアウトされます。このため、この更新後は全員がもう一度サインインする必要があります。初回セットアップページにも、他のページと同じ他サイトからの攻撃への保護が加わりました
+    label: パスワードを変更したとき、または管理者がリセットしたときに、そのアカウントは他のすべてのデバイスでサインアウトされます。そのため、このアップデート後は全員がもう一度サインインする必要があります。初回セットアップページにも、他のページと同じく他のウェブサイトからの攻撃への保護が加わりました
+    en: Changing your password, or an admin resetting it, now signs that account out on every other device. Because of this, everyone signs in once more after this update. The first-run setup page also gets the same protection against other websites as every other page
   - type: fix
-    label: アバターとして拒否された画像が、現在のアバターを削除することはなくなりました
+    label: アバターとして拒否された画像によって、それまでのアバターが削除されることはなくなりました
+    en: A picture that is refused as your avatar no longer deletes the avatar you had
   - type: fix
-    label: 取得がオンラインサービスにより優しくなりました。失敗し続けるサービスは、検索時と同様に、不足分の補完時にもしばらくスキップされます。ScreenScraperのゲーム検索も、1日の上限を守るようになりました
+    label: 取得がオンラインサービスにより優しくなりました。失敗が続くサービスは、検索のときと同様に、不足分の補完時にもしばらくスキップされます。ScreenScraperのゲーム検索も、1日の上限を守るようになりました
+    en: Scrapes are gentler on the online services. A service that keeps failing is skipped for a while when filling gaps, as it already was in searches, and ScreenScraper game lookups now respect its daily limits too
   - type: fix
-    label: 「TBA」のように発売年が不明なゲームでも取得が失敗しなくなりました。また、「Brazil, Korea」のようにリストにない地域向けのゲームは、デフォルトの地域に置き換わらず、その地域が維持されます
+    label: 公開年が「TBA」のように不明なゲームでも取得が失敗しなくなりました。また、「ブラジル、韓国」のようにリスト外の地域で発売されたゲームは、デフォルトの地域に置き換わらず、その地域が保持されます
+    en: A scrape no longer fails on a game whose release year is unknown, such as "TBA", and a game listed for regions outside your list, such as "Brazil, Korea", keeps its region instead of becoming your default
   - type: fix
-    label: ~/ で書かれたES-DEのフォルダーが使えるようになり、非常に大きなES-DEファイルはコピーされなくなりました。おすすめの地域別バージョンが、互いにバージョンではないと指定した2つのゲームを再びまとめることはありません
+    label: ~/で書かれたES-DEのフォルダーが使えるようになり、非常に大きなES-DEファイルもコピーされなくなりました。提案される地域別バージョンは、互いにバージョンではないと指定した2つのゲームを再びまとめることはありません
+    en: ES-DE folders written as ~/ now work, and a very large ES-DE file is no longer copied. Suggested regional versions never put back together two games you said are not versions of each other
   - type: security
-    label: RetroDBは、Webから画像を取得する際に、さらにいくつかのプライベートネットワークアドレスを拒否し、Webアドレスのリダイレクトにも正しく従います
+    label: RetroDBは、ウェブから画像を取得する際に、さらにいくつかのプライベートネットワークアドレスを拒否し、ウェブアドレスのリダイレクトを正しくたどります
+    en: RetroDB refuses a few more private network addresses when fetching pictures from the web, and follows a web address's redirect correctly
   - type: fix
-    label: 英語のままだった最後の画面も、セットアップウィザード、タグ、リスト、ゲーム比較、ROMツールの設定、一括取得キュー、ダッシュボードの中断されたジョブ一覧、ライブラリカードのラベル、多くのエラーメッセージを含め、あなたの言語に対応しました
+    label: まだ英語のままだった最後の画面も、言語設定に従うようになりました。セットアップウィザード、タグ、リスト、ゲーム比較、ROMツールの設定、一括取得キュー、ダッシュボードの中断されたジョブの一覧、ライブラリカードのラベル、多くのエラーメッセージが対象です
+    en: The last screens still in English now follow your language too, including the setup wizard, Tags, Lists, Compare Games, ROM Tools settings, the bulk scrape queue, the dashboard's interrupted-jobs list, the library card labels and many error messages
   - type: security
-    label: Webコードを含むシステム名が、一括取得キューのウィンドウで実行されることはなくなりました
+    label: ウェブコードを含むシステム名が、一括取得キューのウィンドウで実行されることはなくなりました
+    en: A system name holding web code can no longer run it in the bulk scrape queue window
   - type: accessibility
-    label: ページのどこにいても、キーボードの位置がテーマの色の太い枠で、すべてのボタン、ボックス、リンクに表示されます。以前は多くのコントロールで、マウスを重ねたときと同じ薄い線しか表示されませんでした
+    label: ページのどこにいても、キーボードの現在位置がテーマの色の太い枠で示されます。すべてのボタン、ボックス、リンクが対象です。以前は多くのコントロールで、マウスを重ねたときと同じかすかな線しか表示されませんでした
+    en: Wherever you are on a page, the keyboard's place is now marked with a bold ring in your theme's colour, on every button, box and link. Before, many controls showed only a faint line, the same as when the mouse passed over them
   - type: accessibility
-    label: ライブラリカードのジャンル、シリーズ、デベロッパー、パブリッシャーのリンクが、キーボードから使えるようになりました。プレイ中のゲームの「実行中」ボタンもキーボードで開け、Escキーまたは他の場所のクリックで一覧が閉じます
+    label: ライブラリカードのジャンル、シリーズ、デベロッパー、パブリッシャーのリンクが、キーボードで使えるようになりました。プレイ中ゲームの「実行中」ボタンもキーボードで開け、Escまたは他の場所のクリックで一覧が閉じます
+    en: The Genre, Series, Developer and Publisher links on library cards now work from the keyboard. The "running" button for games in play opens from the keyboard too, and Esc or a click elsewhere closes its list
   - type: accessibility
-    label: スクリーンリーダーは、各タグの色の名前と選択中の色を読み上げ、トロフィーの画像も1文字ではなくプラチナ、ゴールド、シルバー、ブロンズと読み上げます。ゲームの起動中は、Tabキーで起動画面の裏側に移動することもなくなりました
+    label: スクリーンリーダーが、各タグの色の名前と選択中の色を読み上げ、トロフィー画像を1文字ではなくプラチナ、ゴールド、シルバー、ブロンズと読み上げます。ゲームの起動中は、Tabキーで起動画面の裏側に移動しなくなりました
+    en: Screen readers now name each tag colour and say which one is chosen, and read trophy pictures as Platinum, Gold, Silver and Bronze instead of single letters. While a game starts, Tab no longer moves behind the starting screen
   - type: fix
-    label: ファイルの入れ替えを始める前に更新が止まった場合、RetroDBは終了したままにならず、以前のバージョンを再び起動します
+    label: アップデートがファイルの入れ替えを始める前に止まった場合、RetroDBは終了したままにならず、それまでのバージョンを再び起動します
+    en: If an update stops before it starts swapping files, RetroDB now starts the version you had again, instead of staying closed
   - type: fix
-    label: プレイを同時に2回押しても、内蔵プレイヤーで2つのゲームが起動することはなくなりました。コアのダウンロード待ちは、一定時間後、またはRetroDBが応答しなくなったときに、永遠に待たずに中止されます。「すでに実行中」の確認にはRetroDB独自のダイアログが使われます
+    label: プレイを同時に2回押しても、内蔵プレイヤーで2つのゲームが起動することはなくなりました。コアのダウンロード待ちは、一定時間後、またはRetroDBが応答しなくなったときに、永遠に待たずに諦めます。また、「すでに実行中」の確認にはRetroDB独自のダイアログを使います
+    en: Pressing Play twice at once can no longer start two games on the built-in player. Waiting for a core download now gives up after a while, or when RetroDB stops answering, instead of waiting forever, and the "already running" question uses RetroDB's own dialog
   - type: fix
-    label: プレイ中にオンまたはオフにしたチートは、同じファイル名の別のゲームではなく、正しいゲームに対して保持されます。チートの問題でゲームの起動が妨げられることはありません
+    label: プレイ中にオンまたはオフにしたチートは、同じファイル名を持つ別のゲームからではなく、正しいゲームのものとして保持されます。チートの問題でゲームの起動が妨げられることはありません
+    en: Cheats you switch on or off during play are kept for the right game, never taken from another game whose file has the same name. A cheat problem never stops a game starting
   - type: fix
-    label: RetroDBはエミュレーターの設定ファイルをより安全に書き込みます。リンクである設定ファイルはリンクのままで、権限も維持され、読み取れない文字も保持されます。保存に失敗しても不要なファイルは残りません
+    label: RetroDBは、エミュレーターの設定ファイルをより安全に書き込みます。リンクである設定ファイルはリンクのまま、権限も保たれ、読み取れない文字も保持されます。保存に失敗しても、不要なファイルは残りません
+    en: RetroDB writes an emulator's settings file more safely. A settings file that is a link stays a link, keeps its permissions, and keeps letters it cannot read, and a failed save leaves no stray file behind
   - type: fix
-    label: 実行中に一括取得をキューの後ろに移動したり、他のものと入れ替えたり、再開したりしても、RetroDBの再起動で失われなくなりました。ダッシュボードから、止まった位置から再開できます。入れ替えられた取得が新しい取得と並行して動き続けることはなく、再開を素早く2回クリックしてもジョブは1回だけ開始されます
+    label: 実行中に、一括取得をキューの後ろへ移動、他と入れ替え、または再開しても、RetroDBの再起動で失われなくなりました。ダッシュボードが、中断した位置から再開するよう提案します。入れ替えられた取得が新しいものと並行して実行され続けることもなくなり、再開を素早く2回クリックしてもジョブは1回だけ開始されます
+    en: A bulk scrape you move down the queue, swap with another or resume while one runs is no longer lost when RetroDB restarts; the dashboard offers it, from where it stopped. A swapped-out scrape no longer keeps running beside the new one, and two quick clicks on Resume start a job once
   - type: fix
-    label: ネットワークの切断など1つのゲームのエラーで、AI補完の実行全体や、ボックスとマニュアルの地域修正の実行全体が終了することはなくなりました。そのゲームは失敗として数え、残りは続行します。RetroDBを停止すると、コアのダウンロードも正常に停止します
+    label: ネットワークの切断など、1つのゲームのエラーで、AI補完の実行全体、またはボックスとマニュアルの地域修正の実行全体が終了することはなくなりました。そのゲームは失敗として数えられ、残りは続行されます。RetroDBを停止すると、コアのダウンロードも正常に停止します
+    en: One game's error, such as the network dropping, no longer ends a whole AI Fill run or a Fix Box and Manual Regions run; that game counts as failed and the rest go on. Stopping RetroDB now also stops core downloads cleanly
   - type: fix
-    label: ウィッシュリストの項目が、エラーや再起動のあとに「取得中」のままになることはなくなり、同じウィッシュリストに対する2つのすべて取得が同時に実行されることもなくなりました
+    label: ウィッシュリストの項目が、エラーや再起動のあとも「取得中」のまま残らなくなりました。また、同じウィッシュリストに対する「すべて取得」が同時に2回実行されることもなくなりました
+    en: Wishlist items no longer stay on "scraping" forever after an error or a restart, and two Scrape All runs for the same wishlist no longer run at once
   - type: fix
-    label: スクリプトや2つ目のRetroDBが起動しても、実行中のサーバーのジョブが中断扱いにされることはなくなり、2つが同時に起動してもデータベースのバージョンが戻ることはなくなりました
+    label: スクリプトやRetroDBの2つ目のコピーを起動しても、動作中のサーバーのジョブが中断扱いにならなくなりました。2つのコピーが同時に起動しても、データベースのバージョンが戻ることはありません
+    en: A script or a second copy of RetroDB starting up no longer marks the running server's jobs as interrupted, and two copies starting at once can no longer set the database back a version
   - type: fix
-    label: PlayStationの同期を開始しても、Sonyへのサインイン中に全員の進捗バーが待たされることはなくなりました。毎日のPlayStationキープアライブは、毎日ではなく、10日間の期限が近づいたときだけサインインを更新します
+    label: PlayStation同期を開始しても、Sonyへのサインイン中にほかの人の進捗バーが待たされなくなりました。毎日のPlayStation維持処理は、毎日ではなく10日間の期限が近づいたときだけサインインを更新します
+    en: Starting a PlayStation sync no longer makes everyone's progress bars wait while it signs in to Sony. The daily PlayStation keep-alive now renews a sign-in only near the end of its 10 days, instead of every day
   - type: fix
-    label: 取得中にあなたが行った変更を、取得が上書きすることはなくなりました。また、名前が分からないジャンル、モード、ビューを空にすることもなくなりました。保存済みのプレイヤー数をゲームのモードに合わせて変更することもなくなりました
+    label: 取得が実行中に行った変更を上書きしなくなり、名前が分からないジャンル、モード、ビューを空にすることもなくなりました。保存済みのプレイヤー数をゲームのモードに合わせて変更することもありません
+    en: A scrape no longer writes over a change you make while it runs, and no longer empties a genre, mode or view it has no name for. It no longer changes a stored player count to match the game's modes
   - type: fix
-    label: AI補完は、パブリッシャーやジャンルを手動で修正した場合など、自分で入力した内容を変更しなくなりました。修正するのは取得した値だけです。4人を「1-4」と書いたり、同じジャンルを別の順序で書いたりするなど、表記が違うだけの場合は、変更したと報告しなくなりました
+    label: AI補完は、パブリッシャーやジャンルなど手入力で修正した内容を変更しなくなりました。修正するのは取得した値だけです。4人を「1-4」と書くなど、表記だけが違う場合や、同じジャンルの順序が違うだけの場合は、変更とは報告されません
+    en: AI Fill no longer changes what you typed yourself, such as a publisher or genre you corrected by hand; it corrects only scraped values. It no longer reports a value as changed when it only wrote it differently, such as 4 players as "1-4" or the same genres in another order
   - type: fix
-    label: ゲームに入力したコントローラーは保持されます。コンソールの既定のコントローラーは、取得した値とAIの値だけを置き換えるようになりました。他のレーティング機関のAI推測から変換した年齢レーティングにも、推測のマークが付きます
+    label: ゲームに入力したコントローラーは保持されます。コンソールの標準コントローラーは、取得値とAI値だけを置き換えます。他のボードのAI推定から変換した年齢レーティングにも、推定の印が付くようになりました
+    en: A controller you type for a game is kept; the console's default controller now replaces only scraped and AI values. An age rating converted from another board's AI guess is now marked as a guess too
   - type: fix
-    label: ゲームの編集ウィンドウを保存しても、ウィンドウに表示されない項目が空になることはなくなりました。ゲームのページのリセットは、ビュー、エディション、別名を含め、表示どおりすべてを消去します。他のゲームが使っていない場合はゲームの画像と動画を削除し、ライブラリのフィルターもすぐに更新します
+    label: ゲームの編集ウィンドウを保存しても、ウィンドウに表示されない項目が空にならなくなりました。ゲームページのリセットは、表示されている内容をすべて消去します。ビュー、エディション、別名も含まれます。ほかのゲームが使っていない画像と動画は削除され、ライブラリのフィルターもすぐ更新されます
+    en: Saving a game's edit window no longer empties fields the window does not show. Reset on a game's page now clears everything it says it does, including the view, edition and other names, deletes the game's pictures and videos unless another game uses them, and updates the library filters straight away
   - type: fix
-    label: 取得データの消去で、ビュー、2Dまたは3D、ゲーム構造も消去されるようになりました。年だけがあるゲームのCLZインポートでは、1月1日ではなく年だけが保持されます
+    label: 取得データのクリアで、ビュー、2Dか3Dか、ゲーム構造も消去されるようになりました。年だけがあるゲームのCLZインポートでは、1月1日ではなく年だけが保持されます
+    en: Clear Scraped Data now also clears the view, 2D or 3D, and game structure. A CLZ import of a game with only a year keeps just the year, not 1 January
   - type: security
-    label: Steam同期は、設定のSteamキーを全世帯メンバーに使い回さなくなりました。自分のSteamキーがないメンバーのアカウントに、管理者のSteamライブラリと実績が入ってしまっていました。設定のキーは管理者専用になりました
+    label: Steam同期が、設定のSteamキーを世帯の全メンバーに使い回さなくなりました。自分のSteamキーがないメンバーに、管理者のSteamライブラリと実績が表示されていました。設定のキーは管理者だけが使えます
+    en: Steam sync no longer borrows the Steam key from Settings for every household member. A member with no Steam key of their own was getting the admin's Steam library and achievements under their account. The key in Settings now serves admins only
   - type: fix
-    label: 多数のゲームに対するHow Long to Beatの検索で、確実な時間が保存されるようになりました。以前は確実な一致がすべて失敗し、何も保存されませんでした。RetroAchievementsの更新でも、取得と同様にRetroAchievementsの一覧と各ゲームのファイルを照合するので、お持ちの版と正確に紐づきます
+    label: 多数のゲームを対象にしたHow Long to Beatの検索で、確実な時間が保存されるようになりました。以前は確実な一致がすべて失敗し、何も保存されませんでした。RetroAchievementsの更新でも、取得と同様に各ゲームのファイルをRetroAchievementsの一覧と照合するため、お持ちのバージョンと正確に結び付きます
+    en: How Long to Beat's lookup for many games now saves the times it is sure of. Before, every sure match failed and nothing was saved. RetroAchievements Refresh now also checks each game's file against RetroAchievements' list, as a scrape does, so a game is linked to the exact version you have
   - type: fix
-    label: バックグラウンドジョブの完了メッセージが再び表示されます。また、サーバーの再起動後にジョブが再開されると、進行状況ボックスがそれに気づきます。以前はどちらも表示されませんでした
+    label: バックグラウンドジョブの完了メッセージが再び表示されます。また、再起動後にサーバーがジョブを引き継いだことを、ジョブの進捗ボックスが検知します。以前はどちらも表示されませんでした
+    en: The message that a background job has finished shows again, and a job's progress box notices when the server picks the job up after a restart. Before, neither ever appeared
   - type: fix
-    label: 'PlayStationトロフィー: 手動で紐づけたゲームは、完全同期後も紐づいたままです。また、同期で「Doom」を「Doom Eternal」のような続編に紐づけることもなくなりました。PlayStationゲームのインポートでも、SteamやXboxのインポートと同様にライブラリ内の既存ゲームと紐づけ、トロフィーが表示されます'
+    label: PlayStationトロフィー:手動でリンクしたゲームは、フル同期後もリンクされたままです。また、同期で「Doom」を「Doom Eternal」のような続編にリンクすることもなくなりました。PlayStationゲームのインポートでは、SteamやXboxのインポートと同様にライブラリにあるゲームがリンクされ、トロフィーが表示されます
+    en: 'PlayStation trophies: a game you linked by hand stays linked after a full sync, and a sync no longer links a game to its sequel, such as "Doom" to "Doom Eternal". Importing PlayStation games now links a game already in your library, as Steam and Xbox imports do, so its trophies show on it'
   - type: fix
-    label: Xboxのサインインが自動更新された後も、ゲーマータグが「Unknown」と表示されなくなりました。接続が遅い、または失敗しても、Xboxからサインアウトされることはありません。サインアウトされるのは、Microsoftがサインインを拒否した場合だけです
+    label: サインインが自動更新されたあとに、Xboxでゲーマータグが「不明」と表示されなくなりました。接続が遅い、または失敗しても、Xboxからサインアウトされません。サインアウトされるのはMicrosoftがサインインを拒否したときだけです
+    en: Xbox no longer shows your gamertag as Unknown after its sign-in renews itself, and a slow or failed connection no longer signs you out of Xbox. Only Microsoft refusing the sign-in does that
   - type: fix
-    label: 同じ名前のタグを複数の人が持てるようになりました。以前は2人目がエラーになっていました。サインイン中のユーザーなら誰でも自分のRPCS3トロフィーを再スキャンできます。以前は管理者だけで、他の人はRetroDBを再起動するまで古いトロフィーを見ていました
+    label: 同じ名前のタグを2人がそれぞれ持てるようになりました。以前は2人目がエラーになりました。サインインしている全ユーザーが自分のRPCS3トロフィーを再スキャンできます。以前は管理者だけで、ほかの人にはRetroDBを再起動するまで古いトロフィーが表示されていました
+    en: Two people can now each have a tag of the same name; before, the second one failed with an error. Any signed-in user can now rescan their own RPCS3 trophies; before, only an admin could, and everyone else saw old trophies until RetroDB restarted
   - type: security
-    label: サインイン情報は非公開のままです。データベースのバックアップをコンピューター上の他のアカウントが読めなくなり、バックアップに失敗しても前のバックアップは削除されません。ユーザーの削除や無効化で、DuckStationとPCSX2のRetroAchievementsからもサインアウトされます。プレイヤー自身のメニューから保存したRetroAchievementsのサインインが、次にプレイする人に引き継がれることもなくなりました。ログと保存されたジョブエラーではRetroAchievementsトークンが隠され、他のメンバーのPlayStationエラーは本人にだけ表示されます。古い平文のPlayStationとXboxのサインインファイルは削除されます
+    label: サインイン情報は非公開のままです。データベースのバックアップは、コンピューター上の他のアカウントから読めなくなりました。バックアップに失敗しても、その前のバックアップは削除されません。ユーザーを削除またはオフにすると、DuckStationとPCSX2のRetroAchievementsからもサインアウトされます。プレイヤー自身のメニューから保存したRetroAchievementsのサインインは、次にプレイする人に引き継がれません。ログと保存されたジョブエラーではRetroAchievementsトークンが隠され、ほかのメンバーのPlayStationエラーは本人にだけ表示されます。古い平文のPlayStationとXboxのサインインファイルは削除されます
+    en: Your sign-ins stay private. Database backups can no longer be read by other accounts on the computer, and a failed backup no longer deletes the one before it. Deleting or switching off a user also signs them out of RetroAchievements in DuckStation and PCSX2. A RetroAchievements sign-in saved from the player's own menu no longer carries over to the next person who plays. Logs and saved job errors hide RetroAchievements tokens, another member's PlayStation error is shown only to them, and old plain-text PlayStation and Xbox sign-in files are removed
   - type: fix
-    label: RetroDB自身のチェックは、実行中にライブラリへ触れなくなりました。常にデータベース、画像、設定の使い捨てコピーを使い、いずれかが実際のファイルを指している場合は開始を拒否します
+    label: RetroDB自身のチェックが、実行中にライブラリへ触れなくなりました。チェックは常にデータベース、画像、設定の使い捨てコピーを使い、いずれかが実際のファイルを指している場合は起動を拒否します
+    en: RetroDB's own checks can no longer touch your library while they run. They always use a throwaway copy of the database, pictures and settings, and refuse to start if any of them points at your real files
   - type: fix
-    label: 孤立ファイルの整理で、ウィッシュリストの画像が削除されなくなりました。ゲームを開いても、見つからないスクリーンショットを忘れなくなりました。以前は画像ドライブを外していると、開いたゲームのスクリーンショット一覧がすべて失われていました。今は一覧が保持され、見つからない画像は非表示になるだけです
+    label: 孤立ファイルのクリーンアップで、ウィッシュリストの画像が削除されなくなりました。ゲームを開いても、見つからないスクリーンショットを忘れなくなりました。以前は画像ドライブを外していると、開いたゲームすべてでスクリーンショット一覧が丸ごと失われていました。今は一覧が保持され、見つからない画像は非表示になるだけです
+    en: Clean orphaned files no longer deletes your wishlist's pictures. Opening a game no longer makes it forget screenshots it cannot find. Before, with the picture drive unplugged, every game you opened lost its whole screenshot list; now the list is kept, and a missing picture is only hidden
   - type: fix
-    label: 動画やマニュアルのダウンロードが途中で失敗しても、ゲームにある既存のコピーが壊れなくなり、メディアフォルダーに隠れた不完全ファイルも残りません。バックグラウンドのアップスケーラーが、その間にダウンロードされた新しい画像を古い画像で上書きすることもなくなりました。WebPへの変換は、画像を共有するすべてのゲームがそれを指したままにし、画像フォルダー外のファイルには触れません
+    label: 動画やマニュアルのダウンロードが途中で失敗しても、ゲームが元から持っているコピーは壊れません。失敗したダウンロードが、メディアフォルダーに隠れた中途半端なファイルを残すこともありません。バックグラウンドのアップスケーラーが、その間にダウンロードされた新しい画像を古い画像で上書きすることもなくなりました。WebPへの変換では、画像を共有するすべてのゲームがその画像を指したままになり、画像フォルダー外のファイルには一切触れません
+    en: A video or manual download that fails part-way no longer damages the copy the game already had, and a failed download no longer leaves a hidden half-file in the media folder. The background upscaler no longer saves an old picture over a newer one downloaded meanwhile. Convert to WebP keeps every game that shares a picture pointing at it, and never touches a file outside the picture folders
   - type: fix
-    label: ゲームやウィッシュリスト項目を削除すると、その画像、動画、マニュアルも削除されます。ただし、他のゲームやウィッシュリスト項目が使っているものは残ります。保存した画像は、コンピューター上の他のアカウントからまた読めるようになりました。画像のリサイズでは、保存できなかった画像を完了ではなく失敗として数えます
+    label: ゲームまたはウィッシュリスト項目を削除すると、その画像、動画、マニュアルも削除されます。ただし、ほかのゲームやウィッシュリスト項目が使っているものは残ります。保存した画像は、コンピューター上の他のアカウントから再び読めるようになりました。画像のリサイズでは、保存できなかった画像を完了ではなく失敗として数えます
+    en: Deleting a game or a wishlist item now deletes its pictures, videos and manuals too, but keeps any another game or wishlist item still uses. Saved pictures can be read by other accounts on the computer again, and Resize Images counts a picture it could not save as failed, not as done
   - type: fix
-    label: 重複ファインダーは、使用中のファイルを削除候補にしなくなりました。名前で探す場合、ゲームの.cueと.binを互いのコピーとは見なしません。2つのバージョンが共有することのあるディスクのトラックファイルは、候補に出しません。プレイリストに載っているディスクは削除しません。ファイルを削除したゲームは残したコピーに移るので、ライブラリに残ります
+    label: 重複ファインダーが、正常なファイルを削除候補にしなくなりました。名前で検索しても、ゲームの.cueと.binを互いのコピーとは見なしません。2つのバージョンが共有することのあるディスクのトラックファイルは、候補になりません。プレイリストに載っているディスクも削除されません。ファイルを削除したゲームは、残すコピーに切り替わるため、ライブラリに残ります
+    en: Duplicate Finder no longer offers a working file for deletion. Looking by name, it no longer calls a game's .cue and .bin copies of each other. It never offers a disc's track file, which two versions of a game can share. It will not delete a disc that a playlist lists. A game whose file you delete now moves to the copy you keep, so it stays in the library
   - type: fix
-    label: 複数ディスクの整理は、既存のプレイリストやゲームフォルダー内の既存ファイルを上書きしなくなりました。停止して、どれかを知らせます。作成されるプレイリストには、トラックファイルではなく各ディスクの.cueが載ります。ファイルを移動したゲームもフォルダーへ追従するので、存在しないROMの整理で削除されなくなりました
+    label: マルチディスクの整理が、既存のプレイリストやゲームのフォルダー内のファイルを上書きしなくなりました。処理を止め、どのファイルかを表示します。作成されるプレイリストには、トラックファイルではなく各ディスクの.cueが載ります。ファイルを移動したゲームも一緒にフォルダーへ移るため、見つからないROMのクリーンアップで削除されなくなりました
+    en: Organize Multi-Disc no longer writes over an existing playlist or a file already in the game's folder; it stops and says which. The playlist it makes lists each disc's .cue, not its track files. Games whose files it moves now follow them into the folder, so Clean missing ROMs no longer removes them
   - type: fix
-    label: 「元ファイルを削除」でCHDに変換すると、ディスクのトラックファイルも削除されます。ただし、別の.cueがまだ使っているトラックは残ります。ゲームと、古いディスクを載せていたプレイリストは、新しい.chdを指すようになります。ゲームのファイル名を変更すると、それを載せたプレイリストも更新され、.cueが必要とするトラックファイルは名前を変更できません。zipからのファイル削除では、名前に[や]があっても、選んだファイルだけが削除されます。スクリーンショットの重複排除は、スキャンで見つかったコピーだけを削除し、必ず1つは残します
+    label: 「元のファイルを削除」でCHDに変換すると、ディスクのトラックファイルも削除されます。ただし、ほかの.cueがまだ使っているトラックは残ります。古いディスクを載せていたゲームとプレイリストは、新しい.chdを指すようになります。ゲームのファイル名を変更すると、それを載せているプレイリストも更新されます。.cueが必要とするトラックファイルは名前を変更できません。zipからのファイル削除では、名前に[や]があっても、選んだファイルだけが削除されます。スクリーンショットの重複削除は、スキャンで見つかったコピーだけを削除し、必ず1つは残します
+    en: Converting to CHD with "delete originals" now deletes the disc's track files too, but keeps a track another .cue still uses. The game and any playlist that listed the old disc now point at the new .chd. Renaming a game's file now updates the playlist that lists it, and a track file a .cue needs cannot be renamed. Removing files from a zip removes only the files you picked, even when a name holds [ or ]. Screenshot Dedup deletes only the copies its scan found, and always keeps one
   - type: fix
-    label: ゲームのページのHow Long to Beatは、入力した内容で検索します。以前は、見つからないタイトルだとゲームの別名で検索し、ファンリメイクなど別のゲームを候補に出すことがありました。ボックスにゲーム自身の名前が入っている場合は、今も別名を試します
+    label: ゲームページのHow Long to Beatは、入力した内容で検索します。以前は、見つからないタイトルだとゲームの別名で検索し直し、ファンリメイクのような別のゲームを候補にすることがありました。ボックスにゲーム自身の名前が入っているときは、今も別名を試します
+    en: How Long to Beat on a game's page searches for what you type. Before, a title it could not find made it search the game's other names instead, and it could offer a different game, such as a fan remake. It still tries the other names when the box holds the game's own name
   - type: fix
-    label: ヘルプマニュアルのHow Long to Beatの手順を画面に合わせました。以前は一覧から一致を選ぶとありましたが、実際のページでは1件の一致と保存、キャンセルが表示されます。RetroDBが自動で再サインインするため、PlayStationのヘルプから、サインインが約2か月続くという記述を削除しました。翻訳済みの20のマニュアルすべてに両方の変更が反映されています
+    label: ヘルプマニュアルのHow Long to Beatの手順が、画面と一致しました。以前は一覧から一致を選ぶと説明していましたが、実際のページには保存とキャンセルの付いた一致が1件表示されます。RetroDBが自動で再サインインするため、PlayStationのヘルプでサインインが約2か月続くという説明も削除しました。翻訳された20のマニュアルすべてに、この2つの変更が反映されています
+    en: The help manual's How Long to Beat steps match the screen. They said to pick a match from a list; the page shows one match with Save and Cancel. The PlayStation help no longer says the sign-in lasts about two months, since RetroDB signs in again by itself. All 20 translated manuals carry both changes
   - type: fix
-    label: すべての文字バーの先頭に「すべて」ボタンが付きました。ライブラリ、コンソール、PSNトロフィーのページでは、文字を選ぶとその文字のゲームだけが表示され、以前は残りを戻すボタンがありませんでした。他の実績ページでは、「すべて」で最初のゲームに戻ります
+    label: すべての文字バーの先頭に「すべて」ボタンが付きました。ライブラリ、コンソール、PSNトロフィーのページでは、文字を選ぶとその文字のゲームだけが表示され、以前は残りを戻すボタンがありませんでした。ほかの実績ページでは、「すべて」で最初のゲームに戻ります
+    en: Every letter bar now starts with an All button. On the Library, console and PSN Trophies pages, picking a letter shows only that letter's games, and before there was no button to bring the rest back. On the other achievement pages, All goes back to the first game
   - type: fix
-    label: 設定に貼り付けた新しいPlayStationサインイントークンがすぐに使われます。以前は古いサインインが切れるまでRetroDBがそれを使い続け、保存して接続テストでも古いサインインが有効と報告されていました。Sonyが拒否したトークンが、有効なトークンを置き換えることもなくなりました
+    label: 設定で貼り付けた新しいPlayStationサインイントークンが、すぐに使われるようになりました。以前は古いサインインが切れるまでRetroDBがそれを使い続け、「保存して接続テスト」でも古いサインインが正常と報告されていました。Sonyが拒否したトークンが、有効なトークンを置き換えることもありません
+    en: A new PlayStation sign-in token you paste in Settings is now used straight away. Before, RetroDB kept using the old sign-in until it ran out, and Save & Test Connection reported that old sign-in as working. A token Sony refuses no longer replaces one that works
   - type: enhancement
-    label: 設定のPlayStationサインインを維持しやすくなりました。RetroDBが自動で再サインインするため、操作の必要がない日数をバナーがカウントダウンしなくなり、Sonyが保存済みトークンを拒否した場合だけ赤くなります。「ここに貼り付け」ボタンでブラウザーがクリップボードの読み取りを求めることはなくなり、Ctrl+Vを押せるようボックスにカーソルを置きます。まだ有効なトークンを置き換える場合は、先にPlayStationからサインアウトするよう手順に追加され、メッセージも翻訳できます
+    label: 設定のPlayStationサインインを維持しやすくなりました。RetroDBが自動で再サインインするため、操作の必要がない日数のカウントダウンはバナーに表示されません。バナーが赤くなるのは、Sonyが保存済みトークンを拒否したときだけです。「ここに貼り付け」ボタンは、ブラウザーにクリップボードの読み取りを求めなくなり、Ctrl+Vで貼り付けられるよう入力欄にカーソルを置きます。まだ有効なトークンを置き換える場合は、先にPlayStationからサインアウトするよう手順に追加し、手順のメッセージも翻訳できるようになりました
+    en: 'The PlayStation sign-in in Settings is easier to keep going. The banner no longer counts down days you never had to act on, because RetroDB signs in again by itself; it turns red only when Sony refuses your saved token. The Paste here button no longer makes the browser ask to read your clipboard: it puts the cursor in the box for Ctrl+V. The steps now say to sign out of PlayStation first when you replace a token that still works, and their messages can be translated'
   - type: enhancement
-    label: 「設定を保存しました」や「このリストを削除しますか?」などのポップアップメッセージと確認ボックスが、すべてのページで翻訳できるようになりました。以前は、選んだ言語に関係なく、ほとんどが英語のままでした
+    label: 「設定を保存しました」や「このリストを削除しますか?」などのポップアップメッセージと確認ボックスが、すべてのページで翻訳できるようになりました。以前は、どの言語を選んでもほとんどが英語のままでした
+    en: Pop-up messages and question boxes, such as "Settings saved" or "Delete this list?", can now be translated on every page. Before, most of them stayed in English whatever language you chose
   - type: enhancement
     label: 「NPSSOの有効期限が切れた可能性があります」など、PlayStationのサインインに失敗した理由を伝えるメッセージが翻訳できるようになりました
+    en: The messages that say why a PlayStation sign-in failed, such as "Your NPSSO may have expired", can now be translated
   - type: fix
-    label: すべての言語のヘルプマニュアルが英語版と同じ内容になりました。どこでも検索、タイトルの保持、MAME名、ボックスの裏面が追加され、遅れていた古い段落も更新されています
+    label: すべての言語のヘルプマニュアルが、英語版と同じ内容になりました。どこでも検索、タイトルの保持、MAME名、ボックスの裏面が追加され、古くなっていた段落も更新されています
+    en: The help manual in every language now matches the English one. It gains Search Anywhere, Keeping a Title, MAME Names and the back of the box, and older paragraphs that had fallen behind are up to date
   - type: fix
-    label: ドイツ語、アフリカーンス語、スペイン語で、ゲームのカバーにある「戻る」ボタンが、「前の画面に戻る」ではなくボックスの裏面を意味する表記になりました
+    label: ドイツ語、アフリカーンス語、スペイン語で、ゲームのカバーにある「戻る」ボタンが、「前に戻る」ではなくボックスの裏面を表すようになりました
+    en: In German, Afrikaans and Spanish, the Back button on a game's cover now says the back of the box, not "go back"
   - type: feature
-    label: プレイを押すと、ゲームの起動中、背景画像の上にゲームのロゴが画面いっぱいに表示されます。ロゴがない場合は名前が大きな文字で表示されます。ゲームのウィンドウが開くか、Escを押すかクリックすると自動的に消えます
+    label: プレイを押すと、ゲームの起動中、背景画像の上にゲームのロゴが画面いっぱいに表示されます。ロゴがない場合は、ゲーム名が大きな文字で表示されます。ゲームのウィンドウが開くか、Escを押すかクリックすると自動的に消えます
+    en: Pressing Play now fills the screen with the game's logo on its background picture while the game starts, or its name in large letters when it has no logo. It goes away by itself when the game's window opens, or when you press Esc or click
   - type: feature
-    label: 回転できる3DボックスがPS5ケースの本来の形になりました。丸みのある角と縁、カバーを囲む盛り上がった縁、2つの半分の継ぎ目、開く側の指かけ溝があります。形を書き込むSlipcaseのバージョンで作られたボックスファイルが必要で、ボックスをもう一度インポートしてください。他のボックスは以前と同じです
+    label: 回転できる3Dボックスが、PS5ケースの本物の形になりました。丸みのある角と縁、カバーの周りの盛り上がった縁、2つの半分の合わせ目、開く側の指かけ用の切り欠きがあります。この形を書き込むSlipcaseバージョンのボックスファイルが必要です。ボックスをもう一度インポートしてください。ほかのボックスは今までどおりです
+    en: 'The turnable 3D box now has the real shape of a PS5 case: rounded corners and edges, the raised lip round the cover, the line where the two halves meet, and the finger slot in the opening side. It needs a box file from a Slipcase version that writes the shape; import the box again to get it. Other boxes look as before'
   - type: enhancement
-    label: RetroAchievementsの更新は設定からRetroAchievementsページに移り、「実績のあるゲームを探す」という名前になりました。ページ内のすべてのボタンに説明文が付き、ゲーム検索と進捗同期の違いが分かりやすくなりました。まだ紐づいたゲームがない場合、管理者には次のタブへ進まず検索ボタンが表示されます
-  body: "<ul>\n  <li><strong>ヘルプマニュアルがすべての言語で最新になりました。</strong>\n    英語版にしかなかったセクションが翻訳されました。</li>\n</ul>\n"
+    label: RetroAchievementsの更新が設定からRetroAchievementsページに移動し、「実績のあるゲームを探す」という名前になりました。ページのすべてのボタンに説明文が付き、ゲームを探すと進捗を同期するの違いが分かりやすくなりました。リンクされたゲームがまだない場合、管理者には次のタブへ進まず、探すボタンが表示されます
+    en: Refresh RetroAchievements moved from Settings to the RetroAchievements page, and is now called Find Games with Achievements. Every button there now has a line saying what it does, so Find Games and Sync Progress are easy to tell apart. With no games linked yet, the page shows an admin the Find button instead of moving on to the next tab
+  body: "<ul>\n  <li><strong>ヘルプマニュアルがすべての言語で最新になりました。</strong>\n    英語のマニュアルにしかなかったセクションが翻訳されました。</li>\n</ul>\n"
+  body_en: "<ul>\n  <li><strong>The help manual is up to date in every language.</strong>\n    Sections that were only in the English manual are now translated.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'
   tags:

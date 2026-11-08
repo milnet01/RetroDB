@@ -1,149 +1,233 @@
 - version: 4.0.0
-  date: '2026-11-06'
+  date: '2026-11-08'
   tags:
+  - type: performance
+    label: 使用 Claude 网页搜索的 AI 填充费用更低。Claude 每次搜索后都会重新读取搜索结果；RetroDB 现在会请求 Anthropic 将结果保持就绪状态，这样再次读取的费用只需原价的十分之一甚至更低
+    en: AI Fill with Claude web search costs less. Claude reads the search results again after each search; RetroDB now asks Anthropic to keep them ready, and a re-read then costs a tenth of the price or less
+  - type: fix
+    label: 取消已经完成的抓取、同步或图片任务,现在会清除卡住的进度弹窗。启动已在运行的任务时,会显示真实原因,例如“SNES 的抓取已在运行”,而不是“网络错误”。博物馆中的手柄图片错误现在会说明出了什么问题;取消其他用户的 RetroAchievements 同步时,会提示该同步属于对方,而不是假装已取消
+    en: Cancelling a scrape, sync or image job that has already finished now clears its stuck progress popup. Starting a job that is already running shows the real reason, such as "A scrape for SNES is already running", instead of "Network error". Controller image errors in the Museum now say what went wrong, and cancelling another user's RetroAchievements sync says it is theirs instead of pretending to cancel it
+  - type: security
+    label: 日志查看器现在也会隐藏旧日志文件中的密码和密钥。在 RetroDB 学会隐藏某个密码(例如 ScreenScraper 的密码)之前写入的日志,在查看或下载时会以明文显示
+    en: The log viewer now hides passwords and keys in older log files too. Logs written before RetroDB learned to hide a particular password, such as ScreenScraper's, showed it in plain text when viewed or downloaded
+  - type: security
+    label: 将所有设置恢复默认值后,现在会保留你的 ROM 文件夹以及已完成初始设置的状态。以前,重置会重新打开无需登录即可使用的首次设置页面,直到管理员再次运行设置
+    en: Resetting all settings to their defaults now keeps your ROM folder and the fact that setup is done. Before, a reset reopened the first-time setup pages, which work without signing in, until an admin ran setup again
   - type: feature
-    label: 街机游戏又可以获得 RetroAchievements 成就了。现在只有当 RetroAchievements 知道街机游戏的确切文件名(例如《街头霸王 II》的 sf2)时,RetroDB 才会关联该游戏,不再根据标题猜测而关联到错误的游戏。你的街机游戏会在下次刷新 RetroAchievements 数据或抓取时完成关联
+    label: 街机游戏又可以获得 RetroAchievements 成就了。RetroDB 现在只在 RetroAchievements 知道确切文件名时才关联街机游戏,例如 Street Fighter II 的 sf2,因此不再根据标题猜测而关联错游戏。你的街机游戏会在下次刷新 RetroAchievements 数据或抓取时完成关联
+    en: Arcade games can earn RetroAchievements again. RetroDB now links an arcade game only when RetroAchievements knows its exact file name, such as sf2 for Street Fighter II, so it no longer guesses from titles and links the wrong game. Your arcade games link the next time their RetroAchievements data is refreshed or they are scraped
   - type: fix
-    label: PlayStation 奖杯同步现在会修正之前错误的游戏关联,例如许多游戏被关联到一个名为“D”的无关游戏。你自己设置的关联不会被同步更改。下次同步会重新检查所有旧关联,因此少数相近的匹配可能会被取消关联,请手动重新关联
+    label: PlayStation 奖杯同步现在会纠正之前错误建立的游戏关联,例如许多游戏被关联到一个名为“D”的无关游戏。你自己设置的关联不会被同步更改。下次同步会重新检查所有旧关联,因此一些相近的匹配可能会被取消关联;请手动重新关联这些游戏
+    en: PlayStation trophy sync now corrects game links it made wrongly before, such as many games linked to an unrelated game called "D". A link you set yourself is never changed by a sync. The next sync checks all older links again, so a few near matches may come unlinked; link those again by hand
   - type: fix
-    label: 将等待中的批量抓取调到正在运行的抓取之前时,不再把旧抓取的最后一个游戏计入新抓取的数量。在愿望单上点击“全部抓取”时,如果已有抓取在运行,现在会提示这一点,而不是声称已开始
+    label: 把等待中的批量抓取移到正在运行的抓取之前,不再把旧抓取的最后一个游戏计入新抓取的数量。在愿望单上点击“全部抓取”时,如果已有抓取在运行,现在会提示这一点,而不是声称已开始
+    en: Moving a waiting bulk scrape ahead of a running one no longer adds the old scrape's last game to the new one's counts. Clicking "Scrape all" on the wishlist while one is already running now says so, instead of claiming it started
   - type: accessibility
-    label: 使用屏幕阅读器时,“运行中”按钮只在数量变化时才播报“1 个游戏运行中”,不再每隔几秒朗读一个单独的数字。它的列表会作为带名称的窗口打开,光标位于其中;其中的“结束”和“下一张光盘”按钮会说明作用于哪个游戏;点击“结束”后光标会回到合理的位置。游戏库中的每张游戏卡片现在可以通过键盘从标题打开,其筛选按钮也会说明筛选的内容,例如“按开发商筛选:Konami”
+    label: 使用屏幕阅读器时,“运行中”按钮现在只在数量变化时才读出“1 个游戏运行中”,而不是每隔几秒读一个孤零零的数字。它的列表会作为带名称的窗口打开,光标位于其中;其“结束”和“下一张光盘”按钮会说明作用于哪个游戏;结束后光标会回到合理的位置。游戏库中的每张游戏卡片现在可以通过键盘从标题打开,其筛选按钮会说明筛选内容,例如“按开发商筛选:Konami”
+    en: 'With a screen reader, the "running" button now says "1 game running" only when the count changes, instead of reading a bare number every few seconds. Its list opens as a named window with the cursor inside, its Kill and Next disk buttons say which game they act on, and after Kill the cursor returns to a sensible place. Each game card in the library now opens with the keyboard from its title, and its filter buttons say what they filter, such as "Filter by Developer: Konami"'
   - type: feature
     label: 现在每位成员都可以在 设置 → 我的资料 中添加自己的 Steam 密钥和 Steam ID,并导入自己的 Steam 游戏库和成就。此前只有管理员可以
+    en: Every member can now add their own Steam key and Steam ID under Settings → My Profile, and import their own Steam library and achievements. Until now only an admin could
   - type: fix
-    label: 保存游戏详情时,不再把空的玩家人数设为 1,也不再把 RetroDB 为你推算出的年龄分级标记为你自己输入的。AI 填充会保留你标记为独占的游戏,也会保留你在游戏等待 AI 回复期间所做的更改。抓取历史现在只列出它实际保存的详情
+    label: 保存游戏详情时,不再把空的玩家数量设为 1,也不再把 RetroDB 为你推算出的年龄分级标记为你手动输入的。AI 填充会保留你标记为独占的游戏,也会保留你在游戏等待 AI 回复期间所做的任何更改。抓取历史现在只列出它实际保存的详情
+    en: Saving a game's details no longer sets an empty player count to 1, and no longer marks the age ratings RetroDB worked out for you as typed by you. AI Fill keeps a game you marked Exclusive, and keeps any change you make to a game while it is waiting for the AI's answer. A scrape's history now lists only the details it actually saved
   - type: fix
-    label: 当某张已存储的截图过大而无法打开时,截图审核不再中途停止;它会把这张图片算作无法读取并继续。帮助页面的目录现在链接到模拟器和游玩,关于登录、后台任务、抓取、图片、更新和错误回复的开发者说明,现在如实描述了程序的实际行为
+    label: 当某张已存的截图过大而无法打开时,截图审核不再中途停止;它会将该图片计为无法读取并继续。帮助页面的目录现在链接到模拟器和游玩,关于登录、后台任务、抓取、图片、更新和错误回复的开发者说明,现在如实描述了程序的实际行为
+    en: Screenshot Review no longer stops halfway when one stored screenshot is far too large to open; it counts that picture as unreadable and carries on. The help page's contents list now links to Emulators and Playing, and the developer notes on sign-in, background jobs, scraping, pictures, updates and error replies now say what the program really does
   - type: fix
-    label: 启动 ROM 工具扫描的编辑者现在可以暂停、继续或取消该扫描;他人的扫描仍只有管理员能停止。标签和列表在名称缺失或颜色无效时会给出清晰的提示,而不是错误页面;把愿望单中的游戏改名为你已在愿望单中的另一个游戏时会被拒绝,与添加时一致。清除 RA 数据现在也会清除你的副本是否可获得成就的记录。RetroDB 不再提供的奖杯不再计入你的收藏家等级。Windows 的 ROM 路径现在按文件名匹配 RetroAchievements 游戏
+    label: 启动 ROM 工具扫描的编辑者现在可以暂停、继续或取消该扫描;其他人的扫描仍只有管理员可以停止。标签和列表在缺少名称或颜色无效时,会给出清晰的提示,而不是错误页面;把愿望单中的游戏重命名为你已在愿望单中的另一个游戏时会被拒绝,就像添加时一样。清除 RA 数据现在还会忘记你的副本是否能获得成就。RetroDB 不再提供的奖杯将不再计入你的收藏家等级。Windows 的 ROM 路径现在会按文件名匹配 RetroAchievements 游戏
+    en: An editor who starts a ROM Tools scan can now pause, resume or cancel it; other people's scans stay an admin's to stop. Tags and lists refuse a missing name or a bad colour with a clear message instead of an error page, and renaming a wishlist game onto another one you already wish for is refused, as adding it is. Clear RA Data now also forgets whether your copy earns achievements. A trophy RetroDB no longer offers stops counting toward your collector rank. Windows ROM paths now match RetroAchievements games by file name
   - type: fix
-    label: 维护修复。解压失败的多光盘压缩包不再留下阻止所有重试的半成品文件夹。计算存储空间现在会统计 PS3 游戏文件夹内的所有文件。清除抓取数据只会在你要求时才删除图片。游戏库扫描遇到另一次扫描刚添加的游戏时,会继续处理该主机的其余游戏
+    label: 维护修复。解压失败的多光盘压缩包不再留下半成品文件夹而阻止每次重试。计算存储空间现在会统计 PS3 游戏文件夹内的每个文件。清除抓取数据仅在你要求时才删除图片。游戏库扫描遇到另一次扫描刚添加的游戏时,会继续处理该主机的其余游戏
+    en: Maintenance fixes. A multi-disc archive that fails to unpack no longer leaves a half-made folder behind that blocks every retry. Calculate Storage now counts every file inside a PS3 game folder. Clear Scraped Data deletes pictures only when you ask it to. A library scan that meets a game another scan has just added carries on with the rest of that console's games
   - type: fix
-    label: 恢复备份更安全了。现在它会按数据库自身期望的方式写入游戏库数据库,因此打开着数据库的 RetroDB 部分会看到恢复后的数据,而不会有损坏的风险。删除游戏现在还会删除它的包装盒图片,以及等待中的图片和模拟器设置条目,因此新游戏不会继承它们。同时保存的两项设置不再丢失其中一项
+    label: 恢复备份更安全了。现在它会按照数据库自身期望的方式写入游戏库数据库,因此正在打开该数据库的 RetroDB 部分会看到恢复后的数据,而不会有损坏的风险。删除游戏现在也会删除它的包装盒图片,以及其等待中的图片和模拟器设置条目,因此新游戏绝不会继承它们。同时保存的两项设置不再丢失其中一项
+    en: Restoring a backup is safer. It is now written into the library database the way the database itself expects, so a part of RetroDB that has it open sees the restored data instead of risking damage. Deleting a game now also deletes its box pictures and its waiting picture and emulator-setting entries, so a new game can never inherit them. Two settings saved at the same moment no longer lose one of them
   - type: fix
-    label: 图片修复。GIF 不再先经过放大器处理再被丢弃。放大器模型会对照其公布的指纹校验,下载损坏时会重新获取,而不是永久关闭放大功能。徽标和带透明部分的图片在放大后保持透明。转换为 WebP 现在也包括封底和徽标,并且不再因为不必要的空间要求而拒绝处理大型游戏库。包装盒文件的两个面可以共用一张图片,删除记录已损坏的包装盒时也会删除它的图片
+    label: 图片修复。GIF 不再先经过放大器处理再被丢弃。放大器模型会对照其公布的指纹进行校验,下载损坏时会重新获取,而不是永久关闭放大功能。徽标和带透明部分的图片在放大后会保留透明度。转换为 WebP 现在也包括封底和徽标,并且不再因为不需要的空间而拒绝处理大型游戏库。包装盒文件的两个面可以共用一张图片,删除记录损坏的包装盒时会一并删除其图片
+    en: Picture fixes. GIFs are no longer run through the upscaler only to be thrown away. The upscaler model is checked against its published fingerprint, and a bad download is fetched again instead of turning upscaling off for good. Logos and pictures with see-through parts keep their transparency when enlarged. Convert to WebP now takes back covers and logos too, and no longer refuses a large library for want of room it does not need. Two faces of a box file can share one picture, and removing a box with a damaged record removes its pictures
   - type: fix
-    label: 从 CLZ、Steam、Xbox 和 PlayStation 导入时,不再把所有仅用日文或其他非拉丁文字书写的标题当作同一个游戏,也不再添加没有 ID 的游戏。CLZ 预览不再在你确认导入前添加主机,查看 Steam、Xbox 或 PlayStation 游戏库的查看者也不再添加它们。已从商店下架的 Steam 游戏只会询问一次,而不是每次同步都询问
+    label: 从 CLZ、Steam、Xbox 和 PlayStation 导入时,不再把所有仅用日文或其他非拉丁文字书写的标题当作同一个游戏,也不再添加没有 ID 的游戏。CLZ 预览在你确认导入前不再添加主机,查看 Steam、Xbox 或 PlayStation 游戏库的查看者也不会再添加它们。已从商店下架的 Steam 游戏只会询问一次,而不是每次同步都问
+    en: Imports from CLZ, Steam, Xbox and PlayStation no longer treat every title written only in Japanese or another non-Latin script as the same game, and no longer add a game with no id. The CLZ preview no longer adds consoles before you confirm the import, and a viewer looking at a Steam, Xbox or PlayStation library no longer adds them either. A Steam game removed from the store is asked about once, not on every sync
   - type: fix
-    label: 分析现在把更多主机归到其制造商名下,而不是“其他”;仪表盘的“最近抓取”列表也会显示你重新抓取的游戏,而不只是新添加的游戏
+    label: 分析现在会把更多主机归到其制造商名下,而不是“其他”;仪表板的“最近抓取”列表会显示你重新抓取过的游戏,而不仅是新添加的游戏
+    en: Analytics now groups many more consoles under their maker instead of "Other", and the dashboard's Recently Scraped list shows a game you scraped again, not only newly added games
   - type: fix
-    label: 你在博物馆中添加的手柄图片会在独立版更新时保留。当在线服务因达到限制而暂停时,再次请求的时间会按你自己的时区显示
+    label: 你在博物馆中添加的手柄图片,在独立版更新时会被保留。当在线服务因达到限额而暂停时,再次请求的时间会按你自己的时区显示
+    en: Controller pictures you add in the Museum are kept when the standalone version updates. When an online service pauses at its limit, the time it will be asked again is shown in your own time zone
   - type: fix
-    label: 额外光盘不再能关联到自身或另一张额外光盘,自动关联也不再在同一次运行中把光盘关联到它标记为额外光盘的光盘
+    label: 额外光盘不再能关联到自己或另一张额外光盘,自动关联也不再在同一次运行中把光盘关联到它标记为额外光盘的光盘
+    en: A bonus disc can no longer be linked to itself or to another bonus disc, and Auto-link no longer links a disc to one it marks as a bonus disc in the same run
   - type: fix
-    label: 游戏库和主机页面不再把街机 BIOS 文件算作游戏,无论是总数还是字母栏。相似游戏,以及在游戏页面点击类型或发行商后得到的列表,不再显示该游戏自己的地区版本、额外光盘或 BIOS 文件
+    label: 游戏库和主机页面不再把街机 BIOS 文件算作游戏,无论是在总数中还是字母栏中。相似游戏,以及在游戏页面点击类型或发行商后得到的列表,不再显示该游戏自己的其他地区版本、额外光盘或 BIOS 文件
+    en: The Library and console pages no longer count arcade BIOS files as games, in their totals or the letter bar. Similar games, and the list you get by clicking a genre or publisher on a game's page, no longer show the game's own regional versions, bonus discs or BIOS files
   - type: fix
-    label: 当列表过长而被截断时,全选现在会提示这一点,而不是悄悄地只选中一部分
+    label: 当过大的列表被截断时,全选现在会提示这一点,而不是悄悄只选中一部分
+    en: Select all now says so when a very large list is cut short, instead of quietly selecting only part of it
   - type: fix
-    label: 当你的成就或奖杯进度变化,或游戏变为可游玩或不可游玩时,游戏库卡片现在会更新
+    label: 当你的成就或奖杯进度变化,以及游戏变为可游玩或不可游玩时,游戏库卡片现在会更新
+    en: Library cards now update when your achievement or trophy progress changes, and when a game becomes playable or stops being playable
   - type: fix
-    label: 批量编辑收到错误的选择时,不再更改错误的游戏;批量编辑失败时也不再把这些游戏标记为由你编辑
+    label: 批量编辑在收到错误的选择时,不再更改错误的游戏;批量编辑失败时,也不再把这些游戏标记为由你编辑
+    en: Bulk edit can no longer change the wrong games when it is sent a bad selection, and a bulk edit that fails no longer marks the games as edited by you
   - type: fix
-    label: 仅有 1% 相符度的 HowLongToBeat 匹配不再显示为 100% 匹配,页面加载失败时会显示错误页面,而不是原始错误文字
+    label: 仅有 1% 匹配度的 HowLongToBeat 结果不再显示为 100% 匹配;页面加载失败时会显示错误页面,而不是原始错误文本
+    en: A HowLongToBeat match that is only a 1% fit is no longer shown as a 100% match, and a page that fails to load shows the error page instead of the raw error text
   - type: security
-    label: 更改密码或由管理员重置密码后,该账户会在其他所有设备上退出登录。因此,本次更新后所有人都需要重新登录一次。首次运行的设置页面也获得了与其他页面相同的防跨站保护
+    label: 更改密码,或由管理员重置密码后,现在会让该账户在其他所有设备上退出登录。因此,此次更新后每个人都需要重新登录一次。首次运行的设置页面也获得了与其他所有页面相同的跨站保护
+    en: Changing your password, or an admin resetting it, now signs that account out on every other device. Because of this, everyone signs in once more after this update. The first-run setup page also gets the same protection against other websites as every other page
   - type: fix
     label: 被拒绝作为头像的图片不再删除你原有的头像
+    en: A picture that is refused as your avatar no longer deletes the avatar you had
   - type: fix
-    label: 抓取对在线服务更温和了。填补空缺时,持续失败的服务会被暂时跳过(搜索时本来就是如此),ScreenScraper 的游戏查询现在也遵守其每日限制
+    label: 抓取对在线服务更温和了。填补空缺时,持续失败的服务会被跳过一段时间,就像搜索时一样;ScreenScraper 的游戏查询现在也会遵守其每日限额
+    en: Scrapes are gentler on the online services. A service that keeps failing is skipped for a while when filling gaps, as it already was in searches, and ScreenScraper game lookups now respect its daily limits too
   - type: fix
-    label: 抓取不再因发行年份未知(如“TBA”)的游戏而失败;发行于你的列表之外地区(如“Brazil, Korea”)的游戏会保留其地区,而不是变成你的默认地区
+    label: 抓取不再因发行年份未知(例如“TBA”)的游戏而失败;在你的列表之外的地区发行的游戏(例如“巴西、韩国”)会保留其地区,而不是变成你的默认地区
+    en: A scrape no longer fails on a game whose release year is unknown, such as "TBA", and a game listed for regions outside your list, such as "Brazil, Korea", keeps its region instead of becoming your default
   - type: fix
-    label: 以 ~/ 书写的 ES-DE 文件夹现在可以使用,超大的 ES-DE 文件也不再被复制。建议的地区版本不会再把你说过互不为版本的两个游戏重新合在一起
+    label: 以 ~/ 书写的 ES-DE 文件夹现在可以使用,非常大的 ES-DE 文件也不再被复制。建议的地区版本绝不会把你说过不是彼此版本的两个游戏重新合在一起
+    en: ES-DE folders written as ~/ now work, and a very large ES-DE file is no longer copied. Suggested regional versions never put back together two games you said are not versions of each other
   - type: security
-    label: 从网络获取图片时,RetroDB 会拒绝更多的私有网络地址,并能正确跟随网址的重定向
+    label: 从网络获取图片时,RetroDB 会多拒绝一些私有网络地址,并能正确跟随网址的重定向
+    en: RetroDB refuses a few more private network addresses when fetching pictures from the web, and follows a web address's redirect correctly
   - type: fix
-    label: 最后仍是英文的界面现在也会跟随你的语言,包括设置向导、标签、列表、比较游戏、ROM 工具设置、批量抓取队列、仪表盘的中断任务列表、游戏库卡片标签和许多错误消息
+    label: 仍为英文的最后一批界面现在也会跟随你的语言,包括设置向导、标签、列表、比较游戏、ROM 工具设置、批量抓取队列、仪表板的中断任务列表、游戏库卡片标签和许多错误信息
+    en: The last screens still in English now follow your language too, including the setup wizard, Tags, Lists, Compare Games, ROM Tools settings, the bulk scrape queue, the dashboard's interrupted-jobs list, the library card labels and many error messages
   - type: security
-    label: 含有网页代码的系统名称不再能在批量抓取队列窗口中运行该代码
+    label: 包含网页代码的系统名称不再能在批量抓取队列窗口中运行该代码
+    en: A system name holding web code can no longer run it in the bulk scrape queue window
   - type: accessibility
-    label: 无论你在页面的哪个位置,键盘焦点现在都会用主题颜色的粗圆环标出,适用于每个按钮、输入框和链接。此前许多控件只显示一条淡淡的线,与鼠标悬停时相同
+    label: 无论你在页面的哪个位置,键盘焦点现在都会以主题颜色的粗环标出,适用于每个按钮、输入框和链接。以前,许多控件只显示一条淡淡的线,与鼠标经过时相同
+    en: Wherever you are on a page, the keyboard's place is now marked with a bold ring in your theme's colour, on every button, box and link. Before, many controls showed only a faint line, the same as when the mouse passed over them
   - type: accessibility
-    label: 游戏库卡片上的类型、系列、开发商和发行商链接现在可以用键盘操作。游玩中游戏的“运行中”按钮也可以用键盘打开,按 Esc 或点击其他位置会关闭其列表
+    label: 游戏库卡片上的类型、系列、开发商和发行商链接现在可以用键盘操作。游戏进行中的“运行中”按钮也可以用键盘打开,按 Esc 或点击其他位置会关闭其列表
+    en: The Genre, Series, Developer and Publisher links on library cards now work from the keyboard. The "running" button for games in play opens from the keyboard too, and Esc or a click elsewhere closes its list
   - type: accessibility
-    label: 屏幕阅读器现在会读出每种标签颜色的名称并说明选中的是哪一个,并把奖杯图片读作白金、金、银和铜,而不是单个字母。游戏启动期间,Tab 键不再移到启动画面后面
+    label: 屏幕阅读器现在会读出每种标签颜色并说明选中的是哪一种,并把奖杯图片读作白金、金、银和铜,而不是单个字母。游戏启动时,Tab 不再移动到启动画面后面
+    en: Screen readers now name each tag colour and say which one is chosen, and read trophy pictures as Platinum, Gold, Silver and Bronze instead of single letters. While a game starts, Tab no longer moves behind the starting screen
   - type: fix
-    label: 如果更新在开始替换文件之前中止,RetroDB 现在会重新启动你原来的版本,而不是保持关闭
+    label: 如果更新在开始替换文件前中止,RetroDB 现在会重新启动你原来的版本,而不是保持关闭
+    en: If an update stops before it starts swapping files, RetroDB now starts the version you had again, instead of staying closed
   - type: fix
-    label: 同时按两次游玩不再会在内置播放器上启动两个游戏。等待核心下载现在会在一段时间后或 RetroDB 停止响应时放弃,而不是一直等下去,“已在运行”的询问也使用 RetroDB 自己的对话框
+    label: 同时按两次游玩不再能在内置播放器上启动两个游戏。等待核心下载现在会在一段时间后或 RetroDB 不再响应时放弃,而不是永远等待;“已在运行”的提问也改用 RetroDB 自己的对话框
+    en: Pressing Play twice at once can no longer start two games on the built-in player. Waiting for a core download now gives up after a while, or when RetroDB stops answering, instead of waiting forever, and the "already running" question uses RetroDB's own dialog
   - type: fix
-    label: 你在游玩期间开启或关闭的金手指会保存到正确的游戏,不会取自文件名相同的另一个游戏。金手指的问题永远不会阻止游戏启动
+    label: 你在游玩期间开启或关闭的金手指会保存到正确的游戏,绝不会取自文件名相同的另一个游戏。金手指的问题绝不会阻止游戏启动
+    en: Cheats you switch on or off during play are kept for the right game, never taken from another game whose file has the same name. A cheat problem never stops a game starting
   - type: fix
-    label: RetroDB 写入模拟器设置文件更安全了。作为链接的设置文件仍保持为链接,保留其权限,并保留它无法读取的字符,保存失败也不会留下多余的文件
+    label: RetroDB 写入模拟器设置文件更安全了。作为链接的设置文件仍保持为链接,保留其权限,并保留它无法读取的字符,保存失败也不会留下多余文件
+    en: RetroDB writes an emulator's settings file more safely. A settings file that is a link stays a link, keeps its permissions, and keeps letters it cannot read, and a failed save leaves no stray file behind
   - type: fix
-    label: 你在队列中下移、与另一个交换或在另一个运行时继续的批量抓取,不再因 RetroDB 重启而丢失;仪表盘会提供它,并从中断处继续。被换下的抓取不再与新的抓取同时运行,快速点击两次继续也只会启动一次任务
+    label: 你在队列中下移、与另一个交换,或在有任务运行时继续的批量抓取,不再在 RetroDB 重启时丢失;仪表板会提供它,并从停止处继续。被换下的抓取不再与新抓取同时运行,快速点击两次继续也只会启动一次任务
+    en: A bulk scrape you move down the queue, swap with another or resume while one runs is no longer lost when RetroDB restarts; the dashboard offers it, from where it stopped. A swapped-out scrape no longer keeps running beside the new one, and two quick clicks on Resume start a job once
   - type: fix
-    label: 单个游戏的错误(例如网络中断)不再结束整个 AI 填充或修复包装盒和说明书地区的运行;该游戏会计为失败,其余的继续。停止 RetroDB 现在也会干净地停止核心下载
+    label: 单个游戏的错误(例如网络中断)不再结束整个 AI 填充,或修复包装盒和说明书地区的运行;该游戏会计为失败,其余游戏继续。停止 RetroDB 现在也会干净地停止核心下载
+    en: One game's error, such as the network dropping, no longer ends a whole AI Fill run or a Fix Box and Manual Regions run; that game counts as failed and the rest go on. Stopping RetroDB now also stops core downloads cleanly
   - type: fix
-    label: 愿望单项目不再因错误或重启而一直停在“抓取中”,同一愿望单的两次全部抓取也不再同时运行
+    label: 愿望单项目在出错或重启后不再永远停在“抓取中”,同一愿望单的两次“全部抓取”也不再同时运行
+    en: Wishlist items no longer stay on "scraping" forever after an error or a restart, and two Scrape All runs for the same wishlist no longer run at once
   - type: fix
-    label: 脚本或 RetroDB 的第二个副本启动时,不再把正在运行的服务器的任务标记为中断,两个副本同时启动也不再把数据库回退一个版本
+    label: 脚本或第二个 RetroDB 启动时,不再把正在运行的服务器的任务标记为已中断,两个副本同时启动也不会再让数据库回退一个版本
+    en: A script or a second copy of RetroDB starting up no longer marks the running server's jobs as interrupted, and two copies starting at once can no longer set the database back a version
   - type: fix
-    label: 启动 PlayStation 同步时,不再因为登录 Sony 而让所有人的进度条等待。每日的 PlayStation 保活现在只在 10 天有效期将尽时才续期登录,而不是每天续期
+    label: 开始 PlayStation 同步时,不再因为要登录 Sony 而让所有人的进度条等待。每日的 PlayStation 保活现在只在 10 天有效期将尽时才续期登录,而不是每天续期
+    en: Starting a PlayStation sync no longer makes everyone's progress bars wait while it signs in to Sony. The daily PlayStation keep-alive now renews a sign-in only near the end of its 10 days, instead of every day
   - type: fix
-    label: 抓取不再覆盖你在抓取期间所做的修改,也不再清空它无法识别名称的类型、模式或视角。它也不再根据游戏的模式改动已保存的玩家人数
+    label: 抓取不再覆盖你在抓取期间所做的修改,也不再清空它不认识名称的类型、模式或视角。它也不再为了匹配游戏模式而改动已保存的玩家人数
+    en: A scrape no longer writes over a change you make while it runs, and no longer empties a genre, mode or view it has no name for. It no longer changes a stored player count to match the game's modes
   - type: fix
-    label: AI 填充不再改动你亲手输入的内容,例如你手动修正过的发行商或类型;它只会修正抓取到的值。它也不再把仅仅写法不同的值报告为已更改,例如把 4 名玩家写成“1-4”,或同样的类型换了顺序
+    label: AI 填充不再改动你亲手输入的内容,例如你手动更正的发行商或类型;它只修正抓取到的值。当值只是写法不同时,例如把 4 名玩家写成“1-4”,或同样的类型顺序不同,也不再报告为已更改
+    en: AI Fill no longer changes what you typed yourself, such as a publisher or genre you corrected by hand; it corrects only scraped values. It no longer reports a value as changed when it only wrote it differently, such as 4 players as "1-4" or the same genres in another order
   - type: fix
-    label: 你为游戏输入的手柄会被保留;主机的默认手柄现在只会替换抓取和 AI 得到的值。由其他机构的 AI 推测转换而来的年龄分级,现在也会标记为推测
+    label: 你为游戏输入的手柄会被保留;主机的默认手柄现在只替换抓取值和 AI 值。由其他分级机构的 AI 推测转换而来的年龄分级,现在也会标记为推测
+    en: A controller you type for a game is kept; the console's default controller now replaces only scraped and AI values. An age rating converted from another board's AI guess is now marked as a guess too
   - type: fix
-    label: 保存游戏的编辑窗口不再清空窗口中未显示的字段。游戏页面上的重置现在会清除它所说的全部内容,包括视角、版本和其他名称,删除该游戏的图片和视频(除非其他游戏也在使用),并立即更新游戏库筛选
+    label: 保存游戏的编辑窗口不再清空窗口中未显示的字段。游戏页面上的“重置”现在会清除它所说的全部内容,包括视角、版本和其他名称,会删除该游戏的图片和视频(除非其他游戏在使用),并立即更新游戏库筛选
+    en: Saving a game's edit window no longer empties fields the window does not show. Reset on a game's page now clears everything it says it does, including the view, edition and other names, deletes the game's pictures and videos unless another game uses them, and updates the library filters straight away
   - type: fix
-    label: 清除抓取数据现在也会清除视角、2D 或 3D,以及游戏结构。导入只有年份的 CLZ 游戏时,只保留年份,而不是 1 月 1 日
+    label: “清除抓取数据”现在也会清除视角、2D 或 3D 以及游戏结构。只有年份的游戏通过 CLZ 导入时只保留年份,不再变成 1 月 1 日
+    en: Clear Scraped Data now also clears the view, 2D or 3D, and game structure. A CLZ import of a game with only a year keeps just the year, not 1 January
   - type: security
-    label: Steam 同步不再为每位家庭成员借用设置中的 Steam 密钥。以前没有自己 Steam 密钥的成员,会在自己的账户下看到管理员的 Steam 游戏库和成就。现在设置中的密钥只供管理员使用
+    label: Steam 同步不再让每位家庭成员借用设置中的 Steam 密钥。没有自己 Steam 密钥的成员,以前会在自己的账户下得到管理员的 Steam 游戏库和成就。设置中的密钥现在只供管理员使用
+    en: Steam sync no longer borrows the Steam key from Settings for every household member. A member with no Steam key of their own was getting the admin's Steam library and achievements under their account. The key in Settings now serves admins only
   - type: fix
-    label: How Long to Beat 批量查找游戏时,现在会保存它确定的时长。以前每个确定的匹配都会失败,什么也没保存。刷新 RetroAchievements 现在也会像抓取一样,将每个游戏的文件与 RetroAchievements 的列表对照,因此游戏会关联到你所拥有的确切版本
+    label: How Long to Beat 对多个游戏的查询现在会保存它确定的时长。以前每个确定的匹配都会失败,什么也没保存。刷新 RetroAchievements 现在也会像抓取一样,把每个游戏的文件与 RetroAchievements 的列表核对,让游戏关联到你所拥有的确切版本
+    en: How Long to Beat's lookup for many games now saves the times it is sure of. Before, every sure match failed and nothing was saved. RetroAchievements Refresh now also checks each game's file against RetroAchievements' list, as a scrape does, so a game is linked to the exact version you have
   - type: fix
-    label: 后台任务完成的消息又会显示了,任务进度框也会在服务器重启后接手任务时有所察觉。以前两者都不会出现
+    label: 后台任务完成的提示重新显示了,任务的进度框也能察觉服务器在重启后接手任务。以前这两者都不会出现
+    en: The message that a background job has finished shows again, and a job's progress box notices when the server picks the job up after a restart. Before, neither ever appeared
   - type: fix
-    label: PlayStation 奖杯:手动关联的游戏在完整同步后仍保持关联,同步也不再把游戏关联到它的续作,例如把“Doom”关联到“Doom Eternal”。导入 PlayStation 游戏现在会像 Steam 和 Xbox 导入一样,关联游戏库中已有的游戏,因此奖杯会显示在该游戏上
+    label: PlayStation 奖杯:你手动关联的游戏在完整同步后仍保持关联,同步也不再把游戏关联到其续作,例如把“Doom”关联到“Doom Eternal”。导入 PlayStation 游戏现在会像 Steam 和 Xbox 导入一样关联游戏库中已有的游戏,让奖杯显示在其上
+    en: 'PlayStation trophies: a game you linked by hand stays linked after a full sync, and a sync no longer links a game to its sequel, such as "Doom" to "Doom Eternal". Importing PlayStation games now links a game already in your library, as Steam and Xbox imports do, so its trophies show on it'
   - type: fix
-    label: Xbox 登录自动续期后,不再把你的玩家标签显示为“未知”,连接缓慢或失败也不再让你退出 Xbox 登录。只有微软拒绝登录时才会如此
+    label: Xbox 登录自动续期后,不再把你的玩家标签显示为“未知”,连接缓慢或失败也不再让你退出 Xbox 登录。只有微软拒绝登录时才会这样
+    en: Xbox no longer shows your gamertag as Unknown after its sign-in renews itself, and a slow or failed connection no longer signs you out of Xbox. Only Microsoft refusing the sign-in does that
   - type: fix
-    label: 两个人现在可以各自拥有同名标签;以前第二个会报错失败。任何已登录的用户现在都可以重新扫描自己的 RPCS3 奖杯;以前只有管理员可以,其他人在 RetroDB 重启前看到的都是旧奖杯
+    label: 现在两个人可以各有一个同名标签;以前第二个会报错。任何已登录用户现在都可以重新扫描自己的 RPCS3 奖杯;以前只有管理员可以,其他人要等 RetroDB 重启才能看到新的奖杯
+    en: Two people can now each have a tag of the same name; before, the second one failed with an error. Any signed-in user can now rescan their own RPCS3 trophies; before, only an admin could, and everyone else saw old trophies until RetroDB restarted
   - type: security
-    label: 你的登录信息保持私密。数据库备份不再能被这台电脑上的其他账户读取,备份失败也不再删除上一个备份。删除或停用用户时,也会让其退出 DuckStation 和 PCSX2 中的 RetroAchievements 登录。从玩家自己的菜单保存的 RetroAchievements 登录,不再带到下一位玩家。日志和已保存的任务错误会隐藏 RetroAchievements 令牌,其他成员的 PlayStation 错误只对其本人显示,旧的明文 PlayStation 和 Xbox 登录文件也会被移除
+    label: 你的登录信息保持私密。数据库备份不再能被电脑上的其他账户读取,备份失败也不再删除上一份备份。删除或停用用户时,也会让其退出 DuckStation 和 PCSX2 中的 RetroAchievements 登录。从玩家自己的菜单保存的 RetroAchievements 登录不再延续给下一个游玩的人。日志和已保存的任务错误会隐藏 RetroAchievements 令牌,其他成员的 PlayStation 错误只对本人显示,旧的明文 PlayStation 和 Xbox 登录文件也会被删除
+    en: Your sign-ins stay private. Database backups can no longer be read by other accounts on the computer, and a failed backup no longer deletes the one before it. Deleting or switching off a user also signs them out of RetroAchievements in DuckStation and PCSX2. A RetroAchievements sign-in saved from the player's own menu no longer carries over to the next person who plays. Logs and saved job errors hide RetroAchievements tokens, another member's PlayStation error is shown only to them, and old plain-text PlayStation and Xbox sign-in files are removed
   - type: fix
-    label: RetroDB 自带的检查在运行时不再会碰你的游戏库。它们始终使用数据库、图片和设置的临时副本,如果其中任何一项指向你的真实文件,就会拒绝启动
+    label: RetroDB 自身的检查在运行时不再能触及你的游戏库。它们始终使用数据库、图片和设置的临时副本,如果其中任何一项指向你的真实文件,就拒绝启动
+    en: RetroDB's own checks can no longer touch your library while they run. They always use a throwaway copy of the database, pictures and settings, and refuse to start if any of them points at your real files
   - type: fix
-    label: 清理孤立文件不再删除愿望单的图片。打开游戏不再让它忘记找不到的截图。以前图片所在的硬盘拔掉时,你打开的每个游戏都会丢失整个截图列表;现在列表会保留,缺失的图片只是被隐藏
+    label: 清理孤立文件不再删除愿望单的图片。打开游戏不再让它忘记找不到的截图。以前图片所在的硬盘拔掉时,你打开的每个游戏都会丢失整个截图列表;现在列表会保留,找不到的图片只是被隐藏
+    en: Clean orphaned files no longer deletes your wishlist's pictures. Opening a game no longer makes it forget screenshots it cannot find. Before, with the picture drive unplugged, every game you opened lost its whole screenshot list; now the list is kept, and a missing picture is only hidden
   - type: fix
-    label: 视频或说明书下载中途失败,不再损坏游戏已有的副本,下载失败也不再在媒体文件夹中留下隐藏的半截文件。后台放大器不再用旧图片覆盖期间下载的新图片。转换为 WebP 会让共用同一张图片的每个游戏继续指向它,并且绝不会碰图片文件夹以外的文件
+    label: 视频或说明书下载中途失败,不再损坏游戏原有的副本,失败的下载也不再在媒体文件夹中留下隐藏的半截文件。后台放大工具不再用旧图片覆盖期间下载的新图片。转换为 WebP 会让共用同一图片的所有游戏继续指向它,并且绝不会触碰图片文件夹之外的文件
+    en: A video or manual download that fails part-way no longer damages the copy the game already had, and a failed download no longer leaves a hidden half-file in the media folder. The background upscaler no longer saves an old picture over a newer one downloaded meanwhile. Convert to WebP keeps every game that shares a picture pointing at it, and never touches a file outside the picture folders
   - type: fix
-    label: 删除游戏或愿望单项目时,现在也会删除它的图片、视频和说明书,但会保留其他游戏或愿望单项目仍在使用的。保存的图片又可以被这台电脑上的其他账户读取了,调整图片大小会把无法保存的图片计为失败,而不是完成
+    label: 删除游戏或愿望单项目现在也会删除其图片、视频和说明书,但会保留其他游戏或愿望单项目仍在使用的。已保存的图片又可以被电脑上的其他账户读取,调整图片大小也会把无法保存的图片计为失败,而不是完成
+    en: Deleting a game or a wishlist item now deletes its pictures, videos and manuals too, but keeps any another game or wishlist item still uses. Saved pictures can be read by other accounts on the computer again, and Resize Images counts a picture it could not save as failed, not as done
   - type: fix
-    label: 重复项查找器不再提供可正常使用的文件供删除。按名称查找时,不再把游戏的 .cue 和 .bin 当作彼此的副本。它绝不会提供光盘的音轨文件,因为同一游戏的两个版本可能共用它。它不会删除播放列表中列出的光盘。删除文件的游戏现在会转到你保留的副本,因此仍留在游戏库中
+    label: 重复文件查找器不再提供可正常使用的文件供删除。按名称查找时,不再把游戏的 .cue 和 .bin 副本当作彼此的重复。它绝不会提供光盘的音轨文件,因为同一游戏的两个版本可能共用它。它也不会删除播放列表中列出的光盘。你删除文件的游戏现在会转移到你保留的副本上,因此仍留在游戏库中
+    en: Duplicate Finder no longer offers a working file for deletion. Looking by name, it no longer calls a game's .cue and .bin copies of each other. It never offers a disc's track file, which two versions of a game can share. It will not delete a disc that a playlist lists. A game whose file you delete now moves to the copy you keep, so it stays in the library
   - type: fix
-    label: 整理多碟不再覆盖已有的播放列表或游戏文件夹中已有的文件;它会停止并告诉你是哪个。它生成的播放列表列出每张光盘的 .cue,而不是音轨文件。文件被移动的游戏现在会跟随文件进入文件夹,因此清理缺失 ROM 不再把它们移除
+    label: 整理多碟不再覆盖已有的播放列表或游戏文件夹中已有的文件;它会停止并告诉你是哪一个。生成的播放列表列出每张光盘的 .cue,而不是它的音轨文件。被它移动文件的游戏现在会跟随文件进入文件夹,因此“清理缺失的 ROM”不再删除它们
+    en: Organize Multi-Disc no longer writes over an existing playlist or a file already in the game's folder; it stops and says which. The playlist it makes lists each disc's .cue, not its track files. Games whose files it moves now follow them into the folder, so Clean missing ROMs no longer removes them
   - type: fix
-    label: 选择“删除原文件”转换为 CHD 时,现在也会删除光盘的音轨文件,但会保留仍被其他 .cue 使用的音轨。游戏以及列出旧光盘的播放列表现在都会指向新的 .chd。重命名游戏文件现在会更新列出它的播放列表,.cue 所需的音轨文件则不能重命名。从 zip 中移除文件只会移除你选中的文件,即使名称包含 [ 或 ]。截图去重只删除扫描发现的副本,并且始终保留一份
+    label: 使用“删除原文件”转换为 CHD 时,现在也会删除光盘的音轨文件,但会保留其他 .cue 仍在使用的音轨。游戏和列出旧光盘的所有播放列表现在都指向新的 .chd。重命名游戏文件现在会更新列出它的播放列表,.cue 需要的音轨文件不能被重命名。从 zip 中移除文件只会移除你选的文件,即使名称中含有 [ 或 ]。截图去重只删除其扫描发现的副本,并且始终保留一份
+    en: Converting to CHD with "delete originals" now deletes the disc's track files too, but keeps a track another .cue still uses. The game and any playlist that listed the old disc now point at the new .chd. Renaming a game's file now updates the playlist that lists it, and a track file a .cue needs cannot be renamed. Removing files from a zip removes only the files you picked, even when a name holds [ or ]. Screenshot Dedup deletes only the copies its scan found, and always keeps one
   - type: fix
-    label: 游戏页面上的 How Long to Beat 会搜索你输入的内容。以前找不到标题时,它会改为搜索游戏的其他名称,还可能给出另一个游戏,例如粉丝重制版。当输入框中是游戏本身的名称时,它仍会尝试其他名称
+    label: 游戏页面上的 How Long to Beat 会搜索你输入的内容。以前找不到标题时,它会改搜游戏的其他名称,还可能给出另一款游戏,例如粉丝重制版。当输入框中是游戏本身的名称时,它仍会尝试其他名称
+    en: How Long to Beat on a game's page searches for what you type. Before, a title it could not find made it search the game's other names instead, and it could offer a different game, such as a fan remake. It still tries the other names when the box holds the game's own name
   - type: fix
-    label: 帮助说明书中 How Long to Beat 的步骤已与界面一致。以前说要从列表中选择匹配项,而页面只显示一个匹配项,并带有保存和取消。PlayStation 帮助不再说登录大约持续两个月,因为 RetroDB 会自动重新登录。全部 20 种语言的说明书都包含这两处更改
+    label: 帮助说明书中 How Long to Beat 的步骤与界面一致。以前说要从列表中选择匹配项;页面实际显示的是一个匹配项,配有“保存”和“取消”。PlayStation 帮助不再说登录大约持续两个月,因为 RetroDB 会自动重新登录。全部 20 种翻译的说明书都包含这两项更改
+    en: The help manual's How Long to Beat steps match the screen. They said to pick a match from a list; the page shows one match with Save and Cancel. The PlayStation help no longer says the sign-in lasts about two months, since RetroDB signs in again by itself. All 20 translated manuals carry both changes
   - type: fix
-    label: 每个字母栏现在都以“全部”按钮开头。在游戏库、主机和 PSN 奖杯页面,选择字母后只显示该字母的游戏,以前没有按钮可以让其余游戏重新显示。在其他成就页面,“全部”会回到第一个游戏
+    label: 每个字母栏现在都以“全部”按钮开头。在游戏库、主机和 PSN 奖杯页面,选择一个字母只显示该字母开头的游戏,以前没有按钮可以把其余的找回来。在其他成就页面,“全部”会回到第一个游戏
+    en: Every letter bar now starts with an All button. On the Library, console and PSN Trophies pages, picking a letter shows only that letter's games, and before there was no button to bring the rest back. On the other achievement pages, All goes back to the first game
   - type: fix
-    label: 你在设置中粘贴的新 PlayStation 登录令牌现在会立即生效。以前 RetroDB 会继续使用旧登录直到过期,保存并测试连接还会把旧登录报告为可用。被索尼拒绝的令牌不再替换仍可用的令牌
+    label: 你在设置中粘贴的新 PlayStation 登录令牌现在会立即生效。以前 RetroDB 会继续使用旧登录直到过期,“保存并测试连接”还会报告旧登录可用。Sony 拒绝的令牌不再替换仍可用的令牌
+    en: A new PlayStation sign-in token you paste in Settings is now used straight away. Before, RetroDB kept using the old sign-in until it ran out, and Save & Test Connection reported that old sign-in as working. A token Sony refuses no longer replaces one that works
   - type: enhancement
-    label: 设置中的 PlayStation 登录更容易维持。横幅不再倒数你无需处理的天数,因为 RetroDB 会自动重新登录;只有索尼拒绝你保存的令牌时才会变红。“在此粘贴”按钮不再让浏览器请求读取剪贴板:它会把光标放进输入框,供你按 Ctrl+V。步骤现在说明,替换仍可用的令牌时要先退出 PlayStation 登录,并且这些提示信息可以翻译
+    label: 设置中的 PlayStation 登录更容易保持有效。横幅不再倒数你根本不需要处理的天数,因为 RetroDB 会自动重新登录;只有当 Sony 拒绝你保存的令牌时才会变红。“在此粘贴”按钮不再让浏览器请求读取你的剪贴板:它会把光标放进输入框,供你按 Ctrl+V。当你替换仍可用的令牌时,步骤现在会提示先退出 PlayStation 登录,这些提示也可以翻译了
+    en: 'The PlayStation sign-in in Settings is easier to keep going. The banner no longer counts down days you never had to act on, because RetroDB signs in again by itself; it turns red only when Sony refuses your saved token. The Paste here button no longer makes the browser ask to read your clipboard: it puts the cursor in the box for Ctrl+V. The steps now say to sign out of PlayStation first when you replace a token that still works, and their messages can be translated'
   - type: enhancement
-    label: 弹出消息和提问框,例如“设置已保存”或“删除此列表?”,现在在每个页面都可以翻译。以前无论选择什么语言,大多数仍是英文
+    label: 弹出消息和询问框,例如“设置已保存”或“删除此列表?”,现在在每个页面都可以翻译。以前无论你选什么语言,大多数都仍是英文
+    en: Pop-up messages and question boxes, such as "Settings saved" or "Delete this list?", can now be translated on every page. Before, most of them stayed in English whatever language you chose
   - type: enhancement
     label: 说明 PlayStation 登录失败原因的消息,例如“你的 NPSSO 可能已过期”,现在可以翻译了
+    en: The messages that say why a PlayStation sign-in failed, such as "Your NPSSO may have expired", can now be translated
   - type: fix
-    label: 各语言的帮助说明书现在都与英文版一致。新增了全局搜索、保留标题、MAME 名称和包装盒背面,落后的旧段落也已更新
+    label: 各语言的帮助说明书现在都与英文版一致。新增了随处搜索、保留标题、MAME 名称和盒子背面,落后的旧段落也已更新
+    en: The help manual in every language now matches the English one. It gains Search Anywhere, Keeping a Title, MAME Names and the back of the box, and older paragraphs that had fallen behind are up to date
   - type: fix
-    label: 在德语、南非荷兰语和西班牙语中,游戏封面上的“背面”按钮现在表示包装盒背面,而不是“返回”
+    label: 在德语、南非荷兰语和西班牙语中,游戏封面上的“返回”按钮现在表示盒子背面,而不是“返回上一页”
+    en: In German, Afrikaans and Spanish, the Back button on a game's cover now says the back of the box, not "go back"
   - type: feature
-    label: 按下游游玩后,游戏启动期间会在游戏背景图上全屏显示游戏标志,没有标志时则显示大号游戏名称。游戏窗口打开时,或你按 Esc 或点击时,它会自动消失
+    label: 按下“游玩”后,游戏启动期间会用游戏标志加背景图铺满屏幕;没有标志时则显示游戏名称的大字。游戏窗口打开时,或按 Esc 或点击时,它会自动消失
+    en: Pressing Play now fills the screen with the game's logo on its background picture while the game starts, or its name in large letters when it has no logo. It goes away by itself when the game's window opens, or when you press Esc or click
   - type: feature
-    label: 可旋转的 3D 包装盒现在具有 PS5 盒子的真实形状:圆角和圆边、封面周围凸起的边缘、两半相接的线,以及开口一侧的拇指槽。它需要来自能写入该形状的 Slipcase 版本的盒子文件;请重新导入盒子以获得该效果。其他盒子外观不变
+    label: 可旋转的 3D 盒子现在拥有 PS5 盒子的真实形状:圆角和圆边、封面周围凸起的边缘、两半相接的线,以及开口一侧的指槽。它需要来自会写入该形状的 Slipcase 版本的盒子文件;请重新导入盒子以获得。其他盒子外观不变
+    en: 'The turnable 3D box now has the real shape of a PS5 case: rounded corners and edges, the raised lip round the cover, the line where the two halves meet, and the finger slot in the opening side. It needs a box file from a Slipcase version that writes the shape; import the box again to get it. Other boxes look as before'
   - type: enhancement
-    label: 刷新 RetroAchievements 已从设置移到 RetroAchievements 页面,并改名为查找有成就的游戏。那里的每个按钮现在都有一行说明其作用,方便区分查找游戏和同步进度。尚未关联任何游戏时,页面会向管理员显示查找按钮,而不是跳到下一个标签页
-  body: "<ul>\n  <li><strong>各语言的帮助说明书都已更新。</strong>\n    以前只有英文说明书中的章节,现在都已翻译。</li>\n</ul>\n"
+    label: 刷新 RetroAchievements 已从设置移到 RetroAchievements 页面,现在名为“查找有成就的游戏”。那里的每个按钮现在都有一行说明其作用,方便区分“查找游戏”和“同步进度”。尚未关联任何游戏时,页面会向管理员显示“查找”按钮,而不是跳到下一个标签页
+    en: Refresh RetroAchievements moved from Settings to the RetroAchievements page, and is now called Find Games with Achievements. Every button there now has a line saying what it does, so Find Games and Sync Progress are easy to tell apart. With no games linked yet, the page shows an admin the Find button instead of moving on to the next tab
+  body: "<ul>\n  <li><strong>各语言的帮助说明书都已更新。</strong>\n    以前只有英文说明书中的章节现在都已翻译。</li>\n</ul>\n"
+  body_en: "<ul>\n  <li><strong>The help manual is up to date in every language.</strong>\n    Sections that were only in the English manual are now translated.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'
   tags:

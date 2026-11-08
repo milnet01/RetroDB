@@ -1,149 +1,233 @@
 - version: 4.0.0
-  date: '2026-11-06'
+  date: '2026-11-08'
   tags:
+  - type: performance
+    label: מילוי AI עם חיפוש באינטרנט של Claude עולה פחות. Claude קורא שוב את תוצאות החיפוש אחרי כל חיפוש; RetroDB מבקשת עכשיו מ-Anthropic לשמור אותן זמינות, וקריאה חוזרת עולה עשירית מהמחיר או פחות
+    en: AI Fill with Claude web search costs less. Claude reads the search results again after each search; RetroDB now asks Anthropic to keep them ready, and a re-read then costs a tenth of the price or less
+  - type: fix
+    label: ביטול של משימת גרידה, סנכרון או תמונות שכבר הסתיימה מנקה עכשיו את חלון ההתקדמות התקוע. הפעלת משימה שכבר רצה מציגה את הסיבה האמיתית, כמו "גרידה עבור SNES כבר רצה", במקום "שגיאת רשת". שגיאות תמונות בקר במוזיאון מסבירות עכשיו מה השתבש, וביטול סנכרון RetroAchievements של משתמש אחר מודיע שהוא שייך לו, במקום להעמיד פנים שהוא בוטל
+    en: Cancelling a scrape, sync or image job that has already finished now clears its stuck progress popup. Starting a job that is already running shows the real reason, such as "A scrape for SNES is already running", instead of "Network error". Controller image errors in the Museum now say what went wrong, and cancelling another user's RetroAchievements sync says it is theirs instead of pretending to cancel it
+  - type: security
+    label: מציג היומנים מסתיר עכשיו סיסמאות ומפתחות גם בקובצי יומן ישנים יותר. יומנים שנכתבו לפני ש-RetroDB למד להסתיר סיסמה מסוימת, כמו זו של ScreenScraper, הציגו אותה בגלוי בצפייה או בהורדה
+    en: The log viewer now hides passwords and keys in older log files too. Logs written before RetroDB learned to hide a particular password, such as ScreenScraper's, showed it in plain text when viewed or downloaded
+  - type: security
+    label: איפוס כל ההגדרות לברירת המחדל שומר עכשיו את תיקיית ה-ROM שלך ואת העובדה שההתקנה הושלמה. קודם, איפוס פתח מחדש את דפי ההתקנה הראשונית, שפועלים גם בלי התחברות, עד שמנהל הריץ את ההתקנה שוב
+    en: Resetting all settings to their defaults now keeps your ROM folder and the fact that setup is done. Before, a reset reopened the first-time setup pages, which work without signing in, until an admin ran setup again
   - type: feature
-    label: משחקי ארקייד יכולים שוב לקבל RetroAchievements. RetroDB מקשר עכשיו משחק ארקייד רק אם RetroAchievements מכיר את שם הקובץ המדויק שלו, כמו sf2 עבור Street Fighter II, ולכן הוא כבר לא מנחש לפי שמות ולא מקשר משחק שגוי. משחקי הארקייד שלך יקושרו בפעם הבאה שנתוני RetroAchievements שלהם יתרעננו או שיגרדו אותם
+    label: משחקי ארקייד יכולים שוב להרוויח RetroAchievements. RetroDB מקשר עכשיו משחק ארקייד רק כש-RetroAchievements מכיר את שם הקובץ המדויק שלו, כמו sf2 עבור Street Fighter II, ולכן הוא כבר לא מנחש לפי שמות ומקשר משחק שגוי. משחקי הארקייד שלך יקושרו ברענון הבא של נתוני RetroAchievements שלהם או כשייגרדו
+    en: Arcade games can earn RetroAchievements again. RetroDB now links an arcade game only when RetroAchievements knows its exact file name, such as sf2 for Street Fighter II, so it no longer guesses from titles and links the wrong game. Your arcade games link the next time their RetroAchievements data is refreshed or they are scraped
   - type: fix
-    label: סנכרון הגביעים של PlayStation מתקן עכשיו קישורי משחקים שנעשו בטעות בעבר, כמו משחקים רבים שקושרו למשחק לא קשור בשם "D". קישור שקבעת בעצמך לעולם לא משתנה בסנכרון. הסנכרון הבא בודק שוב את כל הקישורים הישנים, ולכן כמה התאמות קרובות עשויות להתנתק; קשר אותן שוב ידנית
+    label: סנכרון גביעי PlayStation מתקן עכשיו קישורי משחקים שנעשו בטעות קודם, כמו משחקים רבים שקושרו למשחק לא קשור בשם "D". קישור שקבעת בעצמך לא משתנה לעולם בסנכרון. הסנכרון הבא בודק שוב את כל הקישורים הישנים, ולכן כמה התאמות קרובות עלולות להתנתק; קשר אותן מחדש ביד
+    en: PlayStation trophy sync now corrects game links it made wrongly before, such as many games linked to an unrelated game called "D". A link you set yourself is never changed by a sync. The next sync checks all older links again, so a few near matches may come unlinked; link those again by hand
   - type: fix
-    label: העברת גירוד כמותי ממתין לפני גירוד שרץ כבר לא מוסיפה את המשחק האחרון של הגירוד הישן לספירה של החדש. לחיצה על "גרד הכול" ברשימת המשאלות בזמן שגירוד כבר רץ אומרת זאת עכשיו, במקום לטעון שהוא התחיל
+    label: העברת גרידה המונית ממתינה לפני גרידה שרצה כבר לא מוסיפה את המשחק האחרון של הגרידה הישנה לספירות של החדשה. לחיצה על "גרד הכול" ברשימת המשאלות בזמן שגרידה כבר רצה מודיעה על כך, במקום לטעון שהיא התחילה
+    en: Moving a waiting bulk scrape ahead of a running one no longer adds the old scrape's last game to the new one's counts. Clicking "Scrape all" on the wishlist while one is already running now says so, instead of claiming it started
   - type: accessibility
-    label: 'בקורא מסך, הכפתור "רץ" אומר "משחק אחד רץ" רק כשהמספר משתנה, במקום להקריא מספר חשוף כל כמה שניות. הרשימה שלו נפתחת כחלון עם שם והסמן בתוכו, כפתורי Kill ו-Next disk שלו אומרים על איזה משחק הם פועלים, ואחרי Kill הסמן חוזר למקום הגיוני. כל כרטיס משחק בספרייה נפתח עכשיו במקלדת מהכותרת שלו, וכפתורי הסינון בו אומרים מה הם מסננים, כמו "סנן לפי מפתח: Konami"'
+    label: 'עם קורא מסך, הכפתור "רץ" אומר עכשיו "משחק אחד רץ" רק כשהמספר משתנה, במקום להקריא מספר חשוף כל כמה שניות. הרשימה שלו נפתחת כחלון בעל שם עם הסמן בתוכו, כפתורי "סיים" ו"דיסק הבא" שלו אומרים על איזה משחק הם פועלים, ואחרי "סיים" הסמן חוזר למקום הגיוני. כל כרטיס משחק בספרייה נפתח עכשיו במקלדת מהכותרת שלו, וכפתורי הסינון שלו אומרים מה הם מסננים, כמו "סנן לפי מפתח: Konami"'
+    en: 'With a screen reader, the "running" button now says "1 game running" only when the count changes, instead of reading a bare number every few seconds. Its list opens as a named window with the cursor inside, its Kill and Next disk buttons say which game they act on, and after Kill the cursor returns to a sensible place. Each game card in the library now opens with the keyboard from its title, and its filter buttons say what they filter, such as "Filter by Developer: Konami"'
   - type: feature
     label: כל חבר יכול עכשיו להוסיף מפתח Steam ומזהה Steam משלו תחת הגדרות ← הפרופיל שלי, ולייבא את ספריית Steam וההישגים שלו. עד עכשיו רק מנהל יכול היה
+    en: Every member can now add their own Steam key and Steam ID under Settings → My Profile, and import their own Steam library and achievements. Until now only an admin could
   - type: fix
-    label: שמירת פרטי משחק כבר לא קובעת מספר שחקנים ריק ל-1, וכבר לא מסמנת דירוגי גיל ש-RetroDB חישב בשבילך כאילו הקלדת אותם. מילוי AI משאיר משחק שסימנת כבלעדי, ושומר כל שינוי שאתה עושה במשחק בזמן שהוא ממתין לתשובת ה-AI. היסטוריית גירוד מציגה עכשיו רק פרטים שנשמרו בפועל
+    label: שמירת פרטי משחק כבר לא קובעת מספר שחקנים ריק ל-1, וכבר לא מסמנת את דירוגי הגיל ש-RetroDB חישב בשבילך כאילו הקלדת אותם. מילוי AI משאיר משחק שסימנת כבלעדי, ושומר כל שינוי שאתה עושה במשחק בזמן שהוא ממתין לתשובת ה-AI. היסטוריית גרידה מציגה עכשיו רק את הפרטים שנשמרו בפועל
+    en: Saving a game's details no longer sets an empty player count to 1, and no longer marks the age ratings RetroDB worked out for you as typed by you. AI Fill keeps a game you marked Exclusive, and keeps any change you make to a game while it is waiting for the AI's answer. A scrape's history now lists only the details it actually saved
   - type: fix
-    label: בדיקת צילומי מסך כבר לא נעצרת באמצע כשצילום מסך שמור אחד גדול מדי לפתיחה; היא סופרת אותו כלא קריא וממשיכה. רשימת התוכן בדף העזרה מקשרת עכשיו לאמולטורים ולשחק, והערות המפתחים על כניסה, משימות רקע, גירוד, תמונות, עדכונים והודעות שגיאה מתארות עכשיו מה התוכנה באמת עושה
+    label: סקירת צילומי מסך כבר לא נעצרת באמצע כשצילום מסך שמור אחד גדול מדי לפתיחה; היא סופרת אותו כלא קריא וממשיכה. רשימת התוכן של דף העזרה מקשרת עכשיו לאמולטורים ולשחק, והערות המפתח על התחברות, משימות רקע, גרידה, תמונות, עדכונים ותשובות שגיאה אומרות עכשיו מה התוכנה באמת עושה
+    en: Screenshot Review no longer stops halfway when one stored screenshot is far too large to open; it counts that picture as unreadable and carries on. The help page's contents list now links to Emulators and Playing, and the developer notes on sign-in, background jobs, scraping, pictures, updates and error replies now say what the program really does
   - type: fix
-    label: עורך שמתחיל סריקת כלי ROM יכול עכשיו להשהות, להמשיך או לבטל אותה; סריקות של אחרים נשארות בסמכות מנהל. תגיות ורשימות דוחות שם חסר או צבע שגוי בהודעה ברורה במקום בדף שגיאה, ושינוי שם של משחק ברשימת משאלות לשם של משחק אחר שכבר ברשימה נדחה, כמו בהוספה. נקה נתוני RA שוכח עכשיו גם אם העותק שלך מקבל הישגים. גביע ש-RetroDB כבר לא מציע מפסיק להיספר בדרגת האספן שלך. נתיבי ROM של Windows מותאמים עכשיו למשחקי RetroAchievements לפי שם קובץ
+    label: עורך שמפעיל סריקת כלי ROM יכול עכשיו להשהות, להמשיך או לבטל אותה; סריקות של אחרים נשארות בידי מנהל. תגיות ורשימות דוחות שם חסר או צבע שגוי בהודעה ברורה במקום בדף שגיאה, ושינוי שם של משחק ברשימת משאלות לשם של משחק אחר שכבר ברשימה נדחה, כמו הוספתו. נקה נתוני RA שוכח עכשיו גם אם העותק שלך מרוויח הישגים. גביע ש-RetroDB כבר לא מציע מפסיק להיספר בדרגת האספן שלך. נתיבי ROM של Windows מותאמים עכשיו למשחקי RetroAchievements לפי שם קובץ
+    en: An editor who starts a ROM Tools scan can now pause, resume or cancel it; other people's scans stay an admin's to stop. Tags and lists refuse a missing name or a bad colour with a clear message instead of an error page, and renaming a wishlist game onto another one you already wish for is refused, as adding it is. Clear RA Data now also forgets whether your copy earns achievements. A trophy RetroDB no longer offers stops counting toward your collector rank. Windows ROM paths now match RetroAchievements games by file name
   - type: fix
-    label: תיקוני תחזוקה. ארכיון רב-דיסקים שנכשל בפריסה כבר לא משאיר תיקייה חצי-גמורה שחוסמת כל ניסיון חוזר. חישוב אחסון סופר עכשיו כל קובץ בתיקיית משחק PS3. ניקוי נתוני גירוד מוחק תמונות רק כשאתה מבקש. סריקת ספרייה שנתקלת במשחק שסריקה אחרת הרגע הוסיפה ממשיכה עם שאר משחקי הקונסולה
+    label: תיקוני תחזוקה. ארכיון רב-דיסקים שנכשל בפריסה כבר לא משאיר תיקייה חצי-מוכנה שחוסמת כל ניסיון חוזר. חישוב אחסון סופר עכשיו כל קובץ בתוך תיקיית משחק PS3. ניקוי נתונים שנגרדו מוחק תמונות רק כשאתה מבקש. סריקת ספרייה שנתקלת במשחק שסריקה אחרת הוסיפה זה עתה ממשיכה עם שאר משחקי אותה קונסולה
+    en: Maintenance fixes. A multi-disc archive that fails to unpack no longer leaves a half-made folder behind that blocks every retry. Calculate Storage now counts every file inside a PS3 game folder. Clear Scraped Data deletes pictures only when you ask it to. A library scan that meets a game another scan has just added carries on with the rest of that console's games
   - type: fix
-    label: שחזור גיבוי בטוח יותר. הוא נכתב עכשיו לבסיס נתוני הספרייה כפי שבסיס הנתונים עצמו מצפה, כך שחלק ב-RetroDB שפתוח עליו רואה את הנתונים המשוחזרים במקום להסתכן בנזק. מחיקת משחק מוחקת עכשיו גם את תמונות הקופסה שלו ואת התמונה הממתינה והגדרות האמולטור שלו, כך שמשחק חדש לא יירש אותם. שתי הגדרות שנשמרות באותו רגע כבר לא מאבדות אחת מהן
+    label: שחזור גיבוי בטוח יותר. הוא נכתב עכשיו לתוך מסד נתוני הספרייה כפי שהמסד עצמו מצפה, כך שחלק ב-RetroDB שפותח אותו רואה את הנתונים ששוחזרו במקום להסתכן בנזק. מחיקת משחק מוחקת עכשיו גם את תמונות הקופסה שלו ואת רשומות התמונה וההגדרות של האמולטור הממתינות שלו, כך שמשחק חדש לא יירש אותן. שתי הגדרות שנשמרות באותו רגע כבר לא מאבדות אחת מהן
+    en: Restoring a backup is safer. It is now written into the library database the way the database itself expects, so a part of RetroDB that has it open sees the restored data instead of risking damage. Deleting a game now also deletes its box pictures and its waiting picture and emulator-setting entries, so a new game can never inherit them. Two settings saved at the same moment no longer lose one of them
   - type: fix
-    label: תיקוני תמונות. קובצי GIF כבר לא עוברים הגדלה רק כדי להיזרק. מודל ההגדלה נבדק מול טביעת האצבע שפורסמה שלו, והורדה פגומה נמשכת שוב במקום לכבות את ההגדלה לתמיד. לוגואים ותמונות עם חלקים שקופים שומרים על השקיפות בהגדלה. המרה ל-WebP כוללת עכשיו גם גב כריכות ולוגואים, וכבר לא מסרבת לספרייה גדולה בגלל מקום שאינה צריכה. שני צדדים של קובץ קופסה יכולים לשתף תמונה אחת, והסרת קופסה עם רשומה פגומה מסירה את התמונות שלה
+    label: תיקוני תמונות. קובצי GIF כבר לא עוברים דרך מגדיל התמונה רק כדי להיזרק. מודל המגדיל נבדק מול טביעת האצבע שפורסמה שלו, והורדה פגומה נמשכת שוב במקום לכבות את ההגדלה לתמיד. לוגואים ותמונות עם חלקים שקופים שומרים על השקיפות כשהם מוגדלים. המרה ל-WebP כוללת עכשיו גם גבים ולוגואים, וכבר לא מסרבת לספרייה גדולה בגלל מקום שאינה צריכה. שני צדדים של קובץ קופסה יכולים לחלוק תמונה אחת, והסרת קופסה עם רשומה פגומה מסירה גם את תמונותיה
+    en: Picture fixes. GIFs are no longer run through the upscaler only to be thrown away. The upscaler model is checked against its published fingerprint, and a bad download is fetched again instead of turning upscaling off for good. Logos and pictures with see-through parts keep their transparency when enlarged. Convert to WebP now takes back covers and logos too, and no longer refuses a large library for want of room it does not need. Two faces of a box file can share one picture, and removing a box with a damaged record removes its pictures
   - type: fix
-    label: ייבוא מ-CLZ, Steam, Xbox ו-PlayStation כבר לא מתייחס לכל כותרת שכתובה רק ביפנית או בכתב לא לטיני אחר כאל אותו משחק, וכבר לא מוסיף משחק בלי מזהה. תצוגה מקדימה של CLZ כבר לא מוסיפה קונסולות לפני שאישרת את הייבוא, וצופה בספריית Steam, Xbox או PlayStation כבר לא מוסיף אותן. משחק Steam שהוסר מהחנות נשאל עליו פעם אחת, לא בכל סנכרון
+    label: ייבוא מ-CLZ, Steam, Xbox ו-PlayStation כבר לא מתייחס לכל כותרת הכתובה רק ביפנית או בכתב לא לטיני אחר כאל אותו משחק, וכבר לא מוסיף משחק בלי מזהה. תצוגה מקדימה של CLZ כבר לא מוסיפה קונסולות לפני שתאשר את הייבוא, וצופה בספריית Steam, Xbox או PlayStation כבר לא מוסיף אותן. שואלים פעם אחת על משחק Steam שהוסר מהחנות, ולא בכל סנכרון
+    en: Imports from CLZ, Steam, Xbox and PlayStation no longer treat every title written only in Japanese or another non-Latin script as the same game, and no longer add a game with no id. The CLZ preview no longer adds consoles before you confirm the import, and a viewer looking at a Steam, Xbox or PlayStation library no longer adds them either. A Steam game removed from the store is asked about once, not on every sync
   - type: fix
-    label: הניתוח מקבץ עכשיו הרבה יותר קונסולות תחת היצרן שלהן במקום "אחר", ורשימת "נגרדו לאחרונה" בלוח הבקרה מציגה משחק שגרדת שוב, לא רק משחקים שנוספו חדשים
+    label: הניתוח מקבץ עכשיו הרבה יותר קונסולות תחת היצרן שלהן במקום "אחר", ורשימת "נגרדו לאחרונה" בלוח הבקרה מציגה משחק שגרדת שוב, ולא רק משחקים שנוספו חדשים
+    en: Analytics now groups many more consoles under their maker instead of "Other", and the dashboard's Recently Scraped list shows a game you scraped again, not only newly added games
   - type: fix
-    label: תמונות בקר שהוספת במוזיאון נשמרות כשהגרסה העצמאית מתעדכנת. כששירות מקוון נעצר בגלל המגבלה שלו, השעה שבה ייפנו אליו שוב מוצגת באזור הזמן שלך
+    label: תמונות בקר שאתה מוסיף במוזיאון נשמרות כשהגרסה העצמאית מתעדכנת. כששירות מקוון נעצר בגלל המגבלה שלו, השעה שבה ייפנו אליו שוב מוצגת באזור הזמן שלך
+    en: Controller pictures you add in the Museum are kept when the standalone version updates. When an online service pauses at its limit, the time it will be asked again is shown in your own time zone
   - type: fix
-    label: דיסק בונוס כבר לא יכול להיות מקושר לעצמו או לדיסק בונוס אחר, וקישור אוטומטי כבר לא מקשר דיסק לדיסק שהוא מסמן כדיסק בונוס באותה הרצה
+    label: דיסק בונוס כבר לא יכול להיות מקושר לעצמו או לדיסק בונוס אחר, והקישור האוטומטי כבר לא מקשר דיסק לדיסק שהוא מסמן כדיסק בונוס באותה הרצה
+    en: A bonus disc can no longer be linked to itself or to another bonus disc, and Auto-link no longer links a disc to one it marks as a bonus disc in the same run
   - type: fix
-    label: דפי הספרייה והקונסולה כבר לא סופרים קובצי BIOS של ארקייד כמשחקים, לא בסך הכול ולא בשורת האותיות. משחקים דומים והרשימה שמקבלים בלחיצה על ז'אנר או מוציא לאור בדף משחק כבר לא מציגים את הגרסאות האזוריות של המשחק עצמו, דיסקי בונוס או קובצי BIOS
+    label: דפי הספרייה והקונסולות כבר לא סופרים קובצי BIOS של ארקייד כמשחקים, לא בסכומים ולא בסרגל האותיות. משחקים דומים והרשימה שמקבלים בלחיצה על ז'אנר או מוציא לאור בדף משחק כבר לא מציגים את הגרסאות האזוריות של המשחק עצמו, דיסקי בונוס או קובצי BIOS
+    en: The Library and console pages no longer count arcade BIOS files as games, in their totals or the letter bar. Similar games, and the list you get by clicking a genre or publisher on a game's page, no longer show the game's own regional versions, bonus discs or BIOS files
   - type: fix
-    label: בחר הכול אומר עכשיו כשרשימה גדולה מאוד נחתכה, במקום לבחור חלק ממנה בשקט
+    label: בחר הכול מודיע עכשיו כשרשימה גדולה מאוד נחתכת, במקום לבחור חלק ממנה בשקט
+    en: Select all now says so when a very large list is cut short, instead of quietly selecting only part of it
   - type: fix
-    label: כרטיסי הספרייה מתעדכנים עכשיו כשהתקדמות ההישגים או הגביעים שלך משתנה, וכשמשחק נעשה ניתן למשחק או מפסיק להיות כזה
+    label: כרטיסי הספרייה מתעדכנים עכשיו כשהתקדמות ההישגים או הגביעים שלך משתנה, וכשמשחק הופך לניתן לשחק או מפסיק להיות כזה
+    en: Library cards now update when your achievement or trophy progress changes, and when a game becomes playable or stops being playable
   - type: fix
-    label: עריכה קבוצתית כבר לא יכולה לשנות משחקים שגויים כשנשלחת לה בחירה פגומה, ועריכה קבוצתית שנכשלת כבר לא מסמנת את המשחקים כערוכים על ידיך
+    label: עריכה המונית כבר לא יכולה לשנות משחקים שגויים כשנשלחת לה בחירה פגומה, ועריכה המונית שנכשלת כבר לא מסמנת את המשחקים כערוכים על ידך
+    en: Bulk edit can no longer change the wrong games when it is sent a bad selection, and a bulk edit that fails no longer marks the games as edited by you
   - type: fix
-    label: התאמת HowLongToBeat של 1% בלבד כבר לא מוצגת כהתאמה של 100%, ודף שנכשל בטעינה מציג את דף השגיאה במקום טקסט שגיאה גולמי
+    label: התאמת HowLongToBeat שהיא רק 1% כבר לא מוצגת כהתאמה של 100%, ודף שנכשל בטעינה מציג את דף השגיאה במקום טקסט השגיאה הגולמי
+    en: A HowLongToBeat match that is only a 1% fit is no longer shown as a 100% match, and a page that fails to load shows the error page instead of the raw error text
   - type: security
-    label: שינוי הסיסמה שלך, או איפוס שלה על ידי מנהל, מנתק עכשיו את החשבון בכל מכשיר אחר. בגלל זה כולם יתחברו פעם נוספת אחרי העדכון. גם דף ההגדרה הראשונית מקבל אותה הגנה מפני אתרים אחרים כמו כל דף אחר
+    label: שינוי הסיסמה שלך, או איפוס שלה על ידי מנהל, מנתק עכשיו את החשבון בכל המכשירים האחרים. בגלל זה, כולם יתחברו פעם נוספת אחרי עדכון זה. דף ההתקנה בהרצה הראשונה מקבל גם הוא את אותה הגנה מפני אתרים אחרים כמו כל דף אחר
+    en: Changing your password, or an admin resetting it, now signs that account out on every other device. Because of this, everyone signs in once more after this update. The first-run setup page also gets the same protection against other websites as every other page
   - type: fix
-    label: תמונה שנדחתה כאווטאר כבר לא מוחקת את האווטאר שהיה לך
+    label: תמונה שנדחתה כתמונת פרופיל כבר לא מוחקת את תמונת הפרופיל שהייתה לך
+    en: A picture that is refused as your avatar no longer deletes the avatar you had
   - type: fix
-    label: הגירוד עדין יותר לשירותים המקוונים. שירות שממשיך להיכשל מדולג לזמן מה בעת מילוי פערים, כפי שכבר היה בחיפושים, וחיפושי משחקים ב-ScreenScraper מכבדים עכשיו גם את המגבלות היומיות שלו
+    label: גרידות עדינות יותר כלפי השירותים המקוונים. שירות שממשיך להיכשל מדולג לזמן מה במילוי פערים, כפי שכבר היה בחיפושים, וחיפושי משחקים ב-ScreenScraper מכבדים עכשיו גם את המגבלות היומיות שלו
+    en: Scrapes are gentler on the online services. A service that keeps failing is skipped for a while when filling gaps, as it already was in searches, and ScreenScraper game lookups now respect its daily limits too
   - type: fix
-    label: גירוד כבר לא נכשל במשחק ששנת היציאה שלו לא ידועה, כמו "TBA", ומשחק שרשום לאזורים מחוץ לרשימה שלך, כמו "Brazil, Korea", שומר על האזור שלו במקום להפוך לברירת המחדל שלך
+    label: גרידה כבר לא נכשלת על משחק שנת היציאה שלו לא ידועה, כמו "TBA", ומשחק שמופיע לאזורים מחוץ לרשימה שלך, כמו "ברזיל, קוריאה", שומר על האזור שלו במקום להפוך לברירת המחדל שלך
+    en: A scrape no longer fails on a game whose release year is unknown, such as "TBA", and a game listed for regions outside your list, such as "Brazil, Korea", keeps its region instead of becoming your default
   - type: fix
-    label: תיקיות ES-DE שנכתבו כ-~/ עובדות עכשיו, וקובץ ES-DE גדול מאוד כבר לא מועתק. גרסאות אזוריות מוצעות לעולם לא מחברות מחדש שני משחקים שאמרת שאינם גרסאות זה של זה
+    label: תיקיות ES-DE שנכתבו עם ~/ עובדות עכשיו, וקובץ ES-DE גדול מאוד כבר לא מועתק. גרסאות אזוריות מוצעות כבר לא מחברות מחדש שני משחקים שאמרת שאינם גרסאות זה של זה
+    en: ES-DE folders written as ~/ now work, and a very large ES-DE file is no longer copied. Suggested regional versions never put back together two games you said are not versions of each other
   - type: security
     label: RetroDB דוחה עוד כמה כתובות רשת פרטית בעת הבאת תמונות מהאינטרנט, ועוקב נכון אחרי הפניה של כתובת אינטרנט
+    en: RetroDB refuses a few more private network addresses when fetching pictures from the web, and follows a web address's redirect correctly
   - type: fix
-    label: המסכים האחרונים שעדיין היו באנגלית עוקבים עכשיו גם הם אחרי השפה שלך, כולל אשף ההגדרה, תגיות, רשימות, השוואת משחקים, הגדרות כלי ROM, תור הגירוד הכמותי, רשימת המשימות שהופרעו בלוח הבקרה, תוויות כרטיסי הספרייה והודעות שגיאה רבות
+    label: המסכים האחרונים שעדיין היו באנגלית עוקבים עכשיו גם הם אחרי השפה שלך, כולל אשף ההתקנה, תגיות, רשימות, השוואת משחקים, הגדרות כלי ROM, תור הגרידה ההמונית, רשימת המשימות שהופסקו בלוח הבקרה, תוויות כרטיסי הספרייה והודעות שגיאה רבות
+    en: The last screens still in English now follow your language too, including the setup wizard, Tags, Lists, Compare Games, ROM Tools settings, the bulk scrape queue, the dashboard's interrupted-jobs list, the library card labels and many error messages
   - type: security
-    label: שם מערכת שמכיל קוד אינטרנט כבר לא יכול להריץ אותו בחלון תור הגירוד הכמותי
+    label: שם מערכת שמכיל קוד אינטרנט כבר לא יכול להריץ אותו בחלון תור הגרידה ההמונית
+    en: A system name holding web code can no longer run it in the bulk scrape queue window
   - type: accessibility
-    label: בכל מקום בדף, מקום המקלדת מסומן עכשיו בטבעת מודגשת בצבע ערכת הנושא שלך, בכל כפתור, תיבה וקישור. קודם, בקרים רבים הציגו רק קו עמום, זהה למעבר העכבר מעליהם
+    label: בכל מקום בדף, מקום המקלדת מסומן עכשיו בטבעת עבה בצבע ערכת הנושא שלך, בכל כפתור, תיבה וקישור. קודם, בקרים רבים הציגו רק קו חלש, כמו כשהעכבר עבר מעליהם
+    en: Wherever you are on a page, the keyboard's place is now marked with a bold ring in your theme's colour, on every button, box and link. Before, many controls showed only a faint line, the same as when the mouse passed over them
   - type: accessibility
-    label: קישורי ז'אנר, סדרה, מפתח ומוציא לאור בכרטיסי הספרייה עובדים עכשיו מהמקלדת. גם כפתור "רץ" למשחקים בהפעלה נפתח מהמקלדת, ו-Esc או לחיצה במקום אחר סוגרים את הרשימה שלו
+    label: קישורי ז'אנר, סדרה, מפתח ומוציא לאור בכרטיסי הספרייה עובדים עכשיו במקלדת. גם הכפתור "רץ" למשחקים במשחק נפתח במקלדת, ו-Esc או לחיצה במקום אחר סוגרים את הרשימה שלו
+    en: The Genre, Series, Developer and Publisher links on library cards now work from the keyboard. The "running" button for games in play opens from the keyboard too, and Esc or a click elsewhere closes its list
   - type: accessibility
-    label: קוראי מסך מציינים עכשיו כל צבע תגית ואומרים איזה נבחר, וקוראים תמונות גביעים כפלטינה, זהב, כסף וארד במקום אותיות בודדות. בזמן שמשחק מתחיל, Tab כבר לא עובר מאחורי מסך ההפעלה
+    label: קוראי מסך מכנים עכשיו כל צבע תגית ואומרים איזה נבחר, וקוראים תמונות גביעים כפלטינה, זהב, כסף וארד במקום אותיות בודדות. בזמן שמשחק מתחיל, Tab כבר לא עובר מאחורי מסך ההפעלה
+    en: Screen readers now name each tag colour and say which one is chosen, and read trophy pictures as Platinum, Gold, Silver and Bronze instead of single letters. While a game starts, Tab no longer moves behind the starting screen
   - type: fix
-    label: אם עדכון נעצר לפני שהחלפת הקבצים מתחילה, RetroDB מפעיל עכשיו שוב את הגרסה שהייתה לך, במקום להישאר סגור
+    label: אם עדכון נעצר לפני שהחלה החלפת הקבצים, RetroDB מפעיל שוב את הגרסה שהייתה לך, במקום להישאר סגור
+    en: If an update stops before it starts swapping files, RetroDB now starts the version you had again, instead of staying closed
   - type: fix
-    label: לחיצה כפולה בבת אחת על שחק כבר לא יכולה להפעיל שני משחקים בנגן המובנה. המתנה להורדת ליבה מוותרת עכשיו אחרי זמן מה, או כש-RetroDB מפסיק להגיב, במקום להמתין לנצח, והשאלה "כבר רץ" משתמשת בחלון של RetroDB עצמו
+    label: לחיצה על שחק פעמיים בבת אחת כבר לא יכולה להפעיל שני משחקים בנגן המובנה. המתנה להורדת ליבה מוותרת עכשיו אחרי זמן מה, או כש-RetroDB מפסיק לענות, במקום להמתין לנצח, ושאלת "כבר רץ" משתמשת בחלון הדו-שיח של RetroDB עצמו
+    en: Pressing Play twice at once can no longer start two games on the built-in player. Waiting for a core download now gives up after a while, or when RetroDB stops answering, instead of waiting forever, and the "already running" question uses RetroDB's own dialog
   - type: fix
-    label: צ'יטים שאתה מפעיל או מכבה במהלך משחק נשמרים למשחק הנכון, ולעולם לא נלקחים ממשחק אחר שלקובץ שלו אותו שם. בעיית צ'יטים לעולם לא מונעת ממשחק להתחיל
+    label: צ'יטים שאתה מפעיל או מכבה במהלך משחק נשמרים למשחק הנכון, ולא נלקחים ממשחק אחר שלקובץ שלו אותו שם. בעיית צ'יטים לא עוצרת לעולם התחלת משחק
+    en: Cheats you switch on or off during play are kept for the right game, never taken from another game whose file has the same name. A cheat problem never stops a game starting
   - type: fix
-    label: RetroDB כותב קובץ הגדרות של אמולטור בבטחה רבה יותר. קובץ הגדרות שהוא קישור נשאר קישור, שומר על ההרשאות שלו, ושומר אותיות שאינו יכול לקרוא, ושמירה שנכשלה לא משאירה קובץ תועה
+    label: RetroDB כותב קובץ הגדרות של אמולטור בבטחה רבה יותר. קובץ הגדרות שהוא קישור נשאר קישור, שומר על ההרשאות שלו, ושומר אותיות שאינו יכול לקרוא, ושמירה שנכשלת לא משאירה קובץ תועה
+    en: RetroDB writes an emulator's settings file more safely. A settings file that is a link stays a link, keeps its permissions, and keeps letters it cannot read, and a failed save leaves no stray file behind
   - type: fix
-    label: גירוד כמותי שאתה מזיז למטה בתור, מחליף עם אחר או ממשיך בזמן שאחד רץ כבר לא הולך לאיבוד כש-RetroDB מופעל מחדש; לוח הבקרה מציע אותו, מהמקום שבו עצר. גירוד שהוחלף כבר לא ממשיך לרוץ לצד החדש, ושתי לחיצות מהירות על המשך מפעילות משימה פעם אחת
+    label: גרידה המונית שהזזת למטה בתור, החלפת עם אחרת או המשכת בזמן שאחרת רצה כבר לא אובדת כש-RetroDB מופעל מחדש; לוח הבקרה מציע אותה, מהמקום שבו נעצרה. גרידה שהוחלפה כבר לא ממשיכה לרוץ לצד החדשה, ושתי לחיצות מהירות על המשך מפעילות משימה פעם אחת
+    en: A bulk scrape you move down the queue, swap with another or resume while one runs is no longer lost when RetroDB restarts; the dashboard offers it, from where it stopped. A swapped-out scrape no longer keeps running beside the new one, and two quick clicks on Resume start a job once
   - type: fix
-    label: שגיאה במשחק אחד, כמו נפילת רשת, כבר לא מסיימת הרצה שלמה של מילוי AI או של תיקון קופסה ואזורי מדריך; המשחק נספר ככושל והשאר ממשיכים. עצירת RetroDB עוצרת עכשיו גם הורדות ליבה בצורה נקייה
+    label: שגיאה של משחק אחד, כמו נפילת הרשת, כבר לא מסיימת הרצה שלמה של מילוי AI או הרצה של תיקון קופסה ואזורי מדריך; המשחק נספר ככושל והשאר ממשיכים. עצירת RetroDB עוצרת עכשיו גם הורדות ליבה בצורה נקייה
+    en: One game's error, such as the network dropping, no longer ends a whole AI Fill run or a Fix Box and Manual Regions run; that game counts as failed and the rest go on. Stopping RetroDB now also stops core downloads cleanly
   - type: fix
-    label: פריטים ברשימת המשאלות כבר לא נשארים על "גורד" לנצח אחרי שגיאה או הפעלה מחדש, ושתי הרצות של גרד הכול לאותה רשימת משאלות כבר לא רצות בו זמנית
+    label: פריטים ברשימת משאלות כבר לא נשארים תקועים על "גורד" לנצח אחרי שגיאה או הפעלה מחדש, ושתי הרצות של "גרד הכול" לאותה רשימת משאלות כבר לא רצות בו זמנית
+    en: Wishlist items no longer stay on "scraping" forever after an error or a restart, and two Scrape All runs for the same wishlist no longer run at once
   - type: fix
-    label: סקריפט או עותק שני של RetroDB שמתחיל לרוץ כבר לא מסמן את משימות השרת הרץ כמופרעות, ושני עותקים שמתחילים בו זמנית כבר לא יכולים להחזיר את בסיס הנתונים גרסה אחורה
+    label: סקריפט או עותק שני של RetroDB שעולה כבר לא מסמנים את המשימות של השרת הפועל כמופרעות, ושני עותקים שעולים בו זמנית כבר לא יכולים להחזיר את מסד הנתונים לגרסה קודמת
+    en: A script or a second copy of RetroDB starting up no longer marks the running server's jobs as interrupted, and two copies starting at once can no longer set the database back a version
   - type: fix
-    label: התחלת סנכרון PlayStation כבר לא גורמת לסרגלי ההתקדמות של כולם להמתין בזמן ההתחברות ל-Sony. שמירת החיבור היומית של PlayStation מחדשת עכשיו התחברות רק קרוב לסוף 10 הימים שלה, ולא בכל יום
+    label: התחלת סנכרון PlayStation כבר לא גורמת לסרגלי ההתקדמות של כולם להמתין בזמן ההתחברות ל-Sony. שמירת החיבור היומית של PlayStation מחדשת התחברות רק לקראת סוף 10 הימים, ולא בכל יום
+    en: Starting a PlayStation sync no longer makes everyone's progress bars wait while it signs in to Sony. The daily PlayStation keep-alive now renews a sign-in only near the end of its 10 days, instead of every day
   - type: fix
-    label: גרידה כבר לא דורסת שינוי שאתה מבצע בזמן שהיא רצה, וכבר לא מרוקנת ז'אנר, מצב או תצוגה שאין לה שם עבורם. היא כבר לא משנה מספר שחקנים שמור כדי להתאים אותו למצבי המשחק
+    label: גרד כבר לא דורס שינוי שביצעת בזמן שהוא רץ, וכבר לא מרוקן ז'אנר, מצב או תצוגה שאין לו להם שם. הוא גם לא משנה מספר שחקנים שנשמר כדי שיתאים למצבי המשחק
+    en: A scrape no longer writes over a change you make while it runs, and no longer empties a genre, mode or view it has no name for. It no longer changes a stored player count to match the game's modes
   - type: fix
-    label: מילוי AI כבר לא משנה מה שהקלדת בעצמך, כמו מוציא לאור או ז'אנר שתיקנת ידנית; הוא מתקן רק ערכים שנגרדו. הוא כבר לא מדווח על ערך כשונה כשרק נכתב אחרת, כמו 4 שחקנים כ-"1-4" או אותם ז'אנרים בסדר אחר
+    label: מילוי AI כבר לא משנה את מה שהקלדת בעצמך, כמו מוציא לאור או ז'אנר שתיקנת ידנית; הוא מתקן רק ערכים שנגרדו. הוא גם לא מדווח על ערך כשונה כשרק נכתב אחרת, כמו 4 שחקנים כ-"1-4" או אותם ז'אנרים בסדר אחר
+    en: AI Fill no longer changes what you typed yourself, such as a publisher or genre you corrected by hand; it corrects only scraped values. It no longer reports a value as changed when it only wrote it differently, such as 4 players as "1-4" or the same genres in another order
   - type: fix
-    label: בקר שהקלדת למשחק נשמר; הבקר המוגדר כברירת מחדל של הקונסולה מחליף עכשיו רק ערכים שנגרדו וערכי AI. דירוג גיל שהומר מניחוש AI של לוח אחר מסומן עכשיו גם כניחוש
+    label: בקר שהקלדת למשחק נשמר; הבקר המוגדר כברירת מחדל של הקונסולה מחליף כעת רק ערכים שנגרדו וערכי AI. דירוג גיל שהומר מהשערת AI של לוח אחר מסומן עכשיו גם הוא כהשערה
+    en: A controller you type for a game is kept; the console's default controller now replaces only scraped and AI values. An age rating converted from another board's AI guess is now marked as a guess too
   - type: fix
-    label: שמירה בחלון העריכה של משחק כבר לא מרוקנת שדות שהחלון לא מציג. איפוס בדף של משחק מנקה עכשיו הכול כפי שנאמר, כולל התצוגה, המהדורה ושמות אחרים, מוחק את התמונות והסרטונים של המשחק אלא אם משחק אחר משתמש בהם, ומעדכן מיד את מסנני הספרייה
+    label: שמירה בחלון העריכה של משחק כבר לא מרוקנת שדות שהחלון לא מציג. איפוס בדף המשחק מנקה עכשיו את כל מה שנאמר שהוא מנקה, כולל התצוגה, המהדורה ושמות אחרים, מוחק את התמונות והסרטונים של המשחק אלא אם משחק אחר משתמש בהם, ומעדכן את מסנני הספרייה מיד
+    en: Saving a game's edit window no longer empties fields the window does not show. Reset on a game's page now clears everything it says it does, including the view, edition and other names, deletes the game's pictures and videos unless another game uses them, and updates the library filters straight away
   - type: fix
     label: ניקוי נתונים שנגרדו מנקה עכשיו גם את התצוגה, 2D או 3D, ואת מבנה המשחק. ייבוא CLZ של משחק עם שנה בלבד שומר רק את השנה, לא 1 בינואר
+    en: Clear Scraped Data now also clears the view, 2D or 3D, and game structure. A CLZ import of a game with only a year keeps just the year, not 1 January
   - type: security
-    label: סנכרון Steam כבר לא שואל את מפתח Steam מההגדרות עבור כל בני הבית. חבר ללא מפתח Steam משלו קיבל את ספריית Steam וההישגים של המנהל תחת החשבון שלו. המפתח בהגדרות משרת עכשיו מנהלים בלבד
+    label: סנכרון Steam כבר לא משתמש במפתח ה-Steam מההגדרות עבור כל בני הבית. חבר ללא מפתח Steam משלו קיבל את ספריית Steam וההישגים של המנהל בחשבון שלו. המפתח בהגדרות משרת עכשיו רק מנהלים
+    en: Steam sync no longer borrows the Steam key from Settings for every household member. A member with no Steam key of their own was getting the admin's Steam library and achievements under their account. The key in Settings now serves admins only
   - type: fix
-    label: חיפוש How Long to Beat עבור משחקים רבים שומר עכשיו את הזמנים שהוא בטוח בהם. קודם כל התאמה בטוחה נכשלה ושום דבר לא נשמר. רענון RetroAchievements בודק עכשיו גם את קובץ כל משחק מול הרשימה של RetroAchievements, כמו גרידה, כך שמשחק מקושר לגרסה המדויקת שיש לך
+    label: חיפוש How Long to Beat של משחקים רבים שומר עכשיו את הזמנים שהוא בטוח בהם. קודם כל התאמה בטוחה נכשלה ולא נשמר דבר. רענון RetroAchievements בודק עכשיו גם את קובץ כל משחק מול הרשימה של RetroAchievements, כמו גרד, כך שמשחק מקושר לגרסה המדויקת שברשותך
+    en: How Long to Beat's lookup for many games now saves the times it is sure of. Before, every sure match failed and nothing was saved. RetroAchievements Refresh now also checks each game's file against RetroAchievements' list, as a scrape does, so a game is linked to the exact version you have
   - type: fix
-    label: ההודעה על סיום משימת רקע מוצגת שוב, ותיבת ההתקדמות של משימה מבחינה כשהשרת מרים את המשימה אחרי הפעלה מחדש. קודם אף אחת מהן לא הופיעה
+    label: ההודעה שמשימת רקע הסתיימה מוצגת שוב, וחלון ההתקדמות של משימה מזהה שהשרת המשיך אותה אחרי הפעלה מחדש. קודם אף אחת מהן לא הופיעה
+    en: The message that a background job has finished shows again, and a job's progress box notices when the server picks the job up after a restart. Before, neither ever appeared
   - type: fix
-    label: 'גביעי PlayStation: משחק שקישרת ידנית נשאר מקושר אחרי סנכרון מלא, וסנכרון כבר לא מקשר משחק להמשך שלו, כמו "Doom" ל-"Doom Eternal". ייבוא משחקי PlayStation מקשר עכשיו משחק שכבר בספרייה שלך, כמו בייבוא מ-Steam ומ-Xbox, כך שהגביעים מוצגים בו'
+    label: 'גביעי PlayStation: משחק שקישרת ידנית נשאר מקושר אחרי סנכרון מלא, וסנכרון כבר לא מקשר משחק להמשך שלו, כמו "Doom" ל-"Doom Eternal". ייבוא משחקי PlayStation מקשר עכשיו משחק שכבר בספרייה, כמו בייבוא מ-Steam ומ-Xbox, כך שהגביעים מוצגים בו'
+    en: 'PlayStation trophies: a game you linked by hand stays linked after a full sync, and a sync no longer links a game to its sequel, such as "Doom" to "Doom Eternal". Importing PlayStation games now links a game already in your library, as Steam and Xbox imports do, so its trophies show on it'
   - type: fix
-    label: Xbox כבר לא מציג את ה-gamertag שלך כ"לא ידוע" אחרי שההתחברות מתחדשת מעצמה, וחיבור איטי או כושל כבר לא מנתק אותך מ-Xbox. רק סירוב של Microsoft להתחברות עושה זאת
+    label: Xbox כבר לא מציג את ה-gamertag שלך כ-Unknown אחרי שההתחברות מתחדשת מעצמה, וחיבור איטי או כושל כבר לא מנתק אותך מ-Xbox. רק סירוב של Microsoft להתחברות עושה זאת
+    en: Xbox no longer shows your gamertag as Unknown after its sign-in renews itself, and a slow or failed connection no longer signs you out of Xbox. Only Microsoft refusing the sign-in does that
   - type: fix
-    label: שני אנשים יכולים עכשיו להחזיק כל אחד תגית באותו שם; קודם השנייה נכשלה בשגיאה. כל משתמש מחובר יכול עכשיו לסרוק מחדש את גביעי RPCS3 שלו; קודם רק מנהל יכול היה, והאחרים ראו גביעים ישנים עד להפעלה מחדש של RetroDB
+    label: שני אנשים יכולים עכשיו לקבל כל אחד תגית באותו שם; קודם השנייה נכשלה בשגיאה. כל משתמש מחובר יכול עכשיו לסרוק מחדש את גביעי RPCS3 שלו; קודם רק מנהל יכול היה, ואחרים ראו גביעים ישנים עד שהפעלת RetroDB מחדש
+    en: Two people can now each have a tag of the same name; before, the second one failed with an error. Any signed-in user can now rescan their own RPCS3 trophies; before, only an admin could, and everyone else saw old trophies until RetroDB restarted
   - type: security
-    label: ההתחברויות שלך נשארות פרטיות. חשבונות אחרים במחשב כבר לא יכולים לקרוא גיבויי מסד נתונים, וגיבוי שנכשל כבר לא מוחק את הקודם. מחיקה או כיבוי של משתמש גם מנתקים אותו מ-RetroAchievements ב-DuckStation וב-PCSX2. התחברות ל-RetroAchievements שנשמרה מתפריט השחקן עצמו כבר לא עוברת לאדם הבא שישחק. יומנים ושגיאות משימות שמורות מסתירים אסימוני RetroAchievements, שגיאת PlayStation של חבר אחר מוצגת רק לו, וקובצי התחברות ישנים של PlayStation ו-Xbox בטקסט גלוי נמחקים
+    label: ההתחברויות שלך נשארות פרטיות. גיבויי מסד הנתונים כבר לא קריאים לחשבונות אחרים במחשב, וגיבוי שנכשל כבר לא מוחק את הקודם לו. מחיקה או כיבוי של משתמש גם מנתקים אותו מ-RetroAchievements ב-DuckStation וב-PCSX2. התחברות ל-RetroAchievements שנשמרה מתפריט הנגן עצמו כבר לא עוברת לאדם הבא שמשחק. יומנים ושגיאות משימות שמורות מסתירים אסימוני RetroAchievements, שגיאת PlayStation של חבר אחר מוצגת רק לו, וקובצי התחברות ישנים של PlayStation ו-Xbox בטקסט גלוי נמחקים
+    en: Your sign-ins stay private. Database backups can no longer be read by other accounts on the computer, and a failed backup no longer deletes the one before it. Deleting or switching off a user also signs them out of RetroAchievements in DuckStation and PCSX2. A RetroAchievements sign-in saved from the player's own menu no longer carries over to the next person who plays. Logs and saved job errors hide RetroAchievements tokens, another member's PlayStation error is shown only to them, and old plain-text PlayStation and Xbox sign-in files are removed
   - type: fix
-    label: הבדיקות של RetroDB עצמה כבר לא יכולות לגעת בספרייה שלך בזמן שהן רצות. הן תמיד משתמשות בעותק זמני של מסד הנתונים, התמונות וההגדרות, ומסרבות לעלות אם אחד מהם מצביע לקבצים האמיתיים שלך
+    label: הבדיקות של RetroDB עצמו כבר לא יכולות לגעת בספרייה שלך בזמן שהן רצות. הן תמיד משתמשות בעותק זמני של מסד הנתונים, התמונות וההגדרות, ומסרבות לפעול אם אחד מהם מצביע על הקבצים האמיתיים שלך
+    en: RetroDB's own checks can no longer touch your library while they run. They always use a throwaway copy of the database, pictures and settings, and refuse to start if any of them points at your real files
   - type: fix
-    label: ניקוי קבצים יתומים כבר לא מוחק את התמונות של רשימת המשאלות שלך. פתיחת משחק כבר לא גורמת לו לשכוח צילומי מסך שאינו מוצא. קודם, כשכונן התמונות היה מנותק, כל משחק שפתחת איבד את כל רשימת צילומי המסך שלו; עכשיו הרשימה נשמרת, ותמונה חסרה רק מוסתרת
+    label: ניקוי קבצים יתומים כבר לא מוחק את התמונות של רשימת המשאלות. פתיחת משחק כבר לא גורמת לו לשכוח צילומי מסך שאינו מוצא. קודם, כשכונן התמונות היה מנותק, כל משחק שנפתח איבד את כל רשימת צילומי המסך; עכשיו הרשימה נשמרת, ותמונה חסרה רק מוסתרת
+    en: Clean orphaned files no longer deletes your wishlist's pictures. Opening a game no longer makes it forget screenshots it cannot find. Before, with the picture drive unplugged, every game you opened lost its whole screenshot list; now the list is kept, and a missing picture is only hidden
   - type: fix
-    label: הורדת וידאו או מדריך שנכשלת באמצע כבר לא פוגעת בעותק שכבר היה למשחק, והורדה שנכשלה כבר לא משאירה חצי קובץ נסתר בתיקיית המדיה. משדרג התמונות ברקע כבר לא שומר תמונה ישנה על גבי חדשה יותר שהורדה בינתיים. המרה ל-WebP משאירה כל משחק שחולק תמונה מצביע עליה, ולעולם לא נוגעת בקובץ מחוץ לתיקיות התמונות
+    label: הורדת וידאו או מדריך שנכשלת באמצע כבר לא פוגעת בעותק שכבר היה למשחק, והורדה שנכשלה לא משאירה חצי קובץ מוסתר בתיקיית המדיה. המגדיל ברקע כבר לא שומר תמונה ישנה על גבי חדשה יותר שהורדה בינתיים. המרה ל-WebP שומרת על כל המשחקים שחולקים תמונה מצביעים אליה, ולעולם לא נוגעת בקובץ מחוץ לתיקיות התמונות
+    en: A video or manual download that fails part-way no longer damages the copy the game already had, and a failed download no longer leaves a hidden half-file in the media folder. The background upscaler no longer saves an old picture over a newer one downloaded meanwhile. Convert to WebP keeps every game that shares a picture pointing at it, and never touches a file outside the picture folders
   - type: fix
-    label: מחיקת משחק או פריט ברשימת משאלות מוחקת עכשיו גם את התמונות, הסרטונים והמדריכים שלו, אך משאירה את מה שמשחק או פריט אחר עדיין משתמש בו. חשבונות אחרים במחשב יכולים שוב לקרוא תמונות שמורות, ושינוי גודל תמונות סופר תמונה שלא הצליח לשמור ככושלת, לא כמוצלחת
+    label: מחיקת משחק או פריט ברשימת משאלות מוחקת עכשיו גם את התמונות, הסרטונים והמדריכים שלו, אבל משאירה את אלה שמשחק או פריט אחר עדיין משתמש בהם. תמונות שמורות קריאות שוב לחשבונות אחרים במחשב, ושינוי גודל תמונות סופר תמונה שלא הצליח לשמור ככושלת, לא כגמורה
+    en: Deleting a game or a wishlist item now deletes its pictures, videos and manuals too, but keeps any another game or wishlist item still uses. Saved pictures can be read by other accounts on the computer again, and Resize Images counts a picture it could not save as failed, not as done
   - type: fix
-    label: מאתר הכפילויות כבר לא מציע למחיקה קובץ תקין. בחיפוש לפי שם הוא כבר לא רואה קובצי .cue ו-.bin של משחק ככפילויות זה של זה. הוא אף פעם לא מציע קובץ רצועה של דיסק, שיכול להיות משותף לשתי גרסאות של משחק. הוא לא ימחק דיסק שמופיע ברשימת השמעה. משחק שמחקת את הקובץ שלו עובר עכשיו לעותק שאתה שומר, ולכן נשאר בספרייה
+    label: מאתר כפילויות כבר לא מציע קובץ תקין למחיקה. בחיפוש לפי שם, הוא כבר לא רואה בקובצי .cue ו-.bin של משחק עותקים זה של זה. הוא אף פעם לא מציע קובץ רצועה של דיסק, ששתי גרסאות של משחק יכולות לשתף. הוא לא ימחק דיסק שרשימת השמעה מפרטת. משחק שמחקת את הקובץ שלו עובר לעותק ששמרת, כך שהוא נשאר בספרייה
+    en: Duplicate Finder no longer offers a working file for deletion. Looking by name, it no longer calls a game's .cue and .bin copies of each other. It never offers a disc's track file, which two versions of a game can share. It will not delete a disc that a playlist lists. A game whose file you delete now moves to the copy you keep, so it stays in the library
   - type: fix
-    label: ארגון רב-דיסקים כבר לא דורס רשימת השמעה קיימת או קובץ שכבר נמצא בתיקיית המשחק; הוא עוצר ואומר איזה. רשימת ההשמעה שהוא יוצר כוללת את ה-.cue של כל דיסק, לא את קובצי הרצועות. משחקים שהקבצים שלהם הועברו עוברים עכשיו איתם לתיקייה, כך שניקוי ROM חסרים כבר לא מסיר אותם
+    label: ארגון רב-דיסקים כבר לא דורס רשימת השמעה קיימת או קובץ שכבר נמצא בתיקיית המשחק; הוא עוצר ואומר איזה. רשימת ההשמעה שהוא יוצר מפרטת את ה-.cue של כל דיסק, לא את קובצי הרצועות. משחקים שהקבצים שלהם הועברו עוקבים אחריהם לתיקייה, כך שניקוי ROM חסרים כבר לא מסיר אותם
+    en: Organize Multi-Disc no longer writes over an existing playlist or a file already in the game's folder; it stops and says which. The playlist it makes lists each disc's .cue, not its track files. Games whose files it moves now follow them into the folder, so Clean missing ROMs no longer removes them
   - type: fix
-    label: המרה ל-CHD עם "מחק מקורות" מוחקת עכשיו גם את קובצי הרצועות של הדיסק, אך משאירה רצועה ש-.cue אחר עדיין משתמש בה. המשחק וכל רשימת השמעה שכללה את הדיסק הישן מצביעים עכשיו על ה-.chd החדש. שינוי שם של קובץ משחק מעדכן עכשיו את רשימת ההשמעה שכוללת אותו, ואי אפשר לשנות שם של קובץ רצועה ש-.cue זקוק לו. הסרת קבצים מ-zip מסירה רק את הקבצים שבחרת, גם כששם מכיל [ או ]. ניקוי כפילויות צילומי מסך מוחק רק עותקים שהסריקה מצאה, ותמיד משאיר אחד
+    label: המרה ל-CHD עם "מחק מקורות" מוחקת עכשיו גם את קובצי הרצועות של הדיסק, אבל משאירה רצועה ש-.cue אחר עדיין משתמש בה. המשחק וכל רשימת השמעה שפירטה את הדיסק הישן מצביעים עכשיו על ה-.chd החדש. שינוי שם של קובץ משחק מעדכן עכשיו את רשימת ההשמעה שמפרטת אותו, וקובץ רצועה ש-.cue זקוק לו אי אפשר לשנות את שמו. הסרת קבצים מ-zip מסירה רק את הקבצים שבחרת, גם כששם מכיל [ או ]. ניקוי כפילויות צילומי מסך מוחק רק עותקים שהסריקה מצאה, ותמיד משאיר אחד
+    en: Converting to CHD with "delete originals" now deletes the disc's track files too, but keeps a track another .cue still uses. The game and any playlist that listed the old disc now point at the new .chd. Renaming a game's file now updates the playlist that lists it, and a track file a .cue needs cannot be renamed. Removing files from a zip removes only the files you picked, even when a name holds [ or ]. Screenshot Dedup deletes only the copies its scan found, and always keeps one
   - type: fix
-    label: How Long to Beat בדף של משחק מחפש את מה שהקלדת. קודם, כותר שלא נמצא גרם לו לחפש את השמות האחרים של המשחק, והוא יכול היה להציע משחק אחר, כמו רימייק של מעריצים. הוא עדיין מנסה את השמות האחרים כשהתיבה מכילה את שם המשחק עצמו
+    label: How Long to Beat בדף המשחק מחפש את מה שהקלדת. קודם, כותר שלא נמצא גרם לו לחפש את השמות האחרים של המשחק, והוא יכול היה להציע משחק אחר, כמו רימייק של מעריצים. הוא עדיין מנסה את השמות האחרים כשהתיבה מכילה את שם המשחק עצמו
+    en: How Long to Beat on a game's page searches for what you type. Before, a title it could not find made it search the game's other names instead, and it could offer a different game, such as a fan remake. It still tries the other names when the box holds the game's own name
   - type: fix
-    label: שלבי How Long to Beat במדריך העזרה תואמים את המסך. הם אמרו לבחור התאמה מרשימה; הדף מציג התאמה אחת עם שמור וביטול. עזרת PlayStation כבר לא אומרת שההתחברות נמשכת כחודשיים, כי RetroDB מתחברת שוב מעצמה. כל 20 המדריכים המתורגמים כוללים את שני השינויים
+    label: השלבים של How Long to Beat במדריך העזרה תואמים את המסך. הם אמרו לבחור התאמה מרשימה; הדף מציג התאמה אחת עם שמור וביטול. עזרת PlayStation כבר לא אומרת שההתחברות נמשכת כחודשיים, כי RetroDB מתחבר שוב מעצמו. כל 20 המדריכים המתורגמים כוללים את שני השינויים
+    en: The help manual's How Long to Beat steps match the screen. They said to pick a match from a list; the page shows one match with Save and Cancel. The PlayStation help no longer says the sign-in lasts about two months, since RetroDB signs in again by itself. All 20 translated manuals carry both changes
   - type: fix
-    label: כל סרגל אותיות מתחיל עכשיו בכפתור "הכול". בדפי הספרייה, הקונסולה וגביעי PSN, בחירת אות מציגה רק משחקים של אותה אות, ולפני כן לא היה כפתור שמחזיר את השאר. בדפי ההישגים האחרים, "הכול" חוזר למשחק הראשון
+    label: כל סרגל אותיות מתחיל עכשיו בכפתור "הכול". בדפי הספרייה, הקונסולה וגביעי PSN, בחירת אות מציגה רק משחקים של אותה אות, ולפני כן לא היה כפתור להחזיר את השאר. בדפי ההישגים האחרים, "הכול" חוזר למשחק הראשון
+    en: Every letter bar now starts with an All button. On the Library, console and PSN Trophies pages, picking a letter shows only that letter's games, and before there was no button to bring the rest back. On the other achievement pages, All goes back to the first game
   - type: fix
-    label: אסימון התחברות חדש ל-PlayStation שאתה מדביק בהגדרות נכנס לשימוש מיד. קודם RetroDB המשיכה להשתמש בהתחברות הישנה עד שפגה, ו"שמור ובדוק חיבור" דיווח שההתחברות הישנה תקינה. אסימון ש-Sony מסרבת לו כבר לא מחליף אסימון שעובד
+    label: אסימון התחברות חדש ל-PlayStation שהדבקת בהגדרות נמצא בשימוש מיד. קודם RetroDB המשיך להשתמש בהתחברות הישנה עד שפגה, ו"שמור ובדוק חיבור" דיווח שההתחברות הישנה תקינה. אסימון ש-Sony מסרבת לו כבר לא מחליף אסימון תקין
+    en: A new PlayStation sign-in token you paste in Settings is now used straight away. Before, RetroDB kept using the old sign-in until it ran out, and Save & Test Connection reported that old sign-in as working. A token Sony refuses no longer replaces one that works
   - type: enhancement
-    label: קל יותר לשמור על ההתחברות ל-PlayStation בהגדרות. הבאנר כבר לא סופר ימים שלא היית צריך לפעול בהם, כי RetroDB מתחברת שוב מעצמה; הוא הופך לאדום רק כש-Sony מסרבת לאסימון השמור שלך. הכפתור "הדבק כאן" כבר לא גורם לדפדפן לבקש גישה ללוח; הוא מציב את הסמן בתיבה להדבקה ב-Ctrl+V. השלבים אומרים עכשיו להתנתק קודם מ-PlayStation כשמחליפים אסימון שעדיין עובד, וניתן לתרגם את ההודעות שלהם
+    label: קל יותר לשמור על ההתחברות ל-PlayStation בהגדרות. הבאנר כבר לא סופר ימים שלא היית צריך לפעול בהם, כי RetroDB מתחבר שוב מעצמו; הוא הופך לאדום רק כש-Sony מסרבת לאסימון השמור שלך. כפתור "הדבק כאן" כבר לא גורם לדפדפן לבקש גישה ללוח; הוא מציב את הסמן בתיבה להדבקה עם Ctrl+V. השלבים אומרים עכשיו להתנתק קודם מ-PlayStation כשמחליפים אסימון שעדיין תקין, וההודעות שלהם ניתנות לתרגום
+    en: 'The PlayStation sign-in in Settings is easier to keep going. The banner no longer counts down days you never had to act on, because RetroDB signs in again by itself; it turns red only when Sony refuses your saved token. The Paste here button no longer makes the browser ask to read your clipboard: it puts the cursor in the box for Ctrl+V. The steps now say to sign out of PlayStation first when you replace a token that still works, and their messages can be translated'
   - type: enhancement
     label: הודעות קופצות ותיבות שאלה, כמו "ההגדרות נשמרו" או "למחוק את הרשימה?", ניתנות עכשיו לתרגום בכל דף. קודם רובן נשארו באנגלית בכל שפה שבחרת
+    en: Pop-up messages and question boxes, such as "Settings saved" or "Delete this list?", can now be translated on every page. Before, most of them stayed in English whatever language you chose
   - type: enhancement
-    label: ההודעות שמסבירות למה התחברות ל-PlayStation נכשלה, כמו "ייתכן שה-NPSSO שלך פג", ניתנות עכשיו לתרגום
+    label: ההודעות שמסבירות מדוע התחברות ל-PlayStation נכשלה, כמו "ה-NPSSO שלך אולי פג", ניתנות עכשיו לתרגום
+    en: The messages that say why a PlayStation sign-in failed, such as "Your NPSSO may have expired", can now be translated
   - type: fix
-    label: מדריך העזרה בכל שפה תואם עכשיו את האנגלי. נוספו בו חיפוש בכל מקום, שמירת כותר, שמות MAME וגב האריזה, ופסקאות ישנות שפיגרו עודכנו
+    label: מדריך העזרה בכל שפה תואם עכשיו את האנגלי. הוא כולל חיפוש בכל מקום, שמירת כותר, שמות MAME וגב האריזה, ופסקאות ישנות שפיגרו עודכנו
+    en: The help manual in every language now matches the English one. It gains Search Anywhere, Keeping a Title, MAME Names and the back of the box, and older paragraphs that had fallen behind are up to date
   - type: fix
-    label: בגרמנית, באפריקאנס ובספרדית, כפתור החזרה על כריכת המשחק אומר עכשיו גב האריזה, לא "חזור"
+    label: בגרמנית, באפריקאנס ובספרדית, כפתור החזרה בעטיפת המשחק אומר עכשיו גב האריזה, ולא "חזור"
+    en: In German, Afrikaans and Spanish, the Back button on a game's cover now says the back of the box, not "go back"
   - type: feature
-    label: לחיצה על שחק ממלאת עכשיו את המסך בלוגו המשחק על תמונת הרקע שלו בזמן שהמשחק עולה, או בשמו באותיות גדולות אם אין לו לוגו. היא נעלמת מעצמה כשחלון המשחק נפתח, או כשלוחצים Esc או לוחצים בעכבר
+    label: לחיצה על שחק ממלאת עכשיו את המסך בלוגו המשחק על תמונת הרקע שלו בזמן שהמשחק עולה, או בשמו באותיות גדולות כשאין לו לוגו. זה נעלם מעצמו כשחלון המשחק נפתח, או כשלוחצים Esc או לוחצים עליו
+    en: Pressing Play now fills the screen with the game's logo on its background picture while the game starts, or its name in large letters when it has no logo. It goes away by itself when the game's window opens, or when you press Esc or click
   - type: feature
-    label: 'קופסת ה-3D הניתנת לסיבוב מקבלת עכשיו את הצורה האמיתית של נרתיק PS5: פינות וקצוות מעוגלים, שפה מורמת סביב הכריכה, הקו שבו שני החצאים נפגשים, וחריץ אצבע בצד הפתיחה. היא דורשת קובץ קופסה מגרסת Slipcase שכותבת את הצורה; ייבא את הקופסה שוב כדי לקבל אותה. קופסאות אחרות נראות כמו קודם'
+    label: 'קופסת ה-3D הסובבת מקבלת עכשיו את הצורה האמיתית של מארז PS5: פינות וקצוות מעוגלים, השפה המורמת סביב העטיפה, הקו שבו שני החצאים נפגשים וחריץ האצבע בצד הנפתח. היא דורשת קובץ קופסה מגרסת Slipcase שכותבת את הצורה; ייבא את הקופסה שוב כדי לקבל אותה. קופסאות אחרות נראות כמו קודם'
+    en: 'The turnable 3D box now has the real shape of a PS5 case: rounded corners and edges, the raised lip round the cover, the line where the two halves meet, and the finger slot in the opening side. It needs a box file from a Slipcase version that writes the shape; import the box again to get it. Other boxes look as before'
   - type: enhancement
-    label: רענון RetroAchievements עבר מההגדרות לדף RetroAchievements, ונקרא עכשיו מצא משחקים עם הישגים. לכל כפתור שם יש עכשיו שורה שמסבירה מה הוא עושה, כך שקל להבדיל בין מצא משחקים לסנכרון התקדמות. כשעדיין לא קושרו משחקים, הדף מציג למנהל את כפתור החיפוש במקום לעבור ללשונית הבאה
-  body: "<ul>\n  <li><strong>מדריך העזרה מעודכן בכל שפה.</strong>\n    פרקים שהיו רק במדריך האנגלי תורגמו.</li>\n</ul>\n"
+    label: רענון RetroAchievements עבר מההגדרות לדף RetroAchievements, ונקרא עכשיו "מצא משחקים עם הישגים". לכל כפתור שם יש עכשיו שורה שמסבירה מה הוא עושה, כך שקל להבדיל בין מצא משחקים לסנכרון התקדמות. כשעדיין אין משחקים מקושרים, הדף מציג למנהל את כפתור החיפוש במקום לעבור ללשונית הבאה
+    en: Refresh RetroAchievements moved from Settings to the RetroAchievements page, and is now called Find Games with Achievements. Every button there now has a line saying what it does, so Find Games and Sync Progress are easy to tell apart. With no games linked yet, the page shows an admin the Find button instead of moving on to the next tab
+  body: "<ul>\n  <li><strong>מדריך העזרה מעודכן בכל שפה.</strong>\n    סעיפים שהיו רק במדריך האנגלי תורגמו.</li>\n</ul>\n"
+  body_en: "<ul>\n  <li><strong>The help manual is up to date in every language.</strong>\n    Sections that were only in the English manual are now translated.</li>\n</ul>\n"
 - version: 3.35.4
   date: '2026-11-03'
   tags:
