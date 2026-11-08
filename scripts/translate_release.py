@@ -206,15 +206,26 @@ def translate_catalog(locale, key, dry_run):
     return len(todo), len(todo) - len(done)
 
 
-def _entries_to_do(english, known):
+def _is_current(held, entry):
+    """True when the locale's entry matches the English one. Each translated item
+    records its English in `en`; an older entry without it is judged by count."""
+    if held is None or len(held['tags']) != len(entry['tags']):
+        return False
+    if held.get('body_en') and held['body_en'] != entry.get('body'):
+        return False
+    sources = [tag.get('en') for tag in held['tags']]
+    return not any(sources) or sources == [tag['label'] for tag in entry['tags']]
+
+
+def _entries_to_do(english, held):
     """Newest first, down to the first entry this locale already holds whole.
     A locale holding nothing starts at the newest: deep history stays English."""
     todo = []
     for entry in english:
-        if known.get(entry['version']) == len(entry['tags']):
+        if _is_current(held.get(entry['version']), entry):
             break
         todo.append(entry)
-    return todo if known else todo[:1]
+    return todo if held else todo[:1]
 
 
 def _write_entries(path, new_entries):
@@ -246,21 +257,31 @@ def translate_changelog(locale, key, dry_run):
     if os.path.exists(path):
         with open(path, encoding='utf-8') as f:
             rows = yaml.safe_load(f) or []
-    todo = _entries_to_do(english, {r['version']: len(r['tags']) for r in rows})
+    held = {r['version']: r for r in rows}
+    todo = _entries_to_do(english, held)
     if dry_run or not todo:
         return len(todo), 0
     written = []
     for entry in todo:
-        items = {i: tag['label'] for i, tag in enumerate(entry['tags'])}
-        if entry.get('body'):
+        # An item whose English is unchanged keeps its translation; only new or
+        # reworded items are sent, so a growing entry costs only what it gained.
+        old = held.get(entry['version'], {})
+        known = {tag['en']: tag['label'] for tag in old.get('tags', []) if tag.get('en')}
+        if old.get('body_en'):
+            known[old['body_en']] = old['body']
+        items = {i: tag['label'] for i, tag in enumerate(entry['tags'])
+                 if tag['label'] not in known}
+        if entry.get('body') and entry['body'] not in known:
             items['body'] = entry['body']
-        done = _translate(locale, items, key)
+        done = _translate(locale, items, key) if items else {}
         if len(done) < len(items):
             continue
         out = {'version': entry['version'], 'date': str(entry['date']),
-               'tags': [{**tag, 'label': done[i]} for i, tag in enumerate(entry['tags'])]}
+               'tags': [{**tag, 'label': done[i] if i in done else known[tag['label']],
+                         'en': tag['label']} for i, tag in enumerate(entry['tags'])]}
         if entry.get('body'):
-            out['body'] = done['body']
+            out['body'] = done.get('body', known.get(entry['body']))
+            out['body_en'] = entry['body']
         written.append(out)
     if written:
         _write_entries(path, written)

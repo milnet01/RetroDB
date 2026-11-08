@@ -142,17 +142,48 @@ def test_a_new_entry_goes_on_top_and_the_rest_is_untouched(repo, monkeypatch):
     assert text.startswith('# kept comment\n- version: 2.0.0') and text.endswith(LOCALE_LOG.split('\n', 1)[1])
     entry = yaml.safe_load(text)[0]
     assert entry == {'version': '2.0.0', 'date': '2026-10-30',
-                     'tags': [{'type': 'fix', 'label': 'DE Label 2.0.0'}]}
+                     'tags': [{'type': 'fix', 'label': 'DE Label 2.0.0', 'en': 'Label 2.0.0'}]}
 
 
-def test_an_entry_that_gained_items_is_replaced_whole(repo, monkeypatch):
+def _grown(repo, monkeypatch, first_label):
+    """1.0.0 in English: first_label, then a new item 'More'. The German file
+    holds 'Alt', translated from 'Label 1.0.0'. Returns the German entry and
+    what was sent to Claude."""
+    (repo / 'data' / 'changelog.de.yaml').write_text(
+        LOCALE_LOG.replace("label: 'Alt'", "label: 'Alt'\n    en: Label 1.0.0"), encoding='utf-8')
     english = _english('1.0.0')
+    english[0]['tags'][0]['label'] = first_label
     english[0]['tags'].append({'type': 'feature', 'label': 'More'})
     (repo / 'data' / 'changelog.yaml').write_text(yaml.safe_dump(english), encoding='utf-8')
-    monkeypatch.setattr(tr, '_ask_claude', _echo)
+    sent = []
+    monkeypatch.setattr(tr, '_ask_claude', lambda s, p, k: sent.extend(p.values()) or _echo(s, p, k))
     assert tr.translate_changelog('de', 'k', dry_run=False) == (1, 0)
-    rows = yaml.safe_load((repo / 'data' / 'changelog.de.yaml').read_text(encoding='utf-8'))
-    assert [r['version'] for r in rows] == ['1.0.0'] and len(rows[0]['tags']) == 2
+    return yaml.safe_load((repo / 'data' / 'changelog.de.yaml').read_text(encoding='utf-8'))[0], sent
+
+
+def test_a_grown_entry_sends_only_its_new_items(repo, monkeypatch):
+    entry, sent = _grown(repo, monkeypatch, 'Label 1.0.0')
+    assert sent == ['More']
+    assert entry['tags'] == [{'type': 'fix', 'label': 'Alt', 'en': 'Label 1.0.0'},
+                             {'type': 'feature', 'label': 'DE More', 'en': 'More'}]
+
+
+def test_an_item_whose_english_changed_is_translated_again(repo, monkeypatch):
+    entry, sent = _grown(repo, monkeypatch, 'Label 1.0.0, reworded')
+    assert sorted(sent) == ['Label 1.0.0, reworded', 'More']
+    assert entry['tags'][0] == {'type': 'fix', 'label': 'DE Label 1.0.0, reworded',
+                                'en': 'Label 1.0.0, reworded'}
+
+
+def test_a_reworded_item_alone_is_found(repo, monkeypatch):
+    # Same item count, so only the recorded English shows the change.
+    (repo / 'data' / 'changelog.de.yaml').write_text(
+        LOCALE_LOG.replace("label: 'Alt'", "label: 'Alt'\n    en: Label 1.0.0"), encoding='utf-8')
+    english = _english('1.0.0')
+    english[0]['tags'][0]['label'] = 'Reworded'
+    (repo / 'data' / 'changelog.yaml').write_text(yaml.safe_dump(english), encoding='utf-8')
+    monkeypatch.setattr(tr, '_ask_claude', _echo)
+    assert tr.translate_changelog('de', 'k', dry_run=True) == (1, 0)
 
 
 def test_a_locale_with_no_file_gets_only_the_newest_entry(repo, monkeypatch):
@@ -170,7 +201,15 @@ def test_the_body_is_translated_too(repo, monkeypatch):
     monkeypatch.setattr(tr, '_ask_claude', _echo)
     tr.translate_changelog('de', 'k', dry_run=False)
     rows = yaml.safe_load((repo / 'data' / 'changelog.de.yaml').read_text(encoding='utf-8'))
-    assert rows[0]['body'] == 'DE <p>Hello</p>'
+    assert rows[0]['body'] == 'DE <p>Hello</p>' and rows[0]['body_en'] == '<p>Hello</p>'
+    # The entry grows: its unchanged body is kept, not sent again.
+    english[0]['tags'].append({'type': 'feature', 'label': 'More'})
+    (repo / 'data' / 'changelog.yaml').write_text(yaml.safe_dump(english), encoding='utf-8')
+    sent = []
+    monkeypatch.setattr(tr, '_ask_claude', lambda s, p, k: sent.extend(p.values()) or _echo(s, p, k))
+    tr.translate_changelog('de', 'k', dry_run=False)
+    rows = yaml.safe_load((repo / 'data' / 'changelog.de.yaml').read_text(encoding='utf-8'))
+    assert sent == ['More'] and rows[0]['body'] == 'DE <p>Hello</p>'
 
 
 def test_the_word_list_is_filled_from_the_catalog_and_keeps_a_corrected_word(repo, monkeypatch):
