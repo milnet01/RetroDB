@@ -1,6 +1,8 @@
 - version: 4.0.0
-  date: 2026-11-06
+  date: 2026-11-08
   tags:
+  - type: performance
+    label: 'AI Fill with Claude web search costs less. Claude reads the search results again after each search; RetroDB now asks Anthropic to keep them ready, and a re-read then costs a tenth of the price or less'
   - type: fix
     label: 'Cancelling a scrape, sync or image job that has already finished now clears its stuck progress popup. Starting a job that is already running shows the real reason, such as "A scrape for SNES is already running", instead of "Network error". Controller image errors in the Museum now say what went wrong, and cancelling another user''s RetroAchievements sync says it is theirs instead of pretending to cancel it'
   - type: security

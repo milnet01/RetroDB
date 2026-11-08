@@ -134,6 +134,17 @@ def test_search_is_capped_per_game(monkeypatch):
     assert scrape_ai.CLAUDE_MAX_SEARCHES == 5
 
 
+def test_only_a_searching_request_is_cached(monkeypatch):
+    # Each search re-reads the prompt and earlier results, so caching pays;
+    # a request without search is read once, and a cache write costs more.
+    sent = _reply(monkeypatch, {'content': [{'type': 'text', 'text': '{}'}]})
+    scrape_ai._call_claude('p', 'k', 'claude-haiku-5-5', web_search=True)
+    assert sent['cache_control'] == {'type': 'ephemeral'}
+    sent = _reply(monkeypatch, {'content': [{'type': 'text', 'text': '{}'}]})
+    scrape_ai._call_claude('p', 'k', 'claude-haiku-5-5')
+    assert 'cache_control' not in sent
+
+
 def test_searching_claude_is_told_to_search_for_sales(monkeypatch):
     """At low effort, with nothing in the prompt asking for a search, Claude
     answered GTA IV without searching and left units_sold blank."""

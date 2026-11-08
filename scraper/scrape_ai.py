@@ -957,6 +957,11 @@ def _call_claude(prompt, api_key, model, web_search=False, **_kwargs):
         # code execution, which this request does not run.
         payload['tools'] = [{'type': 'web_search_20250305', 'name': 'web_search',
                              'max_uses': CLAUDE_MAX_SEARCHES}]
+        # Claude re-reads the prompt and every earlier search result after
+        # each search; cached, those re-reads cost a tenth or less. Not
+        # without search: that prompt is read once, and a cache write costs
+        # a quarter more (platform.claude.com prompt caching page, 2026-11-08).
+        payload['cache_control'] = {'type': 'ephemeral'}
     headers = {
         'Content-Type': 'application/json',
         'x-api-key': api_key,
@@ -966,6 +971,7 @@ def _call_claude(prompt, api_key, model, web_search=False, **_kwargs):
     # Pass 32.14: cap Claude response size.
     max_bytes = getattr(config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
     content = []
+    cache_read = 0
     for _turn in range(1 + _CLAUDE_MAX_CONTINUATIONS):
         response = http_post(url, json_data=payload, headers=headers,
                              timeout=120 if web_search else 60, retries=1,
@@ -983,6 +989,7 @@ def _call_claude(prompt, api_key, model, web_search=False, **_kwargs):
         except (KeyError, TypeError) as e:
             logger.error(f"Claude response parse error: {e}")
             return None
+        cache_read += (data.get('usage') or {}).get('cache_read_input_tokens') or 0
         if data.get('stop_reason') != 'pause_turn':
             break
         # A paused search turn goes back unchanged for Claude to carry on.
@@ -990,7 +997,8 @@ def _call_claude(prompt, api_key, model, web_search=False, **_kwargs):
 
     searches = sum(1 for block in content if block.get('type') == 'server_tool_use')
     if searches:
-        logger.info(f"Claude searched the web {searches} time(s)")
+        logger.info(f"Claude searched the web {searches} time(s); "
+                    f"{cache_read} input tokens read from the cache")
 
     try:
         text = _claude_answer_text(content)
