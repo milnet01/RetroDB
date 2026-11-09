@@ -191,7 +191,7 @@ def test_failed_check_is_retried_within_the_hour(sandbox, monkeypatch):
 
 def test_successful_check_still_waits_the_full_interval(sandbox, monkeypatch):
     calls = []
-    payload = {'tag_name': 'v9.0.0', 'draft': False, 'prerelease': False, 'assets': []}
+    payload = [{'tag_name': 'v4.0.1', 'draft': False, 'prerelease': False, 'assets': []}]
     monkeypatch.setattr(updater, '_http_get',
                         lambda url, **kw: calls.append(url) or FakeResponse(payload=payload))
     assert updater.check()['release']

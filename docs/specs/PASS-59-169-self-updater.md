@@ -29,9 +29,9 @@ covered, on Linux, Windows and macOS.
 
 - No unattended install. Checking can be automatic; installing always takes
   an admin's click (user, 2026-10-27).
-- No downgrade and no pre-release channel: only GitHub's "latest" published,
-  non-draft, non-pre-release release is considered, and only when it is
-  newer than the running version.
+- No downgrade and no pre-release channel: only published, non-draft,
+  non-pre-release releases are considered, and only when newer than the
+  running version (§3).
 - Git checkouts are never updated (`git pull` is the developer's tool), and
   neither is an install run under LocalWebServerManager (`LWSM_MANAGED=1`),
   whose manager restarts the process itself and would race the swap. Both
@@ -41,11 +41,21 @@ covered, on Linux, Windows and macOS.
 
 ## 3. Where updates come from
 
-`GET https://api.github.com/repos/milnet01/RetroDB/releases/latest`
-(`services/updater.py::RELEASES_REPO`). Draft releases are invisible to this
-endpoint, so the maintainer's existing "review the draft, then publish" step
-is also the switch that offers an update to users. The tag is `vX.Y.Z`;
-versions compare as integer tuples.
+`GET https://api.github.com/repos/milnet01/RetroDB/releases`
+(`services/updater.py::RELEASES_URL`), the newest releases first. Draft
+releases are invisible to anyone without write access, so the maintainer's
+existing "review the draft, then publish" step is also the switch that
+offers an update to users. The tag is `vX.Y.Z`; versions compare as integer
+tuples.
+
+**Web and desktop lines** (PASS-59-271, user 2026-11-09). 4.0.0 is the last
+web version; the desktop and Android app (PASS-59-270) starts at 5.0.0.
+A release whose major version is at most `WEB_LAST_MAJOR` (4) is a web
+update: the newest one is offered and installed as below. The newest
+release at 5.0.0 or later is the desktop app: status reports it as
+`desktop` (version and release page), and the web app links to it and never
+installs it. A web fix published after a desktop release is still found,
+because the whole list is read, not only GitHub's "latest".
 
 The asset for this install:
 
@@ -171,7 +181,7 @@ shows the outcome to the admin, and removes leftovers the helper could not
 
 | Route | Does |
 |---|---|
-| `GET /api/updates/status` | current version, latest release (version, notes, page URL, published date), `available`, `can_install` + `reason`, job state and progress, last result. Starts a background check when the cached one is over 24 h old and `update_check_auto` is on. |
+| `GET /api/updates/status` | current version, newest web release (version, notes, page URL, published date), `desktop` (newest desktop release's version and page URL, or null; §3), `available`, `can_install` + `reason`, job state and progress, last result. Starts a background check when the cached one is over 24 h old and `update_check_auto` is on. |
 | `POST /api/updates/check` | check now |
 | `POST /api/updates/download` | start §4 |
 | `POST /api/updates/install` | §5 |

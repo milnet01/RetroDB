@@ -154,6 +154,14 @@
     <div class="card-body">
         <p>{{ _('This is RetroDB %(version)s.', version=config.APP_VERSION) }}
            <span data-update-summary class="text-muted"></span></p>
+        {# PASS-59-271: 4.0 is the last web version; updates.js fills in the desktop release #}
+        <div>
+            <p>{{ _('Version 4.0 is the last web version of RetroDB. New versions will be a desktop app for Windows, Linux and macOS, and an Android app. They will open your existing library. Until then, version 4.0 gets only security fixes and fixes for bugs that lose data.') }}</p>
+            <p data-update-desktop hidden>
+                <span data-update-desktop-text></span>
+                <a data-update-desktop-link class="btn btn-primary btn-sm" href="#" target="_blank" rel="noopener noreferrer">{{ _('Download the desktop app') }}</a>
+            </p>
+        </div>
         <div data-update-result class="update-result" hidden></div>
         <div data-update-release hidden>
             <h3 class="section-title" data-update-title></h3>

@@ -41,10 +41,20 @@
     // Dashboard banner
     // ---------------------------------------------------------------------
 
+    // PASS-59-271: 5.0.0 and up is the desktop app, linked and never installed.
+    function desktopText(desktop) {
+        return t('RetroDB {version} is out as a desktop app.', { version: desktop.version });
+    }
+
     function renderBanner(banner, st) {
-        if (!st.available || !st.latest) return;
-        banner.querySelector('[data-update-banner-text]').textContent =
-            t('RetroDB {version} is available.', { version: st.latest.version });
+        let text = '';
+        if (st.available && st.latest) {
+            text = t('RetroDB {version} is available.', { version: st.latest.version });
+        } else if (st.desktop) {
+            text = desktopText(st.desktop);
+        }
+        if (!text) return;
+        banner.querySelector('[data-update-banner-text]').textContent = text;
         show(banner, true);
     }
 
@@ -77,6 +87,15 @@
             summary = t('You have the latest version.');
         }
         q('[data-update-summary]').textContent = summary;
+
+        const desktop = st.desktop;
+        show(q('[data-update-desktop]'), !!desktop);
+        if (desktop) {
+            q('[data-update-desktop-text]').textContent = desktopText(desktop);
+            const link = q('[data-update-desktop-link]');
+            if (desktop.url) link.href = desktop.url;
+            show(link, !!desktop.url);
+        }
 
         const release = q('[data-update-release]');
         show(release, !!(st.available && latest));

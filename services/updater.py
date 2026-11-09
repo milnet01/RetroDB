@@ -38,7 +38,10 @@ import config
 logger = logging.getLogger(__name__)
 
 RELEASES_REPO = 'milnet01/RetroDB'
-LATEST_URL = f'https://api.github.com/repos/{RELEASES_REPO}/releases/latest'
+RELEASES_URL = f'https://api.github.com/repos/{RELEASES_REPO}/releases?per_page=30'
+# 4.0.x is the last web line; 5.0.0 and up is the desktop and Android app,
+# which this app links to and never installs (PASS-59-271).
+WEB_LAST_MAJOR = 4
 DOWNLOAD_PREFIX = f'https://github.com/{RELEASES_REPO}/releases/download/'
 CHECK_INTERVAL = 24 * 3600
 CHECK_RETRY = 3600          # after a failed check: try again sooner
@@ -224,26 +227,47 @@ def _is_fresh(cached) -> bool:
     return time.time() - cached.get('checked_at', 0) < wait
 
 
+def _newest_by_line(releases) -> tuple:
+    """(newest web release, newest desktop release) among published X.Y.Z
+    releases; either may be None. A major version up to WEB_LAST_MAJOR is
+    the web app, anything later the desktop app (PASS-59-271)."""
+    web = desktop = None
+    for release in releases if isinstance(releases, list) else []:
+        if not isinstance(release, dict) or release.get('draft') or release.get('prerelease'):
+            continue
+        version = parse_version(release.get('tag_name'))
+        if not version:
+            continue
+        if version[0] <= WEB_LAST_MAJOR:
+            if not web or version > parse_version(web['tag_name']):
+                web = release
+        elif not desktop or version > parse_version(desktop['tag_name']):
+            desktop = release
+    return web, desktop
+
+
 def check(force=False) -> dict:
-    """Ask GitHub for the latest release; cached (see _is_fresh)."""
+    """Ask GitHub for its releases; cached (see _is_fresh)."""
     with _check_lock:
         cached = _load_check()
         if not force and _is_fresh(cached):
             return cached
-        data = {'checked_at': time.time(), 'release': None, 'error': None}
+        data = {'checked_at': time.time(), 'release': None, 'desktop': None, 'error': None}
         try:
-            r = _http_get(LATEST_URL)
+            r = _http_get(RELEASES_URL)
             if r.status_code == 404:
                 data['error'] = 'no published release'
             elif r.status_code != 200:
                 data['error'] = f'GitHub answered {r.status_code}'
             else:
-                release = r.json()
-                if parse_version(release.get('tag_name')) and not release.get('draft') \
-                        and not release.get('prerelease'):
-                    data['release'] = _summarise(release)
-                else:
-                    data['error'] = 'latest release has no X.Y.Z tag'
+                web, desktop = _newest_by_line(r.json())
+                if web:
+                    data['release'] = _summarise(web)
+                if desktop:
+                    summary = _summarise(desktop)
+                    data['desktop'] = {'version': summary['version'], 'url': summary['url']}
+                if not web and not desktop:
+                    data['error'] = 'no published release'
         except (requests.RequestException, ValueError) as e:
             data['error'] = 'could not reach GitHub'
             logger.info(f"update check failed: {e}")
@@ -566,6 +590,7 @@ def status() -> dict:
         'current': config.APP_VERSION,
         'latest': {k: release.get(k) for k in ('version', 'notes', 'url', 'published_at')}
         if release else None,
+        'desktop': cached.get('desktop'),
         'available': available,
         'can_install': can_install,
         'reason': None if can_install else (reason if available else None),
