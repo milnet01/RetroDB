@@ -481,7 +481,7 @@
         <p><em>Isetyenziselwa ukungenisa ilayibrari yeSteam nokulandelela i-achievement.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Uqinisekiso lweXbox lusebenzisa i-OAuth2 &mdash; akukho API key eyimfuneko. Ngena ngeakhawunti yakho yeMicrosoft ngokuthe ngqo kwi-tab yeGame Imports &rarr; Xbox. Ii-token zigcinwa ngokuzenzekelayo kwaye zihlaziywa xa kufuneka.</p>
+        <p>I-Xbox ifikelela kwi-RetroDB ngeOpenXBL, inkonzo yasimahla. Umntu ngamnye usebenzisa isitshixo sakhe: ngena kwi-<a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> nge-akhawunti yakho yeXbox, kopa isitshixo sakho se-API, uze usincamathisele kwiiSethingi &rarr; Iprofayile Yam &rarr; Xbox. <strong>Gcina &amp; Vavanya Uqhagamshelo</strong> ihlola isitshixo kwaye ibonise i-gamertag yakho. Isitshixo sasimahla sivumela izicelo ezili-150 ngeyure.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>I-PSN isebenzisa uqinisekiso lwe-cookie ye-NPSSO. Jonga icandelo le-<a href="#trophies">Iindebe</a> ukuze ufumane imiyalelo yosetho eneenkcukacha.</p>
@@ -1054,15 +1054,13 @@
         </ol>
 
         <h3>Ukungenisa kweXbox</h3>
-        <p>Ngenisa ilayibrari yakho yemidlalo yeXbox ngeakhawunti yeMicrosoft.</p>
+        <p>Ngenisa imidlalo yeXbox oyidlalileyo, usebenzisa isitshixo sakho se-OpenXBL.</p>
         <ol>
-            <li>Yiya kwi-Game Imports &rarr; i-tab ye-<strong>Xbox</strong></li>
-            <li>Cofa <strong>"Sign In"</strong> ukuqinisekisa ngeakhawunti yakho yeMicrosoft (i-OAuth2 flow)</li>
-            <li>Imbali yezihloko zakho zeXbox ilandwa ngokuzenzekelayo</li>
-            <li>Khetha imidlalo yokungenisa ngokuchongwa kweempinda</li>
+            <li>Gcina isitshixo sakho se-OpenXBL kwiiSethingi &rarr; Iprofayile Yam &rarr; Xbox (jonga izitshixo ze-API ngasentla)</li>
+            <li>Yiya kwi-Game Imports &rarr; i-tab ye-<strong>Xbox</strong> uze ucofe <strong>Landa Ithala</strong></li>
+            <li>Khetha imidlalo yokungenisa ngokuchongwa kweempinda. Ii-app nemidlalo yefowuni kuphela ziyashiywa ngaphandle.</li>
             <li>Imidlalo engeniswayo iphawulwa nge-Xbox Title ID yayo ukulandelela i-achievement</li>
         </ol>
-        <p>Ii-token zeXbox zigcinwa kwi-<code>data/xbox_tokens.json</code> kwaye zihlaziywa ngokuzenzekelayo.</p>
 
         <h3>Ukungenisa kwePSN</h3>
         <p>Ngenisa ilayibrari yakho yemidlalo ye-PlayStation Network.</p>
@@ -1176,7 +1174,7 @@
         <h3>Useto</h3>
         <ol>
             <li>Ngenisa imidlalo yeXbox nge-<strong>Game Imports &rarr; Xbox</strong></li>
-            <li>Uqinisekiso luphathwa nge-Xbox OAuth ngexesha lokungenisa</li>
+            <li>Gcina isitshixo sakho se-OpenXBL kwiiSethingi &rarr; Iprofayile Yam &rarr; Xbox</li>
         </ol>
 
         <h3>Iphepha lokuFika le-Achievements</h3>
@@ -1196,6 +1194,7 @@
         <h3>Ukuvumelanisa</h3>
         <ul>
             <li>Vumelanisa umdlalo omnye okanye uvumelanise yonke imidlalo yeXbox ngobuninzi</li>
+            <li>Umdlalo ngamnye sisicelo esinye, kwaye isitshixo se-OpenXBL sasimahla sivumela ezili-150 ngeyure. Ukulungelelanisa ngobuninzi okufikelela kumda kuyema kwaye kuxele oko; kuqhube kwakhona emva kweyure kwaye kuya kuqala ngemidlalo engekalungelelaniswa.</li>
             <li>Iqhuba njengomsebenzi wasemva ngee-toast notification</li>
             <li>Ii-gamerscore total zihlaziyeka ngokuzenzekelayo emva kokuvumelanisa</li>
         </ul>
@@ -1837,10 +1836,10 @@
             <li>IRetroDB iphinda ingene ngokwayo logama iSony isamkela i-NPSSO yakho egciniweyo. Xa iSony iyiyala, ncamathisela entsha kwi-Settings &rarr; Account &rarr; PSN. Ukuze utshintshe i-token esasebenzayo, qala uphume kwi-PlayStation.</li>
         </ul>
 
-        <h4>"Xbox Authentication Failed"</h4>
+        <h4>"I-OpenXBL ayisamkelanga eso sitshixo"</h4>
         <ul>
-            <li>Phinda-qinisekise ngokucofa "Sign In" kwi-tab yeGame Imports &rarr; Xbox</li>
-            <li>Ii-token zeXbox zigcinwa kwi-<code>data/xbox_tokens.json</code> kwaye zihlaziywa ngokuzenzekelayo</li>
+            <li>Phinda ukope isitshixo kwi-<a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> uze usincamathisele kwiiSethingi &rarr; Iprofayile Yam &rarr; Xbox</li>
+            <li>"Umda weyure we-OpenXBL ufikelelwe" kuthetha ukuba isitshixo sisebenzise izicelo zaso ezili-150 kule yure; linda uze uzame kwakhona</li>
         </ul>
 
         <h4>"Image Upscaling Errors"</h4>

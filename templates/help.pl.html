@@ -481,7 +481,7 @@
         <p><em>Używane do importu biblioteki Steam i śledzenia osiągnięć.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Uwierzytelnianie Xbox używa OAuth2 &mdash; klucz API nie jest potrzebny. Zaloguj się kontem Microsoft bezpośrednio z zakładki Import gier &rarr; Xbox. Tokeny są buforowane automatycznie i odświeżane w razie potrzeby.</p>
+        <p>Xbox łączy się z RetroDB przez OpenXBL, darmową usługę. Każdy używa własnego klucza: zaloguj się na <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> kontem Xbox, skopiuj swój klucz API i wklej go w Ustawienia &rarr; Mój profil &rarr; Xbox. <strong>Zapisz i przetestuj połączenie</strong> sprawdza klucz i pokazuje Twój gamertag. Darmowy klucz pozwala na 150 zapytań na godzinę.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN używa uwierzytelniania przez ciasteczko NPSSO. Zobacz sekcję <a href="#trophies">Trofea</a>, aby poznać szczegółowe instrukcje konfiguracji.</p>
@@ -1054,15 +1054,13 @@
         </ol>
 
         <h3>Import Xbox</h3>
-        <p>Importuj swoją bibliotekę gier Xbox przez konto Microsoft.</p>
+        <p>Importuj gry Xbox z historii swojego konta za pomocą własnego klucza OpenXBL.</p>
         <ol>
-            <li>Przejdź do Import gier &rarr; zakładka <strong>Xbox</strong></li>
-            <li>Kliknij <strong>„Zaloguj się”</strong>, aby uwierzytelnić się kontem Microsoft (proces OAuth2)</li>
-            <li>Historia tytułów Xbox jest pobierana automatycznie</li>
-            <li>Wybierz gry do zaimportowania z wykrywaniem duplikatów</li>
+            <li>Zapisz swój klucz OpenXBL w Ustawienia &rarr; Mój profil &rarr; Xbox (zobacz Klucze API powyżej)</li>
+            <li>Przejdź do Import gier &rarr; zakładka <strong>Xbox</strong> i kliknij <strong>Pobierz bibliotekę</strong></li>
+            <li>Wybierz gry do zaimportowania z wykrywaniem duplikatów. Aplikacje i gry tylko na telefon są pomijane.</li>
             <li>Zaimportowane gry są oznaczane ich Xbox Title ID do śledzenia osiągnięć</li>
         </ol>
-        <p>Tokeny Xbox są buforowane w <code>data/xbox_tokens.json</code> i odświeżane automatycznie.</p>
 
         <h3>Import PSN</h3>
         <p>Importuj swoją bibliotekę gier PlayStation Network.</p>
@@ -1176,7 +1174,7 @@
         <h3>Konfiguracja</h3>
         <ol>
             <li>Zaimportuj gry Xbox przez <strong>Import gier &rarr; Xbox</strong></li>
-            <li>Uwierzytelnianie jest obsługiwane przez OAuth Xbox podczas importu</li>
+            <li>Zapisz swój klucz OpenXBL w Ustawienia &rarr; Mój profil &rarr; Xbox</li>
         </ol>
 
         <h3>Strona główna osiągnięć</h3>
@@ -1196,6 +1194,7 @@
         <h3>Synchronizacja</h3>
         <ul>
             <li>Synchronizuj pojedynczą grę lub masowo wszystkie gry Xbox</li>
+            <li>Każda gra to jedno zapytanie, a darmowy klucz OpenXBL pozwala na 150 na godzinę. Masowa synchronizacja, która dojdzie do limitu, zatrzymuje się i o tym informuje; uruchom ją ponownie godzinę później, a zacznie od gier, które nie zostały jeszcze zsynchronizowane.</li>
             <li>Działa jako zadanie w tle z powiadomieniami toast</li>
             <li>Sumy gamerscore aktualizują się automatycznie po każdej synchronizacji</li>
         </ul>
@@ -1837,10 +1836,10 @@
             <li>RetroDB sam loguje się ponownie, dopóki Sony akceptuje zapisany NPSSO. Gdy Sony go odrzuci, wklej nowy w Ustawienia &rarr; Konto &rarr; PSN. Aby zastąpić token, który nadal działa, najpierw wyloguj się z PlayStation.</li>
         </ul>
 
-        <h4>„Uwierzytelnianie Xbox nie powiodło się”</h4>
+        <h4>„OpenXBL nie przyjął tego klucza”</h4>
         <ul>
-            <li>Uwierzytelnij się ponownie, klikając „Zaloguj się” w zakładce Import gier &rarr; Xbox</li>
-            <li>Tokeny Xbox są buforowane w <code>data/xbox_tokens.json</code> i odświeżane automatycznie</li>
+            <li>Skopiuj klucz ponownie z <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> i wklej go w Ustawienia &rarr; Mój profil &rarr; Xbox</li>
+            <li>„Osiągnięto godzinny limit OpenXBL” oznacza, że klucz wykorzystał w tej godzinie swoje 150 zapytań; poczekaj i spróbuj ponownie</li>
         </ul>
 
         <h4>„Błędy powiększania obrazów”</h4>

@@ -481,7 +481,7 @@
         <p><em>Isetshenziselwa ukungenisa umtapo we-Steam nokulandelela ama-achievement.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Ukuqinisekiswa kwe-Xbox kusebenzisa i-OAuth2 &mdash; ayikho i-API key edingekayo. Ngena nge-akhawunti yakho ye-Microsoft ngqo ku-thebhu ye-Game Imports &rarr; Xbox. Ama-token agcinwa ku-cache ngokuzenzakalelayo futhi avuselelwe njengoba kudingeka.</p>
+        <p>I-Xbox ifinyelela ku-RetroDB ngokusebenzisa i-OpenXBL, isevisi yamahhala. Umuntu ngamunye usebenzisa ukhiye wakhe: ngena ku-<a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> nge-akhawunti yakho ye-Xbox, kopisha ukhiye wakho we-API, bese uwunamathisela ku-Izilungiselelo &rarr; Iphrofayela Yami &rarr; Xbox. <strong>Londoloza &amp; Hlola Uxhumano</strong> ihlola ukhiye futhi ibonise i-gamertag yakho. Ukhiye wamahhala uvumela izicelo eziyi-150 ngehora.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>I-PSN isebenzisa ukuqinisekiswa kwe-cookie ye-NPSSO. Bheka isigaba se-<a href="#trophies">Trophies</a> ukuze uthole imiyalelo yokusetha eningiliziwe.</p>
@@ -1054,15 +1054,13 @@
         </ol>
 
         <h3>Xbox Import</h3>
-        <p>Ngenisa umtapo wakho wamageyimu we-Xbox nge-akhawunti ye-Microsoft.</p>
+        <p>Ngenisa imidlalo ye-Xbox oyidlalile, usebenzisa ukhiye wakho we-OpenXBL.</p>
         <ol>
-            <li>Iya ku-Game Imports &rarr; ithebhu ye-<strong>Xbox</strong></li>
-            <li>Chofoza <strong>"Sign In"</strong> ukuze uqinisekise nge-akhawunti yakho ye-Microsoft (i-OAuth2 flow)</li>
-            <li>Umlando wesihloko sakho se-Xbox ulandwa ngokuzenzakalela</li>
-            <li>Khetha amageyimu ozowangenisa ngokutholwa kokufanayo</li>
+            <li>Londoloza ukhiye wakho we-OpenXBL ku-Izilungiselelo &rarr; Iphrofayela Yami &rarr; Xbox (bheka okhiye be-API ngenhla)</li>
+            <li>Iya ku-Game Imports &rarr; ithebhu ye-<strong>Xbox</strong> bese uchofoza <strong>Landa Umtapo</strong></li>
+            <li>Khetha imidlalo ozoyingenisa ngokutholwa kokufanayo. Ama-app nemidlalo yefoni kuphela ashiywa ngaphandle.</li>
             <li>Amageyimu angenisiwe afakwa i-tag nge-Xbox Title ID yawo ukuze kulandelelwe ama-achievement</li>
         </ol>
-        <p>Ama-token e-Xbox agcinwa esigcinini ku-<code>data/xbox_tokens.json</code> futhi avuselelwa ngokuzenzakalela.</p>
 
         <h3>PSN Import</h3>
         <p>Ngenisa umtapo wakho wamageyimu we-PlayStation Network.</p>
@@ -1176,7 +1174,7 @@
         <h3>Ukusetha</h3>
         <ol>
             <li>Ngenisa amageyimu e-Xbox nge-<strong>Game Imports &rarr; Xbox</strong></li>
-            <li>Ukuqinisekiswa kuphathwa nge-Xbox OAuth ngesikhathi sokungenisa</li>
+            <li>Londoloza ukhiye wakho we-OpenXBL ku-Izilungiselelo &rarr; Iphrofayela Yami &rarr; Xbox</li>
         </ol>
 
         <h3>Ikhasi Lokufika Lama-Achievement</h3>
@@ -1196,6 +1194,7 @@
         <h3>Ukuvumelanisa</h3>
         <ul>
             <li>Vumelanisa igeyimu eyodwa noma uvumelanise ngobuningi wonke amageyimu e-Xbox</li>
+            <li>Umdlalo ngamunye uyisicelo esisodwa, futhi ukhiye we-OpenXBL wamahhala uvumela eziyi-150 ngehora. Ukuvumelanisa ngobuningi okufinyelela umkhawulo kuyama futhi kukusho lokho; kuqalise futhi emva kwehora bese kuqala ngemidlalo engakavumelaniswa.</li>
             <li>Isebenza njengomsebenzi wangemuva nezaziso ze-toast</li>
             <li>Ama-total e-gamerscore abuyekezwa ngokuzenzakalela ngemva kwe-sync ngayinye</li>
         </ul>
@@ -1837,10 +1836,10 @@
             <li>I-RetroDB iphinda ingene ngokwayo inqobo nje uma i-Sony isamukela i-NPSSO yakho elondoloziwe. Uma i-Sony isiyenqabile, namathelisa entsha ku-Settings &rarr; Account &rarr; PSN. Ukuze ushintshe i-token esasebenza, qala uphume ku-PlayStation.</li>
         </ul>
 
-        <h4>"Xbox Authentication Failed"</h4>
+        <h4>"I-OpenXBL ayiwamukelanga lowo khiye"</h4>
         <ul>
-            <li>Qinisekisa kabusha ngokuchofoza "Sign In" kuthebhu ye-Game Imports &rarr; Xbox</li>
-            <li>Ama-token e-Xbox agcinwa ku-<code>data/xbox_tokens.json</code> futhi avuselelwa ngokuzenzakalelayo</li>
+            <li>Kopisha ukhiye futhi ku-<a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> bese uwunamathisela ku-Izilungiselelo &rarr; Iphrofayela Yami &rarr; Xbox</li>
+            <li>"Umkhawulo wehora we-OpenXBL ufinyelelwe" kusho ukuthi ukhiye usuzisebenzisile izicelo zawo eziyi-150 kuleli hora; linda bese uzama futhi</li>
         </ul>
 
         <h4>"Image Upscaling Errors"</h4>

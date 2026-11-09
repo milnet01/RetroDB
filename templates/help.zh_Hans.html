@@ -481,7 +481,7 @@
         <p><em>用于 Steam 游戏库导入和成就追踪。</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox 认证使用 OAuth2 &mdash; 无需 API 密钥。直接从 游戏导入 &rarr; Xbox 标签页用你的 Microsoft 账户登录。令牌会自动缓存并按需刷新。</p>
+        <p>Xbox 通过免费服务 OpenXBL 连接到 RetroDB。每个人使用自己的密钥：用你的 Xbox 账户登录 <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a>，复制你的 API 密钥，然后粘贴到 设置 &rarr; 我的资料 &rarr; Xbox 中。<strong>保存&amp;测试连接</strong>会检查密钥并显示你的玩家代号（gamertag）。免费密钥每小时允许 150 次请求。</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN 使用 NPSSO cookie 认证。详细设置说明请参见 <a href="#trophies">奖杯</a> 部分。</p>
@@ -1054,15 +1054,13 @@
         </ol>
 
         <h3>Xbox 导入</h3>
-        <p>通过 Microsoft 账户导入你的 Xbox 游戏库。</p>
+        <p>使用你自己的 OpenXBL 密钥，导入你玩过的 Xbox 游戏。</p>
         <ol>
-            <li>进入游戏导入 &rarr; <strong>Xbox</strong> 标签页</li>
-            <li>点击<strong>“登录”</strong>以使用你的 Microsoft 账户进行身份验证（OAuth2 流程）</li>
-            <li>系统会自动获取你的 Xbox 游戏历史记录</li>
-            <li>选择要导入的游戏，并检测重复项</li>
+            <li>在 设置 &rarr; 我的资料 &rarr; Xbox 中保存你的 OpenXBL 密钥（见上文“API 密钥”）</li>
+            <li>进入游戏导入 &rarr; <strong>Xbox</strong> 标签页，点击<strong>获取游戏库</strong></li>
+            <li>选择要导入的游戏，并检测重复项。应用和仅限手机的游戏会被排除。</li>
             <li>导入的游戏会标记其 Xbox Title ID 以便追踪成就</li>
         </ol>
-        <p>Xbox 令牌缓存在 <code>data/xbox_tokens.json</code> 中并会自动刷新。</p>
 
         <h3>PSN 导入</h3>
         <p>导入你的 PlayStation Network 游戏库。</p>
@@ -1176,7 +1174,7 @@
         <h3>设置</h3>
         <ol>
             <li>通过<strong>游戏导入 &rarr; Xbox</strong> 导入 Xbox 游戏</li>
-            <li>身份验证在导入过程中通过 Xbox OAuth 处理</li>
+            <li>在 设置 &rarr; 我的资料 &rarr; Xbox 中保存你的 OpenXBL 密钥</li>
         </ol>
 
         <h3>成就着陆页</h3>
@@ -1196,6 +1194,7 @@
         <h3>同步</h3>
         <ul>
             <li>同步单款游戏或批量同步所有 Xbox 游戏</li>
+            <li>每款游戏算一次请求，免费 OpenXBL 密钥每小时允许 150 次。批量同步达到上限时会停止并提示；一小时后再运行，它会从尚未同步的游戏开始。</li>
             <li>作为后台任务运行，并带有 toast 通知</li>
             <li>每次同步后游戏得分总计会自动更新</li>
         </ul>
@@ -1837,10 +1836,10 @@
             <li>只要 Sony 接受你保存的 NPSSO，RetroDB 就会自动重新登录。一旦 Sony 拒绝它，请在 设置 &rarr; 账户 &rarr; PSN 中粘贴一个新的。若要替换仍然有效的令牌，请先退出 PlayStation 登录。</li>
         </ul>
 
-        <h4>“Xbox 身份验证失败”</h4>
+        <h4>“OpenXBL 不接受该密钥”</h4>
         <ul>
-            <li>在 游戏导入 &rarr; Xbox 标签页中点击“登录”以重新验证</li>
-            <li>Xbox 令牌缓存在 <code>data/xbox_tokens.json</code> 中并会自动刷新</li>
+            <li>从 <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> 重新复制密钥，并粘贴到 设置 &rarr; 我的资料 &rarr; Xbox 中</li>
+            <li>“已达到 OpenXBL 每小时的请求上限”表示该密钥本小时的 150 次请求已用完；请稍候再试</li>
         </ul>
 
         <h4>“图片放大错误”</h4>

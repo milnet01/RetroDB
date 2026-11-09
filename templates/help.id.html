@@ -481,7 +481,7 @@
         <p><em>Digunakan untuk impor perpustakaan Steam dan pelacakan achievement.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Autentikasi Xbox menggunakan OAuth2 &mdash; tidak diperlukan kunci API. Masuk dengan akun Microsoft Anda langsung dari tab Game Imports &rarr; Xbox. Token disimpan otomatis di cache dan diperbarui sesuai kebutuhan.</p>
+        <p>Xbox terhubung ke RetroDB melalui OpenXBL, layanan gratis. Setiap orang memakai kuncinya sendiri: masuk di <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> dengan akun Xbox Anda, salin kunci API Anda, lalu tempelkan di Pengaturan &rarr; Profil Saya &rarr; Xbox. <strong>Simpan &amp; Uji Koneksi</strong> memeriksa kunci dan menampilkan gamertag Anda. Kunci gratis mengizinkan 150 permintaan per jam.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN menggunakan autentikasi cookie NPSSO. Lihat bagian <a href="#trophies">Trophies</a> untuk petunjuk pengaturan yang rinci.</p>
@@ -1054,15 +1054,13 @@
         </ol>
 
         <h3>Impor Xbox</h3>
-        <p>Impor perpustakaan game Xbox Anda lewat akun Microsoft.</p>
+        <p>Impor game Xbox yang pernah Anda mainkan, dengan kunci OpenXBL milik Anda sendiri.</p>
         <ol>
-            <li>Buka tab Game Imports &rarr; <strong>Xbox</strong></li>
-            <li>Klik <strong>"Sign In"</strong> untuk mengautentikasi dengan akun Microsoft Anda (alur OAuth2)</li>
-            <li>Riwayat judul Xbox Anda diambil secara otomatis</li>
-            <li>Pilih game yang akan diimpor dengan deteksi duplikat</li>
+            <li>Simpan kunci OpenXBL Anda di Pengaturan &rarr; Profil Saya &rarr; Xbox (lihat Panduan Pengaturan Kunci API di atas)</li>
+            <li>Buka tab Game Imports &rarr; <strong>Xbox</strong> lalu klik <strong>Ambil Pustaka</strong></li>
+            <li>Pilih game yang akan diimpor dengan deteksi duplikat. Aplikasi dan game khusus ponsel tidak disertakan.</li>
             <li>Game yang diimpor ditandai dengan Xbox Title ID-nya untuk pelacakan achievement</li>
         </ol>
-        <p>Token Xbox disimpan di cache dalam <code>data/xbox_tokens.json</code> dan diperbarui secara otomatis.</p>
 
         <h3>Impor PSN</h3>
         <p>Impor perpustakaan game PlayStation Network Anda.</p>
@@ -1176,7 +1174,7 @@
         <h3>Pengaturan</h3>
         <ol>
             <li>Impor game Xbox lewat <strong>Game Imports &rarr; Xbox</strong></li>
-            <li>Autentikasi ditangani lewat OAuth Xbox selama impor</li>
+            <li>Simpan kunci OpenXBL Anda di Pengaturan &rarr; Profil Saya &rarr; Xbox</li>
         </ol>
 
         <h3>Halaman Utama Achievements</h3>
@@ -1196,6 +1194,7 @@
         <h3>Sinkronisasi</h3>
         <ul>
             <li>Sinkronkan satu game atau sinkronkan massal semua game Xbox</li>
+            <li>Setiap game memakai satu permintaan, dan kunci OpenXBL gratis mengizinkan 150 per jam. Sinkronisasi massal yang mencapai batas akan berhenti dan memberi tahu Anda; jalankan lagi satu jam kemudian dan sinkronisasi dimulai dari game yang belum disinkronkan.</li>
             <li>Berjalan sebagai job latar belakang dengan notifikasi toast</li>
             <li>Total gamerscore diperbarui otomatis setelah setiap sinkronisasi</li>
         </ul>
@@ -1837,10 +1836,10 @@
             <li>RetroDB masuk kembali dengan sendirinya selama Sony menerima NPSSO Anda yang tersimpan. Setelah Sony menolaknya, tempelkan yang baru di Settings &rarr; Account &rarr; PSN. Untuk mengganti token yang masih berfungsi, keluar dari PlayStation terlebih dahulu.</li>
         </ul>
 
-        <h4>"Xbox Authentication Failed"</h4>
+        <h4>"OpenXBL tidak menerima kunci itu"</h4>
         <ul>
-            <li>Autentikasi ulang dengan mengklik "Sign In" pada tab Game Imports &rarr; Xbox</li>
-            <li>Token Xbox disimpan di cache dalam <code>data/xbox_tokens.json</code> dan diperbarui secara otomatis</li>
+            <li>Salin lagi kunci dari <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> lalu tempelkan di Pengaturan &rarr; Profil Saya &rarr; Xbox</li>
+            <li>"Batas per jam OpenXBL sudah tercapai" berarti kunci sudah memakai 150 permintaannya untuk jam ini; tunggu lalu coba lagi</li>
         </ul>
 
         <h4>"Image Upscaling Errors"</h4>

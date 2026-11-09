@@ -481,7 +481,7 @@
         <p><em>Steam 라이브러리 가져오기 및 업적 추적에 사용됩니다.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox 인증은 OAuth2를 사용합니다 &mdash; API 키가 필요하지 않습니다. 게임 가져오기 &rarr; Xbox 탭에서 직접 Microsoft 계정으로 로그인하세요. 토큰은 자동으로 캐시되고 필요에 따라 갱신됩니다.</p>
+        <p>Xbox는 무료 서비스인 OpenXBL을 통해 RetroDB와 연결됩니다. 각 사용자가 자신의 키를 사용합니다. Xbox 계정으로 <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a>에 로그인하고 API 키를 복사해 설정 &rarr; 내 프로필 &rarr; Xbox에 붙여 넣으세요. <strong>저장 &amp; 연결 테스트</strong>를 누르면 키를 확인하고 게이머태그를 보여 줍니다. 무료 키는 한 시간에 요청 150건까지 허용합니다.</p>
 
         <h4>PlayStation Network(PSN)</h4>
         <p>PSN은 NPSSO 쿠키 인증을 사용합니다. 자세한 설정 방법은 <a href="#trophies">트로피</a> 섹션을 참조하세요.</p>
@@ -1052,15 +1052,13 @@
         </ol>
 
         <h3>Xbox 가져오기</h3>
-        <p>Microsoft 계정을 통해 Xbox 게임 라이브러리를 가져옵니다.</p>
+        <p>플레이한 Xbox 게임을 본인의 OpenXBL 키로 가져옵니다.</p>
         <ol>
-            <li>게임 가져오기 &rarr; <strong>Xbox</strong> 탭으로 이동합니다</li>
-            <li><strong>"로그인"</strong>을 클릭하여 Microsoft 계정으로 인증합니다(OAuth2 흐름)</li>
-            <li>Xbox 타이틀 기록이 자동으로 검색됩니다</li>
-            <li>중복 감지와 함께 가져올 게임을 선택합니다</li>
+            <li>설정 &rarr; 내 프로필 &rarr; Xbox에 OpenXBL 키를 저장합니다(위의 API 키 설정 가이드 참고)</li>
+            <li>게임 가져오기 &rarr; <strong>Xbox</strong> 탭으로 이동해 <strong>라이브러리 가져오기</strong>를 클릭합니다</li>
+            <li>중복 감지와 함께 가져올 게임을 선택합니다. 앱과 휴대폰 전용 게임은 제외됩니다.</li>
             <li>가져온 게임은 업적 추적을 위해 Xbox Title ID로 태그가 지정됩니다</li>
         </ol>
-        <p>Xbox 토큰은 <code>data/xbox_tokens.json</code> 에 캐시되고 자동으로 갱신됩니다.</p>
 
         <h3>PSN 가져오기</h3>
         <p>PlayStation Network 게임 라이브러리를 가져옵니다.</p>
@@ -1174,7 +1172,7 @@
         <h3>설정</h3>
         <ol>
             <li><strong>게임 가져오기 &rarr; Xbox</strong>를 통해 Xbox 게임을 가져옵니다</li>
-            <li>인증은 가져오기 중 Xbox OAuth를 통해 처리됩니다</li>
+            <li>설정 &rarr; 내 프로필 &rarr; Xbox에 OpenXBL 키를 저장합니다</li>
         </ol>
 
         <h3>업적 랜딩 페이지</h3>
@@ -1194,6 +1192,7 @@
         <h3>동기화</h3>
         <ul>
             <li>단일 게임을 동기화하거나 모든 Xbox 게임을 일괄 동기화</li>
+            <li>게임 하나에 요청 하나가 쓰이며, 무료 OpenXBL 키는 한 시간에 150건까지 허용합니다. 일괄 동기화가 한도에 도달하면 멈추고 그 사실을 알려 줍니다. 한 시간 뒤에 다시 실행하면 아직 동기화하지 않은 게임부터 시작합니다.</li>
             <li>토스트 알림과 함께 백그라운드 작업으로 실행</li>
             <li>게이머스코어 총합은 각 동기화 후 자동으로 업데이트</li>
         </ul>
@@ -1831,10 +1830,10 @@
             <li>Sony가 저장된 NPSSO를 받아들이는 동안 RetroDB가 스스로 다시 로그인합니다. Sony가 거부하면 설정 &rarr; 계정 &rarr; PSN에 새 NPSSO를 붙여 넣으세요. 아직 작동하는 토큰을 바꾸려면 먼저 PlayStation에서 로그아웃하세요.</li>
         </ul>
 
-        <h4>"Xbox Authentication Failed"</h4>
+        <h4>"OpenXBL이 그 키를 받아들이지 않았습니다"</h4>
         <ul>
-            <li>게임 가져오기 &rarr; Xbox 탭에서 "로그인"을 클릭하여 다시 인증하세요</li>
-            <li>Xbox 토큰은 <code>data/xbox_tokens.json</code> 에 캐시되고 자동으로 갱신됩니다</li>
+            <li><a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a>에서 키를 다시 복사해 설정 &rarr; 내 프로필 &rarr; Xbox에 붙여 넣으세요</li>
+            <li>"OpenXBL의 시간당 한도에 도달했습니다"는 키가 이번 시간의 요청 150건을 모두 썼다는 뜻입니다. 기다렸다가 다시 시도하세요</li>
         </ul>
 
         <h4>"Image Upscaling Errors"</h4>

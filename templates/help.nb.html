@@ -481,7 +481,7 @@
         <p><em>Brukes til Steam-biblioteksimport og sporing av prestasjoner.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox-autentisering bruker OAuth2 &mdash; ingen API-nøkkel er nødvendig. Logg inn med Microsoft-kontoen din direkte fra Spillimport &rarr; Xbox-fanen. Tokens caches automatisk og fornyes ved behov.</p>
+        <p>Xbox kobles til RetroDB gjennom OpenXBL, en gratis tjeneste. Hver person bruker sin egen nøkkel: logg inn på <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> med Xbox-kontoen din, kopier API-nøkkelen og lim den inn under Innstillinger &rarr; Min profil &rarr; Xbox. <strong>Lagre &amp; test tilkobling</strong> sjekker nøkkelen og viser gamertaggen din. Den gratis nøkkelen tillater 150 forespørsler i timen.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN bruker NPSSO-informasjonskapsel-autentisering. Se <a href="#trophies">Trofeer</a>-seksjonen for detaljerte oppsettsinstruksjoner.</p>
@@ -1052,15 +1052,13 @@
         </ol>
 
         <h3>Xbox-import</h3>
-        <p>Importer Xbox-spillbiblioteket ditt via Microsoft-konto.</p>
+        <p>Importer Xbox-spillene du har spilt, med din egen OpenXBL-nøkkel.</p>
         <ol>
-            <li>Gå til Spillimport &rarr; <strong>Xbox</strong>-fanen</li>
-            <li>Klikk <strong>"Sign In"</strong> for å autentisere med Microsoft-kontoen din (OAuth2-flyt)</li>
-            <li>Xbox-titelhistorikken din hentes automatisk</li>
-            <li>Velg spill som skal importeres, med duplikatgjenkjenning</li>
+            <li>Lagre OpenXBL-nøkkelen din under Innstillinger &rarr; Min profil &rarr; Xbox (se oppsettsguiden for API-nøkler ovenfor)</li>
+            <li>Gå til Spillimport &rarr; <strong>Xbox</strong>-fanen og klikk <strong>Hent bibliotek</strong></li>
+            <li>Velg spill som skal importeres, med duplikatgjenkjenning. Apper og spill kun for telefon blir utelatt.</li>
             <li>Importerte spill tagges med Xbox Title ID-en sin for sporing av prestasjoner</li>
         </ol>
-        <p>Xbox-tokens caches i <code>data/xbox_tokens.json</code> og fornyes automatisk.</p>
 
         <h3>PSN-import</h3>
         <p>Importer PlayStation Network-spillbiblioteket ditt.</p>
@@ -1174,7 +1172,7 @@
         <h3>Oppsett</h3>
         <ol>
             <li>Importer Xbox-spill via <strong>Spillimport &rarr; Xbox</strong></li>
-            <li>Autentisering håndteres via Xbox OAuth under import</li>
+            <li>Lagre OpenXBL-nøkkelen din under Innstillinger &rarr; Min profil &rarr; Xbox</li>
         </ol>
 
         <h3>Prestasjoner-landingsside</h3>
@@ -1194,6 +1192,7 @@
         <h3>Synkronisering</h3>
         <ul>
             <li>Synkroniser ett enkelt spill eller massesynkroniser alle Xbox-spill</li>
+            <li>Hvert spill er én forespørsel, og den gratis OpenXBL-nøkkelen tillater 150 i timen. En massesynkronisering som når grensen, stopper og sier fra; kjør den igjen en time senere, så starter den med spillene som ikke er synkronisert ennå.</li>
             <li>Kjører som en bakgrunnsjobb med varselboble-varsler</li>
             <li>Gamerscore-totaler oppdateres automatisk etter hver synkronisering</li>
         </ul>
@@ -1831,10 +1830,10 @@
             <li>RetroDB logger inn igjen av seg selv så lenge Sony godtar den lagrede NPSSO-en din. Når Sony avviser den, limer du inn en ny i Innstillinger &rarr; Konto &rarr; PSN. For å bytte ut et token som fortsatt virker, logg først ut av PlayStation.</li>
         </ul>
 
-        <h4>"Xbox Authentication Failed"</h4>
+        <h4>"OpenXBL godtok ikke den nøkkelen"</h4>
         <ul>
-            <li>Autentiser på nytt ved å klikke "Sign In" på Spillimport &rarr; Xbox-fanen</li>
-            <li>Xbox-tokens caches i <code>data/xbox_tokens.json</code> og fornyes automatisk</li>
+            <li>Kopier nøkkelen på nytt fra <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> og lim den inn under Innstillinger &rarr; Min profil &rarr; Xbox</li>
+            <li>"OpenXBLs grense per time er nådd" betyr at nøkkelen har brukt sine 150 forespørsler denne timen; vent og prøv igjen</li>
         </ul>
 
         <h4>"Image Upscaling Errors"</h4>

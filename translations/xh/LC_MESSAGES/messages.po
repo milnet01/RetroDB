@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-09 16:46+0200\n"
+"POT-Creation-Date: 2026-11-09 18:41+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: xh\n"
@@ -249,8 +249,8 @@ msgstr "Akukho midlalo eneRetroAchievements kule sistim"
 msgid "Sync already in progress for %(name)s"
 msgstr "Ukulungelelanisa sekuqhubeka ku-%(name)s"
 
-#: routes/achievements.py:392 routes/platform_import.py:394
-#: routes/platform_import.py:771 routes/ra_sync.py:146
+#: routes/achievements.py:392 routes/platform_import.py:392
+#: routes/platform_import.py:695 routes/ra_sync.py:146
 msgid "That job belongs to another user"
 msgstr "Lo msebenzi ngowomnye umsebenzisi"
 
@@ -581,11 +581,11 @@ msgstr ""
 "kuphela"
 
 #: routes/bonus_discs.py:219 routes/bonus_discs.py:237 routes/games.py:1397
-#: routes/games.py:1427 routes/platform_import.py:357
-#: routes/platform_import.py:736 routes/platform_import.py:1120
+#: routes/games.py:1427 routes/platform_import.py:355
+#: routes/platform_import.py:660 routes/platform_import.py:1044
 #: routes/scrape_logs.py:85 routes/scrape_logs.py:170 routes/scrape_logs.py:183
-#: routes/scrape_logs.py:221 routes/scraper.py:207 routes/scraper.py:538
-#: routes/scraper.py:929 routes/settings.py:319 routes/settings.py:343
+#: routes/scrape_logs.py:221 routes/scraper.py:204 routes/scraper.py:535
+#: routes/scraper.py:926 routes/settings.py:319 routes/settings.py:343
 #: routes/settings.py:431 routes/settings.py:510 routes/settings.py:539
 #: routes/settings.py:583 routes/settings.py:596 routes/settings.py:632
 #: routes/steam_achievements.py:138 routes/systems.py:164 routes/systems.py:367
@@ -866,10 +866,10 @@ msgstr "Ukufakwa kwemetadata akuphumelelanga."
 msgid "No fields to update"
 msgstr "Akukho ifildi zokuhlaziya"
 
-#: routes/games.py:1205 routes/platform_import.py:263
-#: routes/platform_import.py:642 routes/platform_import.py:1006
-#: routes/trophies.py:1921 templates/game_imports.html:579
-#: templates/game_imports.html:842
+#: routes/games.py:1205 routes/platform_import.py:261
+#: routes/platform_import.py:566 routes/platform_import.py:930
+#: routes/trophies.py:1921 templates/game_imports.html:578
+#: templates/game_imports.html:826
 msgid "No games selected"
 msgstr "Akukho midlalo ikhethiweyo"
 
@@ -1116,7 +1116,7 @@ msgstr "Khetha uluhlu lwe-MAME kuqala."
 msgid "MAME Names is already running."
 msgstr "I-MAME Names sele isebenza."
 
-#: routes/museum.py:400 routes/scraper.py:770
+#: routes/museum.py:400 routes/scraper.py:767
 msgid "No AI provider configured"
 msgstr "Akukho mboneleli we-AI omiselweyo"
 
@@ -1179,19 +1179,19 @@ msgstr "Ifayile yomfanekiso ayifunyanwanga"
 msgid "Background removal failed"
 msgstr "Ukususwa kwangasemva kwehlulekile"
 
-#: routes/platform_import.py:195
+#: routes/platform_import.py:193
 msgid "No Steam key yet. Add yours under Settings → My Profile."
 msgstr ""
 "Akukabikho sitshixo se-Steam. Yongeza esakho phantsi kwe-Iisethingi → "
 "Iprofayile Yam."
 
-#: routes/platform_import.py:197
+#: routes/platform_import.py:195
 msgid "No Steam ID yet. Add yours under Settings → My Profile."
 msgstr ""
 "Akukabikho Steam ID. Yongeza eyakho phantsi kwe-Iisethingi → Iprofayile "
 "Yam."
 
-#: routes/platform_import.py:203
+#: routes/platform_import.py:201
 #, python-format
 msgid ""
 "Could not resolve Steam vanity URL \"%(steam_id)s\". Use your 17-digit "
@@ -1200,7 +1200,7 @@ msgstr ""
 "Ayikwazanga ukucombulula i-Steam vanity URL \"%(steam_id)s\". Endaweni "
 "yoko sebenzisa i-Steam ID yakho enamanani angu-17."
 
-#: routes/platform_import.py:209
+#: routes/platform_import.py:207
 msgid ""
 "No games found. Check that your Steam profile and game details are set to"
 " Public."
@@ -1208,33 +1208,44 @@ msgstr ""
 "Akukho midlalo ifunyenweyo. Qinisekisa ukuba iprofayile yakho yeSteam "
 "neenkcukacha zomdlalo zimiselwe kuLuntu."
 
-#: routes/platform_import.py:268
+#: routes/platform_import.py:266
 msgid "Could not create Windows system entry"
 msgstr "Ayikwazanga ukwenza ungeniso lwesistim yeWindows"
 
-#: routes/platform_import.py:412
-msgid "Xbox Client ID not configured. Add it in Settings → API Keys."
-msgstr "I-Xbox Client ID ayimiselwanga. Yifake kwiiSethingi → API Keys."
+#: routes/platform_import.py:412 templates/settings.html:5120
+msgid "Paste your OpenXBL key first."
+msgstr "Qala ngokuncamathisela isitshixo sakho se-OpenXBL."
 
-#: routes/platform_import.py:550
-msgid "Xbox credentials not configured. Add them in Settings → API Keys."
-msgstr "Iziqinisekiso zeXbox azimiselwanga. Zifake kwiiSethingi → API Keys."
+#: routes/platform_import.py:417
+msgid "OpenXBL did not accept that key. Copy it again from xbl.io."
+msgstr "I-OpenXBL ayisamkelanga eso sitshixo. Siphinde usikope kwi-xbl.io."
 
-#: routes/platform_import.py:554
-msgid "Xbox authentication failed. Please re-connect your Xbox account."
+#: routes/platform_import.py:421 routes/platform_import.py:481
+#: routes/xbox_achievements.py:137
+#, python-format
+msgid "OpenXBL's hourly limit was reached. Try again in %(minutes)s minutes."
 msgstr ""
-"Uqinisekiso lweXbox lwehlulekile. Nceda uphinde uxhume i-akhawunti yakho "
-"yeXbox."
+"Umda weyure we-OpenXBL ufikelelwe. Zama kwakhona emva kwemizuzu "
+"eyi-%(minutes)s."
 
-#: routes/platform_import.py:558
+#: routes/platform_import.py:423 routes/platform_import.py:483
+msgid "OpenXBL did not answer. Try again later."
+msgstr "I-OpenXBL ayiphendulanga. Zama kwakhona emva kwexesha."
+
+#: routes/platform_import.py:475 routes/xbox_achievements.py:123
+#: services/jobs/platform_sync.py:783
+msgid "Add your OpenXBL key in Settings > My Profile first."
+msgstr "Qala ngokufaka isitshixo sakho se-OpenXBL kwiiSethingi > Iprofayile Yam."
+
+#: routes/platform_import.py:485
 msgid "No games found in Xbox title history."
 msgstr "Akukho midlalo ifunyenwe kwimbali yezihloko zeXbox."
 
-#: routes/platform_import.py:846
+#: routes/platform_import.py:770
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr "I-PSN NPSSO ayimiselwanga. Yifake kwiiSethingi → API Keys."
 
-#: routes/platform_import.py:873
+#: routes/platform_import.py:797
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr ""
 "Kwehlulekile ukulanda uluhlu lwemidlalo yePSN. Zama ukulungelelanisa "
@@ -1343,65 +1354,65 @@ msgstr "Ifayile ayifunyanwanga"
 msgid "Log file not found"
 msgstr "Ifayile yelog ayifunyanwanga"
 
-#: routes/scraper.py:222
+#: routes/scraper.py:219
 #, python-format
 msgid "invalid scraper settings: %(reason)s"
 msgstr "iisethingi ze-scraper ezingasebenziyo: %(reason)s"
 
-#: routes/scraper.py:283
+#: routes/scraper.py:280
 #, python-format
 msgid "invalid api keys: %(reason)s"
 msgstr "izitshixo ze-api ezingasebenziyo: %(reason)s"
 
-#: routes/scraper.py:558
+#: routes/scraper.py:555
 msgid "No TGDB API key configured"
 msgstr "Akukho sitshixo se-TGDB API simiselweyo"
 
-#: routes/scraper.py:655
+#: routes/scraper.py:652
 msgid "No ScreenScraper credentials configured"
 msgstr "Akukho ziqinisekiso zeScreenScraper zimiselweyo"
 
-#: routes/scraper.py:691
+#: routes/scraper.py:688
 msgid "Invalid JSON response from ScreenScraper"
 msgstr "Impendulo ye-JSON engasebenziyo evela kwiScreenScraper"
 
-#: routes/scraper.py:694
+#: routes/scraper.py:691
 msgid "Error parsing API response"
 msgstr "Impazamo ekuhlalutyweni kwempendulo ye-API"
 
-#: routes/scraper.py:696
+#: routes/scraper.py:693
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
 msgstr "I-ScreenScraper iphendule nge-HTTP %(code)s"
 
-#: routes/scraper.py:711
+#: routes/scraper.py:708
 msgid "No RAWG API key configured"
 msgstr "Akukho sitshixo se-RAWG API simiselweyo"
 
-#: routes/scraper.py:816
+#: routes/scraper.py:813
 #, python-format
 msgid "Unknown AI provider: %(provider)s"
 msgstr "Umboneleli we-AI ongaziwayo: %(provider)s"
 
-#: routes/scraper.py:819
+#: routes/scraper.py:816
 msgid "No response from AI provider"
 msgstr "Akukho mpendulo evela kumboneleli we-AI"
 
-#: routes/scraper.py:824 routes/scraper.py:825
+#: routes/scraper.py:821 routes/scraper.py:822
 #, python-format
 msgid "%(provider)s refused the API key. Check the key and save it again."
 msgstr ""
 "%(provider)s ilale isitshixo se-API. Jonga isitshixo uze usigcine "
 "kwakhona."
 
-#: routes/scraper.py:826
+#: routes/scraper.py:823
 #, python-format
 msgid "%(provider)s wants payment: the account has no credit or billing is off."
 msgstr ""
 "%(provider)s ifuna intlawulo: iakhawunti ayinamali okanye ukuhlawulisa "
 "kucinyiwe."
 
-#: routes/scraper.py:827
+#: routes/scraper.py:824
 #, python-format
 msgid ""
 "%(provider)s says a usage limit is reached. Try again later or check your"
@@ -1410,17 +1421,17 @@ msgstr ""
 "%(provider)s ithi umda wokusetyenziswa ufikelelwe. Zama kwakhona kamva "
 "okanye ujonge isicwangciso sakho."
 
-#: routes/scraper.py:829
+#: routes/scraper.py:826
 #, python-format
 msgid "%(provider)s answered with error %(code)s."
 msgstr "%(provider)s iphendule ngempazamo %(code)s."
 
-#: routes/scraper.py:922
+#: routes/scraper.py:919
 #, python-format
 msgid "Connection error: %(error)s"
 msgstr "Impazamo yoqhagamshelo: %(error)s"
 
-#: routes/scraper.py:925
+#: routes/scraper.py:922
 #, python-format
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "Ukhangelo lwesabelo aluxhaswanga kwi-%(scraper)s"
@@ -1720,15 +1731,7 @@ msgstr "Lo mdlalo awuxhunywanga kwezinye iinguqulelo."
 msgid "The AI did not give a usable answer. Try again later."
 msgstr "I-AI ayinikanga mpendulo isebenzisekayo. Zama kwakhona kamva."
 
-#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:798
-msgid "Xbox credentials not configured"
-msgstr "Iziqinisekiso zeXbox azimiselwanga"
-
-#: routes/xbox_achievements.py:131
-msgid "Xbox authentication failed — please re-connect your account"
-msgstr "Uqinisekiso lweXbox lwehlulekile — nceda uphinde uxhume i-akhawunti yakho"
-
-#: routes/xbox_achievements.py:135
+#: routes/xbox_achievements.py:130
 msgid "Game not found or not an Xbox game"
 msgstr "Umdlalo awufunyanwanga okanye asingomdlalo weXbox"
 
@@ -2193,7 +2196,7 @@ msgstr "Isicelo sokuzalisa nge-AI sisilele: {error}"
 msgid "AI found no missing fields to fill"
 msgstr "I-AI ayifumananga ndawo zilahlekileyo zokuzalisa"
 
-#: services/js_i18n_strings.py:591 templates/_settings_tabs/account.html:317
+#: services/js_i18n_strings.py:591 templates/_settings_tabs/account.html:332
 #: templates/archive_scanner.html:726 templates/list_detail.html:47
 #: templates/multi_disc_organizer.html:217 templates/reports.html:369
 #: templates/reports.html:450
@@ -2292,7 +2295,7 @@ msgstr ""
 msgid "Are you sure you want to cancel?"
 msgstr "Uqinisekile ukuba ufuna ukurhoxisa?"
 
-#: services/js_i18n_strings.py:612 templates/settings.html:4927
+#: services/js_i18n_strings.py:612 templates/settings.html:4925
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "Uqinisekile ukuba ufuna ukucima \"{filename}\"?"
@@ -2383,7 +2386,7 @@ msgstr ""
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:73
-#: templates/_settings_tabs/account.html:412
+#: templates/_settings_tabs/account.html:427
 #: templates/_settings_tabs/customization.html:264
 #: templates/achievement_game.html:178 templates/archive_scanner.html:661
 #: templates/archive_scanner.html:798 templates/base.html:340
@@ -2684,7 +2687,7 @@ msgstr "Esisetiweyo ngoku"
 msgid "Default emulator for {system}"
 msgstr "I-emulator ezenzekelayo ye-{system}"
 
-#: services/js_i18n_strings.py:694 templates/settings.html:4927
+#: services/js_i18n_strings.py:694 templates/settings.html:4925
 msgid "Delete Log File"
 msgstr "Cima Ifayile yeLog"
 
@@ -2797,7 +2800,7 @@ msgstr "Ii-cheat ze-DuckStation"
 msgid "DuckStation ignores cheats in hardcore mode."
 msgstr "I-DuckStation ayizihoyi ii-cheat kwimowudi ye-hardcore."
 
-#: services/js_i18n_strings.py:721 templates/_settings_tabs/account.html:362
+#: services/js_i18n_strings.py:721 templates/_settings_tabs/account.html:377
 #: templates/base.html:1006 templates/game_detail.html:135
 #: templates/wishlist.html:641
 msgid "Edit"
@@ -2837,21 +2840,21 @@ msgstr "Faka indlela enye yefolda."
 #: templates/multi_disc_organizer.html:371 templates/reports.html:1123
 #: templates/reports.html:1126 templates/reports.html:1192
 #: templates/reports.html:1195 templates/rom_tools_settings.html:579
-#: templates/rom_tools_settings.html:582 templates/settings.html:2924
-#: templates/settings.html:2928 templates/settings.html:2947
-#: templates/settings.html:2951 templates/settings.html:3544
-#: templates/settings.html:3548 templates/settings.html:3616
-#: templates/settings.html:3620 templates/settings.html:3651
-#: templates/settings.html:3655 templates/settings.html:3681
-#: templates/settings.html:3685 templates/settings.html:4187
-#: templates/settings.html:4191 templates/settings.html:4209
-#: templates/settings.html:4240 templates/settings.html:4300
-#: templates/settings.html:4304 templates/settings.html:4434
-#: templates/settings.html:4438 templates/settings.html:4464
-#: templates/settings.html:4468 templates/settings.html:4915
-#: templates/settings.html:4918 templates/settings.html:4937
-#: templates/settings.html:4940 templates/settings.html:4955
-#: templates/settings.html:4958
+#: templates/rom_tools_settings.html:582 templates/settings.html:2922
+#: templates/settings.html:2926 templates/settings.html:2945
+#: templates/settings.html:2949 templates/settings.html:3542
+#: templates/settings.html:3546 templates/settings.html:3614
+#: templates/settings.html:3618 templates/settings.html:3649
+#: templates/settings.html:3653 templates/settings.html:3679
+#: templates/settings.html:3683 templates/settings.html:4185
+#: templates/settings.html:4189 templates/settings.html:4207
+#: templates/settings.html:4238 templates/settings.html:4298
+#: templates/settings.html:4302 templates/settings.html:4432
+#: templates/settings.html:4436 templates/settings.html:4462
+#: templates/settings.html:4466 templates/settings.html:4913
+#: templates/settings.html:4916 templates/settings.html:4935
+#: templates/settings.html:4938 templates/settings.html:4953
+#: templates/settings.html:4956
 msgid "Error"
 msgstr "Impazamo"
 
@@ -3688,7 +3691,7 @@ msgstr "Umdlalo wangaphambili"
 msgid "Processing images…"
 msgstr "Kulungiswa imifanekiso…"
 
-#: services/js_i18n_strings.py:909 templates/game_imports.html:418
+#: services/js_i18n_strings.py:909 templates/game_imports.html:417
 msgid "Processing..."
 msgstr "Iyaqhuba..."
 
@@ -3759,9 +3762,9 @@ msgid "Regional name matches"
 msgstr "Amagama angqinelanayo ommandla"
 
 #: services/js_i18n_strings.py:925 templates/_modals/edit_modal.html:386
-#: templates/compare_games.html:24 templates/compare_games.html:40
-#: templates/rom_tools_settings.html:462 templates/rom_tools_settings.html:501
-#: templates/screenshot_review.html:185
+#: templates/_settings_tabs/account.html:228 templates/compare_games.html:24
+#: templates/compare_games.html:40 templates/rom_tools_settings.html:462
+#: templates/rom_tools_settings.html:501 templates/screenshot_review.html:185
 msgid "Remove"
 msgstr "Susa"
 
@@ -4476,7 +4479,7 @@ msgstr "Layisha"
 msgid "Upload Controller Image"
 msgstr "Layisha Umfanekiso Wekhontrola"
 
-#: services/js_i18n_strings.py:1072 templates/settings.html:5194
+#: services/js_i18n_strings.py:1072 templates/settings.html:5230
 msgid "Upload failed"
 msgstr "Ukulayisha kuhlulekile"
 
@@ -4976,39 +4979,41 @@ msgstr "Qhuba i-%(name)s kanye ukuze yenze iisethingi zayo, uze udlale kwakhona.
 msgid "The player has no core for this system."
 msgstr "Isidlali asinayo i-core yale sistim."
 
-#: services/jobs/platform_sync.py:398 services/jobs/platform_sync.py:707
+#: services/jobs/platform_sync.py:384 services/jobs/platform_sync.py:692
 msgid "Sync already running"
 msgstr "Ukulungelelanisa sele kuyasebenza"
 
-#: services/jobs/platform_sync.py:403
+#: services/jobs/platform_sync.py:389
 msgid "Steam sync is already running on another worker process."
 msgstr "Ukulungelelanisa kwe-Steam sele kuyasebenza kwenye inkqubo yomsebenzi."
 
-#: services/jobs/platform_sync.py:421 services/jobs/platform_sync.py:730
+#: services/jobs/platform_sync.py:407 services/jobs/platform_sync.py:715
 msgid "No running sync to cancel"
 msgstr "Akukho kulungelelanisa kusebenzayo ukuze kurhoxiswe"
 
-#: services/jobs/platform_sync.py:515
+#: services/jobs/platform_sync.py:501
 msgid "Steam API key or Steam ID not configured"
 msgstr "Isitshixo se-API ye-Steam okanye i-Steam ID azizetwanga"
 
-#: services/jobs/platform_sync.py:534
+#: services/jobs/platform_sync.py:520
 msgid "No Steam games found to sync"
 msgstr "Akukho midlalo ye-Steam ifunyenweyo yokulungelelanisa"
 
-#: services/jobs/platform_sync.py:712
+#: services/jobs/platform_sync.py:697
 msgid "Xbox sync is already running on another worker process."
 msgstr "Ukulungelelanisa kwe-Xbox sele kuyasebenza kwenye inkqubo yomsebenzi."
 
-#: services/jobs/platform_sync.py:807
-msgid "Xbox authentication failed — please re-connect your Xbox account"
-msgstr ""
-"Ungqinisiso lwe-Xbox aluphumelelanga — nceda uqhagamshele kwakhona "
-"i-akhawunti yakho ye-Xbox"
-
-#: services/jobs/platform_sync.py:858
+#: services/jobs/platform_sync.py:844
 msgid "No Xbox games found to sync"
 msgstr "Akukho midlalo ye-Xbox efunyenweyo yokulungelelanisa"
+
+#: services/jobs/platform_sync.py:887
+msgid ""
+"OpenXBL's hourly limit was reached. Sync again in an hour: it starts with"
+" the games not synced yet."
+msgstr ""
+"Umda weyure we-OpenXBL ufikelelwe. Lungelelanisa kwakhona emva kweyure: "
+"kuya kuqala ngemidlalo engekalungelelaniswa."
 
 #: templates/_bulk_edit_modal.html:7
 msgid "Bulk Edit"
@@ -5228,7 +5233,7 @@ msgstr "Ezinye Iinkcukacha"
 msgid "First Achievement"
 msgstr "Impumelelo Yokuqala"
 
-#: templates/_settings_tabs/account.html:357
+#: templates/_settings_tabs/account.html:372
 #: templates/achievement_game.html:233 templates/achievement_game.html:237
 #: templates/local_trophy_detail.html:211
 #: templates/local_trophy_detail.html:215 templates/psn_trophies.html:76
@@ -5403,7 +5408,7 @@ msgstr ""
 
 #: templates/achievements_system.html:184 templates/all_games.html:33
 #: templates/game_imports.html:215 templates/game_imports.html:270
-#: templates/game_imports.html:326 templates/game_imports.html:389
+#: templates/game_imports.html:325 templates/game_imports.html:388
 #: templates/psn_trophies.html:119 templates/steam_achievements.html:72
 #: templates/system_games.html:40 templates/xbox_achievements.html:72
 msgid "Search games..."
@@ -5433,7 +5438,7 @@ msgid "Back to the first game"
 msgstr "Buyela kumdlalo wokuqala"
 
 #: templates/achievements_system.html:204 templates/all_games.html:122
-#: templates/game_imports.html:330 templates/game_imports.html:393
+#: templates/game_imports.html:329 templates/game_imports.html:392
 #: templates/hltb_review.html:28 templates/local_trophies.html:102
 #: templates/logs.html:707 templates/psn_trophies.html:129
 #: templates/psn_trophies.html:163 templates/psn_trophies.html:181
@@ -6136,8 +6141,8 @@ msgid "Largest Games"
 msgstr "Imidlalo Emikhulu"
 
 #: templates/analytics.html:602 templates/game_imports.html:222
-#: templates/game_imports.html:277 templates/game_imports.html:340
-#: templates/game_imports.html:403
+#: templates/game_imports.html:277 templates/game_imports.html:339
+#: templates/game_imports.html:402
 msgid "Game"
 msgstr "Umdlalo"
 
@@ -6169,7 +6174,7 @@ msgstr "Inani lemidlalo"
 msgid "Critic"
 msgstr "Umgxeki"
 
-#: templates/_settings_tabs/account.html:312 templates/analytics.html:1965
+#: templates/_settings_tabs/account.html:327 templates/analytics.html:1965
 msgid "User"
 msgstr "Umsebenzisi"
 
@@ -6374,13 +6379,13 @@ msgid "Processed"
 msgstr "Kuqhutyiwe"
 
 #: templates/archive_scanner.html:782 templates/game_detail.html:4067
-#: templates/reports.html:492 templates/settings.html:3542
-#: templates/settings.html:4298 templates/settings.html:4952
+#: templates/reports.html:492 templates/settings.html:3540
+#: templates/settings.html:4296 templates/settings.html:4950
 msgid "Success"
 msgstr "Impumelelo"
 
-#: templates/archive_scanner.html:786 templates/game_imports.html:652
-#: templates/game_imports.html:727 templates/game_imports.html:905
+#: templates/archive_scanner.html:786 templates/game_imports.html:651
+#: templates/game_imports.html:708 templates/game_imports.html:889
 #: templates/reports.html:496 templates/wishlist.html:509
 msgid "Failed"
 msgstr "Kwehlulekile"
@@ -6601,7 +6606,7 @@ msgstr "Impumelelo: {count}"
 
 #: templates/archive_scanner.html:1569 templates/archive_scanner.html:1574
 #: templates/archive_scanner.html:1742 templates/archive_scanner.html:1748
-#: templates/game_imports.html:596 templates/game_imports.html:856
+#: templates/game_imports.html:595 templates/game_imports.html:840
 #, python-brace-format
 msgid "Failed: {count}"
 msgstr " Koyisekile: {count}"
@@ -7771,8 +7776,8 @@ msgstr "Kubonwe"
 
 #: templates/dashboard.html:21 templates/dashboard.html:392
 #: templates/dashboard.html:533 templates/game_imports.html:224
-#: templates/game_imports.html:277 templates/game_imports.html:340
-#: templates/game_imports.html:403
+#: templates/game_imports.html:277 templates/game_imports.html:339
+#: templates/game_imports.html:402
 msgid "Status"
 msgstr "Isimo"
 
@@ -7980,7 +7985,7 @@ msgstr "Iyafumaneka"
 
 #: templates/dashboard.html:602 templates/dashboard.html:612
 #: templates/dashboard.html:632 templates/dashboard.html:642
-#: templates/game_imports.html:368
+#: templates/game_imports.html:367
 msgid "Checking..."
 msgstr "Iyakhangela..."
 
@@ -7995,7 +8000,7 @@ msgstr "Icimile"
 msgid "Not Configured"
 msgstr "Ayimiselwanga"
 
-#: templates/_settings_tabs/account.html:341 templates/dashboard.html:622
+#: templates/_settings_tabs/account.html:356 templates/dashboard.html:622
 msgid "Configured"
 msgstr "Imiselwe"
 
@@ -8175,7 +8180,7 @@ msgstr ""
 "Usebenzisa iphasiwedi yomlawuli emiselweyo. Ngenxa yokhuseleko, kufuneka "
 "umisele iphasiwedi entsha phambi kokuqhubeka."
 
-#: templates/_settings_tabs/account.html:254
+#: templates/_settings_tabs/account.html:269
 #: templates/force_change_password.html:20
 msgid "New Password"
 msgstr "Iphasiwedi Entsha"
@@ -8269,7 +8274,7 @@ msgstr "Bona Incwadana Yomyalelo (PDF)"
 msgid "Delete game from database"
 msgstr "Cima umdlalo kwi-database"
 
-#: templates/_settings_tabs/account.html:364 templates/game_detail.html:150
+#: templates/_settings_tabs/account.html:379 templates/game_detail.html:150
 #: templates/logs.html:735 templates/settings.html:45
 #: templates/wishlist.html:642
 msgid "Delete"
@@ -8811,11 +8816,12 @@ msgstr "Ukucima i-screenshot akuphumelelanga"
 msgid "Failed to delete screenshot: {error}"
 msgstr "Ukucima i-screenshot akuphumelelanga: {error}"
 
-#: templates/_settings_tabs/account.html:218 templates/game_imports.html:170
+#: templates/_settings_tabs/account.html:233 templates/game_imports.html:170
 msgid "Steam"
 msgstr "Steam"
 
-#: templates/game_imports.html:173
+#: templates/_settings_tabs/account.html:218
+#: templates/_settings_tabs/scraping.html:419 templates/game_imports.html:173
 msgid "Xbox"
 msgstr "Xbox"
 
@@ -8850,43 +8856,43 @@ msgid "CLZ Library"
 msgstr "Ithala leCLZ"
 
 #: templates/game_imports.html:207 templates/game_imports.html:262
-#: templates/game_imports.html:318 templates/game_imports.html:381
+#: templates/game_imports.html:317 templates/game_imports.html:380
 msgid "Total"
 msgstr "Iyonke"
 
 #: templates/game_imports.html:208 templates/game_imports.html:263
-#: templates/game_imports.html:319 templates/game_imports.html:382
+#: templates/game_imports.html:318 templates/game_imports.html:381
 msgid "New"
 msgstr "Entsha"
 
 #: templates/game_imports.html:209 templates/game_imports.html:264
-#: templates/game_imports.html:320 templates/game_imports.html:383
+#: templates/game_imports.html:319 templates/game_imports.html:382
 msgid "Already Imported"
 msgstr "Sele Ingenisiwe"
 
 #: templates/game_imports.html:213 templates/game_imports.html:268
-#: templates/game_imports.html:324 templates/game_imports.html:387
+#: templates/game_imports.html:323 templates/game_imports.html:386
 msgid "Select All New"
 msgstr "Khetha Konke Okutsha"
 
 #: templates/game_imports.html:214 templates/game_imports.html:269
-#: templates/game_imports.html:325 templates/game_imports.html:388
+#: templates/game_imports.html:324 templates/game_imports.html:387
 msgid "Deselect All"
 msgstr "Susa Ukukhetha Konke"
 
 #: templates/_modals/filter_modal.html:15 templates/game_imports.html:223
-#: templates/game_imports.html:340 templates/game_imports.html:403
+#: templates/game_imports.html:339 templates/game_imports.html:402
 #: templates/psn_trophies.html:153 templates/psn_trophy_detail.html:241
 msgid "Platform"
 msgstr "Iplatfom"
 
 #: templates/game_imports.html:230 templates/game_imports.html:283
-#: templates/game_imports.html:346 templates/game_imports.html:409
+#: templates/game_imports.html:345 templates/game_imports.html:408
 msgid "0 games selected"
 msgstr "0 imidlalo ekhethiweyo"
 
 #: templates/game_imports.html:231 templates/game_imports.html:284
-#: templates/game_imports.html:347 templates/game_imports.html:410
+#: templates/game_imports.html:346 templates/game_imports.html:409
 msgid "Import Selected"
 msgstr "Ngenisa Okukhethiweyo"
 
@@ -8913,7 +8919,7 @@ msgstr "Iziqinisekiso zeSteam"
 msgid "Steam Web API Key"
 msgstr "Isitshixo se-Steam Web API"
 
-#: templates/_settings_tabs/account.html:224 templates/game_imports.html:250
+#: templates/_settings_tabs/account.html:239 templates/game_imports.html:250
 msgid "Your Steam Web API Key"
 msgstr "Isitshixo sakho se-Steam Web API"
 
@@ -8925,8 +8931,8 @@ msgstr "I-Steam ID okanye i-Vanity URL"
 msgid "76561198012345678 or custom URL name"
 msgstr "76561198012345678 okanye igama le-URL elenziwe ngokwezicelo"
 
-#: templates/game_imports.html:252 templates/game_imports.html:311
-#: templates/game_imports.html:370
+#: templates/game_imports.html:252 templates/game_imports.html:310
+#: templates/game_imports.html:369
 msgid "Fetch Library"
 msgstr "Landa Ithala"
 
@@ -8943,61 +8949,59 @@ msgstr "Kudlalwe Ekugqibeleni"
 msgid ""
 "Import your Xbox game library. Games are assigned to their correct Xbox "
 "system.\n"
-"                You need an Azure AD app registration &mdash; configure "
-"credentials in <a href=\"%(settings_url)s\" style=\"color: var(--primary-"
-"cyan);\">Settings &rarr; API Keys</a>."
+"                You need your own free OpenXBL key &mdash; add it in <a "
+"href=\"%(profile_url)s\" style=\"color: var(--primary-cyan);\">Settings "
+"&rarr; My Profile</a>."
 msgstr ""
-"Ngenisa ithala lakho lemidlalo yeXbox. Imidlalo yabelwa kwisistim yayo "
-"echanekileyo yeXbox.\n"
-"                Ufuna ubhaliso lwe-app ye-Azure AD &mdash; misela "
-"iziqinisekiso kwi-<a href=\"%(settings_url)s\" style=\"color: var"
-"(--primary-cyan);\">Settings &rarr; API Keys</a>."
+"Ngenisa ithala lakho lemidlalo yeXbox. Imidlalo ifakwa kwisistim yeXbox "
+"echanekileyo.\n"
+"                Ufuna isitshixo sakho se-OpenXBL sasimahla &mdash; sifake"
+" kwi-<a href=\"%(profile_url)s\" style=\"color: var(--primary-"
+"cyan);\">Iisethingi &rarr; Iprofayile Yam</a>."
 
 #: templates/game_imports.html:301
 msgid "Xbox Account"
 msgstr "I-akhawunti yeXbox"
 
-#: templates/game_imports.html:304
+#: templates/game_imports.html:304 templates/game_imports.html:692
 msgid "Not Connected"
 msgstr "Ayixhunywanga"
 
-#: templates/game_imports.html:304
-msgid "Connect your Xbox account to import games"
-msgstr "Xhuma i-akhawunti yakho yeXbox ukuze ungenise imidlalo"
+#: templates/game_imports.html:304 templates/game_imports.html:693
+msgid "Add your OpenXBL key in Settings > My Profile to import games."
+msgstr ""
+"Faka isitshixo sakho se-OpenXBL kwiiSethingi > Iprofayile Yam ukuze "
+"ungenise imidlalo."
 
 #: templates/game_imports.html:306
-msgid "Connect Xbox Account"
-msgstr "Xhuma I-akhawunti yeXbox"
+msgid "Xbox key settings"
+msgstr "Iisethingi zesitshixo seXbox"
 
-#: templates/game_imports.html:307
-msgid "Disconnect"
-msgstr "Yeka Ukuxhuma"
-
-#: templates/game_imports.html:316
+#: templates/game_imports.html:315
 msgid "Xbox Library"
 msgstr "Ithala leXbox"
 
-#: templates/game_imports.html:331
+#: templates/game_imports.html:330
 msgid "Xbox 360"
 msgstr "Xbox 360"
 
-#: templates/game_imports.html:332
+#: templates/game_imports.html:331
 msgid "Xbox One"
 msgstr "Xbox One"
 
-#: templates/game_imports.html:333
+#: templates/game_imports.html:332
 msgid "Xbox Series"
 msgstr "Xbox Series"
 
-#: templates/game_imports.html:334
+#: templates/game_imports.html:333
 msgid "PC"
 msgstr "PC"
 
-#: templates/game_imports.html:340 templates/xbox_achievements.html:53
+#: templates/game_imports.html:339 templates/xbox_achievements.html:53
 msgid "Gamerscore"
 msgstr "Gamerscore"
 
-#: templates/game_imports.html:359
+#: templates/game_imports.html:358
 #, python-format
 msgid ""
 "Import your PlayStation game library. Games come from your PSN trophy "
@@ -9018,130 +9022,107 @@ msgstr ""
 "zakho kuqala ngephepha le-<a href=\"%(trophies_url)s\" style=\"color: var"
 "(--primary-cyan);\">PSN Trophies</a>."
 
-#: templates/game_imports.html:365
+#: templates/game_imports.html:364
 msgid "PSN Account"
 msgstr "I-akhawunti yePSN"
 
-#: templates/game_imports.html:379
+#: templates/game_imports.html:378
 msgid "PSN Library"
 msgstr "Ithala lePSN"
 
-#: templates/game_imports.html:394
+#: templates/game_imports.html:393
 msgid "PS5"
 msgstr "PS5"
 
-#: templates/game_imports.html:395
+#: templates/game_imports.html:394
 msgid "PS4"
 msgstr "PS4"
 
-#: templates/game_imports.html:396
+#: templates/game_imports.html:395
 msgid "PS3"
 msgstr "PS3"
 
-#: templates/game_imports.html:397
+#: templates/game_imports.html:396
 msgid "PS Vita"
 msgstr "PS Vita"
 
-#: templates/game_imports.html:403 templates/local_trophy_detail.html:123
+#: templates/game_imports.html:402 templates/local_trophy_detail.html:123
 #: templates/psn_trophy_detail.html:114
 msgid "Trophy Progress"
 msgstr "Inkqubela Yeendebe"
 
-#: templates/game_imports.html:528
+#: templates/game_imports.html:527
 msgid "Parse failed"
 msgstr "Ukuhlalutya akuphumelelanga"
 
-#: templates/game_imports.html:544 templates/game_imports.html:670
+#: templates/game_imports.html:543 templates/game_imports.html:669
 #, python-brace-format
 msgid "Games found: {total} ({existing} already imported)"
 msgstr "Imidlalo efunyenweyo: {total} ({existing} sele ingeniswe)"
 
-#: templates/game_imports.html:594 templates/game_imports.html:853
+#: templates/game_imports.html:593 templates/game_imports.html:837
 #, python-brace-format
 msgid "Imported: {count}"
 msgstr "Ingeniswe: {count}"
 
-#: templates/game_imports.html:595 templates/game_imports.html:855
+#: templates/game_imports.html:594 templates/game_imports.html:839
 #, python-brace-format
 msgid "Already in library: {count}"
 msgstr "Sele ikwiThala: {count}"
 
-#: templates/game_imports.html:597 templates/game_imports.html:858
+#: templates/game_imports.html:596 templates/game_imports.html:842
 msgid "Import complete"
 msgstr "Ukungenisa kugqityiwe"
 
-#: templates/game_imports.html:605 templates/game_imports.html:866
+#: templates/game_imports.html:604 templates/game_imports.html:850
 msgid "Import failed"
 msgstr "Ukungenisa akuphumelelanga"
 
-#: templates/game_imports.html:607 templates/game_imports.html:867
+#: templates/game_imports.html:606 templates/game_imports.html:851
 #, python-brace-format
 msgid "Import error: {error}"
 msgstr "Impazamo yokungenisa: {error}"
 
-#: templates/game_imports.html:629
+#: templates/game_imports.html:628
 msgid "Please drop a PDF file"
 msgstr "Nceda ulahle ifayile ye-PDF"
 
-#: templates/game_imports.html:707
-msgid "Failed to get auth URL"
-msgstr "Ukufumana i-URL yokungena akuphumelelanga"
-
-#: templates/game_imports.html:708
+#: templates/game_imports.html:687
 #, python-brace-format
-msgid "Failed to connect to Xbox: {error}"
-msgstr "Ukudibana ne-Xbox akuphumelelanga: {error}"
+msgid "Connected as {name}"
+msgstr "Unxibelelene njengo-{name}"
 
-#: templates/game_imports.html:712
-msgid "Disconnect Xbox"
-msgstr "Nqanda i-Xbox"
+#: templates/game_imports.html:688
+msgid "Through your OpenXBL key."
+msgstr "Ngesitshixo sakho se-OpenXBL."
 
-#: templates/game_imports.html:712
-msgid "Remove your Xbox account connection? You can reconnect later."
-msgstr ""
-"Susa uqhagamshelo lwe-akhawunti yakho ye-Xbox? Unokuphinda uqhagamshele "
-"kamva."
-
-#: templates/game_imports.html:713
-msgid "Xbox account disconnected"
-msgstr "I-akhawunti ye-Xbox inqanyuliwe"
-
-#: templates/game_imports.html:714
-#, python-brace-format
-msgid "Failed to disconnect: {error}"
-msgstr "Ukunqanda akuphumelelanga: {error}"
-
-#: templates/game_imports.html:739
+#: templates/game_imports.html:720
 #, python-brace-format
 msgid "Xbox games found: {total} ({existing} already imported)"
 msgstr "Imidlalo ye-Xbox efunyenweyo: {total} ({existing} sele ingeniswe)"
 
-#: templates/game_imports.html:762 templates/game_imports.html:770
-#: templates/game_imports.html:776
+#: templates/game_imports.html:722
+#, python-brace-format
+msgid "{count} apps and phone-only titles were left out."
+msgstr "Ii-app nezihloko zefowuni kuphela ezishiyiweyo: {count}."
+
+#: templates/game_imports.html:746 templates/game_imports.html:754
+#: templates/game_imports.html:760
 msgid "In your library: link it"
 msgstr "Kwithala lakho: yidibanise"
 
-#: templates/game_imports.html:854
+#: templates/game_imports.html:838
 msgid "Linked to games in your library"
 msgstr "Idityaniswe nemidlalo kwithala lakho"
 
-#: templates/game_imports.html:857
+#: templates/game_imports.html:841
 msgid "Details are arriving from Steam in the background"
 msgstr "Iinkcukacha ziyafika ezivela kwi-Steam ngasemva"
 
-#: templates/game_imports.html:926
+#: templates/game_imports.html:910
 #, python-brace-format
 msgid "PSN games found: {total} ({existing} already imported)"
 msgstr "Imidlalo ye-PSN efunyenweyo: {total} ({existing} sele ingeniswe)"
-
-#: templates/game_imports.html:999
-msgid "Xbox account connected successfully!"
-msgstr "I-akhawunti ye-Xbox iqhagamshelwe ngempumelelo!"
-
-#: templates/game_imports.html:1005
-#, python-brace-format
-msgid "Xbox connection failed: {error}"
-msgstr "Uxhulumano lwe-Xbox aluphumelelanga: {error}"
 
 #: templates/help.af.html:11 templates/help.de.html:11
 #: templates/help.es.html:11 templates/help.fr.html:11
@@ -11887,93 +11868,93 @@ msgstr "Isitshixo siyasebenza: %(provider)s iphendule isebenzisa %(model)s."
 msgid "The key test failed."
 msgstr "Uvavanyo lwesitshixo aluphumelelanga."
 
-#: templates/settings.html:2907
+#: templates/settings.html:2905
 msgid "Invalid Input"
 msgstr "Igalelo Elingasebenzi"
 
-#: templates/settings.html:2907
+#: templates/settings.html:2905
 msgid "Please enter a value"
 msgstr "Nceda ufake ixabiso"
 
-#: templates/settings.html:2924 templates/settings.html:2928
+#: templates/settings.html:2922 templates/settings.html:2926
 msgid "Failed to add option"
 msgstr "Koyisekile ukongeza ukhetho"
 
-#: templates/settings.html:2934
+#: templates/settings.html:2932
 msgid "Delete Option"
 msgstr "Cima Ukhetho"
 
-#: templates/settings.html:2935
+#: templates/settings.html:2933
 msgid "Are you sure you want to delete this option?"
 msgstr "Uqinisekile ukuba ufuna ukucima olu khetho?"
 
-#: templates/settings.html:2947 templates/settings.html:2951
+#: templates/settings.html:2945 templates/settings.html:2949
 msgid "Failed to delete option"
 msgstr "Koyisekile ukucima ukhetho"
 
-#: templates/settings.html:3498 templates/settings.html:4260
+#: templates/settings.html:3496 templates/settings.html:4258
 msgid "Missing Input"
 msgstr "Akukafakwa Nto"
 
-#: templates/settings.html:3498 templates/settings.html:4260
+#: templates/settings.html:3496 templates/settings.html:4258
 msgid "Please enter a controller name"
 msgstr "Nceda ufake igama lekhontrola"
 
-#: templates/settings.html:3542
+#: templates/settings.html:3540
 #, python-brace-format
 msgid "Controller \"{name}\" has been added to the library."
 msgstr "Ikhontrola \"{name}\" yongezwe kwithala."
 
-#: templates/settings.html:3544 templates/settings.html:3548
+#: templates/settings.html:3542 templates/settings.html:3546
 msgid "Failed to add controller"
 msgstr "Koyisekile ukongeza ikhontrola"
 
-#: templates/settings.html:3616 templates/settings.html:3620
+#: templates/settings.html:3614 templates/settings.html:3618
 msgid "Failed to set default controller"
 msgstr "Koyisekile ukumisela ikhontrola engagqibekanga"
 
-#: templates/settings.html:3651 templates/settings.html:3655
+#: templates/settings.html:3649 templates/settings.html:3653
 msgid "Failed to add default controller"
 msgstr "Koyisekile ukongeza ikhontrola engagqibekanga"
 
-#: templates/settings.html:3681 templates/settings.html:3685
+#: templates/settings.html:3679 templates/settings.html:3683
 msgid "Failed to remove default controller"
 msgstr "Koyisekile ukukhupha ikhontrola engagqibekanga"
 
-#: templates/settings.html:3788
+#: templates/settings.html:3786
 msgid "ALL SYSTEMS"
 msgstr "ZONKE IISISTIM"
 
-#: templates/settings.html:3792
+#: templates/settings.html:3790
 msgid "Clear Scraped Data"
 msgstr "Cima Idatha Ekhuphiweyo"
 
-#: templates/settings.html:3793
+#: templates/settings.html:3791
 #, python-brace-format
 msgid "This will clear all scraped metadata from games in {system}."
 msgstr "Oku kuza kucima yonke imetadatha ekhuphiweyo kwimidlalo e-{system}."
 
-#: templates/settings.html:3794
+#: templates/settings.html:3792
 msgid "Downloaded images will also be deleted!"
 msgstr "Imifanekiso ekhutshelweyo iya kucinywa nayo!"
 
-#: templates/settings.html:3795
+#: templates/settings.html:3793
 msgid "This cannot be undone. Are you sure?"
 msgstr "Oku akunakuphindwa. Uqinisekile?"
 
-#: templates/settings.html:3920
+#: templates/settings.html:3918
 msgid "No Files"
 msgstr "Akukho Zifayile"
 
-#: templates/settings.html:3920
+#: templates/settings.html:3918
 msgid "Please scan for orphaned files first."
 msgstr "Nceda uqale ukhangele iifayile ezingenabanini."
 
-#: templates/settings.html:3925
+#: templates/settings.html:3923
 msgid "Delete Orphaned Files"
 msgstr "Cima Iifayile Ezingenabanini"
 
-#: templates/settings.html:3926
+#: templates/settings.html:3924
 #, python-brace-format
 msgid ""
 "Orphaned media files to delete permanently: {count}. This action cannot "
@@ -11982,19 +11963,19 @@ msgstr ""
 "Iifayile zemidiya ezingenabanini ezizakucinywa ngokusisigxina: {count}. "
 "Esi senzo asinakuphindwa.<br><br>Qhubeka?"
 
-#: templates/settings.html:4056
+#: templates/settings.html:4054
 msgid "Nothing to Clear"
 msgstr "Akukho Nto Yokucima"
 
-#: templates/settings.html:4056
+#: templates/settings.html:4054
 msgid "Please scan for missing media references first."
 msgstr "Nceda uqale ukhangele iimbekiselo zemidiya ezingekhoyo."
 
-#: templates/settings.html:4061
+#: templates/settings.html:4059
 msgid "Clear Missing References"
 msgstr "Cima Iimbekiselo Ezingekhoyo"
 
-#: templates/settings.html:4062
+#: templates/settings.html:4060
 #, python-brace-format
 msgid ""
 "Database references to clear: {count}. They point to media files that no "
@@ -12005,11 +11986,11 @@ msgstr ""
 "zemidiya ezingasasekho kwidiski, ngoko abakhupha banokuzikhuphela "
 "kwakhona. Iingxelo zakho zemidlalo azichaphazeleki.<br><br>Qhubeka?"
 
-#: templates/settings.html:4162
+#: templates/settings.html:4160
 msgid "Delete Controller"
 msgstr "Cima Ikhontrola"
 
-#: templates/settings.html:4163
+#: templates/settings.html:4161
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete {name}?<br><br>This will remove it from "
@@ -12018,164 +11999,164 @@ msgstr ""
 "Uqinisekile ukuba ufuna ukucima {name}?<br><br>Oku kuza kuyisusa kwithala"
 " kunye nawesistim ezisebenzisa njengokungagqibekanga."
 
-#: templates/settings.html:4185
+#: templates/settings.html:4183
 msgid "Deleted"
 msgstr "Kucinyiwe"
 
-#: templates/settings.html:4185
+#: templates/settings.html:4183
 #, python-brace-format
 msgid "Controller \"{name}\" has been removed."
 msgstr "Ikhontrola \"{name}\" ikhutshiwe."
 
-#: templates/settings.html:4187 templates/settings.html:4191
+#: templates/settings.html:4185 templates/settings.html:4189
 msgid "Failed to delete controller"
 msgstr "Koyisekile ukucima ikhontrola"
 
-#: templates/settings.html:4209
+#: templates/settings.html:4207
 msgid "Failed to load controller"
 msgstr "Koyisekile ukulayisha ikhontrola"
 
-#: templates/settings.html:4240
+#: templates/settings.html:4238
 msgid "Failed to load controller data"
 msgstr "Koyisekile ukulayisha idatha yekhontrola"
 
-#: templates/settings.html:4298
+#: templates/settings.html:4296
 #, python-brace-format
 msgid "Controller \"{name}\" has been updated."
 msgstr "Ikhontrola \"{name}\" ihlaziyiwe."
 
-#: templates/settings.html:4300 templates/settings.html:4304
+#: templates/settings.html:4298 templates/settings.html:4302
 msgid "Failed to update controller"
 msgstr "Koyisekile ukuhlaziya ikhontrola"
 
-#: templates/settings.html:4431
+#: templates/settings.html:4429
 msgid "Logos Refreshed"
 msgstr "Iilogo Zihlaziyiwe"
 
-#: templates/settings.html:4432
+#: templates/settings.html:4430
 #, python-brace-format
 msgid "System logos updated: {count}. The table has been refreshed."
 msgstr "Iilogo zeesistim ezihlaziyiweyo: {count}. Itheyibhile ihlaziyiwe."
 
-#: templates/settings.html:4434
+#: templates/settings.html:4432
 msgid "Failed to refresh logos"
 msgstr "Koyisekile ukuhlaziya iilogo"
 
-#: templates/settings.html:4438
+#: templates/settings.html:4436
 msgid "Failed to refresh system logos"
 msgstr "Koyisekile ukuhlaziya iilogo zeesistim"
 
-#: templates/settings.html:4460
+#: templates/settings.html:4458
 msgid "Names Refreshed"
 msgstr "Amagama Ahlaziyiwe"
 
-#: templates/settings.html:4461
+#: templates/settings.html:4459
 #, python-brace-format
 msgid "System names updated: {count}. Click OK to refresh the page."
 msgstr "Amagama eesistim ahlaziyiweyo: {count}. Cofa u-OK ukuhlaziya iphepha."
 
-#: templates/settings.html:4464
+#: templates/settings.html:4462
 msgid "Failed to refresh names"
 msgstr " Koyekile ukuhlaziya amagama"
 
-#: templates/settings.html:4468
+#: templates/settings.html:4466
 msgid "Failed to refresh system names"
 msgstr "Koyekile ukuhlaziya amagama eesistim"
 
-#: templates/settings.html:4911
+#: templates/settings.html:4909
 #, python-brace-format
 msgid "Log: {filename}"
 msgstr "Ilogi: {filename}"
 
-#: templates/settings.html:4912
+#: templates/settings.html:4910
 msgid "Log file is empty"
 msgstr "Ifayile yelogi ayinanto"
 
-#: templates/settings.html:4915
+#: templates/settings.html:4913
 msgid "Failed to load log file"
 msgstr "Koyekile ukulayisha ifayile yelogi"
 
-#: templates/settings.html:4918
+#: templates/settings.html:4916
 #, python-brace-format
 msgid "Error loading log file: {error}"
 msgstr "Impazamo ekulayisheni ifayile yelogi: {error}"
 
-#: templates/settings.html:4937
+#: templates/settings.html:4935
 msgid "Failed to delete log file"
 msgstr "Koyekile ukucima ifayile yelogi"
 
-#: templates/settings.html:4940
+#: templates/settings.html:4938
 #, python-brace-format
 msgid "Error deleting log file: {error}"
 msgstr "Impazamo ekucimeni ifayile yelogi: {error}"
 
-#: templates/settings.html:4946
+#: templates/settings.html:4944
 msgid "Clear Old Logs"
 msgstr "Cima Iilogi Ezindala"
 
-#: templates/settings.html:4946
+#: templates/settings.html:4944
 msgid "This will delete all log files older than 5 days. Continue?"
 msgstr ""
 "Oku kuza kucima zonke iifayile zelogi ezindala ngaphezu kweentsuku ezi-5."
 " Qhubeka?"
 
-#: templates/settings.html:4952
+#: templates/settings.html:4950
 #, python-brace-format
 msgid "Old log files removed: {count}"
 msgstr "Iifayile zelogi ezindala ezisusiweyo: {count}"
 
-#: templates/settings.html:4955
+#: templates/settings.html:4953
 msgid "Failed to clear old logs"
 msgstr "Koyekile ukucima iilogi ezindala"
 
-#: templates/settings.html:4958
+#: templates/settings.html:4956
 #, python-brace-format
 msgid "Error clearing old logs: {error}"
 msgstr "Impazamo ekucimeni iilogi ezindala: {error}"
 
-#: templates/settings.html:5003
+#: templates/settings.html:5001
 msgid "Token extracted from the pasted page"
 msgstr "I-token ikhutshwe kwiphepha elinamathelisiweyo"
 
-#: templates/settings.html:5005
+#: templates/settings.html:5003
 msgid "Token detected"
 msgstr "I-token ifunyenwe"
 
-#: templates/settings.html:5007
+#: templates/settings.html:5005
 msgid "Could not detect a valid NPSSO token"
 msgstr "Ayikwazanga ukufumana i-NPSSO token esebenzayo"
 
-#: templates/settings.html:5019
+#: templates/settings.html:5017
 msgid "Now press Ctrl+V to paste."
 msgstr "Ngoku cinezela Ctrl+V ukunamathelisa."
 
-#: templates/settings.html:5031
+#: templates/settings.html:5029
 msgid "Enter an NPSSO token first"
 msgstr "Qala ngokufaka i-NPSSO token"
 
-#: templates/settings.html:5036
+#: templates/settings.html:5034
 msgid "Testing..."
 msgstr "Iyavavanywa..."
 
-#: templates/settings.html:5037
+#: templates/settings.html:5035 templates/settings.html:5124
 msgid "Saving and connecting..."
 msgstr "Kugcinwa kwaye kuxhunyaniswa..."
 
-#: templates/settings.html:5048
+#: templates/settings.html:5046 templates/settings.html:5133
 #, python-format
 msgid "Connected as %(name)s"
 msgstr "Unxibelelene njengo-%(name)s"
 
-#: templates/settings.html:5055
+#: templates/settings.html:5053 templates/settings.html:5137
 msgid "Connection failed"
 msgstr "Ukunxibelelana kuphumelele kakubi"
 
-#: templates/settings.html:5058
+#: templates/settings.html:5056 templates/settings.html:5140
 #, python-format
 msgid "Error: %(msg)s"
 msgstr "Impazamo: %(msg)s"
 
-#: templates/settings.html:5077
+#: templates/settings.html:5075
 #, python-format
 msgid ""
 "Sony refused your saved NPSSO token on %(date)s. Get a new one with the "
@@ -12184,7 +12165,7 @@ msgstr ""
 "Sony yalile i-NPSSO token yakho egciniweyo ngo %(date)s. Fumana entsha "
 "ngenyathelo elingezantsi."
 
-#: templates/settings.html:5080
+#: templates/settings.html:5078
 msgid ""
 "Connected to PSN. RetroDB keeps the sign-in going by itself. You need a "
 "new token only if Sony refuses this one."
@@ -12192,28 +12173,43 @@ msgstr ""
 "Unxibelelene ne-PSN. RetroDB igcina ukungena kuqhubeka ngokwayo. Udinga "
 "i-token entsha kuphela ukuba Sony iyala le."
 
-#: templates/settings.html:5117
-msgid "Redirect URI copied to clipboard"
-msgstr "I-Redirect URI ikhutshelwe kwiclipboard"
+#: templates/settings.html:5107
+#, python-format
+msgid "Key saved. Connected as %(name)s."
+msgstr "Isitshixo sigciniwe. Unxibelelene njengo-%(name)s."
 
-#: templates/settings.html:5192 templates/settings.html:5234
+#: templates/settings.html:5108
+msgid "No key saved."
+msgstr "Akukho sitshixo sigciniweyo."
+
+#: templates/settings.html:5146
+msgid "Remove Xbox key"
+msgstr "Susa isitshixo seXbox"
+
+#: templates/settings.html:5146
+msgid "Remove your OpenXBL key? Your imported games and achievements stay."
+msgstr ""
+"Susa isitshixo sakho se-OpenXBL? Imidlalo neempumelelo ozingenisileyo "
+"ziya kuhlala."
+
+#: templates/settings.html:5228 templates/settings.html:5270
 msgid "Avatar updated!"
 msgstr "I-avatar ihlaziyiwe!"
 
-#: templates/settings.html:5197
+#: templates/settings.html:5233
 #, python-brace-format
 msgid "Upload failed: {error}"
 msgstr "Ukulayisha akuphumelelanga: {error}"
 
-#: templates/settings.html:5211
+#: templates/settings.html:5247
 msgid "Avatar removed"
 msgstr "I-avatar isusiwe"
 
-#: templates/settings.html:5214
+#: templates/settings.html:5250
 msgid "Failed to remove avatar"
 msgstr "Koyekile ukususa i-avatar"
 
-#: templates/settings.html:5237
+#: templates/settings.html:5273
 msgid "Failed to save avatar"
 msgstr "Koyekile ukugcina i-avatar"
 
@@ -12613,20 +12609,20 @@ msgid "Confirm password"
 msgstr "Qinisekisa igama eliyimfihlo"
 
 #: templates/_settings_tabs/account.html:6
-#: templates/_settings_tabs/account.html:271
-#: templates/_settings_tabs/account.html:278 templates/setup.html:121
+#: templates/_settings_tabs/account.html:286
+#: templates/_settings_tabs/account.html:293 templates/setup.html:121
 msgid "Timezone"
 msgstr "Ummandla Wexesha"
 
-#: templates/_settings_tabs/account.html:280 templates/setup.html:122
+#: templates/_settings_tabs/account.html:295 templates/setup.html:122
 msgid "Search timezones..."
 msgstr "Khangela imimandla yexesha..."
 
-#: templates/_settings_tabs/account.html:284 templates/setup.html:125
+#: templates/_settings_tabs/account.html:299 templates/setup.html:125
 msgid "Browser detected:"
 msgstr "Ibhrawuza ebhaqiweyo:"
 
-#: templates/_settings_tabs/account.html:285 templates/setup.html:126
+#: templates/_settings_tabs/account.html:300 templates/setup.html:126
 msgid "Use detected"
 msgstr "Sebenzisa ebhaqiweyo"
 
@@ -14132,10 +14128,30 @@ msgid "Paste here"
 msgstr "Namathelisa apha"
 
 #: templates/_settings_tabs/account.html:212
+#: templates/_settings_tabs/account.html:227
 msgid "Save &amp; Test Connection"
 msgstr "Gcina &amp; Vavanya Uqhagamshelo"
 
 #: templates/_settings_tabs/account.html:220
+msgid ""
+"Xbox reaches RetroDB through OpenXBL, a free service. Sign in at <a "
+"href=\"https://xbl.io\" target=\"_blank\" rel=\"noopener noreferrer\" "
+"style=\"color: var(--primary-cyan);\">xbl.io</a> with your Xbox account, "
+"copy your API key, and paste it here. The free key allows 150 requests an"
+" hour, so a big achievement sync may take more than one go."
+msgstr ""
+"I-Xbox ifikelela kwi-RetroDB ngeOpenXBL, inkonzo yasimahla. Ngena kwi-<a "
+"href=\"https://xbl.io\" target=\"_blank\" rel=\"noopener noreferrer\" "
+"style=\"color: var(--primary-cyan);\">xbl.io</a> nge-akhawunti yakho "
+"yeXbox, kopa isitshixo sakho se-API, uze usincamathisele apha. Isitshixo "
+"sasimahla sivumela izicelo ezili-150 ngeyure, ngoko ukulungelelanisa "
+"iimpumelelo ezininzi kusenokufuna ngaphezu kwesihlandlo esinye."
+
+#: templates/_settings_tabs/account.html:224
+msgid "Your OpenXBL API key"
+msgstr "Isitshixo sakho se-API se-OpenXBL"
+
+#: templates/_settings_tabs/account.html:235
 msgid ""
 "Add your own Steam key and Steam ID to import your Steam library and "
 "achievements."
@@ -14143,7 +14159,7 @@ msgstr ""
 "Yongeza isitshixo sakho se-Steam ne-Steam ID yakho ukuze ungenise ithala "
 "lakho le-Steam neempumelelo zakho."
 
-#: templates/_settings_tabs/account.html:227
+#: templates/_settings_tabs/account.html:242
 msgid ""
 "Get your key from <a href=\"https://steamcommunity.com/dev/apikey\" "
 "target=\"_blank\" rel=\"noopener noreferrer\" style=\"color: var"
@@ -14153,11 +14169,11 @@ msgstr ""
 "target=\"_blank\" rel=\"noopener noreferrer\" style=\"color: var"
 "(--primary-cyan);\">kwiphepha lezitshixo ze-API ze-Steam</a>"
 
-#: templates/_settings_tabs/account.html:231
+#: templates/_settings_tabs/account.html:246
 msgid "Your Steam ID"
 msgstr "I-Steam ID Yakho"
 
-#: templates/_settings_tabs/account.html:235
+#: templates/_settings_tabs/account.html:250
 msgid ""
 "The 17-digit number, not your profile name. Find it at <a "
 "href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener noreferrer\""
@@ -14167,50 +14183,50 @@ msgstr ""
 "href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener noreferrer\""
 " style=\"color: var(--primary-cyan);\">steamid.io</a>"
 
-#: templates/_settings_tabs/account.html:239
+#: templates/_settings_tabs/account.html:254
 msgid "Save My Settings"
 msgstr "Gcina Iisethingi Zam"
 
-#: templates/_settings_tabs/account.html:243
-#: templates/_settings_tabs/account.html:259
+#: templates/_settings_tabs/account.html:258
+#: templates/_settings_tabs/account.html:274
 msgid "Change Password"
 msgstr "Tshintsha Iphasiwedi"
 
-#: templates/_settings_tabs/account.html:245
+#: templates/_settings_tabs/account.html:260
 msgid "Every account needs a password to log in."
 msgstr "Yonke i-akhawunti idinga iphasiwedi ukuze ingene."
 
-#: templates/_settings_tabs/account.html:249
+#: templates/_settings_tabs/account.html:264
 msgid "Current Password"
 msgstr "Iphasiwedi Yangoku"
 
-#: templates/_settings_tabs/account.html:250
+#: templates/_settings_tabs/account.html:265
 msgid "Enter current password"
 msgstr "Faka iphasiwedi yangoku"
 
-#: templates/_settings_tabs/account.html:255
+#: templates/_settings_tabs/account.html:270
 msgid "Enter new password"
 msgstr "Faka iphasiwedi entsha"
 
-#: templates/_settings_tabs/account.html:263
+#: templates/_settings_tabs/account.html:278
 msgid "Please log in to view your profile settings."
 msgstr "Nceda ungene ukuze ubone iisethingi zeprofayile yakho."
 
-#: templates/_settings_tabs/account.html:275
+#: templates/_settings_tabs/account.html:290
 msgid "Set your timezone to ensure all dates and times display correctly."
 msgstr ""
 "Misela ummandla wexesha lakho ukuze uqinisekise ukuba yonke imihla "
 "namaxesha aboniswa ngokuchanekileyo."
 
-#: templates/_settings_tabs/account.html:288
+#: templates/_settings_tabs/account.html:303
 msgid "Save Timezone"
 msgstr "Gcina Ummandla Wexesha"
 
-#: templates/_settings_tabs/account.html:296
+#: templates/_settings_tabs/account.html:311
 msgid "User Management"
 msgstr "Ulawulo Lwabasebenzisi"
 
-#: templates/_settings_tabs/account.html:300
+#: templates/_settings_tabs/account.html:315
 msgid ""
 "Manage users who can access RetroDB. Admin users require a password to "
 "login, while Editor and Viewer users can login with a single click."
@@ -14219,82 +14235,82 @@ msgstr ""
 "iphasiwedi ukuze bangene, ngelixa abahleli nababoni benokungena ngokucofa"
 " kanye."
 
-#: templates/_settings_tabs/account.html:305
-#: templates/_settings_tabs/account.html:379
+#: templates/_settings_tabs/account.html:320
+#: templates/_settings_tabs/account.html:394
 msgid "Add User"
 msgstr "Yongeza Umsebenzisi"
 
-#: templates/_settings_tabs/account.html:313
+#: templates/_settings_tabs/account.html:328
 msgid "Role"
 msgstr "Indima"
 
-#: templates/_settings_tabs/account.html:314
+#: templates/_settings_tabs/account.html:329
 msgid "Trophy Path"
 msgstr "Indlela Yeendebe"
 
-#: templates/_settings_tabs/account.html:315
+#: templates/_settings_tabs/account.html:330
 msgid "RA Username"
 msgstr "Igama Lomsebenzisi leRA"
 
-#: templates/_settings_tabs/account.html:316
+#: templates/_settings_tabs/account.html:331
 msgid "Last Login"
 msgstr "Ukungena Kokugqibela"
 
-#: templates/_settings_tabs/account.html:343
-#: templates/_settings_tabs/account.html:350
+#: templates/_settings_tabs/account.html:358
+#: templates/_settings_tabs/account.html:365
 msgid "Not Set"
 msgstr "Ayimiselwanga"
 
-#: templates/_settings_tabs/account.html:380
+#: templates/_settings_tabs/account.html:395
 msgid "Close user modal"
 msgstr "Vala imodali yomsebenzisi"
 
-#: templates/_settings_tabs/account.html:386
+#: templates/_settings_tabs/account.html:401
 msgid "Username *"
 msgstr "Igama lomsebenzisi *"
 
-#: templates/_settings_tabs/account.html:387
+#: templates/_settings_tabs/account.html:402
 msgid "username"
 msgstr "igama lomsebenzisi"
 
-#: templates/_settings_tabs/account.html:391
-#: templates/_settings_tabs/account.html:392
+#: templates/_settings_tabs/account.html:406
+#: templates/_settings_tabs/account.html:407
 msgid "Display Name"
 msgstr "Igama Eliboniswayo"
 
-#: templates/_settings_tabs/account.html:396
+#: templates/_settings_tabs/account.html:411
 msgid "Role *"
 msgstr "Indima *"
 
-#: templates/_settings_tabs/account.html:398
+#: templates/_settings_tabs/account.html:413
 msgid "Viewer - Read only access"
 msgstr "Umboni - Ukufikelela kokufunda kuphela"
 
-#: templates/_settings_tabs/account.html:399
+#: templates/_settings_tabs/account.html:414
 msgid "Player - Can launch and track progress"
 msgstr "Umdlali - Angaqalisa aze alandelele inkqubela"
 
-#: templates/_settings_tabs/account.html:400
+#: templates/_settings_tabs/account.html:415
 msgid "Editor - Can edit games and scrape"
 msgstr "Umhleli - Angahlela imidlalo aze akhuphe"
 
-#: templates/_settings_tabs/account.html:401
+#: templates/_settings_tabs/account.html:416
 msgid "Admin - Full access"
 msgstr "Umlawuli - Ukufikelela okupheleleyo"
 
-#: templates/_settings_tabs/account.html:406
+#: templates/_settings_tabs/account.html:421
 msgid "Reset Password"
 msgstr "Setha Kwakhona Iphasiwedi"
 
-#: templates/_settings_tabs/account.html:407
+#: templates/_settings_tabs/account.html:422
 msgid "Leave blank to keep current"
 msgstr "Yishiye ingenanto ukuze ugcine yangoku"
 
-#: templates/_settings_tabs/account.html:408
+#: templates/_settings_tabs/account.html:423
 msgid "Only for admin accounts"
 msgstr "Kwii-akhawunti zomlawuli kuphela"
 
-#: templates/_settings_tabs/account.html:413
+#: templates/_settings_tabs/account.html:428
 msgid "Save User"
 msgstr "Gcina Umsebenzisi"
 
@@ -14856,27 +14872,26 @@ msgstr ""
 msgid "Default Region"
 msgstr "Ummandla Ozenzekelayo"
 
-#: templates/_settings_tabs/scraping.html:428
+#: templates/_settings_tabs/scraping.html:421
+#, python-format
 msgid ""
-"Xbox needs an app registered with Microsoft. Microsoft now asks a "
-"personal account to get a directory first, which can mean signing up for "
-"Azure, and that may ask for a card. Xbox may still refuse an app made "
-"this way: RetroDB has not been able to test one."
+"Each person adds their own free OpenXBL key in <a "
+"href=\"%(profile_url)s\" style=\"color: var(--primary-cyan);\">Settings "
+"&gt; My Profile</a>. Nothing is needed here."
 msgstr ""
-"I-Xbox idinga i-app ebhalisiweyo kwa-Microsoft. Ngoku u-Microsoft ucela "
-"i-akhawunti yobuqu ukuba iqale ifumane idirekhthori, oku kungathetha "
-"ukubhalisa kwi-Azure, kwaye oko kungacela ikhadi. I-Xbox isenokwala i-app"
-" eyenziwe ngale ndlela: RetroDB ayikwazanga ukuvavanya nayiphi."
+"Umntu ngamnye ufaka isitshixo sakhe se-OpenXBL sasimahla kwi-<a "
+"href=\"%(profile_url)s\" style=\"color: var(--primary-cyan);\">Iisethingi"
+" &gt; Iprofayile Yam</a>. Akukho nto ifunekayo apha."
 
-#: templates/_settings_tabs/scraping.html:521
+#: templates/_settings_tabs/scraping.html:438
 msgid "Test saved AI key"
 msgstr "Vavanya isitshixo se-AI esigciniweyo"
 
-#: templates/_settings_tabs/scraping.html:604
+#: templates/_settings_tabs/scraping.html:521
 msgid "Let Claude search the web"
 msgstr "Vumela uClaude akhangele kwiwebhu"
 
-#: templates/_settings_tabs/scraping.html:610
+#: templates/_settings_tabs/scraping.html:527
 msgid ""
 "Without search, Claude answers from what it already knows, and leaves "
 "blank anything that needs a published figure, such as copies sold. With "

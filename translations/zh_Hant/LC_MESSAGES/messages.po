@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-09 16:46+0200\n"
+"POT-Creation-Date: 2026-11-09 18:41+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant\n"
@@ -240,8 +240,8 @@ msgstr "此系統中沒有帶 RetroAchievements 的遊戲"
 msgid "Sync already in progress for %(name)s"
 msgstr "%(name)s 的同步已在進行中"
 
-#: routes/achievements.py:392 routes/platform_import.py:394
-#: routes/platform_import.py:771 routes/ra_sync.py:146
+#: routes/achievements.py:392 routes/platform_import.py:392
+#: routes/platform_import.py:695 routes/ra_sync.py:146
 msgid "That job belongs to another user"
 msgstr "該工作屬於其他使用者"
 
@@ -568,11 +568,11 @@ msgid "A bonus disc links to a main game, one level only"
 msgstr "額外光碟可連結到一款主遊戲,且僅限一層"
 
 #: routes/bonus_discs.py:219 routes/bonus_discs.py:237 routes/games.py:1397
-#: routes/games.py:1427 routes/platform_import.py:357
-#: routes/platform_import.py:736 routes/platform_import.py:1120
+#: routes/games.py:1427 routes/platform_import.py:355
+#: routes/platform_import.py:660 routes/platform_import.py:1044
 #: routes/scrape_logs.py:85 routes/scrape_logs.py:170 routes/scrape_logs.py:183
-#: routes/scrape_logs.py:221 routes/scraper.py:207 routes/scraper.py:538
-#: routes/scraper.py:929 routes/settings.py:319 routes/settings.py:343
+#: routes/scrape_logs.py:221 routes/scraper.py:204 routes/scraper.py:535
+#: routes/scraper.py:926 routes/settings.py:319 routes/settings.py:343
 #: routes/settings.py:431 routes/settings.py:510 routes/settings.py:539
 #: routes/settings.py:583 routes/settings.py:596 routes/settings.py:632
 #: routes/steam_achievements.py:138 routes/systems.py:164 routes/systems.py:367
@@ -841,10 +841,10 @@ msgstr "套用中繼資料失敗。"
 msgid "No fields to update"
 msgstr "沒有可更新的欄位"
 
-#: routes/games.py:1205 routes/platform_import.py:263
-#: routes/platform_import.py:642 routes/platform_import.py:1006
-#: routes/trophies.py:1921 templates/game_imports.html:579
-#: templates/game_imports.html:842
+#: routes/games.py:1205 routes/platform_import.py:261
+#: routes/platform_import.py:566 routes/platform_import.py:930
+#: routes/trophies.py:1921 templates/game_imports.html:578
+#: templates/game_imports.html:826
 msgid "No games selected"
 msgstr "未選擇任何遊戲"
 
@@ -1084,7 +1084,7 @@ msgstr "請先選擇 MAME 清單。"
 msgid "MAME Names is already running."
 msgstr "MAME 命名已在執行中。"
 
-#: routes/museum.py:400 routes/scraper.py:770
+#: routes/museum.py:400 routes/scraper.py:767
 msgid "No AI provider configured"
 msgstr "未配置 AI 提供方"
 
@@ -1147,52 +1147,63 @@ msgstr "未找到圖片檔案"
 msgid "Background removal failed"
 msgstr "背景移除失敗"
 
-#: routes/platform_import.py:195
+#: routes/platform_import.py:193
 msgid "No Steam key yet. Add yours under Settings → My Profile."
 msgstr "還沒有 Steam 金鑰。請在 設定 → 我的資料 中加入你自己的。"
 
-#: routes/platform_import.py:197
+#: routes/platform_import.py:195
 msgid "No Steam ID yet. Add yours under Settings → My Profile."
 msgstr "還沒有 Steam ID。請在 設定 → 我的資料 中加入你自己的。"
 
-#: routes/platform_import.py:203
+#: routes/platform_import.py:201
 #, python-format
 msgid ""
 "Could not resolve Steam vanity URL \"%(steam_id)s\". Use your 17-digit "
 "Steam ID instead."
 msgstr "無法解析 Steam 個性網址「%(steam_id)s」。請改用你的 17 位 Steam ID。"
 
-#: routes/platform_import.py:209
+#: routes/platform_import.py:207
 msgid ""
 "No games found. Check that your Steam profile and game details are set to"
 " Public."
 msgstr "未找到遊戲。請檢查您的 Steam 個人資料和遊戲詳情是否設定為公開。"
 
-#: routes/platform_import.py:268
+#: routes/platform_import.py:266
 msgid "Could not create Windows system entry"
 msgstr "無法建立 Windows 系統項目"
 
-#: routes/platform_import.py:412
-msgid "Xbox Client ID not configured. Add it in Settings → API Keys."
-msgstr "未設定 Xbox Client ID。請在「設定 → API 金鑰」中新增。"
+#: routes/platform_import.py:412 templates/settings.html:5120
+msgid "Paste your OpenXBL key first."
+msgstr "請先貼上你的 OpenXBL 金鑰。"
 
-#: routes/platform_import.py:550
-msgid "Xbox credentials not configured. Add them in Settings → API Keys."
-msgstr "未配置 Xbox 憑據。請在「設定 → API Keys」中新增。"
+#: routes/platform_import.py:417
+msgid "OpenXBL did not accept that key. Copy it again from xbl.io."
+msgstr "OpenXBL 不接受此金鑰。請從 xbl.io 重新複製。"
 
-#: routes/platform_import.py:554
-msgid "Xbox authentication failed. Please re-connect your Xbox account."
-msgstr "Xbox 身分驗證失敗。請重新連接你的 Xbox 帳戶。"
+#: routes/platform_import.py:421 routes/platform_import.py:481
+#: routes/xbox_achievements.py:137
+#, python-format
+msgid "OpenXBL's hourly limit was reached. Try again in %(minutes)s minutes."
+msgstr "已達到 OpenXBL 每小時的請求上限。請在 %(minutes)s 分鐘後再試。"
 
-#: routes/platform_import.py:558
+#: routes/platform_import.py:423 routes/platform_import.py:483
+msgid "OpenXBL did not answer. Try again later."
+msgstr "OpenXBL 沒有回應。請稍後再試。"
+
+#: routes/platform_import.py:475 routes/xbox_achievements.py:123
+#: services/jobs/platform_sync.py:783
+msgid "Add your OpenXBL key in Settings > My Profile first."
+msgstr "請先在「設定 > 我的資料」中新增你的 OpenXBL 金鑰。"
+
+#: routes/platform_import.py:485
 msgid "No games found in Xbox title history."
 msgstr "在 Xbox 遊戲歷史記錄中未找到遊戲。"
 
-#: routes/platform_import.py:846
+#: routes/platform_import.py:770
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr "尚未設定 PSN NPSSO。請在「設定 → API 金鑰」中新增。"
 
-#: routes/platform_import.py:873
+#: routes/platform_import.py:797
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr "取得 PSN 遊戲清單失敗。請先嘗試同步獎盃。"
 
@@ -1295,78 +1306,78 @@ msgstr "未找到檔案"
 msgid "Log file not found"
 msgstr "未找到日誌檔案"
 
-#: routes/scraper.py:222
+#: routes/scraper.py:219
 #, python-format
 msgid "invalid scraper settings: %(reason)s"
 msgstr "抓取器設定無效：%(reason)s"
 
-#: routes/scraper.py:283
+#: routes/scraper.py:280
 #, python-format
 msgid "invalid api keys: %(reason)s"
 msgstr "API 金鑰無效：%(reason)s"
 
-#: routes/scraper.py:558
+#: routes/scraper.py:555
 msgid "No TGDB API key configured"
 msgstr "尚未設定 TGDB API 金鑰"
 
-#: routes/scraper.py:655
+#: routes/scraper.py:652
 msgid "No ScreenScraper credentials configured"
 msgstr "尚未設定 ScreenScraper 憑證"
 
-#: routes/scraper.py:691
+#: routes/scraper.py:688
 msgid "Invalid JSON response from ScreenScraper"
 msgstr "ScreenScraper 返回的 JSON 回應無效"
 
-#: routes/scraper.py:694
+#: routes/scraper.py:691
 msgid "Error parsing API response"
 msgstr "解析 API 回應時出錯"
 
-#: routes/scraper.py:696
+#: routes/scraper.py:693
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
 msgstr "ScreenScraper 回傳了 HTTP %(code)s"
 
-#: routes/scraper.py:711
+#: routes/scraper.py:708
 msgid "No RAWG API key configured"
 msgstr "未設定 RAWG API 金鑰"
 
-#: routes/scraper.py:816
+#: routes/scraper.py:813
 #, python-format
 msgid "Unknown AI provider: %(provider)s"
 msgstr "未知的 AI 提供方：%(provider)s"
 
-#: routes/scraper.py:819
+#: routes/scraper.py:816
 msgid "No response from AI provider"
 msgstr "AI 提供方無回應"
 
-#: routes/scraper.py:824 routes/scraper.py:825
+#: routes/scraper.py:821 routes/scraper.py:822
 #, python-format
 msgid "%(provider)s refused the API key. Check the key and save it again."
 msgstr "%(provider)s 拒絕了該 API 金鑰。請檢查金鑰並重新儲存。"
 
-#: routes/scraper.py:826
+#: routes/scraper.py:823
 #, python-format
 msgid "%(provider)s wants payment: the account has no credit or billing is off."
 msgstr "%(provider)s 要求付款：帳戶沒有餘額，或已關閉計費。"
 
-#: routes/scraper.py:827
+#: routes/scraper.py:824
 #, python-format
 msgid ""
 "%(provider)s says a usage limit is reached. Try again later or check your"
 " plan."
 msgstr "%(provider)s 表示已達使用上限。請稍後再試，或檢查您的方案。"
 
-#: routes/scraper.py:829
+#: routes/scraper.py:826
 #, python-format
 msgid "%(provider)s answered with error %(code)s."
 msgstr "%(provider)s 回傳錯誤 %(code)s。"
 
-#: routes/scraper.py:922
+#: routes/scraper.py:919
 #, python-format
 msgid "Connection error: %(error)s"
 msgstr "連接錯誤：%(error)s"
 
-#: routes/scraper.py:925
+#: routes/scraper.py:922
 #, python-format
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "%(scraper)s 不支援配額檢查"
@@ -1662,15 +1673,7 @@ msgstr "該遊戲未與其他版本連結。"
 msgid "The AI did not give a usable answer. Try again later."
 msgstr "AI 未給出可用的回答。請稍後再試。"
 
-#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:798
-msgid "Xbox credentials not configured"
-msgstr "尚未設定 Xbox 憑據"
-
-#: routes/xbox_achievements.py:131
-msgid "Xbox authentication failed — please re-connect your account"
-msgstr "Xbox 身分驗證失敗 — 請重新連接你的帳戶"
-
-#: routes/xbox_achievements.py:135
+#: routes/xbox_achievements.py:130
 msgid "Game not found or not an Xbox game"
 msgstr "未找到該遊戲，或它不是 Xbox 遊戲"
 
@@ -2131,7 +2134,7 @@ msgstr "AI 填充請求失敗:{error}"
 msgid "AI found no missing fields to fill"
 msgstr "AI 找不到需要填充的缺漏欄位"
 
-#: services/js_i18n_strings.py:591 templates/_settings_tabs/account.html:317
+#: services/js_i18n_strings.py:591 templates/_settings_tabs/account.html:332
 #: templates/archive_scanner.html:726 templates/list_detail.html:47
 #: templates/multi_disc_organizer.html:217 templates/reports.html:369
 #: templates/reports.html:450
@@ -2228,7 +2231,7 @@ msgstr ""
 msgid "Are you sure you want to cancel?"
 msgstr "確定要取消嗎？"
 
-#: services/js_i18n_strings.py:612 templates/settings.html:4927
+#: services/js_i18n_strings.py:612 templates/settings.html:4925
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "確定要刪除「{filename}」嗎？"
@@ -2313,7 +2316,7 @@ msgstr "可以破關，效能可玩，且沒有影響遊戲的嚴重故障。"
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:73
-#: templates/_settings_tabs/account.html:412
+#: templates/_settings_tabs/account.html:427
 #: templates/_settings_tabs/customization.html:264
 #: templates/achievement_game.html:178 templates/archive_scanner.html:661
 #: templates/archive_scanner.html:798 templates/base.html:340
@@ -2608,7 +2611,7 @@ msgstr "目前設定"
 msgid "Default emulator for {system}"
 msgstr "{system} 的預設模擬器"
 
-#: services/js_i18n_strings.py:694 templates/settings.html:4927
+#: services/js_i18n_strings.py:694 templates/settings.html:4925
 msgid "Delete Log File"
 msgstr "刪除日誌檔案"
 
@@ -2721,7 +2724,7 @@ msgstr "DuckStation 金手指"
 msgid "DuckStation ignores cheats in hardcore mode."
 msgstr "DuckStation 在硬核模式下會忽略金手指。"
 
-#: services/js_i18n_strings.py:721 templates/_settings_tabs/account.html:362
+#: services/js_i18n_strings.py:721 templates/_settings_tabs/account.html:377
 #: templates/base.html:1006 templates/game_detail.html:135
 #: templates/wishlist.html:641
 msgid "Edit"
@@ -2761,21 +2764,21 @@ msgstr "請輸入一個資料夾路徑。"
 #: templates/multi_disc_organizer.html:371 templates/reports.html:1123
 #: templates/reports.html:1126 templates/reports.html:1192
 #: templates/reports.html:1195 templates/rom_tools_settings.html:579
-#: templates/rom_tools_settings.html:582 templates/settings.html:2924
-#: templates/settings.html:2928 templates/settings.html:2947
-#: templates/settings.html:2951 templates/settings.html:3544
-#: templates/settings.html:3548 templates/settings.html:3616
-#: templates/settings.html:3620 templates/settings.html:3651
-#: templates/settings.html:3655 templates/settings.html:3681
-#: templates/settings.html:3685 templates/settings.html:4187
-#: templates/settings.html:4191 templates/settings.html:4209
-#: templates/settings.html:4240 templates/settings.html:4300
-#: templates/settings.html:4304 templates/settings.html:4434
-#: templates/settings.html:4438 templates/settings.html:4464
-#: templates/settings.html:4468 templates/settings.html:4915
-#: templates/settings.html:4918 templates/settings.html:4937
-#: templates/settings.html:4940 templates/settings.html:4955
-#: templates/settings.html:4958
+#: templates/rom_tools_settings.html:582 templates/settings.html:2922
+#: templates/settings.html:2926 templates/settings.html:2945
+#: templates/settings.html:2949 templates/settings.html:3542
+#: templates/settings.html:3546 templates/settings.html:3614
+#: templates/settings.html:3618 templates/settings.html:3649
+#: templates/settings.html:3653 templates/settings.html:3679
+#: templates/settings.html:3683 templates/settings.html:4185
+#: templates/settings.html:4189 templates/settings.html:4207
+#: templates/settings.html:4238 templates/settings.html:4298
+#: templates/settings.html:4302 templates/settings.html:4432
+#: templates/settings.html:4436 templates/settings.html:4462
+#: templates/settings.html:4466 templates/settings.html:4913
+#: templates/settings.html:4916 templates/settings.html:4935
+#: templates/settings.html:4938 templates/settings.html:4953
+#: templates/settings.html:4956
 msgid "Error"
 msgstr "錯誤"
 
@@ -3592,7 +3595,7 @@ msgstr "上一個遊戲"
 msgid "Processing images…"
 msgstr "正在處理圖片…"
 
-#: services/js_i18n_strings.py:909 templates/game_imports.html:418
+#: services/js_i18n_strings.py:909 templates/game_imports.html:417
 msgid "Processing..."
 msgstr "正在處理…"
 
@@ -3663,9 +3666,9 @@ msgid "Regional name matches"
 msgstr "地區名稱符合"
 
 #: services/js_i18n_strings.py:925 templates/_modals/edit_modal.html:386
-#: templates/compare_games.html:24 templates/compare_games.html:40
-#: templates/rom_tools_settings.html:462 templates/rom_tools_settings.html:501
-#: templates/screenshot_review.html:185
+#: templates/_settings_tabs/account.html:228 templates/compare_games.html:24
+#: templates/compare_games.html:40 templates/rom_tools_settings.html:462
+#: templates/rom_tools_settings.html:501 templates/screenshot_review.html:185
 msgid "Remove"
 msgstr "移除"
 
@@ -4342,7 +4345,7 @@ msgstr "上傳"
 msgid "Upload Controller Image"
 msgstr "上傳手把圖片"
 
-#: services/js_i18n_strings.py:1072 templates/settings.html:5194
+#: services/js_i18n_strings.py:1072 templates/settings.html:5230
 msgid "Upload failed"
 msgstr "上傳失敗"
 
@@ -4817,37 +4820,39 @@ msgstr "請先執行一次 %(name)s 以產生其設定，然後再次遊玩。"
 msgid "The player has no core for this system."
 msgstr "播放器沒有此系統的核心。"
 
-#: services/jobs/platform_sync.py:398 services/jobs/platform_sync.py:707
+#: services/jobs/platform_sync.py:384 services/jobs/platform_sync.py:692
 msgid "Sync already running"
 msgstr "同步已在執行中"
 
-#: services/jobs/platform_sync.py:403
+#: services/jobs/platform_sync.py:389
 msgid "Steam sync is already running on another worker process."
 msgstr "Steam 同步已在另一個工作程序中執行。"
 
-#: services/jobs/platform_sync.py:421 services/jobs/platform_sync.py:730
+#: services/jobs/platform_sync.py:407 services/jobs/platform_sync.py:715
 msgid "No running sync to cancel"
 msgstr "沒有可取消的同步"
 
-#: services/jobs/platform_sync.py:515
+#: services/jobs/platform_sync.py:501
 msgid "Steam API key or Steam ID not configured"
 msgstr "尚未設定 Steam API 金鑰或 Steam ID"
 
-#: services/jobs/platform_sync.py:534
+#: services/jobs/platform_sync.py:520
 msgid "No Steam games found to sync"
 msgstr "找不到可同步的 Steam 遊戲"
 
-#: services/jobs/platform_sync.py:712
+#: services/jobs/platform_sync.py:697
 msgid "Xbox sync is already running on another worker process."
 msgstr "Xbox 同步已在另一個工作程序中執行。"
 
-#: services/jobs/platform_sync.py:807
-msgid "Xbox authentication failed — please re-connect your Xbox account"
-msgstr "Xbox 驗證失敗，請重新連結你的 Xbox 帳戶"
-
-#: services/jobs/platform_sync.py:858
+#: services/jobs/platform_sync.py:844
 msgid "No Xbox games found to sync"
 msgstr "找不到可同步的 Xbox 遊戲"
+
+#: services/jobs/platform_sync.py:887
+msgid ""
+"OpenXBL's hourly limit was reached. Sync again in an hour: it starts with"
+" the games not synced yet."
+msgstr "已達到 OpenXBL 每小時的請求上限。請一小時後再同步：會先從尚未同步的遊戲開始。"
 
 #: templates/_bulk_edit_modal.html:7
 msgid "Bulk Edit"
@@ -5065,7 +5070,7 @@ msgstr "更多詳情"
 msgid "First Achievement"
 msgstr "首個成就"
 
-#: templates/_settings_tabs/account.html:357
+#: templates/_settings_tabs/account.html:372
 #: templates/achievement_game.html:233 templates/achievement_game.html:237
 #: templates/local_trophy_detail.html:211
 #: templates/local_trophy_detail.html:215 templates/psn_trophies.html:76
@@ -5234,7 +5239,7 @@ msgstr "解除你的 %(system)s 遊戲與 RetroAchievements 的連結,並從此�
 
 #: templates/achievements_system.html:184 templates/all_games.html:33
 #: templates/game_imports.html:215 templates/game_imports.html:270
-#: templates/game_imports.html:326 templates/game_imports.html:389
+#: templates/game_imports.html:325 templates/game_imports.html:388
 #: templates/psn_trophies.html:119 templates/steam_achievements.html:72
 #: templates/system_games.html:40 templates/xbox_achievements.html:72
 msgid "Search games..."
@@ -5264,7 +5269,7 @@ msgid "Back to the first game"
 msgstr "回到第一個遊戲"
 
 #: templates/achievements_system.html:204 templates/all_games.html:122
-#: templates/game_imports.html:330 templates/game_imports.html:393
+#: templates/game_imports.html:329 templates/game_imports.html:392
 #: templates/hltb_review.html:28 templates/local_trophies.html:102
 #: templates/logs.html:707 templates/psn_trophies.html:129
 #: templates/psn_trophies.html:163 templates/psn_trophies.html:181
@@ -5948,8 +5953,8 @@ msgid "Largest Games"
 msgstr "最大的遊戲"
 
 #: templates/analytics.html:602 templates/game_imports.html:222
-#: templates/game_imports.html:277 templates/game_imports.html:340
-#: templates/game_imports.html:403
+#: templates/game_imports.html:277 templates/game_imports.html:339
+#: templates/game_imports.html:402
 msgid "Game"
 msgstr "遊戲"
 
@@ -5981,7 +5986,7 @@ msgstr "遊戲數量"
 msgid "Critic"
 msgstr "媒體"
 
-#: templates/_settings_tabs/account.html:312 templates/analytics.html:1965
+#: templates/_settings_tabs/account.html:327 templates/analytics.html:1965
 msgid "User"
 msgstr "使用者"
 
@@ -6184,13 +6189,13 @@ msgid "Processed"
 msgstr "已處理"
 
 #: templates/archive_scanner.html:782 templates/game_detail.html:4067
-#: templates/reports.html:492 templates/settings.html:3542
-#: templates/settings.html:4298 templates/settings.html:4952
+#: templates/reports.html:492 templates/settings.html:3540
+#: templates/settings.html:4296 templates/settings.html:4950
 msgid "Success"
 msgstr "成功"
 
-#: templates/archive_scanner.html:786 templates/game_imports.html:652
-#: templates/game_imports.html:727 templates/game_imports.html:905
+#: templates/archive_scanner.html:786 templates/game_imports.html:651
+#: templates/game_imports.html:708 templates/game_imports.html:889
 #: templates/reports.html:496 templates/wishlist.html:509
 msgid "Failed"
 msgstr "失敗"
@@ -6407,7 +6412,7 @@ msgstr "成功:{count}"
 
 #: templates/archive_scanner.html:1569 templates/archive_scanner.html:1574
 #: templates/archive_scanner.html:1742 templates/archive_scanner.html:1748
-#: templates/game_imports.html:596 templates/game_imports.html:856
+#: templates/game_imports.html:595 templates/game_imports.html:840
 #, python-brace-format
 msgid "Failed: {count}"
 msgstr "失敗:{count}"
@@ -7565,8 +7570,8 @@ msgstr "已查看"
 
 #: templates/dashboard.html:21 templates/dashboard.html:392
 #: templates/dashboard.html:533 templates/game_imports.html:224
-#: templates/game_imports.html:277 templates/game_imports.html:340
-#: templates/game_imports.html:403
+#: templates/game_imports.html:277 templates/game_imports.html:339
+#: templates/game_imports.html:402
 msgid "Status"
 msgstr "狀態"
 
@@ -7772,7 +7777,7 @@ msgstr "可用"
 
 #: templates/dashboard.html:602 templates/dashboard.html:612
 #: templates/dashboard.html:632 templates/dashboard.html:642
-#: templates/game_imports.html:368
+#: templates/game_imports.html:367
 msgid "Checking..."
 msgstr "正在檢查…"
 
@@ -7787,7 +7792,7 @@ msgstr "已停用"
 msgid "Not Configured"
 msgstr "未設定"
 
-#: templates/_settings_tabs/account.html:341 templates/dashboard.html:622
+#: templates/_settings_tabs/account.html:356 templates/dashboard.html:622
 msgid "Configured"
 msgstr "已設定"
 
@@ -7960,7 +7965,7 @@ msgid ""
 "new password before continuing."
 msgstr "你正在使用預設管理員密碼。出於安全考量，繼續操作前你必須設定新密碼。"
 
-#: templates/_settings_tabs/account.html:254
+#: templates/_settings_tabs/account.html:269
 #: templates/force_change_password.html:20
 msgid "New Password"
 msgstr "新密碼"
@@ -8052,7 +8057,7 @@ msgstr "查看說明書（PDF）"
 msgid "Delete game from database"
 msgstr "從資料庫刪除遊戲"
 
-#: templates/_settings_tabs/account.html:364 templates/game_detail.html:150
+#: templates/_settings_tabs/account.html:379 templates/game_detail.html:150
 #: templates/logs.html:735 templates/settings.html:45
 #: templates/wishlist.html:642
 msgid "Delete"
@@ -8582,11 +8587,12 @@ msgstr "刪除螢幕截圖失敗"
 msgid "Failed to delete screenshot: {error}"
 msgstr "刪除螢幕截圖失敗:{error}"
 
-#: templates/_settings_tabs/account.html:218 templates/game_imports.html:170
+#: templates/_settings_tabs/account.html:233 templates/game_imports.html:170
 msgid "Steam"
 msgstr "Steam"
 
-#: templates/game_imports.html:173
+#: templates/_settings_tabs/account.html:218
+#: templates/_settings_tabs/scraping.html:419 templates/game_imports.html:173
 msgid "Xbox"
 msgstr "Xbox"
 
@@ -8620,43 +8626,43 @@ msgid "CLZ Library"
 msgstr "CLZ 庫"
 
 #: templates/game_imports.html:207 templates/game_imports.html:262
-#: templates/game_imports.html:318 templates/game_imports.html:381
+#: templates/game_imports.html:317 templates/game_imports.html:380
 msgid "Total"
 msgstr "總計"
 
 #: templates/game_imports.html:208 templates/game_imports.html:263
-#: templates/game_imports.html:319 templates/game_imports.html:382
+#: templates/game_imports.html:318 templates/game_imports.html:381
 msgid "New"
 msgstr "新建"
 
 #: templates/game_imports.html:209 templates/game_imports.html:264
-#: templates/game_imports.html:320 templates/game_imports.html:383
+#: templates/game_imports.html:319 templates/game_imports.html:382
 msgid "Already Imported"
 msgstr "已匯入"
 
 #: templates/game_imports.html:213 templates/game_imports.html:268
-#: templates/game_imports.html:324 templates/game_imports.html:387
+#: templates/game_imports.html:323 templates/game_imports.html:386
 msgid "Select All New"
 msgstr "全選新增"
 
 #: templates/game_imports.html:214 templates/game_imports.html:269
-#: templates/game_imports.html:325 templates/game_imports.html:388
+#: templates/game_imports.html:324 templates/game_imports.html:387
 msgid "Deselect All"
 msgstr "取消全選"
 
 #: templates/_modals/filter_modal.html:15 templates/game_imports.html:223
-#: templates/game_imports.html:340 templates/game_imports.html:403
+#: templates/game_imports.html:339 templates/game_imports.html:402
 #: templates/psn_trophies.html:153 templates/psn_trophy_detail.html:241
 msgid "Platform"
 msgstr "平台"
 
 #: templates/game_imports.html:230 templates/game_imports.html:283
-#: templates/game_imports.html:346 templates/game_imports.html:409
+#: templates/game_imports.html:345 templates/game_imports.html:408
 msgid "0 games selected"
 msgstr "已選擇 0 個遊戲"
 
 #: templates/game_imports.html:231 templates/game_imports.html:284
-#: templates/game_imports.html:347 templates/game_imports.html:410
+#: templates/game_imports.html:346 templates/game_imports.html:409
 msgid "Import Selected"
 msgstr "匯入所選"
 
@@ -8682,7 +8688,7 @@ msgstr "Steam 憑據"
 msgid "Steam Web API Key"
 msgstr "Steam Web API 金鑰"
 
-#: templates/_settings_tabs/account.html:224 templates/game_imports.html:250
+#: templates/_settings_tabs/account.html:239 templates/game_imports.html:250
 msgid "Your Steam Web API Key"
 msgstr "你的 Steam Web API 金鑰"
 
@@ -8694,8 +8700,8 @@ msgstr "Steam ID 或自訂 URL"
 msgid "76561198012345678 or custom URL name"
 msgstr "76561198012345678 或自訂 URL 名稱"
 
-#: templates/game_imports.html:252 templates/game_imports.html:311
-#: templates/game_imports.html:370
+#: templates/game_imports.html:252 templates/game_imports.html:310
+#: templates/game_imports.html:369
 msgid "Fetch Library"
 msgstr "取得遊戲庫"
 
@@ -8712,60 +8718,55 @@ msgstr "最近遊玩"
 msgid ""
 "Import your Xbox game library. Games are assigned to their correct Xbox "
 "system.\n"
-"                You need an Azure AD app registration &mdash; configure "
-"credentials in <a href=\"%(settings_url)s\" style=\"color: var(--primary-"
-"cyan);\">Settings &rarr; API Keys</a>."
+"                You need your own free OpenXBL key &mdash; add it in <a "
+"href=\"%(profile_url)s\" style=\"color: var(--primary-cyan);\">Settings "
+"&rarr; My Profile</a>."
 msgstr ""
-"匯入您的 Xbox 遊戲庫。遊戲將被指派到正確的 Xbox 系統。\n"
-"                您需要一個 Azure AD 應用程式註冊 &mdash; 請在 <a "
-"href=\"%(settings_url)s\" style=\"color: var(--primary-cyan);\">設定 &rarr;"
-" API 金鑰</a> 中設定憑證。"
+"匯入你的 Xbox 遊戲庫。遊戲會歸入正確的 Xbox 系統。\n"
+"                你需要自己的免費 OpenXBL 金鑰 &mdash; 請在<a href=\"%(profile_url)s\""
+" style=\"color: var(--primary-cyan);\">設定 &rarr; 我的資料</a>中新增。"
 
 #: templates/game_imports.html:301
 msgid "Xbox Account"
 msgstr "Xbox 帳戶"
 
-#: templates/game_imports.html:304
+#: templates/game_imports.html:304 templates/game_imports.html:692
 msgid "Not Connected"
 msgstr "未連接"
 
-#: templates/game_imports.html:304
-msgid "Connect your Xbox account to import games"
-msgstr "連接您的 Xbox 帳戶以匯入遊戲"
+#: templates/game_imports.html:304 templates/game_imports.html:693
+msgid "Add your OpenXBL key in Settings > My Profile to import games."
+msgstr "請在「設定 > 我的資料」中新增你的 OpenXBL 金鑰，以便匯入遊戲。"
 
 #: templates/game_imports.html:306
-msgid "Connect Xbox Account"
-msgstr "連接 Xbox 帳戶"
+msgid "Xbox key settings"
+msgstr "Xbox 金鑰設定"
 
-#: templates/game_imports.html:307
-msgid "Disconnect"
-msgstr "中斷連線"
-
-#: templates/game_imports.html:316
+#: templates/game_imports.html:315
 msgid "Xbox Library"
 msgstr "Xbox 遊戲庫"
 
-#: templates/game_imports.html:331
+#: templates/game_imports.html:330
 msgid "Xbox 360"
 msgstr "Xbox 360"
 
-#: templates/game_imports.html:332
+#: templates/game_imports.html:331
 msgid "Xbox One"
 msgstr "Xbox One"
 
-#: templates/game_imports.html:333
+#: templates/game_imports.html:332
 msgid "Xbox Series"
 msgstr "Xbox Series"
 
-#: templates/game_imports.html:334
+#: templates/game_imports.html:333
 msgid "PC"
 msgstr "PC"
 
-#: templates/game_imports.html:340 templates/xbox_achievements.html:53
+#: templates/game_imports.html:339 templates/xbox_achievements.html:53
 msgid "Gamerscore"
 msgstr "Gamerscore"
 
-#: templates/game_imports.html:359
+#: templates/game_imports.html:358
 #, python-format
 msgid ""
 "Import your PlayStation game library. Games come from your PSN trophy "
@@ -8783,128 +8784,107 @@ msgstr ""
 "                若想更快匯入，請先透過 <a href=\"%(trophies_url)s\" style=\"color: "
 "var(--primary-cyan);\">PSN 獎盃</a> 頁面同步您的獎盃。"
 
-#: templates/game_imports.html:365
+#: templates/game_imports.html:364
 msgid "PSN Account"
 msgstr "PSN 帳戶"
 
-#: templates/game_imports.html:379
+#: templates/game_imports.html:378
 msgid "PSN Library"
 msgstr "PSN 遊戲庫"
 
-#: templates/game_imports.html:394
+#: templates/game_imports.html:393
 msgid "PS5"
 msgstr "PS5"
 
-#: templates/game_imports.html:395
+#: templates/game_imports.html:394
 msgid "PS4"
 msgstr "PS4"
 
-#: templates/game_imports.html:396
+#: templates/game_imports.html:395
 msgid "PS3"
 msgstr "PS3"
 
-#: templates/game_imports.html:397
+#: templates/game_imports.html:396
 msgid "PS Vita"
 msgstr "PS Vita"
 
-#: templates/game_imports.html:403 templates/local_trophy_detail.html:123
+#: templates/game_imports.html:402 templates/local_trophy_detail.html:123
 #: templates/psn_trophy_detail.html:114
 msgid "Trophy Progress"
 msgstr "獎盃進度"
 
-#: templates/game_imports.html:528
+#: templates/game_imports.html:527
 msgid "Parse failed"
 msgstr "解析失敗"
 
-#: templates/game_imports.html:544 templates/game_imports.html:670
+#: templates/game_imports.html:543 templates/game_imports.html:669
 #, python-brace-format
 msgid "Games found: {total} ({existing} already imported)"
 msgstr "找到的遊戲:{total}(已匯入 {existing} 個)"
 
-#: templates/game_imports.html:594 templates/game_imports.html:853
+#: templates/game_imports.html:593 templates/game_imports.html:837
 #, python-brace-format
 msgid "Imported: {count}"
 msgstr "已匯入:{count}"
 
-#: templates/game_imports.html:595 templates/game_imports.html:855
+#: templates/game_imports.html:594 templates/game_imports.html:839
 #, python-brace-format
 msgid "Already in library: {count}"
 msgstr "已在遊戲庫中:{count}"
 
-#: templates/game_imports.html:597 templates/game_imports.html:858
+#: templates/game_imports.html:596 templates/game_imports.html:842
 msgid "Import complete"
 msgstr "匯入完成"
 
-#: templates/game_imports.html:605 templates/game_imports.html:866
+#: templates/game_imports.html:604 templates/game_imports.html:850
 msgid "Import failed"
 msgstr "匯入失敗"
 
-#: templates/game_imports.html:607 templates/game_imports.html:867
+#: templates/game_imports.html:606 templates/game_imports.html:851
 #, python-brace-format
 msgid "Import error: {error}"
 msgstr "匯入錯誤:{error}"
 
-#: templates/game_imports.html:629
+#: templates/game_imports.html:628
 msgid "Please drop a PDF file"
 msgstr "請拖放 PDF 檔案"
 
-#: templates/game_imports.html:707
-msgid "Failed to get auth URL"
-msgstr "無法取得授權網址"
-
-#: templates/game_imports.html:708
+#: templates/game_imports.html:687
 #, python-brace-format
-msgid "Failed to connect to Xbox: {error}"
-msgstr "無法連線到 Xbox:{error}"
+msgid "Connected as {name}"
+msgstr "已連線為 {name}"
 
-#: templates/game_imports.html:712
-msgid "Disconnect Xbox"
-msgstr "中斷 Xbox 連線"
+#: templates/game_imports.html:688
+msgid "Through your OpenXBL key."
+msgstr "透過你的 OpenXBL 金鑰。"
 
-#: templates/game_imports.html:712
-msgid "Remove your Xbox account connection? You can reconnect later."
-msgstr "要移除 Xbox 帳戶連結嗎?之後可以重新連線。"
-
-#: templates/game_imports.html:713
-msgid "Xbox account disconnected"
-msgstr "Xbox 帳戶已中斷連線"
-
-#: templates/game_imports.html:714
-#, python-brace-format
-msgid "Failed to disconnect: {error}"
-msgstr "中斷連線失敗:{error}"
-
-#: templates/game_imports.html:739
+#: templates/game_imports.html:720
 #, python-brace-format
 msgid "Xbox games found: {total} ({existing} already imported)"
 msgstr "找到的 Xbox 遊戲:{total}(已匯入 {existing} 個)"
 
-#: templates/game_imports.html:762 templates/game_imports.html:770
-#: templates/game_imports.html:776
+#: templates/game_imports.html:722
+#, python-brace-format
+msgid "{count} apps and phone-only titles were left out."
+msgstr "已排除 {count} 個應用程式和僅限手機的項目。"
+
+#: templates/game_imports.html:746 templates/game_imports.html:754
+#: templates/game_imports.html:760
 msgid "In your library: link it"
 msgstr "在你的遊戲庫中:點此連結"
 
-#: templates/game_imports.html:854
+#: templates/game_imports.html:838
 msgid "Linked to games in your library"
 msgstr "已連結到你遊戲庫中的遊戲"
 
-#: templates/game_imports.html:857
+#: templates/game_imports.html:841
 msgid "Details are arriving from Steam in the background"
 msgstr "正在背景從 Steam 取得詳細資料"
 
-#: templates/game_imports.html:926
+#: templates/game_imports.html:910
 #, python-brace-format
 msgid "PSN games found: {total} ({existing} already imported)"
 msgstr "找到的 PSN 遊戲:{total}(已匯入 {existing} 個)"
-
-#: templates/game_imports.html:999
-msgid "Xbox account connected successfully!"
-msgstr "Xbox 帳戶已成功連線!"
-
-#: templates/game_imports.html:1005
-#, python-brace-format
-msgid "Xbox connection failed: {error}"
-msgstr "Xbox 連線失敗:{error}"
 
 #: templates/help.af.html:11 templates/help.de.html:11
 #: templates/help.es.html:11 templates/help.fr.html:11
@@ -11461,112 +11441,112 @@ msgstr "金鑰有效：%(provider)s 已使用 %(model)s 回應。"
 msgid "The key test failed."
 msgstr "金鑰測試失敗。"
 
-#: templates/settings.html:2907
+#: templates/settings.html:2905
 msgid "Invalid Input"
 msgstr "輸入無效"
 
-#: templates/settings.html:2907
+#: templates/settings.html:2905
 msgid "Please enter a value"
 msgstr "請輸入一個值"
 
-#: templates/settings.html:2924 templates/settings.html:2928
+#: templates/settings.html:2922 templates/settings.html:2926
 msgid "Failed to add option"
 msgstr "新增選項失敗"
 
-#: templates/settings.html:2934
+#: templates/settings.html:2932
 msgid "Delete Option"
 msgstr "刪除選項"
 
-#: templates/settings.html:2935
+#: templates/settings.html:2933
 msgid "Are you sure you want to delete this option?"
 msgstr "確定要刪除這個選項嗎?"
 
-#: templates/settings.html:2947 templates/settings.html:2951
+#: templates/settings.html:2945 templates/settings.html:2949
 msgid "Failed to delete option"
 msgstr "刪除選項失敗"
 
-#: templates/settings.html:3498 templates/settings.html:4260
+#: templates/settings.html:3496 templates/settings.html:4258
 msgid "Missing Input"
 msgstr "缺少輸入內容"
 
-#: templates/settings.html:3498 templates/settings.html:4260
+#: templates/settings.html:3496 templates/settings.html:4258
 msgid "Please enter a controller name"
 msgstr "請輸入手把名稱"
 
-#: templates/settings.html:3542
+#: templates/settings.html:3540
 #, python-brace-format
 msgid "Controller \"{name}\" has been added to the library."
 msgstr "手把「{name}」已加入遊戲庫。"
 
-#: templates/settings.html:3544 templates/settings.html:3548
+#: templates/settings.html:3542 templates/settings.html:3546
 msgid "Failed to add controller"
 msgstr "新增手把失敗"
 
-#: templates/settings.html:3616 templates/settings.html:3620
+#: templates/settings.html:3614 templates/settings.html:3618
 msgid "Failed to set default controller"
 msgstr "設定預設手把失敗"
 
-#: templates/settings.html:3651 templates/settings.html:3655
+#: templates/settings.html:3649 templates/settings.html:3653
 msgid "Failed to add default controller"
 msgstr "新增預設手把失敗"
 
-#: templates/settings.html:3681 templates/settings.html:3685
+#: templates/settings.html:3679 templates/settings.html:3683
 msgid "Failed to remove default controller"
 msgstr "移除預設手把失敗"
 
-#: templates/settings.html:3788
+#: templates/settings.html:3786
 msgid "ALL SYSTEMS"
 msgstr "所有系統"
 
-#: templates/settings.html:3792
+#: templates/settings.html:3790
 msgid "Clear Scraped Data"
 msgstr "清除抓取的資料"
 
-#: templates/settings.html:3793
+#: templates/settings.html:3791
 #, python-brace-format
 msgid "This will clear all scraped metadata from games in {system}."
 msgstr "這會清除{system}中所有遊戲已抓取的中繼資料。"
 
-#: templates/settings.html:3794
+#: templates/settings.html:3792
 msgid "Downloaded images will also be deleted!"
 msgstr "已下載的圖片也會一併刪除!"
 
-#: templates/settings.html:3795
+#: templates/settings.html:3793
 msgid "This cannot be undone. Are you sure?"
 msgstr "此操作無法復原。確定要繼續嗎?"
 
-#: templates/settings.html:3920
+#: templates/settings.html:3918
 msgid "No Files"
 msgstr "沒有檔案"
 
-#: templates/settings.html:3920
+#: templates/settings.html:3918
 msgid "Please scan for orphaned files first."
 msgstr "請先掃描孤立檔案。"
 
-#: templates/settings.html:3925
+#: templates/settings.html:3923
 msgid "Delete Orphaned Files"
 msgstr "刪除孤立檔案"
 
-#: templates/settings.html:3926
+#: templates/settings.html:3924
 #, python-brace-format
 msgid ""
 "Orphaned media files to delete permanently: {count}. This action cannot "
 "be undone.<br><br>Proceed?"
 msgstr "將永久刪除的孤立媒體檔案數量:{count}。此操作無法復原。<br><br>要繼續嗎?"
 
-#: templates/settings.html:4056
+#: templates/settings.html:4054
 msgid "Nothing to Clear"
 msgstr "沒有可清除的項目"
 
-#: templates/settings.html:4056
+#: templates/settings.html:4054
 msgid "Please scan for missing media references first."
 msgstr "請先掃描遺失的媒體參照。"
 
-#: templates/settings.html:4061
+#: templates/settings.html:4059
 msgid "Clear Missing References"
 msgstr "清除遺失的參照"
 
-#: templates/settings.html:4062
+#: templates/settings.html:4060
 #, python-brace-format
 msgid ""
 "Database references to clear: {count}. They point to media files that no "
@@ -11574,207 +11554,220 @@ msgid ""
 "entries are not affected.<br><br>Proceed?"
 msgstr "要清除的資料庫參照數量:{count}。這些參照指向磁碟上已不存在的媒體檔案,因此抓取工具可以重新下載。您的遊戲項目不受影響。<br><br>要繼續嗎?"
 
-#: templates/settings.html:4162
+#: templates/settings.html:4160
 msgid "Delete Controller"
 msgstr "刪除手把"
 
-#: templates/settings.html:4163
+#: templates/settings.html:4161
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete {name}?<br><br>This will remove it from "
 "the library and any systems using it as default."
 msgstr "確定要刪除 {name} 嗎?<br><br>這會將它從遊戲庫以及所有以它作為預設的系統中移除。"
 
-#: templates/settings.html:4185
+#: templates/settings.html:4183
 msgid "Deleted"
 msgstr "已刪除"
 
-#: templates/settings.html:4185
+#: templates/settings.html:4183
 #, python-brace-format
 msgid "Controller \"{name}\" has been removed."
 msgstr "手把「{name}」已移除。"
 
-#: templates/settings.html:4187 templates/settings.html:4191
+#: templates/settings.html:4185 templates/settings.html:4189
 msgid "Failed to delete controller"
 msgstr "刪除手把失敗"
 
-#: templates/settings.html:4209
+#: templates/settings.html:4207
 msgid "Failed to load controller"
 msgstr "載入手把失敗"
 
-#: templates/settings.html:4240
+#: templates/settings.html:4238
 msgid "Failed to load controller data"
 msgstr "載入手把資料失敗"
 
-#: templates/settings.html:4298
+#: templates/settings.html:4296
 #, python-brace-format
 msgid "Controller \"{name}\" has been updated."
 msgstr "手把「{name}」已更新。"
 
-#: templates/settings.html:4300 templates/settings.html:4304
+#: templates/settings.html:4298 templates/settings.html:4302
 msgid "Failed to update controller"
 msgstr "更新手把失敗"
 
-#: templates/settings.html:4431
+#: templates/settings.html:4429
 msgid "Logos Refreshed"
 msgstr "標誌已重新整理"
 
-#: templates/settings.html:4432
+#: templates/settings.html:4430
 #, python-brace-format
 msgid "System logos updated: {count}. The table has been refreshed."
 msgstr "已更新的系統標誌數量:{count}。表格已重新整理。"
 
-#: templates/settings.html:4434
+#: templates/settings.html:4432
 msgid "Failed to refresh logos"
 msgstr "重新整理標誌失敗"
 
-#: templates/settings.html:4438
+#: templates/settings.html:4436
 msgid "Failed to refresh system logos"
 msgstr "重新整理系統標誌失敗"
 
-#: templates/settings.html:4460
+#: templates/settings.html:4458
 msgid "Names Refreshed"
 msgstr "名稱已重新整理"
 
-#: templates/settings.html:4461
+#: templates/settings.html:4459
 #, python-brace-format
 msgid "System names updated: {count}. Click OK to refresh the page."
 msgstr "已更新的系統名稱數量:{count}。按一下「確定」重新整理頁面。"
 
-#: templates/settings.html:4464
+#: templates/settings.html:4462
 msgid "Failed to refresh names"
 msgstr "重新整理名稱失敗"
 
-#: templates/settings.html:4468
+#: templates/settings.html:4466
 msgid "Failed to refresh system names"
 msgstr "重新整理系統名稱失敗"
 
-#: templates/settings.html:4911
+#: templates/settings.html:4909
 #, python-brace-format
 msgid "Log: {filename}"
 msgstr "記錄檔:{filename}"
 
-#: templates/settings.html:4912
+#: templates/settings.html:4910
 msgid "Log file is empty"
 msgstr "記錄檔是空的"
 
-#: templates/settings.html:4915
+#: templates/settings.html:4913
 msgid "Failed to load log file"
 msgstr "無法載入記錄檔"
 
-#: templates/settings.html:4918
+#: templates/settings.html:4916
 #, python-brace-format
 msgid "Error loading log file: {error}"
 msgstr "載入記錄檔時發生錯誤:{error}"
 
-#: templates/settings.html:4937
+#: templates/settings.html:4935
 msgid "Failed to delete log file"
 msgstr "無法刪除記錄檔"
 
-#: templates/settings.html:4940
+#: templates/settings.html:4938
 #, python-brace-format
 msgid "Error deleting log file: {error}"
 msgstr "刪除記錄檔時發生錯誤:{error}"
 
-#: templates/settings.html:4946
+#: templates/settings.html:4944
 msgid "Clear Old Logs"
 msgstr "清除舊記錄"
 
-#: templates/settings.html:4946
+#: templates/settings.html:4944
 msgid "This will delete all log files older than 5 days. Continue?"
 msgstr "這會刪除所有超過 5 天的記錄檔。要繼續嗎?"
 
-#: templates/settings.html:4952
+#: templates/settings.html:4950
 #, python-brace-format
 msgid "Old log files removed: {count}"
 msgstr "已移除的舊記錄檔:{count}"
 
-#: templates/settings.html:4955
+#: templates/settings.html:4953
 msgid "Failed to clear old logs"
 msgstr "無法清除舊記錄"
 
-#: templates/settings.html:4958
+#: templates/settings.html:4956
 #, python-brace-format
 msgid "Error clearing old logs: {error}"
 msgstr "清除舊記錄時發生錯誤:{error}"
 
-#: templates/settings.html:5003
+#: templates/settings.html:5001
 msgid "Token extracted from the pasted page"
 msgstr "已從貼上的頁面擷取權杖"
 
-#: templates/settings.html:5005
+#: templates/settings.html:5003
 msgid "Token detected"
 msgstr "已偵測到權杖"
 
-#: templates/settings.html:5007
+#: templates/settings.html:5005
 msgid "Could not detect a valid NPSSO token"
 msgstr "無法偵測到有效的 NPSSO 權杖"
 
-#: templates/settings.html:5019
+#: templates/settings.html:5017
 msgid "Now press Ctrl+V to paste."
 msgstr "現在請按 Ctrl+V 貼上。"
 
-#: templates/settings.html:5031
+#: templates/settings.html:5029
 msgid "Enter an NPSSO token first"
 msgstr "請先輸入 NPSSO 權杖"
 
-#: templates/settings.html:5036
+#: templates/settings.html:5034
 msgid "Testing..."
 msgstr "測試中..."
 
-#: templates/settings.html:5037
+#: templates/settings.html:5035 templates/settings.html:5124
 msgid "Saving and connecting..."
 msgstr "正在儲存並連線..."
 
-#: templates/settings.html:5048
+#: templates/settings.html:5046 templates/settings.html:5133
 #, python-format
 msgid "Connected as %(name)s"
 msgstr "已連線為 %(name)s"
 
-#: templates/settings.html:5055
+#: templates/settings.html:5053 templates/settings.html:5137
 msgid "Connection failed"
 msgstr "連線失敗"
 
-#: templates/settings.html:5058
+#: templates/settings.html:5056 templates/settings.html:5140
 #, python-format
 msgid "Error: %(msg)s"
 msgstr "錯誤:%(msg)s"
 
-#: templates/settings.html:5077
+#: templates/settings.html:5075
 #, python-format
 msgid ""
 "Sony refused your saved NPSSO token on %(date)s. Get a new one with the "
 "steps below."
 msgstr "Sony 已在 %(date)s 拒絕你儲存的 NPSSO 權杖。請依照下方步驟取得新的權杖。"
 
-#: templates/settings.html:5080
+#: templates/settings.html:5078
 msgid ""
 "Connected to PSN. RetroDB keeps the sign-in going by itself. You need a "
 "new token only if Sony refuses this one."
 msgstr "已連線到 PSN。RetroDB 會自動維持登入狀態。只有在 Sony 拒絕此權杖時,你才需要新的權杖。"
 
-#: templates/settings.html:5117
-msgid "Redirect URI copied to clipboard"
-msgstr "已將重新導向 URI 複製到剪貼簿"
+#: templates/settings.html:5107
+#, python-format
+msgid "Key saved. Connected as %(name)s."
+msgstr "金鑰已儲存。已連線為 %(name)s。"
 
-#: templates/settings.html:5192 templates/settings.html:5234
+#: templates/settings.html:5108
+msgid "No key saved."
+msgstr "尚未儲存金鑰。"
+
+#: templates/settings.html:5146
+msgid "Remove Xbox key"
+msgstr "移除 Xbox 金鑰"
+
+#: templates/settings.html:5146
+msgid "Remove your OpenXBL key? Your imported games and achievements stay."
+msgstr "要移除你的 OpenXBL 金鑰嗎？已匯入的遊戲和成就會保留。"
+
+#: templates/settings.html:5228 templates/settings.html:5270
 msgid "Avatar updated!"
 msgstr "大頭貼已更新!"
 
-#: templates/settings.html:5197
+#: templates/settings.html:5233
 #, python-brace-format
 msgid "Upload failed: {error}"
 msgstr "上傳失敗:{error}"
 
-#: templates/settings.html:5211
+#: templates/settings.html:5247
 msgid "Avatar removed"
 msgstr "大頭貼已移除"
 
-#: templates/settings.html:5214
+#: templates/settings.html:5250
 msgid "Failed to remove avatar"
 msgstr "無法移除大頭貼"
 
-#: templates/settings.html:5237
+#: templates/settings.html:5273
 msgid "Failed to save avatar"
 msgstr "無法儲存大頭貼"
 
@@ -12132,20 +12125,20 @@ msgid "Confirm password"
 msgstr "確認密碼"
 
 #: templates/_settings_tabs/account.html:6
-#: templates/_settings_tabs/account.html:271
-#: templates/_settings_tabs/account.html:278 templates/setup.html:121
+#: templates/_settings_tabs/account.html:286
+#: templates/_settings_tabs/account.html:293 templates/setup.html:121
 msgid "Timezone"
 msgstr "時區"
 
-#: templates/_settings_tabs/account.html:280 templates/setup.html:122
+#: templates/_settings_tabs/account.html:295 templates/setup.html:122
 msgid "Search timezones..."
 msgstr "搜尋時區..."
 
-#: templates/_settings_tabs/account.html:284 templates/setup.html:125
+#: templates/_settings_tabs/account.html:299 templates/setup.html:125
 msgid "Browser detected:"
 msgstr "偵測到的瀏覽器："
 
-#: templates/_settings_tabs/account.html:285 templates/setup.html:126
+#: templates/_settings_tabs/account.html:300 templates/setup.html:126
 msgid "Use detected"
 msgstr "使用偵測到的值"
 
@@ -13574,16 +13567,34 @@ msgid "Paste here"
 msgstr "貼上到這裡"
 
 #: templates/_settings_tabs/account.html:212
+#: templates/_settings_tabs/account.html:227
 msgid "Save &amp; Test Connection"
 msgstr "儲存&amp;測試連接"
 
 #: templates/_settings_tabs/account.html:220
 msgid ""
+"Xbox reaches RetroDB through OpenXBL, a free service. Sign in at <a "
+"href=\"https://xbl.io\" target=\"_blank\" rel=\"noopener noreferrer\" "
+"style=\"color: var(--primary-cyan);\">xbl.io</a> with your Xbox account, "
+"copy your API key, and paste it here. The free key allows 150 requests an"
+" hour, so a big achievement sync may take more than one go."
+msgstr ""
+"Xbox 透過免費服務 OpenXBL 連線到 RetroDB。用你的 Xbox 帳戶登入 <a href=\"https://xbl.io\" "
+"target=\"_blank\" rel=\"noopener noreferrer\" style=\"color: var"
+"(--primary-cyan);\">xbl.io</a>，複製你的 API 金鑰，然後貼到這裡。免費金鑰每小時允許 150 "
+"次請求，因此大量成就同步可能需要分幾次完成。"
+
+#: templates/_settings_tabs/account.html:224
+msgid "Your OpenXBL API key"
+msgstr "你的 OpenXBL API 金鑰"
+
+#: templates/_settings_tabs/account.html:235
+msgid ""
 "Add your own Steam key and Steam ID to import your Steam library and "
 "achievements."
 msgstr "加入你自己的 Steam 金鑰和 Steam ID，即可匯入你的 Steam 遊戲庫和成就。"
 
-#: templates/_settings_tabs/account.html:227
+#: templates/_settings_tabs/account.html:242
 msgid ""
 "Get your key from <a href=\"https://steamcommunity.com/dev/apikey\" "
 "target=\"_blank\" rel=\"noopener noreferrer\" style=\"color: var"
@@ -13593,11 +13604,11 @@ msgstr ""
 "rel=\"noopener noreferrer\" style=\"color: var(--primary-cyan);\">Steam 的"
 " API 金鑰頁面</a>取得你的金鑰"
 
-#: templates/_settings_tabs/account.html:231
+#: templates/_settings_tabs/account.html:246
 msgid "Your Steam ID"
 msgstr "你的 Steam ID"
 
-#: templates/_settings_tabs/account.html:235
+#: templates/_settings_tabs/account.html:250
 msgid ""
 "The 17-digit number, not your profile name. Find it at <a "
 "href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener noreferrer\""
@@ -13607,129 +13618,129 @@ msgstr ""
 "rel=\"noopener noreferrer\" style=\"color: var(--primary-"
 "cyan);\">steamid.io</a> 查詢"
 
-#: templates/_settings_tabs/account.html:239
+#: templates/_settings_tabs/account.html:254
 msgid "Save My Settings"
 msgstr "儲存我的設定"
 
-#: templates/_settings_tabs/account.html:243
-#: templates/_settings_tabs/account.html:259
+#: templates/_settings_tabs/account.html:258
+#: templates/_settings_tabs/account.html:274
 msgid "Change Password"
 msgstr "更改密碼"
 
-#: templates/_settings_tabs/account.html:245
+#: templates/_settings_tabs/account.html:260
 msgid "Every account needs a password to log in."
 msgstr "每個帳戶都需要密碼才能登入。"
 
-#: templates/_settings_tabs/account.html:249
+#: templates/_settings_tabs/account.html:264
 msgid "Current Password"
 msgstr "當前密碼"
 
-#: templates/_settings_tabs/account.html:250
+#: templates/_settings_tabs/account.html:265
 msgid "Enter current password"
 msgstr "輸入目前密碼"
 
-#: templates/_settings_tabs/account.html:255
+#: templates/_settings_tabs/account.html:270
 msgid "Enter new password"
 msgstr "輸入新密碼"
 
-#: templates/_settings_tabs/account.html:263
+#: templates/_settings_tabs/account.html:278
 msgid "Please log in to view your profile settings."
 msgstr "請登入以檢視你的個人資料設定。"
 
-#: templates/_settings_tabs/account.html:275
+#: templates/_settings_tabs/account.html:290
 msgid "Set your timezone to ensure all dates and times display correctly."
 msgstr "設定您的時區以確保所有日期和時間正確顯示。"
 
-#: templates/_settings_tabs/account.html:288
+#: templates/_settings_tabs/account.html:303
 msgid "Save Timezone"
 msgstr "儲存時區"
 
-#: templates/_settings_tabs/account.html:296
+#: templates/_settings_tabs/account.html:311
 msgid "User Management"
 msgstr "使用者管理"
 
-#: templates/_settings_tabs/account.html:300
+#: templates/_settings_tabs/account.html:315
 msgid ""
 "Manage users who can access RetroDB. Admin users require a password to "
 "login, while Editor and Viewer users can login with a single click."
 msgstr "管理可存取 RetroDB 的使用者。管理員使用者登入需要密碼，而編輯者和檢視者使用者只需單擊即可登入。"
 
-#: templates/_settings_tabs/account.html:305
-#: templates/_settings_tabs/account.html:379
+#: templates/_settings_tabs/account.html:320
+#: templates/_settings_tabs/account.html:394
 msgid "Add User"
 msgstr "新增使用者"
 
-#: templates/_settings_tabs/account.html:313
+#: templates/_settings_tabs/account.html:328
 msgid "Role"
 msgstr "角色"
 
-#: templates/_settings_tabs/account.html:314
+#: templates/_settings_tabs/account.html:329
 msgid "Trophy Path"
 msgstr "獎盃路徑"
 
-#: templates/_settings_tabs/account.html:315
+#: templates/_settings_tabs/account.html:330
 msgid "RA Username"
 msgstr "RA 使用者名稱"
 
-#: templates/_settings_tabs/account.html:316
+#: templates/_settings_tabs/account.html:331
 msgid "Last Login"
 msgstr "最近登入"
 
-#: templates/_settings_tabs/account.html:343
-#: templates/_settings_tabs/account.html:350
+#: templates/_settings_tabs/account.html:358
+#: templates/_settings_tabs/account.html:365
 msgid "Not Set"
 msgstr "未設定"
 
-#: templates/_settings_tabs/account.html:380
+#: templates/_settings_tabs/account.html:395
 msgid "Close user modal"
 msgstr "關閉使用者彈窗"
 
-#: templates/_settings_tabs/account.html:386
+#: templates/_settings_tabs/account.html:401
 msgid "Username *"
 msgstr "使用者名稱 *"
 
-#: templates/_settings_tabs/account.html:387
+#: templates/_settings_tabs/account.html:402
 msgid "username"
 msgstr "使用者名稱"
 
-#: templates/_settings_tabs/account.html:391
-#: templates/_settings_tabs/account.html:392
+#: templates/_settings_tabs/account.html:406
+#: templates/_settings_tabs/account.html:407
 msgid "Display Name"
 msgstr "顯示名稱"
 
-#: templates/_settings_tabs/account.html:396
+#: templates/_settings_tabs/account.html:411
 msgid "Role *"
 msgstr "角色 *"
 
-#: templates/_settings_tabs/account.html:398
+#: templates/_settings_tabs/account.html:413
 msgid "Viewer - Read only access"
 msgstr "檢視者 - 唯讀存取"
 
-#: templates/_settings_tabs/account.html:399
+#: templates/_settings_tabs/account.html:414
 msgid "Player - Can launch and track progress"
 msgstr "玩家 - 可啟動並追蹤進度"
 
-#: templates/_settings_tabs/account.html:400
+#: templates/_settings_tabs/account.html:415
 msgid "Editor - Can edit games and scrape"
 msgstr "編輯者 - 可編輯遊戲並抓取"
 
-#: templates/_settings_tabs/account.html:401
+#: templates/_settings_tabs/account.html:416
 msgid "Admin - Full access"
 msgstr "管理員 - 完全存取"
 
-#: templates/_settings_tabs/account.html:406
+#: templates/_settings_tabs/account.html:421
 msgid "Reset Password"
 msgstr "重設密碼"
 
-#: templates/_settings_tabs/account.html:407
+#: templates/_settings_tabs/account.html:422
 msgid "Leave blank to keep current"
 msgstr "留空則保留目前值"
 
-#: templates/_settings_tabs/account.html:408
+#: templates/_settings_tabs/account.html:423
 msgid "Only for admin accounts"
 msgstr "僅適用於管理員帳戶"
 
-#: templates/_settings_tabs/account.html:413
+#: templates/_settings_tabs/account.html:428
 msgid "Save User"
 msgstr "儲存使用者"
 
@@ -14251,25 +14262,25 @@ msgstr "設定可用的地區值和預設地區。抓取時如果未偵測到地
 msgid "Default Region"
 msgstr "預設地區"
 
-#: templates/_settings_tabs/scraping.html:428
+#: templates/_settings_tabs/scraping.html:421
+#, python-format
 msgid ""
-"Xbox needs an app registered with Microsoft. Microsoft now asks a "
-"personal account to get a directory first, which can mean signing up for "
-"Azure, and that may ask for a card. Xbox may still refuse an app made "
-"this way: RetroDB has not been able to test one."
+"Each person adds their own free OpenXBL key in <a "
+"href=\"%(profile_url)s\" style=\"color: var(--primary-cyan);\">Settings "
+"&gt; My Profile</a>. Nothing is needed here."
 msgstr ""
-"Xbox 需要在 Microsoft 註冊一個應用程式。Microsoft 現在要求個人帳戶先建立目錄,這可能需要註冊 "
-"Azure,而且可能會要求提供信用卡。Xbox 仍有可能拒絕以這種方式建立的應用程式:RetroDB 尚未能測試過。"
+"每個人在<a href=\"%(profile_url)s\" style=\"color: var(--primary-cyan);\">設定 "
+"&gt; 我的資料</a>中新增自己的免費 OpenXBL 金鑰。這裡無需任何操作。"
 
-#: templates/_settings_tabs/scraping.html:521
+#: templates/_settings_tabs/scraping.html:438
 msgid "Test saved AI key"
 msgstr "測試已儲存的 AI 金鑰"
 
-#: templates/_settings_tabs/scraping.html:604
+#: templates/_settings_tabs/scraping.html:521
 msgid "Let Claude search the web"
 msgstr "允許 Claude 上網搜尋"
 
-#: templates/_settings_tabs/scraping.html:610
+#: templates/_settings_tabs/scraping.html:527
 msgid ""
 "Without search, Claude answers from what it already knows, and leaves "
 "blank anything that needs a published figure, such as copies sold. With "

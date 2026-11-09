@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-09 16:46+0200\n"
+"POT-Creation-Date: 2026-11-09 18:41+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -241,8 +241,8 @@ msgstr "이 시스템에 RetroAchievements가 있는 게임이 없습니다"
 msgid "Sync already in progress for %(name)s"
 msgstr "%(name)s에 대한 동기화가 이미 진행 중입니다"
 
-#: routes/achievements.py:392 routes/platform_import.py:394
-#: routes/platform_import.py:771 routes/ra_sync.py:146
+#: routes/achievements.py:392 routes/platform_import.py:392
+#: routes/platform_import.py:695 routes/ra_sync.py:146
 msgid "That job belongs to another user"
 msgstr "해당 작업은 다른 사용자의 것입니다"
 
@@ -569,11 +569,11 @@ msgid "A bonus disc links to a main game, one level only"
 msgstr "보너스 디스크는 메인 게임 하나에만 연결되며, 한 단계까지만 가능합니다"
 
 #: routes/bonus_discs.py:219 routes/bonus_discs.py:237 routes/games.py:1397
-#: routes/games.py:1427 routes/platform_import.py:357
-#: routes/platform_import.py:736 routes/platform_import.py:1120
+#: routes/games.py:1427 routes/platform_import.py:355
+#: routes/platform_import.py:660 routes/platform_import.py:1044
 #: routes/scrape_logs.py:85 routes/scrape_logs.py:170 routes/scrape_logs.py:183
-#: routes/scrape_logs.py:221 routes/scraper.py:207 routes/scraper.py:538
-#: routes/scraper.py:929 routes/settings.py:319 routes/settings.py:343
+#: routes/scrape_logs.py:221 routes/scraper.py:204 routes/scraper.py:535
+#: routes/scraper.py:926 routes/settings.py:319 routes/settings.py:343
 #: routes/settings.py:431 routes/settings.py:510 routes/settings.py:539
 #: routes/settings.py:583 routes/settings.py:596 routes/settings.py:632
 #: routes/steam_achievements.py:138 routes/systems.py:164 routes/systems.py:367
@@ -844,10 +844,10 @@ msgstr "메타데이터 적용에 실패했습니다."
 msgid "No fields to update"
 msgstr "업데이트할 필드가 없습니다"
 
-#: routes/games.py:1205 routes/platform_import.py:263
-#: routes/platform_import.py:642 routes/platform_import.py:1006
-#: routes/trophies.py:1921 templates/game_imports.html:579
-#: templates/game_imports.html:842
+#: routes/games.py:1205 routes/platform_import.py:261
+#: routes/platform_import.py:566 routes/platform_import.py:930
+#: routes/trophies.py:1921 templates/game_imports.html:578
+#: templates/game_imports.html:826
 msgid "No games selected"
 msgstr "선택된 게임이 없습니다"
 
@@ -1089,7 +1089,7 @@ msgstr "먼저 MAME 목록을 선택하세요."
 msgid "MAME Names is already running."
 msgstr "MAME 이름 지정이 이미 실행 중입니다."
 
-#: routes/museum.py:400 routes/scraper.py:770
+#: routes/museum.py:400 routes/scraper.py:767
 msgid "No AI provider configured"
 msgstr "설정된 AI 공급자가 없습니다"
 
@@ -1152,52 +1152,63 @@ msgstr "이미지 파일을 찾을 수 없습니다"
 msgid "Background removal failed"
 msgstr "배경 제거에 실패했습니다"
 
-#: routes/platform_import.py:195
+#: routes/platform_import.py:193
 msgid "No Steam key yet. Add yours under Settings → My Profile."
 msgstr "아직 Steam 키가 없습니다. 설정 → 내 프로필에서 추가하세요."
 
-#: routes/platform_import.py:197
+#: routes/platform_import.py:195
 msgid "No Steam ID yet. Add yours under Settings → My Profile."
 msgstr "아직 Steam ID가 없습니다. 설정 → 내 프로필에서 추가하세요."
 
-#: routes/platform_import.py:203
+#: routes/platform_import.py:201
 #, python-format
 msgid ""
 "Could not resolve Steam vanity URL \"%(steam_id)s\". Use your 17-digit "
 "Steam ID instead."
 msgstr "Steam 커스텀 URL \"%(steam_id)s\"을(를) 확인할 수 없습니다. 대신 17자리 Steam ID를 사용하세요."
 
-#: routes/platform_import.py:209
+#: routes/platform_import.py:207
 msgid ""
 "No games found. Check that your Steam profile and game details are set to"
 " Public."
 msgstr "게임을 찾을 수 없습니다. Steam 프로필과 게임 세부 정보가 공개로 설정되어 있는지 확인하세요."
 
-#: routes/platform_import.py:268
+#: routes/platform_import.py:266
 msgid "Could not create Windows system entry"
 msgstr "Windows 시스템 항목을 생성할 수 없습니다"
 
-#: routes/platform_import.py:412
-msgid "Xbox Client ID not configured. Add it in Settings → API Keys."
-msgstr "Xbox 클라이언트 ID가 설정되지 않았습니다. 설정 → API 키에서 추가하세요."
+#: routes/platform_import.py:412 templates/settings.html:5120
+msgid "Paste your OpenXBL key first."
+msgstr "먼저 OpenXBL 키를 붙여 넣으세요."
 
-#: routes/platform_import.py:550
-msgid "Xbox credentials not configured. Add them in Settings → API Keys."
-msgstr "Xbox 자격 증명이 설정되지 않았습니다. 설정 → API 키에서 추가하세요."
+#: routes/platform_import.py:417
+msgid "OpenXBL did not accept that key. Copy it again from xbl.io."
+msgstr "OpenXBL이 그 키를 받아들이지 않았습니다. xbl.io에서 다시 복사하세요."
 
-#: routes/platform_import.py:554
-msgid "Xbox authentication failed. Please re-connect your Xbox account."
-msgstr "Xbox 인증에 실패했습니다. Xbox 계정을 다시 연결하세요."
+#: routes/platform_import.py:421 routes/platform_import.py:481
+#: routes/xbox_achievements.py:137
+#, python-format
+msgid "OpenXBL's hourly limit was reached. Try again in %(minutes)s minutes."
+msgstr "OpenXBL의 시간당 한도에 도달했습니다. %(minutes)s분 뒤에 다시 시도하세요."
 
-#: routes/platform_import.py:558
+#: routes/platform_import.py:423 routes/platform_import.py:483
+msgid "OpenXBL did not answer. Try again later."
+msgstr "OpenXBL이 응답하지 않았습니다. 나중에 다시 시도하세요."
+
+#: routes/platform_import.py:475 routes/xbox_achievements.py:123
+#: services/jobs/platform_sync.py:783
+msgid "Add your OpenXBL key in Settings > My Profile first."
+msgstr "먼저 설정 > 내 프로필에서 OpenXBL 키를 추가하세요."
+
+#: routes/platform_import.py:485
 msgid "No games found in Xbox title history."
 msgstr "Xbox 타이틀 기록에서 게임을 찾을 수 없습니다."
 
-#: routes/platform_import.py:846
+#: routes/platform_import.py:770
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr "PSN NPSSO가 설정되지 않았습니다. 설정 → API 키에서 추가하세요."
 
-#: routes/platform_import.py:873
+#: routes/platform_import.py:797
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr "PSN 게임 목록을 가져오지 못했습니다. 먼저 트로피를 동기화해 보세요."
 
@@ -1300,78 +1311,78 @@ msgstr "파일을 찾을 수 없습니다"
 msgid "Log file not found"
 msgstr "로그 파일을 찾을 수 없습니다"
 
-#: routes/scraper.py:222
+#: routes/scraper.py:219
 #, python-format
 msgid "invalid scraper settings: %(reason)s"
 msgstr "잘못된 스크레이퍼 설정입니다: %(reason)s"
 
-#: routes/scraper.py:283
+#: routes/scraper.py:280
 #, python-format
 msgid "invalid api keys: %(reason)s"
 msgstr "잘못된 API 키입니다: %(reason)s"
 
-#: routes/scraper.py:558
+#: routes/scraper.py:555
 msgid "No TGDB API key configured"
 msgstr "설정된 TGDB API 키가 없습니다"
 
-#: routes/scraper.py:655
+#: routes/scraper.py:652
 msgid "No ScreenScraper credentials configured"
 msgstr "설정된 ScreenScraper 자격 증명이 없습니다"
 
-#: routes/scraper.py:691
+#: routes/scraper.py:688
 msgid "Invalid JSON response from ScreenScraper"
 msgstr "ScreenScraper에서 잘못된 JSON 응답을 받았습니다"
 
-#: routes/scraper.py:694
+#: routes/scraper.py:691
 msgid "Error parsing API response"
 msgstr "API 응답 파싱 중 오류가 발생했습니다"
 
-#: routes/scraper.py:696
+#: routes/scraper.py:693
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
 msgstr "ScreenScraper가 HTTP %(code)s 응답을 반환했습니다"
 
-#: routes/scraper.py:711
+#: routes/scraper.py:708
 msgid "No RAWG API key configured"
 msgstr "설정된 RAWG API 키가 없습니다"
 
-#: routes/scraper.py:816
+#: routes/scraper.py:813
 #, python-format
 msgid "Unknown AI provider: %(provider)s"
 msgstr "알 수 없는 AI 공급자: %(provider)s"
 
-#: routes/scraper.py:819
+#: routes/scraper.py:816
 msgid "No response from AI provider"
 msgstr "AI 공급자로부터 응답이 없습니다"
 
-#: routes/scraper.py:824 routes/scraper.py:825
+#: routes/scraper.py:821 routes/scraper.py:822
 #, python-format
 msgid "%(provider)s refused the API key. Check the key and save it again."
 msgstr "%(provider)s에서 API 키를 거부했습니다. 키를 확인하고 다시 저장하세요."
 
-#: routes/scraper.py:826
+#: routes/scraper.py:823
 #, python-format
 msgid "%(provider)s wants payment: the account has no credit or billing is off."
 msgstr "%(provider)s에서 결제를 요구합니다: 계정에 크레딧이 없거나 결제가 꺼져 있습니다."
 
-#: routes/scraper.py:827
+#: routes/scraper.py:824
 #, python-format
 msgid ""
 "%(provider)s says a usage limit is reached. Try again later or check your"
 " plan."
 msgstr "%(provider)s에서 사용 한도에 도달했다고 합니다. 나중에 다시 시도하거나 요금제를 확인하세요."
 
-#: routes/scraper.py:829
+#: routes/scraper.py:826
 #, python-format
 msgid "%(provider)s answered with error %(code)s."
 msgstr "%(provider)s에서 오류 %(code)s로 응답했습니다."
 
-#: routes/scraper.py:922
+#: routes/scraper.py:919
 #, python-format
 msgid "Connection error: %(error)s"
 msgstr "연결 오류: %(error)s"
 
-#: routes/scraper.py:925
+#: routes/scraper.py:922
 #, python-format
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "%(scraper)s에 대해서는 허용량 확인이 지원되지 않습니다"
@@ -1667,15 +1678,7 @@ msgstr "해당 게임은 다른 버전과 연결되어 있지 않습니다."
 msgid "The AI did not give a usable answer. Try again later."
 msgstr "AI가 사용할 수 있는 답변을 주지 않았습니다. 나중에 다시 시도하세요."
 
-#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:798
-msgid "Xbox credentials not configured"
-msgstr "Xbox 자격 증명이 설정되지 않았습니다"
-
-#: routes/xbox_achievements.py:131
-msgid "Xbox authentication failed — please re-connect your account"
-msgstr "Xbox 인증에 실패했습니다 — 계정을 다시 연결하세요"
-
-#: routes/xbox_achievements.py:135
+#: routes/xbox_achievements.py:130
 msgid "Game not found or not an Xbox game"
 msgstr "게임을 찾을 수 없거나 Xbox 게임이 아닙니다"
 
@@ -2136,7 +2139,7 @@ msgstr "AI 채우기 요청 실패: {error}"
 msgid "AI found no missing fields to fill"
 msgstr "AI가 채울 빈 항목을 찾지 못했습니다"
 
-#: services/js_i18n_strings.py:591 templates/_settings_tabs/account.html:317
+#: services/js_i18n_strings.py:591 templates/_settings_tabs/account.html:332
 #: templates/archive_scanner.html:726 templates/list_detail.html:47
 #: templates/multi_disc_organizer.html:217 templates/reports.html:369
 #: templates/reports.html:450
@@ -2233,7 +2236,7 @@ msgstr ""
 msgid "Are you sure you want to cancel?"
 msgstr "취소하시겠습니까?"
 
-#: services/js_i18n_strings.py:612 templates/settings.html:4927
+#: services/js_i18n_strings.py:612 templates/settings.html:4925
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "\"{filename}\"을(를) 삭제하시겠습니까?"
@@ -2318,7 +2321,7 @@ msgstr "플레이 가능한 성능으로, 진행을 막는 결함 없이 끝까�
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:73
-#: templates/_settings_tabs/account.html:412
+#: templates/_settings_tabs/account.html:427
 #: templates/_settings_tabs/customization.html:264
 #: templates/achievement_game.html:178 templates/archive_scanner.html:661
 #: templates/archive_scanner.html:798 templates/base.html:340
@@ -2613,7 +2616,7 @@ msgstr "현재 설정"
 msgid "Default emulator for {system}"
 msgstr "{system}의 기본 에뮬레이터"
 
-#: services/js_i18n_strings.py:694 templates/settings.html:4927
+#: services/js_i18n_strings.py:694 templates/settings.html:4925
 msgid "Delete Log File"
 msgstr "로그 파일 삭제"
 
@@ -2726,7 +2729,7 @@ msgstr "DuckStation 치트"
 msgid "DuckStation ignores cheats in hardcore mode."
 msgstr "DuckStation은 하드코어 모드에서 치트를 무시합니다."
 
-#: services/js_i18n_strings.py:721 templates/_settings_tabs/account.html:362
+#: services/js_i18n_strings.py:721 templates/_settings_tabs/account.html:377
 #: templates/base.html:1006 templates/game_detail.html:135
 #: templates/wishlist.html:641
 msgid "Edit"
@@ -2766,21 +2769,21 @@ msgstr "폴더 경로를 하나 입력하세요."
 #: templates/multi_disc_organizer.html:371 templates/reports.html:1123
 #: templates/reports.html:1126 templates/reports.html:1192
 #: templates/reports.html:1195 templates/rom_tools_settings.html:579
-#: templates/rom_tools_settings.html:582 templates/settings.html:2924
-#: templates/settings.html:2928 templates/settings.html:2947
-#: templates/settings.html:2951 templates/settings.html:3544
-#: templates/settings.html:3548 templates/settings.html:3616
-#: templates/settings.html:3620 templates/settings.html:3651
-#: templates/settings.html:3655 templates/settings.html:3681
-#: templates/settings.html:3685 templates/settings.html:4187
-#: templates/settings.html:4191 templates/settings.html:4209
-#: templates/settings.html:4240 templates/settings.html:4300
-#: templates/settings.html:4304 templates/settings.html:4434
-#: templates/settings.html:4438 templates/settings.html:4464
-#: templates/settings.html:4468 templates/settings.html:4915
-#: templates/settings.html:4918 templates/settings.html:4937
-#: templates/settings.html:4940 templates/settings.html:4955
-#: templates/settings.html:4958
+#: templates/rom_tools_settings.html:582 templates/settings.html:2922
+#: templates/settings.html:2926 templates/settings.html:2945
+#: templates/settings.html:2949 templates/settings.html:3542
+#: templates/settings.html:3546 templates/settings.html:3614
+#: templates/settings.html:3618 templates/settings.html:3649
+#: templates/settings.html:3653 templates/settings.html:3679
+#: templates/settings.html:3683 templates/settings.html:4185
+#: templates/settings.html:4189 templates/settings.html:4207
+#: templates/settings.html:4238 templates/settings.html:4298
+#: templates/settings.html:4302 templates/settings.html:4432
+#: templates/settings.html:4436 templates/settings.html:4462
+#: templates/settings.html:4466 templates/settings.html:4913
+#: templates/settings.html:4916 templates/settings.html:4935
+#: templates/settings.html:4938 templates/settings.html:4953
+#: templates/settings.html:4956
 msgid "Error"
 msgstr "오류"
 
@@ -3597,7 +3600,7 @@ msgstr "이전 게임"
 msgid "Processing images…"
 msgstr "이미지 처리 중…"
 
-#: services/js_i18n_strings.py:909 templates/game_imports.html:418
+#: services/js_i18n_strings.py:909 templates/game_imports.html:417
 msgid "Processing..."
 msgstr "처리 중..."
 
@@ -3668,9 +3671,9 @@ msgid "Regional name matches"
 msgstr "지역별 이름 일치"
 
 #: services/js_i18n_strings.py:925 templates/_modals/edit_modal.html:386
-#: templates/compare_games.html:24 templates/compare_games.html:40
-#: templates/rom_tools_settings.html:462 templates/rom_tools_settings.html:501
-#: templates/screenshot_review.html:185
+#: templates/_settings_tabs/account.html:228 templates/compare_games.html:24
+#: templates/compare_games.html:40 templates/rom_tools_settings.html:462
+#: templates/rom_tools_settings.html:501 templates/screenshot_review.html:185
 msgid "Remove"
 msgstr "제거"
 
@@ -4357,7 +4360,7 @@ msgstr "업로드"
 msgid "Upload Controller Image"
 msgstr "컨트롤러 이미지 업로드"
 
-#: services/js_i18n_strings.py:1072 templates/settings.html:5194
+#: services/js_i18n_strings.py:1072 templates/settings.html:5230
 msgid "Upload failed"
 msgstr "업로드 실패"
 
@@ -4834,37 +4837,39 @@ msgstr "%(name)s을(를) 한 번 실행해 설정을 만든 다음 다시 플레
 msgid "The player has no core for this system."
 msgstr "플레이어에 이 시스템용 코어가 없습니다."
 
-#: services/jobs/platform_sync.py:398 services/jobs/platform_sync.py:707
+#: services/jobs/platform_sync.py:384 services/jobs/platform_sync.py:692
 msgid "Sync already running"
 msgstr "동기화가 이미 실행 중입니다"
 
-#: services/jobs/platform_sync.py:403
+#: services/jobs/platform_sync.py:389
 msgid "Steam sync is already running on another worker process."
 msgstr "Steam 동기화가 다른 워커 프로세스에서 이미 실행 중입니다."
 
-#: services/jobs/platform_sync.py:421 services/jobs/platform_sync.py:730
+#: services/jobs/platform_sync.py:407 services/jobs/platform_sync.py:715
 msgid "No running sync to cancel"
 msgstr "취소할 실행 중인 동기화가 없습니다"
 
-#: services/jobs/platform_sync.py:515
+#: services/jobs/platform_sync.py:501
 msgid "Steam API key or Steam ID not configured"
 msgstr "Steam API 키 또는 Steam ID가 설정되지 않았습니다"
 
-#: services/jobs/platform_sync.py:534
+#: services/jobs/platform_sync.py:520
 msgid "No Steam games found to sync"
 msgstr "동기화할 Steam 게임이 없습니다"
 
-#: services/jobs/platform_sync.py:712
+#: services/jobs/platform_sync.py:697
 msgid "Xbox sync is already running on another worker process."
 msgstr "Xbox 동기화가 다른 워커 프로세스에서 이미 실행 중입니다."
 
-#: services/jobs/platform_sync.py:807
-msgid "Xbox authentication failed — please re-connect your Xbox account"
-msgstr "Xbox 인증에 실패했습니다. Xbox 계정을 다시 연결해 주세요"
-
-#: services/jobs/platform_sync.py:858
+#: services/jobs/platform_sync.py:844
 msgid "No Xbox games found to sync"
 msgstr "동기화할 Xbox 게임이 없습니다"
+
+#: services/jobs/platform_sync.py:887
+msgid ""
+"OpenXBL's hourly limit was reached. Sync again in an hour: it starts with"
+" the games not synced yet."
+msgstr "OpenXBL의 시간당 한도에 도달했습니다. 한 시간 뒤에 다시 동기화하세요. 아직 동기화하지 않은 게임부터 시작합니다."
 
 #: templates/_bulk_edit_modal.html:7
 msgid "Bulk Edit"
@@ -5082,7 +5087,7 @@ msgstr "자세히 보기"
 msgid "First Achievement"
 msgstr "첫 업적"
 
-#: templates/_settings_tabs/account.html:357
+#: templates/_settings_tabs/account.html:372
 #: templates/achievement_game.html:233 templates/achievement_game.html:237
 #: templates/local_trophy_detail.html:211
 #: templates/local_trophy_detail.html:215 templates/psn_trophies.html:76
@@ -5251,7 +5256,7 @@ msgstr "%(system)s 게임과 RetroAchievements의 연결을 해제하고 이 페
 
 #: templates/achievements_system.html:184 templates/all_games.html:33
 #: templates/game_imports.html:215 templates/game_imports.html:270
-#: templates/game_imports.html:326 templates/game_imports.html:389
+#: templates/game_imports.html:325 templates/game_imports.html:388
 #: templates/psn_trophies.html:119 templates/steam_achievements.html:72
 #: templates/system_games.html:40 templates/xbox_achievements.html:72
 msgid "Search games..."
@@ -5281,7 +5286,7 @@ msgid "Back to the first game"
 msgstr "첫 번째 게임으로 돌아가기"
 
 #: templates/achievements_system.html:204 templates/all_games.html:122
-#: templates/game_imports.html:330 templates/game_imports.html:393
+#: templates/game_imports.html:329 templates/game_imports.html:392
 #: templates/hltb_review.html:28 templates/local_trophies.html:102
 #: templates/logs.html:707 templates/psn_trophies.html:129
 #: templates/psn_trophies.html:163 templates/psn_trophies.html:181
@@ -5970,8 +5975,8 @@ msgid "Largest Games"
 msgstr "용량이 큰 게임"
 
 #: templates/analytics.html:602 templates/game_imports.html:222
-#: templates/game_imports.html:277 templates/game_imports.html:340
-#: templates/game_imports.html:403
+#: templates/game_imports.html:277 templates/game_imports.html:339
+#: templates/game_imports.html:402
 msgid "Game"
 msgstr "게임"
 
@@ -6003,7 +6008,7 @@ msgstr "게임 수"
 msgid "Critic"
 msgstr "평론가"
 
-#: templates/_settings_tabs/account.html:312 templates/analytics.html:1965
+#: templates/_settings_tabs/account.html:327 templates/analytics.html:1965
 msgid "User"
 msgstr "사용자"
 
@@ -6206,13 +6211,13 @@ msgid "Processed"
 msgstr "처리됨"
 
 #: templates/archive_scanner.html:782 templates/game_detail.html:4067
-#: templates/reports.html:492 templates/settings.html:3542
-#: templates/settings.html:4298 templates/settings.html:4952
+#: templates/reports.html:492 templates/settings.html:3540
+#: templates/settings.html:4296 templates/settings.html:4950
 msgid "Success"
 msgstr "성공"
 
-#: templates/archive_scanner.html:786 templates/game_imports.html:652
-#: templates/game_imports.html:727 templates/game_imports.html:905
+#: templates/archive_scanner.html:786 templates/game_imports.html:651
+#: templates/game_imports.html:708 templates/game_imports.html:889
 #: templates/reports.html:496 templates/wishlist.html:509
 msgid "Failed"
 msgstr "실패"
@@ -6429,7 +6434,7 @@ msgstr "성공: {count}"
 
 #: templates/archive_scanner.html:1569 templates/archive_scanner.html:1574
 #: templates/archive_scanner.html:1742 templates/archive_scanner.html:1748
-#: templates/game_imports.html:596 templates/game_imports.html:856
+#: templates/game_imports.html:595 templates/game_imports.html:840
 #, python-brace-format
 msgid "Failed: {count}"
 msgstr "실패: {count}"
@@ -7589,8 +7594,8 @@ msgstr "조회됨"
 
 #: templates/dashboard.html:21 templates/dashboard.html:392
 #: templates/dashboard.html:533 templates/game_imports.html:224
-#: templates/game_imports.html:277 templates/game_imports.html:340
-#: templates/game_imports.html:403
+#: templates/game_imports.html:277 templates/game_imports.html:339
+#: templates/game_imports.html:402
 msgid "Status"
 msgstr "상태"
 
@@ -7796,7 +7801,7 @@ msgstr "사용 가능"
 
 #: templates/dashboard.html:602 templates/dashboard.html:612
 #: templates/dashboard.html:632 templates/dashboard.html:642
-#: templates/game_imports.html:368
+#: templates/game_imports.html:367
 msgid "Checking..."
 msgstr "확인 중..."
 
@@ -7811,7 +7816,7 @@ msgstr "비활성화"
 msgid "Not Configured"
 msgstr "구성되지 않음"
 
-#: templates/_settings_tabs/account.html:341 templates/dashboard.html:622
+#: templates/_settings_tabs/account.html:356 templates/dashboard.html:622
 msgid "Configured"
 msgstr "구성됨"
 
@@ -7986,7 +7991,7 @@ msgid ""
 "new password before continuing."
 msgstr "기본 관리자 비밀번호를 사용 중입니다. 보안을 위해 계속하기 전에 새 비밀번호를 설정해야 합니다."
 
-#: templates/_settings_tabs/account.html:254
+#: templates/_settings_tabs/account.html:269
 #: templates/force_change_password.html:20
 msgid "New Password"
 msgstr "새 비밀번호"
@@ -8078,7 +8083,7 @@ msgstr "설명서 보기 (PDF)"
 msgid "Delete game from database"
 msgstr "데이터베이스에서 게임 삭제"
 
-#: templates/_settings_tabs/account.html:364 templates/game_detail.html:150
+#: templates/_settings_tabs/account.html:379 templates/game_detail.html:150
 #: templates/logs.html:735 templates/settings.html:45
 #: templates/wishlist.html:642
 msgid "Delete"
@@ -8608,11 +8613,12 @@ msgstr "스크린샷을 삭제하지 못했습니다"
 msgid "Failed to delete screenshot: {error}"
 msgstr "스크린샷을 삭제하지 못했습니다: {error}"
 
-#: templates/_settings_tabs/account.html:218 templates/game_imports.html:170
+#: templates/_settings_tabs/account.html:233 templates/game_imports.html:170
 msgid "Steam"
 msgstr "Steam"
 
-#: templates/game_imports.html:173
+#: templates/_settings_tabs/account.html:218
+#: templates/_settings_tabs/scraping.html:419 templates/game_imports.html:173
 msgid "Xbox"
 msgstr "Xbox"
 
@@ -8646,43 +8652,43 @@ msgid "CLZ Library"
 msgstr "CLZ 라이브러리"
 
 #: templates/game_imports.html:207 templates/game_imports.html:262
-#: templates/game_imports.html:318 templates/game_imports.html:381
+#: templates/game_imports.html:317 templates/game_imports.html:380
 msgid "Total"
 msgstr "전체"
 
 #: templates/game_imports.html:208 templates/game_imports.html:263
-#: templates/game_imports.html:319 templates/game_imports.html:382
+#: templates/game_imports.html:318 templates/game_imports.html:381
 msgid "New"
 msgstr "신규"
 
 #: templates/game_imports.html:209 templates/game_imports.html:264
-#: templates/game_imports.html:320 templates/game_imports.html:383
+#: templates/game_imports.html:319 templates/game_imports.html:382
 msgid "Already Imported"
 msgstr "이미 가져옴"
 
 #: templates/game_imports.html:213 templates/game_imports.html:268
-#: templates/game_imports.html:324 templates/game_imports.html:387
+#: templates/game_imports.html:323 templates/game_imports.html:386
 msgid "Select All New"
 msgstr "신규 항목 전체 선택"
 
 #: templates/game_imports.html:214 templates/game_imports.html:269
-#: templates/game_imports.html:325 templates/game_imports.html:388
+#: templates/game_imports.html:324 templates/game_imports.html:387
 msgid "Deselect All"
 msgstr "전체 선택 해제"
 
 #: templates/_modals/filter_modal.html:15 templates/game_imports.html:223
-#: templates/game_imports.html:340 templates/game_imports.html:403
+#: templates/game_imports.html:339 templates/game_imports.html:402
 #: templates/psn_trophies.html:153 templates/psn_trophy_detail.html:241
 msgid "Platform"
 msgstr "플랫폼"
 
 #: templates/game_imports.html:230 templates/game_imports.html:283
-#: templates/game_imports.html:346 templates/game_imports.html:409
+#: templates/game_imports.html:345 templates/game_imports.html:408
 msgid "0 games selected"
 msgstr "선택된 게임 0개"
 
 #: templates/game_imports.html:231 templates/game_imports.html:284
-#: templates/game_imports.html:347 templates/game_imports.html:410
+#: templates/game_imports.html:346 templates/game_imports.html:409
 msgid "Import Selected"
 msgstr "선택 항목 가져오기"
 
@@ -8709,7 +8715,7 @@ msgstr "Steam 자격 증명"
 msgid "Steam Web API Key"
 msgstr "Steam Web API 키"
 
-#: templates/_settings_tabs/account.html:224 templates/game_imports.html:250
+#: templates/_settings_tabs/account.html:239 templates/game_imports.html:250
 msgid "Your Steam Web API Key"
 msgstr "Steam Web API 키"
 
@@ -8721,8 +8727,8 @@ msgstr "Steam ID 또는 사용자 지정 URL"
 msgid "76561198012345678 or custom URL name"
 msgstr "76561198012345678 또는 사용자 지정 URL 이름"
 
-#: templates/game_imports.html:252 templates/game_imports.html:311
-#: templates/game_imports.html:370
+#: templates/game_imports.html:252 templates/game_imports.html:310
+#: templates/game_imports.html:369
 msgid "Fetch Library"
 msgstr "라이브러리 가져오기"
 
@@ -8739,60 +8745,56 @@ msgstr "마지막 플레이"
 msgid ""
 "Import your Xbox game library. Games are assigned to their correct Xbox "
 "system.\n"
-"                You need an Azure AD app registration &mdash; configure "
-"credentials in <a href=\"%(settings_url)s\" style=\"color: var(--primary-"
-"cyan);\">Settings &rarr; API Keys</a>."
+"                You need your own free OpenXBL key &mdash; add it in <a "
+"href=\"%(profile_url)s\" style=\"color: var(--primary-cyan);\">Settings "
+"&rarr; My Profile</a>."
 msgstr ""
-"Xbox 게임 라이브러리를 가져옵니다. 게임은 올바른 Xbox 시스템에 할당됩니다.\n"
-"                Azure AD 앱 등록이 필요합니다 &mdash; <a href=\"%(settings_url)s\""
-" style=\"color: var(--primary-cyan);\">설정 &rarr; API 키</a>에서 자격 증명을 "
-"설정하세요."
+"Xbox 게임 라이브러리를 가져옵니다. 게임은 알맞은 Xbox 시스템에 배정됩니다.\n"
+"                본인의 무료 OpenXBL 키가 필요합니다 &mdash; <a "
+"href=\"%(profile_url)s\" style=\"color: var(--primary-cyan);\">설정 &rarr; "
+"내 프로필</a>에서 추가하세요."
 
 #: templates/game_imports.html:301
 msgid "Xbox Account"
 msgstr "Xbox 계정"
 
-#: templates/game_imports.html:304
+#: templates/game_imports.html:304 templates/game_imports.html:692
 msgid "Not Connected"
 msgstr "연결되지 않음"
 
-#: templates/game_imports.html:304
-msgid "Connect your Xbox account to import games"
-msgstr "게임을 가져오려면 Xbox 계정을 연결하세요"
+#: templates/game_imports.html:304 templates/game_imports.html:693
+msgid "Add your OpenXBL key in Settings > My Profile to import games."
+msgstr "게임을 가져오려면 설정 > 내 프로필에서 OpenXBL 키를 추가하세요."
 
 #: templates/game_imports.html:306
-msgid "Connect Xbox Account"
-msgstr "Xbox 계정 연결"
+msgid "Xbox key settings"
+msgstr "Xbox 키 설정"
 
-#: templates/game_imports.html:307
-msgid "Disconnect"
-msgstr "연결 해제"
-
-#: templates/game_imports.html:316
+#: templates/game_imports.html:315
 msgid "Xbox Library"
 msgstr "Xbox 라이브러리"
 
-#: templates/game_imports.html:331
+#: templates/game_imports.html:330
 msgid "Xbox 360"
 msgstr "Xbox 360"
 
-#: templates/game_imports.html:332
+#: templates/game_imports.html:331
 msgid "Xbox One"
 msgstr "Xbox One"
 
-#: templates/game_imports.html:333
+#: templates/game_imports.html:332
 msgid "Xbox Series"
 msgstr "Xbox Series"
 
-#: templates/game_imports.html:334
+#: templates/game_imports.html:333
 msgid "PC"
 msgstr "PC"
 
-#: templates/game_imports.html:340 templates/xbox_achievements.html:53
+#: templates/game_imports.html:339 templates/xbox_achievements.html:53
 msgid "Gamerscore"
 msgstr "게이머스코어"
 
-#: templates/game_imports.html:359
+#: templates/game_imports.html:358
 #, python-format
 msgid ""
 "Import your PlayStation game library. Games come from your PSN trophy "
@@ -8810,128 +8812,107 @@ msgstr ""
 "                더 빠른 가져오기를 위해 <a href=\"%(trophies_url)s\" style=\"color:"
 " var(--primary-cyan);\">PSN 트로피</a> 페이지에서 먼저 트로피를 동기화하세요."
 
-#: templates/game_imports.html:365
+#: templates/game_imports.html:364
 msgid "PSN Account"
 msgstr "PSN 계정"
 
-#: templates/game_imports.html:379
+#: templates/game_imports.html:378
 msgid "PSN Library"
 msgstr "PSN 라이브러리"
 
-#: templates/game_imports.html:394
+#: templates/game_imports.html:393
 msgid "PS5"
 msgstr "PS5"
 
-#: templates/game_imports.html:395
+#: templates/game_imports.html:394
 msgid "PS4"
 msgstr "PS4"
 
-#: templates/game_imports.html:396
+#: templates/game_imports.html:395
 msgid "PS3"
 msgstr "PS3"
 
-#: templates/game_imports.html:397
+#: templates/game_imports.html:396
 msgid "PS Vita"
 msgstr "PS Vita"
 
-#: templates/game_imports.html:403 templates/local_trophy_detail.html:123
+#: templates/game_imports.html:402 templates/local_trophy_detail.html:123
 #: templates/psn_trophy_detail.html:114
 msgid "Trophy Progress"
 msgstr "트로피 진행률"
 
-#: templates/game_imports.html:528
+#: templates/game_imports.html:527
 msgid "Parse failed"
 msgstr "분석하지 못했습니다"
 
-#: templates/game_imports.html:544 templates/game_imports.html:670
+#: templates/game_imports.html:543 templates/game_imports.html:669
 #, python-brace-format
 msgid "Games found: {total} ({existing} already imported)"
 msgstr "찾은 게임: {total}개 (이미 가져온 게임 {existing}개)"
 
-#: templates/game_imports.html:594 templates/game_imports.html:853
+#: templates/game_imports.html:593 templates/game_imports.html:837
 #, python-brace-format
 msgid "Imported: {count}"
 msgstr "가져옴: {count}"
 
-#: templates/game_imports.html:595 templates/game_imports.html:855
+#: templates/game_imports.html:594 templates/game_imports.html:839
 #, python-brace-format
 msgid "Already in library: {count}"
 msgstr "이미 라이브러리에 있음: {count}"
 
-#: templates/game_imports.html:597 templates/game_imports.html:858
+#: templates/game_imports.html:596 templates/game_imports.html:842
 msgid "Import complete"
 msgstr "가져오기 완료"
 
-#: templates/game_imports.html:605 templates/game_imports.html:866
+#: templates/game_imports.html:604 templates/game_imports.html:850
 msgid "Import failed"
 msgstr "가져오기 실패"
 
-#: templates/game_imports.html:607 templates/game_imports.html:867
+#: templates/game_imports.html:606 templates/game_imports.html:851
 #, python-brace-format
 msgid "Import error: {error}"
 msgstr "가져오기 오류: {error}"
 
-#: templates/game_imports.html:629
+#: templates/game_imports.html:628
 msgid "Please drop a PDF file"
 msgstr "PDF 파일을 끌어다 놓아 주세요"
 
-#: templates/game_imports.html:707
-msgid "Failed to get auth URL"
-msgstr "인증 URL을 가져오지 못했습니다"
-
-#: templates/game_imports.html:708
+#: templates/game_imports.html:687
 #, python-brace-format
-msgid "Failed to connect to Xbox: {error}"
-msgstr "Xbox에 연결하지 못했습니다: {error}"
+msgid "Connected as {name}"
+msgstr "{name} 님으로 연결됨"
 
-#: templates/game_imports.html:712
-msgid "Disconnect Xbox"
-msgstr "Xbox 연결 해제"
+#: templates/game_imports.html:688
+msgid "Through your OpenXBL key."
+msgstr "본인의 OpenXBL 키를 통해 연결합니다."
 
-#: templates/game_imports.html:712
-msgid "Remove your Xbox account connection? You can reconnect later."
-msgstr "Xbox 계정 연결을 해제할까요? 나중에 다시 연결할 수 있습니다."
-
-#: templates/game_imports.html:713
-msgid "Xbox account disconnected"
-msgstr "Xbox 계정 연결이 해제되었습니다"
-
-#: templates/game_imports.html:714
-#, python-brace-format
-msgid "Failed to disconnect: {error}"
-msgstr "연결을 해제하지 못했습니다: {error}"
-
-#: templates/game_imports.html:739
+#: templates/game_imports.html:720
 #, python-brace-format
 msgid "Xbox games found: {total} ({existing} already imported)"
 msgstr "찾은 Xbox 게임: {total}개 (이미 가져온 게임 {existing}개)"
 
-#: templates/game_imports.html:762 templates/game_imports.html:770
-#: templates/game_imports.html:776
+#: templates/game_imports.html:722
+#, python-brace-format
+msgid "{count} apps and phone-only titles were left out."
+msgstr "앱과 휴대폰 전용 타이틀 {count}개를 제외했습니다."
+
+#: templates/game_imports.html:746 templates/game_imports.html:754
+#: templates/game_imports.html:760
 msgid "In your library: link it"
 msgstr "내 라이브러리: 연결하기"
 
-#: templates/game_imports.html:854
+#: templates/game_imports.html:838
 msgid "Linked to games in your library"
 msgstr "라이브러리의 게임에 연결됨"
 
-#: templates/game_imports.html:857
+#: templates/game_imports.html:841
 msgid "Details are arriving from Steam in the background"
 msgstr "Steam에서 상세 정보를 백그라운드로 받아오는 중입니다"
 
-#: templates/game_imports.html:926
+#: templates/game_imports.html:910
 #, python-brace-format
 msgid "PSN games found: {total} ({existing} already imported)"
 msgstr "찾은 PSN 게임: {total}개 (이미 가져온 게임 {existing}개)"
-
-#: templates/game_imports.html:999
-msgid "Xbox account connected successfully!"
-msgstr "Xbox 계정을 연결했습니다!"
-
-#: templates/game_imports.html:1005
-#, python-brace-format
-msgid "Xbox connection failed: {error}"
-msgstr "Xbox 연결 실패: {error}"
 
 #: templates/help.af.html:11 templates/help.de.html:11
 #: templates/help.es.html:11 templates/help.fr.html:11
@@ -11516,112 +11497,112 @@ msgstr "키가 작동합니다: %(provider)s에서 %(model)s(으)로 응답했�
 msgid "The key test failed."
 msgstr "키 테스트에 실패했습니다."
 
-#: templates/settings.html:2907
+#: templates/settings.html:2905
 msgid "Invalid Input"
 msgstr "잘못된 입력"
 
-#: templates/settings.html:2907
+#: templates/settings.html:2905
 msgid "Please enter a value"
 msgstr "값을 입력하세요"
 
-#: templates/settings.html:2924 templates/settings.html:2928
+#: templates/settings.html:2922 templates/settings.html:2926
 msgid "Failed to add option"
 msgstr "옵션을 추가하지 못했습니다"
 
-#: templates/settings.html:2934
+#: templates/settings.html:2932
 msgid "Delete Option"
 msgstr "옵션 삭제"
 
-#: templates/settings.html:2935
+#: templates/settings.html:2933
 msgid "Are you sure you want to delete this option?"
 msgstr "이 옵션을 삭제하시겠습니까?"
 
-#: templates/settings.html:2947 templates/settings.html:2951
+#: templates/settings.html:2945 templates/settings.html:2949
 msgid "Failed to delete option"
 msgstr "옵션을 삭제하지 못했습니다"
 
-#: templates/settings.html:3498 templates/settings.html:4260
+#: templates/settings.html:3496 templates/settings.html:4258
 msgid "Missing Input"
 msgstr "입력 누락"
 
-#: templates/settings.html:3498 templates/settings.html:4260
+#: templates/settings.html:3496 templates/settings.html:4258
 msgid "Please enter a controller name"
 msgstr "컨트롤러 이름을 입력하세요"
 
-#: templates/settings.html:3542
+#: templates/settings.html:3540
 #, python-brace-format
 msgid "Controller \"{name}\" has been added to the library."
 msgstr "컨트롤러 \"{name}\"을(를) 라이브러리에 추가했습니다."
 
-#: templates/settings.html:3544 templates/settings.html:3548
+#: templates/settings.html:3542 templates/settings.html:3546
 msgid "Failed to add controller"
 msgstr "컨트롤러를 추가하지 못했습니다"
 
-#: templates/settings.html:3616 templates/settings.html:3620
+#: templates/settings.html:3614 templates/settings.html:3618
 msgid "Failed to set default controller"
 msgstr "기본 컨트롤러를 설정하지 못했습니다"
 
-#: templates/settings.html:3651 templates/settings.html:3655
+#: templates/settings.html:3649 templates/settings.html:3653
 msgid "Failed to add default controller"
 msgstr "기본 컨트롤러를 추가하지 못했습니다"
 
-#: templates/settings.html:3681 templates/settings.html:3685
+#: templates/settings.html:3679 templates/settings.html:3683
 msgid "Failed to remove default controller"
 msgstr "기본 컨트롤러를 제거하지 못했습니다"
 
-#: templates/settings.html:3788
+#: templates/settings.html:3786
 msgid "ALL SYSTEMS"
 msgstr "모든 시스템"
 
-#: templates/settings.html:3792
+#: templates/settings.html:3790
 msgid "Clear Scraped Data"
 msgstr "스크래핑 데이터 지우기"
 
-#: templates/settings.html:3793
+#: templates/settings.html:3791
 #, python-brace-format
 msgid "This will clear all scraped metadata from games in {system}."
 msgstr "{system}에 있는 게임의 스크래핑 메타데이터가 모두 지워집니다."
 
-#: templates/settings.html:3794
+#: templates/settings.html:3792
 msgid "Downloaded images will also be deleted!"
 msgstr "다운로드한 이미지도 삭제됩니다!"
 
-#: templates/settings.html:3795
+#: templates/settings.html:3793
 msgid "This cannot be undone. Are you sure?"
 msgstr "이 작업은 되돌릴 수 없습니다. 계속하시겠습니까?"
 
-#: templates/settings.html:3920
+#: templates/settings.html:3918
 msgid "No Files"
 msgstr "파일 없음"
 
-#: templates/settings.html:3920
+#: templates/settings.html:3918
 msgid "Please scan for orphaned files first."
 msgstr "먼저 고아 파일을 검사하세요."
 
-#: templates/settings.html:3925
+#: templates/settings.html:3923
 msgid "Delete Orphaned Files"
 msgstr "고아 파일 삭제"
 
-#: templates/settings.html:3926
+#: templates/settings.html:3924
 #, python-brace-format
 msgid ""
 "Orphaned media files to delete permanently: {count}. This action cannot "
 "be undone.<br><br>Proceed?"
 msgstr "영구 삭제할 고아 미디어 파일: {count}개. 이 작업은 되돌릴 수 없습니다.<br><br>계속하시겠습니까?"
 
-#: templates/settings.html:4056
+#: templates/settings.html:4054
 msgid "Nothing to Clear"
 msgstr "지울 항목 없음"
 
-#: templates/settings.html:4056
+#: templates/settings.html:4054
 msgid "Please scan for missing media references first."
 msgstr "먼저 누락된 미디어 참조를 검사하세요."
 
-#: templates/settings.html:4061
+#: templates/settings.html:4059
 msgid "Clear Missing References"
 msgstr "누락된 참조 지우기"
 
-#: templates/settings.html:4062
+#: templates/settings.html:4060
 #, python-brace-format
 msgid ""
 "Database references to clear: {count}. They point to media files that no "
@@ -11631,207 +11612,220 @@ msgstr ""
 "지울 데이터베이스 참조: {count}개. 디스크에 더 이상 없는 미디어 파일을 가리키므로 스크래퍼가 다시 다운로드할 수 있습니다."
 " 게임 항목은 영향을 받지 않습니다.<br><br>계속하시겠습니까?"
 
-#: templates/settings.html:4162
+#: templates/settings.html:4160
 msgid "Delete Controller"
 msgstr "컨트롤러 삭제"
 
-#: templates/settings.html:4163
+#: templates/settings.html:4161
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete {name}?<br><br>This will remove it from "
 "the library and any systems using it as default."
 msgstr "{name}을(를) 삭제하시겠습니까?<br><br>라이브러리와 이를 기본값으로 사용하는 모든 시스템에서 제거됩니다."
 
-#: templates/settings.html:4185
+#: templates/settings.html:4183
 msgid "Deleted"
 msgstr "삭제됨"
 
-#: templates/settings.html:4185
+#: templates/settings.html:4183
 #, python-brace-format
 msgid "Controller \"{name}\" has been removed."
 msgstr "컨트롤러 \"{name}\"을(를) 제거했습니다."
 
-#: templates/settings.html:4187 templates/settings.html:4191
+#: templates/settings.html:4185 templates/settings.html:4189
 msgid "Failed to delete controller"
 msgstr "컨트롤러를 삭제하지 못했습니다"
 
-#: templates/settings.html:4209
+#: templates/settings.html:4207
 msgid "Failed to load controller"
 msgstr "컨트롤러를 불러오지 못했습니다"
 
-#: templates/settings.html:4240
+#: templates/settings.html:4238
 msgid "Failed to load controller data"
 msgstr "컨트롤러 데이터를 불러오지 못했습니다"
 
-#: templates/settings.html:4298
+#: templates/settings.html:4296
 #, python-brace-format
 msgid "Controller \"{name}\" has been updated."
 msgstr "컨트롤러 \"{name}\"을(를) 업데이트했습니다."
 
-#: templates/settings.html:4300 templates/settings.html:4304
+#: templates/settings.html:4298 templates/settings.html:4302
 msgid "Failed to update controller"
 msgstr "컨트롤러를 업데이트하지 못했습니다"
 
-#: templates/settings.html:4431
+#: templates/settings.html:4429
 msgid "Logos Refreshed"
 msgstr "로고 새로고침됨"
 
-#: templates/settings.html:4432
+#: templates/settings.html:4430
 #, python-brace-format
 msgid "System logos updated: {count}. The table has been refreshed."
 msgstr "업데이트된 시스템 로고: {count}개. 표를 새로고침했습니다."
 
-#: templates/settings.html:4434
+#: templates/settings.html:4432
 msgid "Failed to refresh logos"
 msgstr "로고를 새로고침하지 못했습니다"
 
-#: templates/settings.html:4438
+#: templates/settings.html:4436
 msgid "Failed to refresh system logos"
 msgstr "시스템 로고를 새로고침하지 못했습니다"
 
-#: templates/settings.html:4460
+#: templates/settings.html:4458
 msgid "Names Refreshed"
 msgstr "이름 새로고침됨"
 
-#: templates/settings.html:4461
+#: templates/settings.html:4459
 #, python-brace-format
 msgid "System names updated: {count}. Click OK to refresh the page."
 msgstr "업데이트된 시스템 이름: {count}개. 확인을 누르면 페이지를 새로고침합니다."
 
-#: templates/settings.html:4464
+#: templates/settings.html:4462
 msgid "Failed to refresh names"
 msgstr "이름 새로 고침 실패"
 
-#: templates/settings.html:4468
+#: templates/settings.html:4466
 msgid "Failed to refresh system names"
 msgstr "시스템 이름 새로 고침 실패"
 
-#: templates/settings.html:4911
+#: templates/settings.html:4909
 #, python-brace-format
 msgid "Log: {filename}"
 msgstr "로그: {filename}"
 
-#: templates/settings.html:4912
+#: templates/settings.html:4910
 msgid "Log file is empty"
 msgstr "로그 파일이 비어 있습니다"
 
-#: templates/settings.html:4915
+#: templates/settings.html:4913
 msgid "Failed to load log file"
 msgstr "로그 파일을 불러오지 못했습니다"
 
-#: templates/settings.html:4918
+#: templates/settings.html:4916
 #, python-brace-format
 msgid "Error loading log file: {error}"
 msgstr "로그 파일을 불러오는 중 오류: {error}"
 
-#: templates/settings.html:4937
+#: templates/settings.html:4935
 msgid "Failed to delete log file"
 msgstr "로그 파일을 삭제하지 못했습니다"
 
-#: templates/settings.html:4940
+#: templates/settings.html:4938
 #, python-brace-format
 msgid "Error deleting log file: {error}"
 msgstr "로그 파일 삭제 중 오류: {error}"
 
-#: templates/settings.html:4946
+#: templates/settings.html:4944
 msgid "Clear Old Logs"
 msgstr "오래된 로그 지우기"
 
-#: templates/settings.html:4946
+#: templates/settings.html:4944
 msgid "This will delete all log files older than 5 days. Continue?"
 msgstr "5일이 지난 로그 파일이 모두 삭제됩니다. 계속할까요?"
 
-#: templates/settings.html:4952
+#: templates/settings.html:4950
 #, python-brace-format
 msgid "Old log files removed: {count}"
 msgstr "삭제된 오래된 로그 파일: {count}개"
 
-#: templates/settings.html:4955
+#: templates/settings.html:4953
 msgid "Failed to clear old logs"
 msgstr "오래된 로그를 지우지 못했습니다"
 
-#: templates/settings.html:4958
+#: templates/settings.html:4956
 #, python-brace-format
 msgid "Error clearing old logs: {error}"
 msgstr "오래된 로그를 지우는 중 오류: {error}"
 
-#: templates/settings.html:5003
+#: templates/settings.html:5001
 msgid "Token extracted from the pasted page"
 msgstr "붙여넣은 페이지에서 토큰을 추출했습니다"
 
-#: templates/settings.html:5005
+#: templates/settings.html:5003
 msgid "Token detected"
 msgstr "토큰을 찾았습니다"
 
-#: templates/settings.html:5007
+#: templates/settings.html:5005
 msgid "Could not detect a valid NPSSO token"
 msgstr "올바른 NPSSO 토큰을 찾을 수 없습니다"
 
-#: templates/settings.html:5019
+#: templates/settings.html:5017
 msgid "Now press Ctrl+V to paste."
 msgstr "이제 Ctrl+V를 눌러 붙여넣으세요."
 
-#: templates/settings.html:5031
+#: templates/settings.html:5029
 msgid "Enter an NPSSO token first"
 msgstr "먼저 NPSSO 토큰을 입력하세요"
 
-#: templates/settings.html:5036
+#: templates/settings.html:5034
 msgid "Testing..."
 msgstr "테스트 중..."
 
-#: templates/settings.html:5037
+#: templates/settings.html:5035 templates/settings.html:5124
 msgid "Saving and connecting..."
 msgstr "저장하고 연결하는 중..."
 
-#: templates/settings.html:5048
+#: templates/settings.html:5046 templates/settings.html:5133
 #, python-format
 msgid "Connected as %(name)s"
 msgstr "%(name)s 님으로 연결됨"
 
-#: templates/settings.html:5055
+#: templates/settings.html:5053 templates/settings.html:5137
 msgid "Connection failed"
 msgstr "연결 실패"
 
-#: templates/settings.html:5058
+#: templates/settings.html:5056 templates/settings.html:5140
 #, python-format
 msgid "Error: %(msg)s"
 msgstr "오류: %(msg)s"
 
-#: templates/settings.html:5077
+#: templates/settings.html:5075
 #, python-format
 msgid ""
 "Sony refused your saved NPSSO token on %(date)s. Get a new one with the "
 "steps below."
 msgstr "%(date)s에 Sony가 저장된 NPSSO 토큰을 거부했습니다. 아래 단계에 따라 새 토큰을 받으세요."
 
-#: templates/settings.html:5080
+#: templates/settings.html:5078
 msgid ""
 "Connected to PSN. RetroDB keeps the sign-in going by itself. You need a "
 "new token only if Sony refuses this one."
 msgstr "PSN에 연결되었습니다. RetroDB가 로그인 상태를 자동으로 유지합니다. Sony가 이 토큰을 거부할 때만 새 토큰이 필요합니다."
 
-#: templates/settings.html:5117
-msgid "Redirect URI copied to clipboard"
-msgstr "리디렉션 URI가 클립보드에 복사되었습니다"
+#: templates/settings.html:5107
+#, python-format
+msgid "Key saved. Connected as %(name)s."
+msgstr "키를 저장했습니다. %(name)s 님으로 연결됨."
 
-#: templates/settings.html:5192 templates/settings.html:5234
+#: templates/settings.html:5108
+msgid "No key saved."
+msgstr "저장된 키가 없습니다."
+
+#: templates/settings.html:5146
+msgid "Remove Xbox key"
+msgstr "Xbox 키 제거"
+
+#: templates/settings.html:5146
+msgid "Remove your OpenXBL key? Your imported games and achievements stay."
+msgstr "OpenXBL 키를 제거할까요? 가져온 게임과 업적은 그대로 남습니다."
+
+#: templates/settings.html:5228 templates/settings.html:5270
 msgid "Avatar updated!"
 msgstr "아바타가 업데이트되었습니다!"
 
-#: templates/settings.html:5197
+#: templates/settings.html:5233
 #, python-brace-format
 msgid "Upload failed: {error}"
 msgstr "업로드 실패: {error}"
 
-#: templates/settings.html:5211
+#: templates/settings.html:5247
 msgid "Avatar removed"
 msgstr "아바타가 제거되었습니다"
 
-#: templates/settings.html:5214
+#: templates/settings.html:5250
 msgid "Failed to remove avatar"
 msgstr "아바타를 제거하지 못했습니다"
 
-#: templates/settings.html:5237
+#: templates/settings.html:5273
 msgid "Failed to save avatar"
 msgstr "아바타를 저장하지 못했습니다"
 
@@ -12203,20 +12197,20 @@ msgid "Confirm password"
 msgstr "비밀번호 확인"
 
 #: templates/_settings_tabs/account.html:6
-#: templates/_settings_tabs/account.html:271
-#: templates/_settings_tabs/account.html:278 templates/setup.html:121
+#: templates/_settings_tabs/account.html:286
+#: templates/_settings_tabs/account.html:293 templates/setup.html:121
 msgid "Timezone"
 msgstr "시간대"
 
-#: templates/_settings_tabs/account.html:280 templates/setup.html:122
+#: templates/_settings_tabs/account.html:295 templates/setup.html:122
 msgid "Search timezones..."
 msgstr "시간대 검색..."
 
-#: templates/_settings_tabs/account.html:284 templates/setup.html:125
+#: templates/_settings_tabs/account.html:299 templates/setup.html:125
 msgid "Browser detected:"
 msgstr "브라우저 감지됨:"
 
-#: templates/_settings_tabs/account.html:285 templates/setup.html:126
+#: templates/_settings_tabs/account.html:300 templates/setup.html:126
 msgid "Use detected"
 msgstr "감지된 값 사용"
 
@@ -13660,16 +13654,34 @@ msgid "Paste here"
 msgstr "여기에 붙여넣기"
 
 #: templates/_settings_tabs/account.html:212
+#: templates/_settings_tabs/account.html:227
 msgid "Save &amp; Test Connection"
 msgstr "저장 &amp; 연결 테스트"
 
 #: templates/_settings_tabs/account.html:220
 msgid ""
+"Xbox reaches RetroDB through OpenXBL, a free service. Sign in at <a "
+"href=\"https://xbl.io\" target=\"_blank\" rel=\"noopener noreferrer\" "
+"style=\"color: var(--primary-cyan);\">xbl.io</a> with your Xbox account, "
+"copy your API key, and paste it here. The free key allows 150 requests an"
+" hour, so a big achievement sync may take more than one go."
+msgstr ""
+"Xbox는 무료 서비스인 OpenXBL을 통해 RetroDB와 연결됩니다. Xbox 계정으로 <a "
+"href=\"https://xbl.io\" target=\"_blank\" rel=\"noopener noreferrer\" "
+"style=\"color: var(--primary-cyan);\">xbl.io</a>에 로그인하고 API 키를 복사해 여기에 붙여"
+" 넣으세요. 무료 키는 한 시간에 요청 150건까지 허용하므로, 업적 동기화가 많으면 여러 번에 나눠야 할 수 있습니다."
+
+#: templates/_settings_tabs/account.html:224
+msgid "Your OpenXBL API key"
+msgstr "OpenXBL API 키"
+
+#: templates/_settings_tabs/account.html:235
+msgid ""
 "Add your own Steam key and Steam ID to import your Steam library and "
 "achievements."
 msgstr "내 Steam 키와 Steam ID를 추가하면 Steam 라이브러리와 업적을 가져올 수 있습니다."
 
-#: templates/_settings_tabs/account.html:227
+#: templates/_settings_tabs/account.html:242
 msgid ""
 "Get your key from <a href=\"https://steamcommunity.com/dev/apikey\" "
 "target=\"_blank\" rel=\"noopener noreferrer\" style=\"color: var"
@@ -13679,11 +13691,11 @@ msgstr ""
 "rel=\"noopener noreferrer\" style=\"color: var(--primary-cyan);\">Steam "
 "API 키 페이지</a>에서 키를 받으세요"
 
-#: templates/_settings_tabs/account.html:231
+#: templates/_settings_tabs/account.html:246
 msgid "Your Steam ID"
 msgstr "내 Steam ID"
 
-#: templates/_settings_tabs/account.html:235
+#: templates/_settings_tabs/account.html:250
 msgid ""
 "The 17-digit number, not your profile name. Find it at <a "
 "href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener noreferrer\""
@@ -13693,48 +13705,48 @@ msgstr ""
 "rel=\"noopener noreferrer\" style=\"color: var(--primary-"
 "cyan);\">steamid.io</a>에서 찾을 수 있습니다"
 
-#: templates/_settings_tabs/account.html:239
+#: templates/_settings_tabs/account.html:254
 msgid "Save My Settings"
 msgstr "내 설정 저장"
 
-#: templates/_settings_tabs/account.html:243
-#: templates/_settings_tabs/account.html:259
+#: templates/_settings_tabs/account.html:258
+#: templates/_settings_tabs/account.html:274
 msgid "Change Password"
 msgstr "비밀번호 변경"
 
-#: templates/_settings_tabs/account.html:245
+#: templates/_settings_tabs/account.html:260
 msgid "Every account needs a password to log in."
 msgstr "로그인하려면 모든 계정에 비밀번호가 필요합니다."
 
-#: templates/_settings_tabs/account.html:249
+#: templates/_settings_tabs/account.html:264
 msgid "Current Password"
 msgstr "현재 비밀번호"
 
-#: templates/_settings_tabs/account.html:250
+#: templates/_settings_tabs/account.html:265
 msgid "Enter current password"
 msgstr "현재 비밀번호를 입력하세요"
 
-#: templates/_settings_tabs/account.html:255
+#: templates/_settings_tabs/account.html:270
 msgid "Enter new password"
 msgstr "새 비밀번호를 입력하세요"
 
-#: templates/_settings_tabs/account.html:263
+#: templates/_settings_tabs/account.html:278
 msgid "Please log in to view your profile settings."
 msgstr "프로필 설정을 보려면 로그인하세요."
 
-#: templates/_settings_tabs/account.html:275
+#: templates/_settings_tabs/account.html:290
 msgid "Set your timezone to ensure all dates and times display correctly."
 msgstr "모든 날짜와 시간이 올바르게 표시되도록 시간대를 설정하세요."
 
-#: templates/_settings_tabs/account.html:288
+#: templates/_settings_tabs/account.html:303
 msgid "Save Timezone"
 msgstr "시간대 저장"
 
-#: templates/_settings_tabs/account.html:296
+#: templates/_settings_tabs/account.html:311
 msgid "User Management"
 msgstr "사용자 관리"
 
-#: templates/_settings_tabs/account.html:300
+#: templates/_settings_tabs/account.html:315
 msgid ""
 "Manage users who can access RetroDB. Admin users require a password to "
 "login, while Editor and Viewer users can login with a single click."
@@ -13742,82 +13754,82 @@ msgstr ""
 "RetroDB에 접근할 수 있는 사용자를 관리합니다. 관리자 사용자는 로그인 시 비밀번호가 필요하며, 편집자와 뷰어 사용자는 클릭 "
 "한 번으로 로그인할 수 있습니다."
 
-#: templates/_settings_tabs/account.html:305
-#: templates/_settings_tabs/account.html:379
+#: templates/_settings_tabs/account.html:320
+#: templates/_settings_tabs/account.html:394
 msgid "Add User"
 msgstr "사용자 추가"
 
-#: templates/_settings_tabs/account.html:313
+#: templates/_settings_tabs/account.html:328
 msgid "Role"
 msgstr "역할"
 
-#: templates/_settings_tabs/account.html:314
+#: templates/_settings_tabs/account.html:329
 msgid "Trophy Path"
 msgstr "트로피 경로"
 
-#: templates/_settings_tabs/account.html:315
+#: templates/_settings_tabs/account.html:330
 msgid "RA Username"
 msgstr "RA 사용자 이름"
 
-#: templates/_settings_tabs/account.html:316
+#: templates/_settings_tabs/account.html:331
 msgid "Last Login"
 msgstr "마지막 로그인"
 
-#: templates/_settings_tabs/account.html:343
-#: templates/_settings_tabs/account.html:350
+#: templates/_settings_tabs/account.html:358
+#: templates/_settings_tabs/account.html:365
 msgid "Not Set"
 msgstr "설정 안 됨"
 
-#: templates/_settings_tabs/account.html:380
+#: templates/_settings_tabs/account.html:395
 msgid "Close user modal"
 msgstr "사용자 모달 닫기"
 
-#: templates/_settings_tabs/account.html:386
+#: templates/_settings_tabs/account.html:401
 msgid "Username *"
 msgstr "사용자 이름 *"
 
-#: templates/_settings_tabs/account.html:387
+#: templates/_settings_tabs/account.html:402
 msgid "username"
 msgstr "사용자 이름"
 
-#: templates/_settings_tabs/account.html:391
-#: templates/_settings_tabs/account.html:392
+#: templates/_settings_tabs/account.html:406
+#: templates/_settings_tabs/account.html:407
 msgid "Display Name"
 msgstr "표시 이름"
 
-#: templates/_settings_tabs/account.html:396
+#: templates/_settings_tabs/account.html:411
 msgid "Role *"
 msgstr "역할 *"
 
-#: templates/_settings_tabs/account.html:398
+#: templates/_settings_tabs/account.html:413
 msgid "Viewer - Read only access"
 msgstr "뷰어 - 읽기 전용 접근"
 
-#: templates/_settings_tabs/account.html:399
+#: templates/_settings_tabs/account.html:414
 msgid "Player - Can launch and track progress"
 msgstr "플레이어 - 실행 및 진행 상황 추적 가능"
 
-#: templates/_settings_tabs/account.html:400
+#: templates/_settings_tabs/account.html:415
 msgid "Editor - Can edit games and scrape"
 msgstr "편집자 - 게임 편집 및 스크래핑 가능"
 
-#: templates/_settings_tabs/account.html:401
+#: templates/_settings_tabs/account.html:416
 msgid "Admin - Full access"
 msgstr "관리자 - 전체 접근"
 
-#: templates/_settings_tabs/account.html:406
+#: templates/_settings_tabs/account.html:421
 msgid "Reset Password"
 msgstr "비밀번호 재설정"
 
-#: templates/_settings_tabs/account.html:407
+#: templates/_settings_tabs/account.html:422
 msgid "Leave blank to keep current"
 msgstr "현재 값을 유지하려면 비워 두세요"
 
-#: templates/_settings_tabs/account.html:408
+#: templates/_settings_tabs/account.html:423
 msgid "Only for admin accounts"
 msgstr "관리자 계정에만 해당"
 
-#: templates/_settings_tabs/account.html:413
+#: templates/_settings_tabs/account.html:428
 msgid "Save User"
 msgstr "사용자 저장"
 
@@ -14342,26 +14354,25 @@ msgstr "사용 가능한 지역 값과 기본값을 설정합니다. 기본 지�
 msgid "Default Region"
 msgstr "기본 지역"
 
-#: templates/_settings_tabs/scraping.html:428
+#: templates/_settings_tabs/scraping.html:421
+#, python-format
 msgid ""
-"Xbox needs an app registered with Microsoft. Microsoft now asks a "
-"personal account to get a directory first, which can mean signing up for "
-"Azure, and that may ask for a card. Xbox may still refuse an app made "
-"this way: RetroDB has not been able to test one."
+"Each person adds their own free OpenXBL key in <a "
+"href=\"%(profile_url)s\" style=\"color: var(--primary-cyan);\">Settings "
+"&gt; My Profile</a>. Nothing is needed here."
 msgstr ""
-"Xbox를 사용하려면 Microsoft에 등록된 앱이 필요합니다. Microsoft는 이제 개인 계정에 먼저 디렉터리를 만들도록 "
-"요구하며, 이를 위해 Azure에 가입해야 할 수 있고 카드 정보를 요구할 수도 있습니다. 이렇게 만든 앱을 Xbox가 거부할 수도"
-" 있습니다. RetroDB는 아직 테스트해 보지 못했습니다."
+"각 사용자가 <a href=\"%(profile_url)s\" style=\"color: var(--primary-"
+"cyan);\">설정 &gt; 내 프로필</a>에서 자신의 무료 OpenXBL 키를 추가합니다. 여기서는 설정할 것이 없습니다."
 
-#: templates/_settings_tabs/scraping.html:521
+#: templates/_settings_tabs/scraping.html:438
 msgid "Test saved AI key"
 msgstr "저장된 AI 키 테스트"
 
-#: templates/_settings_tabs/scraping.html:604
+#: templates/_settings_tabs/scraping.html:521
 msgid "Let Claude search the web"
 msgstr "Claude의 웹 검색 허용"
 
-#: templates/_settings_tabs/scraping.html:610
+#: templates/_settings_tabs/scraping.html:527
 msgid ""
 "Without search, Claude answers from what it already knows, and leaves "
 "blank anything that needs a published figure, such as copies sold. With "

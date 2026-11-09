@@ -481,7 +481,7 @@
         <p><em>Word gebruik vir Steam-biblioteek-invoer en prestasie-opsporing.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox-verifikasie gebruik OAuth2 &mdash; geen API-sleutel is nodig nie. Meld aan met jou Microsoft-rekening direk vanaf die Speletjie-invoere &rarr; Xbox-oortjie. Tekens word outomaties in kas gestoor en opgedateer soos nodig.</p>
+        <p>Xbox bereik RetroDB deur OpenXBL, 'n gratis diens. Elke persoon gebruik hul eie sleutel: meld aan by <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> met jou Xbox-rekening, kopieer jou API-sleutel en plak dit in Instellings &rarr; My Profiel &rarr; Xbox. <strong>Stoor &amp; Toets Koppeling</strong> toets die sleutel en wys jou gamertag. Die gratis sleutel laat 150 versoeke per uur toe.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN gebruik NPSSO-koekie-verifikasie. Sien die <a href="#trophies">Trofeë</a>-afdeling vir gedetailleerde opstelinstruksies.</p>
@@ -1054,15 +1054,13 @@
         </ol>
 
         <h3>Xbox-invoer</h3>
-        <p>Voer jou Xbox-speletjiebiblioteek via 'n Microsoft-rekening in.</p>
+        <p>Voer die Xbox-speletjies in wat jy gespeel het, met jou eie OpenXBL-sleutel.</p>
         <ol>
-            <li>Gaan na Speletjie-invoere &rarr; <strong>Xbox</strong>-oortjie</li>
-            <li>Klik <strong>"Meld Aan"</strong> om met jou Microsoft-rekening te verifieer (OAuth2-vloei)</li>
-            <li>Jou Xbox-titelgeskiedenis word outomaties opgehaal</li>
-            <li>Kies speletjies om in te voer met duplikaatbespeuring</li>
+            <li>Stoor jou OpenXBL-sleutel in Instellings &rarr; My Profiel &rarr; Xbox (sien API-sleutel-opstelgids hierbo)</li>
+            <li>Gaan na Speletjie-invoere &rarr; <strong>Xbox</strong>-oortjie en klik <strong>Haal biblioteek</strong></li>
+            <li>Kies speletjies om in te voer met duplikaatbespeuring. Toepassings en speletjies slegs vir fone word uitgelaat.</li>
             <li>Ingevoerde speletjies word geëtiketteer met hul Xbox-titel-ID vir prestasie-opsporing</li>
         </ol>
-        <p>Xbox-tekens word in <code>data/xbox_tokens.json</code> in kas gestoor en outomaties opgedateer.</p>
 
         <h3>PSN-invoer</h3>
         <p>Voer jou PlayStation Network-speletjiebiblioteek in.</p>
@@ -1176,7 +1174,7 @@
         <h3>Opstelling</h3>
         <ol>
             <li>Voer Xbox-speletjies in via <strong>Speletjie-invoere &rarr; Xbox</strong></li>
-            <li>Verifikasie word via Xbox OAuth tydens invoer hanteer</li>
+            <li>Stoor jou OpenXBL-sleutel in Instellings &rarr; My Profiel &rarr; Xbox</li>
         </ol>
 
         <h3>Prestasies-landingsbladsy</h3>
@@ -1196,6 +1194,7 @@
         <h3>Sinkronisering</h3>
         <ul>
             <li>Sinkroniseer 'n enkele speletjie of sinkroniseer alle Xbox-speletjies in grootmaat</li>
+            <li>Elke speletjie is een versoek, en die gratis OpenXBL-sleutel laat 150 per uur toe. 'n Grootmaat-sinkronisering wat die limiet bereik, stop en sê so; laat dit 'n uur later weer loop en dit begin met die speletjies wat nog nie gesinkroniseer is nie.</li>
             <li>Loop as 'n agtergrondtaak met kennisgewings</li>
             <li>Gamerscore-totale word na elke sinkronisasie outomaties opgedateer</li>
         </ul>
@@ -1837,10 +1836,10 @@
             <li>RetroDB meld self weer aan solank Sony jou gestoorde NPSSO aanvaar. Sodra Sony dit weier, plak 'n nuwe een in Instellings &rarr; Rekening &rarr; PSN. Om 'n teken te vervang wat nog werk, meld eers by PlayStation af.</li>
         </ul>
 
-        <h4>"Xbox Authentication Failed"</h4>
+        <h4>"OpenXBL het daardie sleutel nie aanvaar nie"</h4>
         <ul>
-            <li>Verifieer weer deur "Meld Aan" op die Speletjie-invoere &rarr; Xbox-oortjie te klik</li>
-            <li>Xbox-tekens word in <code>data/xbox_tokens.json</code> in kas gestoor en outomaties opgedateer</li>
+            <li>Kopieer die sleutel weer van <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> af en plak dit in Instellings &rarr; My Profiel &rarr; Xbox</li>
+            <li>"OpenXBL se uurlimiet is bereik" beteken die sleutel het sy 150 versoeke vir hierdie uur gebruik; wag en probeer weer</li>
         </ul>
 
         <h4>"Image Upscaling Errors"</h4>

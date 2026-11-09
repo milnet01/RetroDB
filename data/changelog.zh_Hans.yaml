@@ -1,6 +1,9 @@
 - version: 4.0.0
   date: '2026-11-09'
   tags:
+  - type: feature
+    label: 'Xbox 导入不再需要 Microsoft Azure 账户。现在每个人在“设置 → 我的资料”中粘贴自己的免费 OpenXBL 密钥（来自 xbl.io），并且在你网络中的任何电脑上都能使用。导入还会排除应用和仅限手机的游戏，把 PC 游戏归入 Windows 而不是 Xbox One，正确读取 Xbox 360 成就，并且不再为未解锁的成就显示日期。免费密钥每小时允许 150 次请求：大量成就同步达到上限时会停止并提示，下次会从尚未处理到的游戏开始'
+    en: 'Xbox import no longer needs a Microsoft Azure account. Each person now pastes their own free OpenXBL key (from xbl.io) under Settings → My Profile, and it works from any computer on your network. The import also leaves out apps and phone-only games, files PC games under Windows instead of Xbox One, reads Xbox 360 achievements the right way, and shows no date for a locked achievement. The free key allows 150 requests an hour: a big achievement sync that reaches it stops, says so, and next time starts with the games it had not reached'
   - type: enhancement
     label: 当另一个 RetroAchievements 同步或刷新正在运行时，你再请求的同步或刷新现在会在服务器上排队，并在前一个完成后自动开始，即使你关闭页面或是从另一台设备发起的也一样。每个页面都会显示同一份等待列表，并标出每个任务的排队位置，点击 ✕ 可以移除任务。服务器重启后，仍在等待的任务会在仪表盘中重新提供给你
     en: A RetroAchievements Sync or Refresh you ask for while another one runs now waits on the server and starts by itself when that one finishes, even if you close the page or asked from another device. Every page shows the same waiting list with each job's place in line, and ✕ takes a job out. After a server restart, waiting jobs are offered back on the Dashboard

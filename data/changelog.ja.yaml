@@ -1,6 +1,9 @@
 - version: 4.0.0
   date: '2026-11-09'
   tags:
+  - type: feature
+    label: 'Xbox のインポートに Microsoft Azure アカウントは不要になりました。各ユーザーが自分の無料 OpenXBL キー（xbl.io で取得）を「設定 → マイプロフィール」に貼り付けるだけで、ネットワーク内のどのコンピューターからでも使えます。インポートではアプリとスマートフォン専用ゲームを除外し、PC ゲームを Xbox One ではなく Windows に分類し、Xbox 360 の実績を正しく読み取り、未解除の実績には日付を表示しなくなりました。無料キーで送れるリクエストは1時間に150件までです。大量の実績同期がこの上限に達すると停止してその旨を表示し、次回はまだ処理していないゲームから始めます'
+    en: 'Xbox import no longer needs a Microsoft Azure account. Each person now pastes their own free OpenXBL key (from xbl.io) under Settings → My Profile, and it works from any computer on your network. The import also leaves out apps and phone-only games, files PC games under Windows instead of Xbox One, reads Xbox 360 achievements the right way, and shows no date for a locked achievement. The free key allows 150 requests an hour: a big achievement sync that reaches it stops, says so, and next time starts with the games it had not reached'
   - type: enhancement
     label: 別のRetroAchievementsの同期または更新が実行中に新たに依頼した場合、その依頼はサーバー上で待機し、先の処理が終わると自動的に開始されるようになりました。ページを閉じても、別のデバイスから依頼しても同様です。どのページにも同じ待機リストが表示され、各ジョブの順番がわかります。✕を押すとジョブを取り消せます。サーバーの再起動後、待機中だったジョブはダッシュボードで再開を案内されます
     en: A RetroAchievements Sync or Refresh you ask for while another one runs now waits on the server and starts by itself when that one finishes, even if you close the page or asked from another device. Every page shows the same waiting list with each job's place in line, and ✕ takes a job out. After a server restart, waiting jobs are offered back on the Dashboard

@@ -481,7 +481,7 @@
         <p><em>用於 Steam 遊戲庫匯入和成就追蹤。</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox 認證使用 OAuth2 &mdash; 無需 API 金鑰。直接從 遊戲匯入 &rarr; Xbox 標籤頁用你的 Microsoft 帳戶登入。權杖會自動快取並按需重新整理。</p>
+        <p>Xbox 透過免費服務 OpenXBL 連線到 RetroDB。每個人使用自己的金鑰：用你的 Xbox 帳戶登入 <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a>，複製你的 API 金鑰，然後貼到 設定 &rarr; 我的資料 &rarr; Xbox 中。<strong>儲存&amp;測試連接</strong>會檢查金鑰並顯示你的玩家代號（gamertag）。免費金鑰每小時允許 150 次請求。</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN 使用 NPSSO cookie 認證。詳細設定說明請參見 <a href="#trophies">獎盃</a> 部分。</p>
@@ -1054,15 +1054,13 @@
         </ol>
 
         <h3>Xbox 匯入</h3>
-        <p>透過 Microsoft 帳戶匯入你的 Xbox 遊戲庫。</p>
+        <p>使用你自己的 OpenXBL 金鑰，匯入你玩過的 Xbox 遊戲。</p>
         <ol>
-            <li>進入遊戲匯入 &rarr; <strong>Xbox</strong> 標籤頁</li>
-            <li>點擊<strong>「登入」</strong>以使用你的 Microsoft 帳戶進行身分驗證（OAuth2 流程）</li>
-            <li>系統會自動獲取你的 Xbox 遊戲歷史記錄</li>
-            <li>選擇要匯入的遊戲，並偵測重複項</li>
+            <li>在 設定 &rarr; 我的資料 &rarr; Xbox 中儲存你的 OpenXBL 金鑰（見上文「API 金鑰」）</li>
+            <li>進入遊戲匯入 &rarr; <strong>Xbox</strong> 標籤頁，點擊<strong>取得遊戲庫</strong></li>
+            <li>選擇要匯入的遊戲，並偵測重複項。應用程式和僅限手機的遊戲會被排除。</li>
             <li>匯入的遊戲會標記其 Xbox Title ID 以便追蹤成就</li>
         </ol>
-        <p>Xbox 權杖快取在 <code>data/xbox_tokens.json</code> 中並會自動重新整理。</p>
 
         <h3>PSN 匯入</h3>
         <p>匯入你的 PlayStation Network 遊戲庫。</p>
@@ -1176,7 +1174,7 @@
         <h3>設定</h3>
         <ol>
             <li>透過<strong>遊戲匯入 &rarr; Xbox</strong> 匯入 Xbox 遊戲</li>
-            <li>身分驗證在匯入過程中透過 Xbox OAuth 處理</li>
+            <li>在 設定 &rarr; 我的資料 &rarr; Xbox 中儲存你的 OpenXBL 金鑰</li>
         </ol>
 
         <h3>成就著陸頁</h3>
@@ -1196,6 +1194,7 @@
         <h3>同步</h3>
         <ul>
             <li>同步單款遊戲或批量同步所有 Xbox 遊戲</li>
+            <li>每款遊戲算一次請求，免費 OpenXBL 金鑰每小時允許 150 次。批量同步達到上限時會停止並提示；一小時後再執行，它會從尚未同步的遊戲開始。</li>
             <li>作為後台任務運行，並帶有 toast 通知</li>
             <li>每次同步後遊戲得分總計會自動更新</li>
         </ul>
@@ -1837,10 +1836,10 @@
             <li>只要 Sony 接受你儲存的 NPSSO，RetroDB 就會自動重新登入。一旦 Sony 拒絕它，請在 設定 &rarr; 帳戶 &rarr; PSN 中貼上一個新的。若要替換仍然有效的權杖，請先登出 PlayStation。</li>
         </ul>
 
-        <h4>“Xbox 身份驗證失敗”</h4>
+        <h4>「OpenXBL 不接受此金鑰」</h4>
         <ul>
-            <li>在 遊戲匯入 &rarr; Xbox 標籤頁中點擊“登入”以重新驗證</li>
-            <li>Xbox 令牌快取在 <code>data/xbox_tokens.json</code> 中並會自動重新整理</li>
+            <li>從 <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> 重新複製金鑰，並貼到 設定 &rarr; 我的資料 &rarr; Xbox 中</li>
+            <li>「已達到 OpenXBL 每小時的請求上限」表示此金鑰本小時的 150 次請求已用完；請稍候再試</li>
         </ul>
 
         <h4>“圖片放大錯誤”</h4>

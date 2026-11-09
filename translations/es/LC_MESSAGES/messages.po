@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-09 16:46+0200\n"
+"POT-Creation-Date: 2026-11-09 18:41+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -249,8 +249,8 @@ msgstr "No hay juegos con RetroAchievements en este sistema"
 msgid "Sync already in progress for %(name)s"
 msgstr "Ya hay una sincronización en curso para %(name)s"
 
-#: routes/achievements.py:392 routes/platform_import.py:394
-#: routes/platform_import.py:771 routes/ra_sync.py:146
+#: routes/achievements.py:392 routes/platform_import.py:392
+#: routes/platform_import.py:695 routes/ra_sync.py:146
 msgid "That job belongs to another user"
 msgstr "Esa tarea pertenece a otro usuario"
 
@@ -581,11 +581,11 @@ msgid "A bonus disc links to a main game, one level only"
 msgstr "Un disco extra se vincula a un juego principal, solo un nivel"
 
 #: routes/bonus_discs.py:219 routes/bonus_discs.py:237 routes/games.py:1397
-#: routes/games.py:1427 routes/platform_import.py:357
-#: routes/platform_import.py:736 routes/platform_import.py:1120
+#: routes/games.py:1427 routes/platform_import.py:355
+#: routes/platform_import.py:660 routes/platform_import.py:1044
 #: routes/scrape_logs.py:85 routes/scrape_logs.py:170 routes/scrape_logs.py:183
-#: routes/scrape_logs.py:221 routes/scraper.py:207 routes/scraper.py:538
-#: routes/scraper.py:929 routes/settings.py:319 routes/settings.py:343
+#: routes/scrape_logs.py:221 routes/scraper.py:204 routes/scraper.py:535
+#: routes/scraper.py:926 routes/settings.py:319 routes/settings.py:343
 #: routes/settings.py:431 routes/settings.py:510 routes/settings.py:539
 #: routes/settings.py:583 routes/settings.py:596 routes/settings.py:632
 #: routes/steam_achievements.py:138 routes/systems.py:164 routes/systems.py:367
@@ -860,10 +860,10 @@ msgstr "Error al aplicar los metadatos."
 msgid "No fields to update"
 msgstr "No hay campos que actualizar"
 
-#: routes/games.py:1205 routes/platform_import.py:263
-#: routes/platform_import.py:642 routes/platform_import.py:1006
-#: routes/trophies.py:1921 templates/game_imports.html:579
-#: templates/game_imports.html:842
+#: routes/games.py:1205 routes/platform_import.py:261
+#: routes/platform_import.py:566 routes/platform_import.py:930
+#: routes/trophies.py:1921 templates/game_imports.html:578
+#: templates/game_imports.html:826
 msgid "No games selected"
 msgstr "Ningún juego seleccionado"
 
@@ -1114,7 +1114,7 @@ msgstr "Elige primero una lista de MAME."
 msgid "MAME Names is already running."
 msgstr "MAME Names ya se está ejecutando."
 
-#: routes/museum.py:400 routes/scraper.py:770
+#: routes/museum.py:400 routes/scraper.py:767
 msgid "No AI provider configured"
 msgstr "No hay ningún proveedor de IA configurado"
 
@@ -1177,15 +1177,15 @@ msgstr "Archivo de imagen no encontrado"
 msgid "Background removal failed"
 msgstr "Falló la eliminación del fondo"
 
-#: routes/platform_import.py:195
+#: routes/platform_import.py:193
 msgid "No Steam key yet. Add yours under Settings → My Profile."
 msgstr "Aún no hay clave de Steam. Añade la tuya en Ajustes → Mi perfil."
 
-#: routes/platform_import.py:197
+#: routes/platform_import.py:195
 msgid "No Steam ID yet. Add yours under Settings → My Profile."
 msgstr "Aún no hay ID de Steam. Añade el tuyo en Ajustes → Mi perfil."
 
-#: routes/platform_import.py:203
+#: routes/platform_import.py:201
 #, python-format
 msgid ""
 "Could not resolve Steam vanity URL \"%(steam_id)s\". Use your 17-digit "
@@ -1194,7 +1194,7 @@ msgstr ""
 "No se pudo resolver la URL personalizada de Steam \"%(steam_id)s\". Usa "
 "tu ID de Steam de 17 dígitos en su lugar."
 
-#: routes/platform_import.py:209
+#: routes/platform_import.py:207
 msgid ""
 "No games found. Check that your Steam profile and game details are set to"
 " Public."
@@ -1202,35 +1202,44 @@ msgstr ""
 "No se encontraron juegos. Comprueba que tu perfil de Steam y los detalles"
 " de los juegos estén configurados como Públicos."
 
-#: routes/platform_import.py:268
+#: routes/platform_import.py:266
 msgid "Could not create Windows system entry"
 msgstr "No se pudo crear la entrada del sistema Windows"
 
-#: routes/platform_import.py:412
-msgid "Xbox Client ID not configured. Add it in Settings → API Keys."
+#: routes/platform_import.py:412 templates/settings.html:5120
+msgid "Paste your OpenXBL key first."
+msgstr "Primero pega tu clave de OpenXBL."
+
+#: routes/platform_import.py:417
+msgid "OpenXBL did not accept that key. Copy it again from xbl.io."
+msgstr "OpenXBL no aceptó esa clave. Vuelve a copiarla desde xbl.io."
+
+#: routes/platform_import.py:421 routes/platform_import.py:481
+#: routes/xbox_achievements.py:137
+#, python-format
+msgid "OpenXBL's hourly limit was reached. Try again in %(minutes)s minutes."
 msgstr ""
-"El ID de cliente de Xbox no está configurado. Añádelo en Ajustes → Claves"
-" de API."
+"Se alcanzó el límite por hora de OpenXBL. Inténtalo de nuevo dentro de "
+"%(minutes)s minutos."
 
-#: routes/platform_import.py:550
-msgid "Xbox credentials not configured. Add them in Settings → API Keys."
-msgstr ""
-"Las credenciales de Xbox no están configuradas. Añádelas en Ajustes → "
-"Claves de API."
+#: routes/platform_import.py:423 routes/platform_import.py:483
+msgid "OpenXBL did not answer. Try again later."
+msgstr "OpenXBL no respondió. Inténtalo de nuevo más tarde."
 
-#: routes/platform_import.py:554
-msgid "Xbox authentication failed. Please re-connect your Xbox account."
-msgstr "Falló la autenticación de Xbox. Vuelve a conectar tu cuenta de Xbox."
+#: routes/platform_import.py:475 routes/xbox_achievements.py:123
+#: services/jobs/platform_sync.py:783
+msgid "Add your OpenXBL key in Settings > My Profile first."
+msgstr "Primero añade tu clave de OpenXBL en Ajustes > Mi perfil."
 
-#: routes/platform_import.py:558
+#: routes/platform_import.py:485
 msgid "No games found in Xbox title history."
 msgstr "No se encontraron juegos en el historial de títulos de Xbox."
 
-#: routes/platform_import.py:846
+#: routes/platform_import.py:770
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr "El NPSSO de PSN no está configurado. Añádelo en Ajustes → Claves de API."
 
-#: routes/platform_import.py:873
+#: routes/platform_import.py:797
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr ""
 "No se pudo obtener la lista de juegos de PSN. Prueba a sincronizar "
@@ -1341,63 +1350,63 @@ msgstr "Archivo no encontrado"
 msgid "Log file not found"
 msgstr "Archivo de registro no encontrado"
 
-#: routes/scraper.py:222
+#: routes/scraper.py:219
 #, python-format
 msgid "invalid scraper settings: %(reason)s"
 msgstr "ajustes del scraper no válidos: %(reason)s"
 
-#: routes/scraper.py:283
+#: routes/scraper.py:280
 #, python-format
 msgid "invalid api keys: %(reason)s"
 msgstr "claves de API no válidas: %(reason)s"
 
-#: routes/scraper.py:558
+#: routes/scraper.py:555
 msgid "No TGDB API key configured"
 msgstr "No hay ninguna clave de API de TGDB configurada"
 
-#: routes/scraper.py:655
+#: routes/scraper.py:652
 msgid "No ScreenScraper credentials configured"
 msgstr "No hay credenciales de ScreenScraper configuradas"
 
-#: routes/scraper.py:691
+#: routes/scraper.py:688
 msgid "Invalid JSON response from ScreenScraper"
 msgstr "Respuesta JSON no válida de ScreenScraper"
 
-#: routes/scraper.py:694
+#: routes/scraper.py:691
 msgid "Error parsing API response"
 msgstr "Error al analizar la respuesta de la API"
 
-#: routes/scraper.py:696
+#: routes/scraper.py:693
 #, python-format
 msgid "ScreenScraper answered HTTP %(code)s"
 msgstr "ScreenScraper respondió HTTP %(code)s"
 
-#: routes/scraper.py:711
+#: routes/scraper.py:708
 msgid "No RAWG API key configured"
 msgstr "No hay ninguna clave de API de RAWG configurada"
 
-#: routes/scraper.py:816
+#: routes/scraper.py:813
 #, python-format
 msgid "Unknown AI provider: %(provider)s"
 msgstr "Proveedor de IA desconocido: %(provider)s"
 
-#: routes/scraper.py:819
+#: routes/scraper.py:816
 msgid "No response from AI provider"
 msgstr "Sin respuesta del proveedor de IA"
 
-#: routes/scraper.py:824 routes/scraper.py:825
+#: routes/scraper.py:821 routes/scraper.py:822
 #, python-format
 msgid "%(provider)s refused the API key. Check the key and save it again."
 msgstr "%(provider)s rechazó la clave de API. Revisa la clave y guárdala de nuevo."
 
-#: routes/scraper.py:826
+#: routes/scraper.py:823
 #, python-format
 msgid "%(provider)s wants payment: the account has no credit or billing is off."
 msgstr ""
 "%(provider)s pide un pago: la cuenta no tiene crédito o la facturación "
 "está desactivada."
 
-#: routes/scraper.py:827
+#: routes/scraper.py:824
 #, python-format
 msgid ""
 "%(provider)s says a usage limit is reached. Try again later or check your"
@@ -1406,17 +1415,17 @@ msgstr ""
 "%(provider)s indica que se alcanzó un límite de uso. Inténtalo más tarde "
 "o revisa tu plan."
 
-#: routes/scraper.py:829
+#: routes/scraper.py:826
 #, python-format
 msgid "%(provider)s answered with error %(code)s."
 msgstr "%(provider)s respondió con el error %(code)s."
 
-#: routes/scraper.py:922
+#: routes/scraper.py:919
 #, python-format
 msgid "Connection error: %(error)s"
 msgstr "Error de conexión: %(error)s"
 
-#: routes/scraper.py:925
+#: routes/scraper.py:922
 #, python-format
 msgid "Allowance check not supported for %(scraper)s"
 msgstr "La comprobación de cuota no es compatible con %(scraper)s"
@@ -1722,15 +1731,7 @@ msgstr "Ese juego no está vinculado a otras versiones."
 msgid "The AI did not give a usable answer. Try again later."
 msgstr "La IA no dio una respuesta útil. Inténtalo más tarde."
 
-#: routes/xbox_achievements.py:126 services/jobs/platform_sync.py:798
-msgid "Xbox credentials not configured"
-msgstr "Las credenciales de Xbox no están configuradas"
-
-#: routes/xbox_achievements.py:131
-msgid "Xbox authentication failed — please re-connect your account"
-msgstr "Falló la autenticación de Xbox — vuelve a conectar tu cuenta"
-
-#: routes/xbox_achievements.py:135
+#: routes/xbox_achievements.py:130
 msgid "Game not found or not an Xbox game"
 msgstr "Juego no encontrado o no es un juego de Xbox"
 
@@ -2193,7 +2194,7 @@ msgstr "Falló la solicitud de Rellenar con AI: {error}"
 msgid "AI found no missing fields to fill"
 msgstr "La AI no encontró campos vacíos que rellenar"
 
-#: services/js_i18n_strings.py:591 templates/_settings_tabs/account.html:317
+#: services/js_i18n_strings.py:591 templates/_settings_tabs/account.html:332
 #: templates/archive_scanner.html:726 templates/list_detail.html:47
 #: templates/multi_disc_organizer.html:217 templates/reports.html:369
 #: templates/reports.html:450
@@ -2292,7 +2293,7 @@ msgstr ""
 msgid "Are you sure you want to cancel?"
 msgstr "¿Seguro que quieres cancelar?"
 
-#: services/js_i18n_strings.py:612 templates/settings.html:4927
+#: services/js_i18n_strings.py:612 templates/settings.html:4925
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "¿Seguro que quieres eliminar \"{filename}\"?"
@@ -2383,7 +2384,7 @@ msgstr ""
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:73
-#: templates/_settings_tabs/account.html:412
+#: templates/_settings_tabs/account.html:427
 #: templates/_settings_tabs/customization.html:264
 #: templates/achievement_game.html:178 templates/archive_scanner.html:661
 #: templates/archive_scanner.html:798 templates/base.html:340
@@ -2680,7 +2681,7 @@ msgstr "Valor actual"
 msgid "Default emulator for {system}"
 msgstr "Emulador predeterminado para {system}"
 
-#: services/js_i18n_strings.py:694 templates/settings.html:4927
+#: services/js_i18n_strings.py:694 templates/settings.html:4925
 msgid "Delete Log File"
 msgstr "Eliminar archivo de registro"
 
@@ -2793,7 +2794,7 @@ msgstr "Trucos de DuckStation"
 msgid "DuckStation ignores cheats in hardcore mode."
 msgstr "DuckStation ignora los trucos en modo hardcore."
 
-#: services/js_i18n_strings.py:721 templates/_settings_tabs/account.html:362
+#: services/js_i18n_strings.py:721 templates/_settings_tabs/account.html:377
 #: templates/base.html:1006 templates/game_detail.html:135
 #: templates/wishlist.html:641
 msgid "Edit"
@@ -2833,21 +2834,21 @@ msgstr "Introduce una sola ruta de carpeta."
 #: templates/multi_disc_organizer.html:371 templates/reports.html:1123
 #: templates/reports.html:1126 templates/reports.html:1192
 #: templates/reports.html:1195 templates/rom_tools_settings.html:579
-#: templates/rom_tools_settings.html:582 templates/settings.html:2924
-#: templates/settings.html:2928 templates/settings.html:2947
-#: templates/settings.html:2951 templates/settings.html:3544
-#: templates/settings.html:3548 templates/settings.html:3616
-#: templates/settings.html:3620 templates/settings.html:3651
-#: templates/settings.html:3655 templates/settings.html:3681
-#: templates/settings.html:3685 templates/settings.html:4187
-#: templates/settings.html:4191 templates/settings.html:4209
-#: templates/settings.html:4240 templates/settings.html:4300
-#: templates/settings.html:4304 templates/settings.html:4434
-#: templates/settings.html:4438 templates/settings.html:4464
-#: templates/settings.html:4468 templates/settings.html:4915
-#: templates/settings.html:4918 templates/settings.html:4937
-#: templates/settings.html:4940 templates/settings.html:4955
-#: templates/settings.html:4958
+#: templates/rom_tools_settings.html:582 templates/settings.html:2922
+#: templates/settings.html:2926 templates/settings.html:2945
+#: templates/settings.html:2949 templates/settings.html:3542
+#: templates/settings.html:3546 templates/settings.html:3614
+#: templates/settings.html:3618 templates/settings.html:3649
+#: templates/settings.html:3653 templates/settings.html:3679
+#: templates/settings.html:3683 templates/settings.html:4185
+#: templates/settings.html:4189 templates/settings.html:4207
+#: templates/settings.html:4238 templates/settings.html:4298
+#: templates/settings.html:4302 templates/settings.html:4432
+#: templates/settings.html:4436 templates/settings.html:4462
+#: templates/settings.html:4466 templates/settings.html:4913
+#: templates/settings.html:4916 templates/settings.html:4935
+#: templates/settings.html:4938 templates/settings.html:4953
+#: templates/settings.html:4956
 msgid "Error"
 msgstr "Error"
 
@@ -3682,7 +3683,7 @@ msgstr "Juego anterior"
 msgid "Processing images…"
 msgstr "Procesando imágenes…"
 
-#: services/js_i18n_strings.py:909 templates/game_imports.html:418
+#: services/js_i18n_strings.py:909 templates/game_imports.html:417
 msgid "Processing..."
 msgstr "Procesando..."
 
@@ -3753,9 +3754,9 @@ msgid "Regional name matches"
 msgstr "Coincidencias de nombre regional"
 
 #: services/js_i18n_strings.py:925 templates/_modals/edit_modal.html:386
-#: templates/compare_games.html:24 templates/compare_games.html:40
-#: templates/rom_tools_settings.html:462 templates/rom_tools_settings.html:501
-#: templates/screenshot_review.html:185
+#: templates/_settings_tabs/account.html:228 templates/compare_games.html:24
+#: templates/compare_games.html:40 templates/rom_tools_settings.html:462
+#: templates/rom_tools_settings.html:501 templates/screenshot_review.html:185
 msgid "Remove"
 msgstr "Eliminar"
 
@@ -4470,7 +4471,7 @@ msgstr "Subir"
 msgid "Upload Controller Image"
 msgstr "Subir imagen del mando"
 
-#: services/js_i18n_strings.py:1072 templates/settings.html:5194
+#: services/js_i18n_strings.py:1072 templates/settings.html:5230
 msgid "Upload failed"
 msgstr "La subida falló"
 
@@ -4975,41 +4976,45 @@ msgstr "Ejecuta %(name)s una vez para que cree sus ajustes y vuelve a jugar."
 msgid "The player has no core for this system."
 msgstr "El reproductor no tiene un núcleo para este sistema."
 
-#: services/jobs/platform_sync.py:398 services/jobs/platform_sync.py:707
+#: services/jobs/platform_sync.py:384 services/jobs/platform_sync.py:692
 msgid "Sync already running"
 msgstr "Ya hay una sincronización en curso"
 
-#: services/jobs/platform_sync.py:403
+#: services/jobs/platform_sync.py:389
 msgid "Steam sync is already running on another worker process."
 msgstr ""
 "La sincronización de Steam ya se está ejecutando en otro proceso de "
 "trabajo."
 
-#: services/jobs/platform_sync.py:421 services/jobs/platform_sync.py:730
+#: services/jobs/platform_sync.py:407 services/jobs/platform_sync.py:715
 msgid "No running sync to cancel"
 msgstr "No hay ninguna sincronización en curso que cancelar"
 
-#: services/jobs/platform_sync.py:515
+#: services/jobs/platform_sync.py:501
 msgid "Steam API key or Steam ID not configured"
 msgstr "Clave de API de Steam o ID de Steam sin configurar"
 
-#: services/jobs/platform_sync.py:534
+#: services/jobs/platform_sync.py:520
 msgid "No Steam games found to sync"
 msgstr "No se encontraron juegos de Steam para sincronizar"
 
-#: services/jobs/platform_sync.py:712
+#: services/jobs/platform_sync.py:697
 msgid "Xbox sync is already running on another worker process."
 msgstr ""
 "La sincronización de Xbox ya se está ejecutando en otro proceso de "
 "trabajo."
 
-#: services/jobs/platform_sync.py:807
-msgid "Xbox authentication failed — please re-connect your Xbox account"
-msgstr "Error de autenticación de Xbox: vuelve a conectar tu cuenta de Xbox"
-
-#: services/jobs/platform_sync.py:858
+#: services/jobs/platform_sync.py:844
 msgid "No Xbox games found to sync"
 msgstr "No se encontraron juegos de Xbox para sincronizar"
+
+#: services/jobs/platform_sync.py:887
+msgid ""
+"OpenXBL's hourly limit was reached. Sync again in an hour: it starts with"
+" the games not synced yet."
+msgstr ""
+"Se alcanzó el límite por hora de OpenXBL. Vuelve a sincronizar dentro de "
+"una hora: empezará por los juegos que aún no se han sincronizado."
 
 #: templates/_bulk_edit_modal.html:7
 msgid "Bulk Edit"
@@ -5227,7 +5232,7 @@ msgstr "Más detalles"
 msgid "First Achievement"
 msgstr "Primer logro"
 
-#: templates/_settings_tabs/account.html:357
+#: templates/_settings_tabs/account.html:372
 #: templates/achievement_game.html:233 templates/achievement_game.html:237
 #: templates/local_trophy_detail.html:211
 #: templates/local_trophy_detail.html:215 templates/psn_trophies.html:76
@@ -5402,7 +5407,7 @@ msgstr ""
 
 #: templates/achievements_system.html:184 templates/all_games.html:33
 #: templates/game_imports.html:215 templates/game_imports.html:270
-#: templates/game_imports.html:326 templates/game_imports.html:389
+#: templates/game_imports.html:325 templates/game_imports.html:388
 #: templates/psn_trophies.html:119 templates/steam_achievements.html:72
 #: templates/system_games.html:40 templates/xbox_achievements.html:72
 msgid "Search games..."
@@ -5432,7 +5437,7 @@ msgid "Back to the first game"
 msgstr "Volver al primer juego"
 
 #: templates/achievements_system.html:204 templates/all_games.html:122
-#: templates/game_imports.html:330 templates/game_imports.html:393
+#: templates/game_imports.html:329 templates/game_imports.html:392
 #: templates/hltb_review.html:28 templates/local_trophies.html:102
 #: templates/logs.html:707 templates/psn_trophies.html:129
 #: templates/psn_trophies.html:163 templates/psn_trophies.html:181
@@ -6133,8 +6138,8 @@ msgid "Largest Games"
 msgstr "Juegos más grandes"
 
 #: templates/analytics.html:602 templates/game_imports.html:222
-#: templates/game_imports.html:277 templates/game_imports.html:340
-#: templates/game_imports.html:403
+#: templates/game_imports.html:277 templates/game_imports.html:339
+#: templates/game_imports.html:402
 msgid "Game"
 msgstr "Juego"
 
@@ -6166,7 +6171,7 @@ msgstr "Número de juegos"
 msgid "Critic"
 msgstr "Crítica"
 
-#: templates/_settings_tabs/account.html:312 templates/analytics.html:1965
+#: templates/_settings_tabs/account.html:327 templates/analytics.html:1965
 msgid "User"
 msgstr "Usuario"
 
@@ -6371,13 +6376,13 @@ msgid "Processed"
 msgstr "Procesados"
 
 #: templates/archive_scanner.html:782 templates/game_detail.html:4067
-#: templates/reports.html:492 templates/settings.html:3542
-#: templates/settings.html:4298 templates/settings.html:4952
+#: templates/reports.html:492 templates/settings.html:3540
+#: templates/settings.html:4296 templates/settings.html:4950
 msgid "Success"
 msgstr "Éxito"
 
-#: templates/archive_scanner.html:786 templates/game_imports.html:652
-#: templates/game_imports.html:727 templates/game_imports.html:905
+#: templates/archive_scanner.html:786 templates/game_imports.html:651
+#: templates/game_imports.html:708 templates/game_imports.html:889
 #: templates/reports.html:496 templates/wishlist.html:509
 msgid "Failed"
 msgstr "Fallidos"
@@ -6602,7 +6607,7 @@ msgstr "Correctos: {count}"
 
 #: templates/archive_scanner.html:1569 templates/archive_scanner.html:1574
 #: templates/archive_scanner.html:1742 templates/archive_scanner.html:1748
-#: templates/game_imports.html:596 templates/game_imports.html:856
+#: templates/game_imports.html:595 templates/game_imports.html:840
 #, python-brace-format
 msgid "Failed: {count}"
 msgstr "Fallidos: {count}"
@@ -7772,8 +7777,8 @@ msgstr "Visto"
 
 #: templates/dashboard.html:21 templates/dashboard.html:392
 #: templates/dashboard.html:533 templates/game_imports.html:224
-#: templates/game_imports.html:277 templates/game_imports.html:340
-#: templates/game_imports.html:403
+#: templates/game_imports.html:277 templates/game_imports.html:339
+#: templates/game_imports.html:402
 msgid "Status"
 msgstr "Estado"
 
@@ -7981,7 +7986,7 @@ msgstr "Disponible"
 
 #: templates/dashboard.html:602 templates/dashboard.html:612
 #: templates/dashboard.html:632 templates/dashboard.html:642
-#: templates/game_imports.html:368
+#: templates/game_imports.html:367
 msgid "Checking..."
 msgstr "Comprobando..."
 
@@ -7996,7 +8001,7 @@ msgstr "Desactivado"
 msgid "Not Configured"
 msgstr "No configurado"
 
-#: templates/_settings_tabs/account.html:341 templates/dashboard.html:622
+#: templates/_settings_tabs/account.html:356 templates/dashboard.html:622
 msgid "Configured"
 msgstr "Configurado"
 
@@ -8177,7 +8182,7 @@ msgstr ""
 "Estás usando la contraseña de administrador predeterminada. Por "
 "seguridad, debes establecer una nueva contraseña antes de continuar."
 
-#: templates/_settings_tabs/account.html:254
+#: templates/_settings_tabs/account.html:269
 #: templates/force_change_password.html:20
 msgid "New Password"
 msgstr "Nueva contraseña"
@@ -8269,7 +8274,7 @@ msgstr "Ver manual (PDF)"
 msgid "Delete game from database"
 msgstr "Eliminar juego de la base de datos"
 
-#: templates/_settings_tabs/account.html:364 templates/game_detail.html:150
+#: templates/_settings_tabs/account.html:379 templates/game_detail.html:150
 #: templates/logs.html:735 templates/settings.html:45
 #: templates/wishlist.html:642
 msgid "Delete"
@@ -8813,11 +8818,12 @@ msgstr "No se pudo eliminar la captura de pantalla"
 msgid "Failed to delete screenshot: {error}"
 msgstr "No se pudo eliminar la captura de pantalla: {error}"
 
-#: templates/_settings_tabs/account.html:218 templates/game_imports.html:170
+#: templates/_settings_tabs/account.html:233 templates/game_imports.html:170
 msgid "Steam"
 msgstr "Steam"
 
-#: templates/game_imports.html:173
+#: templates/_settings_tabs/account.html:218
+#: templates/_settings_tabs/scraping.html:419 templates/game_imports.html:173
 msgid "Xbox"
 msgstr "Xbox"
 
@@ -8852,43 +8858,43 @@ msgid "CLZ Library"
 msgstr "Biblioteca de CLZ"
 
 #: templates/game_imports.html:207 templates/game_imports.html:262
-#: templates/game_imports.html:318 templates/game_imports.html:381
+#: templates/game_imports.html:317 templates/game_imports.html:380
 msgid "Total"
 msgstr "Total"
 
 #: templates/game_imports.html:208 templates/game_imports.html:263
-#: templates/game_imports.html:319 templates/game_imports.html:382
+#: templates/game_imports.html:318 templates/game_imports.html:381
 msgid "New"
 msgstr "Nuevos"
 
 #: templates/game_imports.html:209 templates/game_imports.html:264
-#: templates/game_imports.html:320 templates/game_imports.html:383
+#: templates/game_imports.html:319 templates/game_imports.html:382
 msgid "Already Imported"
 msgstr "Ya importados"
 
 #: templates/game_imports.html:213 templates/game_imports.html:268
-#: templates/game_imports.html:324 templates/game_imports.html:387
+#: templates/game_imports.html:323 templates/game_imports.html:386
 msgid "Select All New"
 msgstr "Seleccionar todos los nuevos"
 
 #: templates/game_imports.html:214 templates/game_imports.html:269
-#: templates/game_imports.html:325 templates/game_imports.html:388
+#: templates/game_imports.html:324 templates/game_imports.html:387
 msgid "Deselect All"
 msgstr "Deseleccionar todo"
 
 #: templates/_modals/filter_modal.html:15 templates/game_imports.html:223
-#: templates/game_imports.html:340 templates/game_imports.html:403
+#: templates/game_imports.html:339 templates/game_imports.html:402
 #: templates/psn_trophies.html:153 templates/psn_trophy_detail.html:241
 msgid "Platform"
 msgstr "Plataforma"
 
 #: templates/game_imports.html:230 templates/game_imports.html:283
-#: templates/game_imports.html:346 templates/game_imports.html:409
+#: templates/game_imports.html:345 templates/game_imports.html:408
 msgid "0 games selected"
 msgstr "0 juegos seleccionados"
 
 #: templates/game_imports.html:231 templates/game_imports.html:284
-#: templates/game_imports.html:347 templates/game_imports.html:410
+#: templates/game_imports.html:346 templates/game_imports.html:409
 msgid "Import Selected"
 msgstr "Importar seleccionados"
 
@@ -8915,7 +8921,7 @@ msgstr "Credenciales de Steam"
 msgid "Steam Web API Key"
 msgstr "Clave de API web de Steam"
 
-#: templates/_settings_tabs/account.html:224 templates/game_imports.html:250
+#: templates/_settings_tabs/account.html:239 templates/game_imports.html:250
 msgid "Your Steam Web API Key"
 msgstr "Tu clave de API web de Steam"
 
@@ -8927,8 +8933,8 @@ msgstr "Steam ID o URL personalizada"
 msgid "76561198012345678 or custom URL name"
 msgstr "76561198012345678 o nombre de URL personalizado"
 
-#: templates/game_imports.html:252 templates/game_imports.html:311
-#: templates/game_imports.html:370
+#: templates/game_imports.html:252 templates/game_imports.html:310
+#: templates/game_imports.html:369
 msgid "Fetch Library"
 msgstr "Obtener biblioteca"
 
@@ -8945,61 +8951,57 @@ msgstr "Última vez jugado"
 msgid ""
 "Import your Xbox game library. Games are assigned to their correct Xbox "
 "system.\n"
-"                You need an Azure AD app registration &mdash; configure "
-"credentials in <a href=\"%(settings_url)s\" style=\"color: var(--primary-"
-"cyan);\">Settings &rarr; API Keys</a>."
+"                You need your own free OpenXBL key &mdash; add it in <a "
+"href=\"%(profile_url)s\" style=\"color: var(--primary-cyan);\">Settings "
+"&rarr; My Profile</a>."
 msgstr ""
-"Importa tu biblioteca de juegos de Xbox. Los juegos se asignan a su "
+"Importa tu biblioteca de juegos de Xbox. Cada juego se asigna a su "
 "sistema Xbox correcto.\n"
-"                Necesitas un registro de aplicación de Azure AD &mdash; "
-"configura las credenciales en <a href=\"%(settings_url)s\" style=\"color:"
-" var(--primary-cyan);\">Ajustes &rarr; Claves de API</a>."
+"                Necesitas tu propia clave gratuita de OpenXBL &mdash; "
+"añádela en <a href=\"%(profile_url)s\" style=\"color: var(--primary-"
+"cyan);\">Ajustes &rarr; Mi perfil</a>."
 
 #: templates/game_imports.html:301
 msgid "Xbox Account"
 msgstr "Cuenta de Xbox"
 
-#: templates/game_imports.html:304
+#: templates/game_imports.html:304 templates/game_imports.html:692
 msgid "Not Connected"
 msgstr "No conectado"
 
-#: templates/game_imports.html:304
-msgid "Connect your Xbox account to import games"
-msgstr "Conecta tu cuenta de Xbox para importar juegos"
+#: templates/game_imports.html:304 templates/game_imports.html:693
+msgid "Add your OpenXBL key in Settings > My Profile to import games."
+msgstr "Añade tu clave de OpenXBL en Ajustes > Mi perfil para importar juegos."
 
 #: templates/game_imports.html:306
-msgid "Connect Xbox Account"
-msgstr "Conectar cuenta de Xbox"
+msgid "Xbox key settings"
+msgstr "Ajustes de la clave de Xbox"
 
-#: templates/game_imports.html:307
-msgid "Disconnect"
-msgstr "Desconectar"
-
-#: templates/game_imports.html:316
+#: templates/game_imports.html:315
 msgid "Xbox Library"
 msgstr "Biblioteca de Xbox"
 
-#: templates/game_imports.html:331
+#: templates/game_imports.html:330
 msgid "Xbox 360"
 msgstr "Xbox 360"
 
-#: templates/game_imports.html:332
+#: templates/game_imports.html:331
 msgid "Xbox One"
 msgstr "Xbox One"
 
-#: templates/game_imports.html:333
+#: templates/game_imports.html:332
 msgid "Xbox Series"
 msgstr "Xbox Series"
 
-#: templates/game_imports.html:334
+#: templates/game_imports.html:333
 msgid "PC"
 msgstr "PC"
 
-#: templates/game_imports.html:340 templates/xbox_achievements.html:53
+#: templates/game_imports.html:339 templates/xbox_achievements.html:53
 msgid "Gamerscore"
 msgstr "Gamerscore"
 
-#: templates/game_imports.html:359
+#: templates/game_imports.html:358
 #, python-format
 msgid ""
 "Import your PlayStation game library. Games come from your PSN trophy "
@@ -9020,130 +9022,107 @@ msgstr ""
 "trofeos en la página de <a href=\"%(trophies_url)s\" style=\"color: var"
 "(--primary-cyan);\">Trofeos de PSN</a>."
 
-#: templates/game_imports.html:365
+#: templates/game_imports.html:364
 msgid "PSN Account"
 msgstr "Cuenta de PSN"
 
-#: templates/game_imports.html:379
+#: templates/game_imports.html:378
 msgid "PSN Library"
 msgstr "Biblioteca de PSN"
 
-#: templates/game_imports.html:394
+#: templates/game_imports.html:393
 msgid "PS5"
 msgstr "PS5"
 
-#: templates/game_imports.html:395
+#: templates/game_imports.html:394
 msgid "PS4"
 msgstr "PS4"
 
-#: templates/game_imports.html:396
+#: templates/game_imports.html:395
 msgid "PS3"
 msgstr "PS3"
 
-#: templates/game_imports.html:397
+#: templates/game_imports.html:396
 msgid "PS Vita"
 msgstr "PS Vita"
 
-#: templates/game_imports.html:403 templates/local_trophy_detail.html:123
+#: templates/game_imports.html:402 templates/local_trophy_detail.html:123
 #: templates/psn_trophy_detail.html:114
 msgid "Trophy Progress"
 msgstr "Progreso de trofeos"
 
-#: templates/game_imports.html:528
+#: templates/game_imports.html:527
 msgid "Parse failed"
 msgstr "Error de análisis"
 
-#: templates/game_imports.html:544 templates/game_imports.html:670
+#: templates/game_imports.html:543 templates/game_imports.html:669
 #, python-brace-format
 msgid "Games found: {total} ({existing} already imported)"
 msgstr "Juegos encontrados: {total} ({existing} ya importados)"
 
-#: templates/game_imports.html:594 templates/game_imports.html:853
+#: templates/game_imports.html:593 templates/game_imports.html:837
 #, python-brace-format
 msgid "Imported: {count}"
 msgstr "Importados: {count}"
 
-#: templates/game_imports.html:595 templates/game_imports.html:855
+#: templates/game_imports.html:594 templates/game_imports.html:839
 #, python-brace-format
 msgid "Already in library: {count}"
 msgstr "Ya en la biblioteca: {count}"
 
-#: templates/game_imports.html:597 templates/game_imports.html:858
+#: templates/game_imports.html:596 templates/game_imports.html:842
 msgid "Import complete"
 msgstr "Importación completada"
 
-#: templates/game_imports.html:605 templates/game_imports.html:866
+#: templates/game_imports.html:604 templates/game_imports.html:850
 msgid "Import failed"
 msgstr "Error al importar"
 
-#: templates/game_imports.html:607 templates/game_imports.html:867
+#: templates/game_imports.html:606 templates/game_imports.html:851
 #, python-brace-format
 msgid "Import error: {error}"
 msgstr "Error de importación: {error}"
 
-#: templates/game_imports.html:629
+#: templates/game_imports.html:628
 msgid "Please drop a PDF file"
 msgstr "Suelta un archivo PDF"
 
-#: templates/game_imports.html:707
-msgid "Failed to get auth URL"
-msgstr "No se pudo obtener la URL de autenticación"
-
-#: templates/game_imports.html:708
+#: templates/game_imports.html:687
 #, python-brace-format
-msgid "Failed to connect to Xbox: {error}"
-msgstr "No se pudo conectar con Xbox: {error}"
+msgid "Connected as {name}"
+msgstr "Conectado como {name}"
 
-#: templates/game_imports.html:712
-msgid "Disconnect Xbox"
-msgstr "Desconectar Xbox"
+#: templates/game_imports.html:688
+msgid "Through your OpenXBL key."
+msgstr "Mediante tu clave de OpenXBL."
 
-#: templates/game_imports.html:712
-msgid "Remove your Xbox account connection? You can reconnect later."
-msgstr ""
-"¿Quitar la conexión con tu cuenta de Xbox? Podrás volver a conectarla más"
-" tarde."
-
-#: templates/game_imports.html:713
-msgid "Xbox account disconnected"
-msgstr "Cuenta de Xbox desconectada"
-
-#: templates/game_imports.html:714
-#, python-brace-format
-msgid "Failed to disconnect: {error}"
-msgstr "No se pudo desconectar: {error}"
-
-#: templates/game_imports.html:739
+#: templates/game_imports.html:720
 #, python-brace-format
 msgid "Xbox games found: {total} ({existing} already imported)"
 msgstr "Juegos de Xbox encontrados: {total} ({existing} ya importados)"
 
-#: templates/game_imports.html:762 templates/game_imports.html:770
-#: templates/game_imports.html:776
+#: templates/game_imports.html:722
+#, python-brace-format
+msgid "{count} apps and phone-only titles were left out."
+msgstr "Se omitieron {count} aplicaciones y títulos solo para móvil."
+
+#: templates/game_imports.html:746 templates/game_imports.html:754
+#: templates/game_imports.html:760
 msgid "In your library: link it"
 msgstr "En tu biblioteca: vincúlalo"
 
-#: templates/game_imports.html:854
+#: templates/game_imports.html:838
 msgid "Linked to games in your library"
 msgstr "Vinculado a juegos de tu biblioteca"
 
-#: templates/game_imports.html:857
+#: templates/game_imports.html:841
 msgid "Details are arriving from Steam in the background"
 msgstr "Los detalles llegan desde Steam en segundo plano"
 
-#: templates/game_imports.html:926
+#: templates/game_imports.html:910
 #, python-brace-format
 msgid "PSN games found: {total} ({existing} already imported)"
 msgstr "Juegos de PSN encontrados: {total} ({existing} ya importados)"
-
-#: templates/game_imports.html:999
-msgid "Xbox account connected successfully!"
-msgstr "¡Cuenta de Xbox conectada correctamente!"
-
-#: templates/game_imports.html:1005
-#, python-brace-format
-msgid "Xbox connection failed: {error}"
-msgstr "Error de conexión con Xbox: {error}"
 
 #: templates/help.af.html:11 templates/help.de.html:11
 #: templates/help.es.html:11 templates/help.fr.html:11
@@ -11890,93 +11869,93 @@ msgstr "La clave funciona: %(provider)s respondió usando %(model)s."
 msgid "The key test failed."
 msgstr "La prueba de la clave falló."
 
-#: templates/settings.html:2907
+#: templates/settings.html:2905
 msgid "Invalid Input"
 msgstr "Entrada no válida"
 
-#: templates/settings.html:2907
+#: templates/settings.html:2905
 msgid "Please enter a value"
 msgstr "Introduce un valor"
 
-#: templates/settings.html:2924 templates/settings.html:2928
+#: templates/settings.html:2922 templates/settings.html:2926
 msgid "Failed to add option"
 msgstr "No se pudo añadir la opción"
 
-#: templates/settings.html:2934
+#: templates/settings.html:2932
 msgid "Delete Option"
 msgstr "Eliminar opción"
 
-#: templates/settings.html:2935
+#: templates/settings.html:2933
 msgid "Are you sure you want to delete this option?"
 msgstr "¿Seguro que quieres eliminar esta opción?"
 
-#: templates/settings.html:2947 templates/settings.html:2951
+#: templates/settings.html:2945 templates/settings.html:2949
 msgid "Failed to delete option"
 msgstr "No se pudo eliminar la opción"
 
-#: templates/settings.html:3498 templates/settings.html:4260
+#: templates/settings.html:3496 templates/settings.html:4258
 msgid "Missing Input"
 msgstr "Falta un dato"
 
-#: templates/settings.html:3498 templates/settings.html:4260
+#: templates/settings.html:3496 templates/settings.html:4258
 msgid "Please enter a controller name"
 msgstr "Introduce un nombre para el mando"
 
-#: templates/settings.html:3542
+#: templates/settings.html:3540
 #, python-brace-format
 msgid "Controller \"{name}\" has been added to the library."
 msgstr "El mando \"{name}\" se ha añadido a la biblioteca."
 
-#: templates/settings.html:3544 templates/settings.html:3548
+#: templates/settings.html:3542 templates/settings.html:3546
 msgid "Failed to add controller"
 msgstr "No se pudo añadir el mando"
 
-#: templates/settings.html:3616 templates/settings.html:3620
+#: templates/settings.html:3614 templates/settings.html:3618
 msgid "Failed to set default controller"
 msgstr "No se pudo establecer el mando predeterminado"
 
-#: templates/settings.html:3651 templates/settings.html:3655
+#: templates/settings.html:3649 templates/settings.html:3653
 msgid "Failed to add default controller"
 msgstr "No se pudo añadir el mando predeterminado"
 
-#: templates/settings.html:3681 templates/settings.html:3685
+#: templates/settings.html:3679 templates/settings.html:3683
 msgid "Failed to remove default controller"
 msgstr "No se pudo quitar el mando predeterminado"
 
-#: templates/settings.html:3788
+#: templates/settings.html:3786
 msgid "ALL SYSTEMS"
 msgstr "TODOS LOS SISTEMAS"
 
-#: templates/settings.html:3792
+#: templates/settings.html:3790
 msgid "Clear Scraped Data"
 msgstr "Borrar datos scrapeados"
 
-#: templates/settings.html:3793
+#: templates/settings.html:3791
 #, python-brace-format
 msgid "This will clear all scraped metadata from games in {system}."
 msgstr "Se borrarán todos los metadatos scrapeados de los juegos de {system}."
 
-#: templates/settings.html:3794
+#: templates/settings.html:3792
 msgid "Downloaded images will also be deleted!"
 msgstr "¡Las imágenes descargadas también se eliminarán!"
 
-#: templates/settings.html:3795
+#: templates/settings.html:3793
 msgid "This cannot be undone. Are you sure?"
 msgstr "Esta acción no se puede deshacer. ¿Seguro?"
 
-#: templates/settings.html:3920
+#: templates/settings.html:3918
 msgid "No Files"
 msgstr "Sin archivos"
 
-#: templates/settings.html:3920
+#: templates/settings.html:3918
 msgid "Please scan for orphaned files first."
 msgstr "Primero busca archivos huérfanos."
 
-#: templates/settings.html:3925
+#: templates/settings.html:3923
 msgid "Delete Orphaned Files"
 msgstr "Eliminar archivos huérfanos"
 
-#: templates/settings.html:3926
+#: templates/settings.html:3924
 #, python-brace-format
 msgid ""
 "Orphaned media files to delete permanently: {count}. This action cannot "
@@ -11985,19 +11964,19 @@ msgstr ""
 "Archivos multimedia huérfanos que se eliminarán de forma permanente: "
 "{count}. Esta acción no se puede deshacer.<br><br>¿Continuar?"
 
-#: templates/settings.html:4056
+#: templates/settings.html:4054
 msgid "Nothing to Clear"
 msgstr "Nada que borrar"
 
-#: templates/settings.html:4056
+#: templates/settings.html:4054
 msgid "Please scan for missing media references first."
 msgstr "Primero busca referencias a archivos multimedia que faltan."
 
-#: templates/settings.html:4061
+#: templates/settings.html:4059
 msgid "Clear Missing References"
 msgstr "Borrar referencias que faltan"
 
-#: templates/settings.html:4062
+#: templates/settings.html:4060
 #, python-brace-format
 msgid ""
 "Database references to clear: {count}. They point to media files that no "
@@ -12009,11 +11988,11 @@ msgstr ""
 "pueden volver a descargarlos. Tus juegos no se ven "
 "afectados.<br><br>¿Continuar?"
 
-#: templates/settings.html:4162
+#: templates/settings.html:4160
 msgid "Delete Controller"
 msgstr "Eliminar mando"
 
-#: templates/settings.html:4163
+#: templates/settings.html:4161
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete {name}?<br><br>This will remove it from "
@@ -12022,166 +12001,166 @@ msgstr ""
 "¿Seguro que quieres eliminar {name}?<br><br>Se quitará de la biblioteca y"
 " de los sistemas que lo usen como predeterminado."
 
-#: templates/settings.html:4185
+#: templates/settings.html:4183
 msgid "Deleted"
 msgstr "Eliminado"
 
-#: templates/settings.html:4185
+#: templates/settings.html:4183
 #, python-brace-format
 msgid "Controller \"{name}\" has been removed."
 msgstr "El mando \"{name}\" se ha quitado."
 
-#: templates/settings.html:4187 templates/settings.html:4191
+#: templates/settings.html:4185 templates/settings.html:4189
 msgid "Failed to delete controller"
 msgstr "No se pudo eliminar el mando"
 
-#: templates/settings.html:4209
+#: templates/settings.html:4207
 msgid "Failed to load controller"
 msgstr "No se pudo cargar el mando"
 
-#: templates/settings.html:4240
+#: templates/settings.html:4238
 msgid "Failed to load controller data"
 msgstr "No se pudieron cargar los datos del mando"
 
-#: templates/settings.html:4298
+#: templates/settings.html:4296
 #, python-brace-format
 msgid "Controller \"{name}\" has been updated."
 msgstr "El mando \"{name}\" se ha actualizado."
 
-#: templates/settings.html:4300 templates/settings.html:4304
+#: templates/settings.html:4298 templates/settings.html:4302
 msgid "Failed to update controller"
 msgstr "No se pudo actualizar el mando"
 
-#: templates/settings.html:4431
+#: templates/settings.html:4429
 msgid "Logos Refreshed"
 msgstr "Logotipos actualizados"
 
-#: templates/settings.html:4432
+#: templates/settings.html:4430
 #, python-brace-format
 msgid "System logos updated: {count}. The table has been refreshed."
 msgstr "Logotipos de sistemas actualizados: {count}. La tabla se ha actualizado."
 
-#: templates/settings.html:4434
+#: templates/settings.html:4432
 msgid "Failed to refresh logos"
 msgstr "No se pudieron actualizar los logotipos"
 
-#: templates/settings.html:4438
+#: templates/settings.html:4436
 msgid "Failed to refresh system logos"
 msgstr "No se pudieron actualizar los logotipos de los sistemas"
 
-#: templates/settings.html:4460
+#: templates/settings.html:4458
 msgid "Names Refreshed"
 msgstr "Nombres actualizados"
 
-#: templates/settings.html:4461
+#: templates/settings.html:4459
 #, python-brace-format
 msgid "System names updated: {count}. Click OK to refresh the page."
 msgstr ""
 "Nombres de sistemas actualizados: {count}. Pulsa Aceptar para recargar la"
 " página."
 
-#: templates/settings.html:4464
+#: templates/settings.html:4462
 msgid "Failed to refresh names"
 msgstr "No se pudieron actualizar los nombres"
 
-#: templates/settings.html:4468
+#: templates/settings.html:4466
 msgid "Failed to refresh system names"
 msgstr "No se pudieron actualizar los nombres de los sistemas"
 
-#: templates/settings.html:4911
+#: templates/settings.html:4909
 #, python-brace-format
 msgid "Log: {filename}"
 msgstr "Registro: {filename}"
 
-#: templates/settings.html:4912
+#: templates/settings.html:4910
 msgid "Log file is empty"
 msgstr "El archivo de registro está vacío"
 
-#: templates/settings.html:4915
+#: templates/settings.html:4913
 msgid "Failed to load log file"
 msgstr "No se pudo cargar el archivo de registro"
 
-#: templates/settings.html:4918
+#: templates/settings.html:4916
 #, python-brace-format
 msgid "Error loading log file: {error}"
 msgstr "Error al cargar el archivo de registro: {error}"
 
-#: templates/settings.html:4937
+#: templates/settings.html:4935
 msgid "Failed to delete log file"
 msgstr "No se pudo eliminar el archivo de registro"
 
-#: templates/settings.html:4940
+#: templates/settings.html:4938
 #, python-brace-format
 msgid "Error deleting log file: {error}"
 msgstr "Error al eliminar el archivo de registro: {error}"
 
-#: templates/settings.html:4946
+#: templates/settings.html:4944
 msgid "Clear Old Logs"
 msgstr "Borrar registros antiguos"
 
-#: templates/settings.html:4946
+#: templates/settings.html:4944
 msgid "This will delete all log files older than 5 days. Continue?"
 msgstr ""
 "Se eliminarán todos los archivos de registro con más de 5 días. "
 "¿Continuar?"
 
-#: templates/settings.html:4952
+#: templates/settings.html:4950
 #, python-brace-format
 msgid "Old log files removed: {count}"
 msgstr "Archivos de registro antiguos eliminados: {count}"
 
-#: templates/settings.html:4955
+#: templates/settings.html:4953
 msgid "Failed to clear old logs"
 msgstr "No se pudieron borrar los registros antiguos"
 
-#: templates/settings.html:4958
+#: templates/settings.html:4956
 #, python-brace-format
 msgid "Error clearing old logs: {error}"
 msgstr "Error al borrar los registros antiguos: {error}"
 
-#: templates/settings.html:5003
+#: templates/settings.html:5001
 msgid "Token extracted from the pasted page"
 msgstr "Token extraído de la página pegada"
 
-#: templates/settings.html:5005
+#: templates/settings.html:5003
 msgid "Token detected"
 msgstr "Token detectado"
 
-#: templates/settings.html:5007
+#: templates/settings.html:5005
 msgid "Could not detect a valid NPSSO token"
 msgstr "No se pudo detectar un token NPSSO válido"
 
-#: templates/settings.html:5019
+#: templates/settings.html:5017
 msgid "Now press Ctrl+V to paste."
 msgstr "Ahora pulsa Ctrl+V para pegar."
 
-#: templates/settings.html:5031
+#: templates/settings.html:5029
 msgid "Enter an NPSSO token first"
 msgstr "Introduce primero un token NPSSO"
 
-#: templates/settings.html:5036
+#: templates/settings.html:5034
 msgid "Testing..."
 msgstr "Probando..."
 
-#: templates/settings.html:5037
+#: templates/settings.html:5035 templates/settings.html:5124
 msgid "Saving and connecting..."
 msgstr "Guardando y conectando..."
 
-#: templates/settings.html:5048
+#: templates/settings.html:5046 templates/settings.html:5133
 #, python-format
 msgid "Connected as %(name)s"
 msgstr "Conectado como %(name)s"
 
-#: templates/settings.html:5055
+#: templates/settings.html:5053 templates/settings.html:5137
 msgid "Connection failed"
 msgstr "Error de conexión"
 
-#: templates/settings.html:5058
+#: templates/settings.html:5056 templates/settings.html:5140
 #, python-format
 msgid "Error: %(msg)s"
 msgstr "Error: %(msg)s"
 
-#: templates/settings.html:5077
+#: templates/settings.html:5075
 #, python-format
 msgid ""
 "Sony refused your saved NPSSO token on %(date)s. Get a new one with the "
@@ -12190,7 +12169,7 @@ msgstr ""
 "Sony rechazó tu token NPSSO guardado el %(date)s. Consigue uno nuevo con "
 "los pasos de abajo."
 
-#: templates/settings.html:5080
+#: templates/settings.html:5078
 msgid ""
 "Connected to PSN. RetroDB keeps the sign-in going by itself. You need a "
 "new token only if Sony refuses this one."
@@ -12198,28 +12177,41 @@ msgstr ""
 "Conectado a PSN. RetroDB mantiene la sesión iniciada por sí sola. Solo "
 "necesitas un token nuevo si Sony rechaza este."
 
-#: templates/settings.html:5117
-msgid "Redirect URI copied to clipboard"
-msgstr "URI de redirección copiada al portapapeles"
+#: templates/settings.html:5107
+#, python-format
+msgid "Key saved. Connected as %(name)s."
+msgstr "Clave guardada. Conectado como %(name)s."
 
-#: templates/settings.html:5192 templates/settings.html:5234
+#: templates/settings.html:5108
+msgid "No key saved."
+msgstr "No hay ninguna clave guardada."
+
+#: templates/settings.html:5146
+msgid "Remove Xbox key"
+msgstr "Quitar la clave de Xbox"
+
+#: templates/settings.html:5146
+msgid "Remove your OpenXBL key? Your imported games and achievements stay."
+msgstr "¿Quitar tu clave de OpenXBL? Tus juegos y logros importados se conservan."
+
+#: templates/settings.html:5228 templates/settings.html:5270
 msgid "Avatar updated!"
 msgstr "¡Avatar actualizado!"
 
-#: templates/settings.html:5197
+#: templates/settings.html:5233
 #, python-brace-format
 msgid "Upload failed: {error}"
 msgstr "Error al subir: {error}"
 
-#: templates/settings.html:5211
+#: templates/settings.html:5247
 msgid "Avatar removed"
 msgstr "Avatar quitado"
 
-#: templates/settings.html:5214
+#: templates/settings.html:5250
 msgid "Failed to remove avatar"
 msgstr "No se pudo quitar el avatar"
 
-#: templates/settings.html:5237
+#: templates/settings.html:5273
 msgid "Failed to save avatar"
 msgstr "No se pudo guardar el avatar"
 
@@ -12621,20 +12613,20 @@ msgid "Confirm password"
 msgstr "Confirmar contraseña"
 
 #: templates/_settings_tabs/account.html:6
-#: templates/_settings_tabs/account.html:271
-#: templates/_settings_tabs/account.html:278 templates/setup.html:121
+#: templates/_settings_tabs/account.html:286
+#: templates/_settings_tabs/account.html:293 templates/setup.html:121
 msgid "Timezone"
 msgstr "Zona horaria"
 
-#: templates/_settings_tabs/account.html:280 templates/setup.html:122
+#: templates/_settings_tabs/account.html:295 templates/setup.html:122
 msgid "Search timezones..."
 msgstr "Buscar zonas horarias..."
 
-#: templates/_settings_tabs/account.html:284 templates/setup.html:125
+#: templates/_settings_tabs/account.html:299 templates/setup.html:125
 msgid "Browser detected:"
 msgstr "Detectada por el navegador:"
 
-#: templates/_settings_tabs/account.html:285 templates/setup.html:126
+#: templates/_settings_tabs/account.html:300 templates/setup.html:126
 msgid "Use detected"
 msgstr "Usar la detectada"
 
@@ -14150,10 +14142,30 @@ msgid "Paste here"
 msgstr "Pegar aquí"
 
 #: templates/_settings_tabs/account.html:212
+#: templates/_settings_tabs/account.html:227
 msgid "Save &amp; Test Connection"
 msgstr "Guardar &amp; Probar conexión"
 
 #: templates/_settings_tabs/account.html:220
+msgid ""
+"Xbox reaches RetroDB through OpenXBL, a free service. Sign in at <a "
+"href=\"https://xbl.io\" target=\"_blank\" rel=\"noopener noreferrer\" "
+"style=\"color: var(--primary-cyan);\">xbl.io</a> with your Xbox account, "
+"copy your API key, and paste it here. The free key allows 150 requests an"
+" hour, so a big achievement sync may take more than one go."
+msgstr ""
+"Xbox se conecta con RetroDB a través de OpenXBL, un servicio gratuito. "
+"Inicia sesión en <a href=\"https://xbl.io\" target=\"_blank\" "
+"rel=\"noopener noreferrer\" style=\"color: var(--primary-"
+"cyan);\">xbl.io</a> con tu cuenta de Xbox, copia tu clave de API y pégala"
+" aquí. La clave gratuita permite 150 solicitudes por hora, así que una "
+"sincronización grande de logros puede necesitar más de una vuelta."
+
+#: templates/_settings_tabs/account.html:224
+msgid "Your OpenXBL API key"
+msgstr "Tu clave de API de OpenXBL"
+
+#: templates/_settings_tabs/account.html:235
 msgid ""
 "Add your own Steam key and Steam ID to import your Steam library and "
 "achievements."
@@ -14161,7 +14173,7 @@ msgstr ""
 "Añade tu propia clave y tu ID de Steam para importar tu biblioteca y tus "
 "logros de Steam."
 
-#: templates/_settings_tabs/account.html:227
+#: templates/_settings_tabs/account.html:242
 msgid ""
 "Get your key from <a href=\"https://steamcommunity.com/dev/apikey\" "
 "target=\"_blank\" rel=\"noopener noreferrer\" style=\"color: var"
@@ -14171,11 +14183,11 @@ msgstr ""
 " target=\"_blank\" rel=\"noopener noreferrer\" style=\"color: var"
 "(--primary-cyan);\">página de claves de API de Steam</a>"
 
-#: templates/_settings_tabs/account.html:231
+#: templates/_settings_tabs/account.html:246
 msgid "Your Steam ID"
 msgstr "Tu ID de Steam"
 
-#: templates/_settings_tabs/account.html:235
+#: templates/_settings_tabs/account.html:250
 msgid ""
 "The 17-digit number, not your profile name. Find it at <a "
 "href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener noreferrer\""
@@ -14185,50 +14197,50 @@ msgstr ""
 "href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener noreferrer\""
 " style=\"color: var(--primary-cyan);\">steamid.io</a>"
 
-#: templates/_settings_tabs/account.html:239
+#: templates/_settings_tabs/account.html:254
 msgid "Save My Settings"
 msgstr "Guardar mis ajustes"
 
-#: templates/_settings_tabs/account.html:243
-#: templates/_settings_tabs/account.html:259
+#: templates/_settings_tabs/account.html:258
+#: templates/_settings_tabs/account.html:274
 msgid "Change Password"
 msgstr "Cambiar contraseña"
 
-#: templates/_settings_tabs/account.html:245
+#: templates/_settings_tabs/account.html:260
 msgid "Every account needs a password to log in."
 msgstr "Toda cuenta necesita una contraseña para iniciar sesión."
 
-#: templates/_settings_tabs/account.html:249
+#: templates/_settings_tabs/account.html:264
 msgid "Current Password"
 msgstr "Contraseña actual"
 
-#: templates/_settings_tabs/account.html:250
+#: templates/_settings_tabs/account.html:265
 msgid "Enter current password"
 msgstr "Introduce la contraseña actual"
 
-#: templates/_settings_tabs/account.html:255
+#: templates/_settings_tabs/account.html:270
 msgid "Enter new password"
 msgstr "Introduce la nueva contraseña"
 
-#: templates/_settings_tabs/account.html:263
+#: templates/_settings_tabs/account.html:278
 msgid "Please log in to view your profile settings."
 msgstr "Inicia sesión para ver los ajustes de tu perfil."
 
-#: templates/_settings_tabs/account.html:275
+#: templates/_settings_tabs/account.html:290
 msgid "Set your timezone to ensure all dates and times display correctly."
 msgstr ""
 "Establece tu zona horaria para que todas las fechas y horas se muestren "
 "correctamente."
 
-#: templates/_settings_tabs/account.html:288
+#: templates/_settings_tabs/account.html:303
 msgid "Save Timezone"
 msgstr "Guardar zona horaria"
 
-#: templates/_settings_tabs/account.html:296
+#: templates/_settings_tabs/account.html:311
 msgid "User Management"
 msgstr "Gestión de usuarios"
 
-#: templates/_settings_tabs/account.html:300
+#: templates/_settings_tabs/account.html:315
 msgid ""
 "Manage users who can access RetroDB. Admin users require a password to "
 "login, while Editor and Viewer users can login with a single click."
@@ -14238,82 +14250,82 @@ msgstr ""
 "que los usuarios editores y espectadores pueden iniciar sesión con un "
 "solo clic."
 
-#: templates/_settings_tabs/account.html:305
-#: templates/_settings_tabs/account.html:379
+#: templates/_settings_tabs/account.html:320
+#: templates/_settings_tabs/account.html:394
 msgid "Add User"
 msgstr "Añadir usuario"
 
-#: templates/_settings_tabs/account.html:313
+#: templates/_settings_tabs/account.html:328
 msgid "Role"
 msgstr "Rol"
 
-#: templates/_settings_tabs/account.html:314
+#: templates/_settings_tabs/account.html:329
 msgid "Trophy Path"
 msgstr "Ruta de trofeos"
 
-#: templates/_settings_tabs/account.html:315
+#: templates/_settings_tabs/account.html:330
 msgid "RA Username"
 msgstr "Nombre de usuario de RA"
 
-#: templates/_settings_tabs/account.html:316
+#: templates/_settings_tabs/account.html:331
 msgid "Last Login"
 msgstr "Último inicio de sesión"
 
-#: templates/_settings_tabs/account.html:343
-#: templates/_settings_tabs/account.html:350
+#: templates/_settings_tabs/account.html:358
+#: templates/_settings_tabs/account.html:365
 msgid "Not Set"
 msgstr "Sin establecer"
 
-#: templates/_settings_tabs/account.html:380
+#: templates/_settings_tabs/account.html:395
 msgid "Close user modal"
 msgstr "Cerrar la ventana de usuario"
 
-#: templates/_settings_tabs/account.html:386
+#: templates/_settings_tabs/account.html:401
 msgid "Username *"
 msgstr "Nombre de usuario *"
 
-#: templates/_settings_tabs/account.html:387
+#: templates/_settings_tabs/account.html:402
 msgid "username"
 msgstr "nombre de usuario"
 
-#: templates/_settings_tabs/account.html:391
-#: templates/_settings_tabs/account.html:392
+#: templates/_settings_tabs/account.html:406
+#: templates/_settings_tabs/account.html:407
 msgid "Display Name"
 msgstr "Nombre visible"
 
-#: templates/_settings_tabs/account.html:396
+#: templates/_settings_tabs/account.html:411
 msgid "Role *"
 msgstr "Rol *"
 
-#: templates/_settings_tabs/account.html:398
+#: templates/_settings_tabs/account.html:413
 msgid "Viewer - Read only access"
 msgstr "Espectador: acceso de solo lectura"
 
-#: templates/_settings_tabs/account.html:399
+#: templates/_settings_tabs/account.html:414
 msgid "Player - Can launch and track progress"
 msgstr "Jugador: puede iniciar juegos y seguir su progreso"
 
-#: templates/_settings_tabs/account.html:400
+#: templates/_settings_tabs/account.html:415
 msgid "Editor - Can edit games and scrape"
 msgstr "Editor: puede editar juegos y recopilar datos"
 
-#: templates/_settings_tabs/account.html:401
+#: templates/_settings_tabs/account.html:416
 msgid "Admin - Full access"
 msgstr "Administrador: acceso completo"
 
-#: templates/_settings_tabs/account.html:406
+#: templates/_settings_tabs/account.html:421
 msgid "Reset Password"
 msgstr "Restablecer contraseña"
 
-#: templates/_settings_tabs/account.html:407
+#: templates/_settings_tabs/account.html:422
 msgid "Leave blank to keep current"
 msgstr "Déjalo en blanco para conservar la actual"
 
-#: templates/_settings_tabs/account.html:408
+#: templates/_settings_tabs/account.html:423
 msgid "Only for admin accounts"
 msgstr "Solo para cuentas de administrador"
 
-#: templates/_settings_tabs/account.html:413
+#: templates/_settings_tabs/account.html:428
 msgid "Save User"
 msgstr "Guardar usuario"
 
@@ -14882,27 +14894,26 @@ msgstr ""
 msgid "Default Region"
 msgstr "Región predeterminada"
 
-#: templates/_settings_tabs/scraping.html:428
+#: templates/_settings_tabs/scraping.html:421
+#, python-format
 msgid ""
-"Xbox needs an app registered with Microsoft. Microsoft now asks a "
-"personal account to get a directory first, which can mean signing up for "
-"Azure, and that may ask for a card. Xbox may still refuse an app made "
-"this way: RetroDB has not been able to test one."
+"Each person adds their own free OpenXBL key in <a "
+"href=\"%(profile_url)s\" style=\"color: var(--primary-cyan);\">Settings "
+"&gt; My Profile</a>. Nothing is needed here."
 msgstr ""
-"Xbox necesita una app registrada en Microsoft. Ahora Microsoft pide a una"
-" cuenta personal que obtenga primero un directorio, lo que puede implicar"
-" registrarse en Azure, y eso puede pedir una tarjeta. Xbox aún podría "
-"rechazar una app creada así: RetroDB no ha podido probar ninguna."
+"Cada persona añade su propia clave gratuita de OpenXBL en <a "
+"href=\"%(profile_url)s\" style=\"color: var(--primary-cyan);\">Ajustes "
+"&gt; Mi perfil</a>. Aquí no hace falta nada."
 
-#: templates/_settings_tabs/scraping.html:521
+#: templates/_settings_tabs/scraping.html:438
 msgid "Test saved AI key"
 msgstr "Probar la clave de IA guardada"
 
-#: templates/_settings_tabs/scraping.html:604
+#: templates/_settings_tabs/scraping.html:521
 msgid "Let Claude search the web"
 msgstr "Dejar que Claude busque en la web"
 
-#: templates/_settings_tabs/scraping.html:610
+#: templates/_settings_tabs/scraping.html:527
 msgid ""
 "Without search, Claude answers from what it already knows, and leaves "
 "blank anything that needs a published figure, such as copies sold. With "

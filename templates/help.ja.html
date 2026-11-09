@@ -481,7 +481,7 @@
         <p><em>Steam ライブラリのインポートと実績トラッキングに使用します。</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox 認証は OAuth2 を使用するため、API キーは不要です。ゲームインポート &rarr; Xbox タブから Microsoft アカウントで直接サインインします。トークンは自動でキャッシュされ、必要に応じて更新されます。</p>
+        <p>Xbox は無料サービスの OpenXBL を通じて RetroDB とつながります。キーは各ユーザーが自分のものを使います。<a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> に Xbox アカウントでサインインし、API キーをコピーして、設定 &rarr; マイプロフィール &rarr; Xbox に貼り付けてください。<strong>保存 &amp; 接続テスト</strong> でキーを確認し、ゲーマータグが表示されます。無料キーで送れるリクエストは1時間に150件までです。</p>
 
         <h4>PlayStation Network（PSN）</h4>
         <p>PSN は NPSSO クッキー認証を使用します。詳細な設定手順は<a href="#trophies">トロフィー</a>セクションを参照してください。</p>
@@ -1054,15 +1054,13 @@
         </ol>
 
         <h3>Xbox インポート</h3>
-        <p>Microsoft アカウント経由で Xbox のゲームライブラリをインポートします。</p>
+        <p>プレイしたことのある Xbox ゲームを、自分の OpenXBL キーを使ってインポートします。</p>
         <ol>
-            <li>ゲームインポート &rarr; <strong>Xbox</strong> タブに移動します</li>
-            <li><strong>「サインイン」</strong>をクリックして Microsoft アカウントで認証します（OAuth2 フロー）</li>
-            <li>Xbox のタイトル履歴が自動的に取得されます</li>
-            <li>重複検出付きでインポートするゲームを選択します</li>
+            <li>設定 &rarr; マイプロフィール &rarr; Xbox で OpenXBL キーを保存します（上の API キー設定ガイドを参照）</li>
+            <li>ゲームインポート &rarr; <strong>Xbox</strong> タブに移動し、<strong>ライブラリを取得</strong> をクリックします</li>
+            <li>重複検出付きでインポートするゲームを選択します。アプリとスマートフォン専用ゲームは除外されます。</li>
             <li>インポートしたゲームは実績トラッキング用に Xbox Title ID でタグ付けされます</li>
         </ol>
-        <p>Xbox トークンは <code>data/xbox_tokens.json</code> にキャッシュされ、自動的に更新されます。</p>
 
         <h3>PSN インポート</h3>
         <p>PlayStation Network のゲームライブラリをインポートします。</p>
@@ -1176,7 +1174,7 @@
         <h3>セットアップ</h3>
         <ol>
             <li><strong>ゲームインポート &rarr; Xbox</strong> から Xbox ゲームをインポートします</li>
-            <li>認証はインポート中に Xbox OAuth 経由で処理されます</li>
+            <li>設定 &rarr; マイプロフィール &rarr; Xbox で OpenXBL キーを保存します</li>
         </ol>
 
         <h3>実績ランディングページ</h3>
@@ -1196,6 +1194,7 @@
         <h3>同期</h3>
         <ul>
             <li>単一ゲームの同期またはすべての Xbox ゲームの一括同期</li>
+            <li>1ゲームにつき1リクエストを使い、無料の OpenXBL キーでは1時間に150件まで送れます。一括同期が上限に達すると停止してその旨を表示します。1時間後にもう一度実行すると、まだ同期していないゲームから始まります。</li>
             <li>トースト通知付きでバックグラウンドジョブとして実行されます</li>
             <li>各同期後にゲーマースコアの合計が自動的に更新されます</li>
         </ul>
@@ -1837,10 +1836,10 @@
             <li>Sony が保存済みの NPSSO を受け付けている間は、RetroDB が自動的にサインインし直します。Sony に拒否されたら、「設定 &rarr; アカウント &rarr; PSN」に新しいものを貼り付けてください。まだ有効なトークンを置き換えるには、先に PlayStation からサインアウトしてください。</li>
         </ul>
 
-        <h4>「Xbox 認証に失敗しました」</h4>
+        <h4>「OpenXBL がそのキーを受け付けませんでした」</h4>
         <ul>
-            <li>ゲームインポート &rarr; Xbox タブで「サインイン」をクリックして再認証してください</li>
-            <li>Xbox トークンは <code>data/xbox_tokens.json</code> にキャッシュされ、自動的に更新されます</li>
+            <li><a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> からキーをもう一度コピーし、設定 &rarr; マイプロフィール &rarr; Xbox に貼り付けてください</li>
+            <li>「OpenXBL の1時間あたりの上限に達しました」は、そのキーが今の1時間に150件のリクエストを使い切ったという意味です。しばらく待ってからもう一度お試しください</li>
         </ul>
 
         <h4>「画像アップスケーリングのエラー」</h4>

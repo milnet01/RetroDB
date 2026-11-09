@@ -481,7 +481,7 @@
         <p><em>Gebruikt voor het importeren van de Steam-bibliotheek en prestatieregistratie.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox-authenticatie gebruikt OAuth2 &mdash; er is geen API-sleutel nodig. Meld u rechtstreeks aan met uw Microsoft-account vanaf het tabblad Spelimporten &rarr; Xbox. Tokens worden automatisch gecachet en indien nodig vernieuwd.</p>
+        <p>Xbox bereikt RetroDB via OpenXBL, een gratis dienst. Iedereen gebruikt een eigen sleutel: meld u aan op <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> met uw Xbox-account, kopieer uw API-sleutel en plak die in Instellingen &rarr; Mijn profiel &rarr; Xbox. <strong>Opslaan &amp; verbinding testen</strong> controleert de sleutel en toont uw gamertag. Met de gratis sleutel kunt u 150 verzoeken per uur doen.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN gebruikt authenticatie via een NPSSO-cookie. Zie de sectie <a href="#trophies">Trofeeën</a> voor gedetailleerde instructies.</p>
@@ -1054,15 +1054,13 @@
         </ol>
 
         <h3>Xbox-import</h3>
-        <p>Importeer uw Xbox-spelbibliotheek via uw Microsoft-account.</p>
+        <p>Importeer de Xbox-spellen die u hebt gespeeld, met uw eigen OpenXBL-sleutel.</p>
         <ol>
-            <li>Ga naar Spelimporten &rarr; tabblad <strong>Xbox</strong></li>
-            <li>Klik op <strong>"Aanmelden"</strong> om te verifiëren met uw Microsoft-account (OAuth2-stroom)</li>
-            <li>Uw Xbox-titelgeschiedenis wordt automatisch opgehaald</li>
-            <li>Selecteer spellen om te importeren, met detectie van duplicaten</li>
+            <li>Sla uw OpenXBL-sleutel op in Instellingen &rarr; Mijn profiel &rarr; Xbox (zie API-sleutels hierboven)</li>
+            <li>Ga naar Spelimporten &rarr; tabblad <strong>Xbox</strong> en klik op <strong>Bibliotheek ophalen</strong></li>
+            <li>Selecteer spellen om te importeren, met detectie van duplicaten. Apps en spellen alleen voor telefoon worden weggelaten.</li>
             <li>Geïmporteerde spellen worden getagd met hun Xbox-titel-ID voor prestatieregistratie</li>
         </ol>
-        <p>Xbox-tokens worden gecachet in <code>data/xbox_tokens.json</code> en automatisch vernieuwd.</p>
 
         <h3>PSN-import</h3>
         <p>Importeer uw PlayStation Network-spelbibliotheek.</p>
@@ -1176,7 +1174,7 @@
         <h3>Instellen</h3>
         <ol>
             <li>Importeer Xbox-spellen via <strong>Spelimporten &rarr; Xbox</strong></li>
-            <li>Authenticatie wordt tijdens het importeren via Xbox OAuth afgehandeld</li>
+            <li>Sla uw OpenXBL-sleutel op in Instellingen &rarr; Mijn profiel &rarr; Xbox</li>
         </ol>
 
         <h3>Prestatie-overzichtspagina</h3>
@@ -1196,6 +1194,7 @@
         <h3>Synchroniseren</h3>
         <ul>
             <li>Synchroniseer één spel of alle Xbox-spellen in bulk</li>
+            <li>Elk spel is één verzoek, en de gratis OpenXBL-sleutel staat er 150 per uur toe. Een bulksynchronisatie die de limiet bereikt, stopt en meldt dat; voer hem een uur later opnieuw uit en hij begint met de spellen die nog niet zijn gesynchroniseerd.</li>
             <li>Loopt als achtergrondtaak met meldingen</li>
             <li>Gamerscore-totalen worden na elke synchronisatie automatisch bijgewerkt</li>
         </ul>
@@ -1837,10 +1836,10 @@
             <li>RetroDB meldt zich zelf opnieuw aan zolang Sony uw opgeslagen NPSSO accepteert. Zodra Sony deze weigert, plakt u een nieuwe bij Instellingen &rarr; Account &rarr; PSN. Wilt u een token vervangen dat nog werkt, meld u dan eerst af bij PlayStation.</li>
         </ul>
 
-        <h4>"Xbox Authentication Failed"</h4>
+        <h4>"OpenXBL heeft die sleutel niet geaccepteerd"</h4>
         <ul>
-            <li>Verifieer opnieuw door op "Aanmelden" te klikken op het tabblad Spelimporten &rarr; Xbox</li>
-            <li>Xbox-tokens worden gecachet in <code>data/xbox_tokens.json</code> en automatisch vernieuwd</li>
+            <li>Kopieer de sleutel opnieuw van <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> en plak hem in Instellingen &rarr; Mijn profiel &rarr; Xbox</li>
+            <li>"De uurlimiet van OpenXBL is bereikt" betekent dat de sleutel dit uur zijn 150 verzoeken heeft gebruikt; wacht en probeer het opnieuw</li>
         </ul>
 
         <h4>"Image Upscaling Errors"</h4>

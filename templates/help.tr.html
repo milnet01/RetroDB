@@ -481,7 +481,7 @@
         <p><em>Steam kütüphanesi içe aktarma ve başarım takibi için kullanılır.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox kimlik doğrulaması OAuth2 kullanır &mdash; API anahtarına gerek yoktur. Oyun İçe Aktarma &rarr; Xbox sekmesinden doğrudan Microsoft hesabınızla oturum açın. Belirteçler (token) otomatik olarak önbelleğe alınır ve gerektiğinde yenilenir.</p>
+        <p>Xbox, RetroDB'ye ücretsiz bir hizmet olan OpenXBL üzerinden ulaşır. Herkes kendi anahtarını kullanır: <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> adresinde Xbox hesabınızla oturum açın, API anahtarınızı kopyalayın ve Ayarlar &rarr; Profilim &rarr; Xbox bölümüne yapıştırın. <strong>Kaydet ve Bağlantıyı Test Et</strong> anahtarı denetler ve gamertag'inizi gösterir. Ücretsiz anahtar saatte 150 isteğe izin verir.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN, NPSSO çerez kimlik doğrulaması kullanır. Ayrıntılı kurulum talimatları için <a href="#trophies">Kupalar</a> bölümüne bakın.</p>
@@ -1054,15 +1054,13 @@
         </ol>
 
         <h3>Xbox İçe Aktarma</h3>
-        <p>Xbox oyun kütüphanenizi Microsoft hesabı üzerinden içe aktarın.</p>
+        <p>Oynadığınız Xbox oyunlarını kendi OpenXBL anahtarınızla içe aktarın.</p>
         <ol>
-            <li>Oyun İçe Aktarma &rarr; <strong>Xbox</strong> sekmesine gidin</li>
-            <li>Microsoft hesabınızla kimlik doğrulamak için <strong>"Oturum Aç"</strong> düğmesine tıklayın (OAuth2 akışı)</li>
-            <li>Xbox oyun geçmişiniz otomatik olarak alınır</li>
-            <li>Yinelenen tespitiyle içe aktarılacak oyunları seçin</li>
+            <li>OpenXBL anahtarınızı Ayarlar &rarr; Profilim &rarr; Xbox bölümüne kaydedin (yukarıdaki API Anahtarları bölümüne bakın)</li>
+            <li>Oyun İçe Aktarma &rarr; <strong>Xbox</strong> sekmesine gidin ve <strong>Kütüphaneyi Al</strong> düğmesine tıklayın</li>
+            <li>Yinelenen tespitiyle içe aktarılacak oyunları seçin. Uygulamalar ve yalnızca telefona özel oyunlar dışarıda bırakılır.</li>
             <li>İçe aktarılan oyunlar, başarım takibi için Xbox Title ID'leriyle etiketlenir</li>
         </ol>
-        <p>Xbox belirteçleri <code>data/xbox_tokens.json</code> içinde önbelleğe alınır ve otomatik olarak yenilenir.</p>
 
         <h3>PSN İçe Aktarma</h3>
         <p>PlayStation Network oyun kütüphanenizi içe aktarın.</p>
@@ -1176,7 +1174,7 @@
         <h3>Kurulum</h3>
         <ol>
             <li><strong>Oyun İçe Aktarma &rarr; Xbox</strong> aracılığıyla Xbox oyunlarını içe aktarın</li>
-            <li>Kimlik doğrulama, içe aktarma sırasında Xbox OAuth üzerinden yönetilir</li>
+            <li>OpenXBL anahtarınızı Ayarlar &rarr; Profilim &rarr; Xbox bölümüne kaydedin</li>
         </ol>
 
         <h3>Başarımlar Ana Sayfası</h3>
@@ -1196,6 +1194,7 @@
         <h3>Senkronizasyon</h3>
         <ul>
             <li>Tek bir oyunu senkronize edin veya tüm Xbox oyunlarını toplu senkronize edin</li>
+            <li>Her oyun bir istektir ve ücretsiz OpenXBL anahtarı saatte 150 isteğe izin verir. Sınıra ulaşan toplu senkronizasyon durur ve bunu bildirir; bir saat sonra yeniden çalıştırın, henüz senkronize edilmemiş oyunlardan başlar.</li>
             <li>Toast bildirimleriyle arka plan işi olarak çalışır</li>
             <li>Her senkronizasyondan sonra gamerscore toplamları otomatik olarak güncellenir</li>
         </ul>
@@ -1837,10 +1836,10 @@
             <li>RetroDB, Sony kaydedilmiş NPSSO'nuzu kabul ettiği sürece kendiliğinden yeniden oturum açar. Sony onu reddettiğinde Ayarlar &rarr; Hesap &rarr; PSN bölümüne yenisini yapıştırın. Hâlâ çalışan bir belirteci değiştirmek için önce PlayStation oturumunu kapatın.</li>
         </ul>
 
-        <h4>"Xbox Kimlik Doğrulama Başarısız"</h4>
+        <h4>"OpenXBL bu anahtarı kabul etmedi"</h4>
         <ul>
-            <li>Oyun İçe Aktarma &rarr; Xbox sekmesinde "Oturum Aç" düğmesine tıklayarak yeniden kimlik doğrulaması yapın</li>
-            <li>Xbox belirteçleri <code>data/xbox_tokens.json</code> içinde önbelleğe alınır ve otomatik olarak yenilenir</li>
+            <li>Anahtarı <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> adresinden yeniden kopyalayın ve Ayarlar &rarr; Profilim &rarr; Xbox bölümüne yapıştırın</li>
+            <li>"OpenXBL'in saatlik sınırına ulaşıldı", anahtarın bu saatteki 150 isteğini kullandığı anlamına gelir; bekleyip yeniden deneyin</li>
         </ul>
 
         <h4>"Görsel Büyütme Hataları"</h4>

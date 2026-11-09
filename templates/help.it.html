@@ -481,7 +481,7 @@
         <p><em>Usata per l'importazione della libreria Steam e il monitoraggio degli obiettivi.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>L'autenticazione Xbox usa OAuth2 &mdash; non è necessaria alcuna chiave API. Accedi con il tuo account Microsoft direttamente dalla scheda Importazione giochi &rarr; Xbox. I token vengono memorizzati nella cache automaticamente e aggiornati quando necessario.</p>
+        <p>Xbox arriva a RetroDB tramite OpenXBL, un servizio gratuito. Ognuno usa la propria chiave: accedi a <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> con il tuo account Xbox, copia la tua chiave API e incollala in Impostazioni &rarr; Il mio profilo &rarr; Xbox. <strong>Salva &amp; testa connessione</strong> verifica la chiave e mostra il tuo gamertag. La chiave gratuita consente 150 richieste all'ora.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN usa l'autenticazione tramite cookie NPSSO. Consulta la sezione <a href="#trophies">Trofei</a> per le istruzioni di configurazione dettagliate.</p>
@@ -1054,15 +1054,13 @@
         </ol>
 
         <h3>Importazione Xbox</h3>
-        <p>Importa la tua libreria di giochi Xbox tramite l'account Microsoft.</p>
+        <p>Importa i giochi Xbox a cui hai giocato, usando la tua chiave OpenXBL.</p>
         <ol>
-            <li>Vai su Importazione giochi &rarr; scheda <strong>Xbox</strong></li>
-            <li>Fai clic su <strong>"Accedi"</strong> per autenticarti con il tuo account Microsoft (flusso OAuth2)</li>
-            <li>La cronologia dei titoli Xbox viene recuperata automaticamente</li>
-            <li>Seleziona i giochi da importare con rilevamento dei duplicati</li>
+            <li>Salva la tua chiave OpenXBL in Impostazioni &rarr; Il mio profilo &rarr; Xbox (vedi la guida alle chiavi API qui sopra)</li>
+            <li>Vai su Importazione giochi &rarr; scheda <strong>Xbox</strong> e fai clic su <strong>Recupera libreria</strong></li>
+            <li>Seleziona i giochi da importare con rilevamento dei duplicati. Le app e i giochi solo per telefono vengono esclusi.</li>
             <li>I giochi importati vengono contrassegnati con il loro Xbox Title ID per il monitoraggio degli obiettivi</li>
         </ol>
-        <p>I token Xbox vengono memorizzati nella cache in <code>data/xbox_tokens.json</code> e aggiornati automaticamente.</p>
 
         <h3>Importazione PSN</h3>
         <p>Importa la tua libreria di giochi del PlayStation Network.</p>
@@ -1176,7 +1174,7 @@
         <h3>Configurazione</h3>
         <ol>
             <li>Importa i giochi Xbox tramite <strong>Importazione giochi &rarr; Xbox</strong></li>
-            <li>L'autenticazione è gestita tramite Xbox OAuth durante l'importazione</li>
+            <li>Salva la tua chiave OpenXBL in Impostazioni &rarr; Il mio profilo &rarr; Xbox</li>
         </ol>
 
         <h3>Pagina iniziale degli obiettivi</h3>
@@ -1196,6 +1194,7 @@
         <h3>Sincronizzazione</h3>
         <ul>
             <li>Sincronizza un singolo gioco o sincronizza in blocco tutti i giochi Xbox</li>
+            <li>Ogni gioco è una richiesta, e la chiave OpenXBL gratuita ne consente 150 all'ora. Una sincronizzazione in blocco che raggiunge il limite si ferma e lo segnala; avviala di nuovo un'ora dopo e ripartirà dai giochi non ancora sincronizzati.</li>
             <li>Viene eseguita come processo in background con notifiche toast</li>
             <li>I totali del gamerscore si aggiornano automaticamente dopo ogni sincronizzazione</li>
         </ul>
@@ -1837,10 +1836,10 @@
             <li>RetroDB accede di nuovo da solo finché Sony accetta l'NPSSO salvato. Quando Sony lo rifiuta, incolla un nuovo NPSSO in Impostazioni &rarr; Account &rarr; PSN. Per sostituire un token che funziona ancora, esci prima da PlayStation.</li>
         </ul>
 
-        <h4>"Autenticazione Xbox fallita"</h4>
+        <h4>"OpenXBL non ha accettato quella chiave"</h4>
         <ul>
-            <li>Riautenticati facendo clic su "Accedi" nella scheda Importazione giochi &rarr; Xbox</li>
-            <li>I token Xbox vengono memorizzati nella cache in <code>data/xbox_tokens.json</code> e aggiornati automaticamente</li>
+            <li>Copia di nuovo la chiave da <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> e incollala in Impostazioni &rarr; Il mio profilo &rarr; Xbox</li>
+            <li>"È stato raggiunto il limite orario di OpenXBL" significa che la chiave ha usato le sue 150 richieste di quest'ora; attendi e riprova</li>
         </ul>
 
         <h4>"Errori di upscaling delle immagini"</h4>
