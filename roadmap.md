@@ -11808,6 +11808,22 @@ docs/plans/PASS-59-270-native-app-port.md.
   every language. Website asked to say it at the 4.0.0 release.
 - **Status**: done.
 
+---
+
+#### Pass 59.272 Regroup the roadmap into version blocks and archive finished items (chore, M).
+- **Why**: the user, 2026-11-09: align with roadmap-format.md §3.2
+  (version blocks) and archive what is finished.
+- **Agreed** (user, 2026-11-09): blocks v4.0.0 (last web version, the
+  PASS-59-113 plan), v4.0.x (security and data-loss fixes), v4.x.0
+  (desktop/Android app pieces), v5.0.0 (full desktop release). Open
+  feature ideas outside the 4.0.0 plan go to the desktop app. Finished
+  items move to an archive file, word for word. PASS ids stay.
+- **First**: check which "open" items already shipped (PASS-59-169,
+  PASS-59-142, PASS-59-143, PASS-59-186, PASS-59-227 look done).
+- **Blocked-by**: ANTS-6724 (Ants MCP: convert a pass-headings roadmap
+  to ants-v1, keeping PASS ids). No hand edits: the store reverts them.
+- **Status**: todo.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
