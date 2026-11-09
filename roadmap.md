@@ -11744,8 +11744,13 @@ the cover zoom in Firefox before being reverted for the local fix.
 
 ---
 
-#### Pass 59.268 A RetroAchievements job that is busy says so, instead of claiming it queued (ux, S).
-- **Status**: todo
+#### Pass 59.268 A RetroAchievements job asked for while another runs waits in a real server queue (ux, M).
+- **Resolution** (2026-11-09): Shipped 2026-11-09 as a real server queue (user's choice, 2026-11-09):
+  services/jobs/ra_queue.py, /api/ra-queue, ra_queue in both status
+  replies; the localStorage queue is gone. Test:
+  tests/test_pass59_268_ra_queue.py. Also fixed: the console page's
+  Refresh RA button sent no system id.
+- **Status**: done
 - **Why**: RA sync and refresh routes reply `queued=True` and start
   nothing; the queue lives in this browser's localStorage and runs only
   while a page here polls. Other devices and users never see it.
