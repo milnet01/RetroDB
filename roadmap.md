@@ -11424,6 +11424,15 @@ the cover zoom in Firefox before being reverted for the local fix.
   ~/.local/share/claude-scratch/reviews/RetroDB/review-{code,tests}-2026-11-09/.
   The partition in § Periodic Independent Review is rewritten. Still
   owed: triage the findings into passes (close-findings).
+- **Progress** (2026-11-10): User decisions, 2026-11-10, for the triage: (1) raise --text-muted in
+  the six failing themes and drop the "documented acceptable" note in
+  docs/theme_contrast.md; (2) design standards §11 also promises
+  keyboard use (WCAG 2.1.1) and named controls (4.1.2); (3) brand
+  colours (Steam, Xbox, PSN, rating boards, system badges) become named
+  tokens with a written exemption from "no hard-coded colours". Also
+  decided in the session: the player-profile test gap joins the shipped
+  PASS-59-239 isolation work as a tightening; the CSRF-masked auth tests
+  get one pass with a shared fixture.
 
 ---
 
