@@ -79,9 +79,9 @@ Run a multi-agent independent sweep at one of these triggers (whichever first):
 2. Before any minor version bump (`x.N+1.0`)
 3. After an architectural change touching >3 subsystems
 
-How: see `roadmap.md` §Periodic Independent Review (14-subsystem partition,
-reviewer brief, triage rules). Dispatch all 14 agents in parallel from a single
-message. Surface reports verbatim — don't filter or summarize before the user
+How: see `roadmap.md` §Periodic Independent Review (the lane partition and
+triage rules). Run `review-code` over the source and `review-tests` over
+`tests/`. Surface reports verbatim — don't filter or summarize before the user
 has seen the raw output. Triage into new roadmap passes after.
 
 ### Version Bumping

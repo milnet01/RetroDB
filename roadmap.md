@@ -11402,7 +11402,7 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.251 Finish the audit where it only searched, and update its partition (audit, M).
-- **Status**: todo
+- **Status**: in-progress
 - **Why**: audit 2026-11-04. Lanes 12, 13 and 14 searched patterns more
   than they read; lane 15 skipped `services/emulator_seeder.py`; lane 9
   skipped the `SYSTEM_DEFAULT_CONTROLLER` table; lane 4 skipped lookup
@@ -11416,6 +11416,14 @@ the cover zoom in Firefox before being reverted for the local fix.
     split the oversized JS and template lanes.
   - Triage the new findings into this audit's passes.
 - **Source**: audit 2026-11-04.
+- **Progress** (2026-11-09): 2026-11-09: lanes ran. review-code (20 lanes, JS, templates, CSS,
+  installers, plus the Python files the 2026-11-04 sweep never opened or
+  read in part) found 32 High, 111 Medium and about 258 Low/Info.
+  review-tests (17 lanes over tests/) found 16 High, 62 Medium and 54
+  Low. Reports are kept off the public repo, under
+  ~/.local/share/claude-scratch/reviews/RetroDB/review-{code,tests}-2026-11-09/.
+  The partition in § Periodic Independent Review is rewritten. Still
+  owed: triage the findings into passes (close-findings).
 
 ---
 
@@ -12297,49 +12305,67 @@ Whichever comes first.
 
 ### How to run
 
-The 14-subsystem partition that produced this audit is:
+Run the sweep with the `review-code` skill over the source and the
+`review-tests` skill over `tests/`. Each skill carries its own reviewer
+brief, and each lane reads its files whole. Give it this partition, the
+one the 2026-11-04 and 2026-11-09 sweeps used. Put a new file in the
+lane that owns its subject. Split a lane when its files will not fit one
+careful read; split a big file by concern, on function or block
+boundaries.
 
-1. **Auth & security** — `services/auth.py`, `services/security.py`, `services/log_redactor.py`, `routes/auth.py`
-2. **Database & schema** — `services/database.py`, `database_init.py`
-3. **Scraper orchestration & metadata** — `scraper/scraper_manager.py`, `hybrid_scraper.py`, `metadata_merger.py`, `metadata_normalizer.py`, `match_scorer.py`, `title_normalizer.py`, `scraper_cache.py`, `image_dedup.py`, `services/game_metadata_service.py`
-4. **Per-source scrapers** — `scraper/base_scraper.py`, `scrape_igdb.py`, `scrape_thegamesdb.py`, `scrape_rawg.py`, `scrape_screenscraper.py`, `scrape_esde.py`, `scrape_ai.py`, `retroachievements.py`
-5. **Platform imports** — `routes/platform_import.py`, `steam_achievements.py`, `xbox_achievements.py`, `game_imports.py`, `scraper/scrape_steam.py`, `scrape_xbox.py`
-6. **Image pipeline** — `services/image_utils.py`, `jobs/image_resize.py`, `game_media_service.py`, `media_cleanup.py`
-7. **Background jobs** — `services/jobs/*`
-8. **Game routes & detail/edit** — `routes/games*.py`, `services/game_query.py`, `hltb_service.py`
-9. **Maintenance, settings, systems, reports** — `routes/{systems,maintenance,settings,scraper,bulk_scrape,controllers,reports}.py`, `services/{rom_scanner,game_cleanup,normalization}.py`
-10. **Collections, achievements, trophies, museum** — `routes/{collections,achievements,trophies,collector_trophies,museum,ra_sync,bonus_discs,clz_import,scrape_logs,tools}.py`, `services/{wishlist_scraper,achievement_linking}.py`
-11. **Core app & shared utilities** — `app.py`, `config.py`, `config.example.py`, `services/{api_helpers,template_filters,formatters,game_utils,analytics,assets}.py`
-12. **Frontend JavaScript** — `static/js/*.js` (source files only, skip bundles)
-13. **Templates & CSS** — `templates/**/*.html`, `static/css/**/*.css`
-14. **Tests, tooling, CI/CD** — `tests/`, `build_*.py`, `install*.py`, `scripts/`, `pyproject.toml`, `.semgrep.yml`, `.gitleaks.toml`, `.pre-commit-config.yaml`, `.github/workflows/*`
+**Python**
 
-Each agent gets the same brief, scoped to its subsystem:
+1. **Auth & security** — `services/{auth,security,log_redactor,ssrf,path_browser,platform_tokens,ra_sign_in,ra_standalone}.py`, `routes/auth.py`
+2. **Database & schema** — `services/{database,database_init,atomic_io}.py`, `settings_manager.py`, `services/migrations/**`
+3. **Scraper orchestration & metadata** — `scraper/{scraper_manager,hybrid_scraper,metadata_merger,metadata_normalizer,match_scorer,title_normalizer,scraper_cache,image_dedup,service_limits}.py`, `services/{game_metadata_service,normalization,field_sources,release_dates,version_groups}.py`, including the mapping tables in `normalization.py`
+4. **Per-source scrapers, A** — `scraper/{base_scraper,scrape_igdb,scrape_thegamesdb,scrape_rawg,scrape_screenscraper,ss_regions}.py`, lookup tables included
+5. **Per-source scrapers, B** — `scraper/{scrape_esde,scrape_ai,retroachievements,hltb_lookup}.py`, `services/ai_fill.py`, lookup tables included
+6. **Platform imports** — `routes/{platform_import,steam_achievements,xbox_achievements,game_imports}.py`, `scraper/{scrape_steam,scrape_xbox,trophy_parser}.py`, `services/playtime.py`, `services/jobs/{platform_sync,psn_keepalive,psn_refresh}.py`
+7. **Image pipeline** — `services/{image_utils,game_media_service,media_cleanup,screenshot_fit,box_faces,upscale_queue}.py`, `services/jobs/{image_resize,webp_migrate}.py`
+8. **Background jobs** — every other `services/jobs/*.py`, `services/apply_progress.py`
+9. **Game routes** — `routes/games*.py`, `routes/{versions,ai_fill_bulk}.py`, `services/{game_query,hltb_service,rpcs3_compat}.py`
+10. **Maintenance, settings, systems, reports routes** — `routes/{systems,maintenance,settings,scraper,bulk_scrape,controllers,reports,mame_names}.py`, including the `SYSTEM_DEFAULT_CONTROLLER` table
+11. **ROM scanning & validators** — `services/{rom_scanner,game_cleanup,rom_identity,rom_tools_validators,settings_validators,scraper_settings_validators,mame_names,disc_serial}.py`, `scraper/{scan_roms,rom_tools}.py`
+12. **Collections, museum, imports** — `routes/{collections,museum,bonus_discs,clz_import}.py`, `services/wishlist_scraper.py`
+13. **Achievements, trophies, tools** — `routes/{achievements,trophies,collector_trophies,ra_sync,scrape_logs,tools}.py`, `services/achievement_linking.py`
+14. **Core app** — `app.py`, `config.example.py`, `server_port.py`, `log_manager.py`, `platform_utils.py`
+15. **Shared utilities & i18n** — `services/{api_helpers,template_filters,formatters,game_utils,analytics,assets,i18n,i18n_labels,service_stop_text}.py`
+16. **Launch, cheats, updater** — `updater_apply.py`, `services/{updater,cheats,launch_resolver,player,player_install,retroarch_command}.py`, `routes/{launch,cheats,updates}.py`
+17. **Emulator settings** — `services/launcher/*`, `services/{player_cores,standalone_settings,emulator_adapters,emulator_seeder,disc_files}.py`, `routes/{launch_settings,emulators}.py`
+18. **Worker processes** — `services/{upscale_worker,rembg_worker,gpu_env}.py`
 
-> You are performing an INDEPENDENT code review of ONE subsystem of RetroDB.
-> Project root: `/mnt/Games/Scripts/Linux/RetroDB`.  You do not know what
-> the orchestrator thinks about this code.  Fresh eyes.
->
-> **Scope:** `<paths>` — review ONLY these files.
->
-> **References (treat CLAUDE.md module descriptions as AUTHOR'S CLAIMS, verify against code):**
-> `CLAUDE.md`, `docs/RETRODB_DESIGN_STANDARDS.md`, `docs/STANDARDS_ADDENDUM.md`,
-> `docs/ROM_NAMING_STANDARD.md` (if your subsystem touches ROM paths).
->
-> Answer three questions, with `file:line` refs mandatory on every finding:
-> 1. **Spec alignment** — where does code diverge from docs/CLAUDE.md claims?
-> 2. **Weaknesses** — fragile code, hidden assumptions, race conditions,
->    resource leaks, injection / SSRF / a11y risks, perf traps, surprising
->    behavior.
-> 3. **Gaps** — features/edge cases the spec implies but code doesn't handle.
->
-> Rules: stay in scope; don't read tests or git log to infer intent; no
-> aesthetic refactors; if clean, say so — don't invent findings.
->
-> Output: `## Subsystem: <name>` header, three numbered sections, summary
-> with top-3 priorities. Target 300-600 words.
+**JavaScript and templates** (templates under `templates/`, scripts under `static/js/`)
 
-Dispatch all 14 in parallel (single message, 14 Agent tool calls).
+19. **Core JS** — `utils.js`, `main.js`, `global-search.js`, `theme.js`
+20. **Shell & jobs** — `toast-controller.js`, `launch-indicator.js`, `game-launch.js`, `apply-progress.js`, `updates.js`, `base.html`, `_macros/*`, `_changelog_entries.html`, `changelog.html`
+21. **Game JS & modals** — `game-modals.js`, `game-box-faces.js`, `game-cheats.js`, `game-emulator-settings.js`, `manual-reader.js`, `box-viewer.js`, `versions.js`, `ra-sign-in.js`, `_modals/*`
+22. **Game page** — `game_detail.html` markup and inline script
+23. **Library** — `all-games-controller.js`, `filters.js`, `bulk-scrape.js`, `bulk-edit.js`, `game-list.js`, `ai-fill-bulk.js`, `all_games`, `system_games`, `_bulk_edit_modal`, `_bulk_scrape_modal`, `ai_fill_bulk`, `compare_games`
+24. **Collections pages** — `lists`, `list_detail`, `wishlist`, `tags`, `museum.js`, `museum`, `museum_system`, `versions_review`, `mame_names`, `mame-names.js`
+25. **Settings page** — `settings.html` inline script, `settings-page.js`
+26. **Settings tabs & sign-in** — `_settings_tabs/*`, `settings_emulators.html`, `emulators-settings.js`, `setup`, `login`, `force_change_password`
+27. **ROM tools pages** — `rom-tools.js`, `rom_tools_hub`, `rom_tools_settings`, `archive_scanner`, `chd_verify`, `chd_converter`, `multi_disc_organizer`
+28. **Maintenance pages** — `duplicate_finder`, `screenshot_dedup`, `screenshot_review`, `hltb_review`, `logs.html`, `log-viewer.js`, `game_imports`
+29. **Achievements pages** — `achievements.js`, `achievements_system`, `achievement_game`, `steam_*`, `xbox_*`, `collector_trophies`, `achievements_ra_empty`
+30. **Trophy pages** — `psn_trophies`, `psn_trophy_detail`, `local_trophies`, `local_trophy_detail`
+31. **Analytics & reports** — `analytics.html`, `reports.html`
+32. **Dashboard, systems, help** — `dashboard.html`, `systems.html`, `help.html`
+
+**CSS** (under `static/css/`)
+
+33. **CSS foundation** — `core/*`, `components/*`, `layout/*`, `effects/*`, `utilities.css`
+34. **CSS pages** — `pages/*`, plus the inline style block in `settings.html`
+35. **CSS features** — `features/*`, plus the inline style block in `game_detail.html`
+
+**Tooling**
+
+36. **Build, install, CI** — `build_*.py`, `install.py`, `install_gui.py`, `installer_core.py`, `scripts/`, `pyproject.toml`, `.semgrep.yml`, `.gitleaks.toml`, `.pre-commit-config.yaml`, `.github/workflows/*`
+
+**Tests** go to `review-tests`: `tests/`, whole files, packed in name order.
+
+**Not reviewed:** generated output (`core.bundle.js`, `games.bundle.js`, `main.min.css`, `services/js_i18n_strings.py`), vendored code (`static/js/vendor/`), and the translated help copies (`help.<locale>.html`). `static/css/main.css` is not in `build_css.py`'s `CSS_ORDER`, so nothing builds or loads it.
+
+The harness runs at most 20 helpers at once, so the lanes go in waves.
 
 ### Triage rules
 
