@@ -13,124 +13,13 @@ import config
 from services.database import get_db, query, execute, execute_many
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, admin_required
-from services.game_utils import find_image_file, is_ra_supported, get_ra_supported_systems
+from services.game_utils import (find_image_file, is_ra_supported, get_ra_supported_systems,
+                                 detect_system_type)
 from services.game_query import listed_sql
 
 logger = logging.getLogger(__name__)
 
 bp = Blueprint('systems', __name__)
-
-# =============================================================================
-# SYSTEM TYPE MAPPING
-# =============================================================================
-
-# System type mapping based on folder names
-SYSTEM_TYPE_MAP = {
-    # Consoles
-    'nes': 'Console', 'snes': 'Console', 'n64': 'Console', 'gc': 'Console', 'gamecube': 'Console', 'wii': 'Console', 'wiiu': 'Console',
-    'switch': 'Console', 'genesis': 'Console', 'megadrive': 'Console', 'megadrivejp': 'Console',
-    'mastersystem': 'Console', 'sms': 'Console', 'mark3': 'Console',
-    'saturn': 'Console', 'saturnjp': 'Console', 'dreamcast': 'Console',
-    'segacd': 'Console', 'megacd': 'Console', 'megacdjp': 'Console',
-    'sega32x': 'Console', 'sega32xjp': 'Console', 'sega32xna': 'Console', '32x': 'Console', 'sg-1000': 'Console',
-    'psx': 'Console', 'ps2': 'Console', 'ps3': 'Console', 'ps4': 'Console', 'ps5': 'Console',
-    'xbox': 'Console', 'xbox360': 'Console', 'xboxone': 'Console', 'xboxseriesx': 'Console',
-    'tg16': 'Console', 'tg-cd': 'Console', 'pcengine': 'Console', 'pcenginecd': 'Console', 'supergrafx': 'Console',
-    'pcfx': 'Console',  # NEC PC-FX is a console, not a computer
-    '3do': 'Console', 'jaguar': 'Console', 'jaguarcd': 'Console', 'colecovision': 'Console', 'coleco': 'Console',
-    'intellivision': 'Console', 'channelf': 'Console', 'odyssey2': 'Console', 'videopac': 'Console', 'vectrex': 'Console',
-    'atari2600': 'Console', 'atari5200': 'Console', 'atari7800': 'Console',
-    'neogeo': 'Console', 'neogeocd': 'Console', 'neogeocdjp': 'Console',
-    'fds': 'Console', 'famicom': 'Console', 'superfamicom': 'Console', 'sfc': 'Console',
-    'satellaview': 'Console', 'sufami': 'Console',
-    'virtualboy': 'Console', 'pokemini': 'Console', 'uzebox': 'Console',
-    'supervision': 'Console', 'megaduck': 'Console',
-    'astrocade': 'Console', 'astrocde': 'Console',  # Bally Astrocade (ES-DE uses astrocde)
-    'cdimono1': 'Console', 'cdi': 'Console',  # Philips CD-i
-    'cdtv': 'Console',  # Commodore CDTV
-    'gx4000': 'Console',  # Amstrad GX4000
-    'scv': 'Console',  # Epoch Super Cassette Vision
-    'supracan': 'Console',  # Funtech Super A'Can
-    'multivision': 'Console',  # Othello Multivision
-    'pv1000': 'Console',  # Casio PV-1000
-    'crvision': 'Console',  # VTech CreatiVision
-    'vsmile': 'Console',  # VTech V.Smile
-    'arcadia': 'Console',  # Emerson Arcadia 2001
-
-    # Handhelds
-    'gb': 'Handheld', 'gbc': 'Handheld', 'gba': 'Handheld', 'nds': 'Handheld', '3ds': 'Handheld', 'n3ds': 'Handheld',
-    'psp': 'Handheld', 'vita': 'Handheld', 'psvita': 'Handheld',
-    'gamegear': 'Handheld', 'gg': 'Handheld', 'ngp': 'Handheld', 'ngpc': 'Handheld',
-    'lynx': 'Handheld', 'atarilynx': 'Handheld', 'wonderswan': 'Handheld', 'wonderswancolor': 'Handheld',
-    'wswan': 'Handheld', 'wswanc': 'Handheld',
-    'gw': 'Handheld', 'gameandwatch': 'Handheld',
-    'gp32': 'Handheld', 'gp2x': 'Handheld',  # GamePark handhelds
-    'gamate': 'Handheld',  # Bit Corporation Gamate
-    'gmaster': 'Handheld',  # Hartung Game Master
-    'gamecom': 'Handheld',  # Tiger Game.com
-    'ngage': 'Handheld',  # Nokia N-Gage
-    'arduboy': 'Handheld',  # Arduboy
-    'lcdgames': 'Handheld',  # LCD handheld games
-    'palm': 'Handheld',  # Palm OS
-    'j2me': 'Handheld',  # Java ME mobile
-    'symbian': 'Handheld',  # Symbian mobile
-    'sgb': 'Handheld',  # Super Game Boy
-
-    # Computers
-    'amiga': 'Computer', 'amiga600': 'Computer', 'amiga1200': 'Computer', 'amigacd32': 'Computer',
-    'amstradcpc': 'Computer', 'apple2': 'Computer', 'apple2gs': 'Computer',
-    'atari800': 'Computer', 'atarist': 'Computer', 'atarixe': 'Computer',
-    'c64': 'Computer', 'c128': 'Computer',
-    'coco': 'Computer', 'dos': 'Computer', 'pc': 'Computer', 'pc88': 'Computer', 'pc98': 'Computer',
-    'msx': 'Computer', 'msx1': 'Computer', 'msx2': 'Computer', 'msxturbor': 'Computer',
-    'samcoupe': 'Computer', 'x68000': 'Computer', 'x1': 'Computer',
-    'zxspectrum': 'Computer', 'spectrum': 'Computer', 'zx81': 'Computer', 'zxnext': 'Computer',
-    'electron': 'Computer', 'bbcmicro': 'Computer', 'archimedes': 'Computer', 'atom': 'Computer',
-    'dragon32': 'Computer', 'tanodragon': 'Computer',
-    'ti99': 'Computer', 'trs-80': 'Computer', 'vic20': 'Computer',
-    'sharp': 'Computer', 'fm7': 'Computer', 'fmtowns': 'Computer', 'adam': 'Computer',
-    'pet': 'Computer', 'plus4': 'Computer', 'oric': 'Computer',
-    'thomson': 'Computer', 'to8': 'Computer', 'mo5': 'Computer', 'moto': 'Computer',
-    'macintosh': 'Computer', 'mac': 'Computer',
-    'windows': 'Computer',  # Microsoft Windows
-    'spectravideo': 'Computer',  # Spectravideo SV-3x8
-    'zmachine': 'Computer',  # Z-Machine text adventures
-    # Launchers/platforms (PC-based, not engines)
-    'desktop': 'Computer', 'emulators': 'Computer', 'epic': 'Computer',
-    'kodi': 'Computer', 'lutris': 'Computer', 'mess': 'Computer', 'steam': 'Computer',
-
-    # Engines & Frameworks
-    'ags': 'Engine',  # Adventure Game Studio
-    'chailove': 'Engine',  # ChaiLove framework
-    'doom': 'Engine',  # Doom engine
-    'easyrpg': 'Engine',  # RPG Maker player
-    'flash': 'Engine',  # Flash games
-    'lowresnx': 'Engine',  # LowRes NX fantasy console
-    'lutro': 'Engine',  # Lutro game framework
-    'mugen': 'Engine',  # M.U.G.E.N. engine
-    'openbor': 'Engine',  # OpenBOR engine
-    'pico8': 'Engine',  # PICO-8 fantasy console
-    'tic80': 'Engine',  # TIC-80 fantasy console
-    'wasm4': 'Engine',  # WASM-4 fantasy console
-    'ports': 'Engine',  # Source ports
-    'quake': 'Engine',  # Quake engine
-    'scummvm': 'Engine',  # ScummVM
-    'solarus': 'Engine',  # Solarus engine
-    'vircon32': 'Engine',  # Vircon32 virtual console
-
-    # Arcade
-    'arcade': 'Arcade', 'mame': 'Arcade', 'mame-advmame': 'Arcade', 'fbneo': 'Arcade', 'fba': 'Arcade',
-    'naomi': 'Arcade', 'naomi2': 'Arcade', 'naomigd': 'Arcade', 'atomiswave': 'Arcade',
-    'cps': 'Arcade', 'cps1': 'Arcade', 'cps2': 'Arcade', 'cps3': 'Arcade',
-    'model1': 'Arcade', 'model2': 'Arcade', 'model3': 'Arcade',
-    'sega': 'Arcade', 'segamodel': 'Arcade',
-    'daphne': 'Arcade', 'laserdisc': 'Arcade',
-    'neogeoaes': 'Arcade', 'consolearcade': 'Arcade',
-    'stv': 'Arcade',  # Sega Titan Video
-    'triforce': 'Arcade',  # Nintendo/Sega/Namco arcade
-    'type-x': 'Arcade',  # Taito Type X
-    'vpinball': 'Arcade',  # Virtual Pinball
-}
 
 # =============================================================================
 # HELPER FUNCTIONS
@@ -153,18 +42,7 @@ def update_system_types(cursor, overwrite=False):
     systems = cursor.fetchall()
 
     for system in systems:
-        folder = system['folder'].lower()
-        system_type = SYSTEM_TYPE_MAP.get(folder, None)
-
-        # Try partial matching. Pass 48.5 — only `key in folder` (the folder
-        # name CONTAINS a known system key, e.g. 'snes_eu' → 'snes'). The old
-        # reverse direction `folder in key` mis-typed short folders: 'nes' is a
-        # substring of 'snes', so an NES folder inherited the SNES type.
-        if not system_type:
-            for key, stype in SYSTEM_TYPE_MAP.items():
-                if key in folder:
-                    system_type = stype
-                    break
+        system_type = detect_system_type(system['folder'])
 
         if system_type:
             cursor.execute("UPDATE systems SET system_type = ? WHERE id = ?",

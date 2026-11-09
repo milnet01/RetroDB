@@ -13,79 +13,158 @@ import re
 # CONSTANTS
 # =============================================================================
 
-# Computer systems use Year + Publisher naming in ROM filenames
-# This is a comprehensive list of all computer system folder names
-COMPUTER_SYSTEMS = frozenset({
-    # Commodore
-    'c64', 'c128', 'vic20', 'amiga', 'amiga500', 'amiga600', 'amiga1200', 
-    'amigacd32', 'plus4', 'pet',
-    # Sinclair/ZX
-    'zxspectrum', 'spectrum', 'zx81',
-    # Amstrad
-    'amstradcpc', 'cpc',
-    # MSX
-    'msx', 'msx1', 'msx2', 'msxturbor',
-    # Atari computers
-    'atarist', 'atari800', 'atarixe', 'atari520st', 'atari1040st',
-    # Apple
-    'apple2', 'apple2gs', 'macintosh',
-    # Acorn/BBC
-    'bbcmicro', 'bbc', 'electron', 'archimedes', 'atom',
-    # DOS/PC
-    'dos', 'pc', 'windows',
-    # Tandy/TRS
-    'coco', 'trs-80', 'dragon32',
-    # Texas Instruments
-    'ti99',
-    # Sharp/NEC Japan
-    'x1', 'x68000', 'pc88', 'pc98', 'fm7', 'fmtowns', 'sharp',
-    # Thomson
-    'moto', 'to8', 'mo5',
-    # Other European
-    'oric', 'sam', 'samcoupe', 'spectravideo'
-})
+# The kind of system each folder name is, as the Systems page shows it. The
+# one table: the Systems page's auto-detect fills `systems.system_type` from
+# it, and get_system_type() falls back to it (PASS-59-266).
+SYSTEM_TYPE_MAP = {
+    # Consoles
+    'nes': 'Console', 'snes': 'Console', 'n64': 'Console', 'gc': 'Console', 'gamecube': 'Console', 'wii': 'Console', 'wiiu': 'Console',
+    'switch': 'Console', 'genesis': 'Console', 'megadrive': 'Console', 'megadrivejp': 'Console',
+    'mastersystem': 'Console', 'sms': 'Console', 'mark3': 'Console',
+    'saturn': 'Console', 'saturnjp': 'Console', 'dreamcast': 'Console',
+    'segacd': 'Console', 'megacd': 'Console', 'megacdjp': 'Console',
+    'sega32x': 'Console', 'sega32xjp': 'Console', 'sega32xna': 'Console', '32x': 'Console', 'sg-1000': 'Console',
+    'psx': 'Console', 'ps2': 'Console', 'ps3': 'Console', 'ps4': 'Console', 'ps5': 'Console',
+    'xbox': 'Console', 'xbox360': 'Console', 'xboxone': 'Console', 'xboxseriesx': 'Console',
+    'tg16': 'Console', 'tg-cd': 'Console', 'pcengine': 'Console', 'pcenginecd': 'Console', 'supergrafx': 'Console',
+    'pcfx': 'Console',  # NEC PC-FX is a console, not a computer
+    '3do': 'Console', 'jaguar': 'Console', 'jaguarcd': 'Console', 'colecovision': 'Console', 'coleco': 'Console',
+    'intellivision': 'Console', 'channelf': 'Console', 'odyssey2': 'Console', 'videopac': 'Console', 'vectrex': 'Console',
+    'atari2600': 'Console', 'atari5200': 'Console', 'atari7800': 'Console',
+    'neogeo': 'Console', 'neogeocd': 'Console', 'neogeocdjp': 'Console',
+    'fds': 'Console', 'famicom': 'Console', 'superfamicom': 'Console', 'sfc': 'Console',
+    'satellaview': 'Console', 'sufami': 'Console',
+    'pokemini': 'Console', 'uzebox': 'Console', 'megaduck': 'Console',
+    'astrocade': 'Console', 'astrocde': 'Console',  # Bally Astrocade (ES-DE uses astrocde)
+    'cdimono1': 'Console', 'cdi': 'Console',  # Philips CD-i
+    'cdtv': 'Console',  # Commodore CDTV
+    'gx4000': 'Console',  # Amstrad GX4000
+    'scv': 'Console',  # Epoch Super Cassette Vision
+    'supracan': 'Console',  # Funtech Super A'Can
+    'multivision': 'Console',  # Othello Multivision
+    'pv1000': 'Console',  # Casio PV-1000
+    'crvision': 'Console',  # VTech CreatiVision
+    'vsmile': 'Console',  # VTech V.Smile
+    'arcadia': 'Console',  # Emerson Arcadia 2001
 
-# Handheld systems use Region naming by default (same as consoles)
-HANDHELD_SYSTEMS = frozenset({
-    # Nintendo
-    'gb', 'gbc', 'gba', 'virtualboy', 'nds', 'n3ds',
-    # Sony
-    'psp', 'psvita',
-    # Sega
-    'gamegear', 'gg',
-    # Atari
-    'atarilynx', 'lynx',
-    # SNK
-    'ngp', 'ngpc', 'neogeopocket', 'neogeopocketcolor',
-    # Bandai
-    'wonderswan', 'wonderswancolor', 'swancrystal',
-    # Nokia
-    'ngage',
-    # Tiger
-    'gamecom',
-    # Watara
-    'supervision',
-})
+    # Handhelds
+    'gb': 'Handheld', 'gbc': 'Handheld', 'gba': 'Handheld', 'nds': 'Handheld', '3ds': 'Handheld', 'n3ds': 'Handheld',
+    'psp': 'Handheld', 'vita': 'Handheld', 'psvita': 'Handheld',
+    'gamegear': 'Handheld', 'gg': 'Handheld', 'ngp': 'Handheld', 'ngpc': 'Handheld',
+    'lynx': 'Handheld', 'atarilynx': 'Handheld', 'wonderswan': 'Handheld', 'wonderswancolor': 'Handheld',
+    'wswan': 'Handheld', 'wswanc': 'Handheld',
+    'gw': 'Handheld', 'gameandwatch': 'Handheld',
+    'gp32': 'Handheld', 'gp2x': 'Handheld',  # GamePark handhelds
+    'gamate': 'Handheld',  # Bit Corporation Gamate
+    'gmaster': 'Handheld',  # Hartung Game Master
+    'gamecom': 'Handheld',  # Tiger Game.com
+    'ngage': 'Handheld',  # Nokia N-Gage
+    'arduboy': 'Handheld',  # Arduboy
+    'lcdgames': 'Handheld',  # LCD handheld games
+    'palm': 'Handheld',  # Palm OS
+    'j2me': 'Handheld',  # Java ME mobile
+    'symbian': 'Handheld',  # Symbian mobile
+    'sgb': 'Handheld',  # Super Game Boy
+    'virtualboy': 'Handheld', 'supervision': 'Handheld',
+    'neogeopocket': 'Handheld', 'neogeopocketcolor': 'Handheld', 'swancrystal': 'Handheld',
+
+    # Computers
+    'amiga': 'Computer', 'amiga500': 'Computer', 'amiga600': 'Computer', 'amiga1200': 'Computer', 'amigacd32': 'Computer',
+    'amstradcpc': 'Computer', 'cpc': 'Computer', 'apple2': 'Computer', 'apple2gs': 'Computer',
+    'atari800': 'Computer', 'atarist': 'Computer', 'atarixe': 'Computer',
+    'atari520st': 'Computer', 'atari1040st': 'Computer',
+    'c64': 'Computer', 'c128': 'Computer',
+    'coco': 'Computer', 'dos': 'Computer', 'pc': 'Computer', 'pc88': 'Computer', 'pc98': 'Computer',
+    'msx': 'Computer', 'msx1': 'Computer', 'msx2': 'Computer', 'msxturbor': 'Computer',
+    'samcoupe': 'Computer', 'sam': 'Computer', 'x68000': 'Computer', 'x1': 'Computer',
+    'zxspectrum': 'Computer', 'spectrum': 'Computer', 'zx81': 'Computer', 'zxnext': 'Computer',
+    'electron': 'Computer', 'bbcmicro': 'Computer', 'bbc': 'Computer', 'archimedes': 'Computer', 'atom': 'Computer',
+    'dragon32': 'Computer', 'tanodragon': 'Computer',
+    'ti99': 'Computer', 'trs-80': 'Computer', 'vic20': 'Computer',
+    'sharp': 'Computer', 'fm7': 'Computer', 'fmtowns': 'Computer', 'adam': 'Computer',
+    'pet': 'Computer', 'plus4': 'Computer', 'oric': 'Computer',
+    'thomson': 'Computer', 'to8': 'Computer', 'mo5': 'Computer', 'moto': 'Computer',
+    'macintosh': 'Computer', 'mac': 'Computer',
+    'windows': 'Computer',  # Microsoft Windows
+    'spectravideo': 'Computer',  # Spectravideo SV-3x8
+    'zmachine': 'Computer',  # Z-Machine text adventures
+    # Launchers/platforms (PC-based, not engines)
+    'desktop': 'Computer', 'emulators': 'Computer', 'epic': 'Computer',
+    'kodi': 'Computer', 'lutris': 'Computer', 'mess': 'Computer', 'steam': 'Computer',
+
+    # Engines & Frameworks
+    'ags': 'Engine',  # Adventure Game Studio
+    'chailove': 'Engine',  # ChaiLove framework
+    'doom': 'Engine',  # Doom engine
+    'easyrpg': 'Engine',  # RPG Maker player
+    'flash': 'Engine',  # Flash games
+    'lowresnx': 'Engine',  # LowRes NX fantasy console
+    'lutro': 'Engine',  # Lutro game framework
+    'mugen': 'Engine',  # M.U.G.E.N. engine
+    'openbor': 'Engine',  # OpenBOR engine
+    'pico8': 'Engine',  # PICO-8 fantasy console
+    'tic80': 'Engine',  # TIC-80 fantasy console
+    'wasm4': 'Engine',  # WASM-4 fantasy console
+    'ports': 'Engine',  # Source ports
+    'quake': 'Engine',  # Quake engine
+    'scummvm': 'Engine',  # ScummVM
+    'solarus': 'Engine',  # Solarus engine
+    'vircon32': 'Engine',  # Vircon32 virtual console
+
+    # Arcade
+    'arcade': 'Arcade', 'mame': 'Arcade', 'mame-advmame': 'Arcade', 'fbneo': 'Arcade', 'fba': 'Arcade',
+    'naomi': 'Arcade', 'naomi2': 'Arcade', 'naomigd': 'Arcade', 'atomiswave': 'Arcade',
+    'cps': 'Arcade', 'cps1': 'Arcade', 'cps2': 'Arcade', 'cps3': 'Arcade',
+    'model1': 'Arcade', 'model2': 'Arcade', 'model3': 'Arcade',
+    'sega': 'Arcade', 'segamodel': 'Arcade',
+    'daphne': 'Arcade', 'laserdisc': 'Arcade',
+    'neogeoaes': 'Arcade', 'consolearcade': 'Arcade',
+    'stv': 'Arcade',  # Sega Titan Video
+    'triforce': 'Arcade',  # Nintendo/Sega/Namco arcade
+    'type-x': 'Arcade',  # Taito Type X
+    'vpinball': 'Arcade',  # Virtual Pinball
+}
+
+# Computer systems use Year + Publisher naming in ROM filenames.
+COMPUTER_SYSTEMS = frozenset(f for f, t in SYSTEM_TYPE_MAP.items() if t == 'Computer')
+# Handheld systems use Region naming by default (same as consoles).
+HANDHELD_SYSTEMS = frozenset(f for f, t in SYSTEM_TYPE_MAP.items() if t == 'Handheld')
+# Engine systems: game engines, frameworks and fantasy consoles.
+ENGINE_SYSTEMS = frozenset(f for f, t in SYSTEM_TYPE_MAP.items() if t == 'Engine')
+
+# The kinds that have their own ROM naming row in Settings.
+_NAMING_TYPES = ('console', 'handheld', 'computer', 'engine')
 
 
-# Engine systems — game engines, frameworks, and fantasy consoles
-ENGINE_SYSTEMS = frozenset({
-    'ags', 'chailove', 'doom', 'easyrpg', 'flash', 'lowresnx', 'lutro',
-    'mugen', 'openbor', 'pico8', 'tic80', 'wasm4',
-    'ports', 'quake', 'scummvm', 'solarus', 'vircon32',
-})
+def detect_system_type(system_folder):
+    """The kind of system a folder name is ('Console', 'Handheld', 'Computer',
+    'Engine', 'Arcade'), or None when nothing matches.
+
+    Falls back to a folder that contains a known name ('snes_eu' -> 'snes').
+    Pass 48.5: never the reverse, or 'nes' would match inside 'snes'."""
+    folder = (system_folder or '').lower().strip()
+    if folder in SYSTEM_TYPE_MAP:
+        return SYSTEM_TYPE_MAP[folder]
+    for key, stype in SYSTEM_TYPE_MAP.items():
+        if key in folder:
+            return stype
+    return None
 
 
 def get_system_type(system_folder):
-    """Return 'computer', 'handheld', 'engine', or 'console' for a system folder name."""
-    folder = system_folder.lower().strip()
-    if folder in COMPUTER_SYSTEMS:
-        return 'computer'
-    if folder in HANDHELD_SYSTEMS:
-        return 'handheld'
-    if folder in ENGINE_SYSTEMS:
-        return 'engine'
-    return 'console'
+    """Return the naming kind of a system: 'computer', 'handheld', 'engine'
+    or 'console'.
+
+    The type set on the Systems page wins; then the folder table. Arcade and
+    anything unknown use the console row (PASS-59-266)."""
+    from services.database import query
+    row = query("SELECT system_type FROM systems WHERE folder = ? COLLATE NOCASE",
+                ((system_folder or '').strip(),), one=True)
+    stored = ((row or {}).get('system_type') or '').strip().lower()
+    if stored in _NAMING_TYPES:
+        return stored
+    detected = (detect_system_type(system_folder) or '').lower()
+    return detected if detected in _NAMING_TYPES else 'console'
 
 
 _REGION_WORDS = (r'USA|Europe|Japan|World|Germany|France|Spain|Italy|Australia|Brazil'
