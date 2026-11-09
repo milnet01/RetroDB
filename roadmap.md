@@ -11906,6 +11906,20 @@ docs/plans/PASS-59-270-native-app-port.md.
   it, then (c) the earliest tag containing a commit citing it; unknown
   goes to a "Shipped, version not known" archive block. Scratch-run
   counts come to RetroDB before any real convert.
+- **Progress** (2026-11-10): ants-terminal reported ANTS-6725 option 2 shipped
+  (commit_evidence:false); the convert is ready. Order, all in one
+  session after /mcp reconnects (session_orient server_build 0e6e5bdb or
+  5b24a45d): (1) project_settings: set id_format, prefix PASS, pattern
+  PASS-\d+(?:-\d+)*(?:-[A-Z])?. (2) roadmap_migrate convert: dry run,
+  then real (it snapshots the store first). (3) roadmap_log
+  op:"place_by_release" dry_run:true, unknown_section:"Shipped, version
+  not known", commit_evidence:false. (4) Apply with its plan_id in the
+  same session; a plan does not survive a server restart. Expected from
+  its scratch run: placed 117, moved to "Shipped, version not known"
+  213, unreleased 34 (likely 35 now: c084e5de shipped PASS-59-251 with
+  no tag yet), 10 status-vs-changelog disagreements (status wins). If
+  counts differ otherwise, send them to ants-terminal. Full scratch
+  JSON: /mnt/Games/tmp/ants-6725-proto/pbr-retrodb-nocommit.json.
 
 ---
 
