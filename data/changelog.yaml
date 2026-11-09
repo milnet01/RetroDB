@@ -1,6 +1,8 @@
 - version: 4.0.0
   date: 2026-11-09
   tags:
+  - type: fix
+    label: 'The ROM naming check now treats each system as the kind the Systems page shows. Macintosh, ZX Spectrum Next, Coleco Adam and Thomson are checked as computers, and 3DS and PS Vita as handhelds, instead of as consoles. A type you set on the Systems page is now followed too'
   - type: performance
     label: 'RetroDB uses far less memory while it waits. The AI image upscaler now loads only while it is upscaling, in a helper that closes two minutes after its last picture; an idle server dropped from about 1.4 GB to under 100 MB. If the graphics driver crashes during an upscale, only the helper stops, never the server'
   - type: performance
