@@ -11717,7 +11717,10 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.266 One answer to which kind a system is, for the ROM naming check (fix, S).
-- **Status**: todo
+- **Resolution** (2026-11-09): Shipped 2026-11-09: SYSTEM_TYPE_MAP moved to services/game_utils.py as
+  the one table; get_system_type() reads systems.system_type first.
+  Test: tests/test_pass59_266_system_type.py.
+- **Status**: done
 - **Why**: `game_utils.get_system_type` and `routes/systems.py`
   `SYSTEM_TYPE_MAP` disagree on many folders (3ds, vita, thomson, mac,
   zxnext, adam, virtualboy...). The naming report uses the first, so a
