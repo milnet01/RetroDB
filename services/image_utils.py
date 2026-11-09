@@ -71,7 +71,7 @@ _gpu_thread = None
 # PASS-59-63 — upper bound on one GPU call (a 256px tile, or the warm-up run
 # with MIOpen benchmarking). A wedged ROCm session otherwise blocks the
 # calling thread forever; the TimeoutError trips the circuit breaker in
-# `_upscale_image` (or the warm-up fallback), which moves to CPU.
+# `_enhance_local` (or the warm-up fallback), which moves to CPU.
 _GPU_RUN_TIMEOUT = 120
 
 
@@ -342,7 +342,16 @@ class _OnnxUpscaler:
 
 
 def _get_upscaler():
-    """Return the Real-ESRGAN ONNX upscaler singleton, or None if unavailable."""
+    """The upscaler the server uses: a stand-in that sends each image to the
+    upscale helper process (PASS-59-269), or None when onnxruntime is not
+    installed. Tests replace this to keep the helper from starting."""
+    from services import upscale_worker
+    return upscale_worker.get()
+
+
+def _get_local_upscaler():
+    """Return the Real-ESRGAN ONNX upscaler singleton, or None if unavailable.
+    Only the upscale helper process loads it (services/upscale_worker.py)."""
     global _upscaler, _upscaler_checked
     if _upscaler_checked:
         return _upscaler
@@ -354,6 +363,36 @@ def _get_upscaler():
         _init_upscaler(allow_gpu=not _gpu_failed)
         _upscaler_checked = True
     return _upscaler
+
+
+def _enhance_local(img_np):
+    """Upscale one RGB array 4x with the local upscaler: the upscale helper's
+    side. Returns None when the image is over the tile cap. A GPU failure
+    trips the one-way breaker (rebuild on CPU) and re-raises, so this image
+    uses Lanczos."""
+    global _gpu_failed, _upscaler, _upscaler_checked, _gpu_queue, _gpu_thread
+    upscaler = _get_local_upscaler()
+    try:
+        return upscaler.enhance(img_np, outscale=4)[0]
+    except Exception as e:
+        if upscaler._gpu and not _gpu_failed:
+            with _upscaler_lock:
+                if not _gpu_failed:  # Double-check under lock
+                    # Circuit breaker: GPU failed, rebuild session with CPU-only
+                    _gpu_failed = True
+                    _upscaler_checked = False
+                    _upscaler = None
+                    # Stop the dedicated GPU thread
+                    if _gpu_queue is not None:
+                        _gpu_queue.put(None)
+                        _gpu_queue = None
+                        _gpu_thread = None
+                    logger.warning(f"Real-ESRGAN GPU inference failed — switching to CPU for all future upscales: {e}")
+                    _init_upscaler(allow_gpu=False)
+                    _upscaler_checked = True
+        elif _gpu_failed:
+            logger.info(f"Real-ESRGAN upscale ended by the switch to CPU: {e}")
+        raise
 
 
 # Repair script surfaced when a GPU provider was requested but silently fell
@@ -961,27 +1000,7 @@ def _upscale_image(img, image_type, target, preserve_rgba):
             img = Image.fromarray(output)
 
     except Exception as e:
-        global _gpu_failed, _upscaler, _upscaler_checked, _gpu_queue, _gpu_thread
-        if upscaler._gpu and not _gpu_failed:
-            with _upscaler_lock:
-                if not _gpu_failed:  # Double-check under lock
-                    # Circuit breaker: GPU failed, rebuild session with CPU-only
-                    _gpu_failed = True
-                    _upscaler_checked = False
-                    _upscaler = None
-                    # Stop the dedicated GPU thread
-                    if _gpu_queue is not None:
-                        _gpu_queue.put(None)
-                        _gpu_queue = None
-                        _gpu_thread = None
-                    logger.warning(f"Real-ESRGAN GPU inference failed — switching to CPU for all future upscales: {e}")
-                    # Re-init with CPU-only
-                    _init_upscaler(allow_gpu=False)
-                    _upscaler_checked = True
-        elif not _gpu_failed:
-            logger.warning(f"Real-ESRGAN upscale failed, falling back to Lanczos: {e}")
-        else:
-            logger.info(f"Real-ESRGAN upscale ended by the switch to CPU; Lanczos used for this image: {e}")
+        logger.warning(f"Real-ESRGAN upscale failed, falling back to Lanczos: {e}")
         # img is still the original or partially processed — Lanczos resize anyway
 
     # Now resize to exact target

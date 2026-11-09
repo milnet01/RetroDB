@@ -55,6 +55,13 @@ if os.path.exists('/dev/kfd'):
         del _glob
     del _miopen_cache, _apply_rdna2_override
 
+if len(sys.argv) > 1 and sys.argv[1] == '--upscale-worker':
+    # PASS-59-269 — the AI upscaler runs in this helper process, started by
+    # services/upscale_worker.py. It needs the ROCm variables above, and must
+    # not run the rest of this module, which opens and migrates the database.
+    from services import upscale_worker
+    upscale_worker.child_main(sys.argv[1:])
+
 # Import configuration
 import config
 
@@ -2034,24 +2041,6 @@ if __name__ == '__main__':
     if is_reloader_process or not config.DEBUG_MODE:
         log_manager.setup_all_logging()
         logger.info("File-based logging initialized")
-
-    # Eager GPU warm-up on main thread — MIOpen handles are NOT thread-safe,
-    # so the find/benchmark phase must complete here before Flask worker
-    # threads try to run inference.  Only in the reloader child process
-    # (the one that actually serves requests).
-    if is_reloader_process or not config.DEBUG_MODE:
-        try:
-            from services.image_utils import _get_upscaler
-            _get_upscaler()  # triggers init + warm-up on main thread
-        except Exception as _upscaler_init_err:
-            # Pass 46.4 — _init_upscaler logs its own warning on the normal
-            # failure path, but if the *logging* subsystem itself is broken
-            # the warning never reaches the operator and ESRGAN silently
-            # disables. Print to stderr so even a log-subsystem outage is
-            # visible at startup.
-            import traceback
-            print(f"WARN: ESRGAN init failed: {_upscaler_init_err}", file=sys.stderr)
-            traceback.print_exc()
 
     # Pass 50.1 — start the PSN session keep-alive (a daily check that renews a
     # sign-in near the end of its 10-day refresh token). Only in

@@ -28,9 +28,9 @@ height of 1080 px for boxart / screenshots / 3D boxart, longest-edge of
 variants for boxart that browser `srcset` can pick from. Every write is
 atomic, every external URL is run through the SSRF gate, decompression
 bombs are rejected before they OOM-kill a worker, and the ESRGAN
-upscaler is a lazy GPU-or-CPU singleton that funnels every GPU
-inference through one dedicated thread to keep the MIOpen invoker cache
-warm.
+upscaler is a lazy GPU-or-CPU singleton, in a helper process that exits
+when idle, that funnels every GPU inference through one dedicated thread
+to keep the MIOpen invoker cache warm.
 
 The pipeline is fill-only in the same sense scrapers are: per-image
 work is idempotent, format normalization is a no-op when bytes already
@@ -234,7 +234,19 @@ ONNX variants have fixed 64×64 input dims, others accept dynamic
 shapes. Default `REALESRGAN_TILE_SIZE=256`; padding mode reflect-pads
 the source so dimensions divide evenly.
 
-**Singleton lifecycle**: `_get_upscaler()` is lazy, double-checked
+**Helper process (PASS-59-269)**: the server never loads onnxruntime or
+ROCm, which it could not give back. `_get_upscaler()` returns
+`services/upscale_worker.py`'s stand-in, or None when onnxruntime is
+not installed. The stand-in starts `app.py --upscale-worker` on the
+first upscale and sends it one image at a time over its pipes. The
+helper exits after `IDLE_SECONDS` without work; the next upscale starts
+another. A helper that crashes in an upscale is followed by a CPU-only
+one; a CPU-only helper that crashes turns upscaling off until the
+server restarts. Each failed image uses Lanczos. The helper logs to
+`logs/upscale_worker.log`, native libraries' output included. Everything
+below in this section happens inside the helper.
+
+**Singleton lifecycle**: `_get_local_upscaler()` is lazy, double-checked
 under `_upscaler_lock`. A GPU inference failure trips a one-way circuit
 breaker (`_gpu_failed = True`), tears down the GPU thread, and rebuilds
 the session as CPU-only — every subsequent upscale stays on CPU for the
@@ -643,8 +655,8 @@ purely an AMD-GPU dev-host concern.
 | `TestBoxartSrcset`          | srcset emits existing variants, empty for missing original, skips missing variant siblings |
 | `TestFinalizePipeline`      | end-to-end: JPEG bytes at `.webp` path → WebP on disk + variants written |
 
-Tests stub `_get_upscaler` to `None` so CI doesn't try to load Real-
-ESRGAN — the 800×1120 fixture sits inside the 80%–120% target band
+Tests stub `_get_upscaler` to `None` so CI doesn't start the upscale
+helper — the 800×1120 fixture sits inside the 80%–120% target band
 anyway, so standardize is a no-op for the size dimension.
 
 **ROCm path is not tested in CI** — `/dev/kfd` doesn't exist in CI
@@ -693,8 +705,8 @@ is a regression — flag it in code review.
    name with a distinct log line. `screenshot_fit.fit_error` catches
    nothing; its caller, `routes/tools.py::_run_screenshot_review_scan`,
    counts such a shot as unreadable (PASS-59-250).
-4. **ESRGAN model load is lazy and singleton.** `_get_upscaler()`
-   double-checks under `_upscaler_lock`; the GPU inference worker is a
+4. **ESRGAN model load is lazy and singleton, in the upscale helper
+   process only.** `_get_local_upscaler()` double-checks under `_upscaler_lock`; the GPU inference worker is a
    single daemon thread; the GPU-fail circuit breaker is one-way for
    the process lifetime. A GPU session runs only on that thread: once
    the breaker stops it, a call still waiting on it raises at once and
