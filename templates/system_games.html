@@ -44,7 +44,7 @@
             <button type="button" class="search-clear-btn" id="searchClearBtn" data-on-click="clearSearch" title="{{ _('Clear search') }}">×</button>
         </div>
         {% if ra_supported %}
-        <button type="button" class="filter-btn refresh-ra-btn" data-on-click="refreshRAForSystem" id="refreshRABtn" title="{{ _('Refresh RetroAchievements data for this system') }}">
+        <button type="button" class="filter-btn refresh-ra-btn" data-on-click="refreshRAForSystem" data-args='{{ [system.id, system.name]|tojson }}' id="refreshRABtn" title="{{ _('Refresh RetroAchievements data for this system') }}">
             <span class="filter-icon">🔄</span> {{ _('Refresh RA') }}
         </button>
         {% endif %}
@@ -266,11 +266,8 @@
         });
     });
 
-    // System-specific RA refresh function
-    {% if ra_supported %}
-    function refreshRAForSystem() {
-        RARefreshController.refreshForSystem({{ system.id }}, {{ system.name|tojson }});
-    }
-    {% endif %}
+    // The Refresh RA button passes this console's id and name to the bundled
+    // window.refreshRAForSystem (game-list.js); a page-level function of the
+    // same name was shadowed by it and sent no id.
 </script>
 {% endblock %}
