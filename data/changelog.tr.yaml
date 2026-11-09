@@ -1,6 +1,15 @@
 - version: 4.0.0
   date: '2026-11-09'
   tags:
+  - type: enhancement
+    label: Başka bir RetroAchievements Eşitleme veya Yenileme işlemi çalışırken istediğiniz yeni bir işlem artık sunucuda bekler ve öncekisi bitince kendiliğinden başlar; sayfayı kapatsanız ya da başka bir cihazdan istemiş olsanız da. Her sayfada aynı bekleme listesi, her işin sıradaki yeriyle birlikte görünür ve ✕ ile bir iş listeden çıkarılır. Sunucu yeniden başlatıldıktan sonra bekleyen işler Panel'de yeniden önerilir
+    en: A RetroAchievements Sync or Refresh you ask for while another one runs now waits on the server and starts by itself when that one finishes, even if you close the page or asked from another device. Every page shows the same waiting list with each job's place in line, and ✕ takes a job out. After a server restart, waiting jobs are offered back on the Dashboard
+  - type: fix
+    label: Bir konsolun sayfasındaki RA'yı Yenile düğmesi yeniden çalışıyor. Hangi konsol olduğunu belirtmiyordu, bu yüzden sunucu "Bulunamadı" yanıtı veriyordu
+    en: The Refresh RA button on a console's page works again. It did not say which console, so the server answered "Not found"
+  - type: fix
+    label: ROM adlandırma denetimi artık her sistemi Sistemler sayfasında gösterilen türde ele alıyor. Macintosh, ZX Spectrum Next, Coleco Adam ve Thomson konsol yerine bilgisayar, 3DS ve PS Vita ise el konsolu olarak denetleniyor. Sistemler sayfasında belirlediğiniz tür de artık dikkate alınıyor
+    en: The ROM naming check now treats each system as the kind the Systems page shows. Macintosh, ZX Spectrum Next, Coleco Adam and Thomson are checked as computers, and 3DS and PS Vita as handhelds, instead of as consoles. A type you set on the Systems page is now followed too
   - type: performance
     label: RetroDB artık beklerken çok daha az bellek kullanıyor. Yapay zekâ görsel büyütücü artık yalnızca büyütme sırasında yükleniyor; son görüntüden iki dakika sonra kapanan bir yardımcı süreçte çalışıyor. Boştaki bir sunucunun bellek kullanımı yaklaşık 1,4 GB'tan 100 MB'ın altına düştü. Büyütme sırasında grafik sürücüsü çökerse yalnızca yardımcı süreç durur, sunucu asla durmaz
     en: RetroDB uses far less memory while it waits. The AI image upscaler now loads only while it is upscaling, in a helper that closes two minutes after its last picture; an idle server dropped from about 1.4 GB to under 100 MB. If the graphics driver crashes during an upscale, only the helper stops, never the server

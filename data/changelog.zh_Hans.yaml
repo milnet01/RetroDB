@@ -1,6 +1,15 @@
 - version: 4.0.0
   date: '2026-11-09'
   tags:
+  - type: enhancement
+    label: 当另一个 RetroAchievements 同步或刷新正在运行时，你再请求的同步或刷新现在会在服务器上排队，并在前一个完成后自动开始，即使你关闭页面或是从另一台设备发起的也一样。每个页面都会显示同一份等待列表，并标出每个任务的排队位置，点击 ✕ 可以移除任务。服务器重启后，仍在等待的任务会在仪表盘中重新提供给你
+    en: A RetroAchievements Sync or Refresh you ask for while another one runs now waits on the server and starts by itself when that one finishes, even if you close the page or asked from another device. Every page shows the same waiting list with each job's place in line, and ✕ takes a job out. After a server restart, waiting jobs are offered back on the Dashboard
+  - type: fix
+    label: 主机页面上的“刷新 RA”按钮又可以用了。之前它没有说明是哪台主机，所以服务器返回了“未找到”
+    en: The Refresh RA button on a console's page works again. It did not say which console, so the server answered "Not found"
+  - type: fix
+    label: ROM 命名检查现在会按“系统”页面显示的类型来对待每个系统。Macintosh、ZX Spectrum Next、Coleco Adam 和 Thomson 会被当作电脑检查，3DS 和 PS Vita 会被当作掌机检查，而不再当作主机。你在“系统”页面中设置的类型现在也会被遵循
+    en: The ROM naming check now treats each system as the kind the Systems page shows. Macintosh, ZX Spectrum Next, Coleco Adam and Thomson are checked as computers, and 3DS and PS Vita as handhelds, instead of as consoles. A type you set on the Systems page is now followed too
   - type: performance
     label: RetroDB 在空闲时占用的内存大幅减少。AI 图片放大器现在只在放大图片时才会加载,运行在一个辅助进程中,处理完最后一张图片两分钟后便会自动关闭;空闲状态下的服务器内存占用从约 1.4 GB 降到了 100 MB 以下。如果图形驱动在放大过程中崩溃,只会停止这个辅助进程,不会影响服务器
     en: RetroDB uses far less memory while it waits. The AI image upscaler now loads only while it is upscaling, in a helper that closes two minutes after its last picture; an idle server dropped from about 1.4 GB to under 100 MB. If the graphics driver crashes during an upscale, only the helper stops, never the server

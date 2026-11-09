@@ -1,6 +1,15 @@
 - version: 4.0.0
   date: '2026-11-09'
   tags:
+  - type: enhancement
+    label: Une synchronisation (Sync) ou un rafraîchissement (Refresh) RetroAchievements demandé pendant qu'un autre est en cours attend désormais sur le serveur et démarre tout seul à la fin du précédent, même si vous fermez la page ou l'avez lancé depuis un autre appareil. Chaque page affiche la même file d'attente avec la position de chaque tâche, et ✕ retire une tâche. Après un redémarrage du serveur, les tâches en attente vous sont reproposées sur le Tableau de bord
+    en: A RetroAchievements Sync or Refresh you ask for while another one runs now waits on the server and starts by itself when that one finishes, even if you close the page or asked from another device. Every page shows the same waiting list with each job's place in line, and ✕ takes a job out. After a server restart, waiting jobs are offered back on the Dashboard
+  - type: fix
+    label: Le bouton Refresh RA de la page d'une console fonctionne de nouveau. Il n'indiquait pas de quelle console il s'agissait, donc le serveur répondait « Introuvable »
+    en: The Refresh RA button on a console's page works again. It did not say which console, so the server answered "Not found"
+  - type: fix
+    label: La vérification des noms de ROM traite désormais chaque système selon le type affiché sur la page Systèmes. Macintosh, ZX Spectrum Next, Coleco Adam et Thomson sont vérifiés comme des ordinateurs, et la 3DS et la PS Vita comme des portables, et non plus comme des consoles. Un type défini sur la page Systèmes est aussi pris en compte désormais
+    en: The ROM naming check now treats each system as the kind the Systems page shows. Macintosh, ZX Spectrum Next, Coleco Adam and Thomson are checked as computers, and 3DS and PS Vita as handhelds, instead of as consoles. A type you set on the Systems page is now followed too
   - type: performance
     label: RetroDB utilise beaucoup moins de mémoire en veille. L'agrandisseur d'images par IA ne se charge plus que pendant l'agrandissement, dans un module d'assistance qui se ferme deux minutes après sa dernière image ; un serveur inactif est passé d'environ 1,4 Go à moins de 100 Mo. Si le pilote graphique plante pendant un agrandissement, seul le module d'assistance s'arrête, jamais le serveur
     en: RetroDB uses far less memory while it waits. The AI image upscaler now loads only while it is upscaling, in a helper that closes two minutes after its last picture; an idle server dropped from about 1.4 GB to under 100 MB. If the graphics driver crashes during an upscale, only the helper stops, never the server

@@ -1,6 +1,15 @@
 - version: 4.0.0
   date: '2026-11-09'
   tags:
+  - type: enhancement
+    label: Ukuvumelanisa (Sync) okanye ukuhlaziya (Refresh) kwe-RetroAchievements obukucelayo ngoxa elinye lisaqhuba, ngoku kulinda kwiseva kwaye kuqala ngokwako xa elo ligqiba, nokuba uvale iphepha okanye ucele kolunye ulwazi lwesixhobo. Lonke iphepha libonisa uluhlu olufanayo lokulinda kunye nendawo yomsebenzi ngamnye kwinqwelo, kwaye ✕ isusa umsebenzi. Emva kokuqaliswa kwakhona kweseva, imisebenzi elindileyo iyabuyiselwa kwi-Dashboard
+    en: A RetroAchievements Sync or Refresh you ask for while another one runs now waits on the server and starts by itself when that one finishes, even if you close the page or asked from another device. Every page shows the same waiting list with each job's place in line, and ✕ takes a job out. After a server restart, waiting jobs are offered back on the Dashboard
+  - type: fix
+    label: Iqhosha elithi Refresh RA kwiphepha le-Ikhonsoli ngoku liyasebenza kwakhona. Belingachazi ukuba yiyiphi i-Ikhonsoli, ngoko iseva yaphendula ithi "Not found"
+    en: The Refresh RA button on a console's page works again. It did not say which console, so the server answered "Not found"
+  - type: fix
+    label: Ukukhangela amagama e-ROM ngoku kujonga i-Isistim nganye njengohlobo oluboniswa kwiphepha le-Iisistim. IMacintosh, i-ZX Spectrum Next, i-Coleco Adam kunye neThomson zikhangelwa njengeekhompyutha, kwaye i-3DS kunye ne-PS Vita njengezixhobo zesandla, kungekhona njengee-Ikhonsoli. Uhlobo owulungiselele kwiphepha le-Iisistim ngoku luyalandelwa nalo
+    en: The ROM naming check now treats each system as the kind the Systems page shows. Macintosh, ZX Spectrum Next, Coleco Adam and Thomson are checked as computers, and 3DS and PS Vita as handhelds, instead of as consoles. A type you set on the Systems page is now followed too
   - type: performance
     label: I-RetroDB isebenzisa inkumbulo encinci kakhulu xa ilindile. Isixhobo se-AI sokukhulisa umgangatho wemifanekiso ngoku silayishwa kuphela xa sisebenza, kumncedisi osisincedisi ovalwa imizuzu emibini emva komfanekiso wokugqibela; iseva engasebenziyo yehle ukusuka malunga ne-1.4 GB ukuya ngaphantsi kwe-100 MB. Ukuba isiqhubi semizobo siyaphuka ngexesha lokukhulisa, sisixhobo sokunceda kuphela esimiyo, ayisosoze iseva.
     en: RetroDB uses far less memory while it waits. The AI image upscaler now loads only while it is upscaling, in a helper that closes two minutes after its last picture; an idle server dropped from about 1.4 GB to under 100 MB. If the graphics driver crashes during an upscale, only the helper stops, never the server

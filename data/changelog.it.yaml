@@ -1,6 +1,15 @@
 - version: 4.0.0
   date: '2026-11-09'
   tags:
+  - type: enhancement
+    label: Una Sync o un Refresh di RetroAchievements che richiedi mentre un altro è in corso ora resta in attesa sul server e parte da solo quando quello finisce, anche se chiudi la pagina o lo hai richiesto da un altro dispositivo. Ogni pagina mostra la stessa lista d'attesa con la posizione di ogni attività, e ✕ toglie un'attività dalla coda. Dopo un riavvio del server, le attività in attesa vengono riproposte nella Dashboard
+    en: A RetroAchievements Sync or Refresh you ask for while another one runs now waits on the server and starts by itself when that one finishes, even if you close the page or asked from another device. Every page shows the same waiting list with each job's place in line, and ✕ takes a job out. After a server restart, waiting jobs are offered back on the Dashboard
+  - type: fix
+    label: Il pulsante Refresh RA nella pagina di una console funziona di nuovo. Non indicava quale console, quindi il server rispondeva "Not found"
+    en: The Refresh RA button on a console's page works again. It did not say which console, so the server answered "Not found"
+  - type: fix
+    label: Il controllo dei nomi delle ROM ora tratta ogni sistema come il tipo mostrato nella pagina Sistemi. Macintosh, ZX Spectrum Next, Coleco Adam e Thomson sono controllati come computer, e 3DS e PS Vita come portatili, invece che come console. Ora viene seguito anche il tipo che imposti nella pagina Sistemi
+    en: The ROM naming check now treats each system as the kind the Systems page shows. Macintosh, ZX Spectrum Next, Coleco Adam and Thomson are checked as computers, and 3DS and PS Vita as handhelds, instead of as consoles. A type you set on the Systems page is now followed too
   - type: performance
     label: RetroDB usa molta meno memoria quando è inattivo. Lo scaler di immagini con IA ora si carica solo durante l'upscaling, in un processo di supporto che si chiude due minuti dopo l'ultima immagine; un server inattivo è passato da circa 1,4 GB a meno di 100 MB. Se il driver grafico va in crash durante un upscaling, si ferma solo il processo di supporto, mai il server
     en: RetroDB uses far less memory while it waits. The AI image upscaler now loads only while it is upscaling, in a helper that closes two minutes after its last picture; an idle server dropped from about 1.4 GB to under 100 MB. If the graphics driver crashes during an upscale, only the helper stops, never the server

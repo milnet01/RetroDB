@@ -1,6 +1,15 @@
 - version: 4.0.0
   date: '2026-11-09'
   tags:
+  - type: enhancement
+    label: Sync atau Refresh RetroAchievements yang Anda minta saat yang lain masih berjalan sekarang menunggu di server dan dimulai sendiri saat yang itu selesai, meskipun Anda menutup halaman atau memintanya dari perangkat lain. Setiap halaman menampilkan daftar tunggu yang sama beserta urutan tiap tugas, dan ✕ menghapus tugas dari antrean. Setelah server dimulai ulang, tugas yang menunggu ditawarkan kembali di Dashboard
+    en: A RetroAchievements Sync or Refresh you ask for while another one runs now waits on the server and starts by itself when that one finishes, even if you close the page or asked from another device. Every page shows the same waiting list with each job's place in line, and ✕ takes a job out. After a server restart, waiting jobs are offered back on the Dashboard
+  - type: fix
+    label: Tombol Refresh RA di halaman sebuah konsol kini berfungsi lagi. Sebelumnya tombol itu tidak menyebutkan konsol mana, sehingga server menjawab "Not found"
+    en: The Refresh RA button on a console's page works again. It did not say which console, so the server answered "Not found"
+  - type: fix
+    label: Pemeriksaan penamaan ROM kini memperlakukan setiap sistem sesuai jenis yang ditampilkan di halaman Sistem. Macintosh, ZX Spectrum Next, Coleco Adam, dan Thomson diperiksa sebagai komputer, serta 3DS dan PS Vita sebagai konsol genggam, bukan sebagai konsol. Jenis yang Anda atur di halaman Sistem sekarang juga diikuti
+    en: The ROM naming check now treats each system as the kind the Systems page shows. Macintosh, ZX Spectrum Next, Coleco Adam and Thomson are checked as computers, and 3DS and PS Vita as handhelds, instead of as consoles. A type you set on the Systems page is now followed too
   - type: performance
     label: RetroDB kini memakai memori jauh lebih sedikit saat menunggu. Peningkat kualitas gambar AI sekarang hanya dimuat ketika sedang bekerja, lewat sebuah proses pembantu yang menutup dua menit setelah gambar terakhirnya; server yang menganggur turun dari sekitar 1,4 GB menjadi di bawah 100 MB. Jika driver grafis mogok saat peningkatan kualitas berlangsung, hanya proses pembantu yang berhenti, bukan servernya
     en: RetroDB uses far less memory while it waits. The AI image upscaler now loads only while it is upscaling, in a helper that closes two minutes after its last picture; an idle server dropped from about 1.4 GB to under 100 MB. If the graphics driver crashes during an upscale, only the helper stops, never the server

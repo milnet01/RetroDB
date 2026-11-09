@@ -1,6 +1,15 @@
 - version: 4.0.0
   date: '2026-11-09'
   tags:
+  - type: enhancement
+    label: 다른 RetroAchievements 동기화나 새로고침이 실행 중일 때 요청하면, 이제 해당 작업은 서버에서 대기하다가 앞선 작업이 끝나면 자동으로 시작됩니다. 페이지를 닫거나 다른 기기에서 요청해도 마찬가지입니다. 모든 페이지에 각 작업의 대기 순서가 포함된 같은 대기 목록이 표시되며, ✕를 누르면 작업이 목록에서 빠집니다. 서버를 재시작하면 대기 중이던 작업이 대시보드에 다시 표시됩니다
+    en: A RetroAchievements Sync or Refresh you ask for while another one runs now waits on the server and starts by itself when that one finishes, even if you close the page or asked from another device. Every page shows the same waiting list with each job's place in line, and ✕ takes a job out. After a server restart, waiting jobs are offered back on the Dashboard
+  - type: fix
+    label: 콘솔 페이지의 RA 새로고침 버튼이 다시 작동합니다. 어느 콘솔인지 전달되지 않아 서버가 "찾을 수 없음"이라고 응답하던 문제를 고쳤습니다
+    en: The Refresh RA button on a console's page works again. It did not say which console, so the server answered "Not found"
+  - type: fix
+    label: ROM 이름 검사가 이제 각 시스템을 시스템 페이지에 표시되는 종류 그대로 취급합니다. Macintosh, ZX Spectrum Next, Coleco Adam, Thomson은 콘솔이 아닌 컴퓨터로, 3DS와 PS Vita는 휴대용 기기로 검사됩니다. 시스템 페이지에서 직접 지정한 종류도 이제 반영됩니다
+    en: The ROM naming check now treats each system as the kind the Systems page shows. Macintosh, ZX Spectrum Next, Coleco Adam and Thomson are checked as computers, and 3DS and PS Vita as handhelds, instead of as consoles. A type you set on the Systems page is now followed too
   - type: performance
     label: RetroDB가 대기 중일 때 메모리를 훨씬 적게 사용합니다. AI 이미지 업스케일러는 이제 업스케일할 때만 로드되며, 마지막 이미지 처리 후 2분이 지나면 종료되는 도우미 프로그램에서 실행됩니다. 유휴 상태의 서버는 약 1.4GB에서 100MB 미만으로 줄었습니다. 업스케일 중 그래픽 드라이버가 중단되더라도 도우미만 멈추고 서버는 멈추지 않습니다
     en: RetroDB uses far less memory while it waits. The AI image upscaler now loads only while it is upscaling, in a helper that closes two minutes after its last picture; an idle server dropped from about 1.4 GB to under 100 MB. If the graphics driver crashes during an upscale, only the helper stops, never the server
