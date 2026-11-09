@@ -11752,7 +11752,13 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.269 Load the AI upscaler only while an upscale runs (perf, S).
-- **Status**: todo
+- **Resolution** (2026-11-09): 2026-11-09 (48e75a67): services/upscale_worker.py runs Real-ESRGAN in
+  `app.py --upscale-worker`, started on first upscale, exits after 120 s
+  idle; crash → CPU-only helper → off until restart. Idle :5001 scratch
+  server 1.39 GB RSS (onnxruntime + 9 ROCm libs mapped) before, 87–90 MB
+  with none after; an upscale through the queue still worked on GPU.
+  Helper log: logs/upscale_worker.log.
+- **Status**: done
 The live server held about 730 MB with onnxruntime and the ROCm
 (hip*) libraries mapped while idle (measured 2026-11-09). Import
 them only inside the upscale job, ideally in a child process that
