@@ -11658,7 +11658,14 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.264 Failure replies at HTTP 200, and launch errors that show raw system text (audit-fix, S).
-- **Status**: in-progress
+- **Resolution** (2026-11-09): 2026-11-09 part 2 done (26430cf0, 6c1148dc, 0d122bcf): every
+  LaunchResolutionError message translated (resolver, player.py,
+  CoreMissing), names and paths kept; spawn/kill failure logs the OS
+  text and replies with a translated sentence naming the program;
+  unknown launch token = translated 404; RA sign-in reason wrapped in a
+  translated sentence; api-contracts.md §13 records the exception. Tests
+  in tests/test_pass59_264_error_status.py.
+- **Status**: done
 - **Found by**: PASS-59-250, checking api-contracts.md §3.2 and
   decision record 0003 against the routes.
 - **HTTP 200 failures** (§3.2 now lists them): `routes/museum.py`
