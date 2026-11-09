@@ -10585,6 +10585,8 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Progress** (2026-11-02): Steam built and run against the user's real account on a scratch database (8 games). `SteamSyncJob` fills empty fields once per game from the store, keeps play time in `platform_play_time`, and a Steam or Xbox title match now links its ID. Steam's date and genre are left out: DOOM 3 is dated 2007, its Steam release, and 7 of 8 genres are only Action. Also fixed: an admin's Fetch Library sent Steam the masked key.
   - **Not done**: Steam's review summary (`appreviews?json=1`) answered with a web page, not data, so no user scores. S6 (achievement language) and the `hidden` flag are left. The S3 note's example was wrong: `generate_sort_title` pads numbers and does not move "The".
   - **Next**: Xbox X1 to X7, after the user registers a Microsoft app and signs in once.
+- **Progress** (2026-11-09): **Progress** (2026-11-09): X1-X7 carried out in PASS-59-261 (OpenXBL).
+  A live Xbox reply is still owed there.
 
 ---
 
@@ -11590,7 +11592,7 @@ the cover zoom in Firefox before being reverted for the local fix.
 ---
 
 #### Pass 59.261 Xbox import signs in with a free OpenXBL key, not an Azure app (feature, M).
-- **Status**: todo
+- **Status**: in-progress
 - **Why**: the user tried to link Xbox and was asked for an Azure
   account (2026-11-05). Microsoft app registration needs an Azure
   account since June 2024. The current redirect is built from
@@ -11613,6 +11615,17 @@ the cover zoom in Firefox before being reverted for the local fix.
   and count as 0/0; title history stops at 1000 and returns a partial
   list on errors with no warning (`scraper/scrape_xbox.py`). Not fixed
   in place: that code goes with this item.
+- **Progress** (2026-11-09): **Progress** (2026-11-09): built in the open 4.0.0 (commits cea95e44,
+  ee45243f). Per-user OpenXBL key in Settings > My Profile
+  (`/api/xbox/key` saves only a key OpenXBL accepts; the key is never
+  sent back); client id/secret settings, setup guide and OAuth routes
+  removed; migration 042 drops old sign-in rows. X1-X6 fixed, X7 gone
+  with OAuth. A 429 is never retried and stops that key for the hour;
+  the bulk sync takes never-synced games first. Tests:
+  `tests/test_xbox_openxbl.py`; headless walk at 1400 and 375 px on a
+  scratch DB. **Still owed**: one real OpenXBL key, to confirm the base
+  URL (`https://api.xbl.io/v2`) and the reply shapes, which are
+  Microsoft's and not yet seen through OpenXBL.
 
 ---
 
@@ -11822,6 +11835,37 @@ docs/plans/PASS-59-270-native-app-port.md.
   PASS-59-142, PASS-59-143, PASS-59-186, PASS-59-227 look done).
 - **Blocked-by**: ANTS-6724 (Ants MCP: convert a pass-headings roadmap
   to ants-v1, keeping PASS ids). No hand edits: the store reverts them.
+- **Status**: todo.
+- **Progress** (2026-11-09): **Progress** (2026-11-09): checked the five. Shipped: PASS-59-142 and
+  PASS-59-143 (every locale translates the box-face strings),
+  PASS-59-186 (commits c0c13e61 to 446b991e). PASS-59-227: core built
+  2026-11-02; arcadeDB and libretro-thumbnails as sources remain
+  optional. PASS-59-169: built, but its Verify needs a real published
+  release, so it is not done until 4.0.0 ships. Agreed with
+  ants-terminal for ANTS-6724/6725: PASS ids kept (prefix PASS-59,
+  explicit ids on append). A shipped item's version comes from (a) its
+  own status text, then (b) the oldest data/changelog.yaml entry citing
+  it, then (c) the earliest tag containing a commit citing it; unknown
+  goes to a "Shipped, version not known" archive block. Scratch-run
+  counts come to RetroDB before any real convert.
+
+---
+
+#### Pass 59.273 Museum background removal runs in a helper that closes when idle, like the upscaler (perf, M).
+- **Asked** (user, 2026-11-09): load heavy items into memory only when
+  needed, and clear them out when not in use.
+- **Measured** (2026-11-09, standalone script, CPU path): rembg's
+  `birefnet-general` model (973 MB file) takes a process from 237 MB to
+  2.1 GB when loaded and to about 9 GB during one 512 px removal;
+  dropping the session leaves 900 MB. `routes/museum.py` keeps it in the
+  server for good (`_rembg_session`). The GPU path failed on this machine
+  with MIOPEN error 7, so the code's CPU fallback is the one that runs.
+- **Do**: run it in its own helper process, on `services/upscale_worker.py`'s
+  machinery (start on first use, exit after `IDLE_SECONDS`), never in the
+  same process as the upscaler.
+- **Checked, fine**: idle server 89 MB, 172 MB after every main page;
+  the upscaler already runs in a helper (PASS-59-269); the other in-memory
+  caches are capped.
 - **Status**: todo.
 
 ## Done index
