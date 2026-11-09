@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-06 16:00+0200\n"
+"POT-Creation-Date: 2026-11-09 14:48+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: xh\n"
@@ -208,7 +208,7 @@ msgstr "Isistim ayifunyanwanga okanye ayinamidlalo eneempumelelo"
 #: routes/games.py:927 routes/games.py:1046 routes/games.py:1127
 #: routes/games_ai.py:41 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
-#: routes/games_media.py:240 routes/launch.py:254 routes/reports.py:706
+#: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:706
 #: routes/reports.py:841 routes/trophies.py:1349 services/cheats.py:629
 #: services/hltb_service.py:163
 msgid "Game not found"
@@ -1030,28 +1030,32 @@ msgstr "Isidlali sele sidlala omnye umdlalo"
 msgid "This game is already running"
 msgstr "Lo mdlalo sele uqhuba"
 
-#: routes/launch.py:120
-#, python-format
-msgid "failed to kill prior instance: %(err)s"
-msgstr "kwehlulekile ukubulala isiganeko sangaphambili: %(err)s"
+#: routes/launch.py:121
+msgid "Could not stop the copy of this game that is already running."
+msgstr "Ayikwazanga ukumisa ikopi yalo mdlalo esele isebenza."
 
-#: routes/launch.py:194
+#: routes/launch.py:152
+#, python-format
+msgid "Could not start %(program)s. The server log has the details."
+msgstr "Ayikwazanga ukuqalisa i-%(program)s. Iinkcukacha zikwilog yeseva."
+
+#: routes/launch.py:198
 msgid "RetroArch is not built for this computer."
 msgstr "I-RetroArch ayakhelwanga le khompyutha."
 
-#: routes/launch.py:207
+#: routes/launch.py:211
 msgid "Cores are not built for this computer."
 msgstr "Ii-core azakhelwanga le khompyutha."
 
-#: routes/launch.py:210
+#: routes/launch.py:214
 msgid "The player is not installed."
 msgstr "Isidlali asifakwanga."
 
-#: routes/launch.py:219
+#: routes/launch.py:223
 msgid "No system with games has a player core."
 msgstr "Akukho sistim inemidlalo ene-core yesidlali."
 
-#: routes/launch.py:232
+#: routes/launch.py:236
 msgid ""
 "Could not fetch the list of cores. Check the internet connection and try "
 "again."
@@ -1059,23 +1063,23 @@ msgstr ""
 "Asikwazanga ukufumana uluhlu lwee-core. Khangela uqhagamshelo lwe-"
 "intanethi uze uzame kwakhona."
 
-#: routes/launch.py:237
+#: routes/launch.py:241
 msgid "Every core is up to date."
 msgstr "Zonke ii-core zihlaziyiwe."
 
-#: routes/launch.py:256
+#: routes/launch.py:260
 msgid "Player settings reset to recommended"
 msgstr "Iisetingi zesidlali zibuyiselwe kwezicetyiswayo"
 
-#: routes/launch.py:332
+#: routes/launch.py:275 routes/launch.py:291 routes/launch.py:336
 msgid "That game is no longer running"
 msgstr "Lo mdlalo awusasebenzi"
 
-#: routes/launch.py:334
+#: routes/launch.py:338
 msgid "This game has no disk list to swap through"
 msgstr "Lo mdlalo awunalo uluhlu lweediski onokutshintsha kulo"
 
-#: routes/launch.py:341
+#: routes/launch.py:345
 #, python-format
 msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
@@ -1084,7 +1088,7 @@ msgstr ""
 "I-RetroArch ayamkeli imiyalelo. Kwi-RetroArch, vula Settings > Network > "
 "Network Commands (izibuko %(port)s)."
 
-#: routes/launch.py:344
+#: routes/launch.py:348
 msgid "Next disk inserted"
 msgstr "Idiski elandelayo ifakiwe"
 
@@ -4764,19 +4768,139 @@ msgstr "🛑 Cima Iseva"
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 Coca iiROM Ezilahlekileyo"
 
+#: services/launch_resolver.py:190
+#, python-format
+msgid "Unknown template variable: %(name)s"
+msgstr "Uguqulo lwetemplate olungaziwayo: %(name)s"
+
+#: services/launch_resolver.py:246 services/player.py:250
+#, python-format
+msgid "Cannot parse %(field)s %(value)s: %(error)s"
+msgstr "Ayikwazi ukufunda i-%(field)s %(value)s: %(error)s"
+
+#: services/launch_resolver.py:251
+msgid ""
+"Set the path at /settings/emulators (Edit row → Binary path override) or "
+"click Auto-detect, or install the emulator with your package manager so "
+"it is on PATH."
+msgstr ""
+"Seta indlela ku-/settings/emulators (Hlela kumqolo → Indlela ye-binary "
+"ethatha indawo) okanye ucofe u-Fumanisa ngokuzenzekelayo, okanye ufake "
+"i-emulator ngomphathi weepakethe zakho ukuze ibe ku-PATH."
+
+#: services/launch_resolver.py:265
+#, python-format
+msgid "The binary path override is not a program that can run: %(path)s."
+msgstr "Indlela ye-binary ethatha indawo ayiyiyo inkqubo enokusebenza: %(path)s."
+
+#: services/launch_resolver.py:279
+#, python-format
+msgid "Emulator program not found on PATH: %(name)s."
+msgstr "Inkqubo ye-emulator ayifumaneki ku-PATH: %(name)s."
+
+#: services/launch_resolver.py:314
+#, python-format
+msgid "No emulator configured for system %(system)s"
+msgstr "Akukho i-emulator imiselweyo yesistim %(system)s"
+
+#: services/launch_resolver.py:446
+#, python-format
+msgid "%(name)s must be a whole argument in args_template, not part of %(token)s"
+msgstr ""
+"%(name)s kufuneka ibe yi-argument epheleleyo ku-args_template, ingabi "
+"yinxalenye ye-%(token)s"
+
+#: services/launch_resolver.py:469
+#, python-format
+msgid "ROM file not found: %(path)s"
+msgstr "Ifayile ye-ROM ayifumaneki: %(path)s"
+
+#: services/launch_resolver.py:471
+#, python-format
+msgid "ROM path is not a file or folder: %(path)s"
+msgstr "Indlela ye-ROM ayisiyo fayile okanye ifolda: %(path)s"
+
+#: services/launch_resolver.py:476
+#, python-format
+msgid "ROM path is outside the configured scan folders: %(path)s"
+msgstr "Indlela ye-ROM ingaphandle kweefolda zokuskena ezimiselweyo: %(path)s"
+
+#: services/launch_resolver.py:480
+#, python-format
+msgid "Not launching %(name)s: %(problem)s"
+msgstr "Ayiqalisi i-%(name)s: %(problem)s"
+
+#: services/launch_resolver.py:542
+#, python-format
+msgid "The player has no core for system %(system)s"
+msgstr "Isidlali asinayo i-core yesistim %(system)s"
+
+#: services/launch_resolver.py:547
+#, python-format
+msgid "No core for %(system)s is built for this computer."
+msgstr "Akukho i-core ye-%(system)s eyakhelwe le khompyutha."
+
+#: services/launch_resolver.py:565 services/player.py:298
+#, python-format
+msgid "Cannot write the player's settings (%(file)s): %(error)s"
+msgstr "Ayikwazi ukubhala iisethingi zesidlali (%(file)s): %(error)s"
+
+#: services/launch_resolver.py:610
+#, python-format
+msgid "Game %(id)s not found"
+msgstr "Umdlalo %(id)s awufumaneki"
+
+#: services/launch_resolver.py:616
+msgid "The emulator chosen for this game no longer exists"
+msgstr "I-emulator ekhethelwe lo mdlalo ayisekho"
+
+#: services/launch_resolver.py:618
+#, python-format
+msgid "The emulator %(name)s is turned off"
+msgstr "I-emulator %(name)s icinyiwe"
+
+#: services/launch_resolver.py:633
+#, python-format
+msgid ""
+"RetroArch is chosen for system %(system)s, but no RetroArch core is set "
+"for it"
+msgstr ""
+"I-RetroArch ikhethelwe isistim %(system)s, kodwa akukho i-core ye-"
+"RetroArch isetelwe yona"
+
+#: services/launch_resolver.py:638
+#, python-format
+msgid "RetroArch core not found: %(path)s"
+msgstr "I-core ye-RetroArch ayifumaneki: %(path)s"
+
+#: services/player.py:242
+#, python-format
+msgid "The player cannot use a path containing '|': %(path)s"
+msgstr "Isidlali asinakusebenzisa indlela enee-'|': %(path)s"
+
+#: services/player_cores.py:538
+#, python-format
+msgid "Player core not found: %(path)s"
+msgstr "I-core yesidlali ayifumaneki: %(path)s"
+
 #: services/ra_sign_in.py:54
 msgid "Could not reach RetroAchievements. Try again later."
 msgstr "Asikwazanga ukufikelela kwi-RetroAchievements. Zama kwakhona kamva."
 
 #: services/ra_sign_in.py:67
+#, python-format
+msgid "RetroAchievements did not sign you in: %(reason)s"
+msgstr "I-RetroAchievements ayikungenisanga: %(reason)s"
+
+#: services/ra_sign_in.py:69
 msgid "RetroAchievements did not sign you in."
 msgstr "I-RetroAchievements ayikungenisanga."
 
-#: services/ra_sign_in.py:75
+#: services/ra_sign_in.py:77
 msgid "Enter your RetroAchievements username and password."
 msgstr "Faka igama lomsebenzisi nephasiwedi yakho ye-RetroAchievements."
 
-#: services/ra_sign_in.py:94
+#: services/ra_sign_in.py:96
 msgid "Sign in to RetroAchievements first."
 msgstr "Qala ngokungena kwi-RetroAchievements."
 

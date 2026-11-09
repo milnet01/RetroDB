@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-06 16:00+0200\n"
+"POT-Creation-Date: 2026-11-09 14:48+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans\n"
@@ -199,7 +199,7 @@ msgstr "未找到系统，或该系统没有包含成就的游戏"
 #: routes/games.py:927 routes/games.py:1046 routes/games.py:1127
 #: routes/games_ai.py:41 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
-#: routes/games_media.py:240 routes/launch.py:254 routes/reports.py:706
+#: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:706
 #: routes/reports.py:841 routes/trophies.py:1349 services/cheats.py:629
 #: services/hltb_service.py:163
 msgid "Game not found"
@@ -1000,50 +1000,54 @@ msgstr "播放器正在运行另一个游戏"
 msgid "This game is already running"
 msgstr "该游戏已在运行中"
 
-#: routes/launch.py:120
-#, python-format
-msgid "failed to kill prior instance: %(err)s"
-msgstr "无法终止先前实例：%(err)s"
+#: routes/launch.py:121
+msgid "Could not stop the copy of this game that is already running."
+msgstr "无法停止已在运行的这个游戏副本。"
 
-#: routes/launch.py:194
+#: routes/launch.py:152
+#, python-format
+msgid "Could not start %(program)s. The server log has the details."
+msgstr "无法启动 %(program)s。详情请查看服务器日志。"
+
+#: routes/launch.py:198
 msgid "RetroArch is not built for this computer."
 msgstr "RetroArch 没有适用于这台电脑的版本。"
 
-#: routes/launch.py:207
+#: routes/launch.py:211
 msgid "Cores are not built for this computer."
 msgstr "没有为这台电脑构建的核心。"
 
-#: routes/launch.py:210
+#: routes/launch.py:214
 msgid "The player is not installed."
 msgstr "播放器未安装。"
 
-#: routes/launch.py:219
+#: routes/launch.py:223
 msgid "No system with games has a player core."
 msgstr "没有任何有游戏的系统拥有播放器核心。"
 
-#: routes/launch.py:232
+#: routes/launch.py:236
 msgid ""
 "Could not fetch the list of cores. Check the internet connection and try "
 "again."
 msgstr "无法获取核心列表。请检查网络连接后重试。"
 
-#: routes/launch.py:237
+#: routes/launch.py:241
 msgid "Every core is up to date."
 msgstr "所有核心均为最新。"
 
-#: routes/launch.py:256
+#: routes/launch.py:260
 msgid "Player settings reset to recommended"
 msgstr "播放器设置已重置为推荐值"
 
-#: routes/launch.py:332
+#: routes/launch.py:275 routes/launch.py:291 routes/launch.py:336
 msgid "That game is no longer running"
 msgstr "该游戏已不在运行"
 
-#: routes/launch.py:334
+#: routes/launch.py:338
 msgid "This game has no disk list to swap through"
 msgstr "此游戏没有可切换的光盘列表"
 
-#: routes/launch.py:341
+#: routes/launch.py:345
 #, python-format
 msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
@@ -1052,7 +1056,7 @@ msgstr ""
 "RetroArch 未接受命令。请在 RetroArch 中打开 Settings > Network > Network Commands（端口"
 " %(port)s）。"
 
-#: routes/launch.py:344
+#: routes/launch.py:348
 msgid "Next disk inserted"
 msgstr "已插入下一张光盘"
 
@@ -4622,19 +4626,134 @@ msgstr "🛑 关闭服务器"
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 清理缺失的 ROM"
 
+#: services/launch_resolver.py:190
+#, python-format
+msgid "Unknown template variable: %(name)s"
+msgstr "未知的模板变量：%(name)s"
+
+#: services/launch_resolver.py:246 services/player.py:250
+#, python-format
+msgid "Cannot parse %(field)s %(value)s: %(error)s"
+msgstr "无法解析 %(field)s %(value)s：%(error)s"
+
+#: services/launch_resolver.py:251
+msgid ""
+"Set the path at /settings/emulators (Edit row → Binary path override) or "
+"click Auto-detect, or install the emulator with your package manager so "
+"it is on PATH."
+msgstr ""
+"请在 /settings/emulators 设置路径（该行的“编辑”→“程序路径覆盖”）或点击“自动检测”，或用包管理器安装该模拟器，使其位于 "
+"PATH 中。"
+
+#: services/launch_resolver.py:265
+#, python-format
+msgid "The binary path override is not a program that can run: %(path)s."
+msgstr "程序路径覆盖指向的不是可运行的程序：%(path)s。"
+
+#: services/launch_resolver.py:279
+#, python-format
+msgid "Emulator program not found on PATH: %(name)s."
+msgstr "在 PATH 中找不到模拟器程序：%(name)s。"
+
+#: services/launch_resolver.py:314
+#, python-format
+msgid "No emulator configured for system %(system)s"
+msgstr "系统 %(system)s 未配置模拟器"
+
+#: services/launch_resolver.py:446
+#, python-format
+msgid "%(name)s must be a whole argument in args_template, not part of %(token)s"
+msgstr "%(name)s 必须是 args_template 中的一个完整参数，而不是 %(token)s 的一部分"
+
+#: services/launch_resolver.py:469
+#, python-format
+msgid "ROM file not found: %(path)s"
+msgstr "找不到 ROM 文件：%(path)s"
+
+#: services/launch_resolver.py:471
+#, python-format
+msgid "ROM path is not a file or folder: %(path)s"
+msgstr "ROM 路径既不是文件也不是文件夹：%(path)s"
+
+#: services/launch_resolver.py:476
+#, python-format
+msgid "ROM path is outside the configured scan folders: %(path)s"
+msgstr "ROM 路径在已配置的扫描文件夹之外：%(path)s"
+
+#: services/launch_resolver.py:480
+#, python-format
+msgid "Not launching %(name)s: %(problem)s"
+msgstr "不启动 %(name)s：%(problem)s"
+
+#: services/launch_resolver.py:542
+#, python-format
+msgid "The player has no core for system %(system)s"
+msgstr "播放器没有系统 %(system)s 的核心"
+
+#: services/launch_resolver.py:547
+#, python-format
+msgid "No core for %(system)s is built for this computer."
+msgstr "没有为这台电脑构建的 %(system)s 核心。"
+
+#: services/launch_resolver.py:565 services/player.py:298
+#, python-format
+msgid "Cannot write the player's settings (%(file)s): %(error)s"
+msgstr "无法写入播放器设置（%(file)s）：%(error)s"
+
+#: services/launch_resolver.py:610
+#, python-format
+msgid "Game %(id)s not found"
+msgstr "找不到游戏 %(id)s"
+
+#: services/launch_resolver.py:616
+msgid "The emulator chosen for this game no longer exists"
+msgstr "为这个游戏选择的模拟器已不存在"
+
+#: services/launch_resolver.py:618
+#, python-format
+msgid "The emulator %(name)s is turned off"
+msgstr "模拟器 %(name)s 已关闭"
+
+#: services/launch_resolver.py:633
+#, python-format
+msgid ""
+"RetroArch is chosen for system %(system)s, but no RetroArch core is set "
+"for it"
+msgstr "系统 %(system)s 选择了 RetroArch，但没有为它设置 RetroArch 核心"
+
+#: services/launch_resolver.py:638
+#, python-format
+msgid "RetroArch core not found: %(path)s"
+msgstr "找不到 RetroArch 核心：%(path)s"
+
+#: services/player.py:242
+#, python-format
+msgid "The player cannot use a path containing '|': %(path)s"
+msgstr "播放器无法使用包含 '|' 的路径：%(path)s"
+
+#: services/player_cores.py:538
+#, python-format
+msgid "Player core not found: %(path)s"
+msgstr "找不到播放器核心：%(path)s"
+
 #: services/ra_sign_in.py:54
 msgid "Could not reach RetroAchievements. Try again later."
 msgstr "无法连接 RetroAchievements。请稍后重试。"
 
 #: services/ra_sign_in.py:67
+#, python-format
+msgid "RetroAchievements did not sign you in: %(reason)s"
+msgstr "RetroAchievements 未能让你登录：%(reason)s"
+
+#: services/ra_sign_in.py:69
 msgid "RetroAchievements did not sign you in."
 msgstr "RetroAchievements 未能让你登录。"
 
-#: services/ra_sign_in.py:75
+#: services/ra_sign_in.py:77
 msgid "Enter your RetroAchievements username and password."
 msgstr "请输入你的 RetroAchievements 用户名和密码。"
 
-#: services/ra_sign_in.py:94
+#: services/ra_sign_in.py:96
 msgid "Sign in to RetroAchievements first."
 msgstr "请先登录 RetroAchievements。"
 

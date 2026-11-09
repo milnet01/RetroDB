@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-06 16:00+0200\n"
+"POT-Creation-Date: 2026-11-09 14:48+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -199,7 +199,7 @@ msgstr "システムが見つからないか、実績対応ゲームがありま
 #: routes/games.py:927 routes/games.py:1046 routes/games.py:1127
 #: routes/games_ai.py:41 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
-#: routes/games_media.py:240 routes/launch.py:254 routes/reports.py:706
+#: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:706
 #: routes/reports.py:841 routes/trophies.py:1349 services/cheats.py:629
 #: services/hltb_service.py:163
 msgid "Game not found"
@@ -1004,50 +1004,54 @@ msgstr "プレーヤーは別のゲームを実行中です"
 msgid "This game is already running"
 msgstr "このゲームはすでに実行中です"
 
-#: routes/launch.py:120
-#, python-format
-msgid "failed to kill prior instance: %(err)s"
-msgstr "以前のインスタンスの終了に失敗しました: %(err)s"
+#: routes/launch.py:121
+msgid "Could not stop the copy of this game that is already running."
+msgstr "すでに実行中のこのゲームを停止できませんでした。"
 
-#: routes/launch.py:194
+#: routes/launch.py:152
+#, python-format
+msgid "Could not start %(program)s. The server log has the details."
+msgstr "%(program)s を起動できませんでした。詳細はサーバーログにあります。"
+
+#: routes/launch.py:198
 msgid "RetroArch is not built for this computer."
 msgstr "このコンピューター向けの RetroArch はビルドされていません。"
 
-#: routes/launch.py:207
+#: routes/launch.py:211
 msgid "Cores are not built for this computer."
 msgstr "このコンピューター向けのコアはビルドされていません。"
 
-#: routes/launch.py:210
+#: routes/launch.py:214
 msgid "The player is not installed."
 msgstr "プレーヤーがインストールされていません。"
 
-#: routes/launch.py:219
+#: routes/launch.py:223
 msgid "No system with games has a player core."
 msgstr "ゲームのあるシステムに、プレーヤー用のコアがありません。"
 
-#: routes/launch.py:232
+#: routes/launch.py:236
 msgid ""
 "Could not fetch the list of cores. Check the internet connection and try "
 "again."
 msgstr "コアの一覧を取得できませんでした。インターネット接続を確認して、もう一度お試しください。"
 
-#: routes/launch.py:237
+#: routes/launch.py:241
 msgid "Every core is up to date."
 msgstr "すべてのコアは最新です。"
 
-#: routes/launch.py:256
+#: routes/launch.py:260
 msgid "Player settings reset to recommended"
 msgstr "プレーヤーの設定を推奨値に戻しました"
 
-#: routes/launch.py:332
+#: routes/launch.py:275 routes/launch.py:291 routes/launch.py:336
 msgid "That game is no longer running"
 msgstr "そのゲームはもう実行されていません"
 
-#: routes/launch.py:334
+#: routes/launch.py:338
 msgid "This game has no disk list to swap through"
 msgstr "このゲームには切り替えるディスクリストがありません"
 
-#: routes/launch.py:341
+#: routes/launch.py:345
 #, python-format
 msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
@@ -1056,7 +1060,7 @@ msgstr ""
 "RetroArch がコマンドを受け付けていません。RetroArch で Settings > Network > Network "
 "Commands（ポート %(port)s）をオンにしてください。"
 
-#: routes/launch.py:344
+#: routes/launch.py:348
 msgid "Next disk inserted"
 msgstr "次のディスクを挿入しました"
 
@@ -4626,19 +4630,135 @@ msgstr "🛑 サーバーをシャットダウン"
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 欠落したROMをクリーンアップ"
 
+#: services/launch_resolver.py:190
+#, python-format
+msgid "Unknown template variable: %(name)s"
+msgstr "不明なテンプレート変数: %(name)s"
+
+#: services/launch_resolver.py:246 services/player.py:250
+#, python-format
+msgid "Cannot parse %(field)s %(value)s: %(error)s"
+msgstr "%(field)s %(value)s を解析できません: %(error)s"
+
+#: services/launch_resolver.py:251
+msgid ""
+"Set the path at /settings/emulators (Edit row → Binary path override) or "
+"click Auto-detect, or install the emulator with your package manager so "
+"it is on PATH."
+msgstr ""
+"/settings/emulators "
+"でパスを設定する（行の「編集」→「実行ファイルパスの上書き」）か「自動検出」をクリックするか、パッケージマネージャーでエミュレーターをインストールして"
+" PATH 上に置いてください。"
+
+#: services/launch_resolver.py:265
+#, python-format
+msgid "The binary path override is not a program that can run: %(path)s."
+msgstr "実行ファイルパスの上書きが実行可能なプログラムではありません: %(path)s。"
+
+#: services/launch_resolver.py:279
+#, python-format
+msgid "Emulator program not found on PATH: %(name)s."
+msgstr "PATH 上にエミュレーターのプログラムが見つかりません: %(name)s。"
+
+#: services/launch_resolver.py:314
+#, python-format
+msgid "No emulator configured for system %(system)s"
+msgstr "システム %(system)s にエミュレーターが設定されていません"
+
+#: services/launch_resolver.py:446
+#, python-format
+msgid "%(name)s must be a whole argument in args_template, not part of %(token)s"
+msgstr "%(name)s は args_template で独立した引数にする必要があります（%(token)s の一部にはできません）"
+
+#: services/launch_resolver.py:469
+#, python-format
+msgid "ROM file not found: %(path)s"
+msgstr "ROM ファイルが見つかりません: %(path)s"
+
+#: services/launch_resolver.py:471
+#, python-format
+msgid "ROM path is not a file or folder: %(path)s"
+msgstr "ROM のパスがファイルでもフォルダーでもありません: %(path)s"
+
+#: services/launch_resolver.py:476
+#, python-format
+msgid "ROM path is outside the configured scan folders: %(path)s"
+msgstr "ROM のパスが設定済みのスキャンフォルダーの外にあります: %(path)s"
+
+#: services/launch_resolver.py:480
+#, python-format
+msgid "Not launching %(name)s: %(problem)s"
+msgstr "%(name)s を起動しません: %(problem)s"
+
+#: services/launch_resolver.py:542
+#, python-format
+msgid "The player has no core for system %(system)s"
+msgstr "プレーヤーにはシステム %(system)s 用のコアがありません"
+
+#: services/launch_resolver.py:547
+#, python-format
+msgid "No core for %(system)s is built for this computer."
+msgstr "このコンピューター向けにビルドされた %(system)s 用のコアがありません。"
+
+#: services/launch_resolver.py:565 services/player.py:298
+#, python-format
+msgid "Cannot write the player's settings (%(file)s): %(error)s"
+msgstr "プレーヤーの設定を書き込めません (%(file)s): %(error)s"
+
+#: services/launch_resolver.py:610
+#, python-format
+msgid "Game %(id)s not found"
+msgstr "ゲーム %(id)s が見つかりません"
+
+#: services/launch_resolver.py:616
+msgid "The emulator chosen for this game no longer exists"
+msgstr "このゲームに選択されたエミュレーターはもう存在しません"
+
+#: services/launch_resolver.py:618
+#, python-format
+msgid "The emulator %(name)s is turned off"
+msgstr "エミュレーター %(name)s はオフになっています"
+
+#: services/launch_resolver.py:633
+#, python-format
+msgid ""
+"RetroArch is chosen for system %(system)s, but no RetroArch core is set "
+"for it"
+msgstr "システム %(system)s には RetroArch が選択されていますが、RetroArch のコアが設定されていません"
+
+#: services/launch_resolver.py:638
+#, python-format
+msgid "RetroArch core not found: %(path)s"
+msgstr "RetroArch のコアが見つかりません: %(path)s"
+
+#: services/player.py:242
+#, python-format
+msgid "The player cannot use a path containing '|': %(path)s"
+msgstr "プレーヤーは '|' を含むパスを使えません: %(path)s"
+
+#: services/player_cores.py:538
+#, python-format
+msgid "Player core not found: %(path)s"
+msgstr "プレーヤーのコアが見つかりません: %(path)s"
+
 #: services/ra_sign_in.py:54
 msgid "Could not reach RetroAchievements. Try again later."
 msgstr "RetroAchievements に接続できませんでした。後でもう一度お試しください。"
 
 #: services/ra_sign_in.py:67
+#, python-format
+msgid "RetroAchievements did not sign you in: %(reason)s"
+msgstr "RetroAchievements にサインインできませんでした: %(reason)s"
+
+#: services/ra_sign_in.py:69
 msgid "RetroAchievements did not sign you in."
 msgstr "RetroAchievements にサインインできませんでした。"
 
-#: services/ra_sign_in.py:75
+#: services/ra_sign_in.py:77
 msgid "Enter your RetroAchievements username and password."
 msgstr "RetroAchievements のユーザー名とパスワードを入力してください。"
 
-#: services/ra_sign_in.py:94
+#: services/ra_sign_in.py:96
 msgid "Sign in to RetroAchievements first."
 msgstr "先に RetroAchievements にサインインしてください。"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-06 16:00+0200\n"
+"POT-Creation-Date: 2026-11-09 14:48+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: nb\n"
@@ -206,7 +206,7 @@ msgstr "System ikke funnet eller har ingen spill med prestasjoner"
 #: routes/games.py:927 routes/games.py:1046 routes/games.py:1127
 #: routes/games_ai.py:41 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
-#: routes/games_media.py:240 routes/launch.py:254 routes/reports.py:706
+#: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:706
 #: routes/reports.py:841 routes/trophies.py:1349 services/cheats.py:629
 #: services/hltb_service.py:163
 msgid "Game not found"
@@ -1026,28 +1026,32 @@ msgstr "Spilleren kjører allerede et annet spill"
 msgid "This game is already running"
 msgstr "Dette spillet kjører allerede"
 
-#: routes/launch.py:120
-#, python-format
-msgid "failed to kill prior instance: %(err)s"
-msgstr "kunne ikke avslutte forrige instans: %(err)s"
+#: routes/launch.py:121
+msgid "Could not stop the copy of this game that is already running."
+msgstr "Kunne ikke stoppe kopien av dette spillet som allerede kjører."
 
-#: routes/launch.py:194
+#: routes/launch.py:152
+#, python-format
+msgid "Could not start %(program)s. The server log has the details."
+msgstr "Kunne ikke starte %(program)s. Serverloggen har detaljene."
+
+#: routes/launch.py:198
 msgid "RetroArch is not built for this computer."
 msgstr "RetroArch bygges ikke for denne datamaskinen."
 
-#: routes/launch.py:207
+#: routes/launch.py:211
 msgid "Cores are not built for this computer."
 msgstr "Kjerner bygges ikke for denne datamaskinen."
 
-#: routes/launch.py:210
+#: routes/launch.py:214
 msgid "The player is not installed."
 msgstr "Spilleren er ikke installert."
 
-#: routes/launch.py:219
+#: routes/launch.py:223
 msgid "No system with games has a player core."
 msgstr "Ingen systemer med spill har en kjerne for spilleren."
 
-#: routes/launch.py:232
+#: routes/launch.py:236
 msgid ""
 "Could not fetch the list of cores. Check the internet connection and try "
 "again."
@@ -1055,23 +1059,23 @@ msgstr ""
 "Kunne ikke hente listen over kjerner. Sjekk internettforbindelsen og prøv"
 " igjen."
 
-#: routes/launch.py:237
+#: routes/launch.py:241
 msgid "Every core is up to date."
 msgstr "Alle kjerner er oppdatert."
 
-#: routes/launch.py:256
+#: routes/launch.py:260
 msgid "Player settings reset to recommended"
 msgstr "Spillerinnstillingene er tilbakestilt til anbefalte"
 
-#: routes/launch.py:332
+#: routes/launch.py:275 routes/launch.py:291 routes/launch.py:336
 msgid "That game is no longer running"
 msgstr "Det spillet kjører ikke lenger"
 
-#: routes/launch.py:334
+#: routes/launch.py:338
 msgid "This game has no disk list to swap through"
 msgstr "Dette spillet har ingen diskliste å bytte mellom"
 
-#: routes/launch.py:341
+#: routes/launch.py:345
 #, python-format
 msgid ""
 "RetroArch is not accepting commands. In RetroArch, turn on Settings > "
@@ -1080,7 +1084,7 @@ msgstr ""
 "RetroArch tar ikke imot kommandoer. Slå på Settings > Network > Network "
 "Commands i RetroArch (port %(port)s)."
 
-#: routes/launch.py:344
+#: routes/launch.py:348
 msgid "Next disk inserted"
 msgstr "Neste disk satt inn"
 
@@ -4735,19 +4739,139 @@ msgstr "🛑 Slå av server"
 msgid "🧹 Clean Missing ROMs"
 msgstr "🧹 Rydd opp manglende ROM-er"
 
+#: services/launch_resolver.py:190
+#, python-format
+msgid "Unknown template variable: %(name)s"
+msgstr "Ukjent malvariabel: %(name)s"
+
+#: services/launch_resolver.py:246 services/player.py:250
+#, python-format
+msgid "Cannot parse %(field)s %(value)s: %(error)s"
+msgstr "Kan ikke tolke %(field)s %(value)s: %(error)s"
+
+#: services/launch_resolver.py:251
+msgid ""
+"Set the path at /settings/emulators (Edit row → Binary path override) or "
+"click Auto-detect, or install the emulator with your package manager so "
+"it is on PATH."
+msgstr ""
+"Angi stien i /settings/emulators (Rediger på raden → Overstyrt "
+"programsti), eller klikk Oppdag automatisk, eller installer emulatoren "
+"med pakkebehandleren slik at den ligger i PATH."
+
+#: services/launch_resolver.py:265
+#, python-format
+msgid "The binary path override is not a program that can run: %(path)s."
+msgstr "Den overstyrte programstien er ikke et program som kan kjøres: %(path)s."
+
+#: services/launch_resolver.py:279
+#, python-format
+msgid "Emulator program not found on PATH: %(name)s."
+msgstr "Fant ikke emulatorprogrammet i PATH: %(name)s."
+
+#: services/launch_resolver.py:314
+#, python-format
+msgid "No emulator configured for system %(system)s"
+msgstr "Ingen emulator er satt opp for systemet %(system)s"
+
+#: services/launch_resolver.py:446
+#, python-format
+msgid "%(name)s must be a whole argument in args_template, not part of %(token)s"
+msgstr ""
+"%(name)s må være et helt argument i args_template, ikke en del av "
+"%(token)s"
+
+#: services/launch_resolver.py:469
+#, python-format
+msgid "ROM file not found: %(path)s"
+msgstr "Fant ikke ROM-filen: %(path)s"
+
+#: services/launch_resolver.py:471
+#, python-format
+msgid "ROM path is not a file or folder: %(path)s"
+msgstr "ROM-stien er verken en fil eller en mappe: %(path)s"
+
+#: services/launch_resolver.py:476
+#, python-format
+msgid "ROM path is outside the configured scan folders: %(path)s"
+msgstr "ROM-stien er utenfor de konfigurerte skannemappene: %(path)s"
+
+#: services/launch_resolver.py:480
+#, python-format
+msgid "Not launching %(name)s: %(problem)s"
+msgstr "Starter ikke %(name)s: %(problem)s"
+
+#: services/launch_resolver.py:542
+#, python-format
+msgid "The player has no core for system %(system)s"
+msgstr "Spilleren har ingen kjerne for systemet %(system)s"
+
+#: services/launch_resolver.py:547
+#, python-format
+msgid "No core for %(system)s is built for this computer."
+msgstr "Ingen kjerne for %(system)s er bygget for denne datamaskinen."
+
+#: services/launch_resolver.py:565 services/player.py:298
+#, python-format
+msgid "Cannot write the player's settings (%(file)s): %(error)s"
+msgstr "Kan ikke skrive innstillingene til spilleren (%(file)s): %(error)s"
+
+#: services/launch_resolver.py:610
+#, python-format
+msgid "Game %(id)s not found"
+msgstr "Fant ikke spill %(id)s"
+
+#: services/launch_resolver.py:616
+msgid "The emulator chosen for this game no longer exists"
+msgstr "Emulatoren som er valgt for dette spillet, finnes ikke lenger"
+
+#: services/launch_resolver.py:618
+#, python-format
+msgid "The emulator %(name)s is turned off"
+msgstr "Emulatoren %(name)s er slått av"
+
+#: services/launch_resolver.py:633
+#, python-format
+msgid ""
+"RetroArch is chosen for system %(system)s, but no RetroArch core is set "
+"for it"
+msgstr ""
+"RetroArch er valgt for systemet %(system)s, men ingen RetroArch-kjerne er"
+" angitt for det"
+
+#: services/launch_resolver.py:638
+#, python-format
+msgid "RetroArch core not found: %(path)s"
+msgstr "Fant ikke RetroArch-kjernen: %(path)s"
+
+#: services/player.py:242
+#, python-format
+msgid "The player cannot use a path containing '|': %(path)s"
+msgstr "Spilleren kan ikke bruke en sti som inneholder '|': %(path)s"
+
+#: services/player_cores.py:538
+#, python-format
+msgid "Player core not found: %(path)s"
+msgstr "Fant ikke kjernen til spilleren: %(path)s"
+
 #: services/ra_sign_in.py:54
 msgid "Could not reach RetroAchievements. Try again later."
 msgstr "Kunne ikke nå RetroAchievements. Prøv igjen senere."
 
 #: services/ra_sign_in.py:67
+#, python-format
+msgid "RetroAchievements did not sign you in: %(reason)s"
+msgstr "RetroAchievements logget deg ikke inn: %(reason)s"
+
+#: services/ra_sign_in.py:69
 msgid "RetroAchievements did not sign you in."
 msgstr "RetroAchievements logget deg ikke inn."
 
-#: services/ra_sign_in.py:75
+#: services/ra_sign_in.py:77
 msgid "Enter your RetroAchievements username and password."
 msgstr "Skriv inn brukernavnet og passordet ditt for RetroAchievements."
 
-#: services/ra_sign_in.py:94
+#: services/ra_sign_in.py:96
 msgid "Sign in to RetroAchievements first."
 msgstr "Logg inn på RetroAchievements først."
 
