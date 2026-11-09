@@ -1,6 +1,9 @@
 - version: 4.0.0
   date: '2026-11-09'
   tags:
+  - type: performance
+    label: '博物馆的背景移除功能不再一直占用内存。它用 AI 模型把手柄照片从背景中抠出来，这个模型一旦用过就占用超过 2 GB 内存，处理照片时最多约 9 GB，直到 RetroDB 重启才释放。现在它在一个辅助程序中运行，需要时才启动，处理完最后一张照片两分钟后关闭，把这些内存全部释放'
+    en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'
   - type: feature
     label: 'Xbox 导入不再需要 Microsoft Azure 账户。现在每个人在“设置 → 我的资料”中粘贴自己的免费 OpenXBL 密钥（来自 xbl.io），并且在你网络中的任何电脑上都能使用。导入还会排除应用和仅限手机的游戏，把 PC 游戏归入 Windows 而不是 Xbox One，正确读取 Xbox 360 成就，并且不再为未解锁的成就显示日期。免费密钥每小时允许 150 次请求：大量成就同步达到上限时会停止并提示，下次会从尚未处理到的游戏开始'
     en: 'Xbox import no longer needs a Microsoft Azure account. Each person now pastes their own free OpenXBL key (from xbl.io) under Settings → My Profile, and it works from any computer on your network. The import also leaves out apps and phone-only games, files PC games under Windows instead of Xbox One, reads Xbox 360 achievements the right way, and shows no date for a locked achievement. The free key allows 150 requests an hour: a big achievement sync that reaches it stops, says so, and next time starts with the games it had not reached'

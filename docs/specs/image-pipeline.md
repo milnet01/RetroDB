@@ -246,6 +246,15 @@ server restarts. Each failed image uses Lanczos. The helper logs to
 `logs/upscale_worker.log`, native libraries' output included. Everything
 below in this section happens inside the helper.
 
+**Museum background removal (PASS-59-273)** uses the same machinery in a
+second, separate helper: `services/rembg_worker.py` starts
+`app.py --rembg-worker`, which loads rembg's `birefnet-general` model and
+takes one photo at a time, with the same idle exit and the same
+crash-to-CPU-to-off steps. Inside it, a GPU session that fails at run time
+is replaced by a CPU one. `routes/museum.py` never imports rembg; when the
+helper fails, the photo is kept as it was. It logs to
+`logs/rembg_worker.log`.
+
 **Singleton lifecycle**: `_get_local_upscaler()` is lazy, double-checked
 under `_upscaler_lock`. A GPU inference failure trips a one-way circuit
 breaker (`_gpu_failed = True`), tears down the GPU thread, and rebuilds

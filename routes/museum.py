@@ -15,7 +15,6 @@ import logging
 import requests
 from urllib.parse import urlparse
 
-import threading
 
 import config
 from services.database import get_request_db
@@ -31,13 +30,6 @@ def _is_public_https_url(url, max_redirects=3):
     """
     from services.ssrf import validate_and_pin_url
     return validate_and_pin_url(requests, url, max_redirects=max_redirects, timeout=5)
-
-# Serialize all rembg GPU work to prevent concurrent sessions from exhausting
-# GPU memory (ROCm/HIP workspace allocation failures → GPU hang).
-# The cached session is reused across requests so GPU memory is allocated once.
-_rembg_lock = threading.Lock()
-_rembg_session = None       # Cached GPU session (or CPU fallback)
-_rembg_session_cpu = False   # True if cached session is CPU-only
 
 bp = Blueprint('museum', __name__)
 
@@ -857,10 +849,15 @@ def _remove_background(image_data, removebg_key=None):
         except Exception as e:
             logger.warning(f"Museum: remove.bg error ({e}), falling back to rembg")
 
-    # Fall back to rembg (local AI background removal).
-    # Acquire lock so only one rembg session uses the GPU at a time.
+    # Fall back to rembg (local AI background removal), in its own helper
+    # process, which takes one photo at a time and exits when idle
+    # (services/rembg_worker.py, PASS-59-273).
+    from services import rembg_worker
+    remover = rembg_worker.get()
+    if remover is None:
+        logger.info("Museum: rembg not installed, skipping background removal")
+        return image_data
     try:
-        from rembg import remove as rembg_remove, new_session
         from PIL import Image
         import io
 
@@ -882,63 +879,10 @@ def _remove_background(image_data, removebg_key=None):
         except Exception as e:
             logger.warning(f"Museum: Pre-rembg downscale failed ({e}), using original size")
 
-        with _rembg_lock:
-            global _rembg_session, _rembg_session_cpu
-
-            # Create or reuse a cached session so GPU memory is allocated once
-            if _rembg_session is None:
-                providers = None
-                try:
-                    # An RDNA2 card (RX 6600, gfx1032) needs gfx1030's kernels;
-                    # set before ONNX Runtime touches the GPU, for those cards
-                    # only (PASS-59-249).
-                    from services.gpu_env import apply_rdna2_override
-                    if apply_rdna2_override():
-                        logger.info("Museum: HSA_OVERRIDE_GFX_VERSION=10.3.0 for an RDNA2 card")
-                    # Use MIOpen FAST find mode to skip exhaustive kernel benchmarking.
-                    # Default mode benchmarks every candidate kernel on cache miss,
-                    # hammering the GPU for ~60s after inference is already complete.
-                    if 'MIOPEN_FIND_MODE' not in os.environ:
-                        os.environ['MIOPEN_FIND_MODE'] = '2'
-                        logger.info("Museum: Set MIOPEN_FIND_MODE=2 (fast) to skip kernel auto-tuning")
-
-                    import onnxruntime as ort
-                    available = ort.get_available_providers()
-                    preferred = [
-                        'CUDAExecutionProvider',
-                        'ROCMExecutionProvider',
-                        'CoreMLExecutionProvider',
-                        'CPUExecutionProvider',
-                    ]
-                    providers = [p for p in preferred if p in available]
-                    gpu_provider = next((p for p in providers if p != 'CPUExecutionProvider'), None)
-                    if gpu_provider:
-                        logger.info(f"Museum: rembg using {gpu_provider}")
-                    else:
-                        logger.info("Museum: rembg using CPU (no GPU provider available)")
-                        _rembg_session_cpu = True
-                except ImportError:
-                    pass  # onnxruntime not importable — let rembg handle it
-
-                _rembg_session = new_session('birefnet-general', providers=providers)
-            else:
-                logger.info(f"Museum: rembg reusing cached {'CPU' if _rembg_session_cpu else 'GPU'} session")
-
-            try:
-                result = rembg_remove(image_data, session=_rembg_session, post_process_mask=True)
-            except Exception as e:
-                # GPU session failed at runtime — permanently fall back to CPU
-                if not _rembg_session_cpu:
-                    logger.warning(f"Museum: rembg GPU failed ({e}), switching to CPU session")
-                    _rembg_session = new_session('birefnet-general', providers=['CPUExecutionProvider'])
-                    _rembg_session_cpu = True
-                    result = rembg_remove(image_data, session=_rembg_session, post_process_mask=True)
-                else:
-                    raise
-        logger.info("Museum: Background removed via rembg birefnet-general (local)")
-        return result
-    except ImportError:
-        logger.info("Museum: rembg not installed, skipping background removal")
+        result = remover.remove(image_data)
+        if result is not None:
+            logger.info("Museum: Background removed via rembg birefnet-general (local)")
+            return result
     except Exception as e:
         logger.warning(f"Museum: rembg error: {e}")
 

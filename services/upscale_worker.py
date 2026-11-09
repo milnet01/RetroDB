@@ -80,9 +80,13 @@ def _recv(stream):
 # -----------------------------------------------------------------------------
 
 class _Remote:
-    """Stands in for the upscaler: `enhance()` sends the image to the helper."""
+    """Stands in for the upscaler: `enhance()` sends the image to the helper.
+    `services/rembg_worker.py` reuses it for background removal, with its
+    own FLAG and NAME (PASS-59-273)."""
 
     _gpu = False   # the helper owns the GPU and its breaker
+    FLAG = FLAG
+    NAME = 'Upscale'
 
     def __init__(self):
         self._lock = threading.Lock()
@@ -92,9 +96,9 @@ class _Remote:
 
     def _argv(self):
         if getattr(sys, 'frozen', False):
-            argv = [sys.executable, FLAG]
+            argv = [sys.executable, self.FLAG]
         else:
-            argv = [sys.executable, str(Path(__file__).resolve().parent.parent / 'app.py'), FLAG]
+            argv = [sys.executable, str(Path(__file__).resolve().parent.parent / 'app.py'), self.FLAG]
         return argv + ([CPU_FLAG] if self.cpu_only else [])
 
     def _start(self):
@@ -105,8 +109,8 @@ class _Remote:
         # Collect its exit status as soon as it ends, idle or not, so it
         # does not linger as a zombie until the next upscale.
         threading.Thread(target=self._proc.wait, daemon=True,
-                         name='upscale-helper-reaper').start()
-        logger.info(f"Upscale helper started (pid {self._proc.pid}"
+                         name=f'{self.NAME.lower()}-helper-reaper').start()
+        logger.info(f"{self.NAME} helper started (pid {self._proc.pid}"
                     f"{', CPU only' if self.cpu_only else ''})")
 
     def _ask(self, arr):
@@ -116,10 +120,32 @@ class _Remote:
         watchdog = threading.Timer(CALL_TIMEOUT, proc.kill)
         watchdog.start()
         try:
-            _send(proc.stdin, 'enhance', arr)
+            _send(proc.stdin, 'work', arr)
             return _recv(proc.stdout)
         finally:
             watchdog.cancel()
+
+    def _call(self, arr):
+        """The helper's (kind, array, text) reply; the caller holds _lock.
+        A helper that crashes is followed by a CPU-only one; a CPU-only one
+        that crashes turns the work off until the server restarts. Raises
+        RuntimeError on a crash."""
+        for attempt in (1, 2):
+            try:
+                return self._ask(arr)
+            except (EOFError, OSError, ValueError) as e:
+                code = self._ended()
+                if code == 0 and attempt == 1:
+                    continue    # it left for idleness as the work went in
+                if self.cpu_only:
+                    self.disabled = True
+                    logger.warning(f"{self.NAME} helper crashed again on CPU (exit {code}); "
+                                   f"it is off until the server restarts")
+                else:
+                    self.cpu_only = True
+                    logger.warning(f"{self.NAME} helper crashed (exit {code}); "
+                                   f"the next one runs on CPU only")
+                raise RuntimeError(f"{self.NAME.lower()} helper ended: {e!r}") from e
 
     def _ended(self):
         """The helper's exit code once its pipe has closed."""
@@ -135,24 +161,7 @@ class _Remote:
         with self._lock:
             if self.disabled:
                 return None, None
-            for attempt in (1, 2):
-                try:
-                    reply = self._ask(arr)
-                    break
-                except (EOFError, OSError, ValueError) as e:
-                    code = self._ended()
-                    if code == 0 and attempt == 1:
-                        continue    # it left for idleness as the image went in
-                    if self.cpu_only:
-                        self.disabled = True
-                        logger.warning(f"Upscale helper crashed again on CPU (exit {code}); "
-                                       f"AI upscaling is off until the server restarts")
-                    else:
-                        self.cpu_only = True
-                        logger.warning(f"Upscale helper crashed (exit {code}); "
-                                       f"the next one runs on CPU only")
-                    raise RuntimeError(f"upscale helper ended: {e!r}") from e
-            kind, out, text = reply
+            kind, out, text = self._call(arr)
             if kind == 'ok':
                 return out, None
             if kind == 'unavailable':
@@ -179,11 +188,11 @@ def get():
 # Helper side
 # -----------------------------------------------------------------------------
 
-def _log_to_file():
-    """Send fds 1 and 2, and Python logging, to logs/upscale_worker.log, so
-    native libraries' messages (a missing ROCm library) are kept there."""
+def _log_to_file(log_name=_LOG_NAME):
+    """Send fds 1 and 2, and Python logging, to logs/<log_name>, so native
+    libraries' messages (a missing ROCm library) are kept there."""
     import config
-    path = os.path.join(config.BASE_DIR, 'logs', _LOG_NAME)
+    path = os.path.join(config.BASE_DIR, 'logs', log_name)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     if os.path.exists(path) and os.path.getsize(path) > _LOG_MAX_BYTES:
         os.replace(path, path + '.1')
@@ -193,17 +202,15 @@ def _log_to_file():
     os.close(fd)
     sys.stdout = sys.stderr = open(2, 'w', buffering=1, closefd=False)
     logging.basicConfig(level=logging.INFO, stream=sys.stderr, force=True,
-                        format='%(asctime)s - upscale_worker - %(name)s - %(levelname)s - %(message)s')
+                        format=f'%(asctime)s - {log_name[:-4]} - %(name)s - %(levelname)s - %(message)s')
 
 
-def child_main(argv):
-    """Serve upscales until stdin closes or IDLE_SECONDS pass without one."""
+def serve(handle, log_name=_LOG_NAME):
+    """Answer each request with handle(array) -> (kind, array or None, text)
+    until stdin closes or IDLE_SECONDS pass without one, then exit."""
     replies = os.fdopen(os.dup(1), 'wb')      # the pipe, before fd 1 moves
     requests = os.fdopen(os.dup(0), 'rb')
-    _log_to_file()
-    from services import image_utils
-    if CPU_FLAG in argv:
-        image_utils._gpu_failed = True
+    _log_to_file(log_name)
 
     inbox = queue.Queue()
 
@@ -223,14 +230,26 @@ def child_main(argv):
         if item is None:
             break
         try:
-            if image_utils._get_local_upscaler() is None:
-                _send(replies, 'unavailable')
-            else:
-                # None when the image is over the tile cap
-                _send(replies, 'ok', image_utils._enhance_local(item[1]))
+            kind, out, text = handle(item[1])
+            _send(replies, kind, out, text)
         except Exception as e:
             _send(replies, 'error', text=f"{type(e).__name__}: {e}")
     # os._exit skips exit handlers: ROCm's roctracer aborts in them and
     # leaves a core dump behind.
     replies.flush()
     os._exit(0)
+
+
+def child_main(argv):
+    """Serve upscales until stdin closes or IDLE_SECONDS pass without one."""
+    from services import image_utils
+    if CPU_FLAG in argv:
+        image_utils._gpu_failed = True
+
+    def _upscale(arr):
+        if image_utils._get_local_upscaler() is None:
+            return 'unavailable', None, ''
+        # None when the image is over the tile cap
+        return 'ok', image_utils._enhance_local(arr), ''
+
+    serve(_upscale)

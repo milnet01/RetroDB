@@ -62,6 +62,12 @@ if len(sys.argv) > 1 and sys.argv[1] == '--upscale-worker':
     from services import upscale_worker
     upscale_worker.child_main(sys.argv[1:])
 
+if len(sys.argv) > 1 and sys.argv[1] == '--rembg-worker':
+    # PASS-59-273 — Museum background removal, the same way: a helper
+    # process started by services/rembg_worker.py.
+    from services import rembg_worker
+    rembg_worker.child_main(sys.argv[1:])
+
 # Import configuration
 import config
 

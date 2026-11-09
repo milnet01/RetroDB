@@ -88,7 +88,7 @@ def test_the_helper_answers_then_exits_when_idle(tmp_path):
         import sys
         from services import image_utils, upscale_worker
         upscale_worker.IDLE_SECONDS = 1
-        upscale_worker._log_to_file = lambda: None
+        upscale_worker._log_to_file = lambda *_a: None
         image_utils._get_local_upscaler = lambda: object()
         image_utils._enhance_local = lambda arr: arr + 1
         upscale_worker.child_main([])
