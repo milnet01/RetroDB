@@ -43,6 +43,7 @@ from services.jobs.player_cores import PlayerCoresJob
 from services.jobs.ai_fill_bulk import AiFillBulkJob
 from services.jobs.mame_names import MameNamesJob
 from services.jobs.ss_region_repair import SsRegionRepairJob
+from services.jobs.ra_queue import RAQueue
 
 # =============================================================================
 # GLOBAL JOB INSTANCES
@@ -52,6 +53,7 @@ from services.jobs.ss_region_repair import SsRegionRepairJob
 bulk_scrape_job = BulkScrapeJob()
 ra_sync_job = RASyncJob()
 ra_refresh_job = RARefreshJob()
+ra_queue = RAQueue(ra_sync_job, ra_refresh_job)
 psn_refresh_job = PSNRefreshJob()
 museum_generate_job = MuseumGenerateJob()
 image_resize_job = ImageResizeJob()
@@ -101,6 +103,7 @@ __all__ = [
     'bulk_scrape_job',
     'ra_sync_job',
     'ra_refresh_job',
+    'ra_queue',
     'psn_refresh_job',
     'museum_generate_job',
     'image_resize_job',

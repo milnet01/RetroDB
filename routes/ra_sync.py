@@ -4,15 +4,16 @@
 # Handles RetroAchievements refresh and sync background job management.
 # =============================================================================
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, g
 from flask_babel import gettext as _
 import logging
 
 from services.analytics import invalidate_analytics_cache
 from services.api_helpers import handle_api_errors, success, error, job_reply
-from services.auth import login_required, admin_required
+from services.auth import login_required, admin_required, editor_required
 from services.database import query, execute
-from services.jobs import ra_sync_job, ra_refresh_job
+from services.jobs import ra_sync_job, ra_refresh_job, ra_queue
+from services.jobs.base import may_control
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +35,31 @@ def system_log(level, message):
         logger.debug(message)
 
 
+def queued_reply(kind, system_id, system_name, user_id=None, **extra):
+    """Put an RA job in the server's queue and say so (PASS-59-268). The
+    reply keeps `queued: true`; `queue_id` and `position` say where it waits."""
+    item = ra_queue.add(kind, system_id, system_name, user_id=user_id)
+    system_log('info', f'RA {kind} for {system_name} queued at position {item["position"]}')
+    return success(
+        queued=True,
+        queue_id=item['id'],
+        position=item['position'],
+        system_id=system_id,
+        system_name=system_name,
+        message=_('%(name)s will start when the current RetroAchievements job '
+                  'finishes. Place in line: %(num)s.',
+                  name=system_name, num=item['position']),
+        **extra,
+    )
+
+
+def _may_cancel(item):
+    """A queued refresh is an admin's; a queued sync is its owner's or an admin's."""
+    if item['kind'] == 'refresh':
+        return g.user['role'] == 'admin'
+    return may_control(item['user_id'], g.user)
+
+
 # =============================================================================
 # RETROACHIEVEMENTS REFRESH API
 # =============================================================================
@@ -43,29 +69,10 @@ def system_log(level, message):
 @handle_api_errors
 def api_refresh_retroachievements():
     """Start background job to refresh RetroAchievements status for all games"""
-    # Check if RA Sync is currently running - they share the same API
-    sync_status = ra_sync_job.get_status()
-    if sync_status.get('running', False) and not sync_status.get('completed', False):
-        system_log('info', 'RA Sync is running, queueing global RA Refresh')
-        return success(
-            queued=True,
-            message='RA Sync is running. Global Refresh will start when current operation completes.',
-            blocked_by='ra-sync',
-            system_id=None,
-            system_name='All Systems',
-        )
-
-    # Check if RA Refresh is already running
-    refresh_status = ra_refresh_job.get_status()
-    if refresh_status.get('running', False) and not refresh_status.get('completed', False):
-        system_log('info', 'RA Refresh already running, cannot start another')
-        return success(
-            queued=True,
-            message='Another RA Refresh is running. Global Refresh will start when current operation completes.',
-            blocked_by='ra-refresh',
-            system_id=None,
-            system_name='All Systems',
-        )
+    # RA Sync and RA Refresh share one account: while either runs, wait in
+    # the server's queue (PASS-59-268).
+    if ra_queue.busy():
+        return queued_reply('refresh', None, _('All Systems'))
 
     result = ra_refresh_job.start()
     return job_reply(result)
@@ -75,7 +82,7 @@ def api_refresh_retroachievements():
 @login_required
 def api_refresh_retroachievements_status():
     """Get status of the RA refresh background job"""
-    return jsonify(ra_refresh_job.get_status())
+    return jsonify({**ra_refresh_job.get_status(), 'ra_queue': ra_queue.items()})
 
 
 @bp.route('/api/refresh-retroachievements/cancel', methods=['POST'])
@@ -106,37 +113,39 @@ def api_refresh_retroachievements_system(system_id):
     # Get game count for this system
     game_count = query("SELECT COUNT(*) as cnt FROM games WHERE system_id = ?", (system_id,), one=True)['cnt']
 
-    # Check if RA Sync is currently running - they share the same API
-    sync_status = ra_sync_job.get_status()
-    if sync_status.get('running', False) and not sync_status.get('completed', False):
-        system_log('info', f'RA Sync is running, queueing RA Refresh for {system["name"]}')
-        return success(
-            queued=True,
-            message=f'RA Sync is running. {system["name"]} Refresh will start when current operation completes.',
-            blocked_by='ra-sync',
-            system_id=system_id,
-            system_name=system['name'],
-            game_count=game_count,
-        )
-
-    # Check if RA Refresh is already running
-    refresh_status = ra_refresh_job.get_status()
-    if refresh_status.get('running', False) and not refresh_status.get('completed', False):
-        system_log('info', f'RA Refresh already running, queueing Refresh for {system["name"]}')
-        return success(
-            queued=True,
-            message=f'Another RA Refresh is running. {system["name"]} will start when current operation completes.',
-            blocked_by='ra-refresh',
-            system_id=system_id,
-            system_name=system['name'],
-            game_count=game_count,
-        )
+    if ra_queue.busy():
+        return queued_reply('refresh', system_id, system['name'], game_count=game_count)
 
     # Start the per-system refresh
     result = ra_refresh_job.start(system_id=system_id, system_name=system['name'])
     result['game_count'] = game_count
 
     return job_reply(result)
+
+
+# =============================================================================
+# RETROACHIEVEMENTS QUEUE API (PASS-59-268)
+# =============================================================================
+
+@bp.route('/api/ra-queue', methods=['GET'])
+@login_required
+def api_ra_queue():
+    """RA jobs waiting for the running one, in the order they will start."""
+    return success(queue=ra_queue.items())
+
+
+@bp.route('/api/ra-queue/<int:item_id>/cancel', methods=['POST'])
+@editor_required
+@handle_api_errors
+def api_ra_queue_cancel(item_id):
+    """Take a waiting RA job out of the queue."""
+    item = ra_queue.get(item_id)
+    if not item:
+        return error(_('That job is no longer waiting'), 404)
+    if not _may_cancel(item):
+        return error(_('That job belongs to another user'), 403)
+    ra_queue.cancel(item_id)
+    return success(queue=ra_queue.items())
 
 
 # =============================================================================

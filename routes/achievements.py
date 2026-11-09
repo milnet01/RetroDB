@@ -12,8 +12,9 @@ from services.analytics import invalidate_analytics_cache
 from services.database import query, execute
 from services.auth import login_required, editor_required, get_user_ra_credentials
 from services.api_helpers import handle_api_errors, success, error, job_reply
-from services.jobs import ra_sync_job, ra_refresh_job
+from services.jobs import ra_sync_job, ra_refresh_job, ra_queue
 from services import ra_sign_in
+from routes.ra_sync import queued_reply
 
 logger = logging.getLogger('scraper')
 
@@ -360,31 +361,12 @@ def api_sync_system_achievements(system_id):
                 already_running=True,
             )
     
-    # Check if RA Refresh is currently running
-    refresh_status = ra_refresh_job.get_status()
-    if refresh_status.get('running', False):
-        system_log('info', f'RA Refresh is running, queueing sync for system ID {system_id}')
-        return success(
-            queued=True,
-            message='RA Refresh is running. Sync will start when refresh completes.',
-            refresh_running=True,
-            system_id=system_id,
-            system_name=system['name'],
-            game_count=game_count,
-        )
-    
-    # Check if RA Sync is already running for a DIFFERENT system
-    if sync_status.get('running', False) and not sync_status.get('completed', False):
-        system_log('info', f'RA Sync already running, queueing sync for {system["name"]}')
-        return success(
-            queued=True,
-            message='Sync queued. Will start after current sync completes.',
-            sync_running=True,
-            system_id=system_id,
-            system_name=system['name'],
-            game_count=game_count,
-        )
-    
+    # RA Sync and RA Refresh share one account: while either runs, wait in
+    # the server's queue (PASS-59-268).
+    if ra_queue.busy():
+        return queued_reply('sync', system_id, system['name'], user_id=g.user['id'],
+                            game_count=game_count)
+
     game_ids = [g['id'] for g in games]
     system_log('info', f'Syncing {len(game_ids)} games for {system["name"]}')
     
@@ -397,8 +379,8 @@ def api_sync_system_achievements(system_id):
 @bp.route('/api/achievements/sync-status')
 @login_required
 def api_achievements_sync_status():
-    """Get current RA sync job status"""
-    return jsonify(ra_sync_job.get_status())
+    """Get current RA sync job status, with the RA jobs waiting behind it"""
+    return jsonify({**ra_sync_job.get_status(), 'ra_queue': ra_queue.items()})
 
 
 @bp.route('/api/achievements/sync-cancel', methods=['POST'])

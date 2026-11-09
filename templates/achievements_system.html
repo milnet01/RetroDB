@@ -345,57 +345,6 @@ function updateSystemStats() {
 async function refreshSystemProgress() {
     if (isLoading) return;
     
-    // Check if another sync is running
-    try {
-        const statusResponse = await fetch('/api/achievements/sync-status');
-        const statusData = await statusResponse.json();
-        
-        if (statusData.running && !statusData.completed) {
-            // Queue this sync using the new unified toast controller
-            const systemName = document.querySelector('.card-title')?.textContent || 'Unknown System';
-            const gameCount = document.querySelectorAll('.achievement-game-card').length;
-            
-            // Add to unified RA operations queue
-            const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
-            
-            // Check if already queued
-            if (queue.find(q => q.type === 'sync' && q.systemId === systemId)) {
-                showNotification({{ _('System is already in the queue')|tojson }}, 'info');
-                return;
-            }
-            
-            const newItem = {
-                type: 'sync',
-                systemId: systemId,
-                systemName: systemName,
-                gameCount: gameCount,
-                timestamp: Date.now()
-            };
-            queue.push(newItem);
-            localStorage.setItem('raOperationsQueue', JSON.stringify(queue));
-            
-            // Update button state
-            const btn = document.getElementById('refreshBtn');
-            if (btn) {
-                btn.innerHTML = '<span class="btn-icon">📋</span> Queued';
-                btn.disabled = true;
-            }
-            
-            // Add ONLY this toast (don't touch existing toasts)
-            if (typeof UnifiedToastController !== 'undefined' && UnifiedToastController.addRAOperationToQueue) {
-                UnifiedToastController.addRAOperationToQueue(newItem);
-                if (UnifiedToastController.adjustPollingSpeed) {
-                    UnifiedToastController.adjustPollingSpeed('ra-sync', true);
-                }
-            }
-            
-            showNotification(t({{ _('Added {system} to sync queue')|tojson }}, {system: systemName}), 'info');
-            return;
-        }
-    } catch (e) {
-        console.error('Error checking sync status:', e);
-    }
-    
     isLoading = true;
     
     const btn = document.getElementById('refreshBtn');
@@ -419,39 +368,11 @@ async function refreshSystemProgress() {
         if (data.success) {
             // Check if sync was queued
             if (data.queued) {
-                try {
-                    // Add to unified RA operations queue for toast display
-                    const queue = JSON.parse(localStorage.getItem('raOperationsQueue') || '[]');
-                    
-                    // Don't add duplicates
-                    if (!queue.find(q => q.type === 'sync' && q.systemId === data.system_id)) {
-                        const newItem = {
-                            type: 'sync',
-                            systemId: data.system_id,
-                            systemName: data.system_name,
-                            gameCount: data.game_count,
-                            timestamp: Date.now()
-                        };
-                        queue.push(newItem);
-                        localStorage.setItem('raOperationsQueue', JSON.stringify(queue));
-                        
-                        // Add ONLY this toast (don't touch existing toasts)
-                        if (typeof UnifiedToastController !== 'undefined' && UnifiedToastController.addRAOperationToQueue) {
-                            UnifiedToastController.addRAOperationToQueue(newItem);
-                            if (UnifiedToastController.adjustPollingSpeed) {
-                                UnifiedToastController.adjustPollingSpeed('ra-sync', true);
-                            }
-                        }
-                    }
-                } catch (queueError) {
-                    console.error('Error adding to queue:', queueError);
+                // The server holds it and starts it later (PASS-59-268)
+                if (typeof UnifiedToastController !== 'undefined') {
+                    UnifiedToastController.raJobQueued(data);
                 }
-                
-                // Show feedback
-                if (typeof showModal === 'function') {
-                    showModal('📋 ' + {{ _('Sync Queued')|tojson }}, t({{ _('{system} has been added to the sync queue. It will start automatically when the current sync completes.')|tojson }}, {system: data.system_name}));
-                }
-                
+
                 if (btn) {
                     btn.innerHTML = '<span class="btn-icon">📋</span> Queued';
                     setTimeout(() => {

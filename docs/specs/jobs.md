@@ -36,6 +36,7 @@ can be resumed (or surfaced) on the next start.
 | `bulk_scrape.py` | `BulkScrapeJob` | `bulk_scrape_job` | Bulk metadata fill / full re-scrape across a system or selection; has a per-process **queue** of follow-on jobs and pause/resume/promote/demote operations. |
 | `ra_sync.py` | `RASyncJob` | `ra_sync_job` | Per-user RetroAchievements progress sync — pulls per-game earned/total achievements + points. |
 | `ra_refresh.py` | `RARefreshJob` | `ra_refresh_job` | Walks games to discover whether each has a RetroAchievements entry (populates `games.ra_game_id`). |
+| `ra_queue.py` | `RAQueue` | `ra_queue` | Not a job: RA Sync and RA Refresh share one account, so a request made while either runs waits here and starts when both are idle (PASS-59-268). Routes call `busy()` and `add()`; `/api/ra-queue` lists and cancels. |
 | `psn_refresh.py` | `PSNRefreshJob` | `psn_refresh_job` | Bulk pull of PSN trophy detail with a 2.5 s rate-limit between games. |
 | `museum.py` | `MuseumGenerateJob` | `museum_generate_job` | AI generation of per-system museum content (history / summary / top games). |
 | `image_resize.py` | `ImageResizeJob` | `image_resize_job` | Standardises boxart/screenshots/etc. via Real-ESRGAN upscale + Lanczos downscale. |
@@ -130,6 +131,7 @@ process to `interrupted` so the dashboard never shows stale ghosts.
 |-------|----------|-------------------|
 | `self.running` / `self.cancelled` / `self.paused` / counters | Job object in memory | No |
 | Queue chain (`BulkScrapeJob._queue`) | In-memory list | No (each queued entry also gets a `job_queue` row with `status='queued'` — those are auto-promoted to `interrupted` at startup). A job displaced by a swap or demote, and a resume queued behind a running scrape, get one too, with their progress (`_persist_queued_entry`, PASS-59-243). The row is written outside `self._lock`. |
+| RA queue (`RAQueue._items`) | In-memory list | No, as the bulk scrape queue: each entry gets a `job_queue` row (`ra_sync` / `ra_refresh`, `status='queued'`), shown on the dashboard after a restart. |
 | Per-tick progress | `job_queue.progress` (JSON) | Yes. Most jobs write it every 10 items or 30 s; `museum` every 5 items, `webp_migrate` every 20, each also at 30 s. `hltb_bulk`, `alt_titles_backfill` and `ss_region_repair` write it every 15 s. `ai_fill_bulk` and `mame_names` write no progress. |
 | Run history (started/finished, params, error) | `job_queue` row | Yes — until `sweep_old_job_history` prunes it (§10) |
 | Cross-process lock | `job_locks/<name>.lock` beside the database file (`config.DB_PATH`; by default `database/job_locks/`), as an open FD | No — released on process exit by the kernel |
@@ -373,6 +375,7 @@ it. The fields and their consumers
 | `current_type` | string | image_resize | subtitle line ("boxart" / "screenshots" / ...) |
 | `current_npwr` | string | psn_refresh | secondary subtitle showing the NPWR ID being processed |
 | `queue` / `queue_count` | list / int | bulk_scrape only | per-card queue rendering with cancel/promote/demote buttons |
+| `ra_queue` | list | ra_sync, ra_refresh | queued toasts for the RA jobs waiting on the server, each with a cancel button |
 | `return_url` | string | bulk_scrape | "Return to library" link when the modal closes |
 | `error` / `error_message` | string | all jobs | red toast on failure |
 

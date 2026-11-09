@@ -932,28 +932,9 @@ const RARefreshController = {
 
             if (data.success) {
                 if (data.queued) {
-                    const queue = safeParseJSON('raOperationsQueue', []);
-
-                    if (!queue.find(q => q.type === 'refresh' && q.systemId === systemId)) {
-                        const newItem = {
-                            type: 'refresh',
-                            systemId: systemId,
-                            systemName: systemName || 'Unknown System',
-                            gameCount: data.game_count,
-                            timestamp: Date.now()
-                        };
-                        queue.push(newItem);
-                        localStorage.setItem('raOperationsQueue', JSON.stringify(queue));
-
-                        if (typeof UnifiedToastController !== 'undefined' && UnifiedToastController.addRAOperationToQueue) {
-                            UnifiedToastController.addRAOperationToQueue(newItem);
-                            UnifiedToastController.adjustPollingSpeed('ra-refresh', true);
-                        }
-                    }
-
                     btn.innerHTML = `<span class="filter-icon">${_ti('queued')}</span> ${t('Queued')}`;
-                    if (typeof showNotification !== 'undefined') {
-                        showNotification(t('Added to queue - will start when current operation completes'), 'info');
+                    if (typeof UnifiedToastController !== 'undefined') {
+                        UnifiedToastController.raJobQueued(data);
                     }
                     return;
                 }

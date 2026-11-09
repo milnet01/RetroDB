@@ -1500,10 +1500,7 @@ const UnifiedToastController = {
             } else if (action === 'cancel') {
                 this.cancel(type);
             } else if (action === 'cancel-ra-queued') {
-                const raType = target.dataset.raType;
-                const raSystemIdRaw = target.dataset.raSystemId;
-                const raSystemId = raSystemIdRaw === '' ? null : Number(raSystemIdRaw);
-                this.cancelRAQueued(raType, Number.isFinite(raSystemId) ? raSystemId : null);
+                this.cancelRAQueued(Number(target.dataset.raQueueId));
             }
         });
 
@@ -1860,233 +1857,54 @@ const UnifiedToastController = {
             this.updateQueuedToasts(type, data.queue);
         }
 
-        if (type === 'ra-sync' && !isActive && !existingToast) {
-            const raRefreshToast = this.activeToasts.get('active-ra-refresh');
-            if (!raRefreshToast) {
-                const queue = safeParseJSON('raOperationsQueue', []);
-                if (queue.length > 0 && !this._triggeringRAQueue) {
-                    this.triggerNextRAOperationFromQueue();
-                }
+        if ((type === 'ra-sync' || type === 'ra-refresh') && Array.isArray(data.ra_queue)) {
+            this.updateRAQueuedToasts(data.ra_queue);
+        }
+    },
+
+    /**
+     * Draw the RA jobs waiting on the server (PASS-59-268). Every ra-sync and
+     * ra-refresh status reply carries `ra_queue`; the server starts each job
+     * itself, so the page only shows the list, on any device.
+     */
+    updateRAQueuedToasts(queue) {
+        if (!this.container) this.createContainer();
+        const wanted = new Set();
+        queue.forEach((item, index) => {
+            const toastId = `queued-ra-${item.id}`;
+            wanted.add(toastId);
+            let toast = this.activeToasts.get(toastId);
+            if (!toast) {
+                toast = this.createRAQueuedToast(item);
+                this.activeToasts.set(toastId, toast);
+                this.container.appendChild(toast);
+            }
+            const posEl = toast.querySelector('.queue-position');
+            if (posEl) posEl.textContent = `#${index + 1}`;
+        });
+        for (const [toastId, toast] of this.activeToasts) {
+            if (toastId.startsWith('queued-ra-') && !wanted.has(toastId)) {
+                toast.remove();
+                this.activeToasts.delete(toastId);
             }
         }
+        this._raQueueWaiting = queue.length > 0;
     },
 
     /**
-     * Trigger the next RA operation from the unified queue
-     * Queue can contain both 'sync' and 'refresh' operations
+     * A queued toast for one waiting RA job: {id, kind, system_name}.
      */
-    triggerNextRAOperationFromQueue() {
-        const queue = safeParseJSON('raOperationsQueue', []);
-        if (queue.length === 0) {
-            this._triggeringRAQueue = false;
-            return;
-        }
-
-        if (this._triggeringRAQueue) return;
-        this._triggeringRAQueue = true;
-
-        const syncToast = this.activeToasts.get('active-ra-sync');
-        const refreshToast = this.activeToasts.get('active-ra-refresh');
-        if (syncToast || refreshToast) {
-            console.debug('RA operation already active, not triggering queue');
-            this._triggeringRAQueue = false;
-            return;
-        }
-
-        const next = queue[0];
-
-        if (!next || !next.type) {
-            console.error('Invalid queue item:', next);
-            const newQueue = queue.slice(1);
-            localStorage.setItem('raOperationsQueue', JSON.stringify(newQueue));
-            this._triggeringRAQueue = false;
-            return;
-        }
-
-        let endpoint;
-        if (next.type === 'sync') {
-            endpoint = `/api/achievements/sync-system/${next.systemId}`;
-        } else if (next.type === 'refresh') {
-            endpoint = next.systemId
-                ? `/api/refresh-retroachievements/${next.systemId}`
-                : '/api/refresh-retroachievements';
-        } else {
-            console.error('Unknown RA operation type:', next.type);
-            const newQueue = queue.slice(1);
-            localStorage.setItem('raOperationsQueue', JSON.stringify(newQueue));
-            this._triggeringRAQueue = false;
-            return;
-        }
-
-        console.debug(`Triggering queued RA ${next.type} for ${next.systemName}`);
-
-        API.post(endpoint)
-            .then(result => {
-                if (result.success && !result.queued) {
-                    this.removeRAQueuedToast(next);
-
-                    const updatedQueue = safeParseJSON('raOperationsQueue', []);
-                    const newQueue = updatedQueue.slice(1); // Remove first item
-                    localStorage.setItem('raOperationsQueue', JSON.stringify(newQueue));
-
-                    this.updateRAQueuePositions();
-
-                    const initialData = {
-                        running: true,
-                        completed: false,
-                        current_system: next.systemName,
-                        current_game: t('Starting...'),
-                        total: next.gameCount || 0,
-                        current: 0,
-                        percent: 0,
-                        paused: false
-                    };
-
-                    if (next.type === 'sync') {
-                        this.showActiveToast('ra-sync', ToastTypes.RA_SYNC, initialData);
-                        this.adjustPollingSpeed('ra-sync', true);
-                        this.broadcast('job-started', 'ra-sync', initialData);
-                    } else {
-                        this.showActiveToast('ra-refresh', ToastTypes.RA_REFRESH, initialData);
-                        this.adjustPollingSpeed('ra-refresh', true);
-                        this.broadcast('job-started', 'ra-refresh', initialData);
-                    }
-                } else if (result.queued) {
-                    console.debug(`RA ${next.type} still queued - another operation is running`);
-                } else {
-                    console.error(`Failed to start queued RA ${next.type}:`, result.error);
-                }
-            })
-            .catch(e => {
-                console.error(`Error starting queued RA ${next.type}:`, e);
-            })
-            .finally(() => {
-                setTimeout(() => {
-                    this._triggeringRAQueue = false;
-                }, 2000);
-            });
-    },
-
-    triggerNextRASyncFromQueue() {
-        this.triggerNextRAOperationFromQueue();
-    },
-
-    /**
-     * Add an RA operation to the unified queue (sync or refresh)
-     */
-    addRAOperationToQueue(item) {
-        if (!this.container) {
-            this.createContainer();
-        }
-
-        const toastId = item.type === 'sync'
-            ? `queued-ra-sync-${item.systemId}`
-            : `queued-ra-refresh-${item.systemId || 'all'}`;
-
-        if (this.activeToasts.has(toastId)) {
-            return;
-        }
-
-        const queue = safeParseJSON('raOperationsQueue', []);
-        const position = queue.findIndex(q =>
-            q.type === item.type &&
-            (q.systemId || 'all') === (item.systemId || 'all')
-        ) + 1;
-
-        const toast = this.createRAQueuedToast(item, position || queue.length);
-        this.activeToasts.set(toastId, toast);
-        this.container.appendChild(toast);
-    },
-
-    addRASyncQueuedToast(item) {
-        item.type = 'sync';
-        this.addRAOperationToQueue(item);
-    },
-
-    /**
-     * Remove a queued RA operation toast
-     */
-    removeRAQueuedToast(item) {
-        const toastId = item.type === 'sync'
-            ? `queued-ra-sync-${item.systemId}`
-            : `queued-ra-refresh-${item.systemId || 'all'}`;
-        const toast = this.activeToasts.get(toastId);
-        if (toast) {
-            toast.remove();
-            this.activeToasts.delete(toastId);
-        }
-    },
-
-    removeRASyncQueuedToast(systemId) {
-        this.removeRAQueuedToast({ type: 'sync', systemId });
-    },
-
-    /**
-     * Update queue position numbers for unified queue
-     */
-    updateRAQueuePositions() {
-        const queue = safeParseJSON('raOperationsQueue', []);
-        queue.forEach((item, index) => {
-            const toastId = item.type === 'sync'
-                ? `queued-ra-sync-${item.systemId}`
-                : `queued-ra-refresh-${item.systemId || 'all'}`;
-            const toast = this.activeToasts.get(toastId);
-            if (toast) {
-                const posEl = toast.querySelector('.queue-position');
-                if (posEl) posEl.textContent = `#${index + 1}`;
-            }
-        });
-    },
-
-    updateQueuePositions() {
-        this.updateRAQueuePositions();
-    },
-
-    /**
-     * Restore RA queued toasts from localStorage (called on page load only)
-     */
-    restoreRAQueuedToasts() {
-        const queue = safeParseJSON('raOperationsQueue', []);
-        if (queue.length === 0) return;
-
-        if (!this.container) {
-            this.createContainer();
-        }
-
-        queue.forEach((item, index) => {
-            const toastId = item.type === 'sync'
-                ? `queued-ra-sync-${item.systemId}`
-                : `queued-ra-refresh-${item.systemId || 'all'}`;
-
-            if (this.activeToasts.has(toastId)) return;
-
-            const toast = this.createRAQueuedToast(item, index + 1);
-            this.activeToasts.set(toastId, toast);
-            this.container.appendChild(toast);
-        });
-    },
-
-    restoreRASyncQueuedToasts() {
-        this.restoreRAQueuedToasts();
-    },
-
-    /**
-     * Create a queued toast for any RA operation (sync or refresh)
-     */
-    createRAQueuedToast(item, position) {
-        const config = item.type === 'sync' ? ToastTypes.RA_SYNC : ToastTypes.RA_REFRESH;
+    createRAQueuedToast(item) {
+        const config = item.kind === 'sync' ? ToastTypes.RA_SYNC : ToastTypes.RA_REFRESH;
         const toast = document.createElement('div');
-        toast.className = `unified-toast queued-toast ra-${item.type}-queued-toast`;
+        toast.className = `unified-toast queued-toast ra-${item.kind === 'sync' ? 'sync' : 'refresh'}-queued-toast`;
         toast.dataset.priority = '10';
         toast.style.order = 90;
         toast.style.setProperty('--toast-color', config.queuedColor);
 
-        const title = item.type === 'sync'
-            ? `🔄 ${this.escapeHtml(t('Sync: {system}', {system: item.systemName}))}`
-            : `🏆 ${this.escapeHtml(t('Refresh: {system}', {system: item.systemName || t('All Systems')}))}`;
-
-        const raType = item.type === 'sync' ? 'sync' : 'refresh';
-        const raSystemId = item.systemId == null ? '' : String(item.systemId);
+        const title = item.kind === 'sync'
+            ? `🔄 ${this.escapeHtml(t('Sync: {system}', {system: item.system_name}))}`
+            : `🏆 ${this.escapeHtml(t('Refresh: {system}', {system: item.system_name || t('All Systems')}))}`;
 
         toast.innerHTML = `
             <div class="toast-content">
@@ -2094,40 +1912,44 @@ const UnifiedToastController = {
                     <div class="toast-icon">${getThemedIcon('queued')}</div>
                     <div class="toast-info">
                         <div class="toast-title">${title}</div>
-                        <div class="toast-subtitle"><span class="queue-position">#${position}</span> ${this.escapeHtml(t('in queue'))}${item.gameCount ? ` • ${this.escapeHtml(t('{n} games', {n: this.fmtNum(item.gameCount)}))}` : ''}</div>
+                        <div class="toast-subtitle"><span class="queue-position"></span> ${this.escapeHtml(t('in queue'))}</div>
                     </div>
                 </div>
                 <div class="toast-controls">
-                    <button class="toast-btn cancel" data-toast-action="cancel-ra-queued" data-ra-type="${this.escapeHtml(raType)}" data-ra-system-id="${this.escapeHtml(raSystemId)}" title="${this.escapeHtml(t('Remove from queue'))}">
+                    <button class="toast-btn cancel" data-toast-action="cancel-ra-queued" data-ra-queue-id="${this.escapeHtml(String(item.id))}" title="${this.escapeHtml(t('Remove from queue'))}">
                         ✕
                     </button>
                 </div>
             </div>
         `;
-
         return toast;
     },
 
-    createRASyncQueuedToast(item, position) {
-        item.type = 'sync';
-        return this.createRAQueuedToast(item, position);
+    /**
+     * A page's RA request came back `queued`: the server holds it, so say so
+     * in the server's words and poll to draw the waiting list.
+     */
+    raJobQueued(data) {
+        showNotification(data.message || t('Added to queue - will start when current operation completes'), 'info');
+        this.pollAllNow();
     },
 
     /**
-     * Cancel a queued RA operation
+     * Take a waiting RA job out of the server's queue.
      */
-    cancelRAQueued(type, systemId) {
-        const queue = safeParseJSON('raOperationsQueue', []);
-        const newQueue = queue.filter(q => !(q.type === type && (q.systemId || null) === systemId));
-        localStorage.setItem('raOperationsQueue', JSON.stringify(newQueue));
-
-        this.removeRAQueuedToast({ type, systemId });
-
-        this.updateRAQueuePositions();
-    },
-
-    cancelRASyncQueued(systemId) {
-        this.cancelRAQueued('sync', systemId);
+    async cancelRAQueued(queueId) {
+        try {
+            const result = await API.post(`/api/ra-queue/${queueId}/cancel`);
+            if (result.success) {
+                this.updateRAQueuedToasts(result.queue || []);
+            } else {
+                showNotification(result.error || t('Could not remove it from the queue'), 'error');
+                this.pollAllNow();
+            }
+        } catch (e) {
+            console.error('Could not cancel the queued RA job:', e);
+            showNotification(t('Could not remove it from the queue'), 'error');
+        }
     },
 
     /**
@@ -2470,17 +2292,8 @@ const UnifiedToastController = {
         setTimeout(() => {
             this.hideActiveToast(type);
 
-            if (type === 'ra-sync' || type === 'ra-refresh') {
-                setTimeout(() => {
-                    const queue = safeParseJSON('raOperationsQueue', []);
-                    const syncToast = this.activeToasts.get('active-ra-sync');
-                    const refreshToast = this.activeToasts.get('active-ra-refresh');
-
-                    if (queue.length > 0 && !this._triggeringRAQueue && !syncToast && !refreshToast) {
-                        console.debug(`Queue has ${queue.length} items, triggering next`);
-                        this.triggerNextRAOperationFromQueue();
-                    }
-                }, 1000);
+            if ((type === 'ra-sync' || type === 'ra-refresh') && this._raQueueWaiting) {
+                setTimeout(() => this.pollAllNow(), 1000);
             }
         }, 2000);
     },
@@ -2740,31 +2553,8 @@ const UnifiedToastController = {
         localStorage.removeItem('bulkScrapeJustStarted');
         localStorage.removeItem('bulkScrapeToastState');
 
-        this.migrateOldQueue();
-
-        this.restoreRAQueuedToasts();
-    },
-
-    /**
-     * Migrate old raSyncQueue to unified raOperationsQueue
-     */
-    migrateOldQueue() {
-        const oldItems = safeParseJSON('raSyncQueue', null);
-        if (Array.isArray(oldItems) && oldItems.length > 0) {
-            const unifiedQueue = safeParseJSON('raOperationsQueue', []);
-            oldItems.forEach(item => {
-                if (!item.type) item.type = 'sync';
-                if (!unifiedQueue.find(q => q.type === 'sync' && q.systemId === item.systemId)) {
-                    unifiedQueue.push(item);
-                }
-            });
-            try {
-                localStorage.setItem('raOperationsQueue', JSON.stringify(unifiedQueue));
-            } catch (e) {
-                console.warn('Could not write migrated raOperationsQueue:', e);
-            }
-        }
-        try { localStorage.removeItem('raSyncQueue'); } catch (_) { /* ignore */ }
+        localStorage.removeItem('raOperationsQueue');
+        localStorage.removeItem('raSyncQueue');
     },
 
     /**
@@ -3854,29 +3644,10 @@ async function refreshRetroAchievements() {
 
                 if (data.success) {
                     if (data.queued) {
-                        const queue = safeParseJSON('raOperationsQueue', []);
-
-                        if (!queue.find(q => q.type === 'refresh' && q.systemId === null)) {
-                            const newItem = {
-                                type: 'refresh',
-                                systemId: null,
-                                systemName: 'All Systems',
-                                timestamp: Date.now()
-                            };
-                            queue.push(newItem);
-                            localStorage.setItem('raOperationsQueue', JSON.stringify(queue));
-
-                            if (typeof UnifiedToastController !== 'undefined' && UnifiedToastController.addRAOperationToQueue) {
-                                UnifiedToastController.addRAOperationToQueue(newItem);
-                                UnifiedToastController.adjustPollingSpeed('ra-refresh', true);
-                            }
-                        }
-
                         if (btn) {
                             btn.innerHTML = `<span class="btn-icon">📋</span> ${escapeHtml(t('Queued'))}`;
                         }
-
-                        showNotification(t('Added to queue - will start when current operation completes'), 'info');
+                        UnifiedToastController.raJobQueued(data);
                         return;
                     }
 

@@ -145,32 +145,10 @@ const RARefreshController = {
             if (data.success) {
                 // Check if operation was queued (blocked by another RA operation)
                 if (data.queued) {
-                    // Add to unified queue
-                    const queue = safeParseJSON('raOperationsQueue', []);
-
-                    // Don't add duplicates
-                    if (!queue.find(q => q.type === 'refresh' && q.systemId === systemId)) {
-                        const newItem = {
-                            type: 'refresh',
-                            systemId: systemId,
-                            systemName: systemName || 'Unknown System',
-                            gameCount: data.game_count,
-                            timestamp: Date.now()
-                        };
-                        queue.push(newItem);
-                        localStorage.setItem('raOperationsQueue', JSON.stringify(queue));
-
-                        // Add queued toast if UnifiedToastController is available
-                        if (typeof UnifiedToastController !== 'undefined' && UnifiedToastController.addRAOperationToQueue) {
-                            UnifiedToastController.addRAOperationToQueue(newItem);
-                            UnifiedToastController.adjustPollingSpeed('ra-refresh', true);
-                        }
-                    }
-
-                    // Update button to show queued state
+                    // The server holds it and starts it later (PASS-59-268)
                     btn.innerHTML = `<span class="filter-icon">${_ti('queued')}</span> ${t('Queued')}`;
-                    if (typeof showNotification !== 'undefined') {
-                        showNotification(t('Added to queue - will start when current operation completes'), 'info');
+                    if (typeof UnifiedToastController !== 'undefined') {
+                        UnifiedToastController.raJobQueued(data);
                     }
                     return;
                 }

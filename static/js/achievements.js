@@ -74,35 +74,9 @@ const RASync = {
      * Handle queued sync response
      */
     handleQueued(data, btn, statusEl) {
-        try {
-            // Add to unified RA operations queue
-            const queue = safeParseJSON('raOperationsQueue', []);
-
-            if (!queue.find(q => q.type === 'sync' && q.systemId === data.system_id)) {
-                const newItem = {
-                    type: 'sync',
-                    systemId: data.system_id,
-                    systemName: data.system_name,
-                    gameCount: data.game_count,
-                    timestamp: Date.now()
-                };
-                queue.push(newItem);
-                localStorage.setItem('raOperationsQueue', JSON.stringify(queue));
-
-                // Add to toast controller if available
-                if (typeof UnifiedToastController !== 'undefined' && UnifiedToastController.addRAOperationToQueue) {
-                    UnifiedToastController.addRAOperationToQueue(newItem);
-                    if (UnifiedToastController.adjustPollingSpeed) {
-                        UnifiedToastController.adjustPollingSpeed('ra-sync', true);
-                    }
-                }
-            }
-        } catch (queueError) {
-            console.error('Error adding to queue:', queueError);
-        }
-
-        if (typeof showModal === 'function') {
-            showModal('📋 ' + t('Sync Queued'), t('{system} has been added to the sync queue.', {system: data.system_name}));
+        // The server holds it and starts it later (PASS-59-268)
+        if (typeof UnifiedToastController !== 'undefined') {
+            UnifiedToastController.raJobQueued(data);
         }
 
         if (btn) {
