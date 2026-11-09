@@ -63,7 +63,9 @@ def _ask_for_token(username, password):
         return str(body.get('User') or username), token
     reason = body.get('Error')
     if isinstance(reason, str) and reason:
-        raise SignInError(reason)
+        # RetroAchievements' own words, in English, inside a translated sentence.
+        raise SignInError(_('RetroAchievements did not sign you in: %(reason)s',
+                            reason=reason))
     raise SignInError(_('RetroAchievements did not sign you in.'))
 
 

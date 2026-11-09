@@ -117,7 +117,8 @@ def _launch_game(game_id):
         try:
             launcher.kill(existing.token, timeout_s=5.0)
         except LauncherError as e:
-            return error(_('failed to kill prior instance: %(err)s') % {'err': e}, 500)
+            logger.warning('Could not stop game %s before relaunch: %s', game_id, e)
+            return error(_('Could not stop the copy of this game that is already running.'), 500)
 
     # Resolve
     try:
@@ -146,7 +147,10 @@ def _launch_game(game_id):
     try:
         h = launcher.launch(ctx)
     except LauncherError as e:
-        return error(str(e), 500)
+        # The OS's own text goes to the log; the user gets a translated line.
+        logger.warning('Launch of game %s failed: %s', game_id, e)
+        return error(_('Could not start %(program)s. The server log has the details.',
+                       program=ctx.argv[0]), 500)
 
     payload = _handle_to_dict(h)
     payload['argv'] = ctx.argv
@@ -267,8 +271,8 @@ def api_player_settings_reset(game_id):
 def api_launch_status(token):
     try:
         st = get_launcher().status(token)
-    except LauncherError as e:
-        return error(str(e), 404)
+    except LauncherError:
+        return error(_('That game is no longer running'), 404)
     return success(_status_to_dict(st))
 
 
@@ -283,8 +287,8 @@ def api_launch_status(token):
 def api_launch_kill(token):
     try:
         st = get_launcher().kill(token, timeout_s=5.0)
-    except LauncherError as e:
-        return error(str(e), 404)
+    except LauncherError:
+        return error(_('That game is no longer running'), 404)
     return success(_status_to_dict(st))
 
 

@@ -527,6 +527,11 @@ Per design-standards §22 "Error Message Sanitization":
 - Return a generic, user-actionable message:
   `error('Game not found', 404)`, `error('An internal error occurred', 500)`,
   `error('Validation failed', 422, field='title')`.
+- Exception: a `LaunchResolutionError` or `SignInError` is written for the
+  user. Its message is translated and may name the emulator, core or path
+  (user, 2026-11-06), so the route returns it. A `LauncherError` carries
+  the OS's text: it is logged, and the reply is a translated sentence
+  (PASS-59-264).
 
 The `@handle_api_errors` decorator enforces this at the 500 boundary —
 `{'success': False, 'error': 'An internal error occurred'}`. Routes that build

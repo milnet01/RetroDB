@@ -43,6 +43,7 @@ from pathlib import Path
 from typing import Optional
 
 from flask import g, has_request_context
+from flask_babel import gettext as _
 
 from services.database import query
 from services.launcher.base import LaunchContext, LaunchResolutionError
@@ -185,7 +186,8 @@ def _vice_pad_defaults(binary_str: str, core_path: str, rom_path: Path) -> None:
 class _SafeDict(dict):
     """str.format_map dict whose missing-key path raises a clear error."""
     def __missing__(self, key):
-        raise LaunchResolutionError(f"Unknown template variable: {{{key}}}")
+        raise LaunchResolutionError(
+            _('Unknown template variable: %(name)s', name='{' + key + '}'))
 
 
 _FLATPAK_RE = re.compile(r'^flatpak run [A-Za-z0-9._\-]+$')
@@ -241,14 +243,14 @@ def _split(value: str, field: str) -> list:
     try:
         return shlex.split(value)
     except ValueError as e:
-        raise LaunchResolutionError(f"Cannot parse {field} {value!r}: {e}") from e
+        raise LaunchResolutionError(_('Cannot parse %(field)s %(value)s: %(error)s',
+                                      field=field, value=repr(value), error=e)) from e
 
 
-_FIX_HINT = (
-    " — set the path at /settings/emulators (Edit row → Binary path "
-    "override) or click Auto-detect, or install the emulator via your "
-    "package manager so it lands on PATH"
-)
+def _fix_hint():
+    return _('Set the path at /settings/emulators (Edit row → Binary path '
+             'override) or click Auto-detect, or install the emulator with your '
+             'package manager so it is on PATH.')
 
 
 def _resolve_binary(emu_row, sys_emu_row) -> str:
@@ -260,7 +262,8 @@ def _resolve_binary(emu_row, sys_emu_row) -> str:
         path = emu_row['binary_path_override']
         if not os.access(path, os.X_OK):
             raise LaunchResolutionError(
-                f"binary_path_override not executable: {path}{_FIX_HINT}")
+                _('The binary path override is not a program that can run: %(path)s.',
+                  path=path) + ' ' + _fix_hint())
         return path
     if emu_row['is_retroarch']:
         ra_setting = get_setting('retroarch_binary', '')
@@ -273,8 +276,8 @@ def _resolve_binary(emu_row, sys_emu_row) -> str:
     found = shutil.which(emu_row['binary_name'])
     if not found:
         raise LaunchResolutionError(
-            f"Emulator binary not found on PATH: {emu_row['binary_name']!r}"
-            f"{_FIX_HINT}")
+            _('Emulator program not found on PATH: %(name)s.',
+              name=repr(emu_row['binary_name'])) + ' ' + _fix_hint())
     return found
 
 
@@ -308,7 +311,7 @@ def _pick_mapping(system_id, emulator_override_id, system_name=''):
         """, (system_id,), one=True)
     if not sys_emu:
         raise LaunchResolutionError(
-            f"No emulator configured for system {system_name!r}")
+            _('No emulator configured for system %(system)s', system=repr(system_name)))
     emu = query("SELECT * FROM emulators WHERE id = ?",
                 (sys_emu['emulator_id'],), one=True)
     return emu, sys_emu
@@ -440,8 +443,8 @@ def _build_args(emu, sys_emu, game, rom_path_obj: Path, core_path: str) -> list:
         for name in list_vars:
             if name in tok:
                 raise LaunchResolutionError(
-                    f"{name} must be a whole argument in args_template, "
-                    f"not part of {tok!r}")
+                    _('%(name)s must be a whole argument in args_template, not part of %(token)s',
+                      name=name, token=repr(tok)))
         substituted.append(tok.format_map(vars_dict))
 
     for name, words in appendable.items():
@@ -463,18 +466,18 @@ def rom_launch_problem(rom_path):
     where the launch would get past them."""
     rom_path_obj = Path(rom_path or '')
     if not rom_path or not rom_path_obj.exists():
-        return f"ROM file not found: {rom_path_obj}"
+        return _('ROM file not found: %(path)s', path=rom_path_obj)
     if not (rom_path_obj.is_file() or rom_path_obj.is_dir()):
-        return f"ROM path is not a file or folder: {rom_path_obj}"
+        return _('ROM path is not a file or folder: %(path)s', path=rom_path_obj)
     roots = _allowed_rom_roots()
     if roots:
         root = next((r for r in roots if _resolve_under(rom_path_obj, [r])), None)
         if root is None:
-            return f"ROM path is outside configured scan roots: {rom_path_obj}"
+            return _('ROM path is outside the configured scan folders: %(path)s', path=rom_path_obj)
         # PASS-59-95 — only a file type the system's own list allows.
         problem = rom_type_problem(str(rom_path_obj), str(root))
         if problem:
-            return f"Not launching {rom_path_obj.name}: {problem}"
+            return _('Not launching %(name)s: %(problem)s', name=rom_path_obj.name, problem=problem)
     return None
 
 
@@ -536,11 +539,13 @@ def _player_context(game, emu, sys_emu, binary_argv_prefix, rom_path_obj) -> Lau
     folder = game.get('system_folder') or ''
     if not player_cores.entry(folder):
         raise LaunchResolutionError(
-            f"The player has no core for system {game['system_name']!r}")
+            _('The player has no core for system %(system)s',
+              system=repr(game['system_name'])))
     core = player_cores.chosen_core(folder, game['system_id'], game['id'], emu['id'])
     if core is None:
         raise LaunchResolutionError(
-            f"No core for {game['system_name']} is built for this computer.")
+            _('No core for %(system)s is built for this computer.',
+              system=game['system_name']))
     core_path_obj = player.core_file(player_cores.core_file_name(core))
     if not core_path_obj.exists():
         raise player_cores.CoreMissing(core, game['system_id'], game['system_name'],
@@ -557,7 +562,8 @@ def _player_context(game, emu, sys_emu, binary_argv_prefix, rom_path_obj) -> Lau
         player_cores.write_system_cfg(folder, game['system_id'], emu['id'])
     except OSError as e:
         raise LaunchResolutionError(
-            f"Cannot write the player's settings ({e.filename}): {e.strerror or e}") from e
+            _("Cannot write the player's settings (%(file)s): %(error)s",
+              file=e.filename, error=e.strerror or e)) from e
     recommended = player_cores.game_recommended(folder, game['id'], emu['id'], core)
     words, port = player.launch_args(game, sys_emu, str(core_path_obj), rom_abs, token,
                                      recommended, core=core,
@@ -584,7 +590,7 @@ def launches_on_player(game_id) -> bool:
     if not game:
         return False
     try:
-        emu, _ = pick_launch_mapping(game['system_id'], game.get('emulator_override_id'))
+        emu, _mapping = pick_launch_mapping(game['system_id'], game.get('emulator_override_id'))
     except LaunchResolutionError:
         return False
     return bool(emu and emu.get('is_player'))
@@ -601,15 +607,16 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
         WHERE g.id = ?
     """, (game_id,), one=True)
     if not game:
-        raise LaunchResolutionError(f"game_id {game_id} not found")
+        raise LaunchResolutionError(_('Game %(id)s not found', id=game_id))
 
     # ---- pick emulator -------------------------------------------------------
     emu, sys_emu = pick_launch_mapping(game['system_id'], game.get('emulator_override_id'),
                                        game['system_name'])
     if not emu:
-        raise LaunchResolutionError("emulator row missing")
+        raise LaunchResolutionError(_('The emulator chosen for this game no longer exists'))
     if not emu.get('enabled'):
-        raise LaunchResolutionError(f"emulator {emu['name']!r} is disabled")
+        raise LaunchResolutionError(_('The emulator %(name)s is turned off',
+                                      name=repr(emu['name'])))
 
     # ---- binary --------------------------------------------------------------
     binary_str = _resolve_binary(emu, sys_emu)
@@ -623,12 +630,12 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
     if emu.get('is_retroarch'):
         if not sys_emu or not sys_emu.get('retroarch_core'):
             raise LaunchResolutionError(
-                f"RetroArch emulator selected for system {game['system_name']!r} "
-                "but no retroarch_core configured on system_emulators row")
+                _('RetroArch is chosen for system %(system)s, but no RetroArch core is set for it',
+                  system=repr(game['system_name'])))
         core_path_obj = core_file(sys_emu['retroarch_core'])
         if not core_path_obj.exists():
             raise LaunchResolutionError(
-                f"RetroArch core not found: {core_path_obj}")
+                _('RetroArch core not found: %(path)s', path=core_path_obj))
         core_path = str(core_path_obj)
 
     rom_path_obj = Path(game['rom_path'])

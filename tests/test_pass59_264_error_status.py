@@ -82,3 +82,47 @@ def test_job_reply_keeps_200_for_success():
     with app_module.app.app_context():
         resp, status = job_reply({'success': True, 'queued': True})
     assert status == 200 and resp.get_json()['queued'] is True
+
+
+# Launch errors (part 2): the OS's own text stays in the log, the reply is a
+# translated sentence that still names the program (user, 2026-11-06).
+
+@pytest.fixture
+def launch_client(monkeypatch):
+    import app as mod
+    from tests.test_routes_launch import _make_authed_client
+    monkeypatch.setitem(mod.app.config, 'TESTING', True)
+    return _make_authed_client(mod, monkeypatch, 'player')
+
+
+def test_spawn_failure_names_the_program_but_not_the_os_text(launch_client, monkeypatch):
+    from unittest.mock import MagicMock
+    from services.launcher import LauncherError
+    launcher = MagicMock()
+    launcher.active.return_value = []
+    launcher.launch.side_effect = LauncherError(
+        "failed to spawn /opt/emu/duckstation: [Errno 13] Permission denied")
+    monkeypatch.setattr('routes.launch.get_launcher', lambda: launcher)
+    monkeypatch.setattr('routes.launch.launches_on_player', lambda gid: False)
+    monkeypatch.setattr('routes.launch.resolve_launch_context',
+                        lambda gid: MagicMock(is_player=False, argv=['/opt/emu/duckstation']))
+    monkeypatch.setattr('routes.launch.apply_for_launch', lambda gid: None)
+    monkeypatch.setattr('routes.launch.ra_standalone.apply_for_launch', lambda gid: None)
+    resp = launch_client.post('/api/game/1/launch', headers={'X-CSRF-Token': 'test-csrf-token'})
+    _assert_failure(resp, 500)
+    message = resp.get_json()['error']
+    assert '/opt/emu/duckstation' in message
+    assert 'Errno' not in message and 'Permission denied' not in message
+
+
+@pytest.mark.parametrize('method, url', [('get', '/api/launch/gone/status'),
+                                         ('post', '/api/launch/gone/kill')])
+def test_unknown_launch_token_is_a_translated_404(launch_client, monkeypatch, method, url):
+    from unittest.mock import MagicMock
+    from services.launcher import LauncherError
+    launcher = MagicMock()
+    launcher.status.side_effect = launcher.kill.side_effect = LauncherError('unknown token: gone')
+    monkeypatch.setattr('routes.launch.get_launcher', lambda: launcher)
+    resp = getattr(launch_client, method)(url, headers={'X-CSRF-Token': 'test-csrf-token'})
+    _assert_failure(resp, 404)
+    assert resp.get_json()['error'] == 'That game is no longer running'

@@ -27,6 +27,7 @@ from pathlib import Path
 from typing import Optional
 
 import config
+from flask_babel import gettext as _
 from services.launcher.base import LaunchResolutionError
 
 logger = logging.getLogger(__name__)
@@ -238,7 +239,7 @@ def launch_args(game: dict, sys_emu: Optional[dict], core_path: str,
     profile = profile_dir()
     if '|' in str(profile) or '|' in str(rom_path.parent):
         raise LaunchResolutionError(
-            f"The player cannot use a path containing '|': {profile}")
+            _("The player cannot use a path containing '|': %(path)s", path=profile))
     extras = []
     for value, field in (((sys_emu or {}).get('extra_args') or '', 'extra_args'),
                          (game.get('launch_args_override') or '',
@@ -246,7 +247,8 @@ def launch_args(game: dict, sys_emu: Optional[dict], core_path: str,
         try:
             extras += shlex.split(value)
         except ValueError as e:
-            raise LaunchResolutionError(f"Cannot parse {field} {value!r}: {e}") from e
+            raise LaunchResolutionError(_('Cannot parse %(field)s %(value)s: %(error)s',
+                                          field=field, value=repr(value), error=e)) from e
 
     base = profile / 'retroarch.cfg'
     system_cfg = (profile / 'settings' / 'system'
@@ -293,8 +295,8 @@ def launch_args(game: dict, sys_emu: Optional[dict], core_path: str,
             layers.append(str(run_cfg))
     except OSError as e:
         raise LaunchResolutionError(
-            f"Cannot write the player's settings ({e.filename or profile}): "
-            f"{e.strerror or e}") from e
+            _("Cannot write the player's settings (%(file)s): %(error)s",
+              file=e.filename or profile, error=e.strerror or e)) from e
     if core:
         from services import cheats
         cheats.place_for_launch(game['id'], core, rom_path, profile)

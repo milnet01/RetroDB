@@ -35,6 +35,7 @@ from pathlib import Path
 from typing import Optional
 
 import requests
+from flask_babel import gettext as _
 
 import platform_utils
 from services import player
@@ -534,5 +535,5 @@ class CoreMissing(LaunchResolutionError):
     route turns this into a download, or into §6's 422."""
 
     def __init__(self, core, system_id, system_name, path):
-        super().__init__(f"Player core not found: {path}")
+        super().__init__(_('Player core not found: %(path)s', path=path))
         self.core, self.system_id, self.system_name = core, system_id, system_name

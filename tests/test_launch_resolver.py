@@ -262,7 +262,7 @@ def test_disabled_emulator_raises(tmpdb):
     tmpdb['conn'].commit()
     from services.launch_resolver import resolve_launch_context
     from services.launcher.base import LaunchResolutionError
-    with pytest.raises(LaunchResolutionError, match='disabled'):
+    with pytest.raises(LaunchResolutionError, match='turned off'):
         resolve_launch_context(game_id=1)
 
 
