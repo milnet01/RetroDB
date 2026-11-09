@@ -8507,6 +8507,9 @@ were corrected in `2836bc3` and are not repeated here.
   hardening PASS-59-248; small fixes PASS-59-249; docs PASS-59-250;
   the second-look review PASS-59-251 last. PASS-59-252 (Slipcase
   recess keys) goes with PASS-59-231.
+- **Progress** (2026-11-09): PASS-59-271 joins step 9 (user,
+  2026-11-09): 4.0.0 is the last web version, and its updater must
+  know a desktop release before it ships.
 
 ---
 
@@ -11785,6 +11788,20 @@ the phone for use on the go; WebAssembly plugins; two-level themes
 view. Build starts after v4.0.0 ships (PASS-59-113). Spec:
 docs/specs/PASS-59-270-native-app-port.md. Plan:
 docs/plans/PASS-59-270-native-app-port.md.
+
+---
+
+#### Pass 59.271 4.0.0 is the last web version: say so everywhere, and its updater points to the desktop app (feature, M).
+- **Decisions** (user, 2026-11-09): the web version stays available
+  to download after 4.0.0; future versions are desktop and Android
+  only (PASS-59-270). Said in the 4.0.0 changelog, the README, Help
+  and Settings > Updates, and on the website. Until the desktop app
+  does everything, 4.0.x gets security and data-loss fixes only.
+- **Updater**: 4.0.0 reads GitHub's release list. A 4.x release is a
+  web update and installs as before; 5.0.0 and up is the desktop app:
+  a message and a download link, never an install. So the desktop app
+  starts at 5.0.0 and web fixes stay 4.0.x.
+- **Status**: in progress.
 
 ## Done index
 

@@ -47,7 +47,7 @@
 ### Phase 7 — ship and cut over
 
 19. Installers (Linux AppImage or Flatpak, Windows installer, Android APK), self-updater, About Slint panel → **verify:** a clean install on `wintest` and on a phone; an update from the previous version installs.
-20. Cut-over: the Rust runner takes over migrations; the Python app is retired after one release side by side → **verify:** the native app migrates a copy of the live database; the Python app then opens it read-only.
+20. Cut-over: the first native release is 5.0.0; the Rust runner takes over migrations; 4.0.x fixes stop → **verify:** a 4.0.0 web install's Settings > Updates offers the 5.0.0 download page and no install; the native app migrates a copy of the live database; the Python app then opens it read-only.
 
 ## Definition of done
 
