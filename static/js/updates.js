@@ -41,7 +41,7 @@
     // Dashboard banner
     // ---------------------------------------------------------------------
 
-    // PASS-59-271: 5.0.0 and up is the desktop app, linked and never installed.
+    // PASS-59-271: 4.1.0 and up is the desktop app, linked and never installed.
     function desktopText(desktop) {
         return t('RetroDB {version} is out as a desktop app.', { version: desktop.version });
     }

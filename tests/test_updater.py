@@ -178,12 +178,15 @@ def test_check_caches_and_skips_drafts(sandbox, monkeypatch):
 
 
 def test_releases_split_into_web_and_desktop_lines():
-    """PASS-59-271: 4.x is the web app; 5.0.0 and up is the desktop app.
-    The newest of each wins whatever order GitHub lists them in."""
+    """PASS-59-271: 4.0.x is the web app; 4.1.0 and up is the desktop app
+    (its pieces ship as 4.x.0, then 5.0.0). The newest of each wins whatever
+    order GitHub lists them in."""
     web, desktop = updater._newest_by_line([
-        _gh('v5.0.0'), _gh('v4.0.2'), _gh('v5.1.0'), _gh('v4.0.0'), _gh('nightly'),
-        _gh('v5.2.0', draft=True), _gh('v4.0.3', prerelease=True), 'junk'])
-    assert web['tag_name'] == 'v4.0.2' and desktop['tag_name'] == 'v5.1.0'
+        _gh('v4.1.0'), _gh('v4.0.2'), _gh('v3.40.0'), _gh('v4.0.0'), _gh('nightly'),
+        _gh('v4.2.0', draft=True), _gh('v4.0.3', prerelease=True), 'junk'])
+    assert web['tag_name'] == 'v4.0.2' and desktop['tag_name'] == 'v4.1.0'
+    _, desktop = updater._newest_by_line([_gh('v4.9.0'), _gh('v5.0.0'), _gh('v4.10.0')])
+    assert desktop['tag_name'] == 'v5.0.0'
     assert updater._newest_by_line([_gh('v4.0.0')]) == (_gh('v4.0.0'), None)
     assert updater._newest_by_line({'message': 'rate limited'}) == (None, None)
 
@@ -193,20 +196,20 @@ def test_a_desktop_release_is_linked_never_installed(admin_test_client, sandbox,
     desktop release only ever arrives as a version and a page link."""
     import config
     monkeypatch.setattr(config, 'APP_VERSION', '4.0.0')
-    payload = [_gh('v4.0.1'), _gh('v5.0.0')]
+    payload = [_gh('v4.0.1'), _gh('v4.1.0')]
     monkeypatch.setattr(updater, '_http_get', lambda url, **kw: FakeResponse(payload=payload))
     updater.check(force=True)
     client, _ = admin_test_client()
     st = client.get('/api/updates/status').get_json()
     assert st['latest']['version'] == '4.0.1' and st['available'] is True
-    assert st['desktop'] == {'version': '5.0.0',
-                             'url': 'https://github.com/milnet01/RetroDB/releases/tag/v5.0.0'}
+    assert st['desktop'] == {'version': '4.1.0',
+                             'url': 'https://github.com/milnet01/RetroDB/releases/tag/v4.1.0'}
 
-    payload[:] = [_gh('v5.0.0'), _gh('v4.0.0')]  # nothing newer on the web line
+    payload[:] = [_gh('v4.1.0'), _gh('v4.0.0')]  # nothing newer on the web line
     updater.check(force=True)
     st = client.get('/api/updates/status').get_json()
     assert st['available'] is False and st['can_install'] is False and st['reason'] is None
-    assert st['desktop']['version'] == '5.0.0'
+    assert st['desktop']['version'] == '4.1.0'
 
 
 def test_check_with_no_releases_says_so(sandbox, monkeypatch):

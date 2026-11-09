@@ -12,7 +12,7 @@ Layman: RetroDB becomes a light app you install on a PC or an Android phone, ins
 
 ## 1. Goal
 
-One Rust codebase builds RetroDB for Windows, Linux, macOS and Android. It opens the user's existing library unchanged. It uses far less memory than today's server plus browser. Each screen remembers where the user was. Users can install home-made themes and sandboxed plugins. The Python web app's last version is 4.0.0 (user, 2026-11-09): it stays available to download, and gets only security and data-loss fixes (4.0.x) until the native app does everything it does. The native app's first version is 5.0.0, because the 4.0.0 updater treats 5.0.0 and up as the desktop app (`docs/specs/PASS-59-169-self-updater.md` §3).
+One Rust codebase builds RetroDB for Windows, Linux, macOS and Android. It opens the user's existing library unchanged. It uses far less memory than today's server plus browser. Each screen remembers where the user was. Users can install home-made themes and sandboxed plugins. The Python web app's last version is 4.0.0 (user, 2026-11-09): it stays available to download, and gets only security and data-loss fixes (4.0.x) until the native app does everything it does. The native app ships in pieces as 4.1.0, 4.2.0 and on, and in full as 5.0.0 (user, 2026-11-09). The 4.0.0 updater treats 4.1.0 and up as the desktop app (`docs/specs/PASS-59-169-self-updater.md` §3), so web fixes must stay 4.0.x.
 
 ## 2. Problem
 

@@ -39,9 +39,10 @@ logger = logging.getLogger(__name__)
 
 RELEASES_REPO = 'milnet01/RetroDB'
 RELEASES_URL = f'https://api.github.com/repos/{RELEASES_REPO}/releases?per_page=30'
-# 4.0.x is the last web line; 5.0.0 and up is the desktop and Android app,
-# which this app links to and never installs (PASS-59-271).
-WEB_LAST_MAJOR = 4
+# 4.0.x is the last web line; 4.1.0 and up is the desktop and Android app
+# (its pieces ship as 4.x.0, then 5.0.0), which this app links to and never
+# installs (PASS-59-271).
+WEB_LAST_LINE = (4, 0)
 DOWNLOAD_PREFIX = f'https://github.com/{RELEASES_REPO}/releases/download/'
 CHECK_INTERVAL = 24 * 3600
 CHECK_RETRY = 3600          # after a failed check: try again sooner
@@ -229,8 +230,8 @@ def _is_fresh(cached) -> bool:
 
 def _newest_by_line(releases) -> tuple:
     """(newest web release, newest desktop release) among published X.Y.Z
-    releases; either may be None. A major version up to WEB_LAST_MAJOR is
-    the web app, anything later the desktop app (PASS-59-271)."""
+    releases; either may be None. A version whose major.minor is at most
+    WEB_LAST_LINE is the web app, anything later the desktop app (PASS-59-271)."""
     web = desktop = None
     for release in releases if isinstance(releases, list) else []:
         if not isinstance(release, dict) or release.get('draft') or release.get('prerelease'):
@@ -238,7 +239,7 @@ def _newest_by_line(releases) -> tuple:
         version = parse_version(release.get('tag_name'))
         if not version:
             continue
-        if version[0] <= WEB_LAST_MAJOR:
+        if version[:2] <= WEB_LAST_LINE:
             if not web or version > parse_version(web['tag_name']):
                 web = release
         elif not desktop or version > parse_version(desktop['tag_name']):

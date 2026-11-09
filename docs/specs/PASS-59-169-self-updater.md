@@ -49,10 +49,11 @@ offers an update to users. The tag is `vX.Y.Z`; versions compare as integer
 tuples.
 
 **Web and desktop lines** (PASS-59-271, user 2026-11-09). 4.0.0 is the last
-web version; the desktop and Android app (PASS-59-270) starts at 5.0.0.
-A release whose major version is at most `WEB_LAST_MAJOR` (4) is a web
+web version, and its fixes are 4.0.x. The desktop and Android app
+(PASS-59-270) ships in pieces as 4.1.0, 4.2.0 and on, then 5.0.0.
+A release whose major.minor is at most `WEB_LAST_LINE` (4.0) is a web
 update: the newest one is offered and installed as below. The newest
-release at 5.0.0 or later is the desktop app: status reports it as
+release at 4.1.0 or later is the desktop app: status reports it as
 `desktop` (version and release page), and the web app links to it and never
 installs it. A web fix published after a desktop release is still found,
 because the whole list is read, not only GitHub's "latest".

@@ -11797,11 +11797,16 @@ docs/plans/PASS-59-270-native-app-port.md.
   only (PASS-59-270). Said in the 4.0.0 changelog, the README, Help
   and Settings > Updates, and on the website. Until the desktop app
   does everything, 4.0.x gets security and data-loss fixes only.
-- **Updater**: 4.0.0 reads GitHub's release list. A 4.x release is a
-  web update and installs as before; 5.0.0 and up is the desktop app:
-  a message and a download link, never an install. So the desktop app
-  starts at 5.0.0 and web fixes stay 4.0.x.
-- **Status**: in progress.
+- **Updater**: 4.0.0 reads GitHub's release list. A 4.0.x release is a
+  web update and installs as before; 4.1.0 and up is the desktop app:
+  a message and a download link, never an install. The desktop app
+  ships in pieces as 4.x.0, then 5.0.0 (user, 2026-11-09); web fixes
+  stay 4.0.x.
+- **Shipped** (2026-11-09): updater reads the release list
+  (services/updater.py `_newest_by_line`, `WEB_LAST_LINE`); Settings >
+  Updates, dashboard banner, Help, README and the 4.0.0 notes say it, in
+  every language. Website asked to say it at the 4.0.0 release.
+- **Status**: done.
 
 ## Done index
 
