@@ -59,10 +59,10 @@ intent.
 | RA | `routes/achievements.py`, `routes/ra_sync.py` | RA Web API (`scraper/retroachievements.py`) | `game_achievement_progress` |
 | PSN | `routes/trophies.py` (`/psn-trophies`, `/api/psn/*`) | `psnawp_api` | `psn_games`, `psn_trophies`, `psn_sync_status` |
 | Steam | `routes/steam_achievements.py` | Steam Web API (`scraper/scrape_steam.py`) | `game_achievement_progress`, `steam_achievements` |
-| Xbox | `routes/xbox_achievements.py` | Xbox Live (`scraper/scrape_xbox.py`) | `game_achievement_progress`, `xbox_achievements` |
+| Xbox | `routes/xbox_achievements.py` | OpenXBL, with the user's own key (`scraper/scrape_xbox.py`) | `game_achievement_progress`, `xbox_achievements` |
 | RPCS3 | `routes/trophies.py` (`/trophies`) | `TROPCONF.SFM` and `TROPUSR.DAT` files | nothing; the in-process `_trophy_cache` |
 
-`routes/platform_import.py` also carries the Xbox sign-in, PSN library import,
+`routes/platform_import.py` also carries the Xbox key routes, PSN library import,
 and a second set of Steam and Xbox sync routes.
 
 ### 4.2 Per-user and shared data
@@ -140,7 +140,7 @@ cross-process `flock` named after the job, persisted progress and resume.
 | `RASyncJob` (`ra_sync`) | `/api/achievements/sync-system/<id>` (editor) | the caller's own RA account, else the global one | `games.ra_achievement_count`; the caller's `game_achievement_progress` |
 | `PSNRefreshJob` (`psn_refresh`) | `/api/psn/bulk-refresh/start` (login) | the caller's NPSSO | the caller's `psn_games`, `psn_trophies` |
 | `SteamSyncJob` (`steam_sync`) | `/api/steam-achievements/sync-all`, `/api/steam/sync-achievements` (editor), and a Steam import that added or linked a game | caller's `user_settings`, else `scraper_settings.json` for an admin only; the store step needs none | the caller's Steam rows and `platform_play_time`; empty `games` fields, once per game, from the store (`docs/specs/scrapers.md` §10) |
-| `XboxSyncJob` (`xbox_sync`) | `/api/xbox-achievements/sync-all`, `/api/xbox/sync-achievements` (editor) | global client id; the caller's tokens | the caller's Xbox rows |
+| `XboxSyncJob` (`xbox_sync`) | `/api/xbox-achievements/sync-all`, `/api/xbox/sync-achievements` (editor) | the caller's OpenXBL key | the caller's Xbox rows; games the caller never synced go first, then the longest unsynced. A 429 ends the run with a message |
 
 Also:
 
@@ -164,6 +164,10 @@ Also:
   hour (`app.py`). The RA job starts are not rate-limited.
 - **Upstream pacing.** PSN bulk refresh waits 2.5 s per game, Steam 1 s,
   Xbox 0.5 s, RA sync 0.5 s, RA refresh 1 s per console list.
+- **OpenXBL's hourly count.** A free key allows 150 calls an hour, and a
+  refused call counts too. `scrape_xbox` never retries a 429; it stops calls
+  on that key for an hour through `service_limits`, under a name made from a
+  hash of the key, so one user's limit never stops another's.
 
 ### 4.5 Token storage
 
@@ -183,10 +187,11 @@ Also:
   in with it, ignoring the cache, and saves it only if Sony accepts it;
   `/api/users/settings` drops the cache when the NPSSO changes
   (`tests/test_psn_new_npsso.py`).
-- Xbox: `scrape_xbox.get_authenticated_session` refreshes a stale token,
-  fetches the gamertag again after it, and clears the stored tokens only
-  when Microsoft refuses the refresh (HTTP 400 or 401); no answer keeps them. The OAuth `state` is bound
-  to the user who started sign-in.
+- Xbox: the `xbox` row holds `{api_key, xuid, gamertag, connected_at}`.
+  `/api/xbox/key` saves a key only after OpenXBL's `/account` accepts it,
+  and `/api/xbox/status` never sends the key back. A row without `api_key`,
+  left by the retired Microsoft sign-in, counts as no key; migration 042
+  deletes those rows (PASS-59-261).
 - The NPSSO and the RA and Steam keys live in `user_settings` as plain text.
 - `services/log_redactor.py::SecretRedactor` masks tokens, NPSSO and API keys
   in logs.
@@ -279,13 +284,12 @@ can rescan their own folder (`/api/scan-trophies`).
   tests/test_pass59_63_services.py::TestTrophyParserTruncated` → `3 passed`.
   *Breaks when:* the `entry_size < 48` guard or the per-set `try` in
   `load_all_trophy_sets` is removed.
-- **INV-12** — Xbox tokens refresh only when stale, are cleared when a refresh
-  fails, and sign-in checks the OAuth `state`. *Test:* `python3 -m pytest -q
-  tests/test_pass45_security.py -k "fresh_token_skips_refresh or
-  stale_token_triggers_refresh or failed_refresh_clears_tokens"` →
-  `3 passed`, and `python3 -m pytest -q tests/test_auth_hardening.py -k
-  "test_get_auth_url_accepts_state or test_callback_verifies_state"` →
-  `2 passed`. *Breaks when:* a failed refresh leaves the old tokens stored.
+- **INV-12** — Xbox calls use the caller's own OpenXBL key and are never
+  retried on a 429, which stops calls on that key alone for the hour; a key
+  is saved only once OpenXBL accepts it and is never sent back to the page.
+  *Test:* `python3 -m pytest -q tests/test_xbox_openxbl.py`. *Breaks when:*
+  a 429 is retried, a refused key is stored, or `/api/xbox/status` returns
+  the key.
 - **INV-13** — The bulk sync starts are rate-limited to two an hour. *Test:*
   `python3 -m pytest -q tests/test_pass45_security.py::TestPass45_8RateLimits`
   → `3 passed`. *Breaks when:* a bulk start's `_rate_limit` line is removed.
@@ -337,7 +341,8 @@ can rescan their own folder (`/api/scan-trophies`).
   is empty or the fetch passes 300 s.
 - **Expired PSN session.** `create_psn_client` clears the cache and signs in
   with the NPSSO; an expired NPSSO surfaces as a sign-in error.
-- **Failed Xbox refresh.** Stored tokens are cleared; the user signs in again.
+- **OpenXBL refuses the key.** Nothing is saved; the profile says to copy the key again.
+- **OpenXBL's hourly count reached.** The single sync and Fetch Library say how many minutes to wait; the bulk sync stops and says to run it again in an hour.
 - **Restart mid-sync.** Job classes can be resumed ([`jobs.md`](jobs.md)). The
   PSN full sync cannot; it restarts from the beginning.
 - **Corrupt RPCS3 file.** That set is skipped and logged.
@@ -357,7 +362,7 @@ can rescan their own folder (`/api/scan-trophies`).
 | INV-9 | `tests/test_psn_keepalive.py` |
 | INV-10 | `tests/test_pass38_ra_check_helper.py::TestApplyRetroachievementsCheck` |
 | INV-11 | `tests/test_pass41_security.py::TestPass41_7ATropusrBounds`; `tests/test_pass59_63_services.py::TestTrophyParserTruncated` |
-| INV-12 | `tests/test_pass45_security.py` (Xbox token cases); `tests/test_auth_hardening.py` (state cases) |
+| INV-12 | `tests/test_xbox_openxbl.py` |
 | INV-13 | `tests/test_pass45_security.py::TestPass45_8RateLimits` |
 | INV-14 | `tests/test_migration_015.py` |
 | INV-15 | `tests/test_auth_hardening.py` (redactor cases) |

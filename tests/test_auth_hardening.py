@@ -291,32 +291,6 @@ class TestEditorRequiredOnDestructiveEndpoints:
 
 
 # =============================================================================
-# 24.6 — Xbox OAuth state parameter
-# =============================================================================
-
-class TestXboxOAuthState:
-    def test_get_auth_url_accepts_state(self):
-        from scraper.scrape_xbox import get_auth_url
-        url = get_auth_url('test_client', 'https://example.invalid/cb', state='abc123')
-        assert 'state=abc123' in url
-
-    def test_get_auth_url_omits_state_when_not_given(self):
-        from scraper.scrape_xbox import get_auth_url
-        url = get_auth_url('test_client', 'https://example.invalid/cb')
-        assert 'state=' not in url
-
-    def test_callback_verifies_state(self):
-        from routes import platform_import as pi_mod
-        src = read_module_source(pi_mod)
-        # Both the generate-state (auth_url) and verify-state (callback)
-        # sides of the handshake must be present.
-        assert "flask_session['oauth_state_xbox']" in src
-        assert "oauth_state_xbox" in src
-        assert "compare_digest" in src
-        assert "state_mismatch" in src
-
-
-# =============================================================================
 # 27.2 — per-user platform token store (supersedes 24.7's file-permissions
 # tests, since tokens now live in the DB rather than data/{psn,xbox}_tokens.json)
 # =============================================================================

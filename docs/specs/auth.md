@@ -241,7 +241,7 @@ swap inside `services/platform_tokens.py` — call sites unchanged.
 | Steam API key / ID                  | `user_settings.steam_api_key`, `.steam_id`    |
 | RetroAchievements user / key        | `user_settings.ra_username`, `.ra_api_key`    |
 | PSN username / NPSSO                | `user_settings.psn_username`, `.psn_npsso`    |
-| PSN + Xbox OAuth token blobs        | `user_platform_tokens.tokens` (JSON-encoded)  |
+| PSN OAuth tokens; Xbox OpenXBL key  | `user_platform_tokens.tokens` (JSON-encoded)  |
 | RetroAchievements sign-in token     | `user_platform_tokens.tokens`, platform `retroachievements` |
 
 The RetroAchievements row holds the username, the login token and the

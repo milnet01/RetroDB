@@ -85,22 +85,6 @@ def _get_steam_credentials(user_id=None):
     return _shared_steam_credentials() if is_admin else ('', '')
 
 
-def _get_xbox_credentials():
-    """Get Xbox API credentials from scraper settings."""
-    import os, json
-    settings_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(
-        os.path.abspath(__file__)))), 'data', 'scraper_settings.json')
-    try:
-        if os.path.exists(settings_file):
-            with open(settings_file, 'r') as f:
-                settings = json.load(f)
-                keys = settings.get('api_keys', {})
-                return keys.get('xbox_client_id', ''), keys.get('xbox_client_secret', '')
-    except Exception as e:
-        logger.warning(f"Could not load Xbox credentials: {e}")
-    return '', ''
-
-
 # `store_filled`: a scrape history entry from the Steam store means it has already
 # answered for this game, so it is not asked again on every sync. Read as JSON,
 # so it does not hang on how the history was spaced.
@@ -292,6 +276,8 @@ def _upsert_xbox_achievements(cursor, game_id, achievements, user_id):
 
     Returns the number of rows upserted.
     """
+    from scraper.scrape_xbox import unlock_time as _unlock_time
+
     count = 0
     for ach in achievements:
         ach_id = str(ach.get('id', ''))
@@ -301,7 +287,7 @@ def _upsert_xbox_achievements(cursor, game_id, achievements, user_id):
         name = ach.get('name', '')
         description = ach.get('description', '')
         achieved = 1 if ach.get('progressState') == 'Achieved' else 0
-        unlock_time = ach.get('progression', {}).get('timeUnlocked', '') or ''
+        unlock_time = _unlock_time(ach)
 
         # Extract gamerscore from rewards
         gamerscore = 0
@@ -645,10 +631,9 @@ class SteamSyncJob:
 class XboxSyncJob:
     """Manages Xbox achievement sync jobs in background.
 
-    Pass 27.3 — OAuth refresh tokens live in `user_platform_tokens` keyed by
-    user_id (Pass 27.2), so the job must know whose tokens to authenticate
-    with. `start(user_id=…)` captures that at dispatch time and the worker
-    thread reaches back through `self.user_id`.
+    Each user's OpenXBL key lives in `user_platform_tokens` (PASS-59-261), so
+    the job must know whose key to call with. `start(user_id=…)` captures that
+    at dispatch time and the worker thread reaches back through `self.user_id`.
     """
 
     def __init__(self):
@@ -696,9 +681,9 @@ class XboxSyncJob:
         """Start Xbox achievement sync for all Xbox-imported games.
 
         Args:
-            user_id: RetroDB users.id whose Xbox OAuth tokens authenticate
-                the XBL/XSTS handshake (Pass 27.3). Required for new starts;
-                resume paths read it back from persisted params.
+            user_id: RetroDB users.id whose OpenXBL key the calls use.
+                Required for new starts; resume paths read it back from
+                persisted params.
         """
         if not user_id:
             return {'success': False, 'error': 'user_id required for Xbox sync'}
@@ -784,29 +769,21 @@ class XboxSyncJob:
 
     def _run_sync(self):
         """Background sync thread"""
-        from scraper.scrape_xbox import get_authenticated_session, get_achievements
+        from scraper.scrape_xbox import load_tokens, get_achievements, minutes_until_allowed
 
         _last_persist_time = time.time()
         persist_id = None
 
         try:
-            xbox_client_id, xbox_client_secret = _get_xbox_credentials()
-            if not xbox_client_id or not xbox_client_secret:
-                with self._lock:
-                    self.completed = True
-                    self.running = False
-                    self.error_message = N_("Xbox credentials not configured")
-                release_singleton_fd(self)
-                return
-
-            session = get_authenticated_session(xbox_client_id, xbox_client_secret, self.user_id)
+            session = load_tokens(self.user_id)
             if not session:
                 with self._lock:
                     self.completed = True
                     self.running = False
-                    self.error_message = N_("Xbox authentication failed — please re-connect your Xbox account")
+                    self.error_message = N_("Add your OpenXBL key in Settings > My Profile first.")
                 release_singleton_fd(self)
                 return
+            api_key, xuid = session['api_key'], session['xuid']
 
             # Use pre-set game IDs from resume, or query from DB
             if self._resume_game_ids is not None:
@@ -821,8 +798,9 @@ class XboxSyncJob:
                 if real_ids:
                     placeholders = ','.join('?' * len(real_ids))
                     c.execute(f"""
-                        SELECT id, title, xbox_title_id FROM games
-                        WHERE id IN ({placeholders})
+                        SELECT g.id, g.title, g.xbox_title_id, s.folder AS system_folder
+                        FROM games g LEFT JOIN systems s ON s.id = g.system_id
+                        WHERE g.id IN ({placeholders})
                     """, real_ids)
                     for row in c.fetchall():
                         id_map[row['id']] = dict(row)
@@ -832,10 +810,18 @@ class XboxSyncJob:
             else:
                 conn = _get_conn()
                 c = conn.cursor()
+                # Games this user never synced first, then the longest
+                # unsynced: a sync stopped by OpenXBL's hourly count then
+                # moves on next time instead of redoing the same games.
                 c.execute("""
-                    SELECT id, title, xbox_title_id FROM games
-                    WHERE xbox_title_id IS NOT NULL AND xbox_title_id != ''
-                """)
+                    SELECT g.id, g.title, g.xbox_title_id, s.folder AS system_folder
+                    FROM games g
+                    LEFT JOIN systems s ON s.id = g.system_id
+                    LEFT JOIN game_achievement_progress gap
+                        ON gap.game_id = g.id AND gap.user_id = ?
+                    WHERE g.xbox_title_id IS NOT NULL AND g.xbox_title_id != ''
+                    ORDER BY gap.last_synced IS NOT NULL, gap.last_synced, g.id
+                """, (self.user_id,))
                 games = [dict(row) for row in c.fetchall()]
                 conn.close()
 
@@ -891,9 +877,16 @@ class XboxSyncJob:
 
                     try:
                         result = get_achievements(
-                            session['auth_header'], session['xuid'], game['xbox_title_id'])
+                            api_key, xuid, game['xbox_title_id'],
+                            xbox360=game.get('system_folder') == 'xbox360')
 
                         if result is None:
+                            if minutes_until_allowed(api_key):
+                                with self._lock:
+                                    self.error_message = N_(
+                                        "OpenXBL's hourly limit was reached. Sync again "
+                                        "in an hour: it starts with the games not synced yet.")
+                                break
                             with self._lock:
                                 self.skipped_count += 1
                             continue

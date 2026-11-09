@@ -75,7 +75,6 @@ SECRET_API_KEY_FIELDS = frozenset({
     'ai_openai_api_key',
     'ai_claude_api_key',
     'steam_api_key',
-    'xbox_client_secret',
     'screenscraper_password',
     'screenscraper_devpassword',
 })
@@ -138,8 +137,6 @@ def get_saved_api_keys():
         'ai_claude_web_search': '',
         'steam_api_key': '',
         'steam_id': '',
-        'xbox_client_id': '',
-        'xbox_client_secret': '',
     }
     
     try:

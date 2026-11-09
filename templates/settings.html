@@ -2773,8 +2773,6 @@ async function saveApiKeys() {
         ra_apikey: document.getElementById('apikey-ra-apikey').value.trim(),
         steam_api_key: document.getElementById('apikey-steam-api-key').value.trim(),
         steam_id: document.getElementById('apikey-steam-id').value.trim(),
-        xbox_client_id: document.getElementById('apikey-xbox-client-id').value.trim(),
-        xbox_client_secret: document.getElementById('apikey-xbox-client-secret').value.trim(),
         ai_provider: document.getElementById('apikey-ai-provider').value,
         ai_gemini_api_key: document.getElementById('apikey-ai-gemini-key').value.trim(),
         ai_gemini_model: document.getElementById('apikey-ai-gemini-model').value,
@@ -5096,26 +5094,64 @@ async function loadPsnTokenStatus() {
 document.addEventListener('DOMContentLoaded', loadPsnTokenStatus);
 
 // =============================================================================
-// XBOX SETUP WIZARD
+// XBOX (OpenXBL key, PASS-59-261). The saved key is never sent back to the page.
 // =============================================================================
 
-function toggleXboxWizard() {
-    const wizard = document.getElementById('xboxSetupWizard');
-    const btn = document.getElementById('xboxWizardToggle');
-    if (wizard.style.display === 'none') {
-        wizard.style.display = 'block';
-        btn.textContent = 'Hide Setup Guide';
-    } else {
-        wizard.style.display = 'none';
-        btn.textContent = 'Show Setup Guide';
+async function loadXboxKeyStatus() {
+    const statusEl = document.getElementById('xboxKeyStatus');
+    if (!statusEl) return;
+    try {
+        const data = await (await fetch('/api/xbox/status')).json();
+        document.getElementById('xboxRemoveKeyBtn').style.display = data.connected ? '' : 'none';
+        statusEl.textContent = data.connected
+            ? {{ _('Key saved. Connected as %(name)s.', name='{name}')|tojson }}.replace('{name}', data.gamertag || '?')
+            : {{ _('No key saved.')|tojson }};
+    } catch (e) {
+        statusEl.textContent = '';
     }
 }
 
-function copyXboxRedirectUri() {
-    const uri = document.getElementById('xboxRedirectUri').textContent;
-    copyToClipboard(uri);
-    showNotification({{ _('Redirect URI copied to clipboard')|tojson }}, 'success');
+async function xboxSaveKey() {
+    const btn = document.getElementById('xboxSaveKeyBtn');
+    const input = document.getElementById('userXboxKey');
+    const result = document.getElementById('xboxKeyResult');
+    const apiKey = input.value.trim();
+    if (!apiKey) {
+        result.innerHTML = '<span style="color: var(--neon-orange);">' + escapeHtml({{ _('Paste your OpenXBL key first.')|tojson }}) + '</span>';
+        return;
+    }
+    btn.disabled = true;
+    result.innerHTML = '<span style="color: var(--text-secondary);">' + escapeHtml({{ _('Saving and connecting...')|tojson }}) + '</span>';
+    try {
+        const data = await (await fetch('/api/xbox/key', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ api_key: apiKey })
+        })).json();
+        if (data.success) {
+            input.value = '';
+            const msg = {{ _('Connected as %(name)s', name='{name}')|tojson }}.replace('{name}', data.gamertag || '');
+            result.innerHTML = '<span style="color: var(--neon-green);">' + escapeHtml(msg) + '</span>';
+            loadXboxKeyStatus();
+        } else {
+            result.innerHTML = '<span style="color: var(--neon-red);">' + escapeHtml(data.error || {{ _('Connection failed')|tojson }}) + '</span>';
+        }
+    } catch (e) {
+        result.innerHTML = '<span style="color: var(--neon-red);">' + escapeHtml({{ _('Error: %(msg)s', msg='{msg}')|tojson }}.replace('{msg}', e.message)) + '</span>';
+    }
+    btn.disabled = false;
 }
+
+function xboxRemoveKey() {
+    showConfirm({{ _('Remove Xbox key')|tojson }}, {{ _('Remove your OpenXBL key? Your imported games and achievements stay.')|tojson }}, async () => {
+        await fetch('/api/xbox/disconnect', { method: 'POST' });
+        document.getElementById('xboxKeyResult').textContent = '';
+        loadXboxKeyStatus();
+    });
+}
+window.xboxSaveKey = xboxSaveKey;
+window.xboxRemoveKey = xboxRemoveKey;
+document.addEventListener('DOMContentLoaded', loadXboxKeyStatus);
 
 // =============================================================================
 // AVATAR PICKER

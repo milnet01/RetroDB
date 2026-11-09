@@ -72,6 +72,7 @@ _MIGRATION_SCRIPTS = [
     'services.migrations.scripts.039_tags_unique_per_owner',
     'services.migrations.scripts.040_game_delete_cleans_rows',
     'services.migrations.scripts.041_psn_hand_links',
+    'services.migrations.scripts.042_drop_xbox_oauth_tokens',
 ]
 
 # Some pip packages have their own runtime imports that PyInstaller's

@@ -64,7 +64,8 @@ def _make_db(path):
             has_retroachievements INTEGER, alternate_titles TEXT,
             steam_app_id TEXT, xbox_title_id TEXT, scrape_history TEXT
         );
-        CREATE TABLE game_achievement_progress (game_id INTEGER, source TEXT);
+        CREATE TABLE game_achievement_progress (game_id INTEGER, user_id INTEGER,
+                                                source TEXT, last_synced TEXT);
         CREATE TABLE psn_games (id INTEGER PRIMARY KEY, title TEXT,
                                 npwr_id TEXT, user_id INTEGER);
         CREATE TABLE user_settings (user_id INTEGER, psn_npsso TEXT);
@@ -190,13 +191,10 @@ def _drive_xbox(env):
     from services.jobs import platform_sync as mod
     import scraper.scrape_xbox as xbox
     env.patch(mod)
-    env.monkeypatch.setattr(mod, '_get_xbox_credentials', lambda: ('a', 'b'))
     env.monkeypatch.setattr(
-        xbox, 'get_authenticated_session',
-        lambda *_a: {'auth_header': 'h', 'xuid': 'x'},
-    )
+        xbox, 'load_tokens', lambda *_a: {'api_key': 'k', 'xuid': 'x'})
 
-    def _ach(_auth, _xuid, title_id):
+    def _ach(_key, _xuid, title_id, xbox360=False):
         env.state['processed'].append(f"G{title_id}")
         return None
     env.monkeypatch.setattr(xbox, 'get_achievements', _ach)

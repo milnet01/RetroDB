@@ -10,10 +10,9 @@
 #   POST /api/steam/sync-achievements      - Bulk achievement sync (background)
 #   GET  /api/steam/sync-status            - Achievement sync job status
 #   POST /api/steam/cancel-sync            - Cancel achievement sync
-#   GET  /api/xbox/auth-url                - Get Xbox OAuth URL
-#   GET  /api/xbox/callback                - Xbox OAuth callback
-#   GET  /api/xbox/status                  - Check Xbox auth status
-#   POST /api/xbox/disconnect              - Disconnect Xbox account
+#   POST /api/xbox/key                     - Check and save the caller's OpenXBL key
+#   GET  /api/xbox/status                  - Whether the caller has a key saved
+#   POST /api/xbox/disconnect              - Remove the caller's key
 #   POST /api/xbox/fetch-library           - Fetch Xbox library
 #   POST /api/xbox/import                  - Import selected Xbox games
 #   POST /api/xbox/sync-achievements       - Bulk achievement sync (background)
@@ -29,9 +28,8 @@ import re
 import logging
 from datetime import datetime, timezone
 
-from flask import Blueprint, request, jsonify, redirect, url_for, g, session as flask_session
+from flask import Blueprint, request, jsonify, redirect, url_for, g
 from flask_babel import gettext as _
-import secrets as _secrets
 
 import config
 from services.achievement_linking import normalize_title_for_dedup as normalize_title
@@ -39,7 +37,7 @@ from services.database import get_db, query, execute
 from services.game_utils import generate_sort_title
 from services.api_helpers import success, error, job_reply
 from services.auth import login_required, editor_required, has_permission
-from routes.scraper import get_saved_api_keys, is_masked_sentinel
+from routes.scraper import is_masked_sentinel
 
 logger = logging.getLogger(__name__)
 
@@ -399,128 +397,54 @@ def api_steam_cancel_sync():
 # XBOX ENDPOINTS
 # =============================================================================
 
-@bp.route('/api/xbox/auth-url')
+@bp.route('/api/xbox/key', methods=['POST'])
 @login_required
-def api_xbox_auth_url():
-    """Generate the Xbox OAuth authorization URL."""
-    from scraper.scrape_xbox import get_auth_url
-
-    api_keys = get_saved_api_keys()
-    client_id = api_keys.get('xbox_client_id', '')
-
-    if not client_id:
-        return error(_('Xbox Client ID not configured. Add it in Settings → API Keys.'), 400)
-
-    # Pass 24.6 — generate a CSRF-protection `state` token, stash it in
-    # the caller's session, and include it in the Microsoft auth URL so
-    # the callback can verify the flow originated here. Without this,
-    # an attacker triggering /api/xbox/callback with their own `code`
-    # would bind the victim's RetroDB session to the attacker's MS account.
-    # Pass 31.9 — bind the state to the issuing user's id so a logout/login
-    # transition can't let user B's callback consume user A's pending state.
-    state = _secrets.token_urlsafe(32)
-    flask_session['oauth_state_xbox'] = {'state': state, 'user_id': g.user['id']}
-
-    # Build redirect URI based on current request
-    redirect_uri = request.host_url.rstrip('/') + '/api/xbox/callback'
-    auth_url = get_auth_url(client_id, redirect_uri, state=state)
-
-    return success(auth_url=auth_url)
-
-
-@bp.route('/api/xbox/callback')
-@login_required
-def api_xbox_callback():
-    """Handle Xbox OAuth callback."""
+def api_xbox_save_key():
+    """Check the caller's OpenXBL key against OpenXBL and store it with the
+    gamertag it belongs to (PASS-59-261)."""
     from scraper.scrape_xbox import (
-        exchange_code_for_tokens, authenticate_xbox_live, get_xsts_token,
-        save_tokens, get_gamertag, _get_auth_header, attach_expires_at,
+        get_account, save_tokens, KEY_REFUSED, minutes_until_allowed,
     )
 
-    code = request.args.get('code')
-    error = request.args.get('error')
-    returned_state = request.args.get('state', '')
+    data = request.get_json(silent=True) or {}
+    api_key = data.get('api_key')
+    if not isinstance(api_key, str) or not api_key.strip() or len(api_key) > 200:
+        return error(_('Paste your OpenXBL key first.'), 400)
+    api_key = api_key.strip()
 
-    if error:
-        logger.error(f"Xbox OAuth error: {error} - {request.args.get('error_description', '')}")
-        return redirect(url_for('game_imports.game_imports_page', tab='xbox', xbox_error=error))
+    account = get_account(api_key)
+    if account is KEY_REFUSED:
+        return error(_('OpenXBL did not accept that key. Copy it again from xbl.io.'), 400)
+    if account is None:
+        minutes = minutes_until_allowed(api_key)
+        if minutes:
+            return error(_("OpenXBL's hourly limit was reached. Try again in %(minutes)s minutes.",
+                           minutes=minutes), 429)
+        return error(_('OpenXBL did not answer. Try again later.'), 502)
 
-    if not code:
-        return redirect(url_for('platform_import.platform_import') + '?xbox_error=no_code')
-
-    # Pass 24.6 — verify the state parameter matches what we stashed in
-    # api_xbox_auth_url. Pop-and-compare so a replay attack can't reuse a
-    # consumed state. hmac.compare_digest for timing-safe equality.
-    # Pass 31.9 — the stash is now `{'state': ..., 'user_id': ...}` so the
-    # callback also refuses to consume a state issued by a different user
-    # on the same browser session (logout → new login re-race). Legacy
-    # bare-string stashes from an in-flight upgrade degrade to a forced
-    # state_mismatch, which is the safe behavior.
-    import hmac as _hmac
-    expected = flask_session.pop('oauth_state_xbox', None)
-    expected_state = expected.get('state') if isinstance(expected, dict) else None
-    expected_user_id = expected.get('user_id') if isinstance(expected, dict) else None
-    if (not expected_state
-            or not returned_state
-            or not _hmac.compare_digest(expected_state, returned_state)
-            or expected_user_id != g.user['id']):
-        logger.warning("Xbox OAuth callback rejected: state mismatch or user mismatch")
-        return redirect(url_for('platform_import.platform_import') + '?xbox_error=state_mismatch')
-
-    api_keys = get_saved_api_keys()
-    client_id = api_keys.get('xbox_client_id', '')
-    client_secret = api_keys.get('xbox_client_secret', '')
-
-    redirect_uri = request.host_url.rstrip('/') + '/api/xbox/callback'
-
-    # Exchange code for tokens
-    tokens = exchange_code_for_tokens(client_id, client_secret, code, redirect_uri)
-    if not tokens:
-        return redirect(url_for('platform_import.platform_import') + '?xbox_error=token_exchange_failed')
-
-    # Verify by authenticating with Xbox Live
-    xbl_token, user_hash = authenticate_xbox_live(tokens.get('access_token', ''))
-    if not xbl_token:
-        return redirect(url_for('platform_import.platform_import') + '?xbox_error=xbl_auth_failed')
-
-    xsts_token, xuid = get_xsts_token(xbl_token)
-    if not xsts_token:
-        return redirect(url_for('platform_import.platform_import') + '?xbox_error=xsts_auth_failed')
-
-    # Get gamertag
-    auth_header = _get_auth_header(user_hash, xsts_token)
-    gamertag = get_gamertag(auth_header, xuid)
-
-    # Store tokens and metadata
-    tokens['xuid'] = xuid
-    tokens['gamertag'] = gamertag
-    tokens['connected_at'] = datetime.now(timezone.utc).isoformat()
-    # Pass 45.12 — record the token's absolute expiry so subsequent calls
-    # to get_authenticated_session can skip an unnecessary refresh.
-    attach_expires_at(tokens)
-    save_tokens(tokens, g.user['id'])
-
-    logger.info(f"Xbox: Connected as {gamertag} (XUID: {xuid}, user={g.user['id']})")
-    # Pass 41.7.B — pass `xbox_connected=1` as a kwarg to url_for so URL
-    # construction is unambiguous. The previous `+ '&xbox_connected=1'`
-    # string concat worked only because url_for happened to emit `?tab=xbox`
-    # today; a future refactor that drops the query arg would have produced
-    # `/game-imports&xbox_connected=1` (broken path).
-    return redirect(url_for('game_imports.game_imports_page', tab='xbox', xbox_connected=1))
+    xuid, gamertag = account
+    save_tokens({
+        'api_key': api_key,
+        'xuid': xuid,
+        'gamertag': gamertag,
+        'connected_at': datetime.now(timezone.utc).isoformat(),
+    }, g.user['id'])
+    logger.info(f"Xbox: OpenXBL key saved for user={g.user['id']}")
+    return success(gamertag=gamertag)
 
 
 @bp.route('/api/xbox/status')
 @login_required
 def api_xbox_status():
-    """Check if Xbox account is connected (Pass 27.2 — per current user)."""
+    """Whether the caller has an OpenXBL key saved. The key itself is never
+    sent back."""
     from scraper.scrape_xbox import load_tokens
 
     tokens = load_tokens(g.user['id'])
-    if tokens and tokens.get('refresh_token'):
+    if tokens:
         return jsonify({
             'connected': True,
-            'gamertag': tokens.get('gamertag', 'Unknown'),
-            'xuid': tokens.get('xuid', ''),
+            'gamertag': tokens.get('gamertag', ''),
             'connected_at': tokens.get('connected_at', ''),
         })
     return jsonify({'connected': False})
@@ -529,31 +453,34 @@ def api_xbox_status():
 @bp.route('/api/xbox/disconnect', methods=['POST'])
 @login_required
 def api_xbox_disconnect():
-    """Disconnect Xbox account (remove stored tokens for current user)."""
+    """Remove the caller's stored OpenXBL key."""
     from scraper.scrape_xbox import clear_tokens
     clear_tokens(g.user['id'])
-    logger.info(f"Xbox: Account disconnected (user={g.user['id']})")
+    logger.info(f"Xbox: key removed (user={g.user['id']})")
     return success()
 
 
 @bp.route('/api/xbox/fetch-library', methods=['POST'])
 @login_required
 def api_xbox_fetch_library():
-    """Fetch the user's Xbox game library with duplicate detection."""
-    from scraper.scrape_xbox import get_authenticated_session, get_title_history, parse_title_platform
+    """Fetch the caller's Xbox games with duplicate detection. Apps and
+    phone-only titles are left out and counted (X3, X4)."""
+    from scraper.scrape_xbox import (
+        load_tokens, get_title_history, parse_title_platform, is_game,
+        minutes_until_allowed,
+    )
 
-    api_keys = get_saved_api_keys()
-    client_id = api_keys.get('xbox_client_id', '')
-    client_secret = api_keys.get('xbox_client_secret', '')
-
-    if not client_id or not client_secret:
-        return error(_('Xbox credentials not configured. Add them in Settings → API Keys.'), 400)
-
-    session = get_authenticated_session(client_id, client_secret, g.user['id'])
+    session = load_tokens(g.user['id'])
     if not session:
-        return error(_('Xbox authentication failed. Please re-connect your Xbox account.'), 401)
+        return error(_('Add your OpenXBL key in Settings > My Profile first.'), 400)
 
-    titles = get_title_history(session['auth_header'], session['xuid'])
+    titles = get_title_history(session['api_key'])
+    if titles is None:
+        minutes = minutes_until_allowed(session['api_key'])
+        if minutes:
+            return error(_("OpenXBL's hourly limit was reached. Try again in %(minutes)s minutes.",
+                           minutes=minutes), 429)
+        return error(_('OpenXBL did not answer. Try again later.'), 502)
     if not titles:
         return error(_('No games found in Xbox title history.'), 404)
 
@@ -571,53 +498,49 @@ def api_xbox_fetch_library():
 
     dupes = _DuplicateIndex('xbox_title_id')
     result_games = []
+    left_out = 0
     for title in titles:
         name = title.get('name', '')
         title_id = str(title.get('titleId', ''))
         if not name or not title_id:
             continue
 
-        # Determine platform
         folder = parse_title_platform(title)
-        if not folder or folder not in xbox_systems:
-            folder = 'xboxone'  # Default fallback
+        if not is_game(title) or folder not in xbox_systems:
+            left_out += 1
+            continue
 
-        system = xbox_systems.get(folder)
-        system_id = system['id'] if system else None
+        system = xbox_systems[folder]
+        system_id = system['id']
 
         # Check duplicates
         existing_id = dupes.find(name, system_id, title_id)
 
-        # Extract achievement summary from title data
-        achievement = title.get('achievement', {})
-        total_achievements = achievement.get('totalGamerscore', 0)
-        earned_achievements = achievement.get('currentGamerscore', 0)
+        achievement = title.get('achievement') or {}
 
-        # Get image
-        display_image = ''
-        images = title.get('images', [])
-        for img in images:
-            if img.get('type') == 'BoxArt' or img.get('type') == 'Poster':
-                display_image = img.get('url', '')
-                break
+        # The list's own picture field, else the first BoxArt/Poster image.
+        display_image = title.get('displayImage') or ''
+        images = title.get('images') or []
+        if not display_image:
+            for img in images:
+                if img.get('type') in ('BoxArt', 'Poster'):
+                    display_image = img.get('url', '')
+                    break
         if not display_image and images:
             display_image = images[0].get('url', '')
 
-        # Platform display name
-        devices = title.get('devices', [])
-        platform_display = ', '.join(devices) if devices else 'Xbox'
-
+        devices = title.get('devices') or []
         result_games.append({
             'title_id': title_id,
             'name': name,
             'platform': folder,
-            'platform_display': platform_display,
-            'system_name': system['name'] if system else folder,
+            'platform_display': ', '.join(devices) if devices else 'Xbox',
+            'system_name': system['name'],
             'already_imported': existing_id is not None and not dupes.can_link(existing_id),
             'existing_game_id': existing_id,
             'will_link': dupes.can_link(existing_id),
-            'total_gamerscore': total_achievements,
-            'earned_gamerscore': earned_achievements,
+            'total_gamerscore': achievement.get('totalGamerscore', 0),
+            'earned_gamerscore': achievement.get('currentGamerscore', 0),
             'image_url': display_image,
         })
 
@@ -627,6 +550,7 @@ def api_xbox_fetch_library():
         games=result_games,
         total=len(result_games),
         already_imported=sum(1 for g in result_games if g['already_imported']),
+        left_out=left_out,
         gamertag=session.get('gamertag', ''),
     )
 

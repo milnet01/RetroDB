@@ -58,69 +58,6 @@ def test_an_idle_job_stays_quiet():
     assert _poll(False, {'running': False, 'completed': True}) == []
 
 
-# --- Xbox: a refresh keeps the gamertag, and only a refusal ends the sign-in ---
-
-class _Resp:
-    def __init__(self, status):
-        self.status_code = status
-
-    def raise_for_status(self):
-        import requests
-        if self.status_code >= 400:
-            raise requests.HTTPError(response=self)
-
-    def json(self):
-        return {'access_token': 'new'}
-
-
-def _xbox(monkeypatch, refreshed):
-    """A stale stored sign-in; `refreshed` is what the refresh returns."""
-    import time
-    from scraper import scrape_xbox
-    store = {'tokens': {'access_token': 'old', 'refresh_token': 'rt',
-                        'expires_at': time.time() - 1, 'xuid': 'x1', 'gamertag': 'Old'},
-             'cleared': False}
-    monkeypatch.setattr(scrape_xbox, 'load_tokens', lambda uid: dict(store['tokens']))
-    monkeypatch.setattr(scrape_xbox, 'save_tokens',
-                        lambda tokens, uid: store.update(tokens=dict(tokens)))
-    monkeypatch.setattr(scrape_xbox, 'clear_tokens', lambda uid: store.update(cleared=True))
-    monkeypatch.setattr(scrape_xbox, 'refresh_access_token', lambda *a, **k: refreshed)
-    monkeypatch.setattr(scrape_xbox, 'authenticate_xbox_live', lambda tok: ('xbl', 'hash'))
-    monkeypatch.setattr(scrape_xbox, 'get_xsts_token', lambda tok: ('xsts', 'x1'))
-    monkeypatch.setattr(scrape_xbox, 'get_gamertag', lambda auth, xuid: 'NewName')
-    session = scrape_xbox.get_authenticated_session('cid', 'csec', 7)
-    return session, store
-
-
-def test_a_refresh_fetches_the_gamertag_again(monkeypatch):
-    session, store = _xbox(monkeypatch, {'access_token': 'new', 'expires_in': 3600})
-    assert session['gamertag'] == 'NewName'
-    assert store['tokens']['gamertag'] == 'NewName'
-    assert store['tokens']['xuid'] == 'x1'
-
-
-def test_no_answer_from_microsoft_keeps_the_sign_in(monkeypatch):
-    session, store = _xbox(monkeypatch, None)
-    assert session is None
-    assert store['cleared'] is False
-
-
-def test_a_refused_refresh_ends_the_sign_in(monkeypatch):
-    from scraper import scrape_xbox
-    session, store = _xbox(monkeypatch, scrape_xbox.REFRESH_REFUSED)
-    assert session is None
-    assert store['cleared'] is True
-
-
-@pytest.mark.parametrize('status,refused', [(400, True), (401, True), (500, False), (None, False)])
-def test_only_a_refusal_counts_as_refused(monkeypatch, status, refused):
-    from scraper import scrape_xbox
-    monkeypatch.setattr(scrape_xbox, 'http_post',
-                        lambda *a, **k: _Resp(status) if status else None)
-    result = scrape_xbox.refresh_access_token('cid', 'csec', 'rt')
-    assert (result is scrape_xbox.REFRESH_REFUSED) is refused
-
-
 # --- RPCS3: any signed-in user can re-read their own trophies ---
 
 def test_a_viewer_can_rescan_their_own_trophies(admin_test_client, monkeypatch, tmp_path):

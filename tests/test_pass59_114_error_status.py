@@ -77,9 +77,9 @@ def test_steam_single_sync_without_credentials_is_a_400(admin_test_client, monke
     assert (resp.status_code, resp.get_json()['success']) == (400, False)
 
 
-def test_xbox_single_sync_without_credentials_is_a_400(admin_test_client, monkeypatch):
-    import routes.scraper as scraper
-    monkeypatch.setattr(scraper, 'get_saved_api_keys', lambda: {})
+def test_xbox_single_sync_without_a_key_is_a_400(admin_test_client, monkeypatch):
+    import scraper.scrape_xbox as xbox
+    monkeypatch.setattr(xbox, 'load_tokens', lambda _uid: None)
     client, csrf = admin_test_client()
     resp = _post(client, csrf, f'/api/xbox-achievements/sync/{MISSING}')
     assert (resp.status_code, resp.get_json()['success']) == (400, False)

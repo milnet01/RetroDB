@@ -865,32 +865,6 @@ class TestPass41_7ATropusrBounds:
 
 
 # -----------------------------------------------------------------------------
-# 41.7.B — Xbox callback redirect uses kwarg form (not string concat)
-# -----------------------------------------------------------------------------
-class TestPass41_7BXboxRedirectKwarg:
-    """`url_for(...) + '&xbox_connected=1'` worked only because url_for
-    happened to emit a `?tab=xbox` query string today; a future refactor
-    could break the implicit ampersand assumption. Pass 41.7.B converts
-    to the kwarg form so URL construction is unambiguous."""
-
-    def test_no_string_concat_redirect(self):
-        body = read_source('routes/platform_import.py')
-        # Strip comments so the explanatory comment naming the historical
-        # shape doesn't false-positive.
-        code_only = '\n'.join(
-            line.split('#', 1)[0]
-            for line in body.splitlines()
-        )
-        assert "+ '&xbox_connected=1'" not in code_only, (
-            "Xbox redirect still uses string concatenation — convert to "
-            "url_for(..., xbox_connected=1) kwarg form (Pass 41.7.B)"
-        )
-        assert 'xbox_connected=1' in body, (
-            "Xbox-connected redirect target still required (Pass 41.7.B)"
-        )
-
-
-# -----------------------------------------------------------------------------
 # 41.7.C — RA HTTP callers explicitly log 401 (stale API key)
 # -----------------------------------------------------------------------------
 class TestPass41_7CRaApi401Logging:

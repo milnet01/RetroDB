@@ -66,6 +66,7 @@ MIGRATIONS = [
     '039_tags_unique_per_owner',
     '040_game_delete_cleans_rows',
     '041_psn_hand_links',
+    '042_drop_xbox_oauth_tokens',
 ]
 
 

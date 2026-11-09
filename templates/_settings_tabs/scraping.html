@@ -413,95 +413,12 @@
                 <span class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">Your 17-digit Steam ID (e.g. 76561198012345678) or custom URL name. Find it at <a href="https://steamid.io" target="_blank" rel="noopener noreferrer" style="color: var(--primary-cyan);">steamid.io</a></span>
             </div>
 
-            <!-- Xbox Setup Wizard -->
-            <div style="border-top: 1px solid rgba(76, 201, 240, 0.2); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-md);">
-                    <span class="api-key-name" style="font-size: 1rem;">🟢 Xbox Live Integration</span>
-                    <button type="button" class="btn btn-secondary btn-sm" data-on-click="toggleXboxWizard" id="xboxWizardToggle" style="font-size: 0.8rem;">
-                        Show Setup Guide
-                    </button>
+            <!-- Xbox: a per-user OpenXBL key, set in My Profile (PASS-59-261) -->
+            <div class="api-key-item" style="border-top: 1px solid rgba(76, 201, 240, 0.2); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
+                <div class="api-key-header">
+                    <span class="api-key-name">🟢 {{ _('Xbox') }}</span>
                 </div>
-
-                <!-- Collapsible Wizard -->
-                <div id="xboxSetupWizard" style="display: none; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0 0 var(--spacing-lg);">
-                        {{ _('Xbox needs an app registered with Microsoft. Microsoft now asks a personal account to get a directory first, which can mean signing up for Azure, and that may ask for a card. Xbox may still refuse an app made this way: RetroDB has not been able to test one.') }}
-                    </p>
-
-                    <div style="display: flex; flex-direction: column; gap: var(--spacing-lg);">
-                        <!-- Step 1 -->
-                        <div style="display: flex; gap: var(--spacing-md); align-items: flex-start;">
-                            <span style="background: var(--neon-green); color: var(--bg-darkest); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; margin-top: 2px;">1</span>
-                            <div>
-                                <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">Create an Azure AD App Registration</div>
-                                <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0 0 8px;">Go to the Azure Portal and create a new app registration. Use any name (e.g. "RetroDB").</p>
-                                <button type="button" class="btn btn-secondary btn-sm" data-on-click="window.open" data-args='["https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/CreateApplicationBlade/quickStartType//isMSAApp/true", "_blank"]'>
-                                    Open Azure Portal
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Step 2 -->
-                        <div style="display: flex; gap: var(--spacing-md); align-items: flex-start;">
-                            <span style="background: var(--neon-green); color: var(--bg-darkest); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; margin-top: 2px;">2</span>
-                            <div>
-                                <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">Set the Redirect URI</div>
-                                <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0 0 8px;">Under <strong>Authentication</strong>, add a <strong>Web</strong> platform redirect URI:</p>
-                                <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
-                                    <code id="xboxRedirectUri" style="background: var(--bg-medium); padding: 6px 12px; border-radius: var(--radius-sm); border: 1px solid var(--card-border); color: var(--primary-cyan); font-size: 0.85rem; flex: 1; user-select: all;">http://localhost:5000/api/xbox/callback</code>
-                                    <button type="button" class="btn btn-secondary btn-sm" data-on-click="copyXboxRedirectUri" title="Copy redirect URI">
-                                        Copy
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Step 3 -->
-                        <div style="display: flex; gap: var(--spacing-md); align-items: flex-start;">
-                            <span style="background: var(--neon-green); color: var(--bg-darkest); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; margin-top: 2px;">3</span>
-                            <div>
-                                <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">Add Xbox Live API Permission</div>
-                                <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Under <strong>API permissions</strong> &rarr; <strong>Add a permission</strong> &rarr; <strong>Xbox Live</strong> &rarr; check <strong>XboxLive.signin</strong>. Then click "Grant admin consent".</p>
-                            </div>
-                        </div>
-
-                        <!-- Step 4 -->
-                        <div style="display: flex; gap: var(--spacing-md); align-items: flex-start;">
-                            <span style="background: var(--neon-green); color: var(--bg-darkest); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; margin-top: 2px;">4</span>
-                            <div>
-                                <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">Copy the Application (Client) ID</div>
-                                <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">From the app's <strong>Overview</strong> page, copy the "Application (client) ID" and paste it below.</p>
-                            </div>
-                        </div>
-
-                        <!-- Step 5 -->
-                        <div style="display: flex; gap: var(--spacing-md); align-items: flex-start;">
-                            <span style="background: var(--neon-green); color: var(--bg-darkest); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; margin-top: 2px;">5</span>
-                            <div>
-                                <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">Create a Client Secret</div>
-                                <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Under <strong>Certificates &amp; secrets</strong> &rarr; <strong>New client secret</strong>. Copy the <strong>Value</strong> (not the Secret ID) and paste it below.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Input fields (always visible) -->
-                <div class="api-key-item">
-                    <div class="api-key-header">
-                        <span class="api-key-name">🟢 Xbox Client ID</span>
-                    </div>
-                    <input type="text" id="apikey-xbox-client-id" class="api-key-input"
-                           value="{{ scraper_settings.api_keys.xbox_client_id }}"
-                           placeholder="Application (client) ID from Azure">
-                </div>
-                <div class="api-key-item">
-                    <div class="api-key-header">
-                        <span class="api-key-name">🟢 Xbox Client Secret</span>
-                    </div>
-                    <input type="password" id="apikey-xbox-client-secret" class="api-key-input"
-                           value="{{ scraper_settings.api_keys.xbox_client_secret }}"
-                           placeholder="Client secret Value from Azure">
-                </div>
+                <span class="text-muted" style="font-size: 0.85rem;">{% trans profile_url=url_for('settings.settings') ~ '#profile' %}Each person adds their own free OpenXBL key in <a href="{{ profile_url }}" style="color: var(--primary-cyan);">Settings &gt; My Profile</a>. Nothing is needed here.{% endtrans %}</span>
             </div>
 
             <!-- AI Metadata -->

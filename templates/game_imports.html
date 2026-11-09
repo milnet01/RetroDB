@@ -293,18 +293,17 @@
         <div class="info-box">
             <span>ℹ️</span>
             <span class="info-box-text">
-                {% trans settings_url=url_for('settings.settings') ~ '#apikeys' %}Import your Xbox game library. Games are assigned to their correct Xbox system.
-                You need an Azure AD app registration &mdash; configure credentials in <a href="{{ settings_url }}" style="color: var(--primary-cyan);">Settings &rarr; API Keys</a>.{% endtrans %}
+                {% trans profile_url=url_for('settings.settings') ~ '#profile' %}Import your Xbox game library. Games are assigned to their correct Xbox system.
+                You need your own free OpenXBL key &mdash; add it in <a href="{{ profile_url }}" style="color: var(--primary-cyan);">Settings &rarr; My Profile</a>.{% endtrans %}
             </span>
         </div>
         <div class="config-section" id="xboxConfig">
             <h2>🔐 {{ _('Xbox Account') }}</h2>
             <div class="auth-status disconnected" id="xboxAuthStatus">
                 <div class="auth-dot"></div>
-                <div><div id="xboxAuthText" style="color: var(--text-primary);">{{ _('Not Connected') }}</div><div id="xboxAuthDetail" style="color: var(--text-muted); font-size: 0.8rem;">{{ _('Connect your Xbox account to import games') }}</div></div>
+                <div><div id="xboxAuthText" style="color: var(--text-primary);">{{ _('Not Connected') }}</div><div id="xboxAuthDetail" style="color: var(--text-muted); font-size: 0.8rem;">{{ _('Add your OpenXBL key in Settings > My Profile to import games.') }}</div></div>
                 <div style="margin-left: auto; display: flex; gap: var(--spacing-sm);">
-                    <button type="button" class="btn btn-primary btn-sm" data-on-click="connectXbox" id="xboxConnectBtn">🔗 {{ _('Connect Xbox Account') }}</button>
-                    <button type="button" class="btn btn-secondary btn-sm" data-on-click="disconnectXbox" id="xboxDisconnectBtn" style="display: none;">{{ _('Disconnect') }}</button>
+                    <a class="btn btn-secondary btn-sm" href="{{ url_for('settings.settings') }}#profile" id="xboxKeyLink">🔑 {{ _('Xbox key settings') }}</a>
                 </div>
             </div>
             <div style="display: flex; gap: var(--spacing-md); align-items: center; margin-top: var(--spacing-md);" id="xboxFetchRow">
@@ -682,37 +681,19 @@ async function checkXboxStatus() {
         const statusEl = document.getElementById('xboxAuthStatus');
         const textEl = document.getElementById('xboxAuthText');
         const detailEl = document.getElementById('xboxAuthDetail');
-        const connectBtn = document.getElementById('xboxConnectBtn');
-        const disconnectBtn = document.getElementById('xboxDisconnectBtn');
         const fetchBtn = document.getElementById('xboxFetchBtn');
         if (data.connected) {
             statusEl.className = 'auth-status connected';
-            textEl.textContent = `Connected as ${data.gamertag}`;
-            detailEl.textContent = `XUID: ${data.xuid}`;
-            connectBtn.style.display = 'none'; disconnectBtn.style.display = ''; fetchBtn.disabled = false;
+            textEl.textContent = t({{ _('Connected as {name}')|tojson }}, {name: data.gamertag || '?'});
+            detailEl.textContent = {{ _('Through your OpenXBL key.')|tojson }};
+            fetchBtn.disabled = false;
         } else {
             statusEl.className = 'auth-status disconnected';
-            textEl.textContent = 'Not Connected';
-            detailEl.textContent = 'Connect your Xbox account to import games';
-            connectBtn.style.display = ''; disconnectBtn.style.display = 'none'; fetchBtn.disabled = true;
+            textEl.textContent = {{ _('Not Connected')|tojson }};
+            detailEl.textContent = {{ _('Add your OpenXBL key in Settings > My Profile to import games.')|tojson }};
+            fetchBtn.disabled = true;
         }
     } catch (e) { console.error('Xbox status check failed:', e); }
-}
-
-async function connectXbox() {
-    try {
-        const resp = await fetch('/api/xbox/auth-url');
-        const data = await resp.json();
-        if (data.success) window.location.href = data.auth_url;
-        else showNotification(data.error || {{ _('Failed to get auth URL')|tojson }}, 'error');
-    } catch (e) { showNotification(t({{ _('Failed to connect to Xbox: {error}')|tojson }}, {error: e.message}), 'error'); }
-}
-
-async function disconnectXbox() {
-    showConfirm({{ _('Disconnect Xbox')|tojson }}, {{ _('Remove your Xbox account connection? You can reconnect later.')|tojson }}, async () => {
-        try { await fetch('/api/xbox/disconnect', { method: 'POST' }); checkXboxStatus(); showNotification({{ _('Xbox account disconnected')|tojson }}, 'info'); }
-        catch (e) { showNotification(t({{ _('Failed to disconnect: {error}')|tojson }}, {error: e.message}), 'error'); }
-    });
 }
 
 async function fetchXboxLibrary() {
@@ -737,6 +718,9 @@ async function fetchXboxLibrary() {
             filterGames('xbox');
         }
         showNotification(t({{ _('Xbox games found: {total} ({existing} already imported)')|tojson }}, {total: formatNumber(data.total), existing: data.already_imported}), 'success');
+        if (data.left_out) {
+            showNotification(t({{ _('{count} apps and phone-only titles were left out.')|tojson }}, {count: formatNumber(data.left_out)}), 'info');
+        }
     } catch (e) { showNotification(e.message, 'error'); }
     finally { overlay.classList.remove('active'); btn.disabled = false; btn.innerHTML = '📡 Fetch Library'; }
 }
@@ -992,22 +976,10 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(() => {});
 
-    // Check URL params for Xbox callback
     const params = new URLSearchParams(window.location.search);
-    if (params.get('xbox_connected') === '1') {
-        switchTab('xbox');
-        showNotification({{ _('Xbox account connected successfully!')|tojson }}, 'success');
-        params.delete('xbox_connected');
-        window.history.replaceState({}, '', window.location.pathname + '?tab=xbox');
-    }
-    if (params.get('xbox_error')) {
-        switchTab('xbox');
-        showNotification(t({{ _('Xbox connection failed: {error}')|tojson }}, {error: params.get('xbox_error')}), 'error');
-        params.delete('xbox_error');
-        window.history.replaceState({}, '', window.location.pathname + '?tab=xbox');
-    }
 
     // Check PSN status on init if PSN tab is active
+    if (params.get('tab') === 'xbox') checkXboxStatus();
     if (params.get('tab') === 'psn') checkPsnStatus();
 });
 </script>

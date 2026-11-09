@@ -207,13 +207,15 @@ def test_xbox_uses_the_sanctioned_http_layer():
     src = open('scraper/scrape_xbox.py').read()
     code = '\n'.join(l for l in src.split('\n') if not l.lstrip().startswith('#'))
     assert not re.search(r'\brequests\.(get|post)\s*\(', code)
-    assert 'from scraper.base_scraper import http_get, http_post' in src
+    assert 'from scraper.base_scraper import http_get' in src
 
 
-def test_xbox_title_history_caps_the_paginated_body():
+def test_xbox_calls_cap_the_reply_body():
+    """Every OpenXBL call goes through _get, which caps the reply (PASS-59-261)."""
     src = open('scraper/scrape_xbox.py').read()
-    body = src[src.index('def get_title_history'):src.index('def get_achievements')]
+    body = src[src.index('def _get('):src.index('def _json(')]
     assert 'max_bytes=' in body
+    assert src.count('http_get(') == 1
 
 
 # --------------------------------------------------------------------------

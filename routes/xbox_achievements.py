@@ -114,28 +114,28 @@ def xbox_achievement_game(game_id):
 @editor_required
 def api_xbox_sync_single(game_id):
     """Sync achievements for a single Xbox game (Pass 31.2 — per user)."""
-    from scraper.scrape_xbox import get_authenticated_session, get_achievements
-    from routes.scraper import get_saved_api_keys
+    from scraper.scrape_xbox import load_tokens, get_achievements, minutes_until_allowed
     from services.jobs.platform_sync import _upsert_xbox_achievements, _upsert_xbox_progress
 
-    api_keys = get_saved_api_keys()
-    client_id = api_keys.get('xbox_client_id', '')
-    client_secret = api_keys.get('xbox_client_secret', '')
-
-    if not client_id or not client_secret:
-        return error(_('Xbox credentials not configured'), 400)
-
     user_id = g.user['id']
-    session = get_authenticated_session(client_id, client_secret, user_id)
+    session = load_tokens(user_id)
     if not session:
-        return error(_('Xbox authentication failed — please re-connect your account'), 401)
+        return error(_('Add your OpenXBL key in Settings > My Profile first.'), 400)
 
-    game = query("SELECT id, title, xbox_title_id FROM games WHERE id = ?", (game_id,), one=True)
+    game = query("""
+        SELECT g.id, g.title, g.xbox_title_id, s.folder AS system_folder
+        FROM games g LEFT JOIN systems s ON s.id = g.system_id WHERE g.id = ?
+    """, (game_id,), one=True)
     if not game or not game['xbox_title_id']:
         return error(_('Game not found or not an Xbox game'), 404)
 
-    result = get_achievements(session['auth_header'], session['xuid'], game['xbox_title_id'])
+    result = get_achievements(session['api_key'], session['xuid'], game['xbox_title_id'],
+                              xbox360=game['system_folder'] == 'xbox360')
     if result is None:
+        minutes = minutes_until_allowed(session['api_key'])
+        if minutes:
+            return error(_("OpenXBL's hourly limit was reached. Try again in %(minutes)s minutes.",
+                           minutes=minutes), 429)
         return success(message=_('Game has no achievements'), earned=0, total=0)
 
     conn = None

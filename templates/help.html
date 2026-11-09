@@ -481,7 +481,7 @@
         <p><em>Used for Steam library import and achievement tracking.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox authentication uses OAuth2 &mdash; no API key is needed. Sign in with your Microsoft account directly from the Game Imports &rarr; Xbox tab. Tokens are cached automatically and refreshed as needed.</p>
+        <p>Xbox reaches RetroDB through OpenXBL, a free service. Each person uses their own key: sign in at <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> with your Xbox account, copy your API key, and paste it in Settings &rarr; My Profile &rarr; Xbox. <strong>Save &amp; Test Connection</strong> checks the key and shows your gamertag. The free key allows 150 requests an hour.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN uses NPSSO cookie authentication. See the <a href="#trophies">Trophies</a> section for detailed setup instructions.</p>
@@ -1054,15 +1054,13 @@
         </ol>
 
         <h3>Xbox Import</h3>
-        <p>Import your Xbox game library via Microsoft account.</p>
+        <p>Import the Xbox games you have played, using your own OpenXBL key.</p>
         <ol>
-            <li>Go to Game Imports &rarr; <strong>Xbox</strong> tab</li>
-            <li>Click <strong>"Sign In"</strong> to authenticate with your Microsoft account (OAuth2 flow)</li>
-            <li>Your Xbox title history is fetched automatically</li>
-            <li>Select games to import with duplicate detection</li>
+            <li>Save your OpenXBL key in Settings &rarr; My Profile &rarr; Xbox (see API Keys above)</li>
+            <li>Go to Game Imports &rarr; <strong>Xbox</strong> tab and click <strong>Fetch Library</strong></li>
+            <li>Select games to import with duplicate detection. Apps and phone-only games are left out.</li>
             <li>Imported games are tagged with their Xbox Title ID for achievement tracking</li>
         </ol>
-        <p>Xbox tokens are cached in <code>data/xbox_tokens.json</code> and refreshed automatically.</p>
 
         <h3>PSN Import</h3>
         <p>Import your PlayStation Network game library.</p>
@@ -1176,7 +1174,7 @@
         <h3>Setup</h3>
         <ol>
             <li>Import Xbox games via <strong>Game Imports &rarr; Xbox</strong></li>
-            <li>Authentication is handled via Xbox OAuth during import</li>
+            <li>Save your OpenXBL key in Settings &rarr; My Profile &rarr; Xbox</li>
         </ol>
 
         <h3>Achievements Landing Page</h3>
@@ -1196,6 +1194,7 @@
         <h3>Syncing</h3>
         <ul>
             <li>Sync a single game or bulk sync all Xbox games</li>
+            <li>Each game is one request, and the free OpenXBL key allows 150 an hour. A bulk sync that reaches the limit stops and says so; run it again an hour later and it starts with the games not synced yet.</li>
             <li>Runs as a background job with toast notifications</li>
             <li>Gamerscore totals update automatically after each sync</li>
         </ul>
@@ -1837,10 +1836,10 @@
             <li>RetroDB signs in again by itself while Sony accepts your saved NPSSO. Once Sony refuses it, paste a new one in Settings &rarr; Account &rarr; PSN. To replace a token that still works, sign out of PlayStation first.</li>
         </ul>
 
-        <h4>"Xbox Authentication Failed"</h4>
+        <h4>"OpenXBL did not accept that key"</h4>
         <ul>
-            <li>Re-authenticate by clicking "Sign In" on the Game Imports &rarr; Xbox tab</li>
-            <li>Xbox tokens are cached in <code>data/xbox_tokens.json</code> and refreshed automatically</li>
+            <li>Copy the key again from <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> and paste it in Settings &rarr; My Profile &rarr; Xbox</li>
+            <li>"OpenXBL's hourly limit was reached" means the key has used its 150 requests this hour; wait and try again</li>
         </ul>
 
         <h4>"Image Upscaling Errors"</h4>

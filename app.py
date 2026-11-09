@@ -491,6 +491,7 @@ if limiter:
     _rate_limit('platform_import.api_steam_fetch_library', "5 per minute")
     _rate_limit('platform_import.api_steam_import', "5 per minute")
     _rate_limit('platform_import.api_steam_sync_achievements', "2 per hour")
+    _rate_limit('platform_import.api_xbox_save_key', "5 per minute")
     _rate_limit('platform_import.api_xbox_fetch_library', "5 per minute")
     _rate_limit('platform_import.api_xbox_import', "5 per minute")
     _rate_limit('platform_import.api_xbox_sync_achievements', "2 per hour")

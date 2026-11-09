@@ -79,8 +79,8 @@ as the JSON stores; it appears in the table for symmetry.
   (`scanner_types`, `scanner_modes`), CHD options
   (`chd_verify_after_convert`, `chd_delete_originals`, `chd_skip_existing`),
   duplicate-finder mode, archive-type allowlist.
-- **`user_platform_tokens`** — JSON-encoded OAuth blob per
-  `(user_id, platform)` for `psn` and `xbox` sync. Replaced the legacy shared
+- **`user_platform_tokens`** — JSON-encoded blob per `(user_id, platform)`:
+  PSN's OAuth tokens, and the user's OpenXBL key for `xbox` (PASS-59-261). Replaced the legacy shared
   `data/psn_tokens.json` / `data/xbox_tokens.json` files in Pass 27.2 because
   those leaked the first authenticated user's tokens to every subsequent
   user.

@@ -33,7 +33,6 @@ _ALLOWED_API_KEY_FIELDS = {
     'screenscraper_devid', 'screenscraper_devpassword',
     'ra_username', 'ra_apikey',
     'steam_api_key', 'steam_id',
-    'xbox_client_id', 'xbox_client_secret',
     'ai_provider',
     'ai_gemini_api_key', 'ai_gemini_model', 'ai_gemini_project_id',
     'ai_openai_api_key', 'ai_openai_model',

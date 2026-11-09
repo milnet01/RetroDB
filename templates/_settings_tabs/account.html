@@ -215,6 +215,21 @@
             </div>
         </div>
 
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">🟢 {{ _('Xbox') }}</h3>
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            {% trans %}Xbox reaches RetroDB through OpenXBL, a free service. Sign in at <a href="https://xbl.io" target="_blank" rel="noopener noreferrer" style="color: var(--primary-cyan);">xbl.io</a> with your Xbox account, copy your API key, and paste it here. The free key allows 150 requests an hour, so a big achievement sync may take more than one go.{% endtrans %}
+        </p>
+        <div id="xboxKeyStatus" role="status" aria-live="polite" class="text-muted" style="margin-bottom: var(--spacing-sm);"></div>
+        <div class="form-group mb-md">
+            <label class="form-label" for="userXboxKey">{{ _('Your OpenXBL API key') }}</label>
+            <div style="display: flex; gap: var(--spacing-sm); align-items: center; flex-wrap: wrap;">
+                <input type="password" class="form-input" id="userXboxKey" autocomplete="off" style="flex: 1; min-width: 200px;">
+                <button type="button" class="btn btn-primary btn-sm" data-on-click="xboxSaveKey" id="xboxSaveKeyBtn">{{ _('Save &amp; Test Connection') }}</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-on-click="xboxRemoveKey" id="xboxRemoveKeyBtn" style="display: none;">{{ _('Remove') }}</button>
+            </div>
+            <span id="xboxKeyResult" role="status" aria-live="polite" style="font-size: 0.85rem;"></span>
+        </div>
+
         <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">🎮 {{ _('Steam') }}</h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
             {{ _('Add your own Steam key and Steam ID to import your Steam library and achievements.') }}
