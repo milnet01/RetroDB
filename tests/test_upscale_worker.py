@@ -1,30 +1,35 @@
 """PASS-59-269: the AI upscaler runs in a helper process.
 
 The server side (`upscale_worker._Remote`) is driven against small fake
-helpers that speak the same pickle protocol, so no model loads here.
+helpers that speak the same pipe format, so no model loads here.
 """
-import pickle
 import subprocess
 import sys
 import textwrap
 
+import numpy as np
 import pytest
 
 from services import upscale_worker
 
 # A fake helper: answers each request by the action named in its argv.
+_ROOT = str(upscale_worker.Path(upscale_worker.__file__).resolve().parent.parent)
 _FAKE = textwrap.dedent('''
-    import os, pickle, sys
+    import os, sys
+    sys.path.insert(0, %r)
+    from services.upscale_worker import _recv, _send
     action = sys.argv[1]
-    req = pickle.load(sys.stdin.buffer)
+    kind, arr, _ = _recv(sys.stdin.buffer)
     if action == 'crash':
         os._exit(3)
     if action == 'idle':
         os._exit(0)
-    reply = ('ok', req[1] * 2) if action == 'ok' else ('unavailable',)
-    pickle.dump(reply, sys.stdout.buffer)
-    sys.stdout.flush()
-''')
+    if action == 'ok':
+        _send(sys.stdout.buffer, 'ok', arr * 2)
+    else:
+        _send(sys.stdout.buffer, 'unavailable')
+''' % _ROOT)
+_IMG = np.arange(12, dtype=np.uint8).reshape(2, 2, 3)
 
 
 def _remote(monkeypatch, *actions):
@@ -42,32 +47,33 @@ def _remote(monkeypatch, *actions):
 
 def test_an_upscale_comes_back_from_the_helper(monkeypatch):
     remote, _ = _remote(monkeypatch, 'ok')
-    assert remote.enhance(21) == (42, None)
+    out, extra = remote.enhance(_IMG)
+    assert extra is None and (out == _IMG * 2).all()
 
 
 def test_a_helper_that_left_for_idleness_is_restarted_once(monkeypatch):
     remote, started = _remote(monkeypatch, 'idle', 'ok')
-    assert remote.enhance(5) == (10, None)
+    assert (remote.enhance(_IMG)[0] == _IMG * 2).all()
     assert len(started) == 2 and not remote.cpu_only
 
 
 def test_a_crash_moves_to_cpu_and_a_second_crash_turns_upscaling_off(monkeypatch):
     remote, started = _remote(monkeypatch, 'crash', 'crash')
     with pytest.raises(RuntimeError):
-        remote.enhance(1)
+        remote.enhance(_IMG)
     assert remote.cpu_only and not remote.disabled
     with pytest.raises(RuntimeError):
-        remote.enhance(1)
+        remote.enhance(_IMG)
     assert started == [False, True]
     assert remote.disabled
-    assert remote.enhance(1) == (None, None)
+    assert remote.enhance(_IMG) == (None, None)
 
 
 def test_a_helper_with_no_upscaler_turns_upscaling_off(monkeypatch):
     remote, started = _remote(monkeypatch, 'unavailable')
-    assert remote.enhance(1) == (None, None)
+    assert remote.enhance(_IMG) == (None, None)
     assert remote.disabled
-    assert remote.enhance(1) == (None, None) and len(started) == 1
+    assert remote.enhance(_IMG) == (None, None) and len(started) == 1
 
 
 def test_get_offers_no_upscaler_without_onnxruntime(monkeypatch):
@@ -88,18 +94,17 @@ def test_the_helper_answers_then_exits_when_idle(tmp_path):
         upscale_worker.child_main([])
     ''')
     proc = subprocess.Popen([sys.executable, '-c', script], stdin=subprocess.PIPE,
-                            stdout=subprocess.PIPE, cwd=upscale_worker.Path(
-                                upscale_worker.__file__).resolve().parent.parent)
-    pickle.dump(('enhance', 41), proc.stdin)
-    proc.stdin.flush()
-    assert pickle.load(proc.stdout) == ('ok', 42)
+                            stdout=subprocess.PIPE, cwd=_ROOT)
+    upscale_worker._send(proc.stdin, 'enhance', _IMG)
+    kind, out, _ = upscale_worker._recv(proc.stdout)
+    assert kind == 'ok' and (out == _IMG + 1).all()
     assert proc.wait(timeout=10) == 0
 
 
 def test_an_ended_helper_is_collected_without_waiting_for_the_next_upscale(monkeypatch):
     import time
     remote, _ = _remote(monkeypatch, 'ok')
-    remote.enhance(1)      # the fake helper exits after one reply
+    remote.enhance(_IMG)      # the fake helper exits after one reply
     deadline = time.monotonic() + 5
     while remote._proc.returncode is None and time.monotonic() < deadline:
         time.sleep(0.05)

@@ -18,9 +18,10 @@ Lanczos.
 from __future__ import annotations
 
 import importlib.util
+import io
+import json
 import logging
 import os
-import pickle
 import queue
 import subprocess
 import sys
@@ -37,6 +38,41 @@ IDLE_SECONDS = 120
 CALL_TIMEOUT = 600
 _LOG_NAME = 'upscale_worker.log'
 _LOG_MAX_BYTES = 5 * 1024 * 1024
+
+
+# -----------------------------------------------------------------------------
+# The pipe: a 4-byte length, a JSON header, then a .npy array when the header
+# says so. No pickle, so neither side can be made to run code by the other.
+# -----------------------------------------------------------------------------
+
+def _send(stream, kind, arr=None, text=''):
+    payload = b''
+    if arr is not None:
+        import numpy as np
+        buf = io.BytesIO()
+        np.save(buf, np.asarray(arr), allow_pickle=False)
+        payload = buf.getvalue()
+    header = json.dumps({'kind': kind, 'text': text, 'array': arr is not None,
+                         'size': len(payload)}).encode()
+    stream.write(len(header).to_bytes(4, 'big') + header + payload)
+    stream.flush()
+
+
+def _read_exact(stream, n):
+    data = stream.read(n)
+    if len(data) != n:
+        raise EOFError('pipe closed')
+    return data
+
+
+def _recv(stream):
+    """(kind, array or None, text). EOFError when the pipe has closed."""
+    header = json.loads(_read_exact(stream, int.from_bytes(_read_exact(stream, 4), 'big')))
+    arr = None
+    if header['array']:
+        import numpy as np
+        arr = np.load(io.BytesIO(_read_exact(stream, header['size'])), allow_pickle=False)
+    return header['kind'], arr, header['text']
 
 
 # -----------------------------------------------------------------------------
@@ -80,9 +116,8 @@ class _Remote:
         watchdog = threading.Timer(CALL_TIMEOUT, proc.kill)
         watchdog.start()
         try:
-            pickle.dump(('enhance', arr), proc.stdin, protocol=pickle.HIGHEST_PROTOCOL)
-            proc.stdin.flush()
-            return pickle.load(proc.stdout)
+            _send(proc.stdin, 'enhance', arr)
+            return _recv(proc.stdout)
         finally:
             watchdog.cancel()
 
@@ -104,7 +139,7 @@ class _Remote:
                 try:
                     reply = self._ask(arr)
                     break
-                except (EOFError, OSError, pickle.UnpicklingError) as e:
+                except (EOFError, OSError, ValueError) as e:
                     code = self._ended()
                     if code == 0 and attempt == 1:
                         continue    # it left for idleness as the image went in
@@ -117,15 +152,15 @@ class _Remote:
                         logger.warning(f"Upscale helper crashed (exit {code}); "
                                        f"the next one runs on CPU only")
                     raise RuntimeError(f"upscale helper ended: {e!r}") from e
-            kind = reply[0]
+            kind, out, text = reply
             if kind == 'ok':
-                return reply[1], None
+                return out, None
             if kind == 'unavailable':
                 self.disabled = True
                 logger.warning("Real-ESRGAN could not load in the upscale helper; "
                                "see logs/upscale_worker.log. Upscaling uses Lanczos.")
                 return None, None
-            raise RuntimeError(reply[1])
+            raise RuntimeError(text)
 
 
 _remote = _Remote()
@@ -175,7 +210,7 @@ def child_main(argv):
     def _read():
         try:
             while True:
-                inbox.put(pickle.load(requests))
+                inbox.put(_recv(requests))
         except Exception:
             inbox.put(None)     # the server closed the pipe
     threading.Thread(target=_read, daemon=True).start()
@@ -189,13 +224,12 @@ def child_main(argv):
             break
         try:
             if image_utils._get_local_upscaler() is None:
-                reply = ('unavailable',)
+                _send(replies, 'unavailable')
             else:
-                reply = ('ok', image_utils._enhance_local(item[1]))
+                # None when the image is over the tile cap
+                _send(replies, 'ok', image_utils._enhance_local(item[1]))
         except Exception as e:
-            reply = ('error', f"{type(e).__name__}: {e}")
-        pickle.dump(reply, replies, protocol=pickle.HIGHEST_PROTOCOL)
-        replies.flush()
+            _send(replies, 'error', text=f"{type(e).__name__}: {e}")
     # os._exit skips exit handlers: ROCm's roctracer aborts in them and
     # leaves a core dump behind.
     replies.flush()
