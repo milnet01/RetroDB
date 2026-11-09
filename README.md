@@ -2,6 +2,8 @@
 
 **Retro Gaming ROM Library Manager** - A web-based application for organizing, scraping metadata, and managing your retro game ROM collection.
 
+> **4.0 is the last web version.** New versions will be a desktop app for Windows, Linux and macOS, and an Android app, and will open your existing library. Version 4.0 stays available to download, and gets only security fixes and fixes for bugs that lose data.
+
 > **Status:** Solo-developed; releases on a best-effort cadence. See [`SECURITY.md`](SECURITY.md) for the security disclosure policy and [`CONTRIBUTING.md`](CONTRIBUTING.md) for the developer setup.
 
 ## Features
