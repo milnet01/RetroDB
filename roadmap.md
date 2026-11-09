@@ -11866,7 +11866,14 @@ docs/plans/PASS-59-270-native-app-port.md.
 - **Checked, fine**: idle server 89 MB, 172 MB after every main page;
   the upscaler already runs in a helper (PASS-59-269); the other in-memory
   caches are capped.
-- **Status**: todo.
+- **Resolution** (2026-11-09): **Resolution** (2026-11-09): built in the open 4.0.0 (commit
+  4d01977a). `services/rembg_worker.py` runs rembg in `app.py
+  --rembg-worker` on the upscale helper's machinery; `routes/museum.py`
+  never imports rembg. Real-model run: calling process 37 MB, helper
+  peak 2.5 GB (GPU worked in the helper), helper exited after 121 s
+  idle. Tests: `tests/test_rembg_worker.py`. Not walked: the Museum page
+  in a browser.
+- **Status**: done.
 
 ## Done index
 
