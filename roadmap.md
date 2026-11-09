@@ -11742,6 +11742,29 @@ the cover zoom in Firefox before being reverted for the local fix.
 - **Fix**: queue on the server as bulk scrape does, or reword the
   reply and toast to say busy, retry.
 
+---
+
+#### Pass 59.269 Load the AI upscaler only while an upscale runs (perf, S).
+- **Status**: todo
+The live server held about 730 MB with onnxruntime and the ROCm
+(hip*) libraries mapped while idle (measured 2026-11-09). Import
+them only inside the upscale job, ideally in a child process that
+exits when the job ends. Check: RSS of an idle server before and
+after; an upscale still works.
+
+---
+
+#### Pass 59.270 Port RetroDB to a native app in Rust + Slint for Windows, Linux, macOS and Android (feature, XL).
+- **Status**: todo
+Decisions (user, 2026-11-09): Rust + Slint; one codebase for
+desktop and Android; Android runs standalone or as a companion to
+the PC over Wi-Fi, and can copy all or chosen ROMs from the PC to
+the phone for use on the go; WebAssembly plugins; two-level themes
+(skins, layout themes); each screen keeps its state and drops its
+view. Build starts after v4.0.0 ships (PASS-59-113). Spec:
+docs/specs/PASS-59-270-native-app-port.md. Plan:
+docs/plans/PASS-59-270-native-app-port.md.
+
 ## Done index
 
 Compact one-liner per landed pass.  Detail lives in git history
