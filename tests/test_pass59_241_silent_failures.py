@@ -232,24 +232,34 @@ def test_the_upgrade_drops_dangling_links_instead_of_stopping_the_app(tmp_path):
 
 # --- Steam: the shared key in Settings is the admins', never another person's ---
 
+# The test's own users, so a user another test left behind (say an admin
+# with id 2) cannot change the answer; they are removed afterwards.
+_STEAM_ADMIN, _STEAM_VIEWER = 241001, 241002
+
+
 @pytest.mark.parametrize('user_id,expected', [
-    (1, ('shared-key', '765')),   # an admin with no keys of their own
-    (2, ('', '')),                # anyone else gets nothing, not the admin's library
+    (_STEAM_ADMIN, ('shared-key', '765')),   # an admin with no keys of their own
+    (_STEAM_VIEWER, ('', '')),               # anyone else gets nothing, not the admin's library
     (None, ('shared-key', '765')),
 ])
 def test_the_shared_steam_key_is_for_admins_only(vdb, monkeypatch, user_id, expected):
     from services.jobs import platform_sync
-    vdb.conn.execute("INSERT OR IGNORE INTO users (id, username, password_hash, role) "
-                     "VALUES (2, 'kid', 'x', 'viewer')")
-    for uid in (1, 2):
-        vdb.conn.execute("INSERT OR IGNORE INTO user_settings (user_id) VALUES (?)", (uid,))
-        vdb.conn.execute("UPDATE user_settings SET steam_api_key = '', steam_id = '' "
-                         "WHERE user_id = ?", (uid,))
-    vdb.conn.commit()
-    monkeypatch.setattr(platform_sync, '_shared_steam_credentials',
-                        lambda: ('shared-key', '765'))
-    got = platform_sync._get_steam_credentials(user_id=user_id)
-    assert got == expected
+    try:
+        for uid, role in ((_STEAM_ADMIN, 'admin'), (_STEAM_VIEWER, 'viewer')):
+            vdb.conn.execute("INSERT OR REPLACE INTO users (id, username, password_hash, role) "
+                             "VALUES (?, ?, 'x', ?)", (uid, f'steam-{uid}', role))
+            vdb.conn.execute("INSERT OR REPLACE INTO user_settings (user_id, steam_api_key, steam_id) "
+                             "VALUES (?, '', '')", (uid,))
+        vdb.conn.commit()
+        monkeypatch.setattr(platform_sync, '_shared_steam_credentials',
+                            lambda: ('shared-key', '765'))
+        got = platform_sync._get_steam_credentials(user_id=user_id)
+        assert got == expected
+    finally:
+        for uid in (_STEAM_ADMIN, _STEAM_VIEWER):
+            vdb.conn.execute("DELETE FROM user_settings WHERE user_id = ?", (uid,))
+            vdb.conn.execute("DELETE FROM users WHERE id = ?", (uid,))
+        vdb.conn.commit()
 
 
 def test_the_full_sync_corrects_its_own_earlier_link(vdb):
