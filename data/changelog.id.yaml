@@ -2,8 +2,14 @@
   date: '2026-11-09'
   tags:
   - type: performance
+    label: RetroDB kini memakai memori jauh lebih sedikit saat menunggu. Peningkat kualitas gambar AI sekarang hanya dimuat ketika sedang bekerja, lewat sebuah proses pembantu yang menutup dua menit setelah gambar terakhirnya; server yang menganggur turun dari sekitar 1,4 GB menjadi di bawah 100 MB. Jika driver grafis mogok saat peningkatan kualitas berlangsung, hanya proses pembantu yang berhenti, bukan servernya
+    en: RetroDB uses far less memory while it waits. The AI image upscaler now loads only while it is upscaling, in a helper that closes two minutes after its last picture; an idle server dropped from about 1.4 GB to under 100 MB. If the graphics driver crashes during an upscale, only the helper stops, never the server
+  - type: performance
     label: Isi dengan AI memakai pencarian web Claude kini lebih murah. Claude membaca ulang hasil pencarian setelah setiap pencarian; RetroDB sekarang meminta Anthropic menyimpannya agar siap dipakai, sehingga membaca ulang hanya berharga sepersepuluh atau kurang
     en: AI Fill with Claude web search costs less. Claude reads the search results again after each search; RetroDB now asks Anthropic to keep them ready, and a re-read then costs a tenth of the price or less
+  - type: fix
+    label: 'Bahasa Zulu dan Xhosa kini lebih enak dibaca: 133 baris yang artinya salah sudah diperbaiki, misalnya "Edition" yang tampil sebagai "Chapter" dan "must be text" yang tampil sebagai "must be a letter". Setiap perbaikan disetujui oleh dua pemeriksaan AI yang terpisah'
+    en: 'Zulu and Xhosa read better: 133 lines that said the wrong thing are corrected, such as "Edition" shown as "Chapter" and "must be text" shown as "must be a letter". Each correction was agreed by two separate AI checks'
   - type: fix
     label: Saat game tidak mau mulai, pesannya kini muncul dalam bahasa Anda dan tetap menyebut emulator, core, atau file yang bermasalah. Kegagalan di dalam komputer itu sendiri kini menampilkan "Tidak dapat memulai" beserta nama programnya, dengan detailnya ada di log server, bukan teks sistem mentah. Login RetroAchievements yang ditolak menampilkan alasan dari RetroAchievements sendiri di dalam kalimat yang sudah diterjemahkan
     en: When a game will not start, the message is now in your language and still names the emulator, core or file at fault. A failure inside the computer itself now says "Could not start" and the program's name, with the details in the server log, instead of raw system text. A refused RetroAchievements sign-in shows RetroAchievements' own reason inside a translated sentence

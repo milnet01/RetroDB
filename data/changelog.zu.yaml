@@ -2,8 +2,14 @@
   date: '2026-11-09'
   tags:
   - type: performance
+    label: I-RetroDB isebenzisa inkumbulo encane kakhulu uma ilindile. Isikhulisi sezithombe se-AI manje siyalayishwa kuphela ngenkathi sikhulisa, kumsizi evalwa ngemizuzu emibili ngemva kwesithombe sakhe sokugcina; iseva engenzi lutho yehle isuka cishe ku-1.4 GB yaya ngaphansi kuka-100 MB. Uma i-driver yezithombe iphahlazeka ngesikhathi sokukhulisa, kumiswa umsizi kuphela, akusoze kwaphazamiseka iseva
+    en: RetroDB uses far less memory while it waits. The AI image upscaler now loads only while it is upscaling, in a helper that closes two minutes after its last picture; an idle server dropped from about 1.4 GB to under 100 MB. If the graphics driver crashes during an upscale, only the helper stops, never the server
+  - type: performance
     label: Ukugcwalisa nge-AI nge-Claude web search kubiza kancane. U-Claude ufunda kabusha imiphumela yosesho ngemva kosesho ngalunye; manje i-RetroDB icela ku-Anthropic ukuthi iyigcine ilungile, bese ukufunda kabusha kubiza ingxenye eyodwa kweziyishumi yenani noma kuncane
     en: AI Fill with Claude web search costs less. Claude reads the search results again after each search; RetroDB now asks Anthropic to keep them ready, and a re-read then costs a tenth of the price or less
+  - type: fix
+    label: 'isiZulu nesiXhosa sifundeka kangcono: imigqa engu-133 eyeyisho into engafanele ilungisiwe, njengokuthi "Edition" ibisho "Chapter" no-"must be text" ibisho "must be a letter". Ukulungiswa ngakunye kuvunyelwene ngakho yizihloko ezimbili zokuhlola ze-AI ezizimele'
+    en: 'Zulu and Xhosa read better: 133 lines that said the wrong thing are corrected, such as "Edition" shown as "Chapter" and "must be text" shown as "must be a letter". Each correction was agreed by two separate AI checks'
   - type: fix
     label: Uma umdlalo ungaqali, umlayezo manje usolimini lwakho futhi usabiza i-emulator, i-core noma ifayela elinenkinga. Ukwehluleka ngaphakathi kwekhompyutha uqobo manje kuthi "Could not start" kanye negama lohlelo, nemininingwane ikwilogi leseva, esikhundleni sombhalo ongahlelekile wesistimu. Ukuphikwa kokungena ku-RetroAchievements kubonisa isizathu sika-RetroAchievements uqobo ngaphakathi emshweni ohunyushiwe
     en: When a game will not start, the message is now in your language and still names the emulator, core or file at fault. A failure inside the computer itself now says "Could not start" and the program's name, with the details in the server log, instead of raw system text. A refused RetroAchievements sign-in shows RetroAchievements' own reason inside a translated sentence

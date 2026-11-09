@@ -2,8 +2,14 @@
   date: '2026-11-09'
   tags:
   - type: performance
+    label: 'RetroDB теперь потребляет намного меньше памяти в простое. ИИ-апскейлер изображений загружается только во время работы, в отдельном вспомогательном процессе, который закрывается через две минуты после последней картинки: простаивающий сервер стал занимать меньше 100 МБ вместо примерно 1,4 ГБ. Если драйвер видеокарты даст сбой во время апскейла, остановится только этот процесс, но не сервер'
+    en: RetroDB uses far less memory while it waits. The AI image upscaler now loads only while it is upscaling, in a helper that closes two minutes after its last picture; an idle server dropped from about 1.4 GB to under 100 MB. If the graphics driver crashes during an upscale, only the helper stops, never the server
+  - type: performance
     label: Заполнение ИИ с веб-поиском Claude стоит дешевле. После каждого поиска Claude заново читает его результаты; теперь RetroDB просит Anthropic держать их наготове, и повторное чтение обходится в десять раз дешевле или ещё меньше
     en: AI Fill with Claude web search costs less. Claude reads the search results again after each search; RetroDB now asks Anthropic to keep them ready, and a re-read then costs a tenth of the price or less
+  - type: fix
+    label: 'Тексты на зулу и коса стали понятнее: исправлено 133 строки с неверным смыслом, например «Edition» было переведено как «Глава», а «должно быть текстом» — как «должно быть буквой». Каждое исправление подтверждено двумя отдельными проверками ИИ'
+    en: 'Zulu and Xhosa read better: 133 lines that said the wrong thing are corrected, such as "Edition" shown as "Chapter" and "must be text" shown as "must be a letter". Each correction was agreed by two separate AI checks'
   - type: fix
     label: Если игра не запускается, сообщение теперь выводится на вашем языке и по-прежнему называет виноватый эмулятор, ядро или файл. Сбой внутри самого компьютера теперь показывает «Не удалось запустить» и название программы, а подробности записываются в журнал сервера, вместо необработанного системного текста. Если вход в RetroAchievements отклонён, причина от RetroAchievements показывается внутри переведённого предложения
     en: When a game will not start, the message is now in your language and still names the emulator, core or file at fault. A failure inside the computer itself now says "Could not start" and the program's name, with the details in the server log, instead of raw system text. A refused RetroAchievements sign-in shows RetroAchievements' own reason inside a translated sentence

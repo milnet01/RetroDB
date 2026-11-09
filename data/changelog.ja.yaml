@@ -2,8 +2,14 @@
   date: '2026-11-09'
   tags:
   - type: performance
+    label: RetroDBは待機中のメモリ使用量が大幅に減りました。AI画像アップスケーラーは、アップスケール中だけ読み込まれるようになり、最後の画像から2分後に閉じる補助プロセスで動きます。アイドル状態のサーバーは約1.4GBから100MB未満になりました。アップスケール中にグラフィックドライバーがクラッシュしても、止まるのは補助プロセスだけで、サーバーは止まりません
+    en: RetroDB uses far less memory while it waits. The AI image upscaler now loads only while it is upscaling, in a helper that closes two minutes after its last picture; an idle server dropped from about 1.4 GB to under 100 MB. If the graphics driver crashes during an upscale, only the helper stops, never the server
+  - type: performance
     label: Claudeのウェブ検索を使ったAI補完は、より低コストになりました。Claudeは検索のたびに検索結果を読み直しますが、RetroDBはAnthropicに結果を保持しておくよう依頼するようになったため、読み直しの費用は10分の1以下です
     en: AI Fill with Claude web search costs less. Claude reads the search results again after each search; RetroDB now asks Anthropic to keep them ready, and a re-read then costs a tenth of the price or less
+  - type: fix
+    label: ズールー語とコサ語が読みやすくなりました。「Edition」が「Chapter」と表示されたり、「must be text」が「must be a letter」と表示されたりするなど、誤っていた133行を修正しました。修正はすべて、2つの別々のAIチェックで一致したものです
+    en: 'Zulu and Xhosa read better: 133 lines that said the wrong thing are corrected, such as "Edition" shown as "Chapter" and "must be text" shown as "must be a letter". Each correction was agreed by two separate AI checks'
   - type: fix
     label: ゲームを起動できない場合、メッセージがお使いの言語で表示され、原因となっているエミュレーター、コア、ファイルも引き続き示されます。コンピューター内部で起きた失敗は、システムの生のテキストではなく「起動できませんでした」とプログラム名を表示し、詳細はサーバーログに記録されます。RetroAchievements のサインインが拒否された場合は、RetroAchievements 側の理由が翻訳された文の中に表示されます
     en: When a game will not start, the message is now in your language and still names the emulator, core or file at fault. A failure inside the computer itself now says "Could not start" and the program's name, with the details in the server log, instead of raw system text. A refused RetroAchievements sign-in shows RetroAchievements' own reason inside a translated sentence

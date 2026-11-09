@@ -2,8 +2,14 @@
   date: '2026-11-09'
   tags:
   - type: performance
+    label: RetroDB gebruikt veel minder geheugen als het niets doet. De AI-beeldopschaler wordt nu alleen geladen tijdens het opschalen, in een hulpproces dat twee minuten na de laatste afbeelding sluit; een inactieve server ging van ongeveer 1,4 GB naar minder dan 100 MB. Als het grafische stuurprogramma tijdens het opschalen crasht, stopt alleen het hulpproces, nooit de server
+    en: RetroDB uses far less memory while it waits. The AI image upscaler now loads only while it is upscaling, in a helper that closes two minutes after its last picture; an idle server dropped from about 1.4 GB to under 100 MB. If the graphics driver crashes during an upscale, only the helper stops, never the server
+  - type: performance
     label: AI-aanvulling met Claude-webzoekopdrachten is goedkoper. Claude leest de zoekresultaten na elke zoekopdracht opnieuw; RetroDB vraagt Anthropic nu om ze paraat te houden, en opnieuw lezen kost dan een tiende van de prijs of minder
     en: AI Fill with Claude web search costs less. Claude reads the search results again after each search; RetroDB now asks Anthropic to keep them ready, and a re-read then costs a tenth of the price or less
+  - type: fix
+    label: 'Zulu en Xhosa lezen nu beter: 133 regels die het verkeerde zeiden zijn gecorrigeerd, zoals "Edition" dat als "Chapter" werd getoond en "must be text" dat als "must be a letter" werd getoond. Elke correctie is goedgekeurd door twee afzonderlijke AI-controles'
+    en: 'Zulu and Xhosa read better: 133 lines that said the wrong thing are corrected, such as "Edition" shown as "Chapter" and "must be text" shown as "must be a letter". Each correction was agreed by two separate AI checks'
   - type: fix
     label: Als een game niet start, staat de melding nu in jouw taal en noemt ze nog steeds de emulator, core of het bestand dat de fout veroorzaakt. Een fout in de computer zelf toont nu "Kan niet starten" en de naam van het programma, met de details in het serverlogboek, in plaats van onbewerkte systeemtekst. Als inloggen bij RetroAchievements wordt geweigerd, zie je de eigen reden van RetroAchievements in een vertaalde zin
     en: When a game will not start, the message is now in your language and still names the emulator, core or file at fault. A failure inside the computer itself now says "Could not start" and the program's name, with the details in the server log, instead of raw system text. A refused RetroAchievements sign-in shows RetroAchievements' own reason inside a translated sentence

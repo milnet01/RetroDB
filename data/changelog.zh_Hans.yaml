@@ -2,8 +2,14 @@
   date: '2026-11-09'
   tags:
   - type: performance
+    label: RetroDB 在空闲时占用的内存大幅减少。AI 图片放大器现在只在放大图片时才会加载,运行在一个辅助进程中,处理完最后一张图片两分钟后便会自动关闭;空闲状态下的服务器内存占用从约 1.4 GB 降到了 100 MB 以下。如果图形驱动在放大过程中崩溃,只会停止这个辅助进程,不会影响服务器
+    en: RetroDB uses far less memory while it waits. The AI image upscaler now loads only while it is upscaling, in a helper that closes two minutes after its last picture; an idle server dropped from about 1.4 GB to under 100 MB. If the graphics driver crashes during an upscale, only the helper stops, never the server
+  - type: performance
     label: 使用 Claude 网页搜索的 AI 填充费用更低。Claude 每次搜索后都会重新读取搜索结果；RetroDB 现在会请求 Anthropic 将结果保持就绪状态，这样再次读取的费用只需原价的十分之一甚至更低
     en: AI Fill with Claude web search costs less. Claude reads the search results again after each search; RetroDB now asks Anthropic to keep them ready, and a re-read then costs a tenth of the price or less
+  - type: fix
+    label: 祖鲁语和科萨语读起来更通顺了:共更正了133处表达有误的文字,例如把“Edition”显示成“Chapter”,把“must be text”显示成“must be a letter”。每处更正都经过两次独立的AI检查确认。
+    en: 'Zulu and Xhosa read better: 133 lines that said the wrong thing are corrected, such as "Edition" shown as "Chapter" and "must be text" shown as "must be a letter". Each correction was agreed by two separate AI checks'
   - type: fix
     label: 当游戏无法启动时，提示信息现在会以你的语言显示，并且仍会指出出问题的模拟器、核心或文件。如果是计算机本身出现故障，现在会显示“无法启动”和程序名称，详细信息会记录在服务器日志中，而不再显示原始的系统文字。如果 RetroAchievements 拒绝登录，会在一句已翻译的话中显示 RetroAchievements 给出的原因
     en: When a game will not start, the message is now in your language and still names the emulator, core or file at fault. A failure inside the computer itself now says "Could not start" and the program's name, with the details in the server log, instead of raw system text. A refused RetroAchievements sign-in shows RetroAchievements' own reason inside a translated sentence

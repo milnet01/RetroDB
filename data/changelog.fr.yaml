@@ -2,8 +2,14 @@
   date: '2026-11-09'
   tags:
   - type: performance
+    label: RetroDB utilise beaucoup moins de mémoire en veille. L'agrandisseur d'images par IA ne se charge plus que pendant l'agrandissement, dans un module d'assistance qui se ferme deux minutes après sa dernière image ; un serveur inactif est passé d'environ 1,4 Go à moins de 100 Mo. Si le pilote graphique plante pendant un agrandissement, seul le module d'assistance s'arrête, jamais le serveur
+    en: RetroDB uses far less memory while it waits. The AI image upscaler now loads only while it is upscaling, in a helper that closes two minutes after its last picture; an idle server dropped from about 1.4 GB to under 100 MB. If the graphics driver crashes during an upscale, only the helper stops, never the server
+  - type: performance
     label: Le Remplissage IA avec la recherche web de Claude coûte moins cher. Claude relit les résultats après chaque recherche ; RetroDB demande désormais à Anthropic de les garder à disposition, et une relecture coûte alors un dixième du prix, voire moins
     en: AI Fill with Claude web search costs less. Claude reads the search results again after each search; RetroDB now asks Anthropic to keep them ready, and a re-read then costs a tenth of the price or less
+  - type: fix
+    label: 'Le zoulou et le xhosa sont plus agréables à lire : 133 lignes qui disaient autre chose ont été corrigées, par exemple « Edition » affiché comme « Chapitre » et « doit être du texte » affiché comme « doit être une lettre ». Chaque correction a été validée par deux contrôles distincts réalisés par IA'
+    en: 'Zulu and Xhosa read better: 133 lines that said the wrong thing are corrected, such as "Edition" shown as "Chapter" and "must be text" shown as "must be a letter". Each correction was agreed by two separate AI checks'
   - type: fix
     label: Quand un jeu ne démarre pas, le message est désormais dans votre langue et indique toujours l'émulateur, le cœur ou le fichier en cause. Une défaillance interne à l'ordinateur affiche désormais « Démarrage impossible » ainsi que le nom du programme, avec les détails dans le journal du serveur, au lieu d'un texte système brut. Lorsqu'une connexion à RetroAchievements est refusée, le motif donné par RetroAchievements s'affiche dans une phrase traduite
     en: When a game will not start, the message is now in your language and still names the emulator, core or file at fault. A failure inside the computer itself now says "Could not start" and the program's name, with the details in the server log, instead of raw system text. A refused RetroAchievements sign-in shows RetroAchievements' own reason inside a translated sentence
