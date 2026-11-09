@@ -94,7 +94,9 @@ def test_a_busy_refresh_starts_later_with_no_page_open(jobs, admin_test_client):
     assert _wait_for(lambda: started), 'the queued refresh never started'
     kind, _args, kwargs = started[0]
     assert kind == 'refresh' and kwargs['system_id'] == SYSTEM_ID
-    assert _queued_rows() == []
+    # start_next removes the stored row just after the start returns, so a
+    # slow runner can look in between (CI run 42659012902).
+    assert _wait_for(lambda: _queued_rows() == []), _queued_rows()
 
 
 def test_waiting_jobs_are_listed_in_order_and_once(jobs, admin_test_client):
