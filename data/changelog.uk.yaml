@@ -1,9 +1,12 @@
 - version: 4.0.0
-  date: '2026-11-08'
+  date: '2026-11-09'
   tags:
   - type: performance
     label: Заповнення ШІ з веб-пошуком Claude коштує дешевше. Claude перечитує результати після кожного пошуку; тепер RetroDB просить Anthropic зберігати їх напоготові, і повторне прочитання коштує десяту частину ціни або менше
     en: AI Fill with Claude web search costs less. Claude reads the search results again after each search; RetroDB now asks Anthropic to keep them ready, and a re-read then costs a tenth of the price or less
+  - type: fix
+    label: Коли гра не запускається, повідомлення тепер вашою мовою й, як і раніше, називає емулятор, ядро або файл, через які виникла помилка. Збій усередині самого комп'ютера тепер показує «Не вдалося запустити» та назву програми, а подробиці записує в журнал сервера, замість сирого системного тексту. Якщо RetroAchievements відмовляє у вході, у перекладеному реченні показується власна причина від RetroAchievements
+    en: When a game will not start, the message is now in your language and still names the emulator, core or file at fault. A failure inside the computer itself now says "Could not start" and the program's name, with the details in the server log, instead of raw system text. A refused RetroAchievements sign-in shows RetroAchievements' own reason inside a translated sentence
   - type: fix
     label: Скасування завдання зі скрапінгу, синхронізації або зображень, яке вже завершилося, тепер прибирає застряглу спливну панель прогресу. Якщо запустити завдання, що вже виконується, ви побачите справжню причину, наприклад «Скрапінг для SNES уже виконується», а не «Помилка мережі». Помилки зображень контролерів у Музеї тепер пояснюють, що пішло не так, а скасування синхронізації RetroAchievements іншого користувача повідомляє, що вона чужа, а не вдає, що скасовує її
     en: Cancelling a scrape, sync or image job that has already finished now clears its stuck progress popup. Starting a job that is already running shows the real reason, such as "A scrape for SNES is already running", instead of "Network error". Controller image errors in the Museum now say what went wrong, and cancelling another user's RetroAchievements sync says it is theirs instead of pretending to cancel it

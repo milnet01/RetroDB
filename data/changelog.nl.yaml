@@ -1,9 +1,12 @@
 - version: 4.0.0
-  date: '2026-11-08'
+  date: '2026-11-09'
   tags:
   - type: performance
     label: AI-aanvulling met Claude-webzoekopdrachten is goedkoper. Claude leest de zoekresultaten na elke zoekopdracht opnieuw; RetroDB vraagt Anthropic nu om ze paraat te houden, en opnieuw lezen kost dan een tiende van de prijs of minder
     en: AI Fill with Claude web search costs less. Claude reads the search results again after each search; RetroDB now asks Anthropic to keep them ready, and a re-read then costs a tenth of the price or less
+  - type: fix
+    label: Als een game niet start, staat de melding nu in jouw taal en noemt ze nog steeds de emulator, core of het bestand dat de fout veroorzaakt. Een fout in de computer zelf toont nu "Kan niet starten" en de naam van het programma, met de details in het serverlogboek, in plaats van onbewerkte systeemtekst. Als inloggen bij RetroAchievements wordt geweigerd, zie je de eigen reden van RetroAchievements in een vertaalde zin
+    en: When a game will not start, the message is now in your language and still names the emulator, core or file at fault. A failure inside the computer itself now says "Could not start" and the program's name, with the details in the server log, instead of raw system text. A refused RetroAchievements sign-in shows RetroAchievements' own reason inside a translated sentence
   - type: fix
     label: Het annuleren van een scrape-, synchronisatie- of afbeeldingstaak die al klaar is, ruimt nu de vastgelopen voortgangspopup op. Het starten van een taak die al loopt, toont nu de echte reden, zoals "Er loopt al een scrape voor SNES", in plaats van "Netwerkfout". Foutmeldingen over Controller-afbeeldingen in het Museum zeggen nu wat er misging, en als je de RetroAchievements-synchronisatie van een andere gebruiker annuleert, staat er nu dat die van hem of haar is, in plaats van te doen alsof het geannuleerd is
     en: Cancelling a scrape, sync or image job that has already finished now clears its stuck progress popup. Starting a job that is already running shows the real reason, such as "A scrape for SNES is already running", instead of "Network error". Controller image errors in the Museum now say what went wrong, and cancelling another user's RetroAchievements sync says it is theirs instead of pretending to cancel it

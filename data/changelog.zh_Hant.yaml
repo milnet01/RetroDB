@@ -1,9 +1,12 @@
 - version: 4.0.0
-  date: '2026-11-08'
+  date: '2026-11-09'
   tags:
   - type: performance
     label: 使用 Claude 網頁搜尋的 AI 填充費用更低。Claude 每次搜尋後都會重新讀取搜尋結果;RetroDB 現在會請 Anthropic 先將結果保留備用,之後再次讀取的費用只需十分之一甚至更低
     en: AI Fill with Claude web search costs less. Claude reads the search results again after each search; RetroDB now asks Anthropic to keep them ready, and a re-read then costs a tenth of the price or less
+  - type: fix
+    label: 當遊戲無法啟動時，訊息現在會以你的語言顯示，並且仍會指出出問題的模擬器、核心或檔案。如果是電腦本身發生故障，現在會顯示「無法啟動」和程式名稱，詳細資訊則記錄在伺服器日誌中，而不再顯示原始的系統文字。RetroAchievements 拒絕登入時，會在已翻譯的句子中顯示 RetroAchievements 給出的原因
+    en: When a game will not start, the message is now in your language and still names the emulator, core or file at fault. A failure inside the computer itself now says "Could not start" and the program's name, with the details in the server log, instead of raw system text. A refused RetroAchievements sign-in shows RetroAchievements' own reason inside a translated sentence
   - type: fix
     label: 取消已完成的抓取、同步或圖片工作時，現在會清除卡住的進度彈窗。啟動已在執行的工作時，會顯示真正的原因，例如「SNES 的抓取已在執行中」，而不是「網路錯誤」。博物館中的手把圖片錯誤現在會說明出了什麼問題，而取消其他使用者的 RetroAchievements 同步時，會告知該同步屬於對方，而不是假裝已取消
     en: Cancelling a scrape, sync or image job that has already finished now clears its stuck progress popup. Starting a job that is already running shows the real reason, such as "A scrape for SNES is already running", instead of "Network error". Controller image errors in the Museum now say what went wrong, and cancelling another user's RetroAchievements sync says it is theirs instead of pretending to cancel it

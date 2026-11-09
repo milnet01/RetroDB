@@ -1,9 +1,12 @@
 - version: 4.0.0
-  date: '2026-11-08'
+  date: '2026-11-09'
   tags:
   - type: performance
     label: מילוי AI עם חיפוש באינטרנט של Claude עולה פחות. Claude קורא שוב את תוצאות החיפוש אחרי כל חיפוש; RetroDB מבקשת עכשיו מ-Anthropic לשמור אותן זמינות, וקריאה חוזרת עולה עשירית מהמחיר או פחות
     en: AI Fill with Claude web search costs less. Claude reads the search results again after each search; RetroDB now asks Anthropic to keep them ready, and a re-read then costs a tenth of the price or less
+  - type: fix
+    label: כשמשחק לא מתחיל, ההודעה מופיעה עכשיו בשפה שלך ועדיין מציינת את האמולטור, הליבה או הקובץ שגורמים לתקלה. כשל בתוך המחשב עצמו מציג עכשיו "לא ניתן להפעיל" ואת שם התוכנית, והפרטים נשמרים ביומן השרת, במקום טקסט מערכת גולמי. כשהכניסה ל-RetroAchievements נדחית, מוצגת הסיבה של RetroAchievements עצמה בתוך משפט מתורגם
+    en: When a game will not start, the message is now in your language and still names the emulator, core or file at fault. A failure inside the computer itself now says "Could not start" and the program's name, with the details in the server log, instead of raw system text. A refused RetroAchievements sign-in shows RetroAchievements' own reason inside a translated sentence
   - type: fix
     label: ביטול של משימת גרידה, סנכרון או תמונות שכבר הסתיימה מנקה עכשיו את חלון ההתקדמות התקוע. הפעלת משימה שכבר רצה מציגה את הסיבה האמיתית, כמו "גרידה עבור SNES כבר רצה", במקום "שגיאת רשת". שגיאות תמונות בקר במוזיאון מסבירות עכשיו מה השתבש, וביטול סנכרון RetroAchievements של משתמש אחר מודיע שהוא שייך לו, במקום להעמיד פנים שהוא בוטל
     en: Cancelling a scrape, sync or image job that has already finished now clears its stuck progress popup. Starting a job that is already running shows the real reason, such as "A scrape for SNES is already running", instead of "Network error". Controller image errors in the Museum now say what went wrong, and cancelling another user's RetroAchievements sync says it is theirs instead of pretending to cancel it

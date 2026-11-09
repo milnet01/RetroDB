@@ -1,9 +1,12 @@
 - version: 4.0.0
-  date: '2026-11-08'
+  date: '2026-11-09'
   tags:
   - type: performance
     label: Ukugcwalisa nge-AI nge-Claude web search kubiza kancane. U-Claude ufunda kabusha imiphumela yosesho ngemva kosesho ngalunye; manje i-RetroDB icela ku-Anthropic ukuthi iyigcine ilungile, bese ukufunda kabusha kubiza ingxenye eyodwa kweziyishumi yenani noma kuncane
     en: AI Fill with Claude web search costs less. Claude reads the search results again after each search; RetroDB now asks Anthropic to keep them ready, and a re-read then costs a tenth of the price or less
+  - type: fix
+    label: Uma umdlalo ungaqali, umlayezo manje usolimini lwakho futhi usabiza i-emulator, i-core noma ifayela elinenkinga. Ukwehluleka ngaphakathi kwekhompyutha uqobo manje kuthi "Could not start" kanye negama lohlelo, nemininingwane ikwilogi leseva, esikhundleni sombhalo ongahlelekile wesistimu. Ukuphikwa kokungena ku-RetroAchievements kubonisa isizathu sika-RetroAchievements uqobo ngaphakathi emshweni ohunyushiwe
+    en: When a game will not start, the message is now in your language and still names the emulator, core or file at fault. A failure inside the computer itself now says "Could not start" and the program's name, with the details in the server log, instead of raw system text. A refused RetroAchievements sign-in shows RetroAchievements' own reason inside a translated sentence
   - type: fix
     label: Ukukhansela umsebenzi we-scrape, wokuvumelanisa noma wezithombe osuqedile manje kuvala ifasitela eliphelele lenqubekela eyenamathele. Ukuqala umsebenzi osuvele usebenza kubonisa isizathu sangempela, njenge-"A scrape for SNES is already running", esikhundleni se-"Network error". Amaphutha ezithombe zesilawuli ku-Museum manje asho ukuthi kuphutheke ini, futhi ukukhansela ukuvumelanisa kwe-RetroAchievements komunye umsebenzisi kusho ukuthi kungokwakhe esikhundleni sokuzenza sengathi kukhanselwe
     en: Cancelling a scrape, sync or image job that has already finished now clears its stuck progress popup. Starting a job that is already running shows the real reason, such as "A scrape for SNES is already running", instead of "Network error". Controller image errors in the Museum now say what went wrong, and cancelling another user's RetroAchievements sync says it is theirs instead of pretending to cancel it

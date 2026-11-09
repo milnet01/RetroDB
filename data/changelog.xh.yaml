@@ -1,9 +1,12 @@
 - version: 4.0.0
-  date: '2026-11-08'
+  date: '2026-11-09'
   tags:
   - type: performance
     label: Ukuzalisa nge-AI kunye nofundo lwewebhu lukaClaude kubiza kancinci. UClaude uwafunda kwakhona amacandelo okukhangela emva kokukhangela ngakunye; ngoku i-RetroDB icela u-Anthropic ukuba awagcine ekulungele, yaye ukuwafunda kwakhona kubiza ishumi leepesenti zexabiso okanye ngaphantsi
     en: AI Fill with Claude web search costs less. Claude reads the search results again after each search; RetroDB now asks Anthropic to keep them ready, and a re-read then costs a tenth of the price or less
+  - type: fix
+    label: Xa umdlalo ungaqali, umyalezo ngoku ukulwimi lwakho kwaye usabiza i-emulator, i-core okanye ifayile enempazamo. Impazamo ngaphakathi kwekhompyuter ngokwayo ngoku ithi "Could not start" kunye negama leprogram, kunye neenkcukacha kwilog yeseva, endaweni yombhalo ongaqhelekanga wesistim. Ukwaliwa kokungena kwi-RetroAchievements kubonisa isizathu sayo se-RetroAchievements ngaphakathi kwisivakalisi esitshintshelwe kolunye ulwimi
+    en: When a game will not start, the message is now in your language and still names the emulator, core or file at fault. A failure inside the computer itself now says "Could not start" and the program's name, with the details in the server log, instead of raw system text. A refused RetroAchievements sign-in shows RetroAchievements' own reason inside a translated sentence
   - type: fix
     label: Ukurhoxisa umsebenzi wokukhupha, wokulungelelanisa okanye wemifanekiso eseleugqibile ngoku kususa ifestile yenkqubela esele ibambekile. Ukuqala umsebenzi osele usebenza ngoku kubonisa isizathu sokwenene, njengokuthi "Ukukhupha kwe-SNES sele kuyasebenza", endaweni ye-"Network error". Iimpazamo zemifanekiso yeekhontrola kwi-Museum ngoku zichaza ukuba kuphosakele ntoni, kwaye ukurhoxisa ukulungelelanisa kwe-RetroAchievements komnye umsebenzisi kuthi kokwakhe, kungabi kukwenza ngathi kurhoxisiwe
     en: Cancelling a scrape, sync or image job that has already finished now clears its stuck progress popup. Starting a job that is already running shows the real reason, such as "A scrape for SNES is already running", instead of "Network error". Controller image errors in the Museum now say what went wrong, and cancelling another user's RetroAchievements sync says it is theirs instead of pretending to cancel it

@@ -1,9 +1,12 @@
 - version: 4.0.0
-  date: '2026-11-08'
+  date: '2026-11-09'
   tags:
   - type: performance
     label: Claudeのウェブ検索を使ったAI補完は、より低コストになりました。Claudeは検索のたびに検索結果を読み直しますが、RetroDBはAnthropicに結果を保持しておくよう依頼するようになったため、読み直しの費用は10分の1以下です
     en: AI Fill with Claude web search costs less. Claude reads the search results again after each search; RetroDB now asks Anthropic to keep them ready, and a re-read then costs a tenth of the price or less
+  - type: fix
+    label: ゲームを起動できない場合、メッセージがお使いの言語で表示され、原因となっているエミュレーター、コア、ファイルも引き続き示されます。コンピューター内部で起きた失敗は、システムの生のテキストではなく「起動できませんでした」とプログラム名を表示し、詳細はサーバーログに記録されます。RetroAchievements のサインインが拒否された場合は、RetroAchievements 側の理由が翻訳された文の中に表示されます
+    en: When a game will not start, the message is now in your language and still names the emulator, core or file at fault. A failure inside the computer itself now says "Could not start" and the program's name, with the details in the server log, instead of raw system text. A refused RetroAchievements sign-in shows RetroAchievements' own reason inside a translated sentence
   - type: fix
     label: すでに完了した取得、同期、画像ジョブをキャンセルすると、固まっていた進行状況ポップアップが消えるようになりました。すでに実行中のジョブを開始しようとすると、「ネットワークエラー」ではなく「SNESの取得はすでに実行中です」のような本当の理由が表示されます。ミュージアムのコントローラー画像のエラーも、何が起きたかを表示するようになりました。また、他のユーザーのRetroAchievements同期をキャンセルしようとすると、キャンセルしたふりをせず、そのユーザーのものだと表示します
     en: Cancelling a scrape, sync or image job that has already finished now clears its stuck progress popup. Starting a job that is already running shows the real reason, such as "A scrape for SNES is already running", instead of "Network error". Controller image errors in the Museum now say what went wrong, and cancelling another user's RetroAchievements sync says it is theirs instead of pretending to cancel it
