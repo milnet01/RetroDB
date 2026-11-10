@@ -183,6 +183,11 @@ def test_setup_browser_closes_once_setup_is_done(monkeypatch):
     ('settings_emulators.html', 'cheat-import-path', 'folder'),
     ('settings_emulators.html', 'emu-folder-input', 'folder'),
     ('settings_emulators.html', 'emu_edit_binary_path_override', 'file'),
+    # ROM tools: a locked ROM-folder prefix plus a subfolder box; the browser
+    # writes the hidden full path, which the page splits back (PASS-59-285).
+    ('duplicate_finder.html', 'hiddenFullPath', 'folder'),
+    ('chd_verify.html', 'hiddenFullPath', 'folder'),
+    ('chd_converter.html', 'hiddenFullPath', 'folder'),
 ])
 def test_path_field_has_a_browse_button(template, field, scope):
     text = (ROOT / 'templates' / template).read_text(encoding='utf-8')

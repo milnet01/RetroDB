@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% set adaptive_layout = true %}
 {% from "_macros/nav_tabs.html" import rom_tool_tabs %}
+{% from "_macros/browse_button.html" import browse_button with context %}
 
 {% block title %}CHD Converter - RetroDB{% endblock %}
 
@@ -83,12 +84,12 @@
     <div class="card-body">
     <div class="form-group">
         <label for="subPath">{{ _('Source Folder') }}</label>
-        <div class="form-row" style="display: flex; gap: 0.5rem;">
-            <div class="locked-path-wrapper" style="flex: 1;">
+        <div class="path-input-row">
+            <div class="locked-path-wrapper" style="flex: 1 1 14rem; min-width: 0;">
                 <span class="locked-path-prefix" id="basePath">{{ rom_path }}/</span>
                 <input type="text" id="subPath" placeholder="{{ _('subfolder (optional)') }}" value="">
             </div>
-            <button type="button" class="btn btn-secondary" data-on-click="openFolderBrowser" data-args='["hiddenFullPath"]'>📁 {{ _('Browse') }}</button>
+            {{ browse_button('hiddenFullPath', 'folder') }}
             <button type="button" class="btn btn-primary" data-on-click="scanFiles">🔍 {{ _('Scan') }}</button>
         </div>
         <input type="hidden" id="hiddenFullPath" value="{{ rom_path }}">
@@ -217,7 +218,7 @@ const ROM_PATH = {{ rom_path|tojson }};
 
 // Path management
 function getFullPath() {
-    const subPath = document.getElementById('subPath').value.replace(/^\/+/, '');
+    const subPath = document.getElementById('subPath').value.replace(/^[\\/]+/, '');
     return subPath ? `${ROM_PATH}/${subPath}` : ROM_PATH;
 }
 
@@ -228,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
         hiddenInput.addEventListener('change', function() {
             const fullPath = this.value;
             if (fullPath.startsWith(ROM_PATH)) {
-                const sub = fullPath.substring(ROM_PATH.length).replace(/^\/+/, '');
+                const sub = fullPath.substring(ROM_PATH.length).replace(/^[\\/]+/, '');
                 document.getElementById('subPath').value = sub;
             }
         });
