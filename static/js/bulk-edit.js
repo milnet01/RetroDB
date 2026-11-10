@@ -280,7 +280,7 @@ const BulkEditController = (function() {
             }
         } catch (err) {
             console.error('Bulk edit error:', err);
-            showModal(t('Error'), t('Failed to apply bulk edit. Check console for details.'));
+            showModal(t('Error'), err.message || t('Failed to apply bulk edit. Check console for details.'));
         } finally {
             if (applyBtn) {
                 applyBtn.disabled = false;

@@ -58,6 +58,9 @@ function cancelBulkGenerate() {
 function _showProgress() {
     var el = document.getElementById('generateProgress');
     if (el) el.style.display = '';
+    // A finished run disables Cancel; a new run needs it back (PASS-59-277).
+    var cancelBtn = document.getElementById('cancelGenBtn');
+    if (cancelBtn) cancelBtn.disabled = false;
 }
 
 function _hideProgress() {
@@ -65,8 +68,11 @@ function _hideProgress() {
     if (el) el.style.display = 'none';
 }
 
+var _pollMisses = 0;
+
 function _startPolling() {
     if (_pollTimer) clearInterval(_pollTimer);
+    _pollMisses = 0;
     _pollTimer = setInterval(_pollStatus, 2000);
 }
 
@@ -83,6 +89,7 @@ function _pollStatus() {
             // A reply still in flight when an earlier one stopped polling
             // would announce the finished run a second time.
             if (!_pollTimer) return;
+            _pollMisses = 0;
             // Update UI
             var pct = s.total_systems > 0
                 ? Math.round((s.current_index / s.total_systems) * 100)
@@ -148,7 +155,14 @@ function _pollStatus() {
             }
         })
         .catch(function () {
-            // Silently ignore poll errors
+            // A blip is ignored; if RetroDB stays unreachable, stop and say
+            // so rather than polling behind a frozen bar (PASS-59-277).
+            if (_pollTimer && ++_pollMisses >= 15) {
+                _stopPolling();
+                showNotification(t('Lost contact with RetroDB. Reload the page to see the generation progress.'), 'error');
+                var btn = document.getElementById('generateAllBtn');
+                if (btn) btn.disabled = false;
+            }
         });
 }
 

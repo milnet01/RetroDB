@@ -741,60 +741,21 @@
     // Queue manipulation APIs - used by onclick handlers in queue manager modal
     // =============================================================================
 
-    async function cancelQueuedJob(jobId) {
+    // A refused or failed change is said on screen, then the list is
+    // redrawn from the server either way (PASS-59-277).
+    async function queueAction(url) {
         try {
-            const response = await fetch(`/api/bulk-scrape-job/cancel-queued/${jobId}`, { method: 'POST' });
-            const data = await response.json();
-            if (!data.success) console.error('Failed to cancel queued job:', data.error);
-            renderQueueManager();
+            await API.post(url);
         } catch (e) {
-            console.error('Error cancelling queued job:', e);
+            showNotification(e.message || {{ _('Could not change the queue')|tojson }}, 'error');
         }
+        renderQueueManager();
     }
-
-    async function promoteQueuedJob(jobId) {
-        try {
-            const response = await fetch(`/api/bulk-scrape-job/promote-queued/${jobId}`, { method: 'POST' });
-            const data = await response.json();
-            if (!data.success) console.error('Failed to promote queued job:', data.error);
-            renderQueueManager();
-        } catch (e) {
-            console.error('Error promoting queued job:', e);
-        }
-    }
-
-    async function demoteQueuedJob(jobId) {
-        try {
-            const response = await fetch(`/api/bulk-scrape-job/demote-queued/${jobId}`, { method: 'POST' });
-            const data = await response.json();
-            if (!data.success) console.error('Failed to demote queued job:', data.error);
-            renderQueueManager();
-        } catch (e) {
-            console.error('Error demoting queued job:', e);
-        }
-    }
-
-    async function swapWithRunning(jobId) {
-        try {
-            const response = await fetch(`/api/bulk-scrape-job/swap-running/${jobId}`, { method: 'POST' });
-            const data = await response.json();
-            if (!data.success) console.error('Failed to swap with running:', data.error);
-            renderQueueManager();
-        } catch (e) {
-            console.error('Error swapping with running:', e);
-        }
-    }
-
-    async function demoteRunningJob() {
-        try {
-            const response = await fetch('/api/bulk-scrape-job/demote-running', { method: 'POST' });
-            const data = await response.json();
-            if (!data.success) console.error('Failed to demote running job:', data.error);
-            renderQueueManager();
-        } catch (e) {
-            console.error('Error demoting running job:', e);
-        }
-    }
+    function cancelQueuedJob(jobId) { return queueAction(`/api/bulk-scrape-job/cancel-queued/${encodeURIComponent(jobId)}`); }
+    function promoteQueuedJob(jobId) { return queueAction(`/api/bulk-scrape-job/promote-queued/${encodeURIComponent(jobId)}`); }
+    function demoteQueuedJob(jobId) { return queueAction(`/api/bulk-scrape-job/demote-queued/${encodeURIComponent(jobId)}`); }
+    function swapWithRunning(jobId) { return queueAction(`/api/bulk-scrape-job/swap-running/${encodeURIComponent(jobId)}`); }
+    function demoteRunningJob() { return queueAction('/api/bulk-scrape-job/demote-running'); }
 
     function openQueueManager() {
         const modal = document.getElementById('queueManagerModal');
@@ -834,7 +795,7 @@
             // Running job
             if (data.running && !data.completed) {
                 const percent = data.percent || 0;
-                const current = (data.current || 0) + 1;
+                const current = data.processing || data.processed || 0;
                 const total = data.total || 0;
 
                 html += `
@@ -848,7 +809,7 @@
                         </div>
                         <div class="queue-item-controls">
                             <button type="button" class="queue-btn" data-on-click="demoteRunningJob" ${queueLength === 0 ? 'disabled title="' + escapeHtml({{ _('No queued jobs to swap with')|tojson }}) + '"' : 'title="' + escapeHtml({{ _('Swap with next in queue')|tojson }}) + '"'}>
-                                ↑ ${ {{ _('Demote')|tojson }} }
+                                ↓ ${ {{ _('Demote')|tojson }} }
                             </button>
                         </div>
                     </div>
@@ -874,11 +835,11 @@
                             </div>
                             <div class="queue-item-controls">
                                 ${isFirst
-                                    ? `<button type="button" class="queue-btn" data-on-click="swapWithRunning" data-args="${actionArgs(String(job.job_id))}" title="${escapeHtml({{ _('Run now (swap with running)')|tojson }})}">↓ ${ {{ _('Run Now')|tojson }} }</button>`
-                                    : `<button type="button" class="queue-btn" data-on-click="promoteQueuedJob" data-args="${actionArgs(String(job.job_id))}" title="${escapeHtml({{ _('Run sooner')|tojson }})}">↓ ${ {{ _('Promote')|tojson }} }</button>`
+                                    ? `<button type="button" class="queue-btn" data-on-click="swapWithRunning" data-args="${actionArgs(String(job.job_id))}" title="${escapeHtml({{ _('Run now (swap with running)')|tojson }})}">↑ ${ {{ _('Run Now')|tojson }} }</button>`
+                                    : `<button type="button" class="queue-btn" data-on-click="promoteQueuedJob" data-args="${actionArgs(String(job.job_id))}" title="${escapeHtml({{ _('Run sooner')|tojson }})}">↑ ${ {{ _('Promote')|tojson }} }</button>`
                                 }
                                 <button type="button" class="queue-btn" data-on-click="demoteQueuedJob" data-args="${actionArgs(String(job.job_id))}" ${isLast ? 'disabled' : ''} title="${escapeHtml(isLast ? {{ _('Already last in queue')|tojson }} : {{ _('Run later')|tojson }})}">
-                                    ↑ ${ {{ _('Demote')|tojson }} }
+                                    ↓ ${ {{ _('Demote')|tojson }} }
                                 </button>
                                 <button type="button" class="queue-btn danger" data-on-click="cancelQueuedJob" data-args="${actionArgs(String(job.job_id))}" title="${escapeHtml({{ _('Cancel this queued scrape')|tojson }})}">
                                     ✕ ${ {{ _('Cancel')|tojson }} }

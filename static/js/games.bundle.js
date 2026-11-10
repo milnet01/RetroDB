@@ -385,6 +385,7 @@ const BulkScrapeController = {
             }
         } catch (e) {
             console.error('Error toggling pause:', e);
+            showNotification(e.message || t('Could not pause or resume it'), 'error');
         }
     },
 
@@ -407,6 +408,7 @@ const BulkScrapeController = {
                 }
             } catch (e) {
                 console.error('Error cancelling bulk scrape:', e);
+                showNotification(e.message || t('Could not cancel it'), 'error');
             }
         });
     },
@@ -772,7 +774,7 @@ const BulkEditController = (function() {
             }
         } catch (err) {
             console.error('Bulk edit error:', err);
-            showModal(t('Error'), t('Failed to apply bulk edit. Check console for details.'));
+            showModal(t('Error'), err.message || t('Failed to apply bulk edit. Check console for details.'));
         } finally {
             if (applyBtn) {
                 applyBtn.disabled = false;

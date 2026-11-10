@@ -374,7 +374,7 @@ it. The fields and their consumers
 | `system_name` | string | bulk_scrape, ra_sync | subtitle / queue-card title; **load-bearing for XSS** (Pass 40.12 — must be escaped at the controller, never trusted) |
 | `current_type` | string | image_resize | subtitle line ("boxart" / "screenshots" / ...) |
 | `current_npwr` | string | psn_refresh | secondary subtitle showing the NPWR ID being processed |
-| `queue` / `queue_count` | list / int | bulk_scrape only | per-card queue rendering with cancel/promote/demote buttons |
+| `queue` / `queue_count` | list / int | bulk_scrape only | one queued toast per job, with Remove and Reorder; Reorder opens the Queue Manager in `templates/base.html`, which runs a job sooner or later, or swaps it with the running one |
 | `ra_queue` | list | ra_sync, ra_refresh | queued toasts for the RA jobs waiting on the server, each with a cancel button |
 | `return_url` | string | bulk_scrape | "Return to library" link when the modal closes |
 | `error` / `error_message` | string | all jobs | red toast on failure |

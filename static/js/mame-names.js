@@ -36,11 +36,18 @@
             return status.running;
         }
 
+        let pollMisses = 0;
         async function poll() {
             try {
-                if (show(await API.get('/api/mame-names/status'))) setTimeout(poll, 2000);
+                const status = await API.get('/api/mame-names/status');
+                pollMisses = 0;
+                if (show(status)) setTimeout(poll, 2000);
             } catch (err) {
+                // The job goes on without the page: keep asking, more
+                // slowly; after several misses, let the user try again.
                 statusLine.textContent = t('Could not read the run status.');
+                if (++pollMisses < 10) setTimeout(poll, 5000);
+                else runBtn.disabled = false;
             }
         }
 

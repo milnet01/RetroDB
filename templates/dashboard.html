@@ -1165,61 +1165,58 @@ function resumeJob(jobId) {
         });
 }
 
-function dismissJob(jobId) {
-    fetch('/api/jobs/dismiss/' + jobId, { method: 'POST' })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) {
-                const item = document.getElementById('recoveryItem' + jobId);
-                animateOutItem(item);
-            }
-        })
-        .catch(() => {});
+async function dismissJob(jobId) {
+    try {
+        await API.post('/api/jobs/dismiss/' + jobId);
+        animateOutItem(document.getElementById('recoveryItem' + jobId));
+    } catch (e) {
+        showNotification(e.message || {{ _('Could not dismiss the job')|tojson }}, 'error');
+    }
 }
 
-function resumeAllRecoverableJobs() {
+// Resume or dismiss each listed job, wait for every answer, and leave the
+// ones that failed in the banner with working buttons (PASS-59-277).
+async function settleRecoverableJobs(items, url, failText) {
+    const banner = document.getElementById('jobRecoveryBanner');
+    banner.querySelectorAll('.btn').forEach(b => b.disabled = true);
+    const results = await Promise.all(Array.from(items).map(async item => {
+        const jobId = item.id.replace('recoveryItem', '');
+        try {
+            await API.post(url + jobId);
+            animateOutItem(item);
+            return true;
+        } catch (e) {
+            showNotification(e.message || t(failText, {id: jobId}), 'error');
+            return false;
+        }
+    }));
+    banner.querySelectorAll('.btn').forEach(b => b.disabled = false);
+    return results.filter(ok => !ok).length;
+}
+
+async function resumeAllRecoverableJobs() {
     const banner = document.getElementById('jobRecoveryBanner');
     if (!banner) return;
     // Only resume items whose job type has a handler — others can only be
     // dismissed and a Resume POST for them would 400 at the endpoint.
     const items = banner.querySelectorAll('.job-recovery-item[data-can-resume="true"]');
-    let pending = items.length;
-    if (!pending) return;
-    // Disable all buttons while processing
-    banner.querySelectorAll('.btn').forEach(b => b.disabled = true);
-    items.forEach(item => {
-        const jobId = item.id.replace('recoveryItem', '');
-        fetch('/api/jobs/resume/' + jobId, { method: 'POST' })
-            .then(r => r.json())
-            .then(data => {
-                if (!data.success) {
-                    showNotification(data.error || t({{ _('Failed to resume job {id}')|tojson }}, {id: jobId}), 'error');
-                }
-            })
-            .catch(() => {})
-            .finally(() => {
-                pending--;
-                animateOutItem(item);
-                if (pending <= 0) {
-                    showNotification({{ _('All jobs resumed')|tojson }}, 'success');
-                    if (window.RetroDB && window.RetroDB.ToastController) {
-                        window.RetroDB.ToastController.pollAllNow();
-                    }
-                }
-            });
-    });
+    if (!items.length) return;
+    const failed = await settleRecoverableJobs(items, '/api/jobs/resume/', {{ _('Failed to resume job {id}')|tojson }});
+    if (failed === 0) {
+        showNotification({{ _('All jobs resumed')|tojson }}, 'success');
+    } else if (failed < items.length) {
+        showNotification(t({{ _('{ok} of {total} jobs resumed')|tojson }}, {ok: items.length - failed, total: items.length}), 'warning');
+    }
+    if (failed < items.length && window.RetroDB && window.RetroDB.ToastController) {
+        window.RetroDB.ToastController.pollAllNow();
+    }
 }
 
-function dismissAllRecoverableJobs() {
+async function dismissAllRecoverableJobs() {
     const banner = document.getElementById('jobRecoveryBanner');
     if (!banner) return;
     const items = banner.querySelectorAll('.job-recovery-item');
-    items.forEach(item => {
-        const jobId = item.id.replace('recoveryItem', '');
-        fetch('/api/jobs/dismiss/' + jobId, { method: 'POST' }).catch(() => {});
-    });
-    banner.classList.add('fade-out');
-    setTimeout(() => banner.remove(), 500);
+    await settleRecoverableJobs(items, '/api/jobs/dismiss/', {{ _('Could not dismiss job {id}')|tojson }});
 }
 
 function animateOutItem(item) {
@@ -1348,9 +1345,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     container.style.display = 'none';
                     container.innerHTML = '';
                 }
+                jobCheckMisses = 0;
             })
-            .catch(() => {});
+            // A blip must not end the progress card for good: try again,
+            // more slowly, a few times (PASS-59-277).
+            .catch(() => { if (++jobCheckMisses < 5) setTimeout(checkJobs, 10000); });
     }
+    let jobCheckMisses = 0;
     checkJobs();
 });
 

@@ -318,6 +318,7 @@ const BulkScrapeController = {
             }
         } catch (e) {
             console.error('Error toggling pause:', e);
+            showNotification(e.message || t('Could not pause or resume it'), 'error');
         }
     },
     
@@ -346,6 +347,7 @@ const BulkScrapeController = {
                 }
             } catch (e) {
                 console.error('Error cancelling bulk scrape:', e);
+                showNotification(e.message || t('Could not cancel it'), 'error');
             }
         });
     },

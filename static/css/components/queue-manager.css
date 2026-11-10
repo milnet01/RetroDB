@@ -3,6 +3,12 @@
    Styles for the queue manager modal overlay
    ============================================================================= */
 
+/* Opened from a queued toast, so it must sit above the toast stack
+   (10000) and below notifications (10002), which report its refusals. */
+#queueManagerModal {
+    z-index: 10001;
+}
+
 #queueManagerModal .queue-item {
     display: flex;
     align-items: center;

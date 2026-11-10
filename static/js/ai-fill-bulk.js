@@ -91,17 +91,22 @@
             return running;
         }
 
+        let pollMisses = 0;
         async function poll() {
             clearTimeout(pollTimer);
             try {
                 const status = await API.get('/api/ai-fill-bulk/status');
+                pollMisses = 0;
                 if (showRun(status)) {
                     pollTimer = setTimeout(poll, 2000);
                 } else if (status.completed) {
                     loadCount();
                 }
             } catch (err) {
+                // The run goes on without the page: keep asking, more
+                // slowly, and give up after several misses (PASS-59-277).
                 runStatus.textContent = failMessage(err, t('Could not read the run status.'));
+                if (++pollMisses < 10) pollTimer = setTimeout(poll, 5000);
             }
         }
 

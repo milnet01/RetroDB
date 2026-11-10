@@ -1605,6 +1605,14 @@ async function pollSyncStatus() {
                 if (typeof ModalFocusTrap !== 'undefined') ModalFocusTrap.deactivate(m);
                 document.getElementById('syncTrophiesBtn').disabled = false;
             }, 3000);
+        } else if (s.phase === 'idle') {
+            // The server holds no run (it restarted): stop asking, say so,
+            // and offer the footer's Close (PASS-59-277).
+            clearInterval(syncPolling);
+            syncPolling = null;
+            if (status) status.textContent = {{ _('The sync is no longer running. Close this window and start it again.')|tojson }};
+            if (currentGame) currentGame.textContent = '';
+            document.getElementById('syncFooter').style.display = 'flex';
         }
     } catch (e) {
         // Polling error, keep trying

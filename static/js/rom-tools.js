@@ -37,6 +37,7 @@ const TaskPoller = {
         this.taskId = taskId;
         this.pollRate = pollRate;
         this.isPaused = false;
+        this.failedPolls = 0;
         this.callbacks = {
             onProgress: callbacks.onProgress || null,
             onComplete: callbacks.onComplete || null,
@@ -73,46 +74,46 @@ const TaskPoller = {
     async poll() {
         if (!this.taskId) return;
 
+        let task;
         try {
-            const task = await API.get(`/api/rom-tools/task/${this.taskId}`);
-
-            // Task not found (server restarted)
-            if (task.error === 'Task not found') {
+            task = await API.get(`/api/rom-tools/task/${this.taskId}`);
+        } catch (error) {
+            // 404: the server no longer knows the task (it restarted).
+            if (error.status === 404) {
                 this.stop();
-                if (this.callbacks.onNotFound) {
-                    this.callbacks.onNotFound();
-                }
+                if (this.callbacks.onNotFound) this.callbacks.onNotFound();
+                else if (this.callbacks.onError) this.callbacks.onError({ error: error.message });
                 return;
             }
-
-            // Progress update
-            if (this.callbacks.onProgress) {
-                this.callbacks.onProgress(task);
-            }
-
-            // Check completion
-            if (task.status === 'completed') {
-                this.stop();
-                if (this.callbacks.onComplete) {
-                    this.callbacks.onComplete(task);
-                }
-            } else if (task.status === 'error') {
-                this.stop();
-                if (this.callbacks.onError) {
-                    this.callbacks.onError(task);
-                }
-            } else if (task.status === 'cancelled') {
-                this.stop();
-                if (this.callbacks.onCancel) {
-                    this.callbacks.onCancel(task);
-                }
-            }
-        } catch (error) {
+            // Anything else may be a blip while the task keeps running:
+            // give up only after several failures in a row (PASS-59-277).
+            this.failedPolls = (this.failedPolls || 0) + 1;
             console.error('Error polling task status:', error);
-            this.stop();
-            if (this.callbacks.onError) {
-                this.callbacks.onError({ error: error.message });
+            if (this.failedPolls >= 5) {
+                this.stop();
+                if (this.callbacks.onError) this.callbacks.onError({ error: error.message });
             }
+            return;
+        }
+        this.failedPolls = 0;
+
+        if (this.callbacks.onProgress) {
+            this.callbacks.onProgress(task);
+        }
+
+        if (task.status === 'completed') {
+            this.stop();
+            if (this.callbacks.onComplete) this.callbacks.onComplete(task);
+        } else if (task.status === 'error' || task.status === 'failed') {
+            // A crashed worker ends 'failed' with its reason as the last log line.
+            this.stop();
+            if (!task.error && Array.isArray(task.logs) && task.logs.length) {
+                task.error = task.logs[task.logs.length - 1];
+            }
+            if (this.callbacks.onError) this.callbacks.onError(task);
+        } else if (task.status === 'cancelled') {
+            this.stop();
+            if (this.callbacks.onCancel) this.callbacks.onCancel(task);
         }
     },
 
@@ -127,6 +128,7 @@ const TaskPoller = {
             this.isPaused = true;
         } catch (error) {
             console.error('Error pausing task:', error);
+            showNotification(error.message || t('Could not pause or resume it'), 'error');
         }
     },
 
@@ -141,6 +143,7 @@ const TaskPoller = {
             this.isPaused = false;
         } catch (error) {
             console.error('Error resuming task:', error);
+            showNotification(error.message || t('Could not pause or resume it'), 'error');
         }
     },
 
@@ -165,9 +168,12 @@ const TaskPoller = {
 
         try {
             await API.post(`/api/rom-tools/task/${this.taskId}/cancel`);
-            this.stop();
+            // Keep polling: the next reply says 'cancelled' and runs the
+            // page's onCancel, which puts its buttons back (PASS-59-277).
+            this.poll();
         } catch (error) {
             console.error('Error cancelling task:', error);
+            showNotification(error.message || t('Could not cancel it'), 'error');
         }
     }
 };

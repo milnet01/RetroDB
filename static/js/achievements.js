@@ -113,6 +113,9 @@ const RASync = {
         if (btn) {
             btn.innerHTML = '<span class="btn-icon">🔄</span> ' + t('Syncing...');
         }
+        // Follow the run so the button comes back when it ends (PASS-59-277).
+        clearTimeout(this.pollTimeout);
+        this.pollTimeout = setTimeout(() => this.pollStatus(options), 2000);
     },
 
     /**

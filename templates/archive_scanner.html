@@ -1228,11 +1228,7 @@ async function togglePause() {
 async function cancelScan() {
     showConfirm('⚠️ ' + {{ _('Cancel Scan')|tojson }}, {{ _('Are you sure you want to cancel the scan?')|tojson }}, async function() {
         if (!currentTaskId) return;
-        try {
-            await fetch(`/api/rom-tools/task/${currentTaskId}/cancel`, { method: 'POST' });
-        } catch (error) {
-            console.error('Error cancelling scan:', error);
-        }
+        await TaskPoller.cancel();  // says on screen if the server refuses
     });
 }
 

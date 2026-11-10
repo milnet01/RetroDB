@@ -1342,25 +1342,32 @@ const UnifiedToastController = {
     },
 
     /**
-     * Clean up old completion tracking keys from localStorage
-     * Keeps only keys from the last hour
+     * Clean up old completion tracking keys from localStorage.
+     * Each key's value is the time it was written (ms); keep the last hour.
+     * A value that is not a time (older pages wrote 'true') is dropped.
      */
     cleanupOldCompletionKeys() {
+        const hourAgo = Date.now() - 3600 * 1000;
         const keysToRemove = [];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
             if (key && key.startsWith('toast_completion_')) {
-                const match = key.match(/_(\d{10,})$/);
-                if (match) {
-                    const timestamp = parseInt(match[1], 10);
-                    const hourAgo = Math.floor(Date.now() / 1000) - 3600;
-                    if (timestamp < hourAgo) {
-                        keysToRemove.push(key);
-                    }
-                }
+                const written = parseInt(localStorage.getItem(key), 10);
+                if (!(written >= hourAgo)) keysToRemove.push(key);
             }
         }
         keysToRemove.forEach(key => localStorage.removeItem(key));
+    },
+
+    /**
+     * True the first time any tab sees this job's completion; records it so
+     * other tabs and later page loads do not announce it again.
+     */
+    claimCompletion(type, data) {
+        const key = `toast_completion_${type}_${data.job_id || data.start_time || Date.now()}`;
+        if (localStorage.getItem(key)) return false;
+        localStorage.setItem(key, String(Date.now()));
+        return true;
     },
 
     /**
@@ -1839,9 +1846,7 @@ const UnifiedToastController = {
         }
 
         if (data.completed && !existingToast) {
-            const completionKey = `toast_completion_${type}_${data.job_id || data.start_time || Date.now()}`;
-            if (!localStorage.getItem(completionKey)) {
-                localStorage.setItem(completionKey, 'true');
+            if (this.claimCompletion(type, data)) {
                 if (data.error) {
                     showNotification(t('{job} failed: {error}', {job: typeConfig.name, error: data.error}), 'error');
                 } else if (data.cancelled) {
@@ -1903,8 +1908,8 @@ const UnifiedToastController = {
         toast.style.setProperty('--toast-color', config.queuedColor);
 
         const title = item.kind === 'sync'
-            ? `🔄 ${this.escapeHtml(t('Sync: {system}', {system: item.system_name}))}`
-            : `🏆 ${this.escapeHtml(t('Refresh: {system}', {system: item.system_name || t('All Systems')}))}`;
+            ? `${getThemedIcon('ra-sync')} ${this.escapeHtml(t('Sync: {system}', {system: item.system_name}))}`
+            : `${getThemedIcon('ra-refresh')} ${this.escapeHtml(t('Refresh: {system}', {system: item.system_name || t('All Systems')}))}`;
 
         toast.innerHTML = `
             <div class="toast-content">
@@ -2281,15 +2286,15 @@ const UnifiedToastController = {
      * This is the ONLY place that removes active toasts (besides cancel)
      */
     handleCompletion(type, data) {
-        const completionKey = `toast_completion_${type}_${data.job_id || data.start_time || Date.now()}`;
-        if (localStorage.getItem(completionKey)) {
-            return;  // Already handled
-        }
-        localStorage.setItem(completionKey, 'true');
+        this._hidingCompletion = this._hidingCompletion || new Set();
+        if (this._hidingCompletion.has(type)) return;
+        this._hidingCompletion.add(type);
+        this.claimCompletion(type, data);
 
         console.debug(`Handling completion for ${type}`, data.job_id);
 
         setTimeout(() => {
+            this._hidingCompletion.delete(type);
             this.hideActiveToast(type);
 
             if ((type === 'ra-sync' || type === 'ra-refresh') && this._raQueueWaiting) {
@@ -2335,8 +2340,8 @@ const UnifiedToastController = {
                     posEl.textContent = `#${index + 1}`;
                 }
             }
+            toast.style.order = 90 + index;
         });
-
     },
 
     /**
@@ -2358,18 +2363,31 @@ const UnifiedToastController = {
                 <div class="toast-main">
                     <div class="toast-icon">${getThemedIcon('queued')}</div>
                     <div class="toast-info">
-                        <div class="toast-title">${this.escapeHtml(t('{job} Queued (#{position})', {job: config.name, position: position}))}</div>
+                        <div class="toast-title">${this.escapeHtml(config.name)} <span class="queue-position">#${position}</span></div>
                         <div class="toast-subtitle">${this.escapeHtml(subtitleText)}</div>
-                        <div class="toast-meta">${this.escapeHtml(t('{n} games', {n: this.fmtNum(job.total)}))}</div>
+                        <div class="toast-meta">${this.escapeHtml(t('{n} games', {n: this.fmtNum(job.total)}))} · ${this.escapeHtml(t('in queue'))}</div>
                     </div>
                 </div>
                 <div class="toast-controls">
-                    <button class="toast-btn cancel" data-cancel-queued title="${this.escapeHtml(t('Remove from queue'))}">
+                    <button type="button" class="toast-btn" data-open-queue-manager title="${this.escapeHtml(t('Reorder queue'))}" aria-label="${this.escapeHtml(t('Reorder queue'))}">
+                        ⇅
+                    </button>
+                    <button type="button" class="toast-btn cancel" data-cancel-queued aria-label="${this.escapeHtml(t('Remove from queue'))}" title="${this.escapeHtml(t('Remove from queue'))}">
                         ✕
                     </button>
                 </div>
             </div>
         `;
+
+        const reorderBtn = toast.querySelector('[data-open-queue-manager]');
+        if (reorderBtn && typeof window.openQueueManager === 'function') {
+            reorderBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                window.openQueueManager();
+            });
+        } else if (reorderBtn) {
+            reorderBtn.remove();
+        }
 
         const cancelBtn = toast.querySelector('[data-cancel-queued]');
         if (cancelBtn) {
@@ -2410,6 +2428,7 @@ const UnifiedToastController = {
             }
         } catch (e) {
             console.error(`Error toggling pause for ${type}:`, e);
+            showNotification(e.message || t('Could not pause or resume it'), 'error');
         }
     },
 
@@ -2465,6 +2484,7 @@ const UnifiedToastController = {
                 showNotification(e.message, 'error');
             } else {
                 console.error(`Error cancelling ${type}:`, e);
+                showNotification(e.message || t('Could not cancel it'), 'error');
             }
         }
     },
@@ -2497,6 +2517,7 @@ const UnifiedToastController = {
             }
         } catch (e) {
             console.error(`Error cancelling queued job ${jobId}:`, e);
+            showNotification(e.message || t('Could not remove it from the queue'), 'error');
         }
     },
 

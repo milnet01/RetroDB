@@ -125,17 +125,25 @@
         }
 
         const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+        // A blip in polling is not a failed apply: give up only after
+        // several misses in a row, or when the deadline passes (PASS-59-277).
+        const deadline = Date.now() + 10 * 60 * 1000;
+        let misses = 0;
         for (;;) {
             await sleep(POLL_MS);
+            if (Date.now() > deadline) return fail(el);
             let body;
             try {
                 const rv = await fetch(`/api/apply-metadata/${taskId}`);
                 body = await rv.json().catch(() => ({}));
-                if (!rv.ok || !body.success) return fail(el, body.error);
+                if (rv.status === 404 || (rv.ok && !body.success)) return fail(el, body.error);
+                if (!rv.ok) throw new Error(`HTTP ${rv.status}`);
             } catch (e) {
                 console.error('Apply metadata poll failed:', e);
-                return fail(el);
+                if (++misses >= 5) return fail(el);
+                continue;
             }
+            misses = 0;
             render(el, body.percent, body.step);
             if (!body.finished) continue;
             if (!body.applied) return fail(el, body.error);

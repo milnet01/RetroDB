@@ -198,6 +198,13 @@ async function pollSyncStatus() {
             }
         } else if (data.running) {
             btn.innerHTML = `<span class="btn-icon">🔄</span> ${formatNumber(data.current)} / ${formatNumber(data.total)}`;
+        } else {
+            // Neither running nor finished: the run is gone (a restart),
+            // so stop asking and give the button back (PASS-59-277).
+            clearInterval(syncPollInterval);
+            syncPollInterval = null;
+            btn.disabled = false;
+            btn.innerHTML = '<span class="btn-icon">🔄</span> <span class="btn-text">Sync All</span>';
         }
     } catch (e) {
         console.error('Poll error:', e);

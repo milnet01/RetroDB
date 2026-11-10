@@ -436,8 +436,7 @@ function clearLog() {
 
 function cancelScan() {
     if (currentTaskId) {
-        fetch('/api/rom-tools/task/' + currentTaskId + '/cancel', { method: 'POST' });
-        TaskPoller.cancel();
+        TaskPoller.cancel();  // says on screen if the server refuses
         addLogEntry('Cancelling scan...', 'warning');
     }
 }
