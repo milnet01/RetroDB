@@ -2,6 +2,14 @@
   date: '2026-11-10'
   tags:
   - type: security
+    label: 'Paramètres → Mon profil n''envoie plus à la page votre clé RetroAchievements, votre jeton PSN ou votre clé Steam enregistrés. Chaque champ n''affiche que ses quatre derniers caractères, comme le faisaient déjà les clés de l''onglet Récupération. Enregistrer sans retaper conserve la clé enregistrée, et le bouton PSN « Enregistrer & Tester la connexion » teste le jeton enregistré'
+  - type: fix
+    label: 'La Visionneuse de journaux ne s''ouvre plus sur « Fichier journal invalide ». Elle listait des journaux auxiliaires qu''elle n''affichait pas, et ouvrait l''un d''eux en premier ; elle ne liste plus que les journaux qu''elle peut ouvrir'
+  - type: fix
+    label: 'L''onglet PSN des Imports de jeux vous envoie désormais vers Paramètres → Mon profil pour le jeton NPSSO, là où se trouve le champ, au lieu de Paramètres → Clés API, et son état de connexion peut être traduit'
+  - type: fix
+    label: 'Connecté en tant que spectateur, les pages ne demandent plus au serveur des informations réservées aux administrateurs qu''elles ne peuvent pas obtenir : le journal du serveur ne se remplit donc plus de requêtes refusées'
+  - type: security
     label: 'Les noms venus de l''extérieur de RetroDB (données récupérées, noms de fichiers et de dossiers, réponses des services en ligne) s''affichent désormais toujours en texte brut : sur la page du jeu, dans les Paramètres, les Rapports, les outils ROM, les pages de trophées et ailleurs. Les pages n''exécutent plus que les actions de leurs propres boutons : un nom piégé ne peut donc pas faire agir une page, et le lien « retour à » d''une notification de progression ne peut plus mener vers un autre site'
   - type: enhancement
     label: 'Les récupérations en masse en file d''attente ont un bouton Réordonner. Il ouvre le Gestionnaire de file d''attente, où une récupération en attente peut passer plus tôt, plus tard, ou échanger sa place avec celle en cours. Chaque notification en file garde aussi son numéro de position après un changement'

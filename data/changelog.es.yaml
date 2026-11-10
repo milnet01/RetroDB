@@ -2,6 +2,14 @@
   date: '2026-11-10'
   tags:
   - type: security
+    label: 'Ajustes → Mi perfil ya no envía a la página tu clave de RetroAchievements, tu token de PSN ni tu clave de Steam guardados. Cada campo muestra solo sus últimos cuatro caracteres, como ya hacían las claves de la pestaña Scrapeo. Guardar sin volver a escribirla conserva la clave guardada, y el botón "Guardar & Probar conexión" de PSN prueba el token guardado'
+  - type: fix
+    label: 'La página Visor de registros ya no se abre con "Archivo de registro no válido". Mostraba registros auxiliares que no iba a abrir y abría uno de ellos primero; ahora solo muestra los registros que puede abrir'
+  - type: fix
+    label: 'La pestaña PSN de Importaciones de juegos ahora te envía a Ajustes → Mi perfil para el token NPSSO, donde está el campo, en lugar de a Ajustes → Claves de API, y su estado de conexión se puede traducir'
+  - type: fix
+    label: 'Con una sesión de espectador, las páginas ya no piden al servidor información solo para administradores que no pueden obtener, así que el registro del servidor ya no se llena de peticiones rechazadas'
+  - type: security
     label: 'Los nombres que vienen de fuera de RetroDB (datos de scraping, nombres de archivos y carpetas, respuestas de servicios en línea) ahora se muestran siempre como texto simple: en la página del juego, Ajustes, Informes, las herramientas ROM, las páginas de trofeos y más. Además, las páginas solo ejecutan las acciones de sus propios botones, así que un nombre manipulado no puede hacer que una página haga algo, y el enlace "volver a" de un aviso de progreso ya no puede llevar a otro sitio web'
   - type: enhancement
     label: 'Los scrapeos masivos en cola tienen un botón Reordenar. Abre el Gestor de cola, donde un scrapeo en espera puede ejecutarse antes, después o intercambiarse con el que está en marcha. Cada aviso en cola también conserva su número de posición tras un cambio'

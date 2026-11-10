@@ -2,6 +2,14 @@
   date: '2026-11-10'
   tags:
   - type: security
+    label: 'Configurações → Meu perfil não envia mais para a página a sua chave do RetroAchievements, o token da PSN ou a chave da Steam salvos. Cada campo mostra só os últimos quatro caracteres, como as chaves da aba Busca de metadados já faziam. Salvar sem digitar de novo mantém a chave salva, e o botão "Salvar & testar conexão" da PSN testa o token salvo'
+  - type: fix
+    label: 'O Visualizador de Log não abre mais em "Arquivo de log inválido". Ele listava logs auxiliares que não mostrava e abria um deles primeiro; agora lista só os logs que consegue abrir'
+  - type: fix
+    label: 'A aba PSN de Importações de Jogos agora leva você a Configurações → Meu perfil para o token NPSSO, onde fica o campo, em vez de Configurações → Chaves de API, e o status da conexão pode ser traduzido'
+  - type: fix
+    label: 'Com login de visualizador, as páginas não pedem mais ao servidor informações só de administrador que não podem receber, então o log do servidor não fica mais cheio de pedidos recusados'
+  - type: security
     label: 'Nomes que vêm de fora do RetroDB (dados buscados, nomes de arquivos e pastas, respostas de serviços online) agora sempre aparecem como texto simples: na página do jogo, em Configurações, Relatórios, nas ferramentas de ROM, nas páginas de troféus e em outros lugares. As páginas também só executam as ações dos próprios botões, então um nome forjado não consegue fazer uma página agir, e o link "voltar para" de um aviso de progresso não pode mais levar a outro site'
   - type: enhancement
     label: 'Buscas de metadados em massa na fila ganham um botão Reordenar. Ele abre o Gerenciador de Fila, onde uma busca em espera pode rodar antes, depois ou trocar de lugar com a que está rodando agora. Cada aviso na fila também mantém seu número de posição após uma mudança'

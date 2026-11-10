@@ -2,6 +2,14 @@
   date: '2026-11-10'
   tags:
   - type: security
+    label: 'Instellingen → Mijn profiel stuurt je opgeslagen RetroAchievements-sleutel, PSN-token of Steam-sleutel niet meer naar de pagina. Elk vak toont alleen de laatste vier tekens, zoals de sleutels op het tabblad Scrapen al deden. Opslaan zonder opnieuw te typen houdt de opgeslagen sleutel, en de PSN-knop "Opslaan & verbinding testen" test het opgeslagen token'
+  - type: fix
+    label: 'De Logviewer opent niet meer op "Ongeldig logbestand". Hij toonde hulplogs die hij niet wilde openen, en opende er eerst een van; nu toont hij alleen logs die hij kan openen'
+  - type: fix
+    label: 'Het PSN-tabblad van Game-imports stuurt je nu naar Instellingen → Mijn profiel voor het NPSSO-token, waar het vak staat, in plaats van naar Instellingen → API-sleutels, en de verbindingsstatus kan vertaald worden'
+  - type: fix
+    label: 'Ben je ingelogd als kijker, dan vragen pagina''s de server niet meer om informatie die alleen voor beheerders is en die ze toch niet krijgen, dus het serverlog loopt niet meer vol met geweigerde verzoeken'
+  - type: security
     label: 'Namen die van buiten RetroDB komen (gescrapete gegevens, bestands- en mapnamen, antwoorden van onlinediensten) worden nu altijd als platte tekst getoond: op de gamepagina, in Instellingen, Rapporten, de ROM-tools, de trofeeënpagina''s en meer. Pagina''s voeren ook alleen de acties van hun eigen knoppen uit, dus een gemanipuleerde naam kan een pagina niets laten doen, en de link "terug naar" in een voortgangsmelding kan niet meer naar een andere website leiden'
   - type: enhancement
     label: 'Bulkscrapes in de wachtrij krijgen een knop Volgorde wijzigen. Die opent Wachtrijbeheer, waar een wachtende scrape eerder of later kan lopen, of kan ruilen met de scrape die nu loopt. Elke wachtrijmelding houdt na een wijziging ook haar plaatsnummer'

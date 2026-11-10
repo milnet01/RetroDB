@@ -2,6 +2,14 @@
   date: '2026-11-10'
   tags:
   - type: security
+    label: 'Innstillinger → Min profil sender ikke lenger den lagrede RetroAchievements-nøkkelen, PSN-tokenet eller Steam-nøkkelen din til siden. Hver boks viser bare de fire siste tegnene, slik nøklene i Skraping-fanen allerede gjorde. Lagrer du uten å skrive inn på nytt, beholdes den lagrede nøkkelen, og PSN-knappen «Lagre & test tilkobling» tester det lagrede tokenet'
+  - type: fix
+    label: 'Loggviser-siden åpner ikke lenger med «Ugyldig loggfil». Den listet hjelpelogger den ikke ville vise, og åpnet en av dem først; nå lister den bare logger den kan åpne'
+  - type: fix
+    label: 'PSN-fanen i Spillimport sender deg nå til Innstillinger → Min profil for NPSSO-tokenet, der boksen er, i stedet for Innstillinger → API-nøkler, og tilkoblingsstatusen kan oversettes'
+  - type: fix
+    label: 'Når du er pålogget som seer, ber sidene ikke lenger serveren om informasjon bare administratorer får, så serverloggen fylles ikke lenger med avviste forespørsler'
+  - type: security
     label: 'Navn som kommer fra utenfor RetroDB (skrapte data, fil- og mappenavn, svar fra nettjenester) vises nå alltid som ren tekst: på spillsiden, i Innstillinger, Rapporter, ROM-verktøyene, trofésidene og flere steder. Sidene kjører også bare handlingene til sine egne knapper, så et konstruert navn kan ikke få en side til å gjøre noe, og «tilbake til»-lenken i et fremdriftsvarsel kan ikke lenger føre til et annet nettsted'
   - type: enhancement
     label: 'Masseskrapinger i køen får en Endre rekkefølge-knapp. Den åpner Købehandler, der en ventende skraping kan kjøre tidligere, senere eller bytte plass med den som kjører nå. Hvert køvarsel beholder også plassnummeret sitt etter en endring'

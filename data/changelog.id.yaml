@@ -2,6 +2,14 @@
   date: '2026-11-10'
   tags:
   - type: security
+    label: 'Pengaturan → Profil Saya tidak lagi mengirim kunci RetroAchievements, token PSN, atau kunci Steam Anda yang tersimpan ke halaman. Setiap kotak hanya menampilkan empat karakter terakhirnya, seperti yang sudah dilakukan kunci di tab Scraping. Menyimpan tanpa mengetik ulang tetap memakai kunci yang tersimpan, dan tombol "Simpan & Uji Koneksi" PSN menguji token yang tersimpan'
+  - type: fix
+    label: 'Halaman Penampil Log tidak lagi terbuka dengan "Berkas log tidak valid". Halaman ini mencantumkan log pembantu yang tidak akan ditampilkannya, lalu membuka salah satunya lebih dulu; kini hanya log yang bisa dibuka yang dicantumkan'
+  - type: fix
+    label: 'Tab PSN di Impor Game kini mengarahkan Anda ke Pengaturan → Profil Saya untuk token NPSSO, tempat kotaknya berada, bukan ke Pengaturan → Kunci API, dan status koneksinya kini bisa diterjemahkan'
+  - type: fix
+    label: 'Saat masuk sebagai viewer, halaman tidak lagi meminta informasi khusus admin yang memang tidak bisa didapatnya dari server, sehingga log server tidak lagi penuh dengan permintaan yang ditolak'
+  - type: security
     label: 'Nama yang berasal dari luar RetroDB (data hasil scraping, nama file dan folder, balasan dari layanan online) kini selalu tampil sebagai teks biasa: di halaman game, Pengaturan, Laporan, alat ROM, halaman trofi, dan lainnya. Halaman juga hanya menjalankan aksi tombolnya sendiri, sehingga nama yang direkayasa tidak bisa membuat halaman melakukan sesuatu, dan tautan "kembali ke" pada notifikasi progres tidak bisa lagi mengarah ke situs web lain'
   - type: enhancement
     label: 'Scrape massal dalam antrean kini punya tombol Atur Urutan. Tombol ini membuka Pengelola Antrean, tempat scrape yang menunggu bisa dijalankan lebih awal, lebih lambat, atau ditukar dengan yang sedang berjalan. Setiap notifikasi antrean juga mempertahankan nomor urutnya setelah ada perubahan'

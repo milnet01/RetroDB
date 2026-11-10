@@ -2,6 +2,14 @@
   date: '2026-11-10'
   tags:
   - type: security
+    label: 'Einstellungen → Mein Profil sendet deinen gespeicherten RetroAchievements-Schlüssel, dein PSN-Token oder deinen Steam-Schlüssel nicht mehr an die Seite. Jedes Feld zeigt nur die letzten vier Zeichen, wie es die Schlüssel im Tab Scraping schon taten. Speichern ohne neue Eingabe behält den gespeicherten Schlüssel, und die PSN-Schaltfläche „Speichern & Verbindung testen“ testet das gespeicherte Token'
+  - type: fix
+    label: 'Die Protokoll-Anzeige öffnet nicht mehr mit „Ungültige Protokolldatei“. Sie listete Hilfsprotokolle auf, die sie nicht anzeigen würde, und öffnete eines davon zuerst; jetzt listet sie nur Protokolle, die sie öffnen kann'
+  - type: fix
+    label: 'Der PSN-Tab unter Spiel-Importe schickt dich für das NPSSO-Token jetzt zu Einstellungen → Mein Profil, wo das Feld ist, statt zu Einstellungen → API-Schlüssel, und sein Verbindungsstatus lässt sich übersetzen'
+  - type: fix
+    label: 'Bei Anmeldung als Viewer fragen Seiten den Server nicht mehr nach Admin-Informationen, die sie nicht bekommen können, sodass sich das Server-Protokoll nicht mehr mit abgelehnten Anfragen füllt'
+  - type: security
     label: 'Namen, die von außerhalb von RetroDB kommen (gescrapte Daten, Datei- und Ordnernamen, Antworten von Online-Diensten), werden jetzt immer als reiner Text angezeigt: auf der Spielseite, in den Einstellungen, in Berichten, in den ROM-Werkzeugen, auf den Trophäen-Seiten und an weiteren Stellen. Seiten führen außerdem nur die Aktionen ihrer eigenen Schaltflächen aus, sodass ein präparierter Name eine Seite zu keiner Aktion bringen kann, und der „Zurück zu“-Link in einer Fortschrittsmeldung kann nicht mehr auf eine andere Website führen'
   - type: enhancement
     label: 'Massen-Scrapes in der Warteschlange bekommen eine Schaltfläche Neu ordnen. Sie öffnet den Warteschlangen-Manager, in dem ein wartender Scrape früher oder später laufen oder mit dem gerade laufenden tauschen kann. Jede Meldung in der Warteschlange behält nach einer Änderung auch ihre Platznummer'

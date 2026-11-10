@@ -2,6 +2,14 @@
   date: 2026-11-10
   tags:
   - type: security
+    label: 'Settings → My Profile no longer sends your saved RetroAchievements key, PSN token or Steam key to the page. Each box shows only its last four characters, as the Scraping tab''s keys already did. Saving without retyping keeps the saved key, and the PSN "Save & Test Connection" button tests the saved token'
+  - type: fix
+    label: 'The Log Viewer no longer opens on "Invalid log file". It listed helper logs it would not show, and opened one of them first; it now lists only logs it can open'
+  - type: fix
+    label: 'Game Imports'' PSN tab now sends you to Settings → My Profile for the NPSSO token, where the box is, instead of Settings → API Keys, and its connection status can be translated'
+  - type: fix
+    label: 'Signed in as a viewer, pages no longer ask the server for admin-only information they cannot have, so the server log no longer fills with refused requests'
+  - type: security
     label: 'Names that come from outside RetroDB (scraped data, file and folder names, replies from online services) now always show as plain text, on the game page, Settings, Reports, the ROM tools, the trophy pages and more. Pages also run only their own buttons'' actions, so a crafted name cannot make a page do something, and a progress toast''s "return to" link can no longer lead to another website'
   - type: enhancement
     label: 'Queued bulk scrapes get a Reorder button. It opens the Queue Manager, where a waiting scrape can run sooner, later, or swap with the one running now. Each queued toast also keeps its place number after a change'

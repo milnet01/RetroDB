@@ -2,6 +2,14 @@
   date: '2026-11-10'
   tags:
   - type: security
+    label: 'Ustawienia → Mój profil nie wysyła już do strony zapisanego klucza RetroAchievements, tokenu PSN ani klucza Steam. Każde pole pokazuje tylko ostatnie cztery znaki, jak już robiły klucze na karcie Pobieranie danych. Zapisanie bez ponownego wpisywania zachowuje zapisany klucz, a przycisk PSN „Zapisz i przetestuj połączenie” testuje zapisany token'
+  - type: fix
+    label: 'Przeglądarka dzienników nie otwiera się już na „Nieprawidłowy plik dziennika”. Wymieniała dzienniki pomocnicze, których nie chciała pokazać, i jeden z nich otwierała jako pierwszy; teraz wymienia tylko dzienniki, które może otworzyć'
+  - type: fix
+    label: 'Karta PSN w Importach gier kieruje teraz po token NPSSO do Ustawienia → Mój profil, gdzie jest to pole, zamiast do Ustawienia → Klucze API, a jej stan połączenia można przetłumaczyć'
+  - type: fix
+    label: 'Po zalogowaniu jako widz strony nie proszą już serwera o informacje tylko dla administratora, których i tak nie mogą dostać, więc dziennik serwera nie zapełnia się już odrzuconymi żądaniami'
+  - type: security
     label: 'Nazwy pochodzące spoza RetroDB (pobrane dane, nazwy plików i folderów, odpowiedzi usług online) są teraz zawsze pokazywane jako zwykły tekst: na stronie gry, w Ustawieniach, Raportach, narzędziach ROM, na stronach trofeów i w innych miejscach. Strony wykonują też tylko akcje własnych przycisków, więc spreparowana nazwa nie może zmusić strony do żadnego działania, a link „wróć do” w powiadomieniu o postępie nie może już prowadzić do innej witryny'
   - type: enhancement
     label: 'Zbiorcze pobierania danych w kolejce mają przycisk Zmień kolejność. Otwiera on Menedżer kolejki, w którym oczekujące pobieranie może ruszyć wcześniej, później albo zamienić się z tym, które trwa teraz. Każde powiadomienie w kolejce zachowuje też swój numer miejsca po zmianie'
