@@ -1638,14 +1638,13 @@ const UnifiedToastController = {
         this.pollingEndpoints.set('ra-refresh', '/api/refresh-retroachievements/status');
         this.pollingEndpoints.set('psn-refresh', '/api/psn/bulk-refresh/status');
         this.pollingEndpoints.set('image-resize', '/api/maintenance/image-resize/status');
-        this.pollingEndpoints.set('ai-fill', '/api/ai-fill-bulk/status');
+        if (window.IS_EDITOR) {
+            this.pollingEndpoints.set('ai-fill', '/api/ai-fill-bulk/status');
+        }
 
-        this.activeOperations.set('bulk-scrape', false);
-        this.activeOperations.set('ra-sync', false);
-        this.activeOperations.set('ra-refresh', false);
-        this.activeOperations.set('psn-refresh', false);
-        this.activeOperations.set('image-resize', false);
-        this.activeOperations.set('ai-fill', false);
+        for (const type of this.pollingEndpoints.keys()) {
+            this.activeOperations.set(type, false);
+        }
 
         this._burstPollAll();
     },

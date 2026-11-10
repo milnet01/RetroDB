@@ -1422,6 +1422,7 @@ function deleteUser(userId, username) {
 // =============================================================================
 
 function loadPathSettings() {
+    if (!window.IS_ADMIN) return;  // admin-only route (PASS-59-297)
     fetch('/api/settings/paths')
         .then(r => r.json())
         .then(data => {
@@ -1481,6 +1482,7 @@ document.addEventListener('DOMContentLoaded', loadPathSettings);
 // =============================================================================
 
 function loadDisplaySettings() {
+    if (!window.IS_ADMIN) return;  // admin-only route (PASS-59-297)
     fetch('/api/settings')
         .then(r => r.json())
         .then(data => {
@@ -1631,6 +1633,7 @@ function moveNamingTag(systemType, index, direction) {
 }
 
 function loadNamingSettings() {
+    if (!window.IS_ADMIN) return;  // admin-only route (PASS-59-297)
     fetch('/api/settings')
         .then(r => r.json())
         .then(data => {
@@ -2011,6 +2014,7 @@ function createBackup() {
 }
 
 function loadBackups() {
+    if (!window.IS_ADMIN) return;  // admin-only route (PASS-59-297)
     fetch('/api/backups')
         .then(r => r.json())
         .then(data => {
@@ -2243,6 +2247,7 @@ function toggleScraper(scraper, enabled, checkbox) {
 
 // Check API status for each scraper
 async function checkScraperStatus() {
+    if (!window.IS_ADMIN) return;  // admin-only route (PASS-59-297)
     // Set all to checking first
     ['tgdb', 'igdb', 'rawg', 'screenscraper', 'ai'].forEach(scraper => {
         const statusEl = document.getElementById(`status-${scraper}`);
