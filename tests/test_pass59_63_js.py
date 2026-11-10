@@ -450,7 +450,7 @@ def test_boxart_fallback_is_a_data_attribute():
     `data-on-error-src` attribute, where HTML escaping is the whole job."""
     src = _src('static/js/all-games-controller.js')
     line = next(ln for ln in src.splitlines() if 'data-on-error-src="/static/images/boxart/' in ln)
-    assert '${esc(fallbackBoxart)}' in line, line.strip()
+    assert '${esc(encodeURIComponent(fallbackBoxart))}' in line, line.strip()
 
 
 @needs_node
