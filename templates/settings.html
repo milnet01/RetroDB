@@ -1578,7 +1578,7 @@ function renderNamingBuilder() {
                         const tag = NAMING_AVAILABLE_TAGS.find(t => t.key === tagKey);
                         const tagLabel = tag ? tag.label : tagKey;
                         return `<span style="padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); color: var(--neon-green); cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem;"
-                            >${tagLabel}${idx > 0 ? `<button type="button" class="btn-bare" data-on-click="moveNamingTag" data-args="${actionArgs(String(st.key), idx, -1)}" title="${escapeHtml({{ _('Move left')|tojson }})}" aria-label="${escapeHtml({{ _('Move left')|tojson }})}" style="opacity:0.7; font-size:0.7rem;">◀</button>` : ''}${idx < selected.length - 1 ? `<button type="button" class="btn-bare" data-on-click="moveNamingTag" data-args="${actionArgs(String(st.key), idx, 1)}" title="${escapeHtml({{ _('Move right')|tojson }})}" aria-label="${escapeHtml({{ _('Move right')|tojson }})}" style="opacity:0.7; font-size:0.7rem;">▶</button>` : ''}<button type="button" class="btn-bare" data-on-click="removeNamingTag" data-args="${actionArgs(String(st.key), String(tagKey))}" title="${escapeHtml({{ _('Remove')|tojson }})}" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', tagLabel))}" style="opacity:0.7; font-size:0.7rem; margin-left:0.15rem;">✕</button></span>`;
+                            >${escapeHtml(tagLabel)}${idx > 0 ? `<button type="button" class="btn-bare" data-on-click="moveNamingTag" data-args="${actionArgs(String(st.key), idx, -1)}" title="${escapeHtml({{ _('Move left')|tojson }})}" aria-label="${escapeHtml({{ _('Move left')|tojson }})}" style="opacity:0.7; font-size:0.7rem;">◀</button>` : ''}${idx < selected.length - 1 ? `<button type="button" class="btn-bare" data-on-click="moveNamingTag" data-args="${actionArgs(String(st.key), idx, 1)}" title="${escapeHtml({{ _('Move right')|tojson }})}" aria-label="${escapeHtml({{ _('Move right')|tojson }})}" style="opacity:0.7; font-size:0.7rem;">▶</button>` : ''}<button type="button" class="btn-bare" data-on-click="removeNamingTag" data-args="${actionArgs(String(st.key), String(tagKey))}" title="${escapeHtml({{ _('Remove')|tojson }})}" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', tagLabel))}" style="opacity:0.7; font-size:0.7rem; margin-left:0.15rem;">✕</button></span>`;
                     }).join('')}
                 </div>
             </div>
@@ -1596,7 +1596,7 @@ function renderNamingBuilder() {
 
             <!-- Preview -->
             <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">
-                Preview: <code style="color: var(--primary-cyan);">${buildNamingPreview(st.key, selected)}</code>
+                Preview: <code style="color: var(--primary-cyan);">${escapeHtml(buildNamingPreview(st.key, selected))}</code>
             </div>
         </div>`;
     }).join('');
@@ -2038,7 +2038,7 @@ function loadBackups() {
                     <div class="backup-item">
                         <div class="backup-info">
                             <span class="backup-name">📁 ${escapeHtml(backup.filename)}</span>
-                            <span class="backup-meta">${backup.size} • ${backup.date}</span>
+                            <span class="backup-meta">${escapeHtml(backup.size)} • ${escapeHtml(backup.date)}</span>
                         </div>
                         <button type="button" class="btn btn-sm btn-warning" data-on-click="restoreBackup" data-args="${actionArgs(String(backup.filename))}">
                             Restore
@@ -2058,7 +2058,7 @@ function restoreBackup(filename) {
     showConfirm({{ _('Restore Backup')|tojson }},
         t({{ _('Are you sure you want to restore from "{filename}"?\n\nThis will replace your current database. A pre-restore backup will be created automatically.')|tojson }}, {filename}),
         () => {
-            fetch(`/api/restore/${filename}`, { method: 'POST' })
+            fetch(`/api/restore/${encodeURIComponent(filename)}`, { method: 'POST' })
                 .then(r => r.json())
                 .then(data => {
                     if (data.success) {
@@ -2475,7 +2475,7 @@ async function checkRateLimits() {
                     const pubRem = Number(d.public_remaining_monthly) || 0;
                     const pubRemText = `<span class="${pubRem > 500 ? 'text-success' : pubRem > 100 ? 'text-warning' : 'text-danger'}">${formatNumber(pubRem)}</span> remaining (monthly)`;
                     details.push(`Public key: ${pubRemText}`);
-                    const pubResetText = d.public_reset_date ? `Resets: ${d.public_reset_date}` : null;
+                    const pubResetText = d.public_reset_date ? `Resets: ${escapeHtml(d.public_reset_date)}` : null;
                     const pubExtraText = d.public_extra_allowance > 0 ? `Extra: ${formatNumber(d.public_extra_allowance)}` : '';
                     const pubSubDetails = [pubResetText, pubExtraText].filter(Boolean).join(' &middot; ');
                     if (pubSubDetails) details.push(pubSubDetails);
@@ -2484,7 +2484,7 @@ async function checkRateLimits() {
                 } else if (d.public_key_status === 'exhausted') {
                     details.push('Public key: <span class="text-danger">Allowance exhausted</span>');
                 } else {
-                    details.push(`Public key: <span class="text-danger">${d.public_key_status || 'Error'}</span>`);
+                    details.push(`Public key: <span class="text-danger">${escapeHtml(d.public_key_status || 'Error')}</span>`);
                 }
             } else {
                 details.push('Public key: <span class="text-muted">Not configured</span>');
@@ -2494,12 +2494,12 @@ async function checkRateLimits() {
             if (d.private_key_configured) {
                 const rem = Number(d.remaining_monthly) || 0;
                 const remText = d.private_key_error
-                    ? `<span class="text-danger">${d.private_key_error}</span>`
+                    ? `<span class="text-danger">${escapeHtml(d.private_key_error)}</span>`
                     : `<span class="${rem > 500 ? 'text-success' : rem > 100 ? 'text-warning' : 'text-danger'}">${formatNumber(rem)}</span> remaining (monthly)`;
                 details.push(`Private key: ${remText}`);
 
                 if (!d.private_key_error) {
-                    const resetText = formatResetTime(d.refresh_timer) || (d.reset_date ? `Resets: ${d.reset_date}` : null);
+                    const resetText = formatResetTime(d.refresh_timer) || (d.reset_date ? `Resets: ${escapeHtml(d.reset_date)}` : null);
                     const extraText = d.extra_allowance > 0 ? `Extra: ${formatNumber(d.extra_allowance)}` : '';
                     const subDetails = [resetText, extraText].filter(Boolean).join(' &middot; ');
                     if (subDetails) details.push(subDetails);
@@ -2532,7 +2532,7 @@ async function checkRateLimits() {
         } else {
             cards.push(`<div class="rate-limit-item status-red">
                 <strong>🎮 TheGamesDB</strong>
-                <span class="rate-limit-value text-danger">${d.error || 'Error checking'}</span>
+                <span class="rate-limit-value text-danger">${escapeHtml(d.error || 'Error checking')}</span>
             </div>`);
         }
     } else {
@@ -2556,17 +2556,17 @@ async function checkRateLimits() {
                 <span class="rate-limit-value"><span class="${remaining > max * 0.5 ? 'text-success' : remaining > max * 0.2 ? 'text-warning' : 'text-danger'}">${formatRatio(remaining, max)}</span> requests remaining today ${pctText ? `(${pctText})` : ''}</span>
                 ${buildBar(remaining, max, color.bar)}
                 <span class="rate-limit-detail">
-                    Per-minute limit: ${d.max_requests_per_min} &middot;
-                    Level: ${d.user_level}
-                    ${d.max_threads && d.max_threads !== 'Unknown' ? ` &middot; Threads: ${d.max_threads}` : ''}
-                    &middot; Speed: ${d.max_download_speed} KB/s<br>
+                    Per-minute limit: ${escapeHtml(d.max_requests_per_min)} &middot;
+                    Level: ${escapeHtml(d.user_level)}
+                    ${d.max_threads && d.max_threads !== 'Unknown' ? ` &middot; Threads: ${escapeHtml(d.max_threads)}` : ''}
+                    &middot; Speed: ${escapeHtml(d.max_download_speed)} KB/s<br>
                     Resets daily at midnight (UTC)
                 </span>
             </div>`);
         } else {
             cards.push(`<div class="rate-limit-item status-gray">
                 <strong>🖥️ ScreenScraper</strong>
-                <span class="rate-limit-value text-muted">${d.error || 'Not configured'}</span>
+                <span class="rate-limit-value text-muted">${escapeHtml(d.error || 'Not configured')}</span>
             </div>`);
         }
     } else {
@@ -2581,7 +2581,7 @@ async function checkRateLimits() {
         const d = igdbRes.value;
         cards.push(`<div class="rate-limit-item status-green">
             <strong>🌐 IGDB</strong>
-            <span class="rate-limit-value">${d.limit} requests/second (OAuth token-based)</span>
+            <span class="rate-limit-value">${escapeHtml(d.limit)} requests/second (OAuth token-based)</span>
             <span class="rate-limit-detail">Token-based authentication — no daily quota</span>
         </div>`);
     }
@@ -2596,7 +2596,7 @@ async function checkRateLimits() {
                 ? `<span class="${d.remaining > d.limit * 0.5 ? 'text-success' : d.remaining > d.limit * 0.2 ? 'text-warning' : 'text-danger'}">${formatNumber(d.remaining)}</span> / ${formatNumber(d.limit)} requests remaining`
                 : `${formatNumber(d.limit)} requests/month (free tier)`;
             const detailParts = [];
-            if (d.reset_date) detailParts.push(`Resets: ${d.reset_date}`);
+            if (d.reset_date) detailParts.push(`Resets: ${escapeHtml(d.reset_date)}`);
             if (!hasRemaining) detailParts.push('No live usage tracking from API');
             cards.push(`<div class="rate-limit-item ${statusCss}">
                 <strong>🕹️ RAWG</strong>
@@ -2606,7 +2606,7 @@ async function checkRateLimits() {
         } else {
             cards.push(`<div class="rate-limit-item status-gray">
                 <strong>🕹️ RAWG</strong>
-                <span class="rate-limit-value text-muted">${d.error || 'Not configured'}</span>
+                <span class="rate-limit-value text-muted">${escapeHtml(d.error || 'Not configured')}</span>
             </div>`);
         }
     } else {
@@ -2622,7 +2622,7 @@ async function checkRateLimits() {
         cards.push(`<div class="rate-limit-item status-gray">
             <strong>🏆 RetroAchievements</strong>
             <span class="rate-limit-value">No published rate limits</span>
-            <span class="rate-limit-detail">${d.note}</span>
+            <span class="rate-limit-detail">${escapeHtml(d.note)}</span>
         </div>`);
     }
 
@@ -2648,7 +2648,7 @@ async function checkRateLimits() {
                         const resetStr = resetDate.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
                         details.push(`Resets: ${resetStr}`);
                     } catch(e) {
-                        details.push(`Resets: ${d.requests_reset}`);
+                        details.push(`Resets: ${escapeHtml(d.requests_reset)}`);
                     }
                 }
             }
@@ -2696,7 +2696,7 @@ async function checkRateLimits() {
         } else {
             cards.push(`<div class="rate-limit-item status-gray">
                 <strong>🤖 AI Provider</strong>
-                <span class="rate-limit-value text-muted">${d.error || 'Not configured'}</span>
+                <span class="rate-limit-value text-muted">${escapeHtml(d.error || 'Not configured')}</span>
             </div>`);
         }
     } else {
@@ -2890,7 +2890,7 @@ async function loadDropdownOptions(category, containerId) {
         if (data.success && data.options.length > 0) {
             container.innerHTML = data.options.map(opt => `
                 <span class="option-tag">
-                    ${opt.value}
+                    ${escapeHtml(opt.value)}
                     <button type="button" class="delete-btn" data-on-click="deleteDropdownOption" data-args="${actionArgs(opt.id, String(category), String(containerId))}" title="Delete">×</button>
                 </span>
             `).join('');
@@ -3585,7 +3585,7 @@ function updateManufacturerSuggestionsFromData(controllers) {
     // Update datalist
     const datalist = document.getElementById('manufacturerSuggestions');
     if (datalist) {
-        datalist.innerHTML = sorted.map(m => `<option value="${m}">`).join('');
+        datalist.innerHTML = sorted.map(m => `<option value="${escapeHtml(m)}">`).join('');
     }
 }
 
@@ -3718,7 +3718,7 @@ async function autoAssignDefaultControllers() {
             resultDiv.style.display = 'block';
             resultDiv.innerHTML = `
                 <div class="alert alert-error" style="margin: 0;">
-                    ❌ ${data.error || 'Failed to assign controllers'}
+                    ❌ ${escapeHtml(data.error || 'Failed to assign controllers')}
                 </div>
             `;
         }
@@ -3758,7 +3758,7 @@ async function previewClearScrapedData() {
             resultDiv.innerHTML = `
                 <div class="alert alert-info" style="margin: 0;">
                     <strong>Preview:</strong> This will clear scraped data from <strong>${data.count}</strong> games
-                    ${systemId !== 'all' ? ` in ${systemSelect.options[systemSelect.selectedIndex].text}` : ' (all systems)'}.
+                    ${systemId !== 'all' ? ` in ${escapeHtml(systemSelect.options[systemSelect.selectedIndex].text)}` : ' (all systems)'}.
                     <br><small class="text-muted">Fields: description, genre, publisher, developer, players, modes, ratings, scores, images, etc.</small>
                 </div>
             `;
@@ -3766,7 +3766,7 @@ async function previewClearScrapedData() {
             resultDiv.style.display = 'block';
             resultDiv.innerHTML = `
                 <div class="alert alert-error" style="margin: 0;">
-                    ❌ ${data.error || 'Failed to preview'}
+                    ❌ ${escapeHtml(data.error || 'Failed to preview')}
                 </div>
             `;
         }
@@ -3825,7 +3825,7 @@ async function clearScrapedData() {
                     resultDiv.style.display = 'block';
                     resultDiv.innerHTML = `
                         <div class="alert alert-error" style="margin: 0;">
-                            ❌ ${data.error || 'Failed to clear data'}
+                            ❌ ${escapeHtml(data.error || 'Failed to clear data')}
                         </div>
                     `;
                 }
@@ -3884,7 +3884,7 @@ async function previewOrphanedMedia() {
                 });
                 
                 let summaryHtml = Object.entries(byType).map(([type, files]) => 
-                    `<li><strong>${type}</strong>: ${files.length} files</li>`
+                    `<li><strong>${escapeHtml(type)}</strong>: ${files.length} files</li>`
                 ).join('');
                 
                 resultDiv.innerHTML = `
@@ -3901,7 +3901,7 @@ async function previewOrphanedMedia() {
             resultDiv.style.display = 'block';
             resultDiv.innerHTML = `
                 <div class="alert alert-error" style="margin: 0;">
-                    ❌ ${data.error || 'Failed to scan for orphaned files'}
+                    ❌ ${escapeHtml(data.error || 'Failed to scan for orphaned files')}
                 </div>
             `;
         }
@@ -4135,7 +4135,7 @@ async function optimizeDatabase() {
         } else {
             resultDiv.innerHTML = `
                 <div class="alert alert-error" style="margin: 0;">
-                    ❌ ${data.error || 'Failed to optimize database'}
+                    ❌ ${escapeHtml(data.error || 'Failed to optimize database')}
                 </div>
             `;
         }
@@ -4346,10 +4346,10 @@ async function loadLogoReference(systems) {
                 
                 return `
                     <tr>
-                        <td>${system.name || 'Unknown'}</td>
-                        <td><span class="system-type-badge ${typeClass}">${systemType}</span></td>
-                        <td>${system.folder || 'N/A'}</td>
-                        <td>${logoResult.filename || `${system.folder}.png`}</td>
+                        <td>${escapeHtml(system.name || 'Unknown')}</td>
+                        <td><span class="system-type-badge ${escapeHtml(typeClass)}">${escapeHtml(systemType)}</span></td>
+                        <td>${escapeHtml(system.folder || 'N/A')}</td>
+                        <td>${escapeHtml(logoResult.filename || `${system.folder}.png`)}</td>
                         <td class="${logoResult.exists ? 'status-ok' : 'status-missing'}">
                             ${logoResult.exists ? '✓ Found' : '✗ Missing'}
                         </td>
@@ -4362,9 +4362,9 @@ async function loadLogoReference(systems) {
                 console.error(`Error checking system ${system.name}:`, err);
                 return `
                     <tr>
-                        <td>${system.name || 'Unknown'}</td>
+                        <td>${escapeHtml(system.name || 'Unknown')}</td>
                         <td><span class="system-type-badge">Error</span></td>
-                        <td>${system.folder || 'N/A'}</td>
+                        <td>${escapeHtml(system.folder || 'N/A')}</td>
                         <td>-</td>
                         <td class="status-missing">⚠ Error</td>
                         <td class="status-missing">⚠ Error</td>
@@ -4871,8 +4871,8 @@ async function loadLogFiles() {
                 const sizeKB = (file.size / 1024).toFixed(1);
                 html += `
                     <tr>
-                        <td><span class="log-badge ${file.category}">${file.category.replace('_', ' ')}</span></td>
-                        <td>${file.date}</td>
+                        <td><span class="log-badge ${escapeHtml(file.category)}">${escapeHtml(file.category.replace('_', ' '))}</span></td>
+                        <td>${escapeHtml(file.date)}</td>
                         <td>${sizeKB} KB</td>
                         <td>
                             <button type="button" data-on-click="viewLogFile" data-args="${actionArgs(String(file.filename))}" class="btn btn-sm btn-secondary">
@@ -5207,7 +5207,7 @@ function updateAllAvatars(url) {
     // Update profile avatar
     const profileAvatar = document.getElementById('profileAvatar');
     if (url) {
-        profileAvatar.innerHTML = '<img src="' + url + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        profileAvatar.innerHTML = '<img src="' + escapeHtml(url) + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
     } else {
         const role = {{ (current_user.role if current_user else "viewer")|tojson }};
         const emoji = role === 'admin' ? '👑' : role === 'editor' ? '✏️' : '👤';
@@ -5217,7 +5217,7 @@ function updateAllAvatars(url) {
     const sidebarAvatar = document.querySelector('.user-indicator-avatar');
     if (sidebarAvatar) {
         if (url) {
-            sidebarAvatar.innerHTML = '<img src="' + url + '" alt="" class="user-avatar-img">';
+            sidebarAvatar.innerHTML = '<img src="' + escapeHtml(url) + '" alt="" class="user-avatar-img">';
         } else {
             const role = {{ (current_user.role if current_user else "viewer")|tojson }};
             const emoji = role === 'admin' ? '👑' : role === 'editor' ? '✏️' : '👤';

@@ -716,7 +716,7 @@ function showSpecs(folder, event) {
         let html = '';
         
         // Add hardware image container (will be populated if image exists)
-        html += `<div class="hardware-image-container" id="hardwareImageContainer" data-folder="${folder.toLowerCase()}"></div>`;
+        html += `<div class="hardware-image-container" id="hardwareImageContainer" data-folder="${escapeHtml(folder.toLowerCase())}"></div>`;
         
         html += '<div class="specs-grid">';
         
@@ -725,7 +725,7 @@ function showSpecs(folder, event) {
             html += `
                 <div class="spec-item">
                     <div class="spec-label">📦 Type</div>
-                    <div class="spec-value"><span class="system-type-tag ${systemType.toLowerCase()}">${systemType}</span></div>
+                    <div class="spec-value"><span class="system-type-tag ${escapeHtml(systemType.toLowerCase())}">${escapeHtml(systemType)}</span></div>
                 </div>
             `;
         }
@@ -749,7 +749,7 @@ function showSpecs(folder, event) {
                 html += `
                     <div class="spec-item">
                         <div class="spec-label">${label}</div>
-                        <div class="spec-value">${specs[key]}</div>
+                        <div class="spec-value">${escapeHtml(specs[key])}</div>
                     </div>
                 `;
             }
@@ -767,14 +767,14 @@ function showSpecs(folder, event) {
         let html = '';
         
         // Add hardware image container
-        html += `<div class="hardware-image-container" id="hardwareImageContainer" data-folder="${folder.toLowerCase()}"></div>`;
+        html += `<div class="hardware-image-container" id="hardwareImageContainer" data-folder="${escapeHtml(folder.toLowerCase())}"></div>`;
         
         if (systemType) {
             html += `
                 <div class="specs-grid">
                     <div class="spec-item">
                         <div class="spec-label">📦 Type</div>
-                        <div class="spec-value"><span class="system-type-tag ${systemType.toLowerCase()}">${systemType}</span></div>
+                        <div class="spec-value"><span class="system-type-tag ${escapeHtml(systemType.toLowerCase())}">${escapeHtml(systemType)}</span></div>
                     </div>
                 </div>
                 <div class="no-specs" style="margin-top: var(--spacing-md);">No additional specifications available for this system.</div>
