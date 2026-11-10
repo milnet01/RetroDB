@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=297 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=298 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -2620,6 +2620,26 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: fix.
   Source: browser walk 2026-11-10.
 
+- 📋 [PASS-59-298] **One spelling per name: "Doom" and "DOOM" become one, and the AI gives official capitals (enhancement, M).**
+  - **Why**: found 2026-11-10 (PASS-59-160 live check): case twins
+    ("Doom" 14 games, "DOOM" 3) count as two entries in the filter
+    window but filter together. Settings > Normalization cannot fix
+    them: get_unique_values keys on lower case, so it hides twins, and
+    apply_normalization skips a change that only alters capitals.
+  - **Agreed** (user, 2026-11-10): (1) AI Fill asks for franchise,
+    publisher and developer names with their official capitalisation.
+    (2) A saved name equal to a library spelling apart from capitals
+    takes the library's spelling. (3) Settings > Normalization lists
+    each twin group, most-used spelling pre-selected; the user confirms
+    or picks another, then Apply. Nothing changes without the user.
+  - **Verify**: on a copy of the live DB, the twins list shows Doom /
+    DOOM; applying one spelling leaves one entry with the summed count;
+    a scrape bringing "doom" saves the library's spelling.
+  - **Status**: todo.
+  **Layman:** A franchise, publisher or developer spelled with different capitals shows as one name, spelled the official way.
+  Kind: enhancement.
+  Source: user-request-2026-11-10.
+
 ## 4.0.x — Security and data-loss fixes for the web version
 
 After 4.0.0 the web version gets security and data-loss fixes only, always as 4.0.x: the 4.0 updater treats 4.1.0 and up as the desktop app.
@@ -3322,6 +3342,29 @@ Considered or dropped. Kept so the reasoning is not lost.
 
   ---
   Kind: implement.
+
+- 🚫 [PASS-59-0298] **One spelling per name: "Doom" and "DOOM" become one, and the AI gives official capitals (enhancement, M).**
+  - **Why**: found 2026-11-10 (PASS-59-160 live check): case twins
+    ("Doom" 14 games, "DOOM" 3) count as two entries in the filter
+    window but filter together. Settings > Normalization cannot fix
+    them: get_unique_values keys on lower case, so it hides twins, and
+    apply_normalization skips a change that only alters capitals.
+  - **Agreed** (user, 2026-11-10): (1) AI Fill asks for franchise,
+    publisher and developer names with their official capitalisation.
+    (2) A saved name equal to a library spelling apart from capitals
+    takes the library's spelling. (3) Settings > Normalization lists
+    each twin group, most-used spelling pre-selected; the user confirms
+    or picks another, then Apply. Nothing changes without the user.
+  - **Verify**: on a copy of the live DB, the twins list shows Doom /
+    DOOM; applying one spelling leaves one entry with the summed count;
+    a scrape bringing "doom" saves the library's spelling.
+  - **Status**: todo.
+  - **Dropped** (2026-11-10): filed twice; the counter gave this copy a
+    padded id. The item is PASS-59-298.
+  **Layman:** A franchise, publisher or developer spelled with different capitals shows as one name, spelled the official way.
+  Kind: enhancement.
+  Source: user-request-2026-11-10.
+  Duplicate-of: PASS-59-298.
 
 ## Done index
 
