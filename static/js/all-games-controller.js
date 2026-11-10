@@ -817,8 +817,17 @@ const AllGamesController = (function() {
     // FILTER HANDLERS
     // =========================================================================
 
+    // A value is included or excluded, never both: that matches no game.
+    function dropFromOther(store, type, value) {
+        if (!(type in store)) return;
+        const left = asList(store[type]).filter(v => v !== value);
+        if (left.length && isMulti(type)) store[type] = left;
+        else if (!left.length || String(store[type]) === String(value)) delete store[type];
+    }
+
     function applyFilterDirect(type, value) {
         clearLetterJump();
+        dropFromOther(excludeFilters, type, value);
         filters[type] = isMulti(type) ? [value] : value;
         resetAndFetch();
     }
@@ -946,6 +955,7 @@ const AllGamesController = (function() {
 
     function applyFilter(type, value) {
         clearLetterJump();
+        dropFromOther(excludeFilters, type, value);
         filters[type] = value;
         closeFilterModal();
         resetAndFetch();
@@ -1036,6 +1046,7 @@ const AllGamesController = (function() {
 
     function applyExcludeFilter(type, value) {
         clearLetterJump();
+        dropFromOther(filters, type, value);
         excludeFilters[type] = value;
         closeFilterModal();
         resetAndFetch();
@@ -1050,6 +1061,7 @@ const AllGamesController = (function() {
 
     function applyExcludeFilterDirect(type, value) {
         clearLetterJump();
+        dropFromOther(filters, type, value);
         excludeFilters[type] = isMulti(type) ? [value] : value;
         resetAndFetch();
     }
@@ -1177,6 +1189,20 @@ const AllGamesController = (function() {
                     search: '&#128269;', letter: '&#128289;'
                 };
 
+                // What a single-value filter shows: a system's name, not its
+                // id; the picker's own label for a type; a named source.
+                const sourceLabels = {rom: t('ROM Files'), clz: t('CLZ Imports'), steam: t('Steam Imports'),
+                                      xbox: t('Xbox Imports'), psn: t('PSN Imports')};
+                const pickerIds = {system: 'systemFilter', system_type: 'systemTypeFilter'};
+                const filterLabel = (k, v) => {
+                    const picker = pickerIds[k] && document.getElementById(pickerIds[k]);
+                    const opt = picker && Array.from(picker.options).find(o => o.value === String(v));
+                    // The tag has its own icon: drop the option's leading emoji.
+                    if (opt) return opt.textContent.replace(/^[^\p{L}\p{N}]+/u, '').trim();
+                    if (k === 'source' && sourceLabels[v]) return sourceLabels[v];
+                    return String(v);
+                };
+
                 // One tag per value; a multi-value filter's ✕ drops one value
                 // (PASS-53-11). Exclude tags are red, with a NOT prefix.
                 const tagHtml = (entries, exclude) => entries.flatMap(([k, v]) => {
@@ -1184,8 +1210,9 @@ const AllGamesController = (function() {
                     const not = exclude ? `${esc(t('NOT'))} ` : '';
                     if (!isMulti(k)) {
                         const fn = exclude ? 'removeExcludeFilter' : 'removeFilter';
-                        return [`<span class="${cls}">${icons[k] || ''} ${not}${esc(String(v))}
-                            <button type="button" class="filter-tag-remove btn-bare" aria-label="${esc(t('Remove {name}', {name: String(v)}))}" data-on-click="AllGamesController.${fn}" data-args="${actionArgs(String(k))}">&#215;</button></span>`];
+                        const label = filterLabel(k, v);
+                        return [`<span class="${cls}">${icons[k] || ''} ${not}${esc(label)}
+                            <button type="button" class="filter-tag-remove btn-bare" aria-label="${esc(t('Remove {name}', {name: label}))}" data-on-click="AllGamesController.${fn}" data-args="${actionArgs(String(k))}">&#215;</button></span>`];
                     }
                     return asList(v).map(one => `<span class="${cls}">${icons[k] || ''} ${not}${esc(tField(one))}
                         <button type="button" class="filter-tag-remove btn-bare" aria-label="${esc(t('Remove {name}', {name: tField(one)}))}" data-on-click="AllGamesController.removeFilterValue" data-args="${actionArgs(String(k), one, exclude)}">&#215;</button></span>`);
@@ -1305,7 +1332,9 @@ const AllGamesController = (function() {
 
                     if (targetCard) {
                         // Found in DOM — smooth scroll to it
-                        const offset = (filterBar ? filterBar.offsetHeight : 0) +
+                        // baseTop: the phone's fixed header covers the top too.
+                        const offset = (window.StickyScroll ? StickyScroll.baseTop() : 0) +
+                                       (filterBar ? filterBar.offsetHeight : 0) +
                                        (nav ? nav.offsetHeight : 0) + 20;
                         const targetPos = targetCard.getBoundingClientRect().top +
                                          window.pageYOffset - offset;

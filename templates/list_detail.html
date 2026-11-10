@@ -71,9 +71,8 @@
     </div>
 </section>
 
-<!-- Empty State -->
-{% if not games %}
-<div class="empty-state" id="listEmptyState">
+<!-- Empty State: always rendered, so removing the last game can show it -->
+<div class="empty-state" id="listEmptyState"{% if games %} style="display: none;"{% endif %}>
     <div class="empty-state-icon">📋</div>
     <div class="empty-state-title">{{ _('This List is Empty') }}</div>
     <div class="empty-state-text">
@@ -83,7 +82,6 @@
         <span class="btn-icon">+</span> {{ _('Add Games') }}
     </button>
 </div>
-{% endif %}
 
 <!-- Add Game Search Modal -->
 <div class="custom-modal" id="addGameModal" data-on-click="closeAddGameModal" data-self-only>
@@ -381,7 +379,7 @@ function closeAddGameModal() {
 
 function debounceGameSearch() {
     clearTimeout(gameSearchTimeout);
-    gameSearchTimeout = setTimeout(searchGamesForList, 400);
+    gameSearchTimeout = setTimeout(searchGamesForList, 300);
 }
 
 async function searchGamesForList() {

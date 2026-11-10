@@ -289,7 +289,9 @@ function _isKnownAction(name) {
 function _runAction(el, eventName, event) {
     const name = el.getAttribute('data-on-' + eventName);
     if (el.hasAttribute('data-self-only') && event.target !== el) return;
-    if (el.dataset.key && event.key !== el.dataset.key) return;
+    // data-key filters key events only: the same box's data-on-input must
+    // still run (PASS-59-283: search-as-you-type was dead beside an Enter key).
+    if (el.dataset.key && eventName.startsWith('key') && event.key !== el.dataset.key) return;
     if (el.hasAttribute('data-prevent')) event.preventDefault();
     if (!name) return;  // a bare data-on-<event> only stops or prevents
     if (!_isKnownAction(name)) {

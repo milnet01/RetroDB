@@ -254,6 +254,11 @@ function _resetPlaceholder(controllerId) {
     var imgContainer = card.querySelector('.museum-controller-image');
     if (!imgContainer) return;
 
+    // A card that already has a picture keeps it: just clear the progress.
+    var overlay = imgContainer.querySelector('.museum-controller-upload-overlay');
+    if (overlay) overlay.remove();
+    if (imgContainer.querySelector('img')) return;
+
     var fileInput = imgContainer.querySelector('input[type="file"]');
     var placeholder = imgContainer.querySelector('.museum-controller-placeholder');
     if (!placeholder) {
@@ -311,14 +316,13 @@ function removeControllerBg(controllerId) {
                 showNotification(t('Background removed'), 'success');
                 _updateControllerImage(controllerId, data.image);
             } else {
+                // The picture is unchanged; a reload here wiped this message.
                 showNotification(data.error || t('Background removal failed'), 'error');
-                location.reload();
             }
         })
         .catch(function (err) {
             _removeControllerOverlay(controllerId);
             showNotification((err && err.data && err.data.error) || t('Background removal failed'), 'error');
-            location.reload();
         });
 }
 
@@ -327,6 +331,9 @@ function fetchControllerImage(controllerId) {
     var placeholder = card ? card.querySelector('.museum-controller-placeholder') : null;
     if (placeholder) {
         placeholder.innerHTML = `<span class="spinner"></span><span class="text-muted" style="font-size:0.75rem">${escapeHtml(t('Searching & removing background...'))}</span>`;
+    } else {
+        // A card with a picture shows its progress over the picture.
+        _showControllerOverlay(controllerId, t('Searching & removing background...'));
     }
 
     API.post('/api/museum/controller-image/' + controllerId)
@@ -360,12 +367,19 @@ function handleControllerUpload(controllerId, input) {
         return;
     }
 
+    // OK uploads, with or without the background removed; Cancel and
+    // Escape upload nothing (PASS-59-283: both used to upload).
     showConfirm(
         t('Upload Controller Image'),
-        t('Remove background from the uploaded image?'),
-        function () { _doUpload(controllerId, file, true); },
-        function () { _doUpload(controllerId, file, false); }
+        '<label style="display: inline-flex; gap: var(--spacing-sm); align-items: center;"><input type="checkbox" id="ctrlUploadRemoveBg" checked> '
+            + escapeHtml(t('Remove background from the uploaded image?')) + '</label>',
+        function () {
+            var box = document.getElementById('ctrlUploadRemoveBg');
+            _doUpload(controllerId, file, !box || box.checked);
+        },
+        {allowHtml: true}
     );
+    input.value = '';
 }
 
 function _doUpload(controllerId, file, removeBg) {

@@ -581,7 +581,10 @@ function debounceCompareSearch() {
     compareSearchTimeout = setTimeout(searchForCompare, 400);
 }
 
+// Typing and Enter both search: only the newest search may fill the list.
+let compareSearchSeq = 0;
 async function searchForCompare() {
+    const seq = ++compareSearchSeq;
     const q = document.getElementById('compareSearchInput').value.trim();
     const results = document.getElementById('compareSearchResults');
 
@@ -595,6 +598,7 @@ async function searchForCompare() {
     try {
         const resp = await fetch(`/api/games/find?q=${encodeURIComponent(q)}&limit=20`);
         const data = await resp.json();
+        if (seq !== compareSearchSeq) return;
 
         if (!data.success || !data.games || data.games.length === 0) {
             results.innerHTML = '<div class="compare-search-hint">' + {{ _('No games found.')|tojson }} + '</div>';

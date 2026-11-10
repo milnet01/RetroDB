@@ -69,7 +69,8 @@ const AlphabetNav = {
         if (!element) return;
 
         // Account for sticky header
-        const headerOffset = 150;
+        // Plus the phone's fixed header, where it shows (PASS-59-165).
+        const headerOffset = 150 + (window.StickyScroll ? StickyScroll.baseTop() : 0);
         const elementPosition = element.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 

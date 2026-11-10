@@ -4064,7 +4064,14 @@ async function confirmRename() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ new_filename: fullNewFilename })
         });
-        
+        // A sign-in page or proxy error is not JSON: say so, as deleteScreenshot does.
+        if (!(response.headers.get('content-type') || '').includes('application/json')) {
+            errorEl.textContent = response.redirected || response.status === 401
+                ? {{ _('Session expired — please log in again')|tojson }}
+                : {{ _('Server error — please try again')|tojson }};
+            errorEl.classList.add('show');
+            return;
+        }
         const data = await response.json();
         
         if (data.success) {
@@ -5339,7 +5346,7 @@ async function performSearch(event) {
                     if (result.release_date) {
                         year = result.release_date.substring(0, 4);
                     } else if (result.first_release_date) {
-                        year = new Date(result.first_release_date * 1000).getFullYear();
+                        year = new Date(result.first_release_date * 1000).getUTCFullYear();  // IGDB dates are UTC midnight
                     }
                     
                     let platformHtml = '';
@@ -5453,11 +5460,8 @@ async function performSearch(event) {
 }
 
 function applyMetadata(gameSource) {
-    console.log('applyMetadata called with:', gameSource);
-
     // Decode the URI-encoded source (for ES-DE paths with special characters)
     const decodedSource = decodeURIComponent(gameSource);
-    console.log('Decoded source:', decodedSource);
 
     // Determine primary source from gameSource (format: "source_id")
     const primarySource = decodedSource.split('_')[0];
@@ -5475,7 +5479,6 @@ function applyMetadata(gameSource) {
         }
     });
 
-    console.log('Secondary selections:', selections.length, 'starting apply...');
     // PASS-59-108 — runs in the background behind a progress gauge.
     ApplyProgress.run(gameId, decodedSource, selections.length ? selections : null);
 }
@@ -5572,7 +5575,6 @@ function openGameDetailFilterModal(filterType, filterValue, sortBy = null) {
     fetch(fetchUrl)
         .then(response => response.json())
         .then(data => {
-            console.log('[FilterModal] Data received:', data.games ? data.games.length + ' games' : 'no games key');
             if (data.games && data.games.length > 0) {
                 let html = `<div class="filter-count">Found ${data.games.length} game${data.games.length !== 1 ? 's' : ''}</div>`;
                 
@@ -5667,6 +5669,7 @@ async function lookupHLTB() {
             // Store pending data for confirmation
             pendingHltbData = {
                 hltb_id: data.result.hltb_id || null,
+                players: data.result.players || null,
                 match_name: data.result.match_name || query,
                 match_platform: data.result.match_platform || '',
                 confidence: data.result.confidence || 0,
@@ -5686,13 +5689,13 @@ async function lookupHLTB() {
                 headerHtml += `<span class="hltb-match-platform">${escapeHtml(pendingHltbData.match_platform)}</span>`;
             }
             if (pendingHltbData.platform_mismatch) {
-                headerHtml += `<span class="hltb-match-warning">Platform not found</span>`;
+                headerHtml += `<span class="hltb-match-warning">${escapeHtml({{ _('Platform not found')|tojson }})}</span>`;
             }
             if (pendingHltbData.release_year) {
                 headerHtml += `<span class="hltb-match-year">${escapeHtml(String(pendingHltbData.release_year))}</span>`;
             }
             if (confidence > 0) {
-                headerHtml += `<span class="hltb-match-confidence">${confidence}% match</span>`;
+                headerHtml += `<span class="hltb-match-confidence">${confidence}% ${escapeHtml({{ _('match')|tojson }})}</span>`;
             }
             if (pendingHltbData.matched_via_alternate && pendingHltbData.search_term_used) {
                 headerHtml += `<span class="hltb-match-alt-notice" title="${escapeHtml({{ _('Matched using this alternate/regional title — confirm it refers to the same game before saving.')|tojson }})}">⚡ ${ {{ _('via “{term}”')|tojson }}.replace('{term}', () => escapeHtml(pendingHltbData.search_term_used)) }</span>`;
@@ -5743,7 +5746,10 @@ async function confirmHLTB() {
                 playtime: playtime,
                 match_name: pendingHltbData.match_name,
                 match_platform: pendingHltbData.match_platform,
-                confidence: pendingHltbData.confidence
+                confidence: pendingHltbData.confidence,
+                // The save writes both; left out, they were wiped (PASS-59-283).
+                hltb_id: pendingHltbData.hltb_id,
+                players: pendingHltbData.players
             })
         });
 
@@ -5757,9 +5763,9 @@ async function confirmHLTB() {
                 headerHtml = `<div class="hltb-match-header">
                     <span class="hltb-match-title">${escapeHtml(pendingHltbData.match_name)}</span>
                     ${pendingHltbData.match_platform ? `<span class="hltb-match-platform">${escapeHtml(pendingHltbData.match_platform)}</span>` : ''}
-                    ${pendingHltbData.platform_mismatch ? `<span class="hltb-match-warning">Platform not found</span>` : ''}
+                    ${pendingHltbData.platform_mismatch ? `<span class="hltb-match-warning">${escapeHtml({{ _('Platform not found')|tojson }})}</span>` : ''}
                     ${pendingHltbData.release_year ? `<span class="hltb-match-year">${escapeHtml(String(pendingHltbData.release_year))}</span>` : ''}
-                    ${confidence > 0 ? `<span class="hltb-match-confidence">${confidence}% match</span>` : ''}
+                    ${confidence > 0 ? `<span class="hltb-match-confidence">${confidence}% ${escapeHtml({{ _('match')|tojson }})}</span>` : ''}
                 </div>`;
             }
 
@@ -5767,20 +5773,20 @@ async function confirmHLTB() {
                 ${headerHtml}
                 <div class="hltb-results">
                     <div class="hltb-time-row">
-                        <span class="hltb-label">Main Story</span>
+                        <span class="hltb-label">${escapeHtml({{ _('Main Story')|tojson }})}</span>
                         <span class="hltb-value">${escapeHtml(String(pendingHltbData.main_story))}</span>
                     </div>
                     <div class="hltb-time-row">
-                        <span class="hltb-label">Main + Extras</span>
+                        <span class="hltb-label">${escapeHtml({{ _('Main + Extras')|tojson }})}</span>
                         <span class="hltb-value">${escapeHtml(String(pendingHltbData.main_extra))}</span>
                     </div>
                     <div class="hltb-time-row">
-                        <span class="hltb-label">Completionist</span>
+                        <span class="hltb-label">${escapeHtml({{ _('Completionist')|tojson }})}</span>
                         <span class="hltb-value">${escapeHtml(String(pendingHltbData.completionist))}</span>
                     </div>
                 </div>
                 <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
-                    <button type="button" class="btn btn-sm btn-danger" data-on-click="clearHLTB">✕ Clear</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-on-click="clearHLTB">✕ ${escapeHtml({{ _('Clear')|tojson }})}</button>
                 </div>
             `;
 
@@ -5789,14 +5795,14 @@ async function confirmHLTB() {
             savedSection.style.display = 'block';
 
             showNotification({{ _('HLTB data saved')|tojson }}, 'success');
+            pendingHltbData = null;
         } else {
             showNotification(data.error || {{ _('Failed to save HLTB data')|tojson }}, 'error');
         }
     } catch (error) {
         showNotification({{ _('Error saving HLTB data')|tojson }}, 'error');
     }
-
-    pendingHltbData = null;
+    // A failed save keeps the match, so Save can be pressed again.
 }
 
 function cancelHLTB() {
@@ -5818,7 +5824,10 @@ async function clearHLTB() {
             const data = await response.json();
 
             if (data.success) {
-                document.getElementById('hltbSaved').style.display = 'none';
+                // Emptied too, so a later lookup's Cancel cannot bring it back.
+                const saved = document.getElementById('hltbSaved');
+                saved.style.display = 'none';
+                saved.innerHTML = '';
                 showNotification({{ _('HLTB data cleared')|tojson }}, 'success');
             } else {
                 showNotification(data.error || {{ _('Failed to clear HLTB data')|tojson }}, 'error');
@@ -5986,7 +5995,7 @@ async function deleteScreenshot(filename) {
 
                 if (data.success) {
                     // Remove the thumbnail from DOM
-                    const thumb = document.querySelector(`.screenshot-thumb[data-filename="${filename}"]`);
+                    const thumb = document.querySelector(`.screenshot-thumb[data-filename="${CSS.escape(filename)}"]`);
                     if (thumb) {
                         thumb.remove();
                     }
@@ -6049,10 +6058,11 @@ document.querySelectorAll('.filter-link').forEach(link => {
                 </a>`;
             }).join('');
         } else {
-            grid.innerHTML = '<span style="color: var(--text-muted); font-size: 0.85rem;">No similar games found in library</span>';
+            grid.innerHTML = '<span style="color: var(--text-muted); font-size: 0.85rem;">' + escapeHtml({{ _('No similar games found in library')|tojson }}) + '</span>';
         }
     } catch (e) {
-        grid.innerHTML = '';
+        console.error('Similar games failed to load:', e);
+        grid.innerHTML = '<span style="color: var(--text-muted); font-size: 0.85rem;">' + escapeHtml({{ _('Could not load similar games.')|tojson }}) + '</span>';
     }
 })();
 </script>

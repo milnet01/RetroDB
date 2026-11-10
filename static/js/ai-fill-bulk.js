@@ -39,7 +39,12 @@
             return systemSelect.value ? Number(systemSelect.value) : null;
         }
 
+        // Each count request is numbered; only the newest may set the count
+        // the paid confirmation quotes (a system, field or tick change all
+        // start a new one).
+        let countRequest = 0;
         async function loadCount() {
+            const request = ++countRequest;
             const selected = systemSelect.value;
             const chosen = fields();
             if (!chosen.length) {
@@ -47,18 +52,20 @@
                 countLine.textContent = t('Turn on at least one field.');
                 return;
             }
+            count = 0;  // Run says "Loading…" until this request answers
             countLine.textContent = t('Loading…');
             try {
                 const qs = new URLSearchParams({ fields: chosen.join(',') });
                 if (selected) qs.set('system_id', selected);
                 if (includeDone.checked) qs.set('include_done', '1');
                 const data = await API.get(`/api/ai-fill-bulk/count?${qs}`);
-                if (systemSelect.value !== selected) return;
+                if (request !== countRequest) return;
                 count = data.count;
                 countLine.textContent = count
                     ? t('Games to fill: {count}.', { count: count })
                     : t('No game here has those fields empty, or AI Fill has done them all.');
             } catch (err) {
+                if (request !== countRequest) return;
                 countLine.textContent = failMessage(err, t('Could not count the games.'));
             }
         }

@@ -63,7 +63,7 @@ const AlphabetNav = {
     scrollToLetter(element) {
         if (!element) return;
 
-        const headerOffset = 150;
+        const headerOffset = 150 + (window.StickyScroll ? StickyScroll.baseTop() : 0);
         const elementPosition = element.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
@@ -1835,7 +1835,9 @@ const GameEditModal = {
                 GameEditModal.currentData.playtime_estimate = playtime;
                 GameEditModal.currentData.hltb_match_name = pending.match_name;
                 GameEditModal.currentData.hltb_match_platform = pending.match_platform;
-                GameEditModal.currentData.hltb_match_confidence = pending.confidence;
+                GameEditModal.currentData.hltb_match_confidence = pending.confidence ? pending.confidence / 100 : null;
+                GameEditModal.currentData.hltb_id = pending.hltb_id;
+                GameEditModal.currentData.hltb_players = pending.players;
                 GameDetailModal.cache.set(GameEditModal.currentData.id, GameEditModal.currentData);
             }
         },
@@ -1985,7 +1987,7 @@ const GameEditModal = {
         for (const [roman, arabic] of romanMap) {
             const padded = arabic.padStart(2, '0');
             if (singleLetterRomans.has(roman)) {
-                sortTitle = sortTitle.replace(new RegExp('(?<![-\\w])' + roman + '(?![-\\w])', 'g'), padded);
+                sortTitle = sortTitle.replace(new RegExp('(?<![-\\w])' + roman + '(?=\\s*$|\\s*[:(\\[]|\\s+\\d)', 'g'), padded);
             } else {
                 sortTitle = sortTitle.replace(new RegExp('\\b' + roman + '\\b', 'g'), padded);
             }
@@ -2057,11 +2059,9 @@ const GameEditModal = {
                 document.getElementById('gdmGenre').textContent = tField(formData.genre) || '-';
                 document.getElementById('gdmFranchise').textContent = formData.franchise || '-';
 
-                if (formData.description) {
-                    const desc = formData.description;
-                    document.getElementById('gdmDescription').textContent =
-                        desc.length > 300 ? desc.substring(0, 300) + '...' : desc;
-                }
+                const desc = formData.description || t('No description available.');
+                document.getElementById('gdmDescription').textContent =
+                    desc.length > 300 ? desc.substring(0, 300) + '...' : desc;
 
                 const ratingsEl = document.getElementById('gdmRatings');
                 ratingsEl.innerHTML = _buildAgeRatingBadgesHtml(formData)
@@ -2142,22 +2142,22 @@ const GameEditModal = {
                     <div class="hltb-match-header">
                         <span class="hltb-match-title">${escapeHtml(game.hltb_match_name)}</span>
                         ${game.hltb_match_platform ? `<span class="hltb-match-platform">${escapeHtml(game.hltb_match_platform)}</span>` : ''}
-                        ${confidence ? `<span class="hltb-match-confidence">${confidence}% match</span>` : ''}
+                        ${confidence ? `<span class="hltb-match-confidence">${escapeHtml(t('{confidence}% match', {confidence: confidence}))}</span>` : ''}
                     </div>`;
             }
 
             display.innerHTML = `
                 ${matchHeader}
                 <div class="hltb-time-row">
-                    <span class="hltb-label">Main Story</span>
+                    <span class="hltb-label">${escapeHtml(t('Main Story'))}</span>
                     <span class="hltb-value">${escapeHtml(times.main)}</span>
                 </div>
                 <div class="hltb-time-row">
-                    <span class="hltb-label">Main + Extras</span>
+                    <span class="hltb-label">${escapeHtml(t('Main + Extras'))}</span>
                     <span class="hltb-value">${escapeHtml(times.extras)}</span>
                 </div>
                 <div class="hltb-time-row">
-                    <span class="hltb-label">Completionist</span>
+                    <span class="hltb-label">${escapeHtml(t('Completionist'))}</span>
                     <span class="hltb-value">${escapeHtml(times.complete)}</span>
                 </div>`;
             savedDiv.style.display = 'block';

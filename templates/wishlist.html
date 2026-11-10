@@ -535,17 +535,32 @@ async function loadSystems() {
     }
 }
 
+// A failed first load says so; a page that already shows its items keeps
+// them (the wishlist reloads itself while a scrape runs) (PASS-59-283).
+let loadWishlistShown = false;
+function loadWishlistFailed(message) {
+    if (loadWishlistShown) return;
+    showNotification(message || {{ _('Could not load your wishlist.')|tojson }}, 'error');
+    const grid = document.getElementById('wishlistGrid');
+    grid.style.display = '';
+    grid.innerHTML = '<div class="text-muted">' + escapeHtml({{ _('Could not load your wishlist.')|tojson }}) + '</div>';
+}
+
 async function loadWishlist() {
     try {
         const resp = await fetch('/api/wishlist');
         const data = await resp.json();
         if (data.success) {
             allItems = data.items || [];
+            loadWishlistShown = true;
             renderWishlist();
             maybeStartPolling();
+        } else {
+            loadWishlistFailed(data.error);
         }
     } catch (e) {
         console.error('Error loading wishlist:', e);
+        loadWishlistFailed();
     }
 }
 

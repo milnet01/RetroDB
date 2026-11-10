@@ -104,8 +104,9 @@
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({[s.setting]: select.value || null}),
                     });
-                    const data = await resp.json();
-                    if (!resp.ok || !data.success) throw new Error(data.error || resp.statusText);
+                    // A non-JSON reply (sign-in page) is a failure, not a parse error.
+                    const data = await resp.json().catch(() => ({}));
+                    if (!resp.ok || !data.success) throw new Error(data.error || t('Could not save that setting.'));
                     render(panel, data.data);
                     showNotification(t('Saved. It applies the next time you press Play.'), 'success');
                 } catch (err) {

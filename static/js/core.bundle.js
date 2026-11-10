@@ -2866,7 +2866,7 @@ function _isKnownAction(name) {
 function _runAction(el, eventName, event) {
     const name = el.getAttribute('data-on-' + eventName);
     if (el.hasAttribute('data-self-only') && event.target !== el) return;
-    if (el.dataset.key && event.key !== el.dataset.key) return;
+    if (el.dataset.key && eventName.startsWith('key') && event.key !== el.dataset.key) return;
     if (el.hasAttribute('data-prevent')) event.preventDefault();
     if (!name) return;  // a bare data-on-<event> only stops or prevents
     if (!_isKnownAction(name)) {

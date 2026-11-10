@@ -388,16 +388,31 @@ let expandedTagId = null;
 
 document.addEventListener('DOMContentLoaded', loadTags);
 
+// A failed first load says so; a page that already shows its items keeps
+// them (the wishlist reloads itself while a scrape runs) (PASS-59-283).
+let loadTagsShown = false;
+function loadTagsFailed(message) {
+    if (loadTagsShown) return;
+    showNotification(message || {{ _('Could not load your tags.')|tojson }}, 'error');
+    const grid = document.getElementById('tagsGrid');
+    grid.style.display = '';
+    grid.innerHTML = '<div class="text-muted">' + escapeHtml({{ _('Could not load your tags.')|tojson }}) + '</div>';
+}
+
 async function loadTags() {
     try {
         const resp = await fetch('/api/tags');
         const data = await resp.json();
         if (data.success) {
             allTags = data.tags || [];
+            loadTagsShown = true;
             renderTags();
+        } else {
+            loadTagsFailed(data.error);
         }
     } catch (e) {
         console.error('Error loading tags:', e);
+        loadTagsFailed();
     }
 }
 
@@ -498,6 +513,10 @@ async function saveTag() {
     const editId = document.getElementById('tagEditId').value;
     const payload = { name: name, color: selectedTagColor };
 
+    // One request at a time: a double click made two tags (PASS-59-283).
+    const saveBtn = document.getElementById('tagSaveBtn');
+    if (saveBtn.disabled) return;
+    saveBtn.disabled = true;
     try {
         let resp;
         if (editId) {
@@ -525,6 +544,8 @@ async function saveTag() {
     } catch (e) {
         console.error('Error saving tag:', e);
         showNotification({{ _('Error saving tag.')|tojson }}, 'error');
+    } finally {
+        saveBtn.disabled = false;
     }
 }
 

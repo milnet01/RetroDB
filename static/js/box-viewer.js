@@ -305,8 +305,20 @@
         return [(v >> 16 & 255) / 255, (v >> 8 & 255) / 255, (v & 255) / 255];
     }
 
+    // A shader that will not compile or link means no 3D box: the zoom
+    // shows the plain cover, and the next open tries again (PASS-59-283).
     function initGl() {
         if (gl) return true;
+        try {
+            return setUpGl();
+        } catch (e) {
+            console.error('3D box viewer could not start:', e);
+            gl = null;
+            return false;
+        }
+    }
+
+    function setUpGl() {
         gl = canvas.getContext('webgl2', {antialias: true, premultipliedAlpha: true, alpha: true});
         if (!gl) return false;
         const shader = (type, src) => {
@@ -531,6 +543,12 @@
         if (!root) return;
         stage = root.querySelector('.box-viewer-stage');
         canvas = root.querySelector('.box-viewer-canvas');
+        // A lost context (driver reset) leaves gl and every texture dead:
+        // drop them so the next show() builds afresh.
+        canvas.addEventListener('webglcontextlost', () => {
+            gl = null;
+            for (const url of Object.keys(textures)) delete textures[url];
+        });
         try {
             record = JSON.parse(root.dataset.record || 'null');
         } catch (e) {

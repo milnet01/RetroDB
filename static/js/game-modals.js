@@ -916,7 +916,10 @@ const GameEditModal = {
                 GameEditModal.currentData.playtime_estimate = playtime;
                 GameEditModal.currentData.hltb_match_name = pending.match_name;
                 GameEditModal.currentData.hltb_match_platform = pending.match_platform;
-                GameEditModal.currentData.hltb_match_confidence = pending.confidence;
+                // The row keeps a 0-1 fraction; the lookup gives a percent.
+                GameEditModal.currentData.hltb_match_confidence = pending.confidence ? pending.confidence / 100 : null;
+                GameEditModal.currentData.hltb_id = pending.hltb_id;
+                GameEditModal.currentData.hltb_players = pending.players;
                 GameDetailModal.cache.set(GameEditModal.currentData.id, GameEditModal.currentData);
             }
         },
@@ -1084,9 +1087,11 @@ const GameEditModal = {
         for (const [roman, arabic] of romanMap) {
             const padded = arabic.padStart(2, '0');
             if (singleLetterRomans.has(roman)) {
-                // Skip if adjacent to a hyphen or word character (compound names)
-                // e.g. V-Rally, X-Men, I-Ninja — the letter is part of the name, not a numeral
-                sortTitle = sortTitle.replace(new RegExp('(?<![-\\w])' + roman + '(?![-\\w])', 'g'), padded);
+                // As services/game_utils.generate_sort_title (Pass 41.9.C): a lone
+                // I, V or X is a numeral only at the end, before a subtitle mark
+                // or before a number. "I Have No Mouth" keeps its pronoun; a
+                // hyphen or letter beside it (V-Rally, X-Men) is part of a name.
+                sortTitle = sortTitle.replace(new RegExp('(?<![-\\w])' + roman + '(?=\\s*$|\\s*[:(\\[]|\\s+\\d)', 'g'), padded);
             } else {
                 sortTitle = sortTitle.replace(new RegExp('\\b' + roman + '\\b', 'g'), padded);
             }
@@ -1163,11 +1168,10 @@ const GameEditModal = {
                 document.getElementById('gdmGenre').textContent = tField(formData.genre) || '-';
                 document.getElementById('gdmFranchise').textContent = formData.franchise || '-';
 
-                if (formData.description) {
-                    const desc = formData.description;
-                    document.getElementById('gdmDescription').textContent =
-                        desc.length > 300 ? desc.substring(0, 300) + '...' : desc;
-                }
+                // A cleared description shows the empty text, as on open.
+                const desc = formData.description || t('No description available.');
+                document.getElementById('gdmDescription').textContent =
+                    desc.length > 300 ? desc.substring(0, 300) + '...' : desc;
 
                 // Update ratings in detail modal — admin sees all, users see preferred
                 const ratingsEl = document.getElementById('gdmRatings');
@@ -1255,22 +1259,22 @@ const GameEditModal = {
                     <div class="hltb-match-header">
                         <span class="hltb-match-title">${escapeHtml(game.hltb_match_name)}</span>
                         ${game.hltb_match_platform ? `<span class="hltb-match-platform">${escapeHtml(game.hltb_match_platform)}</span>` : ''}
-                        ${confidence ? `<span class="hltb-match-confidence">${confidence}% match</span>` : ''}
+                        ${confidence ? `<span class="hltb-match-confidence">${escapeHtml(t('{confidence}% match', {confidence: confidence}))}</span>` : ''}
                     </div>`;
             }
 
             display.innerHTML = `
                 ${matchHeader}
                 <div class="hltb-time-row">
-                    <span class="hltb-label">Main Story</span>
+                    <span class="hltb-label">${escapeHtml(t('Main Story'))}</span>
                     <span class="hltb-value">${escapeHtml(times.main)}</span>
                 </div>
                 <div class="hltb-time-row">
-                    <span class="hltb-label">Main + Extras</span>
+                    <span class="hltb-label">${escapeHtml(t('Main + Extras'))}</span>
                     <span class="hltb-value">${escapeHtml(times.extras)}</span>
                 </div>
                 <div class="hltb-time-row">
-                    <span class="hltb-label">Completionist</span>
+                    <span class="hltb-label">${escapeHtml(t('Completionist'))}</span>
                     <span class="hltb-value">${escapeHtml(times.complete)}</span>
                 </div>`;
             savedDiv.style.display = 'block';

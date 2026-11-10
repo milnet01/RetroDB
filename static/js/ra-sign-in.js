@@ -35,8 +35,8 @@
         const token = document.querySelector('meta[name="csrf-token"]');
         if (token) headers['X-CSRF-Token'] = token.getAttribute('content');
         const rv = await fetch(url, {method, headers, body: body && JSON.stringify(body)});
-        const data = await rv.json();
-        if (!rv.ok || !data.success) throw new Error(data.error || rv.statusText);
+        const data = await rv.json().catch(() => ({}));
+        if (!rv.ok || !data.success) throw new Error(data.error || t('No answer from RetroDB'));
         return data;
     }
 
@@ -79,5 +79,6 @@
         }
     });
 
-    send('GET', URL).then(show).catch(() => {});
+    // Without the state the box stays hidden; say why in the console.
+    send('GET', URL).then(show).catch(e => console.error('RetroAchievements sign-in state failed to load:', e));
 })();

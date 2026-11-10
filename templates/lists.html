@@ -307,16 +307,31 @@ let selectedListIcon = '📋';
 
 document.addEventListener('DOMContentLoaded', loadLists);
 
+// A failed first load says so; a page that already shows its items keeps
+// them (the wishlist reloads itself while a scrape runs) (PASS-59-283).
+let loadListsShown = false;
+function loadListsFailed(message) {
+    if (loadListsShown) return;
+    showNotification(message || {{ _('Could not load your lists.')|tojson }}, 'error');
+    const grid = document.getElementById('listsGrid');
+    grid.style.display = '';
+    grid.innerHTML = '<div class="text-muted">' + escapeHtml({{ _('Could not load your lists.')|tojson }}) + '</div>';
+}
+
 async function loadLists() {
     try {
         const resp = await fetch('/api/lists');
         const data = await resp.json();
         if (data.success) {
             allLists = data.lists || [];
+            loadListsShown = true;
             renderLists();
+        } else {
+            loadListsFailed(data.error);
         }
     } catch (e) {
         console.error('Error loading lists:', e);
+        loadListsFailed();
     }
 }
 
@@ -430,6 +445,10 @@ async function saveList() {
         icon: selectedListIcon
     };
 
+    // One request at a time: a double click made two lists (PASS-59-283).
+    const saveBtn = document.getElementById('listSaveBtn');
+    if (saveBtn.disabled) return;
+    saveBtn.disabled = true;
     try {
         let resp;
         if (editId) {
@@ -457,6 +476,8 @@ async function saveList() {
     } catch (e) {
         console.error('Error saving list:', e);
         showNotification({{ _('Error saving list.')|tojson }}, 'error');
+    } finally {
+        saveBtn.disabled = false;
     }
 }
 

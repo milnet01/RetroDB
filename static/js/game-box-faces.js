@@ -18,14 +18,21 @@
         return m ? m.getAttribute('content') : '';
     };
 
+    // A network failure answers like an empty reply, so each caller shows
+    // its own error message instead of an unhandled rejection (PASS-59-283).
     async function send(gameId, method, body) {
-        const resp = await fetch(`/api/games/${gameId}/box-faces`, {
-            method,
-            headers: {'X-CSRF-Token': csrfToken()},
-            body,
-        });
-        const data = await resp.json().catch(() => ({}));
-        return {status: resp.status, data};
+        try {
+            const resp = await fetch(`/api/games/${gameId}/box-faces`, {
+                method,
+                headers: {'X-CSRF-Token': csrfToken()},
+                body,
+            });
+            const data = await resp.json().catch(() => ({}));
+            return {status: resp.status, data};
+        } catch (e) {
+            console.error('Box faces request failed:', e);
+            return {status: 0, data: {}};
+        }
     }
 
     function showNote(record) {
