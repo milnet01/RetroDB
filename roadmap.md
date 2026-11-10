@@ -18,7 +18,11 @@ Open work, by the version it ships in:
 
 - [4.0.0 — The last web version](#400--the-last-web-version) — the PASS-59-113 plan and every fix before release
 - [4.0.x — Security and data-loss fixes](#40x--security-and-data-loss-fixes-for-the-web-version) — the web version after 4.0.0
-- [4.x.0 — The desktop and Android app](#4x0--the-desktop-and-android-app-piece-by-piece) — new features, built in the native app
+- [4.1.0 — Desktop app: browse and play](#410--desktop-app-browse-and-play) — the native app's first piece
+- [4.2.0 — Desktop app: edit and scrape](#420--desktop-app-edit-and-scrape)
+- [4.3.0 — Desktop app: tools, cheats and statistics](#430--desktop-app-tools-cheats-and-statistics)
+- [4.4.0 — Desktop app: looks and languages](#440--desktop-app-looks-and-languages)
+- [4.5.0 — The Android app](#450--the-android-app)
 - [5.0.0 — The full desktop app](#500--the-full-desktop-app) — the native app does everything
 - [Ideas, not planned](#ideas-not-planned) — considered or dropped
 
@@ -1107,6 +1111,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     into docs/roadmap/<minor>.md; the table of contents points there.
     Left: "Shipped, version not known" has no archive op yet; requested
     from ants-terminal (RetroDB_Ants_MCP_Feedback.md, 2026-11-10).
+  - **Progress** (2026-11-10, split): the user asked to split 4.x.0 by
+    release. One version per port-plan phase: 4.1.0 browse and play,
+    4.2.0 edit and scrape, 4.3.0 tools, cheats and statistics, 4.4.0
+    looks and languages, 4.5.0 Android. Each item went to the phase that
+    builds its screen; the 4.x.0 heading was removed.
   **Layman:** The roadmap is grouped by version, like other projects.
   Kind: implement.
 
@@ -2605,9 +2614,80 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
 
 After 4.0.0 the web version gets security and data-loss fixes only, always as 4.0.x: the 4.0 updater treats 4.1.0 and up as the desktop app.
 
-## 4.x.0 — The desktop and Android app, piece by piece
+## 4.1.0 — Desktop app: browse and play
 
-The native app (Rust + Slint) ships in pieces as 4.1.0, 4.2.0 and on. New features outside the 4.0.0 plan are built here, not in the web version.
+The first piece of the native app (Rust + Slint): the Library, console and game
+pages, and launching games. Port plan phases 0 to 2
+(docs/plans/PASS-59-270-native-app-port.md).
+
+- 📋 [PASS-59-182] **A missing emulator falls back to a RetroArch that can play the game (ENHANCEMENT, S).**
+  - **Report**: Tomb Raider (GBC) failed with "Emulator binary not
+    found on PATH: 'mgba-qt'". The user expects RetroArch to play it.
+  - **Found** (2026-10-29): gb, gbc and gba default to mGBA, not
+    installed. `launch_resolver.pick_launch_mapping` already falls back
+    to the player when the default does not resolve, but
+    `_player_serves` needs the player's program, and RetroArch
+    (RetroDB) is not downloaded yet (no `data/player/`). The user's own
+    RetroArch row is never tried.
+  - **Target**: (1) the error offers Get RetroArch where the player
+    could serve the system; (2) consider the user's own RetroArch with
+    a core for the system as a further fallback.
+  - **Status**: todo.
+  - **Source**: user, 2026-10-29.
+
+  ---
+  **Layman:** If a game's emulator is missing, RetroArch plays it instead.
+  Kind: implement.
+
+- 📋 [PASS-59-184] **3D box art matches the ROM's region (ENHANCEMENT, M).**
+  - **Target**: a game's 3D box shows its own region's case; many
+    regions' cases look different.
+  - **Open**: which sources give region-tagged 3D boxes, and how the
+    region is read (the `region` field, the ROM name's tags). Related:
+    PASS-59-162, PASS-59-143.
+  - **Status**: todo.
+  - **Source**: user, 2026-10-29.
+
+  ---
+  **Layman:** A game's 3D box matches its region's case.
+  Kind: implement.
+
+- 📋 [PASS-59-191] **Sort and filter the Library by copies sold (feature, S).**
+  - **Target**: a Copies sold sort option beside Critic score and User
+    score (`templates/system_games.html`, `AllGamesController`, so the
+    Library and system pages stay in sync), and a "has a sales figure"
+    filter.
+  - **Status**: todo.
+
+  ---
+  **Layman:** Sort and filter the Library by copies sold.
+  Kind: implement.
+
+- 📋 [PASS-59-193] **Best-seller badges on a game's page (feature, S).**
+  - **Target**: a badge on the game page from `units_sold`: its rank
+    among the system's games with a figure ("#3 best seller on SNES in
+    your library"), shown only for the top 10.
+  - **Status**: todo.
+
+  ---
+  **Layman:** Best-seller badges on a game's page.
+  Kind: implement.
+
+- 📋 [PASS-59-230] **Arcade flyers on the game page (enhancement, S).**
+  - **Status**: todo
+  - **Decided** (user, 2026-11-02): after v4.0.0.
+  - **What the sources send**: ScreenScraper `flyer` (documentation only,
+    in no sample seen). Check a real arcade answer before building.
+  - **Pattern**: the box back (PASS-59-225) — its own column and folder,
+    fill-only, and a place on the game page.
+
+  ---
+  **Layman:** Arcade flyers on the game page.
+  Kind: implement.
+
+## 4.2.0 — Desktop app: edit and scrape
+
+Editing games and filling them from the online sources. Port plan phase 3.
 
 - 📋 [PASS-53-5] **Role-aware rating display in the edit form (UX, S)**
   - **Status**: planned.
@@ -2623,6 +2703,62 @@ The native app (Rust + Slint) ships in pieces as 4.1.0, 4.2.0 and on. New featur
   - **Est.**: S — a role check + conditional render around the rating block.
   **Layman:** The edit form shows only the age-rating boxes that matter to you.
   Kind: implement.
+
+- 📋 [PASS-53-9] **Deep-link from scrape failure to the API-key form (UX, S)**
+  - **Status**: planned.
+  - **Problem**: API keys live three levels deep (Settings → Scraping → sub-tab,
+    `scraping.html:7,265`), yet skipping them causes silent scrape failures whose
+    fix is buried. There's no link from the failure back to the fix.
+  - **Plan**: when a scrape fails for a missing / invalid key, surface a direct
+    link to the API-keys sub-tab (`/settings#scraping` + sub-nav anchor). Pairs
+    with the setup wizard's optional-API-key step (Pass 53.8).
+  - **Est.**: S — a targeted link in the failure message / toast.
+  **Layman:** A scrape that fails for a missing key takes you straight to where you enter it.
+  Kind: implement.
+
+- 📋 [PASS-59-183] **MobyGames as a scrape source (FEATURE, M).**
+  - **Target**: RetroDB fetches game details from MobyGames. The user
+    has no API key.
+  - **Research first** (unverified): whether MobyGames' API needs a
+    paid or approved key, its rate limits and terms, and whether any
+    keyless route is allowed. Scraping its web pages may breach its
+    terms. Fits PASS-59-162's source review.
+  - **Status**: todo.
+  - **Source**: user, 2026-10-29.
+
+  ---
+  **Layman:** MobyGames as another place to look up game details.
+  Kind: implement.
+
+- 📋 [PASS-59-185] **One AI Fill tool in ROM Tools, with a switch for each kind of fill (UX, M).**
+  - **Target**: ROM Tools shows two AI tools today, Official Names and
+    Backfill Alternate Titles. Merge them into one AI Fill with an
+    on/off switch per kind, plus release dates for all regions.
+  - **Status**: todo.
+  - **Source**: user, 2026-10-29.
+
+  ---
+  **Layman:** One AI Fill tool, with a switch for each kind of detail it fills.
+  Kind: implement.
+
+- 📋 [PASS-59-220] **Sales figures for 8-bit games: cited numbers and period sources (enhancement, M).**
+  - **Status**: todo
+  - **Request** (user, 2026-10-31): a Gemini answer listed sources for 8-bit sales figures; see if it can be used.
+  - **Measured 2026-10-31**: `units_sold` is empty on every Commodore 64, ZX Spectrum and Atari 5200 game in one library, and on most Atari 2600 games. Only the AI fills it, and `_build_prompt` already names Wikipedia's lists and VGChartz, with nothing for 8-bit computers.
+  - **Treat the answer as leads, not data**: checked against Wikipedia, its Pitfall! and Asteroids figures differ (about 4.5m and 4.3m against 4,000,000 and 3,832,886), and Sensible Soccer is not listed for Spectrum or C64.
+  - **Plan**: 1. A small shipped table of cited figures, each with its source link, starting with Wikipedia's Atari 2600 list (24 games, each row referenced; text CC BY-SA 4.0, so credit it). It fills `units_sold` fill-only, without paying for AI. 2. For 8-bit systems, add to the AI prompt: the C64 Wiki, Spectrum Computing, World of Spectrum, AtariAge and period magazines on archive.org. Keep "a published figure, never your own estimate", and accept a stated milestone only as that game's figure. 3. Show the source beside the number, with PASS-59-211.
+  - **Not planned**: scraping VGChartz, forums or magazine scans; no API, and terms not checked. A forum estimate is not a published figure.
+  - **Limit**: most 8-bit games have no published figure, so most stay empty, which is the true answer.
+
+  ---
+  **Layman:** Sales figures for 8-bit games, with their sources.
+  Kind: implement.
+
+## 4.3.0 — Desktop app: tools, cheats and statistics
+
+Everything else the web version does: long tasks, the image upscaler,
+achievements and trophies, cheats, imports, ROM tools, analytics and the museum.
+Port plan phase 4.
 
 - 📋 [PASS-53-6] **ROM Tools nav link: hub vs last-visited, as a preference (UX, S)**
   - **Status**: planned (low priority — the maintainer prefers the current
@@ -2643,18 +2779,6 @@ The native app (Rust + Slint) ships in pieces as 4.1.0, 4.2.0 and on. New featur
   **Layman:** A setting chooses whether the ROM Tools link opens the tool list or the last tool you used.
   Kind: implement.
 
-- 📋 [PASS-53-9] **Deep-link from scrape failure to the API-key form (UX, S)**
-  - **Status**: planned.
-  - **Problem**: API keys live three levels deep (Settings → Scraping → sub-tab,
-    `scraping.html:7,265`), yet skipping them causes silent scrape failures whose
-    fix is buried. There's no link from the failure back to the fix.
-  - **Plan**: when a scrape fails for a missing / invalid key, surface a direct
-    link to the API-keys sub-tab (`/settings#scraping` + sub-nav anchor). Pairs
-    with the setup wizard's optional-API-key step (Pass 53.8).
-  - **Est.**: S — a targeted link in the failure message / toast.
-  **Layman:** A scrape that fails for a missing key takes you straight to where you enter it.
-  Kind: implement.
-
 - 📋 [PASS-53-12] **Persistent inline error state for walk-away operations (UX, S)**
   - **Status**: planned.
   - **Problem**: errors from user-initiated operations surface only as ephemeral
@@ -2669,61 +2793,6 @@ The native app (Rust + Slint) ships in pieces as 4.1.0, 4.2.0 and on. New featur
     that. This item adds durability; it does not change toast timing.
   - **Est.**: S — an inline error state hooked into the existing error paths.
   **Layman:** An error from a long task stays on screen until you have seen it.
-  Kind: implement.
-
-- 📋 [PASS-56-2] **Further language packs — Czech, Swedish, Thai, Vietnamese (FEATURE, L)**
-  - **Target**: four more locales — **`cs` Czech, `sv` Swedish, `th` Thai,
-    `vi` Vietnamese** — the next-highest-value gaps for a retro-gaming audience
-    after the Pass 56.1 set.
-  - **Why**: all four are widely-spoken, well-resourced for quality translation,
-    all left-to-right (no RTL prerequisite, unlike Pass 43.4's Arabic), and absent
-    from the current 21-language set. Suggested to and approved by the user
-    2026-07-05.
-  - **Plan**: identical pipeline to Pass 56.1 — `pybabel init -l <code>` →
-    per-locale `{msgid: translation}` JSON → `scripts/apply_po_translations.py`
-    (strict: hard-fails on any missing msgid or dropped placeholder) → `pybabel
-    compile`; then the 14-entry `data/changelog.<code>.yaml` + the ~2000-line
-    `templates/help.<code>.html` (copy-then-translate-prose, anchors byte-identical).
-    Zero code changes — `available_locales()` auto-surfaces each new catalog in the
-    Settings dropdown / validator / selector. Plural-form counts (from CLDR, set by
-    `pybabel init`): `cs` 4, `sv` 2, `th` 1, `vi` 1. Would take the shipped set to
-    25 languages.
-  - **Verify**: `available_locales()` returns the four new codes; `pybabel compile`
-    clean; `scripts/check_i18n_fresh.py` green (msgid set unchanged — locales only);
-    each changelog parses at the current recent-entry count; each help file's
-    `id`/`href` anchor set + Jinja-token count byte-identical to `help.html`.
-  - **Status**: planned (2026-07-05). Not started; a self-contained follow-on to
-    Pass 56.1 whenever the user wants the next batch.
-
-  ---
-  **Layman:** Czech, Swedish, Thai and Vietnamese translations.
-  Kind: implement.
-
-- 📋 [PASS-43-4] **RTL layout support + Arabic (MEDIUM, L)**
-  - **Target**: `static/css/core/*.css`, every grid/flex layout, every
-    text-align/margin-left utility.
-  - **Why**: Arabic and Hebrew are RTL; the current CSS bakes
-    left-to-right assumptions deep into the grid/sticky-nav system.
-  - **Plan**: switch directional utilities (`margin-left/right`,
-    `text-align: left`) to logical properties (`margin-inline-start/end`,
-    `text-align: start`).  Add `[dir="rtl"]` overrides where logical
-    properties don't reach (icons, chevrons, sortable column arrows).
-    `<html dir="rtl">` driven by locale class (`app.py::select_locale` result →
-    Babel `Locale.parse(code).text_direction`).  The CSS audit is the bulk:
-    ~360 physical `left/right` rules, zero logical, no `[dir]` handling as of
-    Pass 56.
-  - **Status**: planned — **un-gated (2026-07-05).** Pass 56 shipped a **Hebrew** (`he`)
-    catalog — the first RTL `.po`, so the "needs a real RTL user" gate is now met.
-    Hebrew currently renders correct Hebrew *text* in the still-LTR layout; this
-    pass is what makes the layout mirror properly. **Also add Arabic (`ar`) here:**
-    Arabic was deliberately held out of Pass 56's translation batch precisely
-    because it needs this layout work first — once RTL layout lands, adding the
-    `ar` catalog (same pipeline as Pass 56: `pybabel init` → translate →
-    `scripts/apply_po_translations.py` → compile) is translation-only. Scope:
-    the CSS logical-property conversion (shared by `he` + `ar`) **plus** the `ar`
-    catalog. Bumped priority MEDIUM (was LOW) now that a shipped RTL locale
-    depends on it.
-  **Layman:** Arabic, with pages laid out right to left.
   Kind: implement.
 
 - 📋 [PASS-59-171] **Cheats for PSP games in PPSSPP (MEDIUM, S).**
@@ -2785,63 +2854,6 @@ The native app (Rust + Slint) ships in pieces as 4.1.0, 4.2.0 and on. New featur
   **Layman:** Three new looks for the console museum to choose from.
   Kind: implement.
 
-- 📋 [PASS-59-182] **A missing emulator falls back to a RetroArch that can play the game (ENHANCEMENT, S).**
-  - **Report**: Tomb Raider (GBC) failed with "Emulator binary not
-    found on PATH: 'mgba-qt'". The user expects RetroArch to play it.
-  - **Found** (2026-10-29): gb, gbc and gba default to mGBA, not
-    installed. `launch_resolver.pick_launch_mapping` already falls back
-    to the player when the default does not resolve, but
-    `_player_serves` needs the player's program, and RetroArch
-    (RetroDB) is not downloaded yet (no `data/player/`). The user's own
-    RetroArch row is never tried.
-  - **Target**: (1) the error offers Get RetroArch where the player
-    could serve the system; (2) consider the user's own RetroArch with
-    a core for the system as a further fallback.
-  - **Status**: todo.
-  - **Source**: user, 2026-10-29.
-
-  ---
-  **Layman:** If a game's emulator is missing, RetroArch plays it instead.
-  Kind: implement.
-
-- 📋 [PASS-59-183] **MobyGames as a scrape source (FEATURE, M).**
-  - **Target**: RetroDB fetches game details from MobyGames. The user
-    has no API key.
-  - **Research first** (unverified): whether MobyGames' API needs a
-    paid or approved key, its rate limits and terms, and whether any
-    keyless route is allowed. Scraping its web pages may breach its
-    terms. Fits PASS-59-162's source review.
-  - **Status**: todo.
-  - **Source**: user, 2026-10-29.
-
-  ---
-  **Layman:** MobyGames as another place to look up game details.
-  Kind: implement.
-
-- 📋 [PASS-59-184] **3D box art matches the ROM's region (ENHANCEMENT, M).**
-  - **Target**: a game's 3D box shows its own region's case; many
-    regions' cases look different.
-  - **Open**: which sources give region-tagged 3D boxes, and how the
-    region is read (the `region` field, the ROM name's tags). Related:
-    PASS-59-162, PASS-59-143.
-  - **Status**: todo.
-  - **Source**: user, 2026-10-29.
-
-  ---
-  **Layman:** A game's 3D box matches its region's case.
-  Kind: implement.
-
-- 📋 [PASS-59-185] **One AI Fill tool in ROM Tools, with a switch for each kind of fill (UX, M).**
-  - **Target**: ROM Tools shows two AI tools today, Official Names and
-    Backfill Alternate Titles. Merge them into one AI Fill with an
-    on/off switch per kind, plus release dates for all regions.
-  - **Status**: todo.
-  - **Source**: user, 2026-10-29.
-
-  ---
-  **Layman:** One AI Fill tool, with a switch for each kind of detail it fills.
-  Kind: implement.
-
 - 📋 [PASS-59-187] **One place to update RetroDB's RetroArch and its cores, with a dashboard reminder when they are out of date (ENHANCEMENT, M).**
   - **Ask** (user, 2026-10-29): RetroArch downloaded beside RetroDB
     needs a way to stay updated: a dedicated place to run updates, and
@@ -2879,17 +2891,6 @@ The native app (Rust + Slint) ships in pieces as 4.1.0, 4.2.0 and on. New featur
   **Layman:** An Analytics card showing how many copies your games sold.
   Kind: implement.
 
-- 📋 [PASS-59-191] **Sort and filter the Library by copies sold (feature, S).**
-  - **Target**: a Copies sold sort option beside Critic score and User
-    score (`templates/system_games.html`, `AllGamesController`, so the
-    Library and system pages stay in sync), and a "has a sales figure"
-    filter.
-  - **Status**: todo.
-
-  ---
-  **Layman:** Sort and filter the Library by copies sold.
-  Kind: implement.
-
 - 📋 [PASS-59-192] **Sales totals by publisher, genre and decade (feature, M).**
   - **Target**: tabs on the Analytics Sales card (PASS-59-190)
     totalling `units_sold` by publisher, by genre (multi-value: a game
@@ -2900,41 +2901,6 @@ The native app (Rust + Slint) ships in pieces as 4.1.0, 4.2.0 and on. New featur
 
   ---
   **Layman:** Copies sold, added up by publisher, genre and decade.
-  Kind: implement.
-
-- 📋 [PASS-59-193] **Best-seller badges on a game's page (feature, S).**
-  - **Target**: a badge on the game page from `units_sold`: its rank
-    among the system's games with a figure ("#3 best seller on SNES in
-    your library"), shown only for the top 10.
-  - **Status**: todo.
-
-  ---
-  **Layman:** Best-seller badges on a game's page.
-  Kind: implement.
-
-- 📋 [PASS-59-220] **Sales figures for 8-bit games: cited numbers and period sources (enhancement, M).**
-  - **Status**: todo
-  - **Request** (user, 2026-10-31): a Gemini answer listed sources for 8-bit sales figures; see if it can be used.
-  - **Measured 2026-10-31**: `units_sold` is empty on every Commodore 64, ZX Spectrum and Atari 5200 game in one library, and on most Atari 2600 games. Only the AI fills it, and `_build_prompt` already names Wikipedia's lists and VGChartz, with nothing for 8-bit computers.
-  - **Treat the answer as leads, not data**: checked against Wikipedia, its Pitfall! and Asteroids figures differ (about 4.5m and 4.3m against 4,000,000 and 3,832,886), and Sensible Soccer is not listed for Spectrum or C64.
-  - **Plan**: 1. A small shipped table of cited figures, each with its source link, starting with Wikipedia's Atari 2600 list (24 games, each row referenced; text CC BY-SA 4.0, so credit it). It fills `units_sold` fill-only, without paying for AI. 2. For 8-bit systems, add to the AI prompt: the C64 Wiki, Spectrum Computing, World of Spectrum, AtariAge and period magazines on archive.org. Keep "a published figure, never your own estimate", and accept a stated milestone only as that game's figure. 3. Show the source beside the number, with PASS-59-211.
-  - **Not planned**: scraping VGChartz, forums or magazine scans; no API, and terms not checked. A forum estimate is not a published figure.
-  - **Limit**: most 8-bit games have no published figure, so most stay empty, which is the true answer.
-
-  ---
-  **Layman:** Sales figures for 8-bit games, with their sources.
-  Kind: implement.
-
-- 📋 [PASS-59-230] **Arcade flyers on the game page (enhancement, S).**
-  - **Status**: todo
-  - **Decided** (user, 2026-11-02): after v4.0.0.
-  - **What the sources send**: ScreenScraper `flyer` (documentation only,
-    in no sample seen). Check a real arcade answer before building.
-  - **Pattern**: the box back (PASS-59-225) — its own column and folder,
-    fill-only, and a place on the game page.
-
-  ---
-  **Layman:** Arcade flyers on the game page.
   Kind: implement.
 
 - 📋 [PASS-59-233] **Check each ROM is a good copy against No-Intro and Redump lists (feature, M).**
@@ -2967,20 +2933,6 @@ The native app (Rust + Slint) ships in pieces as 4.1.0, 4.2.0 and on. New featur
   **Layman:** Back up and restore each game's saves.
   Kind: implement.
 
-- 📋 [PASS-59-235] **TV mode: a big-text Library you steer with a game controller (feature, L).**
-  - **When**: after v4.0.0 (user, 2026-11-04).
-  - **Why**: RetroDB launches games, but choosing one needs a mouse and
-    keyboard. No page reads a game controller today (no `getGamepads`
-    in `static/js`).
-  - **Open**: a separate page or a mode of the Library; which actions it
-    offers (browse, details, Play). Likely needs a spec
-    (`spec-format.md` §1): it spans pages, input and layout.
-  - **Status**: todo.
-
-  ---
-  **Layman:** TV mode: a big-text Library you steer with a game controller.
-  Kind: implement.
-
 - 📋 [PASS-59-236] **ROCm's roctracer aborts every GPU process at exit: find a fix that needs no copy of ROCm (investigate, S).**
   - **When**: after v4.0.0 (user, 2026-11-04).
   - **Why**: `roctracer` 6.4.0 (openSUSE build) fails an assertion in
@@ -3010,6 +2962,84 @@ The native app (Rust + Slint) ships in pieces as 4.1.0, 4.2.0 and on. New featur
   ---
   **Layman:** Find a fix for the graphics-card library that crashes every program using it when it closes.
   Kind: implement.
+
+## 4.4.0 — Desktop app: looks and languages
+
+Themes, layouts, plugins and new languages. Port plan phase 5.
+
+- 📋 [PASS-56-2] **Further language packs — Czech, Swedish, Thai, Vietnamese (FEATURE, L)**
+  - **Target**: four more locales — **`cs` Czech, `sv` Swedish, `th` Thai,
+    `vi` Vietnamese** — the next-highest-value gaps for a retro-gaming audience
+    after the Pass 56.1 set.
+  - **Why**: all four are widely-spoken, well-resourced for quality translation,
+    all left-to-right (no RTL prerequisite, unlike Pass 43.4's Arabic), and absent
+    from the current 21-language set. Suggested to and approved by the user
+    2026-07-05.
+  - **Plan**: identical pipeline to Pass 56.1 — `pybabel init -l <code>` →
+    per-locale `{msgid: translation}` JSON → `scripts/apply_po_translations.py`
+    (strict: hard-fails on any missing msgid or dropped placeholder) → `pybabel
+    compile`; then the 14-entry `data/changelog.<code>.yaml` + the ~2000-line
+    `templates/help.<code>.html` (copy-then-translate-prose, anchors byte-identical).
+    Zero code changes — `available_locales()` auto-surfaces each new catalog in the
+    Settings dropdown / validator / selector. Plural-form counts (from CLDR, set by
+    `pybabel init`): `cs` 4, `sv` 2, `th` 1, `vi` 1. Would take the shipped set to
+    25 languages.
+  - **Verify**: `available_locales()` returns the four new codes; `pybabel compile`
+    clean; `scripts/check_i18n_fresh.py` green (msgid set unchanged — locales only);
+    each changelog parses at the current recent-entry count; each help file's
+    `id`/`href` anchor set + Jinja-token count byte-identical to `help.html`.
+  - **Status**: planned (2026-07-05). Not started; a self-contained follow-on to
+    Pass 56.1 whenever the user wants the next batch.
+
+  ---
+  **Layman:** Czech, Swedish, Thai and Vietnamese translations.
+  Kind: implement.
+
+- 📋 [PASS-43-4] **RTL layout support + Arabic (MEDIUM, L)**
+  - **Target**: `static/css/core/*.css`, every grid/flex layout, every
+    text-align/margin-left utility.
+  - **Why**: Arabic and Hebrew are RTL; the current CSS bakes
+    left-to-right assumptions deep into the grid/sticky-nav system.
+  - **Plan**: switch directional utilities (`margin-left/right`,
+    `text-align: left`) to logical properties (`margin-inline-start/end`,
+    `text-align: start`).  Add `[dir="rtl"]` overrides where logical
+    properties don't reach (icons, chevrons, sortable column arrows).
+    `<html dir="rtl">` driven by locale class (`app.py::select_locale` result →
+    Babel `Locale.parse(code).text_direction`).  The CSS audit is the bulk:
+    ~360 physical `left/right` rules, zero logical, no `[dir]` handling as of
+    Pass 56.
+  - **Status**: planned — **un-gated (2026-07-05).** Pass 56 shipped a **Hebrew** (`he`)
+    catalog — the first RTL `.po`, so the "needs a real RTL user" gate is now met.
+    Hebrew currently renders correct Hebrew *text* in the still-LTR layout; this
+    pass is what makes the layout mirror properly. **Also add Arabic (`ar`) here:**
+    Arabic was deliberately held out of Pass 56's translation batch precisely
+    because it needs this layout work first — once RTL layout lands, adding the
+    `ar` catalog (same pipeline as Pass 56: `pybabel init` → translate →
+    `scripts/apply_po_translations.py` → compile) is translation-only. Scope:
+    the CSS logical-property conversion (shared by `he` + `ar`) **plus** the `ar`
+    catalog. Bumped priority MEDIUM (was LOW) now that a shipped RTL locale
+    depends on it.
+  **Layman:** Arabic, with pages laid out right to left.
+  Kind: implement.
+
+- 📋 [PASS-59-235] **TV mode: a big-text Library you steer with a game controller (feature, L).**
+  - **When**: after v4.0.0 (user, 2026-11-04).
+  - **Why**: RetroDB launches games, but choosing one needs a mouse and
+    keyboard. No page reads a game controller today (no `getGamepads`
+    in `static/js`).
+  - **Open**: a separate page or a mode of the Library; which actions it
+    offers (browse, details, Play). Likely needs a spec
+    (`spec-format.md` §1): it spans pages, input and layout.
+  - **Status**: todo.
+
+  ---
+  **Layman:** TV mode: a big-text Library you steer with a game controller.
+  Kind: implement.
+
+## 4.5.0 — The Android app
+
+RetroDB on an Android phone: on its own, or as a companion to the PC over home
+Wi-Fi, with ROMs copied to the phone. Port plan phase 6. Nothing filed here yet.
 
 ## 5.0.0 — The full desktop app
 
