@@ -1123,6 +1123,9 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     4.2.0 edit and scrape, 4.3.0 tools, cheats and statistics, 4.4.0
     looks and languages, 4.5.0 Android. Each item went to the phase that
     builds its screen; the 4.x.0 heading was removed.
+  - **Blocked-by** (2026-11-10): ANTS-6737, roadmap_log op:"archive_section"
+    for "Shipped, version not known". It waits on a roadmap-format.md
+    § 3.9 change (slug-named archive files) sent to claude-config.
   **Layman:** The roadmap is grouped by version, like other projects.
   Kind: implement.
 
