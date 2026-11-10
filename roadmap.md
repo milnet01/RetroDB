@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=296 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=297 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -3611,6 +3611,16 @@ orchestrator, several by execution rather than reading.
   **Layman:** The PSN import tells you to go to Settings, API Keys, but the PSN sign-in is under My Profile.
   Kind: fix.
   Source: PASS-59-284 2026-11-10.
+
+- 📋 [PASS-59-297] **Viewer pages ask for admin-only data and log 403s.**
+  - **Status**: todo
+  - **Seen**: headless walk as a viewer on :5001, 2026-11-10.
+  - **Every page**: toast-controller.js polls /api/ai-fill-bulk/status (editor-only) for every role.
+  - **Settings**: /api/settings/paths, /api/backups, /api/settings and /api/check-scraper/* answer 403 to a viewer.
+  - **Do**: poll and fetch only for roles the route allows (window.IS_ADMIN, or a role flag from base.html).
+  **Layman:** Nothing breaks on screen, but for a viewer every page quietly asks the server for things only an admin may see.
+  Kind: fix.
+  Source: browser walk 2026-11-10.
 
 ## Done index
 
