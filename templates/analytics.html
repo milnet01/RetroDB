@@ -1530,6 +1530,10 @@ Chart.defaults.color = '#9aa0a6';
 Chart.defaults.borderColor = 'rgba(42, 53, 66, 0.5)';
 Chart.defaults.plugins.legend.labels.usePointStyle = true;
 Chart.defaults.plugins.legend.labels.padding = 20;
+// The CSS reduced-motion rule does not reach canvas drawing; Chart.js needs telling.
+if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    Chart.defaults.animation = false;
+}
 
 // Color palette matching the cyberpunk theme
 const chartColors = {
@@ -2734,12 +2738,14 @@ function exportAsPNG() {
     const link = document.createElement('a');
     link.download = `RetroDB_Stats_${new Date().toISOString().slice(0, 10)}.png`;
     link.href = canvas.toDataURL('image/png');
+    document.body.appendChild(link);
     link.click();
+    link.remove();
 
     showNotification({{ _('PNG infographic downloaded.')|tojson }}, 'success');
 }
 
-function exportToClipboard() {
+async function exportToClipboard() {
     document.getElementById('exportMenu').classList.remove('active');
 
     const stats = _getStatsData();
@@ -2758,20 +2764,13 @@ function exportToClipboard() {
 
     const text = lines.join('\n');
 
-    navigator.clipboard.writeText(text).then(() => {
+    // copyToClipboard falls back to execCommand where navigator.clipboard
+    // is missing (plain-HTTP LAN) and reports whether the copy happened
+    if (await copyToClipboard(text)) {
         showNotification({{ _('Stats copied to clipboard.')|tojson }}, 'success');
-    }).catch(() => {
-        // Fallback
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        ta.style.position = 'fixed';
-        ta.style.left = '-9999px';
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        showNotification({{ _('Stats copied to clipboard.')|tojson }}, 'success');
-    });
+    } else {
+        showNotification({{ _('Could not copy to the clipboard.')|tojson }}, 'error');
+    }
 }
 
 function exportAsCSV() {
@@ -2780,8 +2779,10 @@ function exportAsCSV() {
     const stats = _getStatsData();
     const rows = [['Metric', 'Value']];
 
+    // A number keeps no thousands separator (format_number uses spaces,
+    // formatNumber thin spaces), so a spreadsheet reads it as a number
     Object.entries(stats).forEach(([label, value]) => {
-        rows.push([label, value.replace(/,/g, '')]);
+        rows.push([label, /^[\d\s,]+$/.test(value) ? value.replace(/[\s,]/g, '') : value]);
     });
 
     // Add genre data if available
@@ -2794,23 +2795,33 @@ function exportAsCSV() {
         });
     }
 
-    // Add system data if available
-    const systemChart = Chart.getChart('systemChart');
-    if (systemChart) {
+    // Add per-system storage if available
+    const storageChart = Chart.getChart('storageChart');
+    if (storageChart) {
         rows.push([]);
-        rows.push(['System', 'Count']);
-        systemChart.data.labels.forEach((label, i) => {
-            rows.push([label, systemChart.data.datasets[0].data[i]]);
+        rows.push(['System', 'Storage (GB)']);
+        storageChart.data.labels.forEach((label, i) => {
+            rows.push([label, storageChart.data.datasets[0].data[i]]);
         });
     }
 
-    const csv = rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+    // A text cell starting with = + - @ (or tab/CR) would run as a
+    // spreadsheet formula; a leading ' keeps it text.
+    const csvCell = cell => {
+        let text = String(cell ?? '');
+        if (typeof cell === 'string' && /^[=+\-@\t\r]/.test(text)) text = "'" + text;
+        return `"${text.replace(/"/g, '""')}"`;
+    };
+    const csv = rows.map(row => row.map(csvCell).join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.download = `RetroDB_Stats_${new Date().toISOString().slice(0, 10)}.csv`;
-    link.href = URL.createObjectURL(blob);
+    link.href = url;
+    document.body.appendChild(link);
     link.click();
-    URL.revokeObjectURL(link.href);
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
 
     showNotification({{ _('CSV data exported.')|tojson }}, 'success');
 }

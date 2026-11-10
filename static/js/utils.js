@@ -203,7 +203,8 @@ async function copyToClipboard(text) {
         await navigator.clipboard.writeText(text);
         return true;
     } catch (err) {
-        // Fallback for older browsers
+        // Fallback for older browsers and plain-HTTP pages, where
+        // navigator.clipboard is missing. execCommand says false on failure.
         const textArea = document.createElement('textarea');
         textArea.value = text;
         textArea.style.position = 'fixed';
@@ -211,9 +212,9 @@ async function copyToClipboard(text) {
         document.body.appendChild(textArea);
         textArea.select();
         try {
-            document.execCommand('copy');
+            const copied = document.execCommand('copy');
             document.body.removeChild(textArea);
-            return true;
+            return copied;
         } catch (e) {
             document.body.removeChild(textArea);
             return false;
