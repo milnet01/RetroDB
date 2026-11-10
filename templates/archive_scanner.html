@@ -811,7 +811,7 @@ let isPaused = false;
 let scanResults = [];
 let currentArchivePath = null;
 let currentArchiveType = null;
-let basePath = '{{ rom_path }}/';
+let basePath = {{ rom_path|tojson }} + '/';
 let excludedPaths = ['mame', 'ps3', 'xbox360'];
 
 // Batch operation state
@@ -876,13 +876,18 @@ async function savePreferences() {
     };
     
     try {
-        await fetch('/api/rom-tools/settings', {
+        const response = await fetch('/api/rom-tools/settings', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(prefs)
         });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || data.success === false) {
+            showNotification(data.error || {{ _('Could not save your scanner choices.')|tojson }}, 'error');
+        }
     } catch (error) {
         console.error('Error saving preferences:', error);
+        showNotification({{ _('Could not save your scanner choices.')|tojson }}, 'error');
     }
 }
 
@@ -914,21 +919,22 @@ function loadPreferences(settings) {
     updateAllToggleLabels();
 }
 
-// Session persistence functions
+// Session persistence: SessionState (rom-tools.js) survives a full or
+// blocked storage and drops an entry that will not parse.
+SessionState.setKey('archiveScannerState');
+
 function saveSessionState() {
-    const state = {
+    SessionState.save({
         taskId: currentTaskId,
         results: scanResults,
         isPaused: isPaused
-    };
-    sessionStorage.setItem('archiveScannerState', JSON.stringify(state));
+    });
 }
 
 function loadSessionState() {
     try {
-        const saved = sessionStorage.getItem('archiveScannerState');
-        if (saved) {
-            const state = JSON.parse(saved);
+        const state = SessionState.load();
+        if (state) {
             if (state.taskId) {
                 // Try to reconnect to the task
                 currentTaskId = state.taskId;
@@ -971,7 +977,7 @@ function loadSessionState() {
 }
 
 function clearSessionState() {
-    sessionStorage.removeItem('archiveScannerState');
+    SessionState.clear();
 }
 
 async function loadSettings() {
@@ -1272,9 +1278,9 @@ function updateResultsTable() {
         return `
         <tr data-index="${index}">
             <td>${index + 1}</td>
-            <td>${result.timestamp || formatTimestamp(new Date())}</td>
-            <td><span class="type-badge ${result.type}">${result.type.toUpperCase()}</span></td>
-            <td title="${result.type === 'multi-file' ? 'ROM files / Total files' : ''}">${fileCountDisplay}</td>
+            <td>${escapeHtml(result.timestamp || formatTimestamp(new Date()))}</td>
+            <td><span class="type-badge ${escapeHtml(result.type)}">${escapeHtml(result.type.toUpperCase())}</span></td>
+            <td title="${result.type === 'multi-file' ? 'ROM files / Total files' : ''}">${escapeHtml(String(fileCountDisplay))}</td>
             <td class="path-cell" title="${escapeHtml(result.path)}" data-path="${escapeHtml(result.path)}" data-on-click="viewArchive" data-args="${actionArgs('$this.dataset.path', String(result.type))}">${escapeHtml(result.relative_path || result.path)}</td>
             <td class="action-cell">
                 <button type="button" class="action-btn" data-path="${escapeHtml(result.path)}" data-on-click="viewArchive" data-args="${actionArgs('$this.dataset.path', String(result.type))}">👁️ View</button>
@@ -1388,8 +1394,11 @@ async function removeSelectedFiles() {
             
             if (data.success) {
                 showModal('✅ ' + {{ _('Files Removed')|tojson }}, t({{ _('Files removed: {count}')|tojson }}, {count: formatNumber(filesToRemove.length)}));
+                // closeArchiveModal() clears the current path and type; keep them to reopen.
+                const reopenPath = currentArchivePath;
+                const reopenType = currentArchiveType;
                 closeArchiveModal();
-                viewArchive(currentArchivePath);
+                viewArchive(reopenPath, reopenType);
             } else {
                 showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to remove files.')|tojson }});
             }

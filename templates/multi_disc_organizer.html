@@ -320,14 +320,14 @@ function renderMultiDiscTable(games) {
     
     tbody.innerHTML = games.map((game, idx) => `
         <tr data-index="${idx}">
-            <td><span class="system-badge">${game.system}</span></td>
+            <td><span class="system-badge">${escapeHtml(game.system)}</span></td>
             <td>
                 ${escapeHtml(game.name)}
                 ${game.in_folder ? '<span class="badge badge-warning" style="margin-left: 8px;">In Folder</span>' : ''}
                 ${game.needs_m3u ? '<span class="badge badge-danger" style="margin-left: 4px;">No M3U</span>' : ''}
             </td>
-            <td>${game.disc_count}</td>
-            <td class="filename-cell" title="${game.files.join('\n')}">${game.files.map(f => escapeHtml(f)).join('<br>')}</td>
+            <td>${escapeHtml(String(game.disc_count))}</td>
+            <td class="filename-cell" title="${escapeHtml(game.files.join('\n'))}">${game.files.map(f => escapeHtml(f)).join('<br>')}</td>
             <td class="action-cell">
                 <button type="button" class="action-btn" data-on-click="organizeMultiDisc" data-args="${actionArgs(idx)}">${game.in_folder ? '📝 Create M3U' : '📁 Organize'}</button>
             </td>
@@ -382,7 +382,8 @@ async function organizeAllMultiDisc() {
         async function() {
             let success = 0;
             let failed = 0;
-            
+            const failedGames = [];
+
             for (const game of [...multiDiscGames]) {
                 try {
                     const response = await fetch('/api/reports/organize-multidisc', {
@@ -398,19 +399,21 @@ async function organizeAllMultiDisc() {
                     
                     const data = await response.json();
                     if (data.success) success++;
-                    else failed++;
+                    else { failed++; failedGames.push(game); }
                 } catch (error) {
                     failed++;
+                    failedGames.push(game);
                 }
             }
             
             showModal('✅ ' + {{ _('Complete')|tojson }}, failed > 0
                 ? t({{ _('Games organized: {count}. Failed: {failed}')|tojson }}, {count: success, failed: failed})
                 : t({{ _('Games organized: {count}')|tojson }}, {count: success}));
-            multiDiscGames = [];
-            document.getElementById('stat-games').textContent = formatNumber(0);
-            document.getElementById('organizeAllBtn').disabled = true;
-            renderMultiDiscTable([]);
+            // Keep the games that failed on the list so they can be retried.
+            multiDiscGames = failedGames;
+            document.getElementById('stat-games').textContent = formatNumber(multiDiscGames.length);
+            document.getElementById('organizeAllBtn').disabled = multiDiscGames.length === 0;
+            renderMultiDiscTable(multiDiscGames);
         });
 }
 </script>
