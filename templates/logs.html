@@ -756,9 +756,10 @@
     <div class="toolbar-group">
         <span class="group-label" id="logLevelLabel">{{ _('Level') }}</span>
         <div class="level-toggles" role="group" aria-labelledby="logLevelLabel">
+            <button type="button" class="level-btn" data-level="DEBUG" data-on-click="LogViewer.toggleLevel" data-args='["DEBUG", "$this"]'>{{ _('DEBUG') }}</button>
             <button type="button" class="level-btn active" data-level="INFO" data-on-click="LogViewer.toggleLevel" data-args='["INFO", "$this"]'>{{ _('INFO') }}</button>
             <button type="button" class="level-btn active" data-level="WARNING" data-on-click="LogViewer.toggleLevel" data-args='["WARNING", "$this"]'>{{ _('WARN') }}</button>
-            <button type="button" class="level-btn active" data-level="ERROR" data-on-click="LogViewer.toggleLevel" data-args='["ERROR", "$this"]'>{{ _('ERROR') }}</button>
+            <button type="button" class="level-btn active" data-level="ERROR" data-on-click="LogViewer.toggleLevel" data-args='["ERROR", "$this"]' title="{{ _('Errors and critical errors') }}">{{ _('ERROR') }}</button>
         </div>
     </div>
 

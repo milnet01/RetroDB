@@ -49,8 +49,10 @@ const LogViewer = {
     OUTCOME_SKIPPED: /Skipping |No updates for /,
     OUTCOME_NO_RESULTS: /No results for /,
 
-    // Line parse regex: "YYYY-MM-DD HH:MM:SS | LEVEL    | module | message"
-    LINE_REGEX: /^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}) \| (\w+)\s*\| ([^ |]+)\s*\| (.*)$/,
+    // Line parse regex: "YYYY-MM-DD HH:MM:SS | LEVEL    | request-id | module | message"
+    // (log_manager's file format). The request ID ('-' or 8 hex digits) is
+    // optional so older four-field files still read.
+    LINE_REGEX: /^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2}) \| (\w+)\s*\| (?:(?:-|[0-9a-f]{8}) \| )?([^ |]+)\s*\| (.*)$/,
 
     // =========================================================================
     // INITIALIZATION
@@ -116,7 +118,7 @@ const LogViewer = {
     async loadFileList() {
         try {
             const data = await API.get('/api/logs/files');
-            if (!data.success) return;
+            if (!data.success) throw new Error(data.error || 'log file list refused');
 
             this.allFiles = data.files;
             this.categoryCounts = data.category_counts || {};
@@ -124,6 +126,9 @@ const LogViewer = {
             this.populateFileDropdown();
         } catch (e) {
             console.error('Error loading log file list:', e);
+            const select = document.getElementById('logFileSelect');
+            select.innerHTML = `<option value="">${escapeHtml(t('Could not load the log files'))}</option>`;
+            showNotification(t('Could not load the log files'), 'error');
         }
     },
 
@@ -370,7 +375,9 @@ const LogViewer = {
     // =========================================================================
 
     _matchesFilters(line, timeFrom, timeTo) {
-        if (!this.activeLevels.has(line.level)) return false;
+        // CRITICAL lines ride the ERROR toggle; DEBUG has its own.
+        const level = line.level === 'CRITICAL' ? 'ERROR' : line.level;
+        if (!this.activeLevels.has(level)) return false;
         if (this.activeModule && line.module !== this.activeModule) return false;
         if (timeFrom && line.time < timeFrom) return false;
         if (timeTo && line.time > timeTo) return false;
@@ -468,9 +475,7 @@ const LogViewer = {
     },
 
     renderLine(line) {
-        const message = this.searchTerm
-            ? this.highlightSearch(this.escapeHtml(line.message))
-            : this.escapeHtml(line.message);
+        const message = this.highlightSearch(line.message);
 
         // Pass 36.4 — lineNumber / time / level flow from a log file on disk
         // and land inside innerHTML'd template strings. Escape each one so
@@ -495,11 +500,17 @@ const LogViewer = {
             `</div>`;
     },
 
-    highlightSearch(html) {
-        if (!this.searchTerm) return html;
-        const escaped = this.escapeRegex(this.searchTerm);
-        const regex = new RegExp(`(${escaped})`, 'gi');
-        return html.replace(regex, '<span class="search-highlight">$1</span>');
+    // Takes raw text and returns escaped HTML. Matches are found in the raw
+    // text, then each piece is escaped, so a search for "amp" or "lt" never
+    // splits an entity like &amp;.
+    highlightSearch(text) {
+        if (!this.searchTerm) return this.escapeHtml(text);
+        const regex = new RegExp(`(${this.escapeRegex(this.searchTerm)})`, 'gi');
+        // split() with one capture group puts the matches at odd indexes.
+        return String(text).split(regex).map((piece, i) => i % 2
+            ? `<span class="search-highlight">${this.escapeHtml(piece)}</span>`
+            : this.escapeHtml(piece)
+        ).join('');
     },
 
     shortenModule(mod) {
@@ -526,7 +537,7 @@ const LogViewer = {
         for (const line of this.rawLines) {
             if (line.level === 'INFO') info++;
             else if (line.level === 'WARNING') warn++;
-            else if (line.level === 'ERROR') error++;
+            else if (line.level === 'ERROR' || line.level === 'CRITICAL') error++;
         }
         document.getElementById('statInfo').textContent = formatNumber(info);
         document.getElementById('statWarn').textContent = formatNumber(warn);
@@ -567,7 +578,8 @@ const LogViewer = {
     resetFilters() {
         // Reset levels
         this.activeLevels = new Set(['INFO', 'WARNING', 'ERROR']);
-        document.querySelectorAll('.level-btn').forEach(btn => btn.classList.add('active'));
+        document.querySelectorAll('.level-btn').forEach(btn =>
+            btn.classList.toggle('active', this.activeLevels.has(btn.dataset.level)));
 
         // Reset time
         document.getElementById('timeFrom').value = '';
