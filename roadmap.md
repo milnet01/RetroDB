@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=294 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=296 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -2602,7 +2602,7 @@ orchestrator, several by execution rather than reading.
     read in part) found 32 High, 111 Medium and about 258 Low/Info.
     review-tests (17 lanes over tests/) found 16 High, 62 Medium and 54
     Low. Reports are kept off the public repo, under
-    ~/.local/share/claude-scratch/reviews/RetroDB/review-{code,tests}-2026-11-09/.
+    /mnt/Emulators/.claude/Scratchpad/RetroDB/reviews/RetroDB/review-{code,tests}-2026-11-09/.
     The partition in § Periodic Independent Review is rewritten. Still
     owed: triage the findings into passes (close-findings).
   - **Progress** (2026-11-10): User decisions, 2026-11-10, for the triage: (1) raise --text-muted in
@@ -3161,7 +3161,7 @@ orchestrator, several by execution rather than reading.
   ---
   Kind: implement.
 
-- 📋 [PASS-59-276] **Escape every value put into page HTML, and close the data-on-* gadget (security, M).**
+- ✅ [PASS-59-276] **Escape every value put into page HTML, and close the data-on-* gadget (security, M).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **Do**: run each named value through the shared escape helper; limit `data-on-*` in `static/js/main.js` to an allowlist of handlers.
@@ -3184,9 +3184,14 @@ orchestrator, several by execution rather than reading.
   - Open questions (answer first): static/js/game-list.js:41; templates/settings.html:2888
 
   ---
+  Shipped 2026-11-10 (12d102cf, 186f8686, 41db8f0e, f440c94e, baa19aba,
+  f166faf6). data-on-* runs only names the app writes
+  (services/action_names.py via base.html); every listed sink escaped or
+  encoded; return-URL guard parses every value. Open questions answered:
+  dropdown editor is admin-only to write; fanart names are app-made.
   Kind: implement.
 
-- 📋 [PASS-59-277] **Job progress: stuck pollers, repeated "completed" toasts, and failures nobody is told about (review-fix, M).**
+- ✅ [PASS-59-277] **Job progress: stuck pollers, repeated "completed" toasts, and failures nobody is told about (review-fix, M).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **Needs a decision**: the Queue Manager in `templates/base.html` has no way to open it (H, `jobs.md` §9). Wire it to the queued toast, or delete it and correct §9. Ask the user.
@@ -3214,6 +3219,10 @@ orchestrator, several by execution rather than reading.
   - Open questions (answer first): static/js/main.js:1196; routes/trophies.py:1064; templates/psn_trophies.html
 
   ---
+  Shipped 2026-11-10 (59c92a02). User chose to connect the Queue
+  Manager: queued scrape toasts get a Reorder button (jobs.md §9
+  updated). Pollers handle failed/404/idle, completion keys age by write
+  time, failures shown. Q answered: the client owns the PSN idle case.
   Kind: implement.
 
 - 📋 [PASS-59-278] **Translate the page scripts still in English: Lists, settings, achievements, trophies, reports, dashboard (i18n, L).**
@@ -3319,7 +3328,7 @@ orchestrator, several by execution rather than reading.
   ---
   Kind: implement.
 
-- 📋 [PASS-59-283] **Game, Library, Collections and Museum pages: bugs found by the review (audit-fix, M).**
+- ✅ [PASS-59-283] **Game, Library, Collections and Museum pages: bugs found by the review (audit-fix, M).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
@@ -3338,9 +3347,14 @@ orchestrator, several by execution rather than reading.
   - Open questions (answer first): static/js/manual-reader.js:45; static/js/game-modals.js:1089; routes/collections.py:169,418,631
 
   ---
+  Shipped 2026-11-10 (c23c2ff6). HLTB save keeps hltb_id and players;
+  data-key applies to key events only. Qs: sort title follows the server
+  rule (pronoun I kept); collections stay login_required (owner-scoped);
+  duplicate filterModal ids never share a page; manual-reader CSP not
+  re-tested.
   Kind: implement.
 
-- 📋 [PASS-59-284] **Settings, sign-in and dashboard: bugs found by the review (audit-fix, M).**
+- ✅ [PASS-59-284] **Settings, sign-in and dashboard: bugs found by the review (audit-fix, M).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
@@ -3358,9 +3372,14 @@ orchestrator, several by execution rather than reading.
   - Open questions (answer first): templates/base.html:1421-1436; templates/_macros/sticky_subnav.html; templates/settings.html:1132-1138; templates/setup.html:359; templates/_settings_tabs/account.html:420-423; templates/dashboard.html:248
 
   ---
+  Shipped 2026-11-10 (3c26b8ed). Qs: setup browse refuses after setup;
+  subnav pages both define scrollToSection; per-user RA/Steam settings
+  win over the global fallback by design; autocomplete stays off except
+  on fields naming a purpose. Stored keys: password inputs only; full
+  fix filed as PASS-59-295.
   Kind: implement.
 
-- 📋 [PASS-59-285] **ROM tools and maintenance pages: bugs found by the review (audit-fix, M).**
+- ✅ [PASS-59-285] **ROM tools and maintenance pages: bugs found by the review (audit-fix, M).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
@@ -3378,9 +3397,12 @@ orchestrator, several by execution rather than reading.
   - Open questions (answer first): log_manager.get_full_log_content; templates/game_imports.html (applyPlatformVisibility)
 
   ---
+  Shipped 2026-11-10 (186f8686..f1fa214d, f166faf6). Reset uses
+  rom_tools_defaults(). PSN 'Not Configured' text on Game Imports still
+  names the wrong tab: PASS-59-296.
   Kind: implement.
 
-- 📋 [PASS-59-286] **Achievements, trophies, reports and analytics: bugs found by the review (audit-fix, M).**
+- ✅ [PASS-59-286] **Achievements, trophies, reports and analytics: bugs found by the review (audit-fix, M).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
@@ -3399,6 +3421,8 @@ orchestrator, several by execution rather than reading.
   - Open questions (answer first): templates/reports.html (rename buttons)
 
   ---
+  Shipped 2026-11-10 (41db8f0e..f40b7ece). Q answered: rename buttons
+  now editor/admin only.
   Kind: implement.
 
 - 📋 [PASS-59-287] **Docs and comments the review found out of step with the code (doc-fix, S).**
@@ -3455,7 +3479,7 @@ orchestrator, several by execution rather than reading.
   ---
   Kind: implement.
 
-- 📋 [PASS-59-290] **Tests that cannot fail: stubs on names the code never reads, and asserts that never run (test, M).**
+- ✅ [PASS-59-290] **Tests that cannot fail: stubs on names the code never reads, and asserts that never run (test, M).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **Do**: for each, prove it red against a broken copy of the code before calling it fixed.
@@ -3474,6 +3498,8 @@ orchestrator, several by execution rather than reading.
   - Open questions (answer first): tests/test_ai_fill_bulk.py:183; tests/test_bulk_scrape_race.py:98; tests/test_ci_gate_parity.py:14; tests/test_etag_and_gzip.py:120; tests/test_input_hardening_scrapers.py:63; tests/test_launch_resolver.py:62; tests/test_mame_names.py:229; tests/test_pass40_1_8_security.py:392; tests/test_pass46_frozen_paths.py:39; tests/test_pass59_237_disc_files.py:64; tests/test_pass59_237_disc_files.py:64; tests/test_pass59_216_extra_data.py:235; tests/test_pass59_245_focus.py:22; tests/test_pass59_auth_api.py:125; tests/test_pass59_scrapers.py:146; tests/test_pass59_scrapers.py:146; tests/test_rembg_worker.py:97
 
   ---
+  Shipped 2026-11-10 (f16e3765). All nine tests confirmed and each
+  proven red against broken code.
   Kind: implement.
 
 - 📋 [PASS-59-291] **Tests that check too little to catch the bug they are named for (test, M).**
@@ -3567,6 +3593,24 @@ orchestrator, several by execution rather than reading.
   **Layman:** Opening the Logs page can show "Invalid log file" straight away, because it offers a file the server will not show.
   Kind: fix.
   Source: PASS-59-274 browser walk 2026-11-10.
+
+- 📋 [PASS-59-295] **Stop sending stored API keys and tokens to the Settings page.**
+  - **Status**: todo
+  - **Why**: account.html and scraping.html render each stored key as an input value (now type=password, autocomplete off), so it sits in page source.
+  - **Do**: render a set/not-set marker; send a key only when the field changes; the save routes keep the stored key when the field is left blank. Every save path must agree, or a save blanks keys.
+  - **Threat model**: LAN, one household (docs/decisions); low priority.
+  **Layman:** Settings shows your saved keys as dots now, but the page still carries them; this would send only 'set' or 'not set' instead.
+  Kind: security.
+  Source: PASS-59-284 2026-11-10.
+
+- 📋 [PASS-59-296] **Game Imports' PSN "Not Configured" message names the wrong place.**
+  - **Status**: todo
+  - **Where**: templates/game_imports.html, the PSN 'Not Configured' text, set through innerHTML in English.
+  - **Do**: point it at Settings > My Profile (the NPSSO wizard) and translate it.
+  - **Source**: reported by the PASS-59-285 helper.
+  **Layman:** The PSN import tells you to go to Settings, API Keys, but the PSN sign-in is under My Profile.
+  Kind: fix.
+  Source: PASS-59-284 2026-11-10.
 
 ## Done index
 

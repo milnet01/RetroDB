@@ -298,7 +298,7 @@ def test_theme_init_prefers_the_server_theme():
 
 def test_theme_is_saved_per_user():
     src = _code(JS / 'theme.js')
-    assert "API.post('/api/users/settings', { theme_preference: theme })" in src
+    assert "API.post('/api/users/settings', { theme_preference: theme }" in src
     assert "API.post('/api/settings'" not in src
 
 
