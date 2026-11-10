@@ -59,7 +59,11 @@ def api_log_files():
     Returns category counts and the list of matching files.
     """
     try:
-        all_files = log_manager.get_log_files()
+        # Only files the content route will open: logs/ also holds worker
+        # and dev-server logs, and listing them showed "Invalid log file"
+        # on a fresh page (PASS-59-294).
+        all_files = [f for f in log_manager.get_log_files()
+                     if f['filename'].startswith(VALID_PREFIXES)]
         category_filter = request.args.get('category', '').strip()
 
         # Build category counts from all files
