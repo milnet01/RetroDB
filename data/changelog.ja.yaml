@@ -1,6 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-09'
+  date: '2026-11-10'
   tags:
+  - type: fix
+    label: '確認ウィンドウで、キャンセルや × の上で Enter を押すと、確認ではなくキャンセルされるようになりました。OK で開いたウィンドウが消えなくなり、ショートカット一覧や進行状況ウィンドウを閉じた後も Tab が使えます'
+  - type: enhancement
+    label: 'マウスでしか使えなかった多くの操作が、キーボード（Tab の後に Enter かスペース）で使えるようになりました：サインインのプロフィール、比較の検索結果、タグとその編集・削除ボタン、実績のゲームカード、ログのセッション、テーマとアバターの選択、ミュージアムの画像、ジャンルやフィルターを外す ×、セットアップのフォルダー、スクレイプ元のチェックボックス、CLZ のインポート。オン/オフのスイッチにもキーボードのリングが表示されます'
   - type: performance
     label: 'ミュージアムの背景除去がメモリに残り続けなくなりました。コントローラー写真の背景を AI モデルで切り抜いていましたが、このモデルは一度使うと 2 GB 以上、写真の処理中は最大で約 9 GB のメモリを、RetroDB を再起動するまで使い続けていました。現在は必要なときだけ起動する補助プログラムで動き、最後の写真から 2 分後に終了して、そのメモリをすべて解放します'
     en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'

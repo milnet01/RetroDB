@@ -1,6 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-09'
+  date: '2026-11-10'
   tags:
+  - type: fix
+    label: '확인 창에서 취소나 × 위에서 Enter를 누르면 이제 확인 대신 취소됩니다. 확인으로 연 창이 더 이상 사라지지 않고, 단축키 목록이나 진행 창을 닫은 뒤에도 Tab이 계속 작동합니다'
+  - type: enhancement
+    label: '마우스로만 쓸 수 있던 많은 컨트롤을 이제 키보드(Tab 다음 Enter 또는 Space)로 쓸 수 있습니다: 로그인 프로필, 비교 검색 결과, 태그와 그 편집·삭제 버튼, 업적 게임 카드, 로그 세션, 테마와 아바타 선택, 박물관 사진, 장르나 필터를 지우는 ×, 설정 폴더, 스크랩 출처 체크박스, CLZ 가져오기. 켜기/끄기 스위치에도 이제 키보드 테두리가 보입니다'
   - type: performance
     label: '박물관의 배경 제거 기능이 더 이상 메모리에 계속 남아 있지 않습니다. 이 기능은 AI 모델로 컨트롤러 사진에서 배경을 잘라 냈는데, 이 모델은 한 번 사용하면 2 GB 이상, 사진을 처리하는 동안에는 최대 약 9 GB의 메모리를 RetroDB를 다시 시작할 때까지 차지했습니다. 이제는 필요할 때 시작되고 마지막 사진 후 2분 뒤에 닫히는 보조 프로그램에서 실행되어, 그 메모리를 모두 돌려줍니다'
     en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'

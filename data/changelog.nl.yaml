@@ -1,6 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-09'
+  date: '2026-11-10'
   tags:
+  - type: fix
+    label: 'In een bevestigingsvenster annuleert Enter op Annuleren of × nu in plaats van te bevestigen. Een venster dat door OK wordt geopend verdwijnt niet meer, en Tab blijft werken nadat de lijst met sneltoetsen of een voortgangsvenster sluit'
+  - type: enhancement
+    label: 'Veel bedieningselementen die alleen met de muis werkten, werken nu met het toetsenbord (Tab, dan Enter of Spatie): de profielen bij het inloggen, zoekresultaten in Vergelijken, tags en hun knoppen Bewerken en Verwijderen, spelkaarten bij prestaties, logsessies, de keuze van thema en avatar, Museum-afbeeldingen, de × die een genre of filter verwijdert, mappen in de installatie, selectievakjes voor scrapebronnen en de CLZ-import. Aan/uit-schakelaars tonen nu de toetsenbordring'
   - type: performance
     label: 'De achtergrondverwijderaar van het Museum blijft niet meer in het geheugen. Hij knipte controllerfoto''s uit hun achtergrond met een AI-model dat na het eerste gebruik meer dan 2 GB innam, en tot ongeveer 9 GB tijdens een foto, totdat RetroDB opnieuw startte. Nu draait hij in een hulpprogramma dat start wanneer het nodig is en twee minuten na zijn laatste foto sluit, zodat al dat geheugen weer vrijkomt'
     en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'

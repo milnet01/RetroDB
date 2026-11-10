@@ -1,6 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-09'
+  date: '2026-11-10'
   tags:
+  - type: fix
+    label: 'Bir onay penceresinde İptal veya × üzerindeyken Enter artık onaylamak yerine iptal eder. Tamam ile açılan bir pencere artık kaybolmaz ve kısayol listesi ya da bir ilerleme penceresi kapandıktan sonra Tab çalışmaya devam eder'
+  - type: enhancement
+    label: 'Yalnızca fareyle çalışan birçok denetim artık klavyeyle de çalışıyor (Tab, ardından Enter veya Boşluk): giriş profilleri, Karşılaştır arama sonuçları, etiketler ve Düzenle ile Sil düğmeleri, başarım oyun kartları, günlük oturumları, tema ve avatar seçimi, Müze resimleri, bir türü veya filtreyi kaldıran ×, kurulum klasörleri, kazıma kaynağı onay kutuları ve CLZ içe aktarma. Açma/kapama anahtarları artık klavye halkasını gösteriyor'
   - type: performance
     label: 'Müze''nin arka plan kaldırıcısı artık bellekte kalmıyor. Kontrolcü fotoğraflarını bir AI modeliyle arka planından kesip çıkarıyordu ve bu model bir kez kullanıldıktan sonra RetroDB yeniden başlatılana kadar 2 GB''tan fazla, bir fotoğraf işlenirken de yaklaşık 9 GB''a kadar bellek tutuyordu. Artık gerektiğinde başlayan ve son fotoğrafından iki dakika sonra kapanan yardımcı bir programda çalışıyor ve o belleğin tamamını geri veriyor'
     en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'

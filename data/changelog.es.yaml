@@ -1,6 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-09'
+  date: '2026-11-10'
   tags:
+  - type: fix
+    label: 'En una ventana de confirmación, Intro sobre Cancelar o × ahora cancela en lugar de confirmar. Una ventana abierta con Aceptar ya no desaparece, y Tab sigue funcionando después de cerrar la lista de atajos o una ventana de progreso'
+  - type: enhancement
+    label: 'Muchos controles que solo funcionaban con el ratón ahora funcionan con el teclado (Tab y luego Intro o Espacio): los perfiles de inicio de sesión, los resultados de búsqueda de Comparar, las etiquetas y sus botones Editar y Eliminar, las tarjetas de juegos de logros, las sesiones de registro, la elección de tema y avatar, las imágenes del Museo, la × que quita un género o filtro, las carpetas de la configuración, las casillas de fuentes de scraping y la importación de CLZ. Los interruptores muestran ahora el anillo del teclado'
   - type: performance
     label: 'El quitafondos del Museo ya no se queda en memoria. Recortaba las fotos de mandos de su fondo con un modelo de AI que, una vez usado, ocupaba más de 2 GB, y hasta unos 9 GB durante una foto, hasta que RetroDB se reiniciaba. Ahora funciona en un programa auxiliar que se abre cuando hace falta y se cierra dos minutos después de su última foto, liberando toda esa memoria'
     en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'

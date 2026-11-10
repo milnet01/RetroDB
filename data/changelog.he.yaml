@@ -1,6 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-09'
+  date: '2026-11-10'
   tags:
+  - type: fix
+    label: 'בחלון אישור, Enter על ביטול או × מבטל עכשיו במקום לאשר. חלון שנפתח באמצעות אישור כבר לא נעלם, ו-Tab ממשיך לעבוד אחרי שרשימת הקיצורים או חלון התקדמות נסגרים'
+  - type: enhancement
+    label: 'פקדים רבים שעבדו רק עם עכבר עובדים עכשיו גם מהמקלדת (Tab, ואז Enter או רווח): פרופילי הכניסה, תוצאות החיפוש בהשוואה, תגיות וכפתורי העריכה והמחיקה שלהן, כרטיסי משחקים בהישגים, סשנים ביומן, בחירת ערכת נושא ואווטאר, תמונות המוזיאון, ה-× שמסיר ז''אנר או מסנן, תיקיות בהגדרה, תיבות סימון של מקורות סריקה וייבוא CLZ. מתגי הפעלה/כיבוי מציגים עכשיו את טבעת המקלדת'
   - type: performance
     label: 'מסיר הרקע של המוזיאון כבר לא נשאר בזיכרון. הוא הפריד תמונות בקר מהרקע שלהן בעזרת מודל AI שתפס יותר מ-2 GB אחרי השימוש הראשון, ועד כ-9 GB בזמן עיבוד תמונה, עד ש-RetroDB הופעל מחדש. כעת הוא רץ בתוכנת עזר שנפתחת כשצריך ונסגרת שתי דקות אחרי התמונה האחרונה שלה, וכך כל הזיכרון הזה מתפנה'
     en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'

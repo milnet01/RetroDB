@@ -1,6 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-09'
+  date: '2026-11-10'
   tags:
+  - type: fix
+    label: 'In una finestra di conferma, Invio su Annulla o × ora annulla invece di confermare. Una finestra aperta da OK non scompare più, e Tab continua a funzionare dopo la chiusura dell''elenco delle scorciatoie o di una finestra di avanzamento'
+  - type: enhancement
+    label: 'Molti controlli che funzionavano solo con il mouse ora funzionano con la tastiera (Tab, poi Invio o Spazio): i profili di accesso, i risultati di ricerca di Confronta, i tag con i pulsanti Modifica ed Elimina, le schede dei giochi degli obiettivi, le sessioni del registro, la scelta di tema e avatar, le immagini del Museo, la × che rimuove un genere o un filtro, le cartelle della configurazione, le caselle delle fonti di scraping e l''importazione CLZ. Gli interruttori mostrano ora l''anello della tastiera'
   - type: performance
     label: 'Lo strumento del Museo che rimuove lo sfondo non resta più in memoria. Ritagliava le foto dei controller dal loro sfondo con un modello di AI che, una volta usato, occupava oltre 2 GB, e fino a circa 9 GB durante una foto, finché RetroDB non veniva riavviato. Ora funziona in un programma di supporto che si avvia quando serve e si chiude due minuti dopo l''ultima foto, liberando tutta quella memoria'
     en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'

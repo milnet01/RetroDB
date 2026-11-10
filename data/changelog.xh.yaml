@@ -1,6 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-09'
+  date: '2026-11-10'
   tags:
+  - type: fix
+    label: 'Kwifestile yokuqinisekisa, u-Enter ku-Rhoxisa okanye ku-× ngoku uyarhoxisa endaweni yokuqinisekisa. Ifestile evulwe ngu-OK ayisanyamalali, kwaye u-Tab uyaqhubeka esebenza emva kokuba uluhlu lweendlela ezimfutshane okanye ifestile yenkqubela ivaliwe'
+  - type: enhancement
+    label: 'Izilawuli ezininzi ebezisebenza ngempuku kuphela ngoku ziyasebenza ngekhibhodi (Tab, emva koko Enter okanye Isithuba): iiprofayile zokungena, iziphumo zokukhangela zoThelekiso, iithegi namaqhosha azo okuHlela nokuCima, amakhadi emidlalo yempumelelo, iiseshoni zelog, ukukhetha umxholo ne-avatar, imifanekiso yeMyuziyam, u-× osusa uhlobo okanye isihluzi, iifolda zokuseta, iibhokisi zokuphawula zemithombo yokukhangela kunye nokungenisa kwe-CLZ. Izitshixo zokuvula/zokucima ngoku zibonisa isangqa sekhibhodi'
   - type: performance
     label: 'Isisusi semva kwi-Museum asisahlali kwimemori. Sasisika iifoto zeekhontrola emva kwazo ngemodeli ye-AI eyayithatha ngaphezu kwe-2 GB emva kokusetyenziswa, ukuya kuthi ga kwi-9 GB ngexesha lefoto, de i-RetroDB iqaliswe kwakhona. Ngoku isebenza kwinkqubo encedisayo eqala xa ifuneka kwaye ivaleke imizuzu emibini emva kwefoto yayo yokugqibela, ibuyisela yonke loo memori'
     en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'

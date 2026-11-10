@@ -1,6 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-09'
+  date: '2026-11-10'
   tags:
+  - type: fix
+    label: 'I et bekreftelsesvindu avbryter Enter på Avbryt eller × nå i stedet for å bekrefte. Et vindu som åpnes med OK forsvinner ikke lenger, og Tab virker fortsatt etter at hurtigtastlisten eller et fremdriftsvindu lukkes'
+  - type: enhancement
+    label: 'Mange kontroller som bare virket med mus, virker nå med tastaturet (Tab, så Enter eller mellomrom): påloggingsprofilene, søkeresultatene i Sammenlign, tagger og knappene Rediger og Slett, spillkortene for prestasjoner, loggøkter, valg av tema og avatar, Museum-bilder, × som fjerner en sjanger eller et filter, mapper i oppsettet, avkrysningsbokser for skrapekilder og CLZ-importen. Av/på-brytere viser nå tastaturringen'
   - type: performance
     label: 'Bakgrunnsfjerneren i Museum blir ikke lenger liggende i minnet. Den klippet kontrollerbilder ut av bakgrunnen med en AI-modell som brukte over 2 GB etter første bruk, og opptil rundt 9 GB mens et bilde ble behandlet, helt til RetroDB ble startet på nytt. Nå kjører den i et hjelpeprogram som starter ved behov og lukkes to minutter etter siste bilde, slik at alt det minnet blir gitt tilbake'
     en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'

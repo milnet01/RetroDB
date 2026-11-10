@@ -1,6 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-09'
+  date: '2026-11-10'
   tags:
+  - type: fix
+    label: 'In ''n bevestigingsvenster kanselleer Enter op Kanselleer of × nou in plaas daarvan om te bevestig. ''n Venster wat deur OK oopgemaak word, verdwyn nie meer nie, en Tab werk steeds nadat die kortpadlys of ''n vorderingsvenster toemaak'
+  - type: enhancement
+    label: 'Baie kontroles wat net met ''n muis gewerk het, werk nou met die sleutelbord (Tab, dan Enter of Spasie): die aanmeldprofiele, Vergelyk-soekresultate, etikette en hul Wysig- en Skrap-knoppies, prestasie-speletjiekaarte, logsessies, tema- en avatarkeuses, Museum-prente, die × wat ''n genre of filter verwyder, opstelvouers, merkblokkies vir skraapbronne en die CLZ-invoer. Aan/af-skakelaars wys nou die sleutelbordring'
   - type: performance
     label: 'Die Museum se agtergrondverwyderaar bly nie meer in die geheue nie. Dit het beheerderfoto''s met ''n AI-model uit hul agtergrond gesny, en daardie model het ná die eerste gebruik meer as 2 GB opgeneem, en tot sowat 9 GB terwyl ''n foto verwerk is, totdat RetroDB herbegin het. Dit loop nou in ''n hulpprogram wat begin wanneer dit nodig is en twee minute ná sy laaste foto sluit, sodat al daardie geheue teruggegee word'
     en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'

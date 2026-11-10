@@ -1,6 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-09'
+  date: '2026-11-10'
   tags:
+  - type: fix
+    label: 'Dans une fenêtre de confirmation, Entrée sur Annuler ou × annule désormais au lieu de confirmer. Une fenêtre ouverte par OK ne disparaît plus, et Tab fonctionne toujours après la fermeture de la liste des raccourcis ou d''une fenêtre de progression'
+  - type: enhancement
+    label: 'De nombreuses commandes qui ne marchaient qu''à la souris fonctionnent désormais au clavier (Tab, puis Entrée ou Espace) : les profils de connexion, les résultats de recherche de Comparer, les étiquettes et leurs boutons Modifier et Supprimer, les cartes de jeux des succès, les sessions de journal, le choix du thème et de l''avatar, les images du Musée, le × qui retire un genre ou un filtre, les dossiers de configuration, les cases des sources de scraping et l''import CLZ. Les interrupteurs affichent maintenant l''anneau du clavier'
   - type: performance
     label: 'L''outil de suppression d''arrière-plan du Musée ne reste plus en mémoire. Il détourait les photos de manettes avec un modèle d''AI qui occupait plus de 2 GB après sa première utilisation, et jusqu''à environ 9 GB pendant une photo, jusqu''au redémarrage de RetroDB. Il tourne désormais dans un programme d''aide qui démarre quand il le faut et se ferme deux minutes après sa dernière photo, ce qui libère toute cette mémoire'
     en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'

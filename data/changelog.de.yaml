@@ -1,6 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-09'
+  date: '2026-11-10'
   tags:
+  - type: fix
+    label: 'In einem Bestätigungsfenster bricht Enter auf Abbrechen oder × jetzt ab, statt zu bestätigen. Ein durch OK geöffnetes Fenster verschwindet nicht mehr, und Tab funktioniert weiter, nachdem die Tastenkürzel-Liste oder ein Fortschrittsfenster geschlossen wurde'
+  - type: enhancement
+    label: 'Viele Bedienelemente, die nur mit der Maus funktionierten, gehen jetzt auch mit der Tastatur (Tab, dann Enter oder Leertaste): die Profile bei der Anmeldung, Suchergebnisse im Vergleich, Tags mit ihren Schaltflächen Bearbeiten und Löschen, Spielkarten bei den Erfolgen, Protokollsitzungen, Design- und Avatarauswahl, Museumsbilder, das ×, das ein Genre oder einen Filter entfernt, Ordner in der Einrichtung, Kontrollkästchen für Scraping-Quellen und der CLZ-Import. Ein/Aus-Schalter zeigen jetzt den Tastaturring'
   - type: performance
     label: 'Der Hintergrund-Entferner im Museum bleibt nicht mehr im Speicher. Er schnitt Controller-Fotos mit einem AI-Modell aus ihrem Hintergrund aus, das nach der ersten Nutzung über 2 GB belegte, während eines Fotos bis zu etwa 9 GB, bis RetroDB neu gestartet wurde. Jetzt läuft er in einem Hilfsprogramm, das bei Bedarf startet und zwei Minuten nach seinem letzten Foto schließt und dabei diesen ganzen Speicher wieder freigibt'
     en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'

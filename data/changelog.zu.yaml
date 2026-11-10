@@ -1,6 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-09'
+  date: '2026-11-10'
   tags:
+  - type: fix
+    label: 'Efasiteleni lokuqinisekisa, u-Enter ku-Khansela noma ku-× manje uyakhansela esikhundleni sokuqinisekisa. Ifasitela elivulwe ngu-OK alisanyamalali, futhi u-Tab uyaqhubeka esebenza ngemva kokuthi uhlu lwezinqamuleli noma ifasitela lenqubekelaphambili livaliwe'
+  - type: enhancement
+    label: 'Izilawuli eziningi ebezisebenza ngegundane kuphela manje ziyasebenza ngekhibhodi (Tab, bese u-Enter noma Isikhala): amaphrofayela okungena, imiphumela yokusesha yokuQhathanisa, omaki nezinkinobho zabo zokuHlela nokuSusa, amakhadi emidlalo yempumelelo, izikhathi zelogi, ukukhetha itimu ne-avatar, izithombe zeMnyuziyamu, u-× osusa uhlobo noma isihlungi, amafolda okusetha, amabhokisi okumaka emithombo yokuklwebha kanye nokungenisa kwe-CLZ. Izishintshi zokuvula/zokuvala manje zibonisa indilinga yekhibhodi'
   - type: performance
     label: 'Isisusi sangemuva se-Museum asisahlali kumemori. Sasisika izithombe zesilawuli emuva kwazo ngemodeli ye-AI eyayithatha ngaphezu kuka-2 GB uma isisetshenzisiwe, kuze kufike cishe ku-9 GB ngesikhathi sesithombe, kuze kuqalwe kabusha i-RetroDB. Manje isebenza ohlelweni olusizayo oluqala uma kudingeka futhi oluvaleka emizuzwini emibili ngemuva kwesithombe salo sokugcina, lubuyisela yonke leyo memori'
     en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'

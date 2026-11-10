@@ -1,6 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-09'
+  date: '2026-11-10'
   tags:
+  - type: fix
+    label: 'Di jendela konfirmasi, Enter pada Batal atau × kini membatalkan, bukan mengonfirmasi. Jendela yang dibuka oleh OK tidak lagi menghilang, dan Tab tetap berfungsi setelah daftar pintasan atau jendela progres ditutup'
+  - type: enhancement
+    label: 'Banyak kontrol yang dulu hanya bisa dipakai dengan mouse kini bisa dipakai dengan keyboard (Tab, lalu Enter atau Spasi): profil masuk, hasil pencarian Bandingkan, tag beserta tombol Edit dan Hapus, kartu game pencapaian, sesi log, pilihan tema dan avatar, gambar Museum, tanda × yang menghapus genre atau filter, folder penyiapan, kotak centang sumber scraping, dan impor CLZ. Sakelar hidup/mati kini menampilkan cincin keyboard'
   - type: performance
     label: 'Penghapus latar belakang di Museum tidak lagi terus berada di memori. Fitur ini memotong foto kontroler dari latar belakangnya dengan model AI yang memakai lebih dari 2 GB setelah dipakai, dan hingga sekitar 9 GB saat memproses foto, sampai RetroDB dimulai ulang. Kini fitur ini berjalan di program pembantu yang menyala saat dibutuhkan dan menutup dua menit setelah foto terakhirnya, sehingga semua memori itu dikembalikan'
     en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'

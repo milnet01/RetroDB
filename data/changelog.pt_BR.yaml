@@ -1,6 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-09'
+  date: '2026-11-10'
   tags:
+  - type: fix
+    label: 'Numa janela de confirmação, Enter em Cancelar ou × agora cancela em vez de confirmar. Uma janela aberta pelo OK não some mais, e o Tab continua funcionando depois que a lista de atalhos ou uma janela de progresso fecha'
+  - type: enhancement
+    label: 'Muitos controles que só funcionavam com o mouse agora funcionam pelo teclado (Tab, depois Enter ou Espaço): os perfis de login, os resultados de busca do Comparar, as tags e seus botões Editar e Excluir, os cartões de jogos das conquistas, as sessões de log, a escolha de tema e avatar, as imagens do Museu, o × que remove um gênero ou filtro, as pastas da configuração, as caixas de seleção das fontes de scraping e a importação CLZ. Os interruptores liga/desliga agora mostram o anel do teclado'
   - type: performance
     label: 'O removedor de fundo do Museu não fica mais na memória. Ele recortava as fotos de Controle do fundo com um modelo de AI que, depois de usado, ocupava mais de 2 GB, e até cerca de 9 GB durante uma foto, até o RetroDB ser reiniciado. Agora ele roda em um programa auxiliar que abre quando precisa e fecha dois minutos depois da última foto, devolvendo toda essa memória'
     en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'

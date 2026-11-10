@@ -1,6 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-09'
+  date: '2026-11-10'
   tags:
+  - type: fix
+    label: 'W oknie potwierdzenia Enter na Anuluj lub × teraz anuluje zamiast potwierdzać. Okno otwarte przez OK już nie znika, a Tab działa dalej po zamknięciu listy skrótów lub okna postępu'
+  - type: enhancement
+    label: 'Wiele elementów, które działały tylko myszą, działa teraz z klawiatury (Tab, potem Enter lub Spacja): profile logowania, wyniki wyszukiwania w Porównaj, tagi z przyciskami Edytuj i Usuń, karty gier w osiągnięciach, sesje dziennika, wybór motywu i awatara, zdjęcia w Muzeum, ×, który usuwa gatunek lub filtr, foldery w konfiguracji, pola wyboru źródeł scrapowania i import CLZ. Przełączniki wł./wył. pokazują teraz pierścień klawiatury'
   - type: performance
     label: 'Narzędzie do usuwania tła w Muzeum nie zostaje już w pamięci. Wycinało ono zdjęcia kontrolerów z tła za pomocą modelu AI, który po pierwszym użyciu zajmował ponad 2 GB, a podczas obróbki zdjęcia nawet około 9 GB, aż do ponownego uruchomienia RetroDB. Teraz działa w programie pomocniczym, który uruchamia się w razie potrzeby i zamyka dwie minuty po ostatnim zdjęciu, oddając całą tę pamięć'
     en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'

@@ -1,6 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-09'
+  date: '2026-11-10'
   tags:
+  - type: fix
+    label: '在确认窗口中，焦点在“取消”或 × 上时按 Enter 现在会取消，而不是确认。由“确定”打开的窗口不再消失，关闭快捷键列表或进度窗口后 Tab 仍能正常使用'
+  - type: enhancement
+    label: '许多原本只能用鼠标操作的控件，现在也能用键盘操作（按 Tab，再按 Enter 或空格）：登录页的个人资料、比较页的搜索结果、标签及其编辑和删除按钮、成就中的游戏卡片、日志会话、主题和头像选择、博物馆图片、移除类型或筛选条件的 ×、设置向导中的文件夹、抓取来源复选框以及 CLZ 导入。开关现在也会显示键盘焦点环'
   - type: performance
     label: '博物馆的背景移除功能不再一直占用内存。它用 AI 模型把手柄照片从背景中抠出来，这个模型一旦用过就占用超过 2 GB 内存，处理照片时最多约 9 GB，直到 RetroDB 重启才释放。现在它在一个辅助程序中运行，需要时才启动，处理完最后一张照片两分钟后关闭，把这些内存全部释放'
     en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'
