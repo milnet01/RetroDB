@@ -16,15 +16,23 @@
 // NORMALIZATION MANAGER
 // =============================================================================
 
+// Name fields list spelling groups (PASS-59-298) instead of value rules.
+const NORM_NAME_FIELDS = ['franchise', 'publisher', 'developer'];
+
 const NormalizationManager = {
     currentField: 'genre',
     data: [],
     canonicalOptions: [],
     filterChanged: false,
 
+    /** Is the current field a name field, listed as spelling groups? */
+    isNames() {
+        return NORM_NAME_FIELDS.includes(this.currentField);
+    },
+
     /**
      * Load normalization preview data for a field
-     * @param {string} [field] - Field to load ('genre' or 'modes'), defaults to current
+     * @param {string} [field] - genre, modes, franchise, publisher or developer; defaults to current
      */
     async load(field) {
         if (field) {
@@ -32,33 +40,44 @@ const NormalizationManager = {
         }
 
         // Update button states
-        document.querySelectorAll('.norm-field-btn').forEach(btn => btn.classList.remove('active'));
-        const activeBtn = document.getElementById(this.currentField === 'genre' ? 'normBtnGenre' : 'normBtnModes');
-        if (activeBtn) {
-            activeBtn.classList.remove('btn-secondary');
-            activeBtn.classList.add('btn-primary', 'active');
-        }
-        const inactiveBtn = document.getElementById(this.currentField === 'genre' ? 'normBtnModes' : 'normBtnGenre');
-        if (inactiveBtn) {
-            inactiveBtn.classList.remove('btn-primary', 'active');
-            inactiveBtn.classList.add('btn-secondary');
-        }
+        document.querySelectorAll('.norm-field-btn').forEach(btn => {
+            const on = btn.dataset.field === this.currentField;
+            btn.classList.toggle('active', on);
+            btn.classList.toggle('btn-primary', on);
+            btn.classList.toggle('btn-secondary', !on);
+        });
 
         // Show loading
         const loading = document.getElementById('normLoading');
         const tableContainer = document.getElementById('normTableContainer');
-        const empty = document.getElementById('normEmpty');
+        const empty = document.getElementById(this.isNames() ? 'normEmptyNames' : 'normEmpty');
         if (loading) loading.style.display = '';
         if (tableContainer) tableContainer.style.display = 'none';
-        if (empty) empty.style.display = 'none';
+        ['normEmpty', 'normEmptyNames'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        });
 
         try {
-            const result = await API.get(`/api/normalize/preview/${encodeURIComponent(this.currentField)}`);
+            const field = encodeURIComponent(this.currentField);
+            const result = await API.get(this.isNames()
+                ? `/api/normalize/spellings/${field}`
+                : `/api/normalize/preview/${field}`);
 
             if (loading) loading.style.display = 'none';
 
             if (result.success) {
-                this.data = result.values || [];
+                // A spelling group becomes a row: every spelling with its count,
+                // the most-used one pre-selected.
+                this.data = this.isNames()
+                    ? (result.groups || []).map(g => ({
+                        value: g.spellings.map(s => s.value).join(', '),
+                        count: g.count,
+                        suggested: g.suggested,
+                        spellings: g.spellings,
+                        needs_change: true,
+                    }))
+                    : (result.values || []);
                 this.canonicalOptions = result.canonical_options || [];
 
                 if (this.data.length === 0) {
@@ -114,6 +133,17 @@ const NormalizationManager = {
 
             // Game count
             html += `<td style="text-align: right;">${formatNumber(item.count)}</td>`;
+
+            if (item.spellings) {
+                // A name: pick one of its spellings, nothing else
+                html += `<td><select class="form-select norm-target-input" data-idx="${idx}" data-on-change="NormalizationManager.updateApplyButton">`;
+                item.spellings.forEach(sp => {
+                    const selected = sp.value === item.suggested ? ' selected' : '';
+                    html += `<option value="${escapeHtml(sp.value)}"${selected}>${escapeHtml(sp.value)} (${formatNumber(sp.count)})</option>`;
+                });
+                html += '</select></td></tr>';
+                return;
+            }
 
             // Normalize To input — free-text with datalist autocomplete
             html += '<td>';
@@ -173,6 +203,12 @@ const NormalizationManager = {
             const input = document.querySelector(`.norm-target-input[data-idx="${idx}"]`);
             const newVal = input ? input.value.trim() : '';
 
+            if (item.spellings) {
+                const others = item.spellings.map(s => s.value).filter(v => v !== newVal);
+                mappings.push({ old: others.join(', '), new: newVal, count: item.count });
+                return;
+            }
+
             // Only include if there's a target and it differs from current
             if (newVal && newVal.toLowerCase() !== item.value.toLowerCase()) {
                 mappings.push({ old: item.value, new: newVal, count: item.count });
@@ -211,9 +247,16 @@ const NormalizationManager = {
             msg += `<td style="text-align:right; padding: 4px;">${escapeHtml(String(m.count))}</td></tr>`;
         });
         msg += '</table></div>';
-        const ruleQuestion = mappings.length !== 1
-            ? t('Apply {n} normalization rules?', {n: mappings.length})
-            : t('Apply {n} normalization rule?', {n: mappings.length});
+        let ruleQuestion;
+        if (this.isNames()) {
+            ruleQuestion = mappings.length !== 1
+                ? t('Use these {n} spellings?', {n: mappings.length})
+                : t('Use this spelling?');
+        } else {
+            ruleQuestion = mappings.length !== 1
+                ? t('Apply {n} normalization rules?', {n: mappings.length})
+                : t('Apply {n} normalization rule?', {n: mappings.length});
+        }
         msg += `<p>${escapeHtml(ruleQuestion)}</p>`;
 
         // Use custom confirm dialog — never browser confirm() per standards
@@ -233,14 +276,22 @@ const NormalizationManager = {
         }
 
         try {
-            const result = await API.post('/api/normalize/apply', {
-                field: this.currentField,
-                mappings: mappings.map(m => ({ old: m.old, new: m.new }))
-            });
+            const names = this.isNames();
+            const result = names
+                ? await API.post('/api/normalize/spellings', {
+                    field: this.currentField,
+                    spellings: mappings.map(m => m.new)
+                })
+                : await API.post('/api/normalize/apply', {
+                    field: this.currentField,
+                    mappings: mappings.map(m => ({ old: m.old, new: m.new }))
+                });
 
             if (result.success) {
                 showNotification(
-                    t('Normalization applied: {games} games updated, {rules} rules saved', {games: formatNumber(result.games_updated), rules: formatNumber(result.rules_saved)}),
+                    names
+                        ? t('Spellings applied: {games} games updated', {games: formatNumber(result.games_updated)})
+                        : t('Normalization applied: {games} games updated, {rules} rules saved', {games: formatNumber(result.games_updated), rules: formatNumber(result.rules_saved)}),
                     'success'
                 );
                 // Reload to show updated data

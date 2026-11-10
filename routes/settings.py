@@ -21,7 +21,9 @@ from services.database import query, execute, get_db, backup_database
 from services.auth import login_required, admin_required
 from services.security import safe_filename, validate_settings_path
 from services.settings_validators import validate_settings_value, known_keys
-from services.normalization import get_unique_values, apply_normalization
+from services.normalization import (
+    NAME_FIELDS, apply_normalization, apply_spellings, case_twin_groups, get_unique_values,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -686,3 +688,28 @@ def api_normalize_apply():
         games_updated=result['games_updated'],
         rules_saved=result['rules_saved'],
     )
+
+
+@bp.route('/api/normalize/spellings/<field>')
+@admin_required
+@handle_api_errors
+def api_normalize_spellings(field):
+    """Names spelled more than one way apart from capitals (PASS-59-298)."""
+    if field not in NAME_FIELDS:
+        return error(_('Invalid field'), 400)
+    return success(groups=case_twin_groups(field))
+
+
+@bp.route('/api/normalize/spellings', methods=['POST'])
+@admin_required
+@handle_api_errors
+def api_normalize_spellings_apply():
+    """Write the chosen spelling of each name over its other spellings."""
+    data = request.get_json() or {}
+    field = data.get('field')
+    spellings = data.get('spellings')
+    if field not in NAME_FIELDS:
+        return error(_('Invalid field'), 400)
+    if not isinstance(spellings, list) or not spellings:
+        return error(_('No spellings chosen'), 400)
+    return success(games_updated=apply_spellings(field, spellings))

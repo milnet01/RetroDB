@@ -15,7 +15,7 @@ from concurrent.futures import ThreadPoolExecutor
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import IMAGE_PATH, STATIC_PATH
 from services.field_sources import credits as field_credits
-from services.normalization import canonicalize_metadata
+from services.normalization import NAME_FIELDS, canonicalize_metadata, use_library_spellings
 from services.release_dates import year_gap_with_own_region
 from services.game_utils import generate_sort_title, infer_rating_from_content, RATING_SYSTEM_KEYS, RATING_SYSTEMS
 from services.game_metadata_service import cross_map_ratings
@@ -1837,6 +1837,10 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             field for field in ('genre', 'modes', 'perspective', 'dimension',
                                 'game_structure', 'players')
             if game.get(field) not in (None, '') and metadata.get(field) == game.get(field)})
+        # A new name spelled like one in the library apart from capitals takes
+        # the library's spelling; the game's own stored name stays (PASS-59-298).
+        use_library_spellings(metadata, keep={
+            field for field in NAME_FIELDS if metadata.get(field) == game.get(field)})
 
         _log_date_disagreement(metadata, game)
 

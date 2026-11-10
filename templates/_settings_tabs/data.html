@@ -150,11 +150,17 @@
         <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
             {{ _('Fix inconsistent genre and mode values across your library. Custom rules are saved and automatically apply to future scrapes.') }}
         </p>
+        <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
+            {{ _('Franchise, Publisher and Developer list each name spelled with different capitals, such as "Doom" and "DOOM". Pick one spelling for each; nothing changes until you press Apply. Later scrapes then use that spelling.') }}
+        </p>
 
         <!-- Field selector buttons -->
         <div style="display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-lg); flex-wrap: wrap; align-items: center;">
-            <button type="button" class="btn btn-primary norm-field-btn active" id="normBtnGenre" data-on-click="NormalizationManager.load" data-args='["genre"]'>{{ _('Genre') }}</button>
-            <button type="button" class="btn btn-secondary norm-field-btn" id="normBtnModes" data-on-click="NormalizationManager.load" data-args='["modes"]'>{{ _('Modes') }}</button>
+            <button type="button" class="btn btn-primary norm-field-btn active" data-field="genre" data-on-click="NormalizationManager.load" data-args='["genre"]'>{{ _('Genre') }}</button>
+            <button type="button" class="btn btn-secondary norm-field-btn" data-field="modes" data-on-click="NormalizationManager.load" data-args='["modes"]'>{{ _('Modes') }}</button>
+            <button type="button" class="btn btn-secondary norm-field-btn" data-field="franchise" data-on-click="NormalizationManager.load" data-args='["franchise"]'>{{ _('Franchise') }}</button>
+            <button type="button" class="btn btn-secondary norm-field-btn" data-field="publisher" data-on-click="NormalizationManager.load" data-args='["publisher"]'>{{ _('Publisher') }}</button>
+            <button type="button" class="btn btn-secondary norm-field-btn" data-field="developer" data-on-click="NormalizationManager.load" data-args='["developer"]'>{{ _('Developer') }}</button>
             <div style="margin-left: auto; display: flex; gap: var(--spacing-sm); align-items: center;">
                 <div class="toggle-item" style="display: flex; align-items: center; gap: var(--spacing-xs);">
                     <label class="toggle-switch" style="transform: scale(0.75);" for="normFilterChanged">
@@ -204,6 +210,9 @@
         <!-- Empty state -->
         <div id="normEmpty" style="display: none; text-align: center; padding: var(--spacing-xl); color: var(--text-muted);">
             <p>{{ _('No values found for this field. Make sure your library has games with metadata.') }}</p>
+        </div>
+        <div id="normEmptyNames" style="display: none; text-align: center; padding: var(--spacing-xl); color: var(--text-muted);">
+            <p>{{ _('Every name in this field has one spelling.') }}</p>
         </div>
     </div>
 </section>

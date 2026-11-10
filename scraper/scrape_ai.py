@@ -496,11 +496,13 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None,
             )
         elif field == 'developer':
             field_instructions.append(
-                '"developer": development studio name(s), comma-separated if more than one'
+                '"developer": development studio name(s), comma-separated if more than one, '
+                'each written with its official capitals (e.g. "id Software", "SEGA")'
             )
         elif field == 'publisher':
             field_instructions.append(
-                '"publisher": publishing company name(s), comma-separated if more than one'
+                '"publisher": publishing company name(s), comma-separated if more than one, '
+                'each written with its official capitals (e.g. "id Software", "SEGA")'
             )
         elif field == 'release_date':
             where = f' in the {_sanitize_prompt_input(date_region)} region' if date_region else ''
@@ -594,7 +596,8 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None,
         elif field == 'franchise':
             field_instructions.append(
                 '"franchise": series/franchise name if applicable (e.g., "Super Mario", '
-                '"Final Fantasy"). Return "" (empty string) if not part of a franchise.'
+                '"Final Fantasy"), written with its official capitals. '
+                'Return "" (empty string) if not part of a franchise.'
             )
         elif field == 'similar_games':
             field_instructions.append(

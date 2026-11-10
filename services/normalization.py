@@ -432,6 +432,8 @@ def invalidate_normalization_cache():
     _combined_map_cache_time.clear()
     _canonical_cache.clear()
     _canonical_cache_time.clear()
+    _spelling_cache.clear()
+    _spelling_cache_time.clear()
 
 
 # =============================================================================
@@ -696,3 +698,111 @@ def apply_normalization(field, mappings):
     invalidate_normalization_cache()
     logger.info(f"Normalization applied for {field}: {games_updated} games updated, {rules_saved} rules saved")
     return {'games_updated': games_updated, 'rules_saved': rules_saved}
+
+
+# =============================================================================
+# ONE SPELLING PER NAME (PASS-59-298)
+# =============================================================================
+
+# Comma-separated name fields, where "Doom" and "DOOM" are one name.
+NAME_FIELDS = ('franchise', 'publisher', 'developer')
+_spelling_cache = {}
+_spelling_cache_time = {}
+
+
+def _name_counts(field):
+    """{casefolded name: {spelling: games}} for one name field."""
+    if field not in NAME_FIELDS:
+        raise ValueError(f"Invalid name field: {field!r}")
+    counts = {}
+    # field is one of NAME_FIELDS — safe for SQL interpolation
+    for row in query(f"SELECT {field} FROM games WHERE {field} IS NOT NULL AND {field} != ''"):
+        for name in dict.fromkeys(n.strip() for n in row[field].split(',')):
+            if name:
+                spellings = counts.setdefault(name.casefold(), {})
+                spellings[name] = spellings.get(name, 0) + 1
+    return counts
+
+
+def _most_used(spellings):
+    """The spelling on most games. A tie goes to one with capitals, then the
+    same way every time, so "monster rancher" never beats "Monster Rancher"."""
+    return max(spellings, key=lambda s: (spellings[s], s != s.lower(), s))
+
+
+def _library_spellings(field):
+    """{casefolded name: the library's most-used spelling}, cached like the maps."""
+    import time as _time
+    now = _time.time()
+    if field in _spelling_cache and (now - _spelling_cache_time.get(field, 0)) < _COMBINED_MAP_CACHE_TTL:
+        return _spelling_cache[field]
+    spellings = {key: _most_used(s) for key, s in _name_counts(field).items()}
+    _spelling_cache[field] = spellings
+    _spelling_cache_time[field] = now
+    return spellings
+
+
+def use_library_spellings(metadata, keep=()):
+    """A scraped or AI name takes the library's spelling when only capitals differ.
+
+    `keep` names fields holding the game's stored value, which stay as they are:
+    only the user merges spellings already saved (Settings > Normalization).
+    """
+    for field in NAME_FIELDS:
+        value = metadata.get(field)
+        if not value or not isinstance(value, str) or field in keep:
+            continue
+        # A company alias names the spelling itself, whatever the library holds.
+        library = {**_library_spellings(field),
+                   **(COMPANY_ALIASES if field != 'franchise' else {})}
+        names = (n.strip() for n in value.split(','))
+        metadata[field] = ', '.join(dict.fromkeys(
+            library.get(n.casefold(), n) for n in names if n))
+
+
+def case_twin_groups(field):
+    """Names the library spells more than one way apart from capitals.
+
+    Returns [{suggested, count, spellings: [{value, count}]}], most-used
+    spelling first in each group and as its suggestion.
+    """
+    groups = []
+    for spellings in _name_counts(field).values():
+        if len(spellings) < 2:
+            continue
+        groups.append({
+            'suggested': _most_used(spellings),
+            'count': sum(spellings.values()),
+            'spellings': [{'value': s, 'count': n} for s, n in
+                          sorted(spellings.items(), key=lambda kv: (-kv[1], kv[0]))],
+        })
+    return sorted(groups, key=lambda g: g['suggested'].casefold())
+
+
+def apply_spellings(field, chosen):
+    """Write each chosen spelling over every spelling of that name apart from capitals.
+
+    `chosen` is a list of spellings. A spelling cannot rename anything: it only
+    replaces names equal to it apart from capitals. Returns games updated.
+    """
+    if field not in NAME_FIELDS:
+        raise ValueError(f"Invalid name field: {field!r}")
+    wanted = {c.strip().casefold(): c.strip() for c in chosen
+              if isinstance(c, str) and c.strip()}
+    updated = 0
+    with get_db_with_context() as conn:
+        rows = conn.execute(
+            f"SELECT id, {field} FROM games WHERE {field} IS NOT NULL AND {field} != ''"
+        ).fetchall()
+        for game_id, value in rows:
+            names = [n.strip() for n in value.split(',') if n.strip()]
+            new_names = [wanted.get(n.casefold(), n) for n in names]
+            if new_names == names:
+                continue
+            conn.execute(f"UPDATE games SET {field} = ? WHERE id = ?",
+                         (', '.join(dict.fromkeys(new_names)), game_id))
+            updated += 1
+        conn.commit()
+    invalidate_normalization_cache()
+    logger.info(f"Spellings applied for {field}: {updated} games updated")
+    return updated

@@ -184,6 +184,11 @@ def fill_game(game, fields=None):
             sets[field] = value
             filled_fields.append(field)
 
+    # A name spelled like one in the library apart from capitals takes the
+    # library's spelling (PASS-59-298).
+    from services.normalization import use_library_spellings
+    use_library_spellings(sets)
+
     if file_region and not game.get('region'):
         sets['region'] = file_region
 
