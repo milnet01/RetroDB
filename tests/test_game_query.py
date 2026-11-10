@@ -126,10 +126,11 @@ class TestBuildGamesQuery:
 
     @pytest.mark.parametrize("field", ['genre', 'franchise', 'developer', 'publisher', 'modes', 'perspective', 'dimension'])
     def test_multivalue_fields_use_like_with_escape(self, field):
-        sql, vals = _build_games_query({field: 'Value'}, user_id=1)
+        # A whole comma-separated value (PASS-59-160), with % and _ literal.
+        sql, vals = _build_games_query({field: 'Val_ue%'}, user_id=1)
         # SQL literal: ESCAPE '\' (single backslash — the LIKE escape char).
-        assert f"g.{field} LIKE ? ESCAPE '\\'" in sql
-        assert '%Value%' in vals
+        assert f"g.{field}), ', ', ','), ' ,', ',') || ',') LIKE ? ESCAPE '\\'" in sql
+        assert '%,Val\\_ue\\%,%' in vals
 
 
 class TestSortOrder:

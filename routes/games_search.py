@@ -14,7 +14,7 @@ from flask_babel import gettext as _
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required
 from services.database import query
-from services.game_query import escape_like, listed_sql
+from services.game_query import escape_like, listed_sql, whole_value_param, whole_value_sql
 
 logger = logging.getLogger(__name__)
 
@@ -147,9 +147,9 @@ def api_similar_games(game_id):
                 _take(query(f"""
                     SELECT {columns}
                     FROM games g JOIN systems s ON g.system_id = s.id
-                    WHERE g.franchise LIKE ? ESCAPE '\\' AND g.id != ? AND {listed}
+                    WHERE {whole_value_sql('g.franchise')} AND g.id != ? AND {listed}
                     ORDER BY g.title LIMIT 10
-                """, [f'%{escape_like(franchise)}%', game_id]), f'Same franchise: {franchise}')
+                """, [whole_value_param(franchise), game_id]), f'Same franchise: {franchise}')
 
         # Match by genre + developer
         if game['genre'] and game['developer']:
@@ -159,10 +159,10 @@ def api_similar_games(game_id):
                 _take(query(f"""
                     SELECT {columns}
                     FROM games g JOIN systems s ON g.system_id = s.id
-                    WHERE g.genre LIKE ? ESCAPE '\\' AND g.developer LIKE ? ESCAPE '\\'
+                    WHERE {whole_value_sql('g.genre')} AND {whole_value_sql('g.developer')}
                       AND g.id != ? AND {listed}
                     ORDER BY g.title LIMIT 10
-                """, [f'%{escape_like(genres[0])}%', f'%{escape_like(devs[0])}%', game_id]),
+                """, [whole_value_param(genres[0]), whole_value_param(devs[0]), game_id]),
                     'Same genre & developer')
 
         # Match by genre on same system (weaker signal, fill remaining)
@@ -176,10 +176,10 @@ def api_similar_games(game_id):
                 _take(query(f"""
                     SELECT {columns}
                     FROM games g JOIN systems s ON g.system_id = s.id
-                    WHERE g.genre LIKE ? ESCAPE '\\' AND g.system_id = ?
+                    WHERE {whole_value_sql('g.genre')} AND g.system_id = ?
                       AND g.id NOT IN ({placeholders}) AND {listed}
                     ORDER BY RANDOM() LIMIT ?
-                """, [f'%{escape_like(genres[0])}%', game['system_id']] + seen_ids_list
+                """, [whole_value_param(genres[0]), game['system_id']] + seen_ids_list
                     + [2 * (8 - len(similar))]), 'Similar genre on same system',
                     most=8 - len(similar))
 

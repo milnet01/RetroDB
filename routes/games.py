@@ -28,10 +28,10 @@ from services.field_sources import (
     HAND_EDITED_FIELDS, ai_marks, hand_edit_history, rating_board_starts,
 )
 from services.game_query import (
-    escape_like, get_retroachievements_info, get_trophy_info_for_game,
+    get_retroachievements_info, get_trophy_info_for_game,
     get_bonus_discs_for_game, _get_filter_options, _build_games_query,
     invalidate_filter_cache, VERSION_COLUMNS, MULTI_FILTER_FIELDS,
-    listed_sql, one_row_per_group,
+    listed_sql, one_row_per_group, whole_value_param, whole_value_sql,
 )
 from services.analytics import invalidate_analytics_cache
 from services.box_faces import faces_for
@@ -1479,8 +1479,8 @@ def api_filter_games():
     elif filter_type == 'modes' and 'multi' in filter_value.lower():
         match, match_values = f"(g.{column} LIKE '%Multi%' OR g.players > 1)", []
     else:
-        match = f"g.{column} LIKE ? ESCAPE '\\'"
-        match_values = [f'%{escape_like(filter_value)}%']
+        match = whole_value_sql(f'g.{column}')
+        match_values = [whole_value_param(filter_value)]
     where, values = one_row_per_group(f"{match} AND {listed_sql('g')}", match_values)
     games = query(f"""
         SELECT g.*, s.name AS system_name

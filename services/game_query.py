@@ -16,9 +16,10 @@ from services.game_utils import RATING_SYSTEM_KEYS, RATING_SYSTEMS
 
 logger = logging.getLogger(__name__)
 
-# Text fields the Library filters on by substring. Each takes several values
-# (PASS-53-11): a game matches if it has any of them, and the not_ form
-# hides a game that has any of them.
+# Comma-separated text fields the Library filters on, one whole value at a
+# time (whole_value_sql). Each takes several values (PASS-53-11): a game
+# matches if it has any of them, and the not_ form hides a game that has
+# any of them.
 MULTI_FILTER_FIELDS = ('genre', 'franchise', 'developer', 'publisher',
                        'modes', 'perspective', 'dimension', 'arcade_category')
 
@@ -26,6 +27,30 @@ MULTI_FILTER_FIELDS = ('genre', 'franchise', 'developer', 'publisher',
 def escape_like(value):
     """Escape special SQL LIKE characters so %, _, \\ are matched literally."""
     return value.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
+
+
+def whole_value_sql(column, negate=False):
+    """SQL testing whether a comma-separated column holds one whole value.
+
+    Bind whole_value_param(value) to its `?`. A plain substring match let
+    "Action" match "Action-Adventure", so a filter found more games than
+    the filter window counted (PASS-59-160). The window splits on commas
+    and trims, so this does the same: "A, B" and "A,B" both hold "B".
+    A NULL column matches neither form; callers that want NULL kept by a
+    negated test say so themselves.
+    """
+    padded = f"(',' || REPLACE(REPLACE(TRIM({column}), ', ', ','), ' ,', ',') || ',')"
+    return f"{padded} {'NOT LIKE' if negate else 'LIKE'} ? ESCAPE '\\'"
+
+
+def whole_value_param(value):
+    """The bind value for whole_value_sql: one value, matched whole.
+
+    A value holding a comma itself ("Acme, Inc.") is tidied the same way
+    as the column, so it matches as one run of parts (PASS-53-11).
+    """
+    tidy = ','.join(part.strip() for part in value.split(','))
+    return f"%,{escape_like(tidy)},%"
 
 
 def _as_list(value):
@@ -269,13 +294,13 @@ def _build_games_query(params, count_only=False, ids_only=False, user_id=None,
         wanted = _as_list(params.get(field))
         if wanted:
             conditions.append('(' + ' OR '.join(
-                [f"g.{field} LIKE ? ESCAPE '\\'"] * len(wanted)) + ')')
-            values.extend(f"%{escape_like(v)}%" for v in wanted)
+                [whole_value_sql(f'g.{field}')] * len(wanted)) + ')')
+            values.extend(whole_value_param(v) for v in wanted)
         unwanted = _as_list(params.get(f'not_{field}'))
         if unwanted:
             conditions.append(f"(g.{field} IS NULL OR (" + ' AND '.join(
-                [f"g.{field} NOT LIKE ? ESCAPE '\\'"] * len(unwanted)) + '))')
-            values.extend(f"%{escape_like(v)}%" for v in unwanted)
+                [whole_value_sql(f'g.{field}', negate=True)] * len(unwanted)) + '))')
+            values.extend(whole_value_param(v) for v in unwanted)
 
     if params.get('rating'):
         rating_clauses = ' OR '.join(f"g.{RATING_SYSTEMS[k]['db_column']} = ?" for k in RATING_SYSTEM_KEYS)

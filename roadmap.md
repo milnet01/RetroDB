@@ -883,7 +883,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** A graphics-card upscale that hangs lets go of the card without a server restart.
   Kind: implement.
 
-- 📋 [PASS-59-160] **Library filter "Action" also matches "Action-Adventure", so the window's count and the result disagree (LOW, S).**
+- ✅ [PASS-59-160] **Library filter "Action" also matches "Action-Adventure", so the window's count and the result disagree (LOW, S).**
   - **Status**: todo
   - **Seen** 2026-10-23 on the live library copy: the Genre window says
     Action (755 or 795 depending on version grouping), the filter
@@ -900,6 +900,13 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     under the same grouping; a test pins Action vs Action-Adventure.
 
   ---
+  - **Shipped** (2026-11-10, in 4.0.0): services/game_query.py
+    whole_value_sql / whole_value_param match one whole comma-separated
+    value, used by the Library filter, /api/filter-games and Similar
+    games. On the live library every filter value's count now equals the
+    window's, apart from case twins ("Doom" and "DOOM"): the filter
+    ignores case, the window counts each spelling. Test:
+    tests/test_pass59_160_whole_value_filter.py.
   **Layman:** The Library's "Action" filter shows the same number of games as its count says.
   Kind: implement.
 
