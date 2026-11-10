@@ -330,8 +330,7 @@ correct wherever the store is hand-editable AND the consumer cannot tolerate a
 bad value; it is not a licence to validate everywhere.
 
 The settings-validators module has an import-time cross-check
-(`services/settings_validators.py:315`, inside the block starting at line
-313) that raises `RuntimeError` if anyone adds a new key to
+(the `_missing` check at the end of `services/settings_validators.py`) that raises `RuntimeError` if anyone adds a new key to
 `DEFAULT_SETTINGS` without wiring a validator entry. Adding a key without
 the validator turns the next `import settings_validators` into a startup
 error — the test suite catches it before merge.

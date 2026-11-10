@@ -3582,7 +3582,7 @@ orchestrator, several by execution rather than reading.
   - Open questions (answer first): tests/test_emulator_autodetect.py:160; tests/_bulk_scrape_fixtures.py; tests/test_game_logo.py:133; tests/test_migrations.py:320; tests/test_museum_job.py; tests/test_pass59_161_screenshot_fit.py:21; tests/test_pass59_243_jobs.py:81; tests/test_pass59_auth_api.py:155; tests/test_pass59_trophy_dataloss.py:71; tests/test_launch_resolver.py:10; tests/test_upload_image_pipeline.py:34; tests/test_upload_image_pipeline.py:34; tests/test_upload_limits.py:29
   Kind: implement.
 
-- 📋 [PASS-59-294] **The Logs page lists files it then refuses to open (fix, S).**
+- ✅ [PASS-59-294] **The Logs page lists files it then refuses to open (fix, S).**
   - Seen: on a fresh browser the Logs page loaded its first listed file
     and got 403 "Invalid log file". /api/logs/content accepts only names
     starting with VALID_PREFIXES (routes/scrape_logs.py); logs/ also holds
@@ -3590,34 +3590,48 @@ orchestrator, several by execution rather than reading.
     the list is not confirmed.
   - Fix: make /api/logs/files list only what /api/logs/content serves, or
     serve the extra files. Confirm against source first.
+  Shipped 2026-11-10 (e59b72ff): /api/logs/files lists only names
+  VALID_PREFIXES accepts. The first file was upscale_worker.log (reverse
+  name sort). Test: tests/test_pass59_294_log_list.py.
   **Layman:** Opening the Logs page can show "Invalid log file" straight away, because it offers a file the server will not show.
   Kind: fix.
   Source: PASS-59-274 browser walk 2026-11-10.
 
-- 📋 [PASS-59-295] **Stop sending stored API keys and tokens to the Settings page.**
+- ✅ [PASS-59-295] **Stop sending stored API keys and tokens to the Settings page.**
   - **Status**: todo
   - **Why**: account.html and scraping.html render each stored key as an input value (now type=password, autocomplete off), so it sits in page source.
   - **Do**: render a set/not-set marker; send a key only when the field changes; the save routes keep the stored key when the field is left blank. Every save path must agree, or a save blanks keys.
   - **Threat model**: LAN, one household (docs/decisions); low priority.
+  Shipped 2026-11-10 (746fe0ba). The Scraping tab was already masked
+  (Pass 26.5); My Profile's RA key, NPSSO and Steam key now are too
+  (USER_SECRET_FIELDS, routes/auth.py), in the page and GET
+  /api/users/settings. A mask echoed on save keeps the key; PSN Save &
+  Test with the mask tests the stored token. Test:
+  tests/test_pass59_295_user_key_masks.py.
   **Layman:** Settings shows your saved keys as dots now, but the page still carries them; this would send only 'set' or 'not set' instead.
   Kind: security.
   Source: PASS-59-284 2026-11-10.
 
-- 📋 [PASS-59-296] **Game Imports' PSN "Not Configured" message names the wrong place.**
+- ✅ [PASS-59-296] **Game Imports' PSN "Not Configured" message names the wrong place.**
   - **Status**: todo
   - **Where**: templates/game_imports.html, the PSN 'Not Configured' text, set through innerHTML in English.
   - **Do**: point it at Settings > My Profile (the NPSSO wizard) and translate it.
   - **Source**: reported by the PASS-59-285 helper.
+  Shipped 2026-11-10 (8b5b139d): info box and status point at Settings >
+  My Profile (#profile); status text through _()|tojson and t().
   **Layman:** The PSN import tells you to go to Settings, API Keys, but the PSN sign-in is under My Profile.
   Kind: fix.
   Source: PASS-59-284 2026-11-10.
 
-- 📋 [PASS-59-297] **Viewer pages ask for admin-only data and log 403s.**
+- ✅ [PASS-59-297] **Viewer pages ask for admin-only data and log 403s.**
   - **Status**: todo
   - **Seen**: headless walk as a viewer on :5001, 2026-11-10.
   - **Every page**: toast-controller.js polls /api/ai-fill-bulk/status (editor-only) for every role.
   - **Settings**: /api/settings/paths, /api/backups, /api/settings and /api/check-scraper/* answer 403 to a viewer.
   - **Do**: poll and fetch only for roles the route allows (window.IS_ADMIN, or a role flag from base.html).
+  Shipped 2026-11-10 (420a3342): window.IS_EDITOR in base.html gates the
+  AI Fill poll; five admin-only Settings loaders return early for
+  non-admins. Viewer walk: 12 403s before, 0 after.
   **Layman:** Nothing breaks on screen, but for a viewer every page quietly asks the server for things only an admin may see.
   Kind: fix.
   Source: browser walk 2026-11-10.
