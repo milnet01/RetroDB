@@ -192,9 +192,9 @@ async function copyToClipboard(text) {
         document.body.appendChild(textArea);
         textArea.select();
         try {
-            document.execCommand('copy');
+            const copied = document.execCommand('copy');
             document.body.removeChild(textArea);
-            return true;
+            return copied;
         } catch (e) {
             document.body.removeChild(textArea);
             return false;
