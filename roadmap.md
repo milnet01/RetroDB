@@ -3436,7 +3436,7 @@ orchestrator, several by execution rather than reading.
   ---
   Kind: implement.
 
-- 📋 [PASS-59-288] **Tests: sign-in refusal tests must reach the sign-in check, not stop at the CSRF check (test, S).**
+- ✅ [PASS-59-288] **Tests: sign-in refusal tests must reach the sign-in check, not stop at the CSRF check (test, S).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **User decision 2026-11-10**: one pass with a shared fixture that seeds a CSRF token and completes setup, then asserts the sign-in layer's own reply.
@@ -3451,6 +3451,12 @@ orchestrator, several by execution rather than reading.
   - Open questions (answer first): tests/test_auth_hardening.py:432; tests/test_auth_hardening.py:428; tests/test_emulator_autodetect.py:92; tests/test_pass41_security.py:1081; tests/test_retroarch_detect.py:137; tests/test_emulator_registry_routes.py:44; tests/test_routes_smoke.py:180
 
   ---
+  Shipped 2026-11-10 (4d7db867): conftest anon_client +
+  assert_sign_in_refused; 28 anonymous request tests moved onto them and
+  proved red against a guard-stripping plugin. The m3u path test signs
+  in as admin and asserts 400; the viewer launch/shutdown refusals check
+  their own message. Source-text "requires_admin" tests are left to
+  PASS-59-292.
   Kind: implement.
 
 - 📋 [PASS-59-289] **Tests: clean up shared test state, and keep the player profile out of reach (test, M).**
