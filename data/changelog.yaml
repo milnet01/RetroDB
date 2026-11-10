@@ -1,6 +1,20 @@
 - version: 4.0.0
   date: 2026-11-10
   tags:
+  - type: security
+    label: 'Names that come from outside RetroDB (scraped data, file and folder names, replies from online services) now always show as plain text, on the game page, Settings, Reports, the ROM tools, the trophy pages and more. Pages also run only their own buttons'' actions, so a crafted name cannot make a page do something, and a progress toast''s "return to" link can no longer lead to another website'
+  - type: enhancement
+    label: 'Queued bulk scrapes get a Reorder button. It opens the Queue Manager, where a waiting scrape can run sooner, later, or swap with the one running now. Each queued toast also keeps its place number after a change'
+  - type: fix
+    label: 'Job progress no longer gets stuck or repeats itself. A CHD check or conversion that crashes now ends with its reason; Cancel gives the page its buttons back; a refused cancel, pause or remove says so; "completed" no longer pops up again an hour later; and the achievements page''s Sync button comes back when its sync ends'
+  - type: fix
+    label: 'Saving a HowLongToBeat match on the game page no longer wipes its HLTB link and player count, and a failed save can be retried. Quick Edit no longer shows every saved match as "100% match". Library filter tags show a system''s name instead of its number, and search-as-you-type works on list pages and Compare'
+  - type: fix
+    label: 'Every account can change its own password in Settings → My Profile, and an admin can reset anyone''s. Emulator folders now work on Windows. The dashboard no longer tells editors and viewers that their APIs are offline, and "Games missing box art" opens the Library showing just those games. A password manager can now fill the sign-in box'
+  - type: fix
+    label: 'ROM tools: CHD Verify puts each Valid or Invalid badge on the right file; the log viewer shows module names again and says when its file list fails; Game Imports'' select-all imports only the games your filter shows; and ROM Tools Settings'' Reset restores this computer''s own ROM folder'
+  - type: fix
+    label: 'Steam unlock times show as dates; the A-Z bar works on Local Trophies; PSN Select mode keeps working on games that load as you scroll; viewers no longer see Sync or Rename buttons they cannot use; a batch rename skips a file renamed since the scan; and Analytics can copy on a plain-HTTP network and exports numbers as numbers'
   - type: fix
     label: 'In a confirm window, Enter on Cancel or × now cancels instead of confirming. A window opened by OK no longer vanishes, and Tab keeps working after the shortcuts list or a progress window closes'
   - type: enhancement

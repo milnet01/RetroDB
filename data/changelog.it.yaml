@@ -1,6 +1,20 @@
 - version: 4.0.0
   date: '2026-11-10'
   tags:
+  - type: security
+    label: 'I nomi che arrivano da fuori RetroDB (dati dello scraping, nomi di file e cartelle, risposte dei servizi online) ora appaiono sempre come testo semplice: nella pagina del gioco, in Impostazioni, nei Report, negli strumenti ROM, nelle pagine dei trofei e altrove. Inoltre le pagine eseguono solo le azioni dei propri pulsanti, così un nome costruito ad arte non può far fare qualcosa a una pagina, e il link "torna a" di una notifica di avanzamento non può più portare a un altro sito'
+  - type: enhancement
+    label: 'Gli scraping in blocco in coda hanno un pulsante Riordina. Apre il Gestore della coda, dove uno scraping in attesa può partire prima, dopo o scambiarsi con quello in corso. Ogni notifica in coda mantiene anche il suo numero di posizione dopo una modifica'
+  - type: fix
+    label: 'L''avanzamento delle operazioni non si blocca più e non si ripete. Un controllo o una conversione CHD che va in crash ora termina con il motivo; Annulla restituisce i pulsanti alla pagina; un annullamento, una pausa o una rimozione rifiutati lo segnalano; "completato" non ricompare più un''ora dopo; e il pulsante Sync della pagina degli obiettivi torna quando la sincronizzazione finisce'
+  - type: fix
+    label: 'Salvare una corrispondenza HowLongToBeat nella pagina del gioco non cancella più il link HLTB e il numero di giocatori, e un salvataggio non riuscito si può ripetere. La Modifica rapida non mostra più ogni corrispondenza salvata come "100% di corrispondenza". Le etichette dei filtri della Libreria mostrano il nome del sistema invece del suo numero, e la ricerca durante la digitazione funziona nelle pagine elenco e in Confronta'
+  - type: fix
+    label: 'Ogni account può cambiare la propria password in Impostazioni → Il mio profilo, e un amministratore può reimpostare quella di chiunque. Le cartelle degli emulatori ora funzionano su Windows. La Dashboard non dice più a editor e visualizzatori che le loro API sono offline, e "Giochi senza copertina" apre la Libreria mostrando solo quei giochi. Un gestore di password ora può compilare il riquadro di accesso'
+  - type: fix
+    label: 'Strumenti ROM: Verifica CHD mette ogni badge Validi o Non validi sul file giusto; il visualizzatore di log mostra di nuovo i nomi dei moduli e segnala quando il suo elenco di file non si carica; Seleziona tutto in Importazioni giochi importa solo i giochi mostrati dal tuo filtro; e Reimposta in Impostazioni strumenti ROM ripristina la cartella ROM propria di questo computer'
+  - type: fix
+    label: 'Gli orari di sblocco di Steam appaiono come date; la barra A-Z funziona in Trofei locali; la modalità Seleziona di PSN continua a funzionare sui giochi che si caricano mentre scorri; i visualizzatori non vedono più pulsanti Sync o Rinomina che non possono usare; una rinomina in blocco salta un file rinominato dopo la scansione; e Analisi può copiare su una rete HTTP semplice ed esporta i numeri come numeri'
   - type: fix
     label: 'In una finestra di conferma, Invio su Annulla o × ora annulla invece di confermare. Una finestra aperta da OK non scompare più, e Tab continua a funzionare dopo la chiusura dell''elenco delle scorciatoie o di una finestra di avanzamento'
   - type: enhancement

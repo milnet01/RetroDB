@@ -1,6 +1,20 @@
 - version: 4.0.0
   date: '2026-11-10'
   tags:
+  - type: security
+    label: 'Les noms venus de l''extérieur de RetroDB (données récupérées, noms de fichiers et de dossiers, réponses des services en ligne) s''affichent désormais toujours en texte brut : sur la page du jeu, dans les Paramètres, les Rapports, les outils ROM, les pages de trophées et ailleurs. Les pages n''exécutent plus que les actions de leurs propres boutons : un nom piégé ne peut donc pas faire agir une page, et le lien « retour à » d''une notification de progression ne peut plus mener vers un autre site'
+  - type: enhancement
+    label: 'Les récupérations en masse en file d''attente ont un bouton Réordonner. Il ouvre le Gestionnaire de file d''attente, où une récupération en attente peut passer plus tôt, plus tard, ou échanger sa place avec celle en cours. Chaque notification en file garde aussi son numéro de position après un changement'
+  - type: fix
+    label: 'La progression des tâches ne reste plus bloquée et ne se répète plus. Une vérification ou une conversion CHD qui plante se termine désormais avec sa raison ; Annuler rend ses boutons à la page ; une annulation, une pause ou une suppression refusée le signale ; « terminé » ne réapparaît plus une heure plus tard ; et le bouton Synchroniser de la page des succès revient à la fin de sa synchronisation'
+  - type: fix
+    label: 'Enregistrer une correspondance HowLongToBeat sur la page du jeu n''efface plus son lien HLTB ni son nombre de joueurs, et un enregistrement échoué peut être relancé. La Modification rapide n''affiche plus chaque correspondance enregistrée comme « 100 % de correspondance ». Les étiquettes de filtre de la Bibliothèque affichent le nom d''un système au lieu de son numéro, et la recherche pendant la saisie fonctionne sur les pages de liste et dans Comparer'
+  - type: fix
+    label: 'Chaque compte peut changer son propre mot de passe dans Paramètres → Mon profil, et un administrateur peut réinitialiser celui de n''importe qui. Les dossiers d''émulateurs fonctionnent désormais sous Windows. Le Tableau de bord n''indique plus aux éditeurs et aux lecteurs que leurs API sont hors ligne, et « Jeux sans jaquette » ouvre la Bibliothèque en ne montrant que ces jeux. Un gestionnaire de mots de passe peut désormais remplir la case de connexion'
+  - type: fix
+    label: 'Outils ROM : Vérification CHD place chaque badge Valide ou Invalide sur le bon fichier ; la visionneuse de journaux affiche de nouveau les noms de modules et signale quand sa liste de fichiers échoue ; Tout sélectionner dans Imports de jeux n''importe que les jeux affichés par votre filtre ; et Réinitialiser dans Paramètres des outils ROM rétablit le dossier ROM propre à cet ordinateur'
+  - type: fix
+    label: 'Les heures de déblocage Steam s''affichent comme des dates ; la barre A-Z fonctionne dans Trophées locaux ; le mode Sélection PSN continue de fonctionner sur les jeux chargés pendant le défilement ; les lecteurs ne voient plus les boutons Synchroniser ou Renommer qu''ils ne peuvent pas utiliser ; un renommage par lot ignore un fichier renommé depuis l''analyse ; et Analyses peut copier sur un réseau en HTTP simple et exporte les nombres comme des nombres'
   - type: fix
     label: 'Dans une fenêtre de confirmation, Entrée sur Annuler ou × annule désormais au lieu de confirmer. Une fenêtre ouverte par OK ne disparaît plus, et Tab fonctionne toujours après la fermeture de la liste des raccourcis ou d''une fenêtre de progression'
   - type: enhancement

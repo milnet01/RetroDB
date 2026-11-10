@@ -1,6 +1,20 @@
 - version: 4.0.0
   date: '2026-11-10'
   tags:
+  - type: security
+    label: 'Namen die van buiten RetroDB komen (gescrapete gegevens, bestands- en mapnamen, antwoorden van onlinediensten) worden nu altijd als platte tekst getoond: op de gamepagina, in Instellingen, Rapporten, de ROM-tools, de trofeeënpagina''s en meer. Pagina''s voeren ook alleen de acties van hun eigen knoppen uit, dus een gemanipuleerde naam kan een pagina niets laten doen, en de link "terug naar" in een voortgangsmelding kan niet meer naar een andere website leiden'
+  - type: enhancement
+    label: 'Bulkscrapes in de wachtrij krijgen een knop Volgorde wijzigen. Die opent Wachtrijbeheer, waar een wachtende scrape eerder of later kan lopen, of kan ruilen met de scrape die nu loopt. Elke wachtrijmelding houdt na een wijziging ook haar plaatsnummer'
+  - type: fix
+    label: 'De voortgang van taken blijft niet meer hangen en herhaalt zich niet meer. Een CHD-controle of -conversie die crasht, eindigt nu met de reden; Annuleren geeft de pagina haar knoppen terug; een geweigerde annulering, pauze of verwijdering meldt dat; "voltooid" verschijnt niet meer een uur later opnieuw; en de knop Sync op de prestatiepagina komt terug zodra de synchronisatie klaar is'
+  - type: fix
+    label: 'Een HowLongToBeat-match opslaan op de gamepagina wist niet meer de HLTB-link en het aantal spelers, en een mislukte opslag kun je opnieuw proberen. Snel bewerken toont niet meer elke opgeslagen match als "100% overeenkomst". Filtertags in de Bibliotheek tonen de naam van een systeem in plaats van het nummer, en zoeken tijdens het typen werkt op lijstpagina''s en in Vergelijken'
+  - type: fix
+    label: 'Elk account kan zijn eigen wachtwoord wijzigen in Instellingen → Mijn profiel, en een beheerder kan dat van iedereen resetten. Emulatormappen werken nu op Windows. Het Dashboard vertelt redacteuren en kijkers niet meer dat hun API''s offline zijn, en "Games zonder boxart" opent de Bibliotheek met alleen die games. Een wachtwoordbeheerder kan nu het inlogvak invullen'
+  - type: fix
+    label: 'ROM-tools: CHD verifiëren zet elk badge Geldig of Ongeldig bij het juiste bestand; de logviewer toont weer modulenamen en meldt wanneer de bestandslijst mislukt; Alles selecteren in Game-imports importeert alleen de games die je filter toont; en Resetten in Instellingen voor ROM-tools zet de eigen ROM-map van deze computer terug'
+  - type: fix
+    label: 'Steam-ontgrendeltijden worden als datums getoond; de A-Z-balk werkt bij Lokale trofeeën; de PSN-selectiemodus blijft werken bij games die laden terwijl je scrolt; kijkers zien geen knoppen Sync of Hernoemen meer die ze niet kunnen gebruiken; batchgewijs hernoemen slaat een bestand over dat sinds de scan is hernoemd; en Analyse kan kopiëren op een gewoon HTTP-netwerk en exporteert getallen als getallen'
   - type: fix
     label: 'In een bevestigingsvenster annuleert Enter op Annuleren of × nu in plaats van te bevestigen. Een venster dat door OK wordt geopend verdwijnt niet meer, en Tab blijft werken nadat de lijst met sneltoetsen of een voortgangsvenster sluit'
   - type: enhancement

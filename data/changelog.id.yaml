@@ -1,6 +1,20 @@
 - version: 4.0.0
   date: '2026-11-10'
   tags:
+  - type: security
+    label: 'Nama yang berasal dari luar RetroDB (data hasil scraping, nama file dan folder, balasan dari layanan online) kini selalu tampil sebagai teks biasa: di halaman game, Pengaturan, Laporan, alat ROM, halaman trofi, dan lainnya. Halaman juga hanya menjalankan aksi tombolnya sendiri, sehingga nama yang direkayasa tidak bisa membuat halaman melakukan sesuatu, dan tautan "kembali ke" pada notifikasi progres tidak bisa lagi mengarah ke situs web lain'
+  - type: enhancement
+    label: 'Scrape massal dalam antrean kini punya tombol Atur Urutan. Tombol ini membuka Pengelola Antrean, tempat scrape yang menunggu bisa dijalankan lebih awal, lebih lambat, atau ditukar dengan yang sedang berjalan. Setiap notifikasi antrean juga mempertahankan nomor urutnya setelah ada perubahan'
+  - type: fix
+    label: 'Progres job tidak lagi macet atau berulang. Pemeriksaan atau konversi CHD yang crash kini berakhir dengan alasannya; Batal mengembalikan tombol-tombol halaman; pembatalan, jeda, atau penghapusan yang ditolak kini memberi tahu; "selesai" tidak muncul lagi satu jam kemudian; dan tombol Sync di halaman pencapaian kembali muncul saat sinkronisasinya selesai'
+  - type: fix
+    label: 'Menyimpan kecocokan HowLongToBeat di halaman game tidak lagi menghapus tautan HLTB dan jumlah pemainnya, dan penyimpanan yang gagal bisa dicoba lagi. Edit cepat tidak lagi menampilkan setiap kecocokan tersimpan sebagai "100% cocok". Tag filter Pustaka menampilkan nama sistem, bukan nomornya, dan pencarian saat mengetik berfungsi di halaman daftar dan Bandingkan'
+  - type: fix
+    label: 'Setiap akun bisa mengganti kata sandinya sendiri di Pengaturan → Profil Saya, dan admin bisa mengatur ulang kata sandi siapa pun. Folder emulator kini berfungsi di Windows. Dashboard tidak lagi memberi tahu editor dan penonton bahwa API mereka offline, dan "Game tanpa box art" membuka Pustaka yang hanya menampilkan game tersebut. Pengelola kata sandi kini bisa mengisi kotak masuk'
+  - type: fix
+    label: 'Alat ROM: Verifikasi CHD memasang setiap lencana Valid atau Tidak Valid pada file yang benar; Penampil Log kembali menampilkan nama modul dan memberi tahu saat daftar filenya gagal dimuat; Pilih semua di Impor Game hanya mengimpor game yang ditampilkan filter Anda; dan Atur Ulang di Pengaturan Alat ROM mengembalikan folder ROM milik komputer ini'
+  - type: fix
+    label: 'Waktu unlock Steam tampil sebagai tanggal; bilah A-Z berfungsi di Trofi Lokal; mode Pilih PSN tetap berfungsi pada game yang dimuat saat Anda menggulir; penonton tidak lagi melihat tombol Sync atau Ganti Nama yang tidak bisa mereka pakai; ganti nama massal melewati file yang sudah diganti namanya sejak pemindaian; dan Analitik bisa menyalin di jaringan HTTP biasa serta mengekspor angka sebagai angka'
   - type: fix
     label: 'Di jendela konfirmasi, Enter pada Batal atau × kini membatalkan, bukan mengonfirmasi. Jendela yang dibuka oleh OK tidak lagi menghilang, dan Tab tetap berfungsi setelah daftar pintasan atau jendela progres ditutup'
   - type: enhancement

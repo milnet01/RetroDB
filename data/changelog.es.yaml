@@ -1,6 +1,20 @@
 - version: 4.0.0
   date: '2026-11-10'
   tags:
+  - type: security
+    label: 'Los nombres que vienen de fuera de RetroDB (datos de scraping, nombres de archivos y carpetas, respuestas de servicios en línea) ahora se muestran siempre como texto simple: en la página del juego, Ajustes, Informes, las herramientas ROM, las páginas de trofeos y más. Además, las páginas solo ejecutan las acciones de sus propios botones, así que un nombre manipulado no puede hacer que una página haga algo, y el enlace "volver a" de un aviso de progreso ya no puede llevar a otro sitio web'
+  - type: enhancement
+    label: 'Los scrapeos masivos en cola tienen un botón Reordenar. Abre el Gestor de cola, donde un scrapeo en espera puede ejecutarse antes, después o intercambiarse con el que está en marcha. Cada aviso en cola también conserva su número de posición tras un cambio'
+  - type: fix
+    label: 'El progreso de las tareas ya no se queda atascado ni se repite. Una comprobación o conversión de CHD que falla ahora termina indicando el motivo; Cancelar devuelve a la página sus botones; una cancelación, pausa o eliminación rechazada lo indica; "completado" ya no vuelve a aparecer una hora después; y el botón Sincronizar de la página de logros vuelve cuando termina su sincronización'
+  - type: fix
+    label: 'Guardar una coincidencia de HowLongToBeat en la página del juego ya no borra su enlace de HLTB ni el número de jugadores, y un guardado fallido se puede reintentar. La Edición rápida ya no muestra cada coincidencia guardada como "100% de coincidencia". Las etiquetas de filtro de la Biblioteca muestran el nombre del sistema en lugar de su número, y la búsqueda mientras escribes funciona en las páginas de listas y en Comparar'
+  - type: fix
+    label: 'Cada cuenta puede cambiar su propia contraseña en Ajustes → Mi perfil, y un administrador puede restablecer la de cualquiera. Las carpetas de emuladores ahora funcionan en Windows. El Panel ya no dice a editores y espectadores que sus API están sin conexión, y "Juegos sin carátula" abre la Biblioteca mostrando solo esos juegos. Un gestor de contraseñas ya puede rellenar el cuadro de inicio de sesión'
+  - type: fix
+    label: 'Herramientas ROM: Verificar CHD pone cada insignia Válido o No válido en el archivo correcto; el visor de registros vuelve a mostrar los nombres de módulo e indica cuándo falla su lista de archivos; Seleccionar todo en Importaciones de juegos importa solo los juegos que muestra tu filtro; y Restablecer en Ajustes de herramientas de ROM restaura la carpeta de ROM propia de este equipo'
+  - type: fix
+    label: 'Las horas de desbloqueo de Steam se muestran como fechas; la barra A-Z funciona en Trofeos locales; el modo Seleccionar de PSN sigue funcionando en los juegos que se cargan al desplazarte; los espectadores ya no ven botones de Sincronizar o Renombrar que no pueden usar; un renombrado por lotes omite un archivo renombrado desde el escaneo; y Análisis puede copiar en una red HTTP simple y exporta los números como números'
   - type: fix
     label: 'En una ventana de confirmación, Intro sobre Cancelar o × ahora cancela en lugar de confirmar. Una ventana abierta con Aceptar ya no desaparece, y Tab sigue funcionando después de cerrar la lista de atajos o una ventana de progreso'
   - type: enhancement

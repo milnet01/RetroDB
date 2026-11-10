@@ -1,6 +1,20 @@
 - version: 4.0.0
   date: '2026-11-10'
   tags:
+  - type: security
+    label: 'RetroDB dışından gelen adlar (kazınan veriler, dosya ve klasör adları, çevrimiçi hizmetlerin yanıtları) artık her zaman düz metin olarak görünüyor: oyun sayfasında, Ayarlar''da, Raporlar''da, ROM araçlarında, kupa sayfalarında ve başka yerlerde. Sayfalar ayrıca yalnızca kendi düğmelerinin eylemlerini çalıştırıyor; böylece özel olarak hazırlanmış bir ad bir sayfaya bir şey yaptıramaz ve bir ilerleme bildirimindeki "geri dön" bağlantısı artık başka bir web sitesine götüremez'
+  - type: enhancement
+    label: 'Kuyruktaki toplu kazımalara bir Yeniden Sırala düğmesi geldi. Bu düğme Kuyruk Yöneticisi''ni açar; orada bekleyen bir kazıma daha erken ya da daha geç çalışabilir veya şu an çalışanla yer değiştirebilir. Kuyruktaki her bildirim bir değişiklikten sonra da sıra numarasını korur'
+  - type: fix
+    label: 'İş ilerlemesi artık takılmıyor ya da kendini tekrarlamıyor. Çöken bir CHD denetimi veya dönüştürmesi artık nedenini göstererek bitiyor; İptal, sayfaya düğmelerini geri veriyor; reddedilen bir iptal, duraklatma veya kaldırma bunu söylüyor; "tamamlandı" bir saat sonra yeniden çıkmıyor; ve başarımlar sayfasındaki Eşitle düğmesi eşitleme bitince geri geliyor'
+  - type: fix
+    label: 'Oyun sayfasında bir HowLongToBeat eşleşmesini kaydetmek artık HLTB bağlantısını ve oyuncu sayısını silmiyor, başarısız bir kayıt da yeniden denenebiliyor. Hızlı düzenle artık kayıtlı her eşleşmeyi "%100 eşleşme" olarak göstermiyor. Kütüphane filtre etiketleri bir sistemin numarası yerine adını gösteriyor ve yazarken arama liste sayfalarında ve Karşılaştır''da çalışıyor'
+  - type: fix
+    label: 'Her hesap kendi parolasını Ayarlar → Profilim bölümünden değiştirebilir, bir yönetici de herkesin parolasını sıfırlayabilir. Emülatör klasörleri artık Windows''ta çalışıyor. Kontrol Paneli artık düzenleyicilere ve izleyicilere API''lerinin çevrimdışı olduğunu söylemiyor ve "Kutu resmi olmayan oyunlar" Kütüphane''yi yalnızca o oyunlarla açıyor. Bir parola yöneticisi artık giriş kutusunu doldurabiliyor'
+  - type: fix
+    label: 'ROM Araçları: CHD Doğrulama her Geçerli veya Geçersiz rozetini doğru dosyaya koyuyor; Günlük Görüntüleyici modül adlarını yeniden gösteriyor ve dosya listesi yüklenemediğinde bunu söylüyor; Oyun İçe Aktarmaları''ndaki tümünü seç yalnızca filtrenizin gösterdiği oyunları içe aktarıyor; ve ROM Araçları Ayarları''ndaki Sıfırla bu bilgisayarın kendi ROM klasörünü geri getiriyor'
+  - type: fix
+    label: 'Steam kilit açma zamanları tarih olarak görünüyor; A-Z çubuğu Yerel Kupalar''da çalışıyor; PSN Seçim modu kaydırdıkça yüklenen oyunlarda çalışmaya devam ediyor; izleyiciler artık kullanamadıkları Eşitle veya Yeniden Adlandır düğmelerini görmüyor; toplu yeniden adlandırma, taramadan sonra adı değişen bir dosyayı atlıyor; ve Analitik düz HTTP ağında kopyalayabiliyor ve sayıları sayı olarak dışa aktarıyor'
   - type: fix
     label: 'Bir onay penceresinde İptal veya × üzerindeyken Enter artık onaylamak yerine iptal eder. Tamam ile açılan bir pencere artık kaybolmaz ve kısayol listesi ya da bir ilerleme penceresi kapandıktan sonra Tab çalışmaya devam eder'
   - type: enhancement

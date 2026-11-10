@@ -1,6 +1,20 @@
 - version: 4.0.0
   date: '2026-11-10'
   tags:
+  - type: security
+    label: 'Namen, die von außerhalb von RetroDB kommen (gescrapte Daten, Datei- und Ordnernamen, Antworten von Online-Diensten), werden jetzt immer als reiner Text angezeigt: auf der Spielseite, in den Einstellungen, in Berichten, in den ROM-Werkzeugen, auf den Trophäen-Seiten und an weiteren Stellen. Seiten führen außerdem nur die Aktionen ihrer eigenen Schaltflächen aus, sodass ein präparierter Name eine Seite zu keiner Aktion bringen kann, und der „Zurück zu“-Link in einer Fortschrittsmeldung kann nicht mehr auf eine andere Website führen'
+  - type: enhancement
+    label: 'Massen-Scrapes in der Warteschlange bekommen eine Schaltfläche Neu ordnen. Sie öffnet den Warteschlangen-Manager, in dem ein wartender Scrape früher oder später laufen oder mit dem gerade laufenden tauschen kann. Jede Meldung in der Warteschlange behält nach einer Änderung auch ihre Platznummer'
+  - type: fix
+    label: 'Der Auftragsfortschritt bleibt nicht mehr hängen und wiederholt sich nicht mehr. Eine CHD-Prüfung oder -Umwandlung, die abstürzt, endet jetzt mit ihrem Grund; Abbrechen gibt der Seite ihre Schaltflächen zurück; ein abgelehntes Abbrechen, Pausieren oder Entfernen wird gemeldet; „Abgeschlossen“ erscheint nicht mehr eine Stunde später erneut; und die Sync-Schaltfläche der Erfolge-Seite kommt zurück, wenn ihr Sync endet'
+  - type: fix
+    label: 'Wenn du auf der Spielseite einen HowLongToBeat-Treffer speicherst, werden HLTB-Link und Spielerzahl nicht mehr gelöscht, und ein fehlgeschlagenes Speichern lässt sich wiederholen. Die Schnellbearbeitung zeigt nicht mehr jeden gespeicherten Treffer als „100% Übereinstimmung“. Filter-Tags in der Bibliothek zeigen den Namen eines Systems statt seiner Nummer, und die Suche beim Tippen funktioniert auf Listenseiten und im Vergleich'
+  - type: fix
+    label: 'Jedes Konto kann sein eigenes Passwort unter Einstellungen → Mein Profil ändern, und ein Admin kann das Passwort jedes Kontos zurücksetzen. Emulator-Ordner funktionieren jetzt unter Windows. Das Dashboard meldet Bearbeitern und Betrachtern nicht mehr, dass ihre APIs offline sind, und „Spiele ohne Box-Art“ öffnet die Bibliothek mit genau diesen Spielen. Ein Passwort-Manager kann jetzt das Anmeldefeld ausfüllen'
+  - type: fix
+    label: 'ROM-Werkzeuge: CHD prüfen setzt jedes Abzeichen Gültig oder Ungültig an die richtige Datei; die Protokoll-Anzeige zeigt wieder Modulnamen und meldet, wenn ihre Dateiliste nicht geladen werden kann; Alle auswählen in den Spiel-Importen importiert nur die Spiele, die dein Filter zeigt; und Zurücksetzen in den ROM-Tools-Einstellungen stellt den eigenen ROM-Ordner dieses Computers wieder her'
+  - type: fix
+    label: 'Steam-Freischaltzeiten werden als Datum angezeigt; die A-Z-Leiste funktioniert bei Lokale Trophäen; der PSN-Auswahlmodus funktioniert weiter bei Spielen, die beim Scrollen nachladen; Betrachter sehen keine Sync- oder Umbenennen-Schaltflächen mehr, die sie nicht benutzen können; ein stapelweises Umbenennen überspringt eine Datei, die seit dem Scan umbenannt wurde; und Analyse kann in einem reinen HTTP-Netzwerk kopieren und exportiert Zahlen als Zahlen'
   - type: fix
     label: 'In einem Bestätigungsfenster bricht Enter auf Abbrechen oder × jetzt ab, statt zu bestätigen. Ein durch OK geöffnetes Fenster verschwindet nicht mehr, und Tab funktioniert weiter, nachdem die Tastenkürzel-Liste oder ein Fortschrittsfenster geschlossen wurde'
   - type: enhancement

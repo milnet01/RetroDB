@@ -1,6 +1,20 @@
 - version: 4.0.0
   date: '2026-11-10'
   tags:
+  - type: security
+    label: 'Nazwy pochodzące spoza RetroDB (pobrane dane, nazwy plików i folderów, odpowiedzi usług online) są teraz zawsze pokazywane jako zwykły tekst: na stronie gry, w Ustawieniach, Raportach, narzędziach ROM, na stronach trofeów i w innych miejscach. Strony wykonują też tylko akcje własnych przycisków, więc spreparowana nazwa nie może zmusić strony do żadnego działania, a link „wróć do” w powiadomieniu o postępie nie może już prowadzić do innej witryny'
+  - type: enhancement
+    label: 'Zbiorcze pobierania danych w kolejce mają przycisk Zmień kolejność. Otwiera on Menedżer kolejki, w którym oczekujące pobieranie może ruszyć wcześniej, później albo zamienić się z tym, które trwa teraz. Każde powiadomienie w kolejce zachowuje też swój numer miejsca po zmianie'
+  - type: fix
+    label: 'Postęp zadań już się nie zawiesza ani nie powtarza. Sprawdzanie lub konwersja CHD, które ulegną awarii, kończą się teraz z podaniem przyczyny; Anuluj przywraca stronie jej przyciski; odrzucone anulowanie, wstrzymanie lub usunięcie jest zgłaszane; „ukończono” nie wyskakuje ponownie godzinę później; a przycisk Synchronizuj na stronie osiągnięć wraca po zakończeniu synchronizacji'
+  - type: fix
+    label: 'Zapisanie dopasowania HowLongToBeat na stronie gry nie usuwa już linku HLTB ani liczby graczy, a nieudany zapis można ponowić. Szybka edycja nie pokazuje już każdego zapisanego dopasowania jako „100% dopasowania”. Tagi filtrów w Bibliotece pokazują nazwę systemu zamiast jego numeru, a wyszukiwanie w trakcie pisania działa na stronach list i w Porównaj'
+  - type: fix
+    label: 'Każde konto może zmienić własne hasło w Ustawienia → Mój profil, a administrator może zresetować hasło każdego. Foldery emulatorów działają teraz w Windows. Panel nie mówi już edytorom i widzom, że ich API są offline, a „Gry bez okładki” otwiera Bibliotekę z samymi tymi grami. Menedżer haseł może teraz wypełnić pole logowania'
+  - type: fix
+    label: 'Narzędzia ROM: Weryfikacja CHD umieszcza każdą plakietkę Prawidłowe lub Nieprawidłowe przy właściwym pliku; przeglądarka dzienników znów pokazuje nazwy modułów i informuje, gdy jej lista plików się nie wczyta; Zaznacz wszystko w Importach gier importuje tylko gry widoczne w Twoim filtrze; a Resetuj w Ustawieniach narzędzi ROM przywraca własny folder ROM tego komputera'
+  - type: fix
+    label: 'Czasy odblokowania w Steam są pokazywane jako daty; pasek A-Z działa w Lokalnych trofeach; tryb wyboru PSN działa dalej przy grach wczytywanych podczas przewijania; widzowie nie widzą już przycisków Synchronizuj ani Zmień nazwę, których nie mogą użyć; wsadowa zmiana nazw pomija plik, którego nazwę zmieniono od skanowania; a Analityka potrafi kopiować w zwykłej sieci HTTP i eksportuje liczby jako liczby'
   - type: fix
     label: 'W oknie potwierdzenia Enter na Anuluj lub × teraz anuluje zamiast potwierdzać. Okno otwarte przez OK już nie znika, a Tab działa dalej po zamknięciu listy skrótów lub okna postępu'
   - type: enhancement

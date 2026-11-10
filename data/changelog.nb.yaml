@@ -1,6 +1,20 @@
 - version: 4.0.0
   date: '2026-11-10'
   tags:
+  - type: security
+    label: 'Navn som kommer fra utenfor RetroDB (skrapte data, fil- og mappenavn, svar fra nettjenester) vises nå alltid som ren tekst: på spillsiden, i Innstillinger, Rapporter, ROM-verktøyene, trofésidene og flere steder. Sidene kjører også bare handlingene til sine egne knapper, så et konstruert navn kan ikke få en side til å gjøre noe, og «tilbake til»-lenken i et fremdriftsvarsel kan ikke lenger føre til et annet nettsted'
+  - type: enhancement
+    label: 'Masseskrapinger i køen får en Endre rekkefølge-knapp. Den åpner Købehandler, der en ventende skraping kan kjøre tidligere, senere eller bytte plass med den som kjører nå. Hvert køvarsel beholder også plassnummeret sitt etter en endring'
+  - type: fix
+    label: 'Jobbfremdrift blir ikke lenger hengende og gjentar seg ikke. En CHD-sjekk eller -konvertering som krasjer, avsluttes nå med årsaken; Avbryt gir siden knappene tilbake; en avvist avbrytelse, pause eller fjerning sier fra; «fullført» dukker ikke lenger opp igjen en time senere; og Synkroniser-knappen på prestasjonssiden kommer tilbake når synkroniseringen er ferdig'
+  - type: fix
+    label: 'Når du lagrer et HowLongToBeat-treff på spillsiden, slettes ikke lenger HLTB-lenken og spillerantallet, og en mislykket lagring kan prøves på nytt. Hurtigredigering viser ikke lenger alle lagrede treff som «100 % treff». Filtertagger i Bibliotek viser systemets navn i stedet for nummeret, og søk mens du skriver virker på listesider og i Sammenlign'
+  - type: fix
+    label: 'Hver konto kan endre sitt eget passord under Innstillinger → Min profil, og en administrator kan tilbakestille passordet til hvem som helst. Emulatormapper virker nå på Windows. Oversikten sier ikke lenger til redaktører og lesere at API-ene deres er frakoblet, og «Spill uten boksbilde» åpner Bibliotek med bare de spillene. En passordbehandler kan nå fylle ut påloggingsfeltet'
+  - type: fix
+    label: 'ROM-verktøy: CHD-verifisering setter hvert Gyldig- eller Ugyldig-merke på riktig fil; Loggviser viser modulnavn igjen og sier fra når fillisten feiler; Velg alle i Spillimport importerer bare spillene filteret ditt viser; og Tilbakestill i Innstillinger for ROM-verktøy gjenoppretter denne datamaskinens egen ROM-mappe'
+  - type: fix
+    label: 'Steam-opplåsingstider vises som datoer; A-Z-linjen virker i Lokale trofeer; PSN-velgemodus fortsetter å virke på spill som lastes mens du ruller; lesere ser ikke lenger Synkroniser- eller Gi nytt navn-knapper de ikke kan bruke; en masseendring av navn hopper over en fil som har fått nytt navn siden skanningen; og Analyse kan kopiere på et vanlig HTTP-nettverk og eksporterer tall som tall'
   - type: fix
     label: 'I et bekreftelsesvindu avbryter Enter på Avbryt eller × nå i stedet for å bekrefte. Et vindu som åpnes med OK forsvinner ikke lenger, og Tab virker fortsatt etter at hurtigtastlisten eller et fremdriftsvindu lukkes'
   - type: enhancement
