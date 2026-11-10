@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=293 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=294 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -3100,7 +3100,7 @@ orchestrator, several by execution rather than reading.
   ---
   Kind: implement.
 
-- 📋 [PASS-59-274] **Keyboard: confirm dialogs, focus traps, and controls only a mouse can use (accessibility, M).**
+- ✅ [PASS-59-274] **Keyboard: confirm dialogs, focus traps, and controls only a mouse can use (accessibility, M).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **Do first**: write the promise into `docs/RETRODB_DESIGN_STANDARDS.md` §11: every control works from the keyboard (WCAG 2.1.1) and has a name and role (4.1.2). User decision 2026-11-10.
@@ -3124,6 +3124,16 @@ orchestrator, several by execution rather than reading.
   - M `templates/psn_trophies.html:1689`: On network error the bulk modal hides without deactivating its focus trap, so every Tab press is blocked…
 
   ---
+  Shipped 2026-11-10 (commits 2e468d39, dc840b13, cec59029, 466f7710; in
+  the open 4.0.0 entry). Confirmed against source first: 12 of 14 held;
+  H1 partly (a faint ring existed, but on a zero-size input); H2 already
+  fixed in 079c6dca. §11 "Keyboard" written. Dialog fixes proven
+  red/green in headless Chrome. Mouse-only controls converted on every
+  page with the pattern, including sites the review missed. Left:
+  dashboard row (title link exists), museum.html grid zoom (inside the
+  card link), archive scanner path cell (View button). New aria-label
+  strings are untranslated in the catalogs. Not run in a browser: M1
+  (needs a live bulk scrape), M4 (needs PSN sign-in).
   Kind: implement.
 
 - 📋 [PASS-59-275] **Keyboard and screen readers: the remaining controls with no focus or no name (accessibility, M).**
@@ -3545,6 +3555,18 @@ orchestrator, several by execution rather than reading.
   - Low: tests/test_auth_hardening.py:410; tests/test_game_logo.py:133; tests/test_launcher_local.py:169; tests/test_migrations.py:320; tests/test_pass38_region_helper.py:71; tests/test_pass59_244_recover.py:13; tests/test_pass59_249_database.py:121; tests/test_pass59_auth_api.py:155; tests/test_pass59_frontend.py:271; tests/test_rembg_worker.py:119; tests/test_rembg_worker.py:128; tests/test_shutdown_route.py:142; tests/test_updater.py:297; tests/test_xbox_openxbl.py:231
   - Open questions (answer first): tests/test_emulator_autodetect.py:160; tests/_bulk_scrape_fixtures.py; tests/test_game_logo.py:133; tests/test_migrations.py:320; tests/test_museum_job.py; tests/test_pass59_161_screenshot_fit.py:21; tests/test_pass59_243_jobs.py:81; tests/test_pass59_auth_api.py:155; tests/test_pass59_trophy_dataloss.py:71; tests/test_launch_resolver.py:10; tests/test_upload_image_pipeline.py:34; tests/test_upload_image_pipeline.py:34; tests/test_upload_limits.py:29
   Kind: implement.
+
+- 📋 [PASS-59-294] **The Logs page lists files it then refuses to open (fix, S).**
+  - Seen: on a fresh browser the Logs page loaded its first listed file
+    and got 403 "Invalid log file". /api/logs/content accepts only names
+    starting with VALID_PREFIXES (routes/scrape_logs.py); logs/ also holds
+    upscale_worker.log, which has none of them. Which file was first in
+    the list is not confirmed.
+  - Fix: make /api/logs/files list only what /api/logs/content serves, or
+    serve the extra files. Confirm against source first.
+  **Layman:** Opening the Logs page can show "Invalid log file" straight away, because it offers a file the server will not show.
+  Kind: fix.
+  Source: PASS-59-274 browser walk 2026-11-10.
 
 ## Done index
 
