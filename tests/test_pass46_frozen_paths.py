@@ -32,26 +32,39 @@ class TestPass46_3_DevModeInvariant:
         import config
         assert config.BASE_DIR == config.BUNDLE_DIR
 
-    def test_static_path_under_bundle_dir(self):
-        import config
-        # Honour the test-harness env override but still assert the default
-        # derivation when it's absent — mirrors the RETRODB_DB_PATH guard below.
-        if not os.environ.get("RETRODB_STATIC_PATH"):
-            assert config.STATIC_PATH == os.path.join(config.BUNDLE_DIR, "static")
+    # conftest always sets the RETRODB_* path overrides, so these read a
+    # config imported without them. An `if not os.environ.get(...)` guard here
+    # meant the asserts never ran (PASS-59-290).
+    def test_static_path_under_bundle_dir(self, default_config):
+        assert default_config.STATIC_PATH == os.path.join(
+            default_config.BUNDLE_DIR, "static")
 
-    def test_image_path_under_base_dir(self):
+    def test_image_path_under_base_dir(self, default_config):
         """IMAGE_PATH writes go to the user-data root, never the bundle."""
-        import config
-        if not os.environ.get("RETRODB_IMAGE_PATH"):
-            assert config.IMAGE_PATH == os.path.join(config.BASE_DIR, "static", "images")
+        assert default_config.IMAGE_PATH == os.path.join(
+            default_config.BASE_DIR, "static", "images")
 
-    def test_db_path_under_base_dir(self):
+    def test_db_path_under_base_dir(self, default_config):
         """The SQLite file is user data — must live next to the launcher
         in a frozen bundle, not inside _internal/database/."""
-        import config
-        # Honour env override but still assert the default points at BASE_DIR.
-        if not os.environ.get("RETRODB_DB_PATH"):
-            assert config.DB_PATH == os.path.join(config.BASE_DIR, "database", "roms.db")
+        assert default_config.DB_PATH == os.path.join(
+            default_config.BASE_DIR, "database", "roms.db")
+
+
+_PATH_OVERRIDES = (
+    "RETRODB_DB_PATH", "RETRODB_STATIC_PATH", "RETRODB_IMAGE_PATH",
+    "RETRODB_SETTINGS_FILE", "RETRODB_SCRAPER_SETTINGS_FILE",
+)
+
+
+@pytest.fixture
+def default_config(monkeypatch, evict_config_modules):
+    """A config module imported with no RETRODB_* path overrides: its default
+    paths. Only the paths are read; evict_config_modules puts the suite's own
+    config back afterwards, so nothing opens these real locations."""
+    for name in _PATH_OVERRIDES:
+        monkeypatch.delenv(name, raising=False)
+    return importlib.import_module("config")
 
 
 # Modules that snapshot `config.BASE_DIR` at import time. When the frozen-mode
@@ -112,11 +125,8 @@ class TestPass46_3_FrozenModeSplit:
         monkeypatch.setattr(sys, "_MEIPASS", str(meipass_dir), raising=False)
         monkeypatch.setattr(sys, "executable", str(fake_exe))
         # Avoid the env overrides polluting the frozen-path assertions.
-        monkeypatch.delenv("RETRODB_DB_PATH", raising=False)
-        monkeypatch.delenv("RETRODB_STATIC_PATH", raising=False)
-        monkeypatch.delenv("RETRODB_IMAGE_PATH", raising=False)
-        monkeypatch.delenv("RETRODB_SETTINGS_FILE", raising=False)
-        monkeypatch.delenv("RETRODB_SCRAPER_SETTINGS_FILE", raising=False)
+        for name in _PATH_OVERRIDES:
+            monkeypatch.delenv(name, raising=False)
 
         # evict_config_modules has already popped the snapshot-prone modules
         # both before and (on teardown) after this test. Re-import config now

@@ -143,18 +143,28 @@ def test_download_image_deletes_and_fails_on_finalize_error(tmp_path, monkeypatc
         def __exit__(self, *a):
             return False
 
-    monkeypatch.setattr(base_scraper, 'validate_and_pin_url',
-                        lambda *a, **kw: ('https://example.com/x.webp', None),
-                        raising=False)
+    # download_image imports the SSRF helpers from services.ssrf when it runs,
+    # so they are stubbed there. A stub on base_scraper was never read: real
+    # DNS ran, and offline the call failed before finalize (PASS-59-290).
+    import contextlib
+    from services import ssrf
+    monkeypatch.setattr(ssrf, 'validate_outbound_url', lambda u, **k: (True, u, None))
+    monkeypatch.setattr(ssrf, 'validate_and_pin_url',
+                        lambda _s, u, **k: (u, '93.184.216.34', None))
+    monkeypatch.setattr(ssrf, 'pin_host_ip', lambda *a: contextlib.nullcontext())
     monkeypatch.setattr(base_scraper._http_session, 'get',
                         lambda *a, **kw: _Resp())
 
+    finalized = []
+
     def _boom(*a, **kw):
+        finalized.append(a)
         raise ValueError('cannot decode')
 
     monkeypatch.setattr(image_utils, 'finalize_downloaded_image', _boom)
 
     result = base_scraper.download_image('https://example.com/x.webp', str(dest))
+    assert finalized, 'the download never reached finalize'
     assert result is False, 'a broken image must not report success'
     assert not os.path.exists(str(dest)), 'the broken file must be deleted'
 

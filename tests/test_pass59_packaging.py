@@ -437,10 +437,28 @@ class TestPass59_18StaleTagRefused:
         assert 'rev-parse -q --verify "refs/tags/$TAG' in src
         assert 'git rev-parse HEAD' in src
 
+    @staticmethod
+    def _guard_block():
+        """The script's own local-tag check, from `if existing=` to its `fi`."""
+        src = _read('release-standalone.sh')
+        start = src.index('  if existing="$(git rev-parse -q --verify "refs/tags/$TAG^{commit}")"')
+        end = src.index('\n  fi\n', start) + len('\n  fi\n')
+        return src[start:end]
+
+    def _run_guard(self, repo, tag):
+        script = ('set -euo pipefail\n'
+                  'say() { printf \'%s\\n\' "$*"; }\n'
+                  'die() { printf \'%s\\n\' "$*" >&2; exit 1; }\n'
+                  f'TAG={tag}\n' + self._guard_block())
+        return subprocess.run(['bash', '-c', script], cwd=repo,
+                              capture_output=True, text=True)
+
     @pytest.mark.skipif(shutil.which('git') is None, reason='git not available')
     def test_the_guard_rejects_a_tag_at_an_older_commit(self, tmp_path):
-        """Exercise the comparison itself in a throwaway repo, so the pin is
-        about behaviour rather than the spelling of a grep."""
+        """Run the script's own guard in a throwaway repo, so the pin is about
+        behaviour rather than the spelling of a grep. It used to check only
+        that git resolves an old tag elsewhere, so breaking the guard stayed
+        green (PASS-59-290)."""
         repo = tmp_path / 'repo'
         repo.mkdir()
 
@@ -458,9 +476,15 @@ class TestPass59_18StaleTagRefused:
         (repo / 'a').write_text('2')
         git('commit', '-qam', 'second')
 
-        tagged = git('rev-parse', '-q', '--verify', 'refs/tags/v1.0.0^{commit}').stdout.strip()
-        head = git('rev-parse', 'HEAD').stdout.strip()
-        assert tagged != head, 'the stale tag must not resolve to HEAD'
+        stale = self._run_guard(repo, 'v1.0.0')
+        assert stale.returncode != 0, f'stale tag accepted: {stale.stdout!r}'
+        assert 'not HEAD' in stale.stderr
+
+        # Control: a tag already at HEAD is reused.
+        git('tag', '-a', 'v1.0.1', '-m', 'current')
+        current = self._run_guard(repo, 'v1.0.1')
+        assert current.returncode == 0, current.stderr
+        assert 'reusing existing local tag v1.0.1' in current.stdout
 
 
 # --- PASS-59-102: install.py survives output redirected to a cp1252 file ---

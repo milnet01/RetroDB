@@ -53,129 +53,95 @@ def job_with_real_thread():
             inst._singleton_fd = None
 
 
+# The old code slept 0.5 s after the cancel, then reset. A worker that saw
+# the cancel at once exited inside that half second, so a stub that returns on
+# cancel passed against the old code too. These stubs see the cancel and then
+# keep running until the test lets them go: the hand-off must wait for them.
+_HELD_LONGER_THAN_OLD_SLEEP = 1.0
+
+
+def _worker_that_lingers_after_cancel(observed_cancel, may_exit):
+    def worker(self):
+        while True:
+            with self._lock:
+                if self.cancelled:
+                    observed_cancel.set()
+                    break
+            if may_exit.wait(timeout=0.05):
+                return
+        may_exit.wait(timeout=10.0)  # still finishing its game
+    return worker
+
+
+def _hand_off_waits_for_old_worker(job, hand_off, old_job_id):
+    """Run hand_off in a thread while the old worker is still busy after the
+    cancel; the new job's state must not appear until that worker returns."""
+    observed_cancel = job._test_observed_cancel
+    may_exit = job._test_may_exit
+    done = threading.Event()
+    t = threading.Thread(target=lambda: (hand_off(), done.set()))
+    t.start()
+    try:
+        assert observed_cancel.wait(timeout=5.0), (
+            f"Worker never observed cancel flag — job.cancelled={job.cancelled!r}")
+        assert not done.wait(timeout=_HELD_LONGER_THAN_OLD_SLEEP), (
+            "Hand-off finished while the old worker was still running")
+        with job._lock:
+            assert job.job_id == old_job_id, (
+                f"New job's state written before the old worker exited: "
+                f"job_id={job.job_id!r}")
+    finally:
+        may_exit.set()
+    assert done.wait(timeout=5.0), "Hand-off never finished after the worker exited"
+    t.join(timeout=2.0)
+
+
+def _start_two_jobs(JobCls):
+    observed_cancel, may_exit = threading.Event(), threading.Event()
+    job = JobCls()
+    job._test_observed_cancel, job._test_may_exit = observed_cancel, may_exit
+    return job, _worker_that_lingers_after_cancel(observed_cancel, may_exit)
+
+
 class TestSwapJobOrdering:
     def test_new_job_counters_start_clean_after_cancel(self, job_with_real_thread):
         """The new job's state must not be visible until the old worker has
         exited — otherwise counters from the new job could be attributed to
         the old job's last game."""
-        worker_can_exit = threading.Event()
-        worker_observed_cancel = threading.Event()
-
-        def slow_worker(self):
-            # Pretend we're processing a game. Block until either cancelled
-            # or the test releases us.
-            while True:
-                with self._lock:
-                    if self.cancelled:
-                        worker_observed_cancel.set()
-                        return
-                if worker_can_exit.wait(timeout=0.05):
-                    return
-
-        with patch.object(BulkScrapeJob, '_run_scrape', slow_worker):
-            JobCls = job_with_real_thread
-            job = JobCls()
+        job, worker = _start_two_jobs(job_with_real_thread)
+        with patch.object(BulkScrapeJob, '_run_scrape', worker):
             job.start([100], system_id=1)
             assert job.running is True
             first_id = job.job_id
-
             job.start([200], system_id=2)
             assert len(job._queue) == 1
             queued_id = job._queue[0]['job_id']
 
-            # Run the swap in a separate thread so we can introspect timing.
-            swap_done = threading.Event()
-            def do_swap():
-                job.swap_with_running(queued_id)
-                swap_done.set()
+            _hand_off_waits_for_old_worker(
+                job, lambda: job.swap_with_running(queued_id), first_id)
 
-            swap_thread = threading.Thread(target=do_swap)
-            swap_thread.start()
-
-            # Worker should observe cancel quickly (within 0.5s on a healthy
-            # runner). Use 5.0s ceiling to match the swap.join timeout — under
-            # CI load the worker's 50ms poll loop can briefly stall.
-            observed = worker_observed_cancel.wait(timeout=5.0)
-            assert observed, (
-                "Worker never observed cancel flag — "
-                f"job.cancelled={job.cancelled!r}, _queue={job._queue!r}"
-            )
-
-            # Swap must finish promptly after worker exits.
-            assert swap_done.wait(timeout=5.0), \
-                "Swap blocked too long — join() likely missing or wrong thread"
-
-            # New job's state should now be in place. swap_with_running puts
-            # the old job at the front of the queue and sets job_id to the
-            # promoted queued_id — so job_id must equal queued_id, and the
-            # old first_id must be the next entry in the queue.
+            # swap_with_running puts the old job at the front of the queue and
+            # makes the promoted queued_id the running job.
             assert job.job_id == queued_id
             assert job._queue and job._queue[0]['job_id'] == first_id
-
-            worker_can_exit.set()
-            swap_thread.join(timeout=2.0)
 
 
 class TestDemoteJobOrdering:
     def test_demoted_job_state_only_resets_after_worker_exits(self, job_with_real_thread):
-        worker_observed_cancel = threading.Event()
-        worker_can_exit = threading.Event()
-
-        def slow_worker(self):
-            while True:
-                with self._lock:
-                    if self.cancelled:
-                        worker_observed_cancel.set()
-                        return
-                # Mirror the swap test pattern — a blocking wait on a shared
-                # event instead of busy-polling with time.sleep().
-                if worker_can_exit.wait(timeout=0.05):
-                    return
-
-        with patch.object(BulkScrapeJob, '_run_scrape', slow_worker):
-            JobCls = job_with_real_thread
-            job = JobCls()
+        job, worker = _start_two_jobs(job_with_real_thread)
+        with patch.object(BulkScrapeJob, '_run_scrape', worker):
             job.start([100], system_id=1)
+            first_id = job.job_id
             job.start([200], system_id=2)
+            queued_id = job._queue[0]['job_id']
 
-            demote_done = threading.Event()
-            def do_demote():
-                job.demote_running()
-                demote_done.set()
+            _hand_off_waits_for_old_worker(job, job.demote_running, first_id)
 
-            t = threading.Thread(target=do_demote)
-            t.start()
-
-            observed = worker_observed_cancel.wait(timeout=5.0)
-            assert observed, (
-                "Worker never observed cancel flag — "
-                f"job.cancelled={job.cancelled!r}"
-            )
-            assert demote_done.wait(timeout=5.0), \
-                "Demote blocked too long — join() likely missing or wrong thread"
-            t.join(timeout=2.0)
-
-            # Post-demote state — proves the join semantics aren't the only
-            # thing being verified. demote_running promotes the next queued
-            # job to running and pushes the demoted one back onto the queue,
-            # so .running stays True but the queue should have exactly 1
-            # entry (the previously-running job, now queued).
-            assert job.running is True, (
-                f"After demote, the next queued job should be running; "
-                f"running={job.running!r}"
-            )
-            assert len(job._queue) == 1, (
-                f"Demoted job should be on the queue exactly once; "
-                f"got _queue={job._queue!r}"
-            )
-
-            # Release the promoted worker thread so it can exit cleanly.
-            # After demote_running() promotes the next queued job, a new
-            # worker enters slow_worker's loop on worker_can_exit.wait();
-            # without this set() it would spin (daemon thread) for the
-            # remainder of the pytest session. Mirrors the swap test cleanup
-            # at line 121.
-            worker_can_exit.set()
+            # demote_running promotes the next queued job to running and pushes
+            # the demoted one back onto the queue.
+            assert job.running is True
+            assert job.job_id == queued_id
+            assert [q['job_id'] for q in job._queue] == [first_id]
 
 
 class TestOneWorkerAfterHandoff:

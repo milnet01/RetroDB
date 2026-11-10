@@ -59,8 +59,9 @@ def tmpdb(monkeypatch, tmp_path):
     monkeypatch.setattr('services.launch_resolver._allowed_rom_roots',
                         lambda: [rom_root])
     overrides = tmp_path / 'retroarch-overrides.cfg'
-    monkeypatch.setattr('services.launch_resolver._RETROARCH_OVERRIDES', overrides,
-                        raising=False)
+    # No raising=False: this patch is all that keeps a test off the live cfg,
+    # so a renamed constant must fail here, not write data/ (PASS-59-290).
+    monkeypatch.setattr('services.launch_resolver._RETROARCH_OVERRIDES', overrides)
 
     yield {'conn': conn, 'rom_file': rom_file, 'cores_dir': cores_dir,
            'overrides': overrides}
@@ -419,7 +420,7 @@ def test_inv13_keyboard_computers_start_in_game_focus(tmpdb, monkeypatch, tmp_pa
     # RetroArch's keyboard hotkeys (space, enter, F1-F9, many letters) eat
     # the keys a C64 game needs; game focus sends every key to the core.
     monkeypatch.setattr('services.launch_resolver._RETROARCH_KEYBOARD_OVERRIDES',
-                        tmp_path / 'retroarch-overrides-keyboard.cfg', raising=False)
+                        tmp_path / 'retroarch-overrides-keyboard.cfg')
     (tmpdb['cores_dir'] / core).write_bytes(b'\x7fELF')
     tmpdb['conn'].execute("UPDATE system_emulators SET retroarch_core = ? "
                           "WHERE emulator_id = 2", (core,))

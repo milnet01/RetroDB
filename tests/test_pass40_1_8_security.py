@@ -29,6 +29,7 @@
 # =============================================================================
 
 import os
+import pathlib
 import re
 
 import pytest
@@ -331,66 +332,64 @@ class TestPass40_2ChdConvertVerifyPathValidation:
             )
 
     def test_convert_does_not_remove_arbitrary_file(self, tmp_path, monkeypatch, admin_test_client):
-        """If chd_delete_originals is true, the os.remove must still be
-        gated by safe_path — a logged-in user can't trick the worker into
-        deleting /etc/something.
+        """If chd_delete_originals is true, the delete must still be gated by
+        safe_path — a logged-in user can't trick the worker into deleting
+        /etc/something.
 
-        c-006 F-1 fix: same synchronous-worker pattern as the traversal test
-        — we run the daemon thread inline via Thread.start → Thread.run so
-        the post-response inspection isn't racing against a delayed
-        schedule."""
+        Real files and a fake chdman that writes its output, so a source that
+        passes the gate really is converted and deleted: the in-root source is
+        the positive control. The fake used to write nothing, every conversion
+        failed, and nothing could be deleted either way (PASS-59-290).
+
+        Same synchronous-worker pattern as the traversal test (c-006 F-1)."""
         import threading as _threading
         from routes import tools as tools_mod
 
         rom_root = tmp_path / 'roms'
         rom_root.mkdir()
-        decoy_target = tmp_path / 'outside.cue'
+        in_root = rom_root / 'game.iso'
+        in_root.write_text('IN-ROOT SOURCE')
+        decoy_target = tmp_path / 'outside.iso'
         decoy_target.write_text('SHOULD NOT BE DELETED')
 
         monkeypatch.setattr(tools_mod, '_get_rom_path', lambda: str(rom_root))
         monkeypatch.setattr(tools_mod.shutil, 'which', lambda _: '/usr/bin/chdman')
-
-        # Force chd_delete_originals=True via fake config.
         monkeypatch.setattr(
             tools_mod, 'load_rom_tools_config',
             lambda: {'chdman_path': 'chdman', 'chd_delete_originals': True},
         )
 
-        # Pretend chdman succeeds and the .chd file exists, so the os.remove
-        # branch fires for any path that survives validation.
         class _FakeResult:
             returncode = 0
             stdout = ''
             stderr = ''
 
-        monkeypatch.setattr(tools_mod.subprocess, 'run',
-                            lambda cmd, **kw: _FakeResult())
-        monkeypatch.setattr(tools_mod.os.path, 'exists', lambda p: True)
+        def fake_chdman(cmd, **kw):
+            if cmd[1] == 'createcd':  # chdman createcd -i SRC -o OUT.chd.part
+                pathlib.Path(cmd[cmd.index('-o') + 1]).write_bytes(b'CHD')
+            return _FakeResult()
 
-        # Track which paths os.remove was called on.
-        removed = []
-        monkeypatch.setattr(tools_mod.os, 'remove', lambda p: removed.append(p))
+        from scraper import rom_tools
+        monkeypatch.setattr(rom_tools.subprocess, 'run', fake_chdman)
+        monkeypatch.setattr(_threading.Thread, 'start', lambda self: self.run())
 
-        # Synchronous worker — see F-1 note in test_convert_e2e_rejects_traversal.
-        monkeypatch.setattr(_threading.Thread, 'start',
-                            lambda self: self.run())
-
-        # Pin admin so the route runs past the auth guard.
         client, csrf = admin_test_client(settings={'setup_completed': True, 'rom_path': str(rom_root)})
 
         resp = client.post(
             '/api/rom-tools/chd-converter/convert',
-            json={'files': [str(decoy_target)]},
+            json={'files': [str(in_root), str(decoy_target)]},
             headers={'X-CSRF-Token': csrf},
         )
         assert resp.status_code == 200, (
             f"expected 200 once admin is pinned, got {resp.status_code}: "
             f"{resp.get_data(as_text=True)[:200]}"
         )
-        # The decoy path is OUTSIDE rom_root → safe_path rejects → os.remove
-        # never called on it.
-        assert str(decoy_target) not in removed, \
-            f'os.remove called on path outside rom_path: {removed}'
+        # Positive control: the source inside rom_root was converted and removed.
+        assert (rom_root / 'game.chd').exists()
+        assert not in_root.exists(), 'the in-root source should have been deleted'
+        # The decoy is OUTSIDE rom_root → safe_path rejects it → untouched.
+        assert decoy_target.exists(), 'a file outside rom_path was deleted'
+        assert not (tmp_path / 'outside.chd').exists()
 
     def test_convert_with_only_out_of_bound_files_invokes_no_chdman(
         self, tmp_path, monkeypatch, admin_test_client,

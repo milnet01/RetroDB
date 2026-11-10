@@ -47,13 +47,17 @@ def test_an_igdb_id_that_is_not_a_number_never_reaches_the_query(fetch, monkeypa
     module, name = fetch.rsplit('.', 1)
     mod = importlib.import_module(module)
     sent = []
-    monkeypatch.setattr(mod, 'igdb_auth', lambda: 'token', raising=False)
-    monkeypatch.setattr('scraper.scrape_igdb.igdb_auth', lambda: 'token')
-    for attr in ('http_post', 'requests'):
-        if hasattr(mod, attr) and attr == 'http_post':
-            monkeypatch.setattr(mod, attr, lambda *a, **k: sent.append(k.get('data')) or None)
+    # Both modules call igdb_request by their own name for it; stub that name.
+    # The old stub went on http_post, which hybrid_scraper never names, so it
+    # patched nothing there (PASS-59-290).
+    monkeypatch.setattr(mod, 'igdb_auth', lambda: 'token')
+    monkeypatch.setattr(mod, 'igdb_request',
+                        lambda endpoint, body, token: sent.append(body) or [])
     assert getattr(mod, name)('1; fields *') is None
     assert sent == []
+    # Control: a numeric id does reach the stub, so the stub is the one used.
+    getattr(mod, name)('1')
+    assert len(sent) == 1 and 'where id = 1;' in sent[0]
 
 
 def test_a_record_with_no_system_is_found_in_the_cache():

@@ -50,8 +50,19 @@ class TestESDEPathTraversal:
 # 25.7 — Scraper download response caps
 # -------------------------------------
 class TestScraperDownloadCaps:
-    def test_base_scraper_download_image_respects_max_bytes(self, tmp_path):
+    def test_base_scraper_download_image_respects_max_bytes(self, tmp_path, monkeypatch, caplog):
+        import contextlib
+        import logging
         from scraper import base_scraper
+        from services import ssrf
+
+        # Pass the SSRF gate without DNS, so the request reaches the cap. A
+        # made-up host failed the gate first and the cap never ran (PASS-59-290).
+        url = 'https://images.example.com/fake.jpg'
+        monkeypatch.setattr(ssrf, 'validate_outbound_url', lambda u, **k: (True, u, None))
+        monkeypatch.setattr(ssrf, 'validate_and_pin_url',
+                            lambda _s, u, **k: (u, '93.184.216.34', None))
+        monkeypatch.setattr(ssrf, 'pin_host_ip', lambda *a: contextlib.nullcontext())
 
         # Fake response that claims 100 MB Content-Length (above 50 MB cap).
         fake_resp = _fake_http_response(
@@ -59,14 +70,13 @@ class TestScraperDownloadCaps:
             headers={'Content-Length': str(100 * 1024 * 1024)},
         )
 
-        with patch.object(base_scraper._http_session, 'get', return_value=fake_resp):
-            ok = base_scraper.download_image(
-                'https://example.invalid/fake.jpg',
-                str(tmp_path / 'out.jpg'),
-                timeout=1,
-            )
+        with patch.object(base_scraper._http_session, 'get', return_value=fake_resp) as get, \
+                caplog.at_level(logging.WARNING, logger=base_scraper.logger.name):
+            ok = base_scraper.download_image(url, str(tmp_path / 'out.jpg'), timeout=1)
+        assert get.called, 'the request never reached the size cap'
         assert ok is False
         assert not (tmp_path / 'out.jpg').exists()
+        assert 'exceeds' in caplog.text
 
     def test_constants_reasonable(self):
         import config
