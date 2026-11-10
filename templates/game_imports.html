@@ -241,8 +241,8 @@
         <div class="info-box">
             <span>ℹ️</span>
             <span class="info-box-text">
-                {% trans settings_url=url_for('settings.settings') ~ '#apikeys' %}Import your Steam game library. Games are created under the <strong>Microsoft Windows</strong> system.
-                Configure your Steam API key and Steam ID in <a href="{{ settings_url }}" style="color: var(--primary-cyan);">Settings &rarr; API Keys</a>, or enter them below.{% endtrans %}
+                {% trans settings_url=url_for('settings.settings') ~ '#profile' %}Import your Steam game library. Games are created under the <strong>Microsoft Windows</strong> system.
+                Configure your Steam API key and Steam ID in <a href="{{ settings_url }}" style="color: var(--primary-cyan);">Settings &rarr; My Profile</a>, or enter them below.{% endtrans %}
             </span>
         </div>
         <div class="config-section" id="steamConfig">
@@ -619,7 +619,7 @@ if (clzUploadArea) {
     });
     clzUploadArea.addEventListener('drop', e => {
         const file = e.dataTransfer.files[0];
-        if (file && file.name.endsWith('.pdf')) {
+        if (file && file.name.toLowerCase().endsWith('.pdf')) {
             const input = document.getElementById('clzFileInput');
             const dt = new DataTransfer();
             dt.items.add(file);
@@ -678,6 +678,7 @@ async function fetchSteamLibrary() {
 async function checkXboxStatus() {
     try {
         const resp = await fetch('/api/xbox/status');
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
         const data = await resp.json();
         const statusEl = document.getElementById('xboxAuthStatus');
         const textEl = document.getElementById('xboxAuthText');
@@ -694,7 +695,12 @@ async function checkXboxStatus() {
             detailEl.textContent = {{ _('Add your OpenXBL key in Settings > My Profile to import games.')|tojson }};
             fetchBtn.disabled = true;
         }
-    } catch (e) { console.error('Xbox status check failed:', e); }
+    } catch (e) {
+        console.error('Xbox status check failed:', e);
+        document.getElementById('xboxAuthStatus').className = 'auth-status disconnected';
+        document.getElementById('xboxAuthText').textContent = {{ _('Could not check the connection')|tojson }};
+        document.getElementById('xboxAuthDetail').textContent = {{ _('Reload the page to try again.')|tojson }};
+    }
 }
 
 async function fetchXboxLibrary() {
@@ -732,6 +738,18 @@ async function fetchXboxLibrary() {
 function renderTable(platform) {
     const tbody = document.getElementById(platform + 'TableBody');
     const games = state[platform].filtered;
+    // Keep the user's ticks across re-renders (each search keystroke runs
+    // this), including rows a search hides for a while. A new fetch starts clean.
+    const s = state[platform];
+    if (s._tickedFor !== s.games) {
+        s.ticked = new Set();
+        s._tickedFor = s.games;
+    } else {
+        tbody.querySelectorAll('.' + platform + '-checkbox').forEach(cb => {
+            if (cb.checked) s.ticked.add(cb.dataset.index); else s.ticked.delete(cb.dataset.index);
+        });
+    }
+    const ticked = s.ticked;
     tbody.innerHTML = '';
     games.forEach((game, i) => {
         const tr = document.createElement('tr');
@@ -760,6 +778,8 @@ function renderTable(platform) {
                 <td>${game.earned_gamerscore > 0 ? `${formatNumber(game.earned_gamerscore)} / ${formatNumber(game.total_gamerscore)}` : '<span style="color:var(--text-muted)">—</span>'}</td>
                 <td>${!isNew ? '<span class="status-existing">Already imported</span>' : (game.will_link ? `<span class="status-new">${escapeHtml({{ _('In your library: link it')|tojson }})}</span>` : '<span class="status-new">New</span>')}</td>`;
         }
+        const cb = tr.querySelector('.' + platform + '-checkbox');
+        if (cb && !cb.disabled && ticked.has(String(idx))) cb.checked = true;
         tbody.appendChild(tr);
     });
     updateSelection(platform);
@@ -782,7 +802,10 @@ function filterGames(platform) {
 
 function toggleSelectAll(platform) {
     const checked = document.getElementById(platform + 'SelectAll').checked;
-    document.querySelectorAll('.' + platform + '-checkbox:not(:disabled)').forEach(cb => cb.checked = checked);
+    // Only rows the platform filter shows: hidden rows are never imported.
+    document.querySelectorAll('.' + platform + '-checkbox:not(:disabled)').forEach(cb => {
+        if (cb.closest('tr').style.display !== 'none') cb.checked = checked;
+    });
     updateSelection(platform);
 }
 
@@ -812,6 +835,8 @@ function updateSelection(platform) {
 function getSelectedGames(platform) {
     const selected = [];
     document.querySelectorAll('.' + platform + '-checkbox:checked').forEach(cb => {
+        // Same test updateSelection counts by: a row the filter hides is not sent.
+        if (cb.closest('tr').style.display === 'none') return;
         const idx = parseInt(cb.dataset.index);
         const game = state[platform].games[idx];
         if (game) selected.push(game);
@@ -859,6 +884,7 @@ async function importGames(platform) {
 async function checkPsnStatus() {
     try {
         const resp = await fetch('/api/psn/import/status');
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
         const data = await resp.json();
         const statusEl = document.getElementById('psnAuthStatus');
         const textEl = document.getElementById('psnAuthText');
@@ -875,7 +901,12 @@ async function checkPsnStatus() {
             detailEl.innerHTML = 'Add your NPSSO token in <a href="/settings#apikeys" style="color:var(--primary-cyan)">Settings \u2192 API Keys</a>';
             fetchBtn.disabled = true;
         }
-    } catch (e) { console.error('PSN status check failed:', e); }
+    } catch (e) {
+        console.error('PSN status check failed:', e);
+        document.getElementById('psnAuthStatus').className = 'auth-status disconnected';
+        document.getElementById('psnAuthText').textContent = {{ _('Could not check the connection')|tojson }};
+        document.getElementById('psnAuthDetail').textContent = {{ _('Reload the page to try again.')|tojson }};
+    }
 }
 
 async function fetchPsnLibrary() {
@@ -967,15 +998,9 @@ document.addEventListener('input', (e) => {
 
 document.addEventListener('DOMContentLoaded', () => {
     restorePlatformFilters();
-    // Load saved API keys
-    fetch('/api/scraper-settings')
-        .then(r => r.json())
-        .then(data => {
-            const keys = data.api_keys || {};
-            if (keys.steam_api_key) document.getElementById('steamApiKey').value = keys.steam_api_key;
-            if (keys.steam_id) document.getElementById('steamId').value = keys.steam_id;
-        })
-        .catch(() => {});
+    // The Steam boxes start empty on purpose: the server uses the signed-in
+    // user's own key and ID (Settings > My Profile). Pre-filling them from the
+    // install-wide scraper settings sent another person's Steam ID instead.
 
     const params = new URLSearchParams(window.location.search);
 
