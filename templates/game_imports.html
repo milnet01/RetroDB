@@ -356,8 +356,8 @@
         <div class="info-box">
             <span>ℹ️</span>
             <span class="info-box-text">
-                {% trans settings_url=url_for('settings.settings') ~ '#apikeys', trophies_url=url_for('trophies.psn_trophies') %}Import your PlayStation game library. Games come from your PSN trophy list.
-                Configure your PSN NPSSO token in <a href="{{ settings_url }}" style="color: var(--primary-cyan);">Settings &rarr; API Keys</a>.
+                {% trans settings_url=url_for('settings.settings') ~ '#profile', trophies_url=url_for('trophies.psn_trophies') %}Import your PlayStation game library. Games come from your PSN trophy list.
+                Configure your PSN NPSSO token in <a href="{{ settings_url }}" style="color: var(--primary-cyan);">Settings &rarr; My Profile</a>.
                 For faster imports, sync your trophies first via the <a href="{{ trophies_url }}" style="color: var(--primary-cyan);">PSN Trophies</a> page.{% endtrans %}
             </span>
         </div>
@@ -892,13 +892,17 @@ async function checkPsnStatus() {
         const fetchBtn = document.getElementById('psnFetchBtn');
         if (data.configured) {
             statusEl.className = 'auth-status connected';
-            textEl.textContent = data.username ? `Connected as ${data.username}` : 'PSN Configured';
-            detailEl.textContent = data.has_data ? `${formatNumber(data.total_games)} games in trophy database` : 'No local trophy data \u2014 will fetch from PSN API';
+            textEl.textContent = data.username
+                ? t({{ _('Connected as {name}')|tojson }}, {name: data.username})
+                : {{ _('PSN Configured')|tojson }};
+            detailEl.textContent = data.has_data
+                ? t({{ _('Games in your trophy list: {count}')|tojson }}, {count: formatNumber(data.total_games)})
+                : {{ _('No trophy list saved yet; Fetch will read it from PSN.')|tojson }};
             fetchBtn.disabled = false;
         } else {
             statusEl.className = 'auth-status disconnected';
-            textEl.textContent = 'Not Configured';
-            detailEl.innerHTML = 'Add your NPSSO token in <a href="/settings#apikeys" style="color:var(--primary-cyan)">Settings \u2192 API Keys</a>';
+            textEl.textContent = {{ _('Not Configured')|tojson }};
+            detailEl.textContent = {{ _('Add your PSN NPSSO token in Settings > My Profile to import games.')|tojson }};
             fetchBtn.disabled = true;
         }
     } catch (e) {
