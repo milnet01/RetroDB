@@ -443,7 +443,9 @@ function cancelScan() {
 
 function resetUI() {
     document.getElementById('scanBtn').disabled = false;
-    document.getElementById('scanBtn').innerHTML = '<span class="btn-icon" data-themed-icon="running"></span> Start Scan';
+    // data-themed-icon fills only at page load, so set the icon here as the
+    // Scanning state does.
+    document.getElementById('scanBtn').innerHTML = '<span class="btn-icon">' + getThemedIcon('running') + '</span> ' + escapeHtml({{ _('Start Scan')|tojson }});
     document.getElementById('cancelBtn').style.display = 'none';
     currentTaskId = null;
 }

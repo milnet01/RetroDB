@@ -234,6 +234,11 @@ function hltbRenderPending() {
     document.getElementById('approveAllBtn').disabled = false;
     document.getElementById('rejectAllBtn').disabled = false;
 
+    if (!filtered.length) {
+        list.innerHTML = `<div class="empty-state-text">${escapeHtml({{ _('No pending matches under this filter.')|tojson }})}</div>`;
+        return;
+    }
+
     list.innerHTML = filtered.map(item => {
         const conf = Math.round(item.confidence || 0);
         const confClass = conf >= 85 ? 'conf-high' : 'conf-low';

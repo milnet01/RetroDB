@@ -114,6 +114,7 @@
 const REVIEW_PAGE_SIZE = 40;
 let reviewShots = [];
 let reviewShown = 0;
+let reviewUnreadable = 0;  // the last scan's count, kept for the summary after a Remove
 
 function endReviewScan() {
     document.getElementById('scanBtn').disabled = false;
@@ -145,7 +146,8 @@ async function startReviewScan() {
                 reviewShown = 0;
                 document.getElementById('reviewGrid').innerHTML = '';
                 document.getElementById('resultsCard').hidden = false;
-                updateReviewSummary(task.results.unreadable);
+                reviewUnreadable = task.results.unreadable || 0;
+                updateReviewSummary(reviewUnreadable);
                 showMoreShots();
             },
             onError(task) {
@@ -199,7 +201,7 @@ function removeReviewShot(gameId, filename, button) {
             button.closest('.review-shot').remove();
             reviewShots = reviewShots.filter(shot => shot.filename !== filename);
             reviewShown -= 1;
-            updateReviewSummary(0);
+            updateReviewSummary(reviewUnreadable);
             showNotification({{ _('Screenshot removed')|tojson }}, 'success');
         } catch (err) {
             showNotification(err.message, 'error');
