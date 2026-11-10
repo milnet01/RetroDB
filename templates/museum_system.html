@@ -19,7 +19,7 @@
     <div class="museum-hero-layout">
         <div class="museum-hero-image">
             {% if hw_image %}
-            <img src="{{ url_for('static', filename=hw_image) }}" alt="{{ system.name }}" data-on-click="openHardwareLightbox" data-args='["$this"]' style="cursor:zoom-in">
+            <img src="{{ url_for('static', filename=hw_image) }}" alt="{{ system.name }}" role="button" tabindex="0" aria-label="{{ _('Enlarge %(name)s', name=system.name) }}" data-on-click="openHardwareLightbox" data-args='["$this"]' style="cursor:zoom-in">
             {% else %}
             <div class="museum-hero-placeholder">&#127918;</div>
             {% endif %}
@@ -191,7 +191,7 @@
         <div class="museum-controller-card glass-panel" data-controller-id="{{ ctrl.id }}">
             <div class="museum-controller-image">
                 {% if ctrl.image %}
-                <img src="{{ url_for('static', filename='images/controllers/' ~ ctrl.image) }}" alt="{{ ctrl.name }}" title="{{ ctrl.image }}" loading="lazy" data-on-click="openControllerLightbox" data-args='["$this"]'>
+                <img src="{{ url_for('static', filename='images/controllers/' ~ ctrl.image) }}" alt="{{ ctrl.name }}" title="{{ ctrl.image }}" loading="lazy" role="button" tabindex="0" aria-label="{{ _('Enlarge %(name)s', name=ctrl.name) }}" data-on-click="openControllerLightbox" data-args='["$this"]'>
                 <div class="museum-controller-image-actions">
                     <button type="button" class="btn btn-xs btn-ghost" data-on-click="removeControllerBg" data-args='[{{ ctrl.id|tojson }}]' data-stop title="{{ _('Remove background') }}">{{ _('Remove BG') }}</button>
                     <button type="button" class="btn btn-xs btn-ghost" data-on-click="fetchControllerImage" data-args='[{{ ctrl.id|tojson }}]' data-stop title="{{ _('Search for a new image') }}">{{ _('Search') }}</button>

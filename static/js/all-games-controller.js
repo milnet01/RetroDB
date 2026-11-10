@@ -862,21 +862,21 @@ const AllGamesController = (function() {
         // Special: source (include only, no exclude support)
         if (filterType === 'source') {
             optionsEl.innerHTML = `
-                <div class="filter-option" data-on-click="AllGamesController.applyFilter" data-args="${actionArgs('source', 'rom')}">
+                <button type="button" class="filter-option" data-on-click="AllGamesController.applyFilter" data-args="${actionArgs('source', 'rom')}">
                     <span class="filter-option-name">${esc(t('ROM Files'))}</span>
-                </div>
-                <div class="filter-option" data-on-click="AllGamesController.applyFilter" data-args="${actionArgs('source', 'clz')}">
+                </button>
+                <button type="button" class="filter-option" data-on-click="AllGamesController.applyFilter" data-args="${actionArgs('source', 'clz')}">
                     <span class="filter-option-name">${esc(t('CLZ Imports'))}</span>
-                </div>
-                <div class="filter-option" data-on-click="AllGamesController.applyFilter" data-args="${actionArgs('source', 'steam')}">
+                </button>
+                <button type="button" class="filter-option" data-on-click="AllGamesController.applyFilter" data-args="${actionArgs('source', 'steam')}">
                     <span class="filter-option-name">${esc(t('Steam Imports'))}</span>
-                </div>
-                <div class="filter-option" data-on-click="AllGamesController.applyFilter" data-args="${actionArgs('source', 'xbox')}">
+                </button>
+                <button type="button" class="filter-option" data-on-click="AllGamesController.applyFilter" data-args="${actionArgs('source', 'xbox')}">
                     <span class="filter-option-name">${esc(t('Xbox Imports'))}</span>
-                </div>
-                <div class="filter-option" data-on-click="AllGamesController.applyFilter" data-args="${actionArgs('source', 'psn')}">
+                </button>
+                <button type="button" class="filter-option" data-on-click="AllGamesController.applyFilter" data-args="${actionArgs('source', 'psn')}">
                     <span class="filter-option-name">${esc(t('PSN Imports'))}</span>
-                </div>`;
+                </button>`;
             modal.classList.add('active');
             _activateFilterModalTrap(modal);
             return;
@@ -894,7 +894,7 @@ const AllGamesController = (function() {
                 const label = sysNames[sysKey] || sysKey.toUpperCase();
                 html += `<div class="filter-subheading">${esc(label)}</div>`;
                 items.forEach(([val, cnt]) => {
-                    html += `<div class="filter-option" data-on-click="AllGamesController.handleFilterOptionClick" data-args="${actionArgs('rating', val)}">${esc(val)} <span class="filter-option-count">(${formatNumber(cnt)})</span></div>`;
+                    html += `<button type="button" class="filter-option" data-on-click="AllGamesController.handleFilterOptionClick" data-args="${actionArgs('rating', val)}">${esc(val)} <span class="filter-option-count">(${formatNumber(cnt)})</span></button>`;
                 });
             }
             optionsEl.innerHTML = html || `<div class="filter-empty">${esc(t('No ratings available'))}</div>`;
@@ -1185,25 +1185,25 @@ const AllGamesController = (function() {
                     if (!isMulti(k)) {
                         const fn = exclude ? 'removeExcludeFilter' : 'removeFilter';
                         return [`<span class="${cls}">${icons[k] || ''} ${not}${esc(String(v))}
-                            <span class="filter-tag-remove" data-on-click="AllGamesController.${fn}" data-args="${actionArgs(String(k))}">&#215;</span></span>`];
+                            <button type="button" class="filter-tag-remove btn-bare" aria-label="${esc(t('Remove {name}', {name: String(v)}))}" data-on-click="AllGamesController.${fn}" data-args="${actionArgs(String(k))}">&#215;</button></span>`];
                     }
                     return asList(v).map(one => `<span class="${cls}">${icons[k] || ''} ${not}${esc(tField(one))}
-                        <span class="filter-tag-remove" data-on-click="AllGamesController.removeFilterValue" data-args="${actionArgs(String(k), one, exclude)}">&#215;</span></span>`);
+                        <button type="button" class="filter-tag-remove btn-bare" aria-label="${esc(t('Remove {name}', {name: tField(one)}))}" data-on-click="AllGamesController.removeFilterValue" data-args="${actionArgs(String(k), one, exclude)}">&#215;</button></span>`);
                 }).join('');
                 let html = tagHtml(displayFilters, false) + tagHtml(displayExcludeFilters, true);
 
                 if (filters.ra_only === '1') {
                     html += `<span class="filter-tag ra-tag">&#127942; ${esc(t('Has Achievements'))}
-                        <span class="filter-tag-remove" data-on-click="AllGamesController.toggleRAFilter">&#215;</span></span>`;
+                        <button type="button" class="filter-tag-remove btn-bare" aria-label="${esc(t('Remove {name}', {name: t('Has Achievements')}))}" data-on-click="AllGamesController.toggleRAFilter">&#215;</button></span>`;
                 }
                 if (filters.show_bonus === '1') {
                     html += `<span class="filter-tag" style="background:rgba(168,85,247,0.15);border-color:#a855f7;color:#a855f7;">
                         &#127873; ${esc(t('Showing Bonus Discs'))}
-                        <span class="filter-tag-remove" data-on-click="AllGamesController.toggleBonusDiscFilter">&#215;</span></span>`;
+                        <button type="button" class="filter-tag-remove btn-bare" aria-label="${esc(t('Remove {name}', {name: t('Showing Bonus Discs')}))}" data-on-click="AllGamesController.toggleBonusDiscFilter">&#215;</button></span>`;
                 }
                 if (filters.unscraped === '1') {
                     html += `<span class="filter-tag">&#128237; ${esc(t('Unscraped'))}
-                        <span class="filter-tag-remove" data-on-click="AllGamesController.toggleUnscrapedFilter">&#215;</span></span>`;
+                        <button type="button" class="filter-tag-remove btn-bare" aria-label="${esc(t('Remove {name}', {name: t('Unscraped')}))}" data-on-click="AllGamesController.toggleUnscrapedFilter">&#215;</button></span>`;
                 }
 
                 tags.innerHTML = html;

@@ -2241,8 +2241,10 @@ const GameEditModal = {
         tag.className = className;
         tag.textContent = tField(value) + ' ';
         tag.dataset.value = value;
-        const btn = document.createElement('span');
+        const btn = document.createElement('button');
+        btn.type = 'button';
         btn.className = className === 'controller-tag' ? 'remove-controller' : 'remove-genre';
+        btn.setAttribute('aria-label', t('Remove {name}', {name: tField(value)}));
         btn.textContent = '×';
         btn.addEventListener('click', (e) => {
             e.stopPropagation();

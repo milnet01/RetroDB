@@ -117,6 +117,7 @@
 /* Upload Area (CLZ) */
 .upload-area { display: block; border: 2px dashed var(--card-border); border-radius: var(--radius-lg); padding: var(--spacing-xl); text-align: center; cursor: pointer; transition: all 0.2s ease; margin-bottom: var(--spacing-lg); }
 .upload-area:hover, .upload-area.dragover { border-color: var(--primary-cyan); background: rgba(76, 201, 240, 0.05); }
+.upload-area:focus-within { outline: 3px solid var(--primary-cyan-light); outline-offset: 2px; }
 .upload-icon { font-size: 3rem; margin-bottom: var(--spacing-md); }
 .upload-text { color: var(--text-secondary); margin-bottom: var(--spacing-xs); }
 .upload-subtext { font-size: 0.8rem; color: var(--text-muted); }
@@ -195,8 +196,8 @@
                 <div class="upload-icon">📄</div>
                 <div class="upload-text">{{ _('Click or drag a CLZ PDF file here') }}</div>
                 <div class="upload-subtext">{{ _('Supports PDF exports from CLZ Games app') }}</div>
+                <input type="file" id="clzFileInput" class="visually-hidden" accept=".pdf" data-on-change="uploadClzFile" data-args='["$this"]'>
             </label>
-            <input type="file" id="clzFileInput" accept=".pdf" style="display: none;" data-on-change="uploadClzFile" data-args='["$this"]'>
         </div>
 
         <!-- CLZ Preview -->

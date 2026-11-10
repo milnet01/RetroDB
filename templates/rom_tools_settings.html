@@ -459,7 +459,7 @@ function renderUnwantedPatterns() {
     container.innerHTML = sorted.map(pattern => `
         <span class="tag">
             ${pattern}
-            <span class="remove-tag" data-pattern="${escapeHtml(pattern)}" data-on-click="removeUnwantedPattern" data-args="${actionArgs('$this.dataset.pattern')}" title="${escapeHtml({{ _('Remove')|tojson }})}">×</span>
+            <button type="button" class="remove-tag btn-bare" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', pattern))}" data-pattern="${escapeHtml(pattern)}" data-on-click="removeUnwantedPattern" data-args="${actionArgs('$this.dataset.pattern')}" title="${escapeHtml({{ _('Remove')|tojson }})}">×</button>
         </span>
     `).join('');
 }
@@ -498,7 +498,7 @@ function renderExcludedPaths() {
     container.innerHTML = sorted.map(path => `
         <span class="tag">
             ${path}
-            <span class="remove-tag" data-path="${escapeHtml(path)}" data-on-click="removeExcludedPathSetting" data-args="${actionArgs('$this.dataset.path')}" title="${escapeHtml({{ _('Remove')|tojson }})}">×</span>
+            <button type="button" class="remove-tag btn-bare" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', path))}" data-path="${escapeHtml(path)}" data-on-click="removeExcludedPathSetting" data-args="${actionArgs('$this.dataset.path')}" title="${escapeHtml({{ _('Remove')|tojson }})}">×</button>
         </span>
     `).join('');
 }

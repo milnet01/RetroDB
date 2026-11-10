@@ -2901,6 +2901,15 @@ function initializeDelegatedActions() {
 
 initializeDelegatedActions();
 
+document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const el = e.target;
+    if (!(el instanceof Element) || el.tagName === 'BUTTON') return;
+    if (!el.matches('[role="button"][tabindex]')) return;
+    e.preventDefault();
+    el.click();
+});
+
 function initializeSidebar() {
     const sidebar = document.querySelector('.sidebar');
     const toggleBtn = document.querySelector('.sidebar-toggle');

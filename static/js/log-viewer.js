@@ -446,7 +446,7 @@ const LogViewer = {
             const badgeLabel = session.outcome === 'unknown' ? '...' : session.outcome;
 
             chunks.push(`<div class="log-session" data-session="${i}">`);
-            chunks.push(`<div class="log-session-header" data-on-click="LogViewer.toggleSession" data-args="${actionArgs('$this')}">`);
+            chunks.push(`<button type="button" class="log-session-header" aria-expanded="false" data-on-click="LogViewer.toggleSession" data-args="${actionArgs('$this')}">`);
             chunks.push(`<span class="session-toggle">\u25B6</span>`);
             chunks.push(`<span class="session-title">${this.escapeHtml(session.title)}</span>`);
             if (session.system) {
@@ -455,7 +455,7 @@ const LogViewer = {
             chunks.push(`<span class="session-time">${this.escapeHtml(session.startTime)}</span>`);
             chunks.push(`<span class="session-badge ${badgeClass}">${badgeLabel}</span>`);
             chunks.push(`<span class="session-line-count">${t('{n} lines', {n: session.filteredLines.length})}</span>`);
-            chunks.push(`</div>`);
+            chunks.push(`</button>`);
 
             chunks.push(`<div class="log-session-body">`);
             for (const line of session.filteredLines) {
@@ -613,7 +613,8 @@ const LogViewer = {
 
     toggleSession(headerEl) {
         const sessionEl = headerEl.parentElement;
-        sessionEl.classList.toggle('open');
+        const open = sessionEl.classList.toggle('open');
+        headerEl.setAttribute('aria-expanded', String(open));
     },
 
     // =========================================================================

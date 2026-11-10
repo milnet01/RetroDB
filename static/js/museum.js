@@ -210,6 +210,10 @@ function _updateControllerImage(controllerId, imageFilename) {
     img.setAttribute('src', '/static/images/controllers/' + encodeURIComponent(imageFilename) + '?t=' + Date.now());
     img.setAttribute('alt', t('Controller'));
     img.setAttribute('loading', 'lazy');
+    var nameEl = card.querySelector('.museum-controller-name');
+    img.setAttribute('role', 'button');
+    img.setAttribute('tabindex', '0');
+    img.setAttribute('aria-label', t('Enlarge {name}', {name: nameEl ? nameEl.textContent : t('Controller')}));
     img.addEventListener('click', function () { openControllerLightbox(img); });
 
     var actions = document.createElement('div');

@@ -141,6 +141,10 @@
     font-weight: 600;
     color: #fff;
     letter-spacing: 0.3px;
+    border: 0;
+    line-height: inherit;
+    text-align: inherit;
+    cursor: pointer;
 }
 
 .tag-card-actions {
@@ -150,7 +154,8 @@
     transition: opacity var(--transition-fast);
 }
 
-.tag-card:hover .tag-card-actions {
+.tag-card:hover .tag-card-actions,
+.tag-card:focus-within .tag-card-actions {
     opacity: 1;
 }
 
@@ -409,10 +414,13 @@ function renderTags() {
     grid.style.display = '';
     empty.style.display = 'none';
 
+    // The card holds the Edit and Delete buttons, so it cannot be a button
+    // itself: the pill is the keyboard's way in, and its click bubbles up
+    // to the card's toggleTagGames.
     grid.innerHTML = allTags.map(tag => `
         <div class="tag-card" data-on-click="toggleTagGames" data-args="${actionArgs(tag.id)}" data-tag-id="${tag.id}">
             <div class="tag-card-top">
-                <span class="tag-pill" style="background: ${escapeHtml(tag.color || '#4cc9f0')};">${escapeHtml(tag.name)}</span>
+                <button type="button" class="tag-pill" aria-controls="tagGamesPanel" style="background: ${escapeHtml(tag.color || '#4cc9f0')};">${escapeHtml(tag.name)}</button>
                 <div class="tag-card-actions" data-on-click data-stop>
                     <button type="button" class="tag-action-btn" data-on-click="openEditTagModal" data-args="${actionArgs(tag.id)}" title="${escapeHtml({{ _('Edit tag')|tojson }})}">&#9998;</button>
                     <button type="button" class="tag-action-btn danger" data-name="${escapeHtml(tag.name)}" data-on-click="confirmDeleteTag" data-args="${actionArgs(tag.id, '$this.dataset.name')}" title="${escapeHtml({{ _('Delete tag')|tojson }})}">&#10005;</button>

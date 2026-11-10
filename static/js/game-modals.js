@@ -1367,8 +1367,10 @@ const GameEditModal = {
         tag.textContent = tField(value) + ' ';
         // PASS-59-63: removal matches on this, never on the translated text.
         tag.dataset.value = value;
-        const btn = document.createElement('span');
+        const btn = document.createElement('button');
+        btn.type = 'button';
         btn.className = className === 'controller-tag' ? 'remove-controller' : 'remove-genre';
+        btn.setAttribute('aria-label', t('Remove {name}', {name: tField(value)}));
         btn.textContent = '×';
         btn.addEventListener('click', (e) => {
             e.stopPropagation();

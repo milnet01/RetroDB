@@ -209,7 +209,7 @@
         {% if users %}
         <div class="user-list">
             {% for user in users %}
-            <div class="user-item {{ user.role }}" data-user-id="{{ user.id }}" data-role="{{ user.role }}" data-on-click="selectUser" data-args='[{{ user.id|tojson }}, {{ (user.role)|string|tojson }}]'>
+            <div class="user-item {{ user.role }}" role="button" tabindex="0" data-user-id="{{ user.id }}" data-role="{{ user.role }}" data-on-click="selectUser" data-args='[{{ user.id|tojson }}, {{ (user.role)|string|tojson }}]'>
                 <div class="user-info">
                     <div class="user-avatar">
                         {% set u_avatar = user.avatar or '' %}

@@ -360,6 +360,8 @@
     color: var(--text-secondary);
     cursor: pointer;
     transition: all 0.15s ease;
+    font-family: inherit;
+    line-height: inherit;
 }
 
 .naming-tag-option:hover {
@@ -369,6 +371,13 @@
 
 /* Settings > bonus discs: a parent game to link the disc to */
 .parent-option {
+    display: block;
+    width: 100%;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    background: none;
+    border: 0;
     padding: var(--spacing-sm);
     border-bottom: 1px solid var(--card-border);
     cursor: pointer;
@@ -1736,6 +1745,9 @@
     cursor: pointer;
     transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
     min-width: 110px;
+    font: inherit;
+    color: inherit;
+    text-align: inherit;
 }
 
 .theme-option:hover {
@@ -2371,7 +2383,8 @@ a.museum-top-game-title:hover {
     transition: opacity var(--transition-fast);
 }
 
-.museum-controller-image:hover > .museum-controller-image-actions {
+.museum-controller-image:hover > .museum-controller-image-actions,
+.museum-controller-image:focus-within > .museum-controller-image-actions {
     opacity: 1;
 }
 

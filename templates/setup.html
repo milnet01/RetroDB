@@ -386,11 +386,11 @@ function renderSetupFolderBrowser(data) {
     let html = '';
 
     if (data.parent_path) {
-        html += '<div class="folder-item folder-parent" data-path="' + escapeHtml(data.parent_path) + '" data-on-click="navigateSetupFolder" data-args="' + actionArgs('$this.dataset.path') + '">' +
+        html += '<button type="button" class="folder-item folder-parent" data-path="' + escapeHtml(data.parent_path) + '" data-on-click="navigateSetupFolder" data-args="' + actionArgs('$this.dataset.path') + '">' +
                 '<span class="folder-icon">\u{1F4C1}</span>' +
                 '<span class="folder-name">..</span>' +
                 '<span class="folder-info">' + {{ _('Parent folder')|tojson }} + '</span>' +
-                '</div>';
+                '</button>';
     }
 
     if (data.folders.length === 0 && !data.parent_path) {
@@ -404,11 +404,11 @@ function renderSetupFolderBrowser(data) {
         if (folder.file_count > 0) info.push(folder.file_count === 1 ? {{ _('1 file')|tojson }} : {{ _('{count} files')|tojson }}.replace('{count}', folder.file_count));
         if (folder.subfolder_count > 0) info.push(folder.subfolder_count === 1 ? {{ _('1 folder')|tojson }} : {{ _('{count} folders')|tojson }}.replace('{count}', folder.subfolder_count));
 
-        html += '<div class="folder-item" data-path="' + escapeHtml(folder.path) + '" data-on-click="navigateSetupFolder" data-args="' + actionArgs('$this.dataset.path') + '">' +
+        html += '<button type="button" class="folder-item" data-path="' + escapeHtml(folder.path) + '" data-on-click="navigateSetupFolder" data-args="' + actionArgs('$this.dataset.path') + '">' +
                 '<span class="folder-icon">\u{1F4C1}</span>' +
                 '<span class="folder-name">' + escapeHtml(folder.name) + '</span>' +
                 '<span class="folder-info">' + (info.join(', ') || {{ _('Empty')|tojson }}) + '</span>' +
-                '</div>';
+                '</button>';
     }
 
     list.innerHTML = html;

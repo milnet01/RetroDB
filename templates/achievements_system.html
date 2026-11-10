@@ -215,9 +215,8 @@
     <div class="card-body">
         <div class="achievement-games-grid" id="gamesGrid">
             {% for game in games %}
-            <div class="achievement-game-card"
-               data-on-click="navigateTo" data-args='[{{ url_for('achievements.achievement_game', game_id=game.id)|tojson }}]'
-               style="cursor: pointer;"
+            <a class="achievement-game-card"
+               href="{{ url_for('achievements.achievement_game', game_id=game.id) }}"
                data-title="{{ game.title|lower }}"
                data-game-id="{{ game.id }}"
                data-ra-game-id="{{ game.ra_game_id }}"
@@ -254,7 +253,7 @@
                     </div>
                     {% endif %}
                 </div>
-            </div>
+            </a>
             {% endfor %}
         </div>
     </div>

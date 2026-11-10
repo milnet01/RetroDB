@@ -102,28 +102,28 @@
                     <input type="checkbox" id="typeIso" aria-label="{{ _('Convert ISO files') }}" checked data-on-change="updateToggleLabel" data-args='["$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label active" data-on-click="clickElement" data-args='["typeIso"]'>{{ _('ISO (.iso)') }}</span>
+                <label class="toggle-label active" for="typeIso">{{ _('ISO (.iso)') }}</label>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
                     <input type="checkbox" id="typeCue" aria-label="{{ _('Convert BIN/CUE files') }}" checked data-on-change="updateToggleLabel" data-args='["$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label active" data-on-click="clickElement" data-args='["typeCue"]'>{{ _('BIN/CUE (.cue)') }}</span>
+                <label class="toggle-label active" for="typeCue">{{ _('BIN/CUE (.cue)') }}</label>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
                     <input type="checkbox" id="typeGdi" aria-label="{{ _('Convert GDI files') }}" checked data-on-change="updateToggleLabel" data-args='["$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label active" data-on-click="clickElement" data-args='["typeGdi"]'>{{ _('GDI (.gdi)') }}</span>
+                <label class="toggle-label active" for="typeGdi">{{ _('GDI (.gdi)') }}</label>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
                     <input type="checkbox" id="typeMds" aria-label="{{ _('Convert MDF/MDS files') }}" data-on-change="updateToggleLabel" data-args='["$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label" data-on-click="clickElement" data-args='["typeMds"]'>{{ _('MDF/MDS (.mds)') }}</span>
+                <label class="toggle-label" for="typeMds">{{ _('MDF/MDS (.mds)') }}</label>
             </div>
         </div>
     </div>
@@ -146,21 +146,21 @@
                     <input type="checkbox" id="optVerify" aria-label="{{ _('Verify after conversion') }}" {% if settings.chd_verify_after_convert %}checked{% endif %} data-on-change="updateToggleLabel" data-args='["$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label{% if settings.chd_verify_after_convert %} active{% endif %}" data-on-click="clickElement" data-args='["optVerify"]'>{{ _('Verify after conversion') }}</span>
+                <label class="toggle-label{% if settings.chd_verify_after_convert %} active{% endif %}" for="optVerify">{{ _('Verify after conversion') }}</label>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
                     <input type="checkbox" id="optDelete" aria-label="{{ _('Delete original files after success') }}" {% if settings.chd_delete_originals %}checked{% endif %} data-on-change="updateToggleLabel" data-args='["$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label{% if settings.chd_delete_originals %} active{% endif %}" data-on-click="clickElement" data-args='["optDelete"]'>{{ _('Delete original files after success') }}</span>
+                <label class="toggle-label{% if settings.chd_delete_originals %} active{% endif %}" for="optDelete">{{ _('Delete original files after success') }}</label>
             </div>
             <div class="toggle-item">
                 <label class="toggle-switch">
                     <input type="checkbox" id="optSkip" aria-label="{{ _('Skip existing CHD files') }}" {% if settings.chd_skip_existing %}checked{% endif %} data-on-change="updateToggleLabel" data-args='["$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label{% if settings.chd_skip_existing %} active{% endif %}" data-on-click="clickElement" data-args='["optSkip"]'>{{ _('Skip existing CHD files') }}</span>
+                <label class="toggle-label{% if settings.chd_skip_existing %} active{% endif %}" for="optSkip">{{ _('Skip existing CHD files') }}</label>
             </div>
         </div>
     </div>

@@ -60,7 +60,8 @@
     cursor: pointer;
 }
 
-.profile-avatar-wrapper:hover .avatar-edit-overlay {
+.profile-avatar-wrapper:hover .avatar-edit-overlay,
+.profile-avatar-wrapper:focus-within .avatar-edit-overlay {
     opacity: 1;
 }
 
@@ -123,6 +124,10 @@
     align-items: center;
     justify-content: center;
     background: var(--bg-lighter);
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    text-align: inherit;
 }
 
 .avatar-option:hover {
@@ -1573,7 +1578,7 @@ function renderNamingBuilder() {
                         const tag = NAMING_AVAILABLE_TAGS.find(t => t.key === tagKey);
                         const tagLabel = tag ? tag.label : tagKey;
                         return `<span style="padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); color: var(--neon-green); cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem;"
-                            >${tagLabel}${idx > 0 ? `<span data-on-click="moveNamingTag" data-args="${actionArgs(String(st.key), idx, -1)}" title="Move left" style="opacity:0.7; font-size:0.7rem;">◀</span>` : ''}${idx < selected.length - 1 ? `<span data-on-click="moveNamingTag" data-args="${actionArgs(String(st.key), idx, 1)}" title="Move right" style="opacity:0.7; font-size:0.7rem;">▶</span>` : ''}<span data-on-click="removeNamingTag" data-args="${actionArgs(String(st.key), String(tagKey))}" title="Remove" style="opacity:0.7; font-size:0.7rem; margin-left:0.15rem;">✕</span></span>`;
+                            >${tagLabel}${idx > 0 ? `<button type="button" class="btn-bare" data-on-click="moveNamingTag" data-args="${actionArgs(String(st.key), idx, -1)}" title="${escapeHtml({{ _('Move left')|tojson }})}" aria-label="${escapeHtml({{ _('Move left')|tojson }})}" style="opacity:0.7; font-size:0.7rem;">◀</button>` : ''}${idx < selected.length - 1 ? `<button type="button" class="btn-bare" data-on-click="moveNamingTag" data-args="${actionArgs(String(st.key), idx, 1)}" title="${escapeHtml({{ _('Move right')|tojson }})}" aria-label="${escapeHtml({{ _('Move right')|tojson }})}" style="opacity:0.7; font-size:0.7rem;">▶</button>` : ''}<button type="button" class="btn-bare" data-on-click="removeNamingTag" data-args="${actionArgs(String(st.key), String(tagKey))}" title="${escapeHtml({{ _('Remove')|tojson }})}" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', tagLabel))}" style="opacity:0.7; font-size:0.7rem; margin-left:0.15rem;">✕</button></span>`;
                     }).join('')}
                 </div>
             </div>
@@ -1583,8 +1588,8 @@ function renderNamingBuilder() {
                 <span class="text-muted" style="font-size: 0.8rem; display: block; margin-bottom: 0.35rem;">Available tags (click to add):</span>
                 <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
                     ${available.length > 0 ? available.map(tag => `
-                        <span class="naming-tag-option" data-on-click="addNamingTag" data-args="${actionArgs(String(st.key), String(tag.key))}"
-                            title="Click to add">${tag.label}</span>
+                        <button type="button" class="naming-tag-option" data-on-click="addNamingTag" data-args="${actionArgs(String(st.key), String(tag.key))}"
+                            title="Click to add">${tag.label}</button>
                     `).join('') : '<span class="text-muted" style="font-size: 0.8rem; font-style: italic;">All tags in use</span>'}
                 </div>
             </div>
@@ -1950,10 +1955,10 @@ function showLinkOptions(gameId, systemId) {
         .then(data => {
             if (data.success && data.parents && data.parents.length > 0) {
                 let options = data.parents.map(p => 
-                    `<div class="parent-option"
+                    `<button type="button" class="parent-option"
                          data-on-click="linkBonusToParent" data-args="${actionArgs(gameId, p.id)}">
                         ${escapeHtml(p.title)}
-                    </div>`
+                    </button>`
                 ).join('');
                 
                 showModal('🔗 ' + {{ _('Select Parent Game')|tojson }}, `
@@ -3038,7 +3043,7 @@ async function loadSystemControllersTable() {
                 ? defaultControllers.map(c => `
                     <span class="badge badge-success" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem;">
                         ${escapeHtml(c.name)}
-                        <span data-on-click="removeDefaultController" data-args="${actionArgs(system.id, c.id)}" style="cursor: pointer; opacity: 0.7;">×</span>
+                        <button type="button" class="btn-bare" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', c.name))}" data-on-click="removeDefaultController" data-args="${actionArgs(system.id, c.id)}" style="opacity: 0.7;">×</button>
                     </span>
                 `).join('')
                 : '<span class="text-muted" style="font-size: 0.8rem;">None set</span>';
@@ -3226,7 +3231,7 @@ async function loadControllerLibrary() {
                     <div class="controller-list" style="display: flex; flex-direction: column; gap: 6px;">
                         ${byManufacturer[mfg].sort((a, b) => a.name.localeCompare(b.name)).map(c => `
                             <div class="controller-item" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); cursor: pointer;" 
-                                 data-on-click="toggleControllerDetails" data-args="${actionArgs('$this')}" data-controller-id="${c.id}">
+                                 role="button" tabindex="0" aria-expanded="false" data-on-click="toggleControllerDetails" data-args="${actionArgs('$this')}" data-controller-id="${c.id}">
                                 <div style="flex: 1;">
                                     <span style="font-size: 0.9rem; color: var(--text-primary);">${escapeHtml(c.name)}</span>
                                     ${c.release_year ? `<span class="text-muted" style="font-size: 0.75rem; margin-left: 8px;">(${c.release_year})</span>` : ''}
@@ -3430,7 +3435,7 @@ function renderSystemTags(mode) {
     container.innerHTML = selectedSystems.map(sys => `
         <span class="badge badge-secondary" style="display: inline-flex; align-items: center; gap: 6px;">
             ${escapeHtml(sys.name)}
-            <span data-on-click="removeSystemFromController" data-args="${actionArgs(String(mode), sys.id)}" style="cursor: pointer; opacity: 0.7; font-size: 1.1em;">×</span>
+            <button type="button" class="btn-bare" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', sys.name))}" data-on-click="removeSystemFromController" data-args="${actionArgs(String(mode), sys.id)}" style="opacity: 0.7; font-size: 1.1em;">×</button>
         </span>
     `).join('');
 }
@@ -3479,6 +3484,7 @@ function toggleControllerDetails(element) {
         details.style.display = 'none';
         icon.textContent = '▼';
     }
+    element.setAttribute('aria-expanded', String(details.style.display === 'block'));
     
     // Re-apply masonry layout after height change
     requestAnimationFrame(() => applyControllerMasonry());
@@ -5162,12 +5168,16 @@ let selectedDefaultAvatar = null;
 function openAvatarPicker() {
     const trigger = document.activeElement;
     selectedDefaultAvatar = null;
-    document.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
+    document.querySelectorAll('.avatar-option').forEach(opt => {
+        opt.classList.remove('selected');
+        opt.setAttribute('aria-pressed', 'false');
+    });
     const currentAvatar = {{ (current_user_settings.avatar if current_user_settings and current_user_settings.avatar else "")|tojson }};
     if (currentAvatar.startsWith('default_')) {
         const opt = document.querySelector('.avatar-option[data-avatar="' + currentAvatar + '"]');
         if (opt) {
             opt.classList.add('selected');
+            opt.setAttribute('aria-pressed', 'true');
             selectedDefaultAvatar = currentAvatar;
         }
     }
@@ -5184,8 +5194,12 @@ function closeAvatarPicker() {
 }
 
 function selectDefaultAvatar(name, el) {
-    document.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
+    document.querySelectorAll('.avatar-option').forEach(opt => {
+        opt.classList.remove('selected');
+        opt.setAttribute('aria-pressed', 'false');
+    });
     el.classList.add('selected');
+    el.setAttribute('aria-pressed', 'true');
     selectedDefaultAvatar = name;
 }
 
@@ -5241,7 +5255,10 @@ async function removeAvatar() {
         const data = await resp.json();
         if (data.success) {
             selectedDefaultAvatar = null;
-            document.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelectorAll('.avatar-option').forEach(opt => {
+                opt.classList.remove('selected');
+                opt.setAttribute('aria-pressed', 'false');
+            });
             updateAllAvatars(null);
             closeAvatarPicker();
             showNotification({{ _('Avatar removed')|tojson }}, 'success');

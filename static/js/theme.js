@@ -208,6 +208,7 @@ const ThemeManager = {
         // Update theme selector UI if present
         document.querySelectorAll('.theme-option').forEach(el => {
             el.classList.toggle('active', el.dataset.theme === theme);
+            el.setAttribute('aria-checked', String(el.dataset.theme === theme));
         });
 
         // Save to server

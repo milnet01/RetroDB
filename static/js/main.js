@@ -344,6 +344,18 @@ function initializeDelegatedActions() {
 
 initializeDelegatedActions();
 
+// A control that cannot be a <button> (it holds blocks, or is an image) is
+// marked role="button" tabindex="0"; Enter and Space then click it, as they
+// would a real button (design standards §11 "Keyboard").
+document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const el = e.target;
+    if (!(el instanceof Element) || el.tagName === 'BUTTON') return;
+    if (!el.matches('[role="button"][tabindex]')) return;
+    e.preventDefault();
+    el.click();
+});
+
 // =============================================================================
 // SIDEBAR FUNCTIONALITY
 // =============================================================================

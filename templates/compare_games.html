@@ -604,7 +604,7 @@ async function searchForCompare() {
         results.innerHTML = data.games.map(g => {
             const thumb = g.boxart ? `/static/images/boxart/${encodeURIComponent(g.boxart)}` : '/static/images/placeholder.png';
             return `
-                <div class="compare-search-item" data-on-click="selectCompareGame" data-args="${actionArgs(g.id)}">
+                <div class="compare-search-item" role="button" tabindex="0" data-on-click="selectCompareGame" data-args="${actionArgs(g.id)}">
                     <img src="${escapeHtml(thumb)}" alt="" class="compare-search-thumb" loading="lazy">
                     <div class="compare-search-info">
                         <div class="compare-search-title">${escapeHtml(g.title)}</div>

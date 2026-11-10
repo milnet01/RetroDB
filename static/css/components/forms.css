@@ -176,6 +176,12 @@ select option {
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 0 2px color-mix(in srgb, var(--primary-cyan) 30%, transparent);
 }
 
+/* The input is zero-size, so its own focus ring cannot show (§11 "Keyboard") */
+.toggle-switch input:focus-visible + .toggle-slider {
+    outline: 3px solid var(--primary-cyan-light);
+    outline-offset: 2px;
+}
+
 /* Toggle with Label */
 .toggle-item {
     display: flex;

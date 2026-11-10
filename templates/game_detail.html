@@ -176,6 +176,7 @@
                      sizes="(max-width: 768px) 160px, 320px"{% endif %}
                      alt="{{ game.title }}"
                      class="game-boxart-image clickable boxart-2d"
+                     role="button" tabindex="0" aria-label="{{ _('Enlarge %(name)s', name=game.title) }}"
                      id="boxart2d"
                      decoding="async"
                      fetchpriority="high"
@@ -190,6 +191,7 @@
                 <img src="{{ url_for('static', filename='images/boxart_3d/' + game.boxart_3d) }}"
                      alt="{{ game.title }} (3D)"
                      class="game-boxart-image clickable boxart-3d"
+                     role="button" tabindex="0" aria-label="{{ _('Enlarge %(name)s', name=game.title ~ ' (3D)') }}"
                      id="boxart3d"
                      style="{% if not show_3d_initially and game.boxart %}display: none;{% endif %}"
                      data-zoom-url="{{ url_for('static', filename='images/boxart_3d/' + game.boxart_3d) }}" data-on-click="openBoxartZoom" data-args='["$this.dataset.zoomUrl"]'
@@ -209,6 +211,7 @@
                 <img src="{{ url_for('static', filename='images/boxart_back/' + game.boxart_back) }}"
                      alt="{{ _('Back of the box') }}"
                      class="game-boxart-image clickable boxart-back"
+                     role="button" tabindex="0" aria-label="{{ _('Enlarge %(name)s', name=_('Back of the box')) }}"
                      id="boxartBack"
                      loading="lazy" decoding="async"
                      style="display: none;"
@@ -3182,8 +3185,21 @@ body:has(.game-fanart-bg.active)::before {
     height: 18px;
 }
 
+/* Hidden the .visually-hidden way, so Tab still reaches it. */
 .scrape-select-input {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.scrape-select-input:focus-visible + .scrape-select-mark {
+    outline: 3px solid var(--primary-cyan-light);
+    outline-offset: 2px;
 }
 
 .scrape-select-mark {
@@ -4110,7 +4126,7 @@ function renderGameStructureTags() {
     container.innerHTML = selectedGameStructures.map(structure => `
         <span class="genre-tag">
             ${structure}
-            <span class="remove-genre" data-value="${escapeHtml(structure)}" data-on-click="removeGameStructure" data-args="${actionArgs('$this.dataset.value')}">×</span>
+            <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', structure))}" data-value="${escapeHtml(structure)}" data-on-click="removeGameStructure" data-args="${actionArgs('$this.dataset.value')}">×</button>
         </span>
     `).join('');
 
@@ -4301,7 +4317,7 @@ function renderPerspectiveTags() {
     container.innerHTML = selectedPerspectives.map(perspective => `
         <span class="genre-tag">
             ${perspective}
-            <span class="remove-genre" data-value="${escapeHtml(perspective)}" data-on-click="removePerspective" data-args="${actionArgs('$this.dataset.value')}">×</span>
+            <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', perspective))}" data-value="${escapeHtml(perspective)}" data-on-click="removePerspective" data-args="${actionArgs('$this.dataset.value')}">×</button>
         </span>
     `).join('');
 
@@ -4381,7 +4397,7 @@ function renderDimensionTags() {
     container.innerHTML = selectedDimensions.map(dimension => `
         <span class="genre-tag">
             ${dimension}
-            <span class="remove-genre" data-value="${escapeHtml(dimension)}" data-on-click="removeDimension" data-args="${actionArgs('$this.dataset.value')}">×</span>
+            <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', dimension))}" data-value="${escapeHtml(dimension)}" data-on-click="removeDimension" data-args="${actionArgs('$this.dataset.value')}">×</button>
         </span>
     `).join('');
 
@@ -4633,7 +4649,7 @@ function renderGenreTags() {
     container.innerHTML = selectedGenres.map(genre => `
         <span class="genre-tag">
             ${genre}
-            <span class="remove-genre" data-value="${escapeHtml(genre)}" data-on-click="removeGenre" data-args="${actionArgs('$this.dataset.value')}">×</span>
+            <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', genre))}" data-value="${escapeHtml(genre)}" data-on-click="removeGenre" data-args="${actionArgs('$this.dataset.value')}">×</button>
         </span>
     `).join('');
     
@@ -4717,7 +4733,7 @@ function renderModesTags() {
     container.innerHTML = selectedModes.map(mode => `
         <span class="genre-tag">
             ${mode}
-            <span class="remove-genre" data-value="${escapeHtml(mode)}" data-on-click="removeMode" data-args="${actionArgs('$this.dataset.value')}">×</span>
+            <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', mode))}" data-value="${escapeHtml(mode)}" data-on-click="removeMode" data-args="${actionArgs('$this.dataset.value')}">×</button>
         </span>
     `).join('');
 
@@ -4801,7 +4817,7 @@ function renderControllerTags() {
     container.innerHTML = selectedControllers.map(controller => `
         <span class="controller-tag">
             ${controller}
-            <span class="remove-controller" data-value="${escapeHtml(controller)}" data-on-click="removeController" data-args="${actionArgs('$this.dataset.value')}">×</span>
+            <button type="button" class="remove-controller" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', controller))}" data-value="${escapeHtml(controller)}" data-on-click="removeController" data-args="${actionArgs('$this.dataset.value')}">×</button>
         </span>
     `).join('');
     
@@ -4929,7 +4945,7 @@ function renderSaveTypeTags() {
     container.innerHTML = selectedSaveTypes.map(saveType => `
         <span class="genre-tag">
             ${saveType}
-            <span class="remove-genre" data-value="${escapeHtml(saveType)}" data-on-click="removeSaveType" data-args="${actionArgs('$this.dataset.value')}">×</span>
+            <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', saveType))}" data-value="${escapeHtml(saveType)}" data-on-click="removeSaveType" data-args="${actionArgs('$this.dataset.value')}">×</button>
         </span>
     `).join('');
 
@@ -5367,7 +5383,7 @@ async function performSearch(event) {
                     return `
                         <div class="scrape-result-item-compact">
                             <label class="scrape-select-checkbox" title="${escapeHtml({{ _('Select for hybrid scraping')|tojson }})}">
-                                <input type="checkbox" class="scrape-select-input"
+                                <input type="checkbox" class="scrape-select-input" aria-label="${escapeHtml({{ _('Select for hybrid scraping')|tojson }})}"
                                        data-source="${result.source}" data-id="${encodedId}" data-name="${escapeHtml(result.name)}" />
                                 <span class="scrape-select-mark"></span>
                             </label>
