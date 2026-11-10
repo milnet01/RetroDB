@@ -419,7 +419,7 @@ const BulkScrapeController = {
 
         this.stopPolling();
 
-        if (el.modal) {
+        if (el.modal && el.modal.classList.contains('active')) {
             el.modal.classList.remove('active');
             if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
         }
@@ -442,8 +442,10 @@ const BulkScrapeController = {
      * Close the modal
      */
     closeModal() {
-        this.getElements().modal.classList.remove('active');
+        const modal = this.getElements().modal;
         this.stopPolling();
+        if (!modal.classList.contains('active')) return;
+        modal.classList.remove('active');
         if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
     },
 
@@ -459,8 +461,13 @@ const BulkScrapeController = {
 
                 if (data.success && data.running && !data.completed) {
                     const el = this.getElements();
-                    if (el.modal) {
+                    if (el.modal && !el.modal.classList.contains('active')) {
                         el.modal.classList.add('active');
+                        if (window.ModalFocusTrap) {
+                            ModalFocusTrap.activate(el.modal.querySelector('.modal-content') || el.modal,
+                                                    document.activeElement,
+                                                    { onEscape: () => this.closeModal() });
+                        }
                         this.startPolling();
                         this.updateUI(data);
                     }

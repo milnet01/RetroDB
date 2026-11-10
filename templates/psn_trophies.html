@@ -1686,7 +1686,10 @@ async function startBulkRefresh() {
         }
     } catch (error) {
         document.getElementById('bulkRefreshStatus').textContent = 'Network error: ' + error.message;
-        setTimeout(() => modal.classList.remove('active'), 2000);
+        setTimeout(() => {
+            modal.classList.remove('active');
+            if (typeof ModalFocusTrap !== 'undefined') ModalFocusTrap.deactivate(modal);
+        }, 2000);
     }
 }
 

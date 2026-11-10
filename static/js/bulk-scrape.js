@@ -359,8 +359,9 @@ const BulkScrapeController = {
         // Stop modal polling - UnifiedToastController handles background updates
         this.stopPolling();
 
-        // Close the modal
-        if (el.modal) {
+        // Close the modal. Only when open: deactivating otherwise pops
+        // another modal's trap.
+        if (el.modal && el.modal.classList.contains('active')) {
             el.modal.classList.remove('active');
             if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
         }
@@ -387,8 +388,11 @@ const BulkScrapeController = {
      * Close the modal
      */
     closeModal() {
-        this.getElements().modal.classList.remove('active');
+        const modal = this.getElements().modal;
         this.stopPolling();
+        // Only when open: deactivating otherwise pops another modal's trap.
+        if (!modal.classList.contains('active')) return;
+        modal.classList.remove('active');
         if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
     },
     
@@ -405,8 +409,13 @@ const BulkScrapeController = {
 
                 if (data.success && data.running && !data.completed) {
                     const el = this.getElements();
-                    if (el.modal) {
+                    if (el.modal && !el.modal.classList.contains('active')) {
                         el.modal.classList.add('active');
+                        if (window.ModalFocusTrap) {
+                            ModalFocusTrap.activate(el.modal.querySelector('.modal-content') || el.modal,
+                                                    document.activeElement,
+                                                    { onEscape: () => this.closeModal() });
+                        }
                         this.startPolling();
                         this.updateUI(data);
                     }

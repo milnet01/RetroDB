@@ -486,35 +486,38 @@
     }
     
     function modalKeyHandler(e) {
-        if (e.key === 'Enter') {
-            confirmModal();
-        }
+        if (e.key !== 'Enter') return;
+        // Enter on ×, Cancel or OK presses that button itself; confirming
+        // here as well would confirm on Cancel, or twice on OK.
+        if (e.target instanceof Element && e.target.closest('button, a, textarea, select')) return;
+        confirmModal();
     }
-    
+
+    // Both close the modal before running its callback, so a modal the
+    // callback opens stays open and keeps its own callbacks.
     function closeModal() {
         // Only when open: deactivating otherwise pops another modal's trap.
         const modal = document.getElementById('customModal');
         if (!modal.classList.contains('active')) return;
+        const onCancel = modalCancelCallback;
         modal.classList.remove('active');
         document.removeEventListener('keydown', modalKeyHandler);
         if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
-        if (modalCancelCallback) {
-            modalCancelCallback();
-        }
         modalCallback = null;
         modalCancelCallback = null;
+        if (onCancel) onCancel();
     }
 
     function confirmModal() {
-        if (!document.getElementById('customModal').classList.contains('active')) return;
+        const modal = document.getElementById('customModal');
+        if (!modal.classList.contains('active')) return;
+        const onConfirm = modalCallback;
+        modal.classList.remove('active');
         document.removeEventListener('keydown', modalKeyHandler);
         if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
-        if (modalCallback) {
-            modalCallback();
-        }
-        document.getElementById('customModal').classList.remove('active');
         modalCallback = null;
         modalCancelCallback = null;
+        if (onConfirm) onConfirm();
     }
     
     // Override alert

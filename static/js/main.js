@@ -1667,6 +1667,8 @@ function _buildShortcutsBody() {
 
 function showShortcutsModal() {
     let modal = document.getElementById('shortcuts-modal');
+    // Already open: a second trap would leave Tab dead after Escape.
+    if (modal && modal.classList.contains('active')) return;
     const body = _buildShortcutsBody();
     if (!modal) {
         modal = document.createElement('div');
@@ -1718,7 +1720,9 @@ function showShortcutsModal() {
 
 function closeShortcutsModal() {
     const modal = document.getElementById('shortcuts-modal');
-    if (modal) modal.classList.remove('active');
+    // Only when open: deactivating otherwise pops another modal's trap.
+    if (!modal || !modal.classList.contains('active')) return;
+    modal.classList.remove('active');
     if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
 }
 
