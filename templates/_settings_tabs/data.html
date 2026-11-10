@@ -51,7 +51,7 @@
             </span>
         </div>
         <p class="text-muted" style="font-size: 0.8rem; margin-top: var(--spacing-xs);">
-            {% trans %}Set the RPCS3 Trophy Path in <strong>ES-DE Integration</strong> above{% endtrans %}<br>
+            {% trans %}Set the RPCS3 Trophy Path in <a href="#esde">ES-DE Integration</a> on the Scraping tab{% endtrans %}<br>
             {{ _('Example:') }} <code>/path/to/rpcs3/dev_hdd0/home/00000001/trophy</code>
         </p>
         
@@ -157,7 +157,7 @@
             <button type="button" class="btn btn-secondary norm-field-btn" id="normBtnModes" data-on-click="NormalizationManager.load" data-args='["modes"]'>{{ _('Modes') }}</button>
             <div style="margin-left: auto; display: flex; gap: var(--spacing-sm); align-items: center;">
                 <div class="toggle-item" style="display: flex; align-items: center; gap: var(--spacing-xs);">
-                    <label class="toggle-switch" style="transform: scale(0.75);" for="normSelectAll">
+                    <label class="toggle-switch" style="transform: scale(0.75);" for="normFilterChanged">
                         <input type="checkbox" id="normFilterChanged" data-on-change="NormalizationManager.toggleFilter">
                         <span class="toggle-slider"></span>
                     </label>

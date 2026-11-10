@@ -223,8 +223,15 @@ const ThemeManager = {
      * @param {string} theme - Theme name
      */
     save(theme) {
-        API.post('/api/users/settings', { theme_preference: theme })
-            .catch(err => console.error('Failed to save theme:', err));
+        // keepalive: a theme picked just before leaving the page still saves.
+        // A failure is said: the saved theme would come back on the next page.
+        API.post('/api/users/settings', { theme_preference: theme }, { keepalive: true })
+            .catch(err => {
+                console.error('Failed to save theme:', err);
+                if (typeof showNotification === 'function') {
+                    showNotification(t('Could not save the theme; it will reset on the next page.'), 'error');
+                }
+            });
     },
 
     // =========================================================================

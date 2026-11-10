@@ -840,8 +840,16 @@ document.getElementById('specsModal').addEventListener('click', function(e) {
 
 
 // Search filter
+// 300 ms after the last key (design standards §10). A local timer: this
+// script runs before the deferred bundle that defines debounce().
+let systemSearchTimer = null;
 document.getElementById('systemSearch').addEventListener('input', function() {
-    const term = this.value.toLowerCase();
+    clearTimeout(systemSearchTimer);
+    systemSearchTimer = setTimeout(() => searchSystems(this.value), 300);
+});
+
+function searchSystems(value) {
+    const term = value.toLowerCase();
     document.querySelectorAll('.system-card-wrapper').forEach(card => {
         const name = card.dataset.name.toLowerCase();
         const folder = card.dataset.folder.toLowerCase();
@@ -852,7 +860,7 @@ document.getElementById('systemSearch').addEventListener('input', function() {
         }
     });
     applyFilters();
-});
+}
 
 // Filter systems by type
 function applySystemFilters() {

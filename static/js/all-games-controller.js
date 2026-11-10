@@ -267,10 +267,19 @@ const AllGamesController = (function() {
         // ?q= comes from the global search's "See all results" (PASS-53-1):
         // a fresh search replaces the saved filters, which could hide its
         // results. The parameter is then dropped so a reload restores state.
-        const urlSearch = (new URLSearchParams(window.location.search).get('q') || '').trim();
+        // ?no_boxart=1 comes from the dashboard's Quick Fixes (PASS-59-284),
+        // and replaces the saved filters the same way.
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlSearch = (urlParams.get('q') || '').trim();
         if (urlSearch && searchInput) {
             filters.search = urlSearch;
             searchInput.value = urlSearch;
+            history.replaceState(null, '', window.location.pathname);
+            saveState();
+        } else if (urlParams.get('no_boxart') === '1') {
+            for (const k of Object.keys(filters)) delete filters[k];
+            for (const k of Object.keys(excludeFilters)) delete excludeFilters[k];
+            filters.no_boxart = '1';
             history.replaceState(null, '', window.location.pathname);
             saveState();
         } else {
@@ -1185,7 +1194,7 @@ const AllGamesController = (function() {
                     system: '&#128421;&#65039;', system_type: '&#128241;', genre: '&#127917;',
                     franchise: '&#128218;', publisher: '&#127970;', developer: '&#128104;&#8205;&#128187;',
                     modes: '&#128101;', perspective: '&#128065;&#65039;', dimension: '&#128208;', arcade_category: '&#128377;&#65039;',
-                    rating: '&#11088;', source: '&#128203;',
+                    rating: '&#11088;', source: '&#128203;', no_boxart: '&#128444;&#65039;',
                     search: '&#128269;', letter: '&#128289;'
                 };
 
@@ -1200,6 +1209,7 @@ const AllGamesController = (function() {
                     // The tag has its own icon: drop the option's leading emoji.
                     if (opt) return opt.textContent.replace(/^[^\p{L}\p{N}]+/u, '').trim();
                     if (k === 'source' && sourceLabels[v]) return sourceLabels[v];
+                    if (k === 'no_boxart') return t('Missing box art');
                     return String(v);
                 };
 

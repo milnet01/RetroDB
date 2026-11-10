@@ -4372,7 +4372,7 @@ document.addEventListener('DOMContentLoaded', () => UpscaleStatus.init());
     const MIN_CHARS = 2;
     const GAME_LIMIT = 8;
     const SYSTEM_LIMIT = 4;
-    const DEBOUNCE_MS = 250;
+    const DEBOUNCE_MS = 300;  // design standards §10
 
     let input, list, status;
     let systemsPromise = null;
@@ -4494,6 +4494,7 @@ document.addEventListener('DOMContentLoaded', () => UpscaleStatus.init());
         if (q.length < MIN_CHARS) {
             if (pending) pending.abort();
             close();
+            list.innerHTML = '';  // no old results for ArrowDown to reopen
             return;
         }
         timer = setTimeout(() => search(q), DEBOUNCE_MS);
@@ -4523,6 +4524,7 @@ document.addEventListener('DOMContentLoaded', () => UpscaleStatus.init());
                 close();
             } else if (input.value) {
                 input.value = '';
+                list.innerHTML = '';  // ArrowDown must not reopen them
             } else {
                 input.blur();
             }

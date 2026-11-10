@@ -245,7 +245,7 @@
         <h2 class="card-title"><span>🧹</span> {{ _('Quick Fixes') }}</h2>
     </div>
     <div class="quick-fixes-grid">
-        <a href="{{ url_for('games.all_games') }}" class="quick-fix{% if stats.missing_boxart > 0 %} attention{% endif %}">
+        <a href="{{ url_for('games.all_games', no_boxart=1) }}" class="quick-fix{% if stats.missing_boxart > 0 %} attention{% endif %}">
             <span class="quick-fix-icon" aria-hidden="true">🖼️</span>
             <span class="quick-fix-body">
                 <span class="quick-fix-value">{{ stats.missing_boxart|format_number }}</span>
@@ -1264,6 +1264,27 @@ document.addEventListener('DOMContentLoaded', function() {
         return el && el.querySelector('.status-badge.checking');
     }).length;
 
+    // The check calls each outside service, so it is an admin's; anyone else
+    // sees "Configured", never a false "offline" banner (PASS-59-284).
+    function showBanner() {
+        const banner = document.getElementById('apiWarningBanner');
+        if (!banner) return;
+        banner.querySelector('.api-warning-text').textContent = offlineCount === 1
+            ? {{ _('1 configured API is offline')|tojson }}
+            : {{ _('{count} configured APIs are offline')|tojson }}.replace('{count}', offlineCount);
+        banner.style.display = 'flex';
+    }
+    function settle(indicator, badge, online, text) {
+        indicator.classList.remove('checking', 'offline');
+        badge.classList.remove('checking', 'offline');
+        indicator.classList.add(online ? 'online' : 'offline');
+        badge.classList.add(online ? 'connected' : 'offline');
+        badge.textContent = text;
+        if (!online) offlineCount++;
+        checkedCount++;
+        if (checkedCount === totalToCheck && offlineCount > 0) showBanner();
+    }
+
     scrapers.forEach(scraper => {
         const statusEl = document.getElementById(`status-${scraper}`);
         if (!statusEl) return;
@@ -1273,49 +1294,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (!badge.classList.contains('checking')) return;
 
+        if (!window.IS_ADMIN) {
+            indicator.classList.remove('checking');
+            badge.classList.remove('checking');
+            badge.classList.add('connected');
+            badge.textContent = {{ _('Configured')|tojson }};
+            return;
+        }
+
         fetch(`/api/check-scraper/${scraper}`)
             .then(r => r.json())
-            .then(data => {
-                indicator.classList.remove('checking', 'offline');
-                badge.classList.remove('checking', 'offline');
-
-                if (data.online) {
-                    indicator.classList.add('online');
-                    badge.classList.add('connected');
-                    badge.textContent = 'Online';
-                } else {
-                    indicator.classList.add('offline');
-                    badge.classList.add('offline');
-                    badge.textContent = data.reason || 'Offline';
-                    offlineCount++;
-                }
-                checkedCount++;
-                if (checkedCount === totalToCheck && offlineCount > 0) {
-                    const banner = document.getElementById('apiWarningBanner');
-                    if (banner) {
-                        banner.querySelector('.api-warning-text').textContent =
-                            `${offlineCount} configured API${offlineCount > 1 ? 's are' : ' is'} offline`;
-                        banner.style.display = 'flex';
-                    }
-                }
-            })
-            .catch(() => {
-                indicator.classList.remove('checking');
-                badge.classList.remove('checking');
-                indicator.classList.add('offline');
-                badge.classList.add('offline');
-                badge.textContent = 'Error';
-                offlineCount++;
-                checkedCount++;
-                if (checkedCount === totalToCheck && offlineCount > 0) {
-                    const banner = document.getElementById('apiWarningBanner');
-                    if (banner) {
-                        banner.querySelector('.api-warning-text').textContent =
-                            `${offlineCount} configured API${offlineCount > 1 ? 's are' : ' is'} offline`;
-                        banner.style.display = 'flex';
-                    }
-                }
-            });
+            .then(data => data.online
+                ? settle(indicator, badge, true, {{ _('Online')|tojson }})
+                : settle(indicator, badge, false, data.reason || {{ _('Offline')|tojson }}))
+            .catch(() => settle(indicator, badge, false, {{ _('Error')|tojson }}));
     });
 
     // Poll for active background jobs

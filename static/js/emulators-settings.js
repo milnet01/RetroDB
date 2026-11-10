@@ -231,7 +231,7 @@
                 closeEmuEditModal();
                 refreshEmulators();
             } catch (e) {
-                alert(t('Save failed: {error}', {error: e.message}));
+                showNotification(t('Save failed: {error}', {error: e.message}), 'error');
             }
         });
     }
@@ -303,12 +303,14 @@
 
     const folderList = $('#emu-folders');
     const folderInput = $('#emu-folder-input');
+    // The server's list separator: ':' here, ';' on Windows (C:\ has a ':').
+    const pathSep = (folderList && folderList.dataset.sep) || ':';
     let folders = folderList
-        ? (folderList.dataset.paths || '').split(':').map(p => p.trim()).filter(Boolean)
+        ? (folderList.dataset.paths || '').split(pathSep).map(p => p.trim()).filter(Boolean)
         : [];
 
-    // A remove button asks once more on the button itself; this page loads
-    // no confirm modal.
+    // A remove button asks once more on the button itself, without opening
+    // a dialog.
     function armedClick(btn, action) {
         const label = btn.textContent;
         btn.addEventListener('click', () => {
@@ -353,7 +355,7 @@
         try {
             await fetchJSON('/api/settings', {
                 method: 'POST',
-                body: JSON.stringify({emulator_scan_paths: next.join(':')}),
+                body: JSON.stringify({emulator_scan_paths: next.join(pathSep)}),
             });
         } catch (e) {
             emuDetectStatus.textContent = t('Save failed: {error}', {error: e.message});
@@ -369,7 +371,7 @@
     if (folderAddBtn) {
         const add = () => {
             const folder = folderInput.value.trim();
-            if (!folder || folder.includes(':')) {
+            if (!folder || folder.includes(pathSep)) {
                 emuDetectStatus.textContent = t('Enter one folder path.');
                 return;
             }
@@ -428,11 +430,14 @@
                 select.appendChild(opt);
             }
             select.value = s.value;
+            let saved = s.value;
             select.addEventListener('change', async () => {
                 try {
                     await fetchJSON(url, {method: 'PUT', body: JSON.stringify({[s.setting]: select.value})});
+                    saved = select.value;
                     showNotification(t('Saved. It applies the next time you press Play.'), 'success');
                 } catch (e) {
+                    select.value = saved;  // show what is stored, as playerToggle does
                     showNotification(t('Save failed: {error}', {error: e.message}), 'error');
                 }
             });

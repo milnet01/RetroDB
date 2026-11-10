@@ -174,6 +174,9 @@ def _filter_params(extra=()):
     # PASS-53-2 — the Unscraped filter button
     if request.args.get('unscraped') == '1':
         params['_unscraped'] = True
+    # PASS-59-284 — the dashboard's "Games missing box art" opens this
+    if request.args.get('no_boxart') == '1':
+        params['_no_boxart'] = True
     return params
 
 

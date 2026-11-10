@@ -322,6 +322,9 @@ def _build_games_query(params, count_only=False, ids_only=False, user_id=None,
     if params.get('_unscraped'):
         conditions.append("g.scraped = 0")
 
+    if params.get('_no_boxart'):
+        conditions.append("(g.boxart IS NULL OR g.boxart = '')")
+
     where = " AND ".join(conditions) if conditions else "1=1"
 
     if group_versions:

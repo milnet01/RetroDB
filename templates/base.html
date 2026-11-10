@@ -1382,17 +1382,22 @@
 
     {% block scripts %}{% endblock %}
 
-    <!-- Disable browser auto-fill site-wide -->
+    <!-- Disable browser auto-fill site-wide, except where a field names its
+         own purpose (current-password, new-password, username...): a
+         password manager may fill those (WCAG 1.3.5, PASS-59-284). -->
     <script nonce="{{ csp_nonce }}">
-    document.querySelectorAll('form').forEach(f => f.setAttribute('autocomplete', 'off'));
-    document.querySelectorAll('input, textarea, select').forEach(el => el.setAttribute('autocomplete', 'off'));
+    const _autofillOff = el => {
+        const own = el.getAttribute('autocomplete');
+        if (!own || own === 'on') el.setAttribute('autocomplete', 'off');
+    };
+    document.querySelectorAll('input, textarea, select').forEach(_autofillOff);
     (function() {
         const obs = new MutationObserver(mutations => {
             for (const m of mutations) {
                 for (const node of m.addedNodes) {
                     if (node.nodeType !== 1) continue;
-                    if (node.matches && node.matches('input, textarea, select, form')) node.setAttribute('autocomplete', 'off');
-                    if (node.querySelectorAll) node.querySelectorAll('input, textarea, select, form').forEach(el => el.setAttribute('autocomplete', 'off'));
+                    if (node.matches && node.matches('input, textarea, select')) _autofillOff(node);
+                    if (node.querySelectorAll) node.querySelectorAll('input, textarea, select').forEach(_autofillOff);
                 }
             }
         });

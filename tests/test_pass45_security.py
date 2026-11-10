@@ -610,39 +610,24 @@ class TestPass45_4XssSinks:
             "(Pass 45.4)"
         )
 
-    def test_settings_modal_helpers_default_to_textcontent(self):
-        """showConfirmModal and showInfoModal in settings.html must default
-        to textContent and only use innerHTML when options.allowHtml is
-        explicitly true. Mirrors the ConfirmModal.show pattern in
-        settings-page.js (Pass 29.1)."""
+    def test_settings_uses_the_shared_dialogs(self):
+        """PASS-59-284: settings.html kept its own confirm dialog (English
+        buttons, no onCancel) and settings-page.js pointed the global
+        showConfirm at it. The page now uses base.html's showConfirm /
+        showModal, which default to textContent and take {allowHtml: true}
+        (Pass 40.13); no local copy may come back."""
         body = self._read('templates/settings.html')
-        # Both helpers must accept an options arg.
-        assert 'function showConfirmModal(title, message, onConfirm, options' in body, (
-            "showConfirmModal must accept an options arg with allowHtml "
-            "(Pass 45.4)"
-        )
-        assert 'function showInfoModal(title, message, onOk, options' in body, (
-            "showInfoModal must accept an options arg with allowHtml "
-            "(Pass 45.4)"
-        )
-        # The bug-shape comment must be gone — its presence indicates the
-        # bare innerHTML sink is back.
-        assert "Use innerHTML to support HTML content" not in body, (
-            "Pass 45.4 removed the bare 'innerHTML to support HTML content' "
-            "form; if this fires the textContent default has been reverted"
-        )
-        # The opt-in branch must exist.
-        assert 'options.allowHtml' in body, (
-            "showConfirmModal/showInfoModal must guard innerHTML behind "
-            "options.allowHtml (Pass 45.4)"
-        )
-        assert 'messageEl.textContent = message' in body, (
-            "showConfirmModal/showInfoModal must default to textContent "
-            "(Pass 45.4)"
-        )
+        for gone in ('function showConfirmModal(', 'function showInfoModal(',
+                     'id="confirmModal"', 'pendingConfirmAction'):
+            assert gone not in body, gone
+        page_js = self._read('static/js/settings-page.js')
+        assert 'window.showConfirm =' not in page_js
+        base = self._read('templates/base.html')
+        assert "options.allowHtml === true" in base
+        assert "msgEl.textContent = ''" in base
 
     def test_settings_html_callers_with_html_opt_in(self):
-        """The two showConfirmModal callers that genuinely need formatted
+        """The two showConfirm callers that genuinely need formatted
         HTML (clearScrapedData, deleteController) must opt in via
         {allowHtml: true} and escape user-controlled values they
         interpolate into the template."""
@@ -2327,8 +2312,9 @@ class TestPass45_17ModalFocusTrapRollout:
     # hand-written ModalFocusTrap.activate in its open function. Both on one
     # modal pushed two traps per open (PASS-53-13), so the hand-wired ones
     # must not carry the attribute.
+    # settings.html's confirmModal went in PASS-59-284: the page uses
+    # base.html's dialogs, whose trap showModal wires itself.
     _ATTRIBUTE_TRAPPED = {
-        'settings': ['id="confirmModal"'],
         'reports.html': ['id="batchRenameModal"'],
     }
     _HAND_TRAPPED = {

@@ -188,7 +188,9 @@
             this.render(st);
         } catch (err) {
             const reason = err && err.data && err.data.reason;
-            showNotification(reason ? reasonText(reason) : t('Could not check for updates.'), 'error');
+            const fallback = action === 'download'
+                ? t('Could not download the update.') : t('Could not check for updates.');
+            showNotification(reason ? reasonText(reason) : fallback, 'error');
         } finally {
             btn.disabled = false;
         }

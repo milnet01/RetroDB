@@ -132,7 +132,9 @@ def _scan_paths() -> list:
     if isinstance(raw, list):
         parts = raw
     else:
-        parts = [p.strip() for p in str(raw).split(':') if p.strip()]
+        # The OS's own list separator, as in PATH: ';' on Windows, where ':'
+        # is part of every drive letter (PASS-59-284).
+        parts = [p.strip() for p in str(raw).split(os.pathsep) if p.strip()]
     return [Path(p).expanduser() for p in parts]
 
 

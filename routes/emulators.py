@@ -6,6 +6,7 @@
 # =============================================================================
 
 import logging
+import os
 from itertools import groupby
 
 from flask import Blueprint, render_template, request
@@ -50,6 +51,7 @@ def page_emulators_settings():
         emulator_scan_paths=get_setting(
             'emulator_scan_paths',
             '/mnt/Emulators:~/Downloads:~/.local/bin:/opt'),
+        path_list_separator=os.pathsep,
     )
 
 

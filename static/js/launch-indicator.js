@@ -50,20 +50,34 @@
     }
 
     async function nextDisk(token) {
-        const rv = await fetch(`/api/launch/${token}/disk-next`, {
-            method: 'POST',
-            headers: {'X-CSRF-Token': csrfToken()},
-        });
-        const body = await rv.json().catch(() => ({}));
-        showNotification(body.message || body.error || t('Next disk failed'),
-                         rv.ok ? 'success' : 'error');
+        try {
+            const rv = await fetch(`/api/launch/${token}/disk-next`, {
+                method: 'POST',
+                headers: {'X-CSRF-Token': csrfToken()},
+            });
+            const body = await rv.json().catch(() => ({}));
+            showNotification(body.message || body.error || t('Next disk failed'),
+                             rv.ok ? 'success' : 'error');
+        } catch (e) {
+            showNotification(t('Next disk failed'), 'error');
+        }
     }
 
     async function killLaunch(token) {
-        await fetch(`/api/launch/${token}/kill`, {
-            method: 'POST',
-            headers: {'X-CSRF-Token': csrfToken()},
-        }).catch(() => {});
+        // A refused or failed stop is said; the list refresh below shows
+        // whether the game is still running (PASS-59-284).
+        try {
+            const rv = await fetch(`/api/launch/${token}/kill`, {
+                method: 'POST',
+                headers: {'X-CSRF-Token': csrfToken()},
+            });
+            if (!rv.ok) {
+                const body = await rv.json().catch(() => ({}));
+                showNotification(body.error || t('Could not stop the game'), 'error');
+            }
+        } catch (e) {
+            showNotification(t('Could not stop the game'), 'error');
+        }
         // The open list still shows the killed game; close it so the next
         // click rebuilds it from the refreshed list.
         closePopover();

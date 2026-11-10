@@ -35,17 +35,6 @@
 <!-- ==================== TAB: SYSTEM ==================== -->
 {% include "_settings_tabs/system.html" %}
 
-<!-- Confirm Modal -->
-<div id="confirmModal" class="confirm-modal" data-focus-trap data-focus-trap-content=".confirm-modal-content" data-focus-trap-onescape="closeConfirmModal">
-    <div class="confirm-modal-content glass-panel" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
-        <div class="confirm-modal-title" id="confirmTitle">{{ _('Confirm Action') }}</div>
-        <div class="confirm-modal-message" id="confirmMessage">{{ _('Are you sure?') }}</div>
-        <div class="confirm-modal-buttons">
-            <button type="button" class="btn btn-secondary" id="confirmCancelBtn" data-on-click="closeConfirmModal">{{ _('Cancel') }}</button>
-            <button type="button" class="btn btn-danger" id="confirmBtn" data-on-click="executeConfirm">{{ _('Delete') }}</button>
-        </div>
-    </div>
-</div>
 </div>
 {% endblock %}
 
@@ -1019,8 +1008,9 @@ function switchSettingsTab(tabId, skipScroll) {
             if (typeof applyControllerMasonry === 'function') {
                 applyControllerMasonry();
             }
-            // Refresh logo reference table when tab becomes visible
-            reloadLogoReference();
+            // Fill the logo table the first time the tab shows; Refresh
+            // System Logos reloads it after that (each load probes every logo).
+            if (!logoReferenceLoaded) reloadLogoReference();
             // Re-initialize sticky nav observer
             if (typeof initStickyNavObserver === 'function') {
                 initStickyNavObserver();
@@ -1046,7 +1036,9 @@ function switchSettingsTab(tabId, skipScroll) {
 // Open the tab named by the URL hash. The hash may also name a section inside
 // a tab (e.g. #apikeys); then open that tab and scroll to the section.
 function openSettingsFromHash() {
-    const id = decodeURIComponent(window.location.hash.slice(1));
+    // A malformed hash (#%E0) must not throw: page setup runs after this.
+    let id;
+    try { id = decodeURIComponent(window.location.hash.slice(1)); } catch (e) { return false; }
     if (!id) return false;
     if (switchSettingsTab(id, true)) return true;
     const section = document.getElementById(id);
@@ -1057,12 +1049,14 @@ function openSettingsFromHash() {
 }
 
 // Reload logo reference table (for use after tab switch)
+let logoReferenceLoaded = false;
 async function reloadLogoReference() {
     try {
         const response = await fetch('/api/systems-list');
         const data = await response.json();
         if (data.success && data.systems) {
             await loadLogoReference(data.systems);
+            logoReferenceLoaded = true;
         }
     } catch (error) {
         console.error('Error reloading logo reference:', error);
@@ -1194,7 +1188,10 @@ function loadTimezones() {
             sel.value = _currentUserTz;
             if (!sel.value) sel.value = 'UTC';
         })
-        .catch(() => {});
+        .catch(e => {
+            console.error('Timezone list failed to load:', e);
+            showNotification({{ _('Could not load the timezone list.')|tojson }}, 'error');
+        });
 
     const searchInput = document.getElementById('tzSearchInput');
     if (searchInput) {
@@ -1334,17 +1331,17 @@ function editUser(userId) {
                     document.getElementById('userDisplayName').value = user.display_name || '';
                     document.getElementById('userRole').value = user.role;
 
-                    if (user.role === 'admin') {
-                        document.getElementById('resetPasswordGroup').style.display = 'block';
-                    } else {
-                        document.getElementById('resetPasswordGroup').style.display = 'none';
-                    }
+                    // Every role has a password an admin may reset (auth.md).
+                    document.getElementById('resetPasswordGroup').style.display = 'block';
                     document.getElementById('userNewPassword').value = '';
 
                     _activateUserModal();
+                    return;
                 }
             }
-        });
+            showNotification(data.error || {{ _('Could not load that user.')|tojson }}, 'error');
+        })
+        .catch(() => showNotification({{ _('Could not load that user.')|tojson }}, 'error'));
 }
 
 function closeUserModal() {
@@ -1419,15 +1416,6 @@ function deleteUser(userId, username) {
     );
 }
 
-// Update role dropdown change handler
-document.getElementById('userRole')?.addEventListener('change', function() {
-    const isEdit = !!document.getElementById('editUserId').value;
-    const isAdmin = this.value === 'admin';
-    
-    if (isEdit) {
-        document.getElementById('resetPasswordGroup').style.display = isAdmin ? 'block' : 'none';
-    }
-});
 
 // =============================================================================
 // PATH SETTINGS MANAGEMENT
@@ -2063,9 +2051,8 @@ function restoreBackup(filename) {
                 .then(data => {
                     if (data.success) {
                         showNotification({{ _('Database restored! Reloading page...')|tojson }}, 'success');
-                        if (data.restart_required) {
-                            setTimeout(() => location.reload(), 2000);
-                        }
+                        // Always: every number on the page predates the restore.
+                        setTimeout(() => location.reload(), 2000);
                     } else {
                         showNotification(t({{ _('Restore failed: {error}')|tojson }}, {error: data.error}), 'error');
                     }
@@ -2097,84 +2084,6 @@ document.addEventListener('DOMContentLoaded', loadBackups);
 // CONFIRM MODAL
 // =============================================================================
 
-let pendingConfirmAction = null;
-
-// Pass 45.4 — default to textContent so callers can't accidentally turn
-// admin-curated values (controller name, system name, dropdown option,
-// upstream API error string) into an XSS sink. Callers that need
-// formatted HTML pass `{allowHtml: true}` to opt in, mirroring the
-// ConfirmModal.show helper that settings-page.js once carried (Pass 29.1).
-function showConfirmModal(title, message, onConfirm, options = {}) {
-    document.getElementById('confirmTitle').textContent = title;
-    const messageEl = document.getElementById('confirmMessage');
-    if (options.allowHtml) {
-        messageEl.innerHTML = message;
-    } else {
-        messageEl.textContent = message;
-    }
-    pendingConfirmAction = onConfirm;
-    
-    // Show/hide cancel button and update confirm button text
-    const cancelBtn = document.getElementById('confirmCancelBtn');
-    const confirmBtn = document.getElementById('confirmBtn');
-    
-    // If onConfirm is closeConfirmModal or similar simple function, treat as info modal
-    const isInfoModal = !onConfirm || onConfirm === closeConfirmModal;
-    
-    if (isInfoModal) {
-        cancelBtn.style.display = 'none';
-        confirmBtn.textContent = 'OK';
-        confirmBtn.className = 'btn btn-primary';
-    } else {
-        cancelBtn.style.display = '';
-        confirmBtn.textContent = 'Confirm';
-        confirmBtn.className = 'btn btn-danger';
-    }
-    
-    document.getElementById('confirmModal').classList.add('active');
-}
-
-// Show info modal (just OK button)
-// Pass 45.4 — same allowHtml opt-in as showConfirmModal.
-function showInfoModal(title, message, onOk, options = {}) {
-    document.getElementById('confirmTitle').textContent = title;
-    const messageEl = document.getElementById('confirmMessage');
-    if (options.allowHtml) {
-        messageEl.innerHTML = message;
-    } else {
-        messageEl.textContent = message;
-    }
-    pendingConfirmAction = onOk || null;
-    
-    const cancelBtn = document.getElementById('confirmCancelBtn');
-    const confirmBtn = document.getElementById('confirmBtn');
-    
-    cancelBtn.style.display = 'none';
-    confirmBtn.textContent = 'OK';
-    confirmBtn.className = 'btn btn-primary';
-    
-    document.getElementById('confirmModal').classList.add('active');
-}
-
-function closeConfirmModal() {
-    document.getElementById('confirmModal').classList.remove('active');
-    pendingConfirmAction = null;
-    
-    // Reset button states
-    const cancelBtn = document.getElementById('confirmCancelBtn');
-    const confirmBtn = document.getElementById('confirmBtn');
-    cancelBtn.style.display = '';
-    confirmBtn.textContent = 'Delete';
-    confirmBtn.className = 'btn btn-danger';
-}
-
-function executeConfirm() {
-    if (pendingConfirmAction) {
-        pendingConfirmAction();
-    }
-    closeConfirmModal();
-}
-
 // =============================================================================
 // SCRAPER CONFIGURATION - DRAG & DROP + TOGGLES
 // =============================================================================
@@ -2197,6 +2106,9 @@ let scraperSettings = {
     match_mode: {{ scraper_settings.match_mode | tojson }},
     match_criteria: {{ scraper_settings.match_criteria | tojson }}
 };
+// What the server last stored: a toggle saves this plus its one change, so
+// unsaved priority or match edits are not stored behind the user's back.
+let savedScraperSettings = JSON.parse(JSON.stringify(scraperSettings));
 
 // Load saved priority from server on page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -2302,22 +2214,31 @@ function handleDrop(e) {
 }
 
 // Toggle scraper enabled/disabled (auto-saves immediately)
-function toggleScraper(scraper, enabled) {
-    scraperSettings.enabled[scraper] = enabled;
+function toggleScraper(scraper, enabled, checkbox) {
+    const body = JSON.parse(JSON.stringify(savedScraperSettings));
+    body.enabled[scraper] = enabled;
+    // A refused save puts the switch back, so it never shows a state the
+    // server did not store (PASS-59-284).
+    const refuse = (message) => {
+        if (checkbox) checkbox.checked = !enabled;
+        showNotification(message || {{ _('Failed to save scraper setting')|tojson }}, 'error');
+    };
 
     // Auto-save so the toggle takes effect immediately
     fetch('/api/scraper-settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(scraperSettings)
+        body: JSON.stringify(body)
     }).then(r => r.json()).then(data => {
         if (data.success) {
+            savedScraperSettings.enabled[scraper] = enabled;
+            scraperSettings.enabled[scraper] = enabled;
             const names = { esde: 'ES-DE', tgdb: 'TheGamesDB', igdb: 'IGDB', rawg: 'RAWG', screenscraper: 'ScreenScraper', ai: {{ _('AI Metadata')|tojson }} };
             showNotification(t(enabled ? {{ _('{name} enabled')|tojson }} : {{ _('{name} disabled')|tojson }}, {name: names[scraper] || scraper}), 'success');
+        } else {
+            refuse(data.error);
         }
-    }).catch(() => {
-        showNotification({{ _('Failed to save scraper setting')|tojson }}, 'error');
-    });
+    }).catch(() => refuse());
 }
 
 // Check API status for each scraper
@@ -2737,6 +2658,7 @@ async function saveScraperSettings() {
         const data = await response.json();
         
         if (data.success) {
+            savedScraperSettings = JSON.parse(JSON.stringify(scraperSettings));
             resultEl.innerHTML = '<div class="alert alert-success">✅ Settings saved! Checking scraper status...</div>';
             
             // Re-check scraper status after saving
@@ -2933,7 +2855,7 @@ async function addDropdownOption(category, inputId, containerId) {
 }
 
 async function deleteDropdownOption(optionId, category, containerId) {
-    showConfirmModal(
+    showConfirm(
         {{ _('Delete Option')|tojson }},
         {{ _('Are you sure you want to delete this option?')|tojson }},
         async () => {
@@ -2947,11 +2869,11 @@ async function deleteDropdownOption(optionId, category, containerId) {
                 if (data.success) {
                     loadDropdownOptions(category, containerId);
                 } else {
-                    showConfirmModal({{ _('Error')|tojson }}, data.error || {{ _('Failed to delete option')|tojson }}, closeConfirmModal);
+                    showModal({{ _('Error')|tojson }}, data.error || {{ _('Failed to delete option')|tojson }});
                 }
             } catch (error) {
                 console.error('Error deleting option:', error);
-                showConfirmModal({{ _('Error')|tojson }}, {{ _('Failed to delete option')|tojson }}, closeConfirmModal);
+                showModal({{ _('Error')|tojson }}, {{ _('Failed to delete option')|tojson }});
             }
         }
     );
@@ -3132,11 +3054,15 @@ function scrollToSystemLetter(letter) {
 }
 
 // Initialize sticky nav visibility observer
+let stickyNavObserved = false;
 function initStickyNavObserver() {
     const wrapper = document.getElementById('systemControllersWrapper');
     const stickyNav = document.getElementById('systemControllersStickyNav');
-    
-    if (!wrapper || !stickyNav) return;
+
+    // Once per page: each tab switch called this, adding a scroll listener
+    // that was never removed (PASS-59-284).
+    if (!wrapper || !stickyNav || stickyNavObserved) return;
+    stickyNavObserved = true;
     
     // Use scroll event to check if we're within the wrapper bounds
     let ticking = false;
@@ -3792,13 +3718,12 @@ async function clearScrapedData() {
     const systemName = systemId === 'all' ? {{ _('ALL SYSTEMS')|tojson }} : systemSelect.options[systemSelect.selectedIndex].text;
     
     // Pass 45.4 — escape system name; opt in to HTML for the formatting.
-    showConfirmModal(
+    showConfirm(
         '⚠️ ' + {{ _('Clear Scraped Data')|tojson }},
         t({{ _('This will clear all scraped metadata from games in {system}.')|tojson }}, {system: '<strong>' + escapeHtml(systemName) + '</strong>'}) + '<br><br>'
          + (deleteImages ? '<strong style="color: var(--neon-red);">⚠️ ' + {{ _('Downloaded images will also be deleted!')|tojson }} + '</strong><br><br>' : '')
          + {{ _('This cannot be undone. Are you sure?')|tojson }},
         async () => {
-            closeConfirmModal();
             btn.disabled = true;
             btn.innerHTML = '<span class="btn-icon">⏳</span> Clearing...';
             
@@ -3975,10 +3900,8 @@ async function cleanOrphanedMedia() {
                 btn.innerHTML = '<span class="btn-icon">🗑️</span> Delete Orphaned Files';
             }
         },
-        // Pass 45.4 hardened showConfirmModal to default to textContent; this
-        // message embeds <br> tags (and only a numeric count — no user input),
-        // so it must opt into HTML or the breaks render literally. Mirrors the
-        // deleteController confirm. (`danger` was never read by showConfirmModal.)
+        // showConfirm shows text by default; this message embeds <br> tags
+        // (and only a numeric count — no user input), so it opts into HTML.
         {allowHtml: true}
     );
 }
@@ -4153,20 +4076,15 @@ async function optimizeDatabase() {
     }
 }
 
-// Close modal on backdrop click
-document.getElementById('confirmModal')?.addEventListener('click', function(e) {
-    if (e.target === this) closeConfirmModal();
-});
 
 async function deleteController(controllerId, controllerName) {
     // Pass 45.4 — controllerName is admin-editable text; escape before
     // interpolating into the HTML template, then opt in to HTML so the
     // <strong> + <br><br> still render.
-    showConfirmModal(
+    showConfirm(
         '🗑️ ' + {{ _('Delete Controller')|tojson }},
         t({{ _('Are you sure you want to delete {name}?<br><br>This will remove it from the library and any systems using it as default.')|tojson }}, {name: '<strong>' + escapeHtml(controllerName) + '</strong>'}),
         async () => {
-            closeConfirmModal();
             try {
                 // Save scroll position before reloading
                 const scrollY = window.scrollY;
@@ -4432,14 +4350,14 @@ async function refreshSystemLogos() {
         if (data.success) {
             // Reload the logo reference table
             await reloadLogoReference();
-            showInfoModal('✅ ' + {{ _('Logos Refreshed')|tojson }}, 
+            showModal('✅ ' + {{ _('Logos Refreshed')|tojson }}, 
                 t({{ _('System logos updated: {count}. The table has been refreshed.')|tojson }}, {count: data.updated}));
         } else {
-            showInfoModal({{ _('Error')|tojson }}, data.error || {{ _('Failed to refresh logos')|tojson }});
+            showModal({{ _('Error')|tojson }}, data.error || {{ _('Failed to refresh logos')|tojson }});
         }
     } catch (error) {
         console.error('Error refreshing logos:', error);
-        showInfoModal({{ _('Error')|tojson }}, {{ _('Failed to refresh system logos')|tojson }});
+        showModal({{ _('Error')|tojson }}, {{ _('Failed to refresh system logos')|tojson }});
     } finally {
         btn.disabled = false;
         btn.innerHTML = originalText;
@@ -4461,15 +4379,15 @@ async function refreshSystemNames() {
         const data = await response.json();
         
         if (data.success) {
-            showInfoModal('✅ ' + {{ _('Names Refreshed')|tojson }}, 
+            showModal('✅ ' + {{ _('Names Refreshed')|tojson }}, 
                 t({{ _('System names updated: {count}. Click OK to refresh the page.')|tojson }}, {count: data.updated}), 
                 () => window.location.reload());
         } else {
-            showInfoModal({{ _('Error')|tojson }}, data.error || {{ _('Failed to refresh names')|tojson }});
+            showModal({{ _('Error')|tojson }}, data.error || {{ _('Failed to refresh names')|tojson }});
         }
     } catch (error) {
         console.error('Error refreshing names:', error);
-        showInfoModal({{ _('Error')|tojson }}, {{ _('Failed to refresh system names')|tojson }});
+        showModal({{ _('Error')|tojson }}, {{ _('Failed to refresh system names')|tojson }});
     } finally {
         btn.disabled = false;
         btn.innerHTML = originalText;
@@ -5150,8 +5068,12 @@ async function xboxSaveKey() {
 
 function xboxRemoveKey() {
     showConfirm({{ _('Remove Xbox key')|tojson }}, {{ _('Remove your OpenXBL key? Your imported games and achievements stay.')|tojson }}, async () => {
-        await fetch('/api/xbox/disconnect', { method: 'POST' });
-        document.getElementById('xboxKeyResult').textContent = '';
+        try {
+            await API.post('/api/xbox/disconnect');
+            document.getElementById('xboxKeyResult').textContent = '';
+        } catch (e) {
+            showNotification(e.message || {{ _('Could not remove the Xbox key.')|tojson }}, 'error');
+        }
         loadXboxKeyStatus();
     });
 }
@@ -5262,6 +5184,8 @@ async function removeAvatar() {
             updateAllAvatars(null);
             closeAvatarPicker();
             showNotification({{ _('Avatar removed')|tojson }}, 'success');
+        } else {
+            showNotification(data.error || {{ _('Failed to remove avatar')|tojson }}, 'error');
         }
     } catch (e) {
         showNotification({{ _('Failed to remove avatar')|tojson }}, 'error');
@@ -5285,6 +5209,8 @@ async function saveAvatarChoice() {
             updateAllAvatars(url);
             closeAvatarPicker();
             showNotification({{ _('Avatar updated!')|tojson }}, 'success');
+        } else {
+            showNotification(data.error || {{ _('Failed to save avatar')|tojson }}, 'error');
         }
     } catch (e) {
         showNotification({{ _('Failed to save avatar')|tojson }}, 'error');

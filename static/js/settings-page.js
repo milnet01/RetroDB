@@ -2,7 +2,7 @@
  * RetroDB Settings Page Module
  *
  * Holds only what the inline script in templates/settings.html does not
- * define: the field-normalization manager and the `showConfirm` alias.
+ * define: the field-normalization manager.
  * Everything else on the settings page lives in that inline script.
  *
  * Pass 59.35 — this file used to carry a second copy of the settings
@@ -260,8 +260,5 @@ const NormalizationManager = {
     }
 };
 
-// Deferred alias — resolves showConfirmModal at call time so the inline
-// template version (which shares pendingConfirmAction with executeConfirm) wins.
-window.showConfirm = function(title, message, onConfirm, options) { return window.showConfirmModal(title, message, onConfirm, options); };
 
 window.NormalizationManager = NormalizationManager;

@@ -89,7 +89,7 @@
                     <span class="status-text">Local</span>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-esde" aria-label="Enable ES-DE local scraper" {{ 'checked' if scraper_settings.enabled.esde else '' }} data-on-change="toggleScraper" data-args='["esde", "$this.checked"]'>
+                    <input type="checkbox" id="toggle-esde" aria-label="Enable ES-DE local scraper" {{ 'checked' if scraper_settings.enabled.esde else '' }} data-on-change="toggleScraper" data-args='["esde", "$this.checked", "$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -107,7 +107,7 @@
                     <span class="status-text">Checking...</span>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-tgdb" aria-label="Enable TheGamesDB scraper" {{ 'checked' if scraper_settings.enabled.tgdb else '' }} data-on-change="toggleScraper" data-args='["tgdb", "$this.checked"]'>
+                    <input type="checkbox" id="toggle-tgdb" aria-label="Enable TheGamesDB scraper" {{ 'checked' if scraper_settings.enabled.tgdb else '' }} data-on-change="toggleScraper" data-args='["tgdb", "$this.checked", "$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -125,7 +125,7 @@
                     <span class="status-text">Checking...</span>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-igdb" aria-label="Enable IGDB scraper" {{ 'checked' if scraper_settings.enabled.igdb else '' }} data-on-change="toggleScraper" data-args='["igdb", "$this.checked"]'>
+                    <input type="checkbox" id="toggle-igdb" aria-label="Enable IGDB scraper" {{ 'checked' if scraper_settings.enabled.igdb else '' }} data-on-change="toggleScraper" data-args='["igdb", "$this.checked", "$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -143,7 +143,7 @@
                     <span class="status-text">Checking...</span>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-rawg" aria-label="Enable RAWG.io scraper" {{ 'checked' if scraper_settings.enabled.rawg else '' }} data-on-change="toggleScraper" data-args='["rawg", "$this.checked"]'>
+                    <input type="checkbox" id="toggle-rawg" aria-label="Enable RAWG.io scraper" {{ 'checked' if scraper_settings.enabled.rawg else '' }} data-on-change="toggleScraper" data-args='["rawg", "$this.checked", "$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -161,7 +161,7 @@
                     <span class="status-text">Checking...</span>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-screenscraper" aria-label="Enable ScreenScraper scraper" {{ 'checked' if scraper_settings.enabled.screenscraper else '' }} data-on-change="toggleScraper" data-args='["screenscraper", "$this.checked"]'>
+                    <input type="checkbox" id="toggle-screenscraper" aria-label="Enable ScreenScraper scraper" {{ 'checked' if scraper_settings.enabled.screenscraper else '' }} data-on-change="toggleScraper" data-args='["screenscraper", "$this.checked", "$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -178,7 +178,7 @@
                     <span class="status-text">Checking...</span>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-ai" aria-label="Enable AI metadata scraper" {{ 'checked' if scraper_settings.enabled.ai else '' }} data-on-change="toggleScraper" data-args='["ai", "$this.checked"]'>
+                    <input type="checkbox" id="toggle-ai" aria-label="Enable AI metadata scraper" {{ 'checked' if scraper_settings.enabled.ai else '' }} data-on-change="toggleScraper" data-args='["ai", "$this.checked", "$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -286,7 +286,7 @@
                     <span class="api-key-name">🎮 TheGamesDB — Public API Key</span>
                     <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Keys →</a>
                 </div>
-                <input type="text" id="apikey-tgdb-public" class="api-key-input"
+                <input type="password" autocomplete="off" id="apikey-tgdb-public" class="api-key-input"
                        value="{{ scraper_settings.api_keys.tgdb_public }}"
                        placeholder="Per-IP rate limit — used as primary for scraping">
                 <span class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">Primary key. Per-IP rate limit, best for regular use.</span>
@@ -296,7 +296,7 @@
                 <div class="api-key-header">
                     <span class="api-key-name">🎮 TheGamesDB — Private API Key</span>
                 </div>
-                <input type="text" id="apikey-tgdb" class="api-key-input"
+                <input type="password" autocomplete="off" id="apikey-tgdb" class="api-key-input"
                        value="{{ scraper_settings.api_keys.tgdb }}"
                        placeholder="Shared monthly pool — used as fallback">
                 <span class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">Fallback key. Shared monthly pool (~6,000 req/month).</span>
@@ -317,7 +317,7 @@
                 <div class="api-key-header">
                     <span class="api-key-name">🌐 IGDB / Twitch Client Secret</span>
                 </div>
-                <input type="password" id="apikey-igdb-client-secret" class="api-key-input" 
+                <input type="password" autocomplete="off" id="apikey-igdb-client-secret" class="api-key-input" 
                        value="{{ scraper_settings.api_keys.igdb_client_secret }}" 
                        placeholder="Enter Twitch Client Secret">
             </div>
@@ -328,7 +328,7 @@
                     <span class="api-key-name">🎮 RAWG.io API Key</span>
                     <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
                 </div>
-                <input type="text" id="apikey-rawg" class="api-key-input" 
+                <input type="password" autocomplete="off" id="apikey-rawg" class="api-key-input" 
                        value="{{ scraper_settings.api_keys.rawg }}" 
                        placeholder="Enter RAWG.io API key">
             </div>
@@ -348,7 +348,7 @@
                 <div class="api-key-header">
                     <span class="api-key-name">🖥️ ScreenScraper Password</span>
                 </div>
-                <input type="password" id="apikey-screenscraper-password" class="api-key-input" 
+                <input type="password" autocomplete="off" id="apikey-screenscraper-password" class="api-key-input" 
                        value="{{ scraper_settings.api_keys.screenscraper_password }}" 
                        placeholder="Your member account login password">
             </div>
@@ -367,7 +367,7 @@
                 <div class="api-key-header">
                     <span class="api-key-name">🖥️ ScreenScraper Developer Password</span>
                 </div>
-                <input type="password" id="apikey-screenscraper-devpassword" class="api-key-input" 
+                <input type="password" autocomplete="off" id="apikey-screenscraper-devpassword" class="api-key-input" 
                        value="{{ scraper_settings.api_keys.screenscraper_devpassword }}" 
                        placeholder="Password from developer area (NOT debug password)">
             </div>
@@ -388,7 +388,7 @@
                     <span class="api-key-name">🏆 RetroAchievements API Key</span>
                     <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
                 </div>
-                <input type="text" id="apikey-ra-apikey" class="api-key-input"
+                <input type="password" autocomplete="off" id="apikey-ra-apikey" class="api-key-input"
                        value="{{ scraper_settings.api_keys.ra_apikey }}"
                        placeholder="Web API Key from Settings > Keys">
             </div>
@@ -399,7 +399,7 @@
                     <span class="api-key-name">🎮 Steam Web API Key</span>
                     <a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
                 </div>
-                <input type="text" id="apikey-steam-api-key" class="api-key-input"
+                <input type="password" autocomplete="off" id="apikey-steam-api-key" class="api-key-input"
                        value="{{ scraper_settings.api_keys.steam_api_key }}"
                        placeholder="Your Steam Web API Key">
             </div>
@@ -447,7 +447,7 @@
                         <span class="api-key-name">🤖 Gemini API Key</span>
                         <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
                     </div>
-                    <input type="text" id="apikey-ai-gemini-key" class="api-key-input"
+                    <input type="password" autocomplete="off" id="apikey-ai-gemini-key" class="api-key-input"
                            value="{{ scraper_settings.api_keys.ai_gemini_api_key }}"
                            placeholder="Enter Google Gemini API key">
                 </div>
@@ -480,7 +480,7 @@
                         <span class="api-key-name">🤖 OpenAI API Key</span>
                         <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
                     </div>
-                    <input type="text" id="apikey-ai-openai-key" class="api-key-input"
+                    <input type="password" autocomplete="off" id="apikey-ai-openai-key" class="api-key-input"
                            value="{{ scraper_settings.api_keys.ai_openai_api_key }}"
                            placeholder="Enter OpenAI API key">
                 </div>
@@ -502,7 +502,7 @@
                         <span class="api-key-name">🤖 Anthropic API Key</span>
                         <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
                     </div>
-                    <input type="text" id="apikey-ai-claude-key" class="api-key-input"
+                    <input type="password" autocomplete="off" id="apikey-ai-claude-key" class="api-key-input"
                            value="{{ scraper_settings.api_keys.ai_claude_api_key }}"
                            placeholder="Enter Anthropic API key">
                 </div>

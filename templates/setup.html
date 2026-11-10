@@ -517,7 +517,9 @@ function finishSetup() {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data)
     })
-    .then(r => r.json())
+    // A server error page is not JSON: report its status, not "Network error".
+    .then(r => r.json().catch(() => ({success: false,
+        error: {{ _('The server answered with an error.')|tojson }} + ' (' + r.status + ')'})))
     .then(result => {
         if (result.success) {
             window.location.href = '/dashboard';
@@ -567,7 +569,13 @@ const detectedTz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
             sel.value = detectedTz;
             if (!sel.value) sel.value = 'UTC';
         })
-        .catch(() => {});
+        .catch(e => {
+            // Without the list, offer the detected zone so setup never
+            // submits an empty one (PASS-59-284).
+            console.error('Timezone list failed to load:', e);
+            const sel = document.getElementById('timezone_select');
+            if (sel && !sel.options.length) sel.add(new Option(detectedTz || 'UTC', detectedTz || 'UTC'));
+        });
 
     const searchInput = document.getElementById('tz_search_setup');
     if (searchInput) {

@@ -265,18 +265,13 @@
 {% block scripts %}
 {# i18n: Pass 43.3 boundary — JS strings localized separately #}
 <script nonce="{{ csp_nonce }}">
+// Every role signs in with a password (Pass 24.1, auth.md).
 function selectUser(userId, role) {
-    if (role === 'admin') {
-        // Show password modal for admin
-        document.getElementById('selectedUserId').value = userId;
-        document.getElementById('passwordInput').value = '';
-        document.getElementById('loginError').classList.remove('show');
-        document.getElementById('passwordModal').classList.add('active');
-        document.getElementById('passwordInput').focus();
-    } else {
-        // Direct login for non-admin users
-        loginUser(userId, '');
-    }
+    document.getElementById('selectedUserId').value = userId;
+    document.getElementById('passwordInput').value = '';
+    document.getElementById('loginError').classList.remove('show');
+    document.getElementById('passwordModal').classList.add('active');
+    document.getElementById('passwordInput').focus();
 }
 
 function closePasswordModal() {
@@ -304,7 +299,9 @@ function loginUser(userId, password) {
             next: nextUrl
         })
     })
-    .then(response => response.json())
+    // A server error page is not JSON: say so, not "Network error".
+    .then(response => response.json().catch(() => ({success: false,
+        error: {{ _('The server answered with an error.')|tojson }} + ' (' + response.status + ')'})))
     .then(data => {
         if (data.success) {
             window.location.href = data.redirect || '/dashboard';

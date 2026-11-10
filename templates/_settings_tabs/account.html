@@ -106,7 +106,7 @@
         
         <div class="form-group mb-lg">
             <label class="form-label" for="userRaApiKey">{{ _('Your RA API Key') }}</label>
-            <input type="password" class="form-input" id="userRaApiKey"
+            <input type="password" class="form-input" id="userRaApiKey" autocomplete="off"
                    value="{{ current_user_settings.ra_api_key if current_user_settings else '' }}"
                    placeholder="{{ _('Your RetroAchievements API Key') }}">
             <span class="field-tip">{% trans %}Get your API key from <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer" style="color: var(--primary-cyan);">RetroAchievements Control Panel</a>{% endtrans %}</span>
@@ -192,7 +192,7 @@
                     <div style="flex: 1;">
                         <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">{{ _('Paste the token') }}</div>
                         <div style="display: flex; gap: var(--spacing-sm); align-items: center; flex-wrap: wrap;">
-                            <input type="password" class="form-input" id="userPsnNpsso"
+                            <input type="password" class="form-input" id="userPsnNpsso" autocomplete="off"
                                    value="{{ current_user_settings.psn_npsso if current_user_settings else '' }}"
                                    placeholder="{{ _('Paste JSON or token here') }}"
                                    style="flex: 1; min-width: 200px;"
@@ -254,7 +254,7 @@
             {{ _('Save My Settings') }}
         </button>
         
-        {% if current_user.role == 'admin' %}
+        {# Every role has a password and may change it (auth.md, PASS-59-284). #}
         <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">🔐 {{ _('Change Password') }}</h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
             {{ _('Every account needs a password to log in.') }}
@@ -262,18 +262,17 @@
         
         <div class="form-group mb-md">
             <label class="form-label" for="currentPassword">{{ _('Current Password') }}</label>
-            <input type="password" class="form-input" id="currentPassword" placeholder="{{ _('Enter current password') }}">
+            <input type="password" class="form-input" id="currentPassword" autocomplete="current-password" placeholder="{{ _('Enter current password') }}">
         </div>
         
         <div class="form-group mb-lg">
             <label class="form-label" for="newPassword">{{ _('New Password') }}</label>
-            <input type="password" class="form-input" id="newPassword" placeholder="{{ _('Enter new password') }}">
+            <input type="password" class="form-input" id="newPassword" autocomplete="new-password" placeholder="{{ _('Enter new password') }}">
         </div>
         
         <button type="button" class="btn btn-warning" data-on-click="changePassword">
             🔐 {{ _('Change Password') }}
         </button>
-        {% endif %}
         {% else %}
         <p class="text-muted">{{ _('Please log in to view your profile settings.') }}</p>
         {% endif %}
@@ -312,7 +311,7 @@
     </div>
     <div class="card-body">
         <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
-            {{ _('Manage users who can access RetroDB. Admin users require a password to login, while Editor and Viewer users can login with a single click.') }}
+            {{ _('Manage users who can access RetroDB.') }} {{ _('Every account needs a password to log in.') }}
         </p>
 
         <div style="display: flex; justify-content: flex-end; margin-bottom: var(--spacing-lg);">
@@ -420,7 +419,6 @@
             <div class="form-group mb-md" id="resetPasswordGroup" style="display: none;">
                 <label class="form-label" for="userNewPassword">{{ _('Reset Password') }}</label>
                 <input type="password" class="form-input" id="userNewPassword" placeholder="{{ _('Leave blank to keep current') }}">
-                <span class="field-tip">{{ _('Only for admin accounts') }}</span>
             </div>
         </div>
         <div class="modal-footer">
