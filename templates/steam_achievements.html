@@ -22,10 +22,13 @@
         <p class="page-subtitle">{% trans count=stats.total_games|format_number %}{{ count }} games with achievement data{% endtrans %}</p>
     </div>
     <div style="display: flex; gap: var(--spacing-sm);">
+        {# Sync needs the editor role (PASS-59-286) #}
+        {% if current_user and current_user.role in ('admin', 'editor') %}
         <button type="button" data-on-click="syncAll" class="btn btn-primary" id="syncAllBtn">
             <span class="btn-icon">🔄</span>
             <span class="btn-text">{{ _('Sync All') }}</span>
         </button>
+        {% endif %}
     </div>
 </div>
 
@@ -235,8 +238,8 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('/api/steam-achievements/sync-status')
         .then(r => r.json())
         .then(data => {
-            if (data.running && !data.completed) {
-                const btn = document.getElementById('syncAllBtn');
+            const btn = document.getElementById('syncAllBtn');
+            if (btn && data.running && !data.completed) {
                 btn.disabled = true;
                 btn.innerHTML = `<span class="btn-icon">🔄</span> ${formatNumber(data.current)} / ${formatNumber(data.total)}`;
                 syncPollInterval = setInterval(pollSyncStatus, 2000);

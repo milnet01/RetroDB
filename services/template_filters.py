@@ -53,7 +53,8 @@ def format_ratio_filter(numerator, denominator):
 
 
 def tz_filter(value, fmt='datetime'):
-    """Convert a UTC datetime string to the current user's timezone.
+    """Convert a UTC datetime, datetime string or Unix time (seconds, as
+    Steam's unlock_time) to the current user's timezone.
 
     fmt: 'datetime' → 'YYYY-MM-DD HH:MM:SS'
          'date'     → 'YYYY-MM-DD'
@@ -75,6 +76,8 @@ def tz_filter(value, fmt='datetime'):
 
         if isinstance(value, datetime):
             dt = value
+        elif isinstance(value, (int, float)) and not isinstance(value, bool):
+            dt = datetime.fromtimestamp(value, tz=timezone.utc)
         elif isinstance(value, str):
             clean = value.strip()
             if clean.endswith('Z'):
@@ -110,7 +113,7 @@ def tz_filter(value, fmt='datetime'):
         else:
             return local_dt.strftime('%Y-%m-%d %H:%M:%S')
 
-    except (ValueError, TypeError, KeyError, AttributeError):
+    except (ValueError, TypeError, KeyError, AttributeError, OverflowError, OSError):
         return value
 
 

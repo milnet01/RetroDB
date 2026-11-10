@@ -148,6 +148,8 @@
     <div class="card-body ra-tools">
         {% if ra_configured %}
         <div class="ra-tool">
+            {# Sync needs the editor role (PASS-59-286) #}
+            {% if current_user and current_user.role in ('admin', 'editor') %}
             <button type="button" data-on-click="syncRAForSystem" data-args='{{ [system.id, system.name, {'gameCount': games|length}]|tojson }}' class="btn btn-primary btn-sm" id="refreshBtn">
                 <span class="btn-icon">🔄</span>
                 <span class="btn-text">{{ _('Sync Progress') }}</span>
@@ -155,6 +157,7 @@
             <p class="text-muted ra-tool-note">
                 {% trans system=system.name %}Downloads which achievements you have earned in your {{ system }} games. Run it after playing.{% endtrans %}
             </p>
+            {% endif %}
             <span class="cache-status text-muted ra-tool-note" id="cacheStatus" data-last-synced="{{ system.last_synced or '' }}">
                 {% if system.last_synced %}{{ _('Loading...') }}{% else %}{{ _('Never synced') }}{% endif %}
             </span>

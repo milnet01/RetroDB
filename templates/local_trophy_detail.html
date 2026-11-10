@@ -352,17 +352,28 @@ async function lookupHLTB() {
                 t({{ _('Found: "{match}"{platform} ({confidence} confidence){alt}\n\nPlaytime: {playtime}\n\nAccept this match?')|tojson }},
                   {match: data.match_name, platform: platformInfo, confidence: confidence + '%', alt: altNotice, playtime: data.playtime}),
                 async function() {
-                    // Save the result
-                    await fetch('/api/hltb-save/{{ game.id }}', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            playtime: data.playtime,
-                            match_name: data.match_name,
-                            match_platform: data.match_platform,
-                            confidence: data.confidence
-                        })
-                    });
+                    // Save the result; show the page as saved only if it was
+                    let saved;
+                    try {
+                        const saveResp = await fetch('/api/hltb-save/{{ game.id }}', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                playtime: data.playtime,
+                                match_name: data.match_name,
+                                match_platform: data.match_platform,
+                                confidence: data.confidence
+                            })
+                        });
+                        saved = await saveResp.json().catch(() => ({}));
+                        if (!saveResp.ok) saved.success = false;
+                    } catch (e) {
+                        saved = { success: false, error: e.message };
+                    }
+                    if (!saved.success) {
+                        showModal('❌ ' + {{ _('Error')|tojson }}, saved.error || {{ _('Failed to save HLTB data.')|tojson }});
+                        return;
+                    }
 
                     // Update display
                     const section = document.getElementById('hltbSection');
@@ -429,7 +440,12 @@ async function clearHLTB() {
         {{ _('Are you sure you want to remove the HLTB playtime data?')|tojson }},
         async function() {
             try {
-                await fetch('/api/hltb-clear/{{ game.id }}', { method: 'POST' });
+                const clearResp = await fetch('/api/hltb-clear/{{ game.id }}', { method: 'POST' });
+                const cleared = await clearResp.json().catch(() => ({}));
+                if (!clearResp.ok || !cleared.success) {
+                    showModal('❌ ' + {{ _('Error')|tojson }}, cleared.error || {{ _('Failed to clear HLTB data.')|tojson }});
+                    return;
+                }
 
                 const section = document.getElementById('hltbSection');
                 section.innerHTML = `

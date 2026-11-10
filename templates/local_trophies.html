@@ -393,10 +393,12 @@
 
 {% block scripts %}
 <script nonce="{{ csp_nonce }}">
-// Initialize alphabet nav
-if (typeof AlphabetNav !== 'undefined') {
-    AlphabetNav.init({ itemSelector: '.trophy-game-card' });
-}
+// Initialize alphabet nav once the deferred games bundle has loaded it
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof AlphabetNav !== 'undefined') {
+        AlphabetNav.init({ itemSelector: '.trophy-game-card' });
+    }
+});
 
 async function scanTrophies() {
     const btn = document.getElementById('scanTrophiesBtn');

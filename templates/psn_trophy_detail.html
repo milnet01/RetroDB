@@ -2,6 +2,8 @@
 {% set adaptive_layout = true %}
 {% from "_macros/breadcrumb.html" import breadcrumb %}
 {% set needs_games_bundle = true %}
+{# Link, unlink and HLTB need the edit permission (PASS-59-286) #}
+{% set _can_edit = has_permission('edit') %}
 
 {% block title %}{{ psn_game.title }} Trophies - RetroDB{% endblock %}
 
@@ -150,6 +152,7 @@
             <div class="hltb-section" id="hltbSection">
                 {% if game %}
                 <!-- Linked game exists - HLTB is synced with RetroDB game -->
+                {% if _can_edit %}
                 <input type="text"
                        id="hltbSearchQuery"
                        class="hltb-search-input"
@@ -182,6 +185,7 @@
                         <button type="button" class="btn btn-sm btn-secondary" data-on-click="cancelHLTB">✕ {{ _('Cancel') }}</button>
                     </div>
                 </div>
+                {% endif %}
 
                 <!-- Saved results -->
                 <div id="hltbSaved" style="{% if hltb_data %}display: block;{% else %}display: none;{% endif %}">
@@ -210,9 +214,11 @@
                             <span class="hltb-value" id="hltbComplete">{{ hltb_data.completionist if hltb_data else '--' }}</span>
                         </div>
                     </div>
+                    {% if _can_edit %}
                     <div class="hltb-actions" style="margin-top: var(--spacing-sm);">
                         <button type="button" class="btn btn-sm btn-danger" data-on-click="clearHLTB">✕ {{ _('Clear') }}</button>
                     </div>
+                    {% endif %}
                 </div>
 
                 <div style="margin-top: var(--spacing-sm); font-size: 0.75rem; color: var(--text-muted);">
@@ -295,15 +301,18 @@
                             <div class="linked-game-system">{{ game.system_name }}</div>
                         </div>
                     </a>
+                    {% if _can_edit %}
                     <div style="display: flex; gap: var(--spacing-xs); margin-top: var(--spacing-sm);">
                         <button type="button" class="btn btn-sm btn-secondary" data-on-click="showLinkSearch">{{ _('Change') }}</button>
                         <button type="button" class="btn btn-sm btn-danger" data-on-click="unlinkGame">{{ _('Unlink') }}</button>
                     </div>
+                    {% endif %}
                 </div>
                 {% else %}
                 <div id="linkedGameDisplay" style="display: none;"></div>
                 {% endif %}
 
+                {% if _can_edit %}
                 <div id="linkSearchSection" {% if game %}style="display: none;"{% endif %}>
                     <div style="margin-top: var(--spacing-sm);">
                         <div class="md-label" style="margin-bottom: var(--spacing-xs);">
@@ -326,6 +335,7 @@
                         {% endif %}
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
