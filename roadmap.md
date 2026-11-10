@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=298 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=299 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -2620,7 +2620,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: fix.
   Source: browser walk 2026-11-10.
 
-- 📋 [PASS-59-298] **One spelling per name: "Doom" and "DOOM" become one, and the AI gives official capitals (enhancement, M).**
+- ✅ [PASS-59-298] **One spelling per name: "Doom" and "DOOM" become one, and the AI gives official capitals (enhancement, M).**
   - **Why**: found 2026-11-10 (PASS-59-160 live check): case twins
     ("Doom" 14 games, "DOOM" 3) count as two entries in the filter
     window but filter together. Settings > Normalization cannot fix
@@ -2636,9 +2636,28 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     DOOM; applying one spelling leaves one entry with the summed count;
     a scrape bringing "doom" saves the library's spelling.
   - **Status**: todo.
+  - **Shipped** 2026-11-10 (4.0.0): normalization.use_library_spellings
+    in the scrape save and AI Fill; Settings > Normalization lists twin
+    groups (case_twin_groups / apply_spellings); the AI prompt asks for
+    official capitals. Checked on a copy of the live DB: Doom 14 / DOOM 3
+    became Doom 17. Tests: tests/test_pass59_298_one_spelling.py.
   **Layman:** A franchise, publisher or developer spelled with different capitals shows as one name, spelled the official way.
   Kind: enhancement.
   Source: user-request-2026-11-10.
+
+- 📋 [PASS-59-299] **Company names ending ", Ltd." or ", Inc." are split into two names (fix, S).**
+  - **Why**: found 2026-11-10 in the PASS-59-298 walk. publisher and
+    developer split on every comma, so "Foo, Ltd." becomes "Foo" and
+    "Ltd."; Settings > Normalization > Publisher lists "Ltd, LTD" and
+    "Ltd., LTD." as names. On 2026-11-10 the live library held 187
+    games with ", Ltd" or ", Inc" in either field.
+  - **Fix**: keep a company suffix (Ltd., Inc., Co., Corp., LLC) with
+    the name before it wherever these fields are split, or store it
+    without the comma. Decide which before building.
+  - **Status**: todo.
+  **Layman:** A company such as "Foo, Ltd." shows as two names, "Foo" and "Ltd.", in filters and Settings.
+  Kind: fix.
+  Source: pass59-298-live-check-2026-11-10.
 
 ## 4.0.x — Security and data-loss fixes for the web version
 
