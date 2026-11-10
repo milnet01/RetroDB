@@ -711,6 +711,12 @@ def api_reports_rename_rom():
     if not old_path:
         return error(_('No ROM path set'), 404)
 
+    # PASS-59-286 — the Reports page sends the name its scan saw. A file
+    # renamed since then must not get that scan's old suggestion.
+    old_name = data.get('old_name')
+    if old_name is not None and old_name != os.path.basename(old_path):
+        return error(_('This file was renamed after the last scan. Scan again, then rename.'), 409)
+
     # CLZ imports have virtual paths — just update the database
     is_virtual = old_path.startswith(('clz_import/', 'steam_import/', 'xbox_import/', 'psn_import/'))
     if is_virtual:

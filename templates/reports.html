@@ -2,6 +2,7 @@
 {% set adaptive_layout = true %}
 {% from "_macros/nav_tabs.html" import rom_tool_tabs %}
 {% set needs_games_bundle = true %}
+{% set _can_rename = current_user is not none and current_user.role in ('admin', 'editor') %}
 
 {% block title %}ROM Reports - RetroDB{% endblock %}
 
@@ -345,11 +346,13 @@
             <label for="filter-search">{{ _('Search:') }}</label>
             <input type="text" id="filter-search" placeholder="{{ _('Search filenames...') }}" data-on-input="applyFilters">
         </div>
+        {% if _can_rename %}
         <div class="filter-group" style="margin-left: auto;">
             <button type="button" class="btn btn-success" id="batchRenameBtn" data-on-click="startBatchRename" disabled>
                 <span class="btn-icon">✏️</span> {{ _('Batch Rename') }} (<span id="batchCount">0</span>)
             </button>
         </div>
+        {% endif %}
     </div>
     
     <div class="results-table-container">
@@ -420,11 +423,13 @@
             <label for="filter-mismatch-search">{{ _('Search:') }}</label>
             <input type="text" id="filter-mismatch-search" placeholder="{{ _('Search...') }}" data-on-input="applyMismatchFilters">
         </div>
+        {% if _can_rename %}
         <div class="filter-group" style="margin-left: auto;">
             <button type="button" class="btn btn-success" id="mismatchBatchRenameBtn" data-on-click="startMismatchBatchRename" disabled>
                 <span class="btn-icon">✏️</span> {{ _('Batch Rename') }} (<span id="mismatchBatchCount">0</span>)
             </button>
         </div>
+        {% endif %}
     </div>
     
     <div class="results-table-container">
@@ -515,6 +520,10 @@
                 <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
                 <h3 style="color: var(--neon-green); margin-bottom: 0.5rem;">{{ _('Batch Rename Complete') }}</h3>
                 <p id="batchCompleteMessage" style="color: var(--text-secondary);"></p>
+                <div id="batchFailures" style="display: none; text-align: left; margin-top: 1rem;">
+                    <p style="color: var(--neon-orange); margin-bottom: 0.5rem;">{{ _('These files were not renamed:') }}</p>
+                    <ul id="batchFailList" style="max-height: 12rem; overflow-y: auto; margin: 0; padding-left: 1.25rem; font-size: 0.85rem;"></ul>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -544,6 +553,8 @@ let sortState = {
 
 const STORAGE_KEY = 'retrodb_rom_reports';
 const FILTERS_KEY = 'retrodb_reports_filters';
+// Rename endpoints are editor-only; viewers get no rename controls.
+const CAN_RENAME = {{ _can_rename|tojson }};
 const CACHE_VERSION = 3;  // Bump when data shape changes (3: mismatch_types array)
 
 // Save current filter values to localStorage
@@ -607,7 +618,7 @@ function loadScanResults() {
         if (stored) {
             const data = JSON.parse(stored);
             // Stale cache check — clear if data shape has changed
-            if (!data.cacheVersion || data.cacheVersion < CACHE_VERSION) {
+            if (data.cacheVersion !== CACHE_VERSION) {
                 localStorage.removeItem(STORAGE_KEY);
                 return null;
             }
@@ -736,7 +747,10 @@ async function runFullScan() {
         const namingResponse = await fetch('/api/reports/naming-check');
         const namingData = await namingResponse.json();
 
-        if (namingData.success) {
+        if (!namingResponse.ok || !namingData.success) {
+            console.error('Naming scan failed:', namingData.error);
+            hasError = true;
+        } else {
             namingIssues = namingData.issues || [];
             allSystems = namingData.systems || [];
             updateNamingResults();
@@ -752,7 +766,10 @@ async function runFullScan() {
         const mismatchResponse = await fetch('/api/reports/name-mismatch');
         const mismatchData = await mismatchResponse.json();
 
-        if (mismatchData.success) {
+        if (!mismatchResponse.ok || !mismatchData.success) {
+            console.error('Mismatch scan failed:', mismatchData.error);
+            hasError = true;
+        } else {
             mismatchIssues = mismatchData.mismatches || [];
             updateMismatchResults();
         }
@@ -765,9 +782,12 @@ async function runFullScan() {
     document.getElementById('count-naming').textContent = namingIssues.length;
     document.getElementById('count-mismatch').textContent = mismatchIssues.length;
 
-    // Save results to localStorage for persistence
-    saveScanResults();
-    updateLastScanIndicator(Date.now());
+    // Save results only from a scan that worked, so a failed scan never
+    // stamps old results as "just now"
+    if (!hasError) {
+        saveScanResults();
+        updateLastScanIndicator(Date.now());
+    }
 
     if (hasError) {
         showNotification({{ _('Some scan checks encountered errors. Check browser console for details.')|tojson }}, 'warning');
@@ -785,7 +805,7 @@ function populateSystemFilters() {
         const current = select.value;
         select.innerHTML = '<option value="">All Systems</option>';
         allSystems.sort().forEach(sys => {
-            select.innerHTML += `<option value="${sys}">${sys}</option>`;
+            select.add(new Option(sys, sys));
         });
         select.value = current;
     });
@@ -932,7 +952,8 @@ function updateBatchRenameButton(filteredItems) {
     const count = itemsWithSuggestions.length;
     const btn = document.getElementById('batchRenameBtn');
     const countSpan = document.getElementById('batchCount');
-    
+    if (!btn || !countSpan) return;  // viewers have no rename controls
+
     countSpan.textContent = count;
     btn.disabled = count === 0;
 }
@@ -958,13 +979,13 @@ function renderNamingTable(items) {
     
     tbody.innerHTML = items.map(item => `
         <tr data-game-id="${item.game_id}">
-            <td><span class="system-badge">${item.system}</span></td>
+            <td><span class="system-badge">${escapeHtml(item.system)}</span></td>
             <td class="filename-cell" title="${escapeHtml(item.filename)}">${escapeHtml(item.filename)}</td>
-            <td>${(item.issues || []).map(i => `<span class="issue-badge ${i}">${formatIssue(i)}</span>`).join(' ')}</td>
+            <td>${(item.issues || []).map(i => `<span class="issue-badge ${escapeHtml(i)}">${escapeHtml(formatIssue(i))}</span>`).join(' ')}</td>
             <td class="suggested-name" title="${escapeHtml(item.suggested || '')}">${escapeHtml(item.suggested || '-')}</td>
             <td class="action-cell">
                 <button type="button" class="action-btn" data-on-click="viewGame" data-args="${actionArgs(item.game_id)}">👁️</button>
-                ${item.suggested ? `<button class="action-btn rename" data-game-id="${item.game_id}" data-suggested="${escapeHtml(item.suggested)}">✏️</button>` : ''}
+                ${CAN_RENAME && item.suggested ? `<button type="button" class="action-btn rename" data-game-id="${item.game_id}" data-filename="${escapeHtml(item.filename)}" data-suggested="${escapeHtml(item.suggested)}">✏️</button>` : ''}
             </td>
         </tr>
     `).join('');
@@ -974,7 +995,7 @@ function renderNamingTable(items) {
         btn.addEventListener('click', function() {
             const gameId = parseInt(this.dataset.gameId);
             const suggested = this.dataset.suggested;
-            renameFile(gameId, suggested);
+            renameFile(gameId, suggested, this.dataset.filename);
         });
     });
 }
@@ -1076,15 +1097,15 @@ function renderMismatchTable(items) {
         const year = (item.release_date || '').slice(0, 4);
         return `
         <tr data-game-id="${item.game_id}">
-            <td><span class="system-badge">${item.system}</span></td>
+            <td><span class="system-badge">${escapeHtml(item.system)}</span></td>
             <td class="filename-cell" title="${escapeHtml(item.filename)}">${escapeHtml(item.filename)}</td>
             <td title="${escapeHtml(item.scraped_title)}">${escapeHtml(item.scraped_title)}</td>
             <td>${escapeHtml(item.region || '')}</td>
             <td>${escapeHtml(year)}</td>
-            <td>${(item.mismatch_types || (item.mismatch_type ? [item.mismatch_type] : [])).map(t => `<span class="issue-badge name-mismatch">${t}</span>`).join(' ')}</td>
+            <td>${(item.mismatch_types || (item.mismatch_type ? [item.mismatch_type] : [])).map(t => `<span class="issue-badge name-mismatch">${escapeHtml(t)}</span>`).join(' ')}</td>
             <td class="action-cell">
                 <button type="button" class="action-btn" data-on-click="viewGame" data-args="${actionArgs(item.game_id)}">👁️</button>
-                <button class="action-btn rename" data-game-id="${item.game_id}">✏️</button>
+                ${CAN_RENAME ? `<button type="button" class="action-btn rename" data-game-id="${item.game_id}">✏️</button>` : ''}
             </td>
         </tr>`;
     }).join('');
@@ -1105,13 +1126,13 @@ function viewGame(gameId) {
 }
 
 // Rename file
-async function renameFile(gameId, newName) {
+async function renameFile(gameId, newName, oldName) {
     showConfirm('✏️ ' + {{ _('Rename File')|tojson }}, t({{ _('Rename ROM file to:<br><code>{name}</code>')|tojson }}, {name: escapeHtml(newName)}), async function() {
         try {
             const response = await fetch('/api/reports/rename-rom', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ game_id: gameId, new_name: newName })
+                body: JSON.stringify({ game_id: gameId, old_name: oldName, new_name: newName })
             });
             
             const data = await response.json();
@@ -1153,11 +1174,11 @@ function renameToScraped(item) {
                 <span style="color: var(--text-secondary);">${ {{ _('System:')|tojson }} }</span>
                 <strong>${escapeHtml(item.system_name || item.system)}</strong>
                 <span style="color: var(--text-muted); margin-left: 0.25rem;">(${escapeHtml(item.system)})</span>
-                <span class="issue-badge name-mismatch" style="margin-left: 0.5rem; vertical-align: middle;">${systemType}</span>
+                <span class="issue-badge name-mismatch" style="margin-left: 0.5rem; vertical-align: middle;">${escapeHtml(systemType)}</span>
             </div>
             <div style="margin-bottom: 0.75rem;">
                 <span style="color: var(--text-secondary);">${ {{ _('Naming convention:')|tojson }} }</span>
-                <code style="color: var(--primary-cyan);">${convention}</code>
+                <code style="color: var(--primary-cyan);">${escapeHtml(convention)}</code>
             </div>
             <div style="margin-bottom: 0.5rem;">
                 <span style="color: var(--text-secondary);">${ {{ _('Current filename:')|tojson }} }</span><br>
@@ -1202,6 +1223,21 @@ function renameToScraped(item) {
 let batchRenameItems = [];
 let batchRenameRunning = false;
 let batchRenameCancelled = false;
+// Each run takes a token; a run cancelled and then replaced by a new one
+// sees the token change, stops, and leaves the modal to the new run.
+let batchRunToken = 0;
+
+// List the files a batch could not rename, with the server's reason
+function showBatchFailures(failures) {
+    const box = document.getElementById('batchFailures');
+    const list = document.getElementById('batchFailList');
+    list.replaceChildren(...failures.map(f => {
+        const li = document.createElement('li');
+        li.textContent = f.error ? `${f.name} — ${f.error}` : f.name;
+        return li;
+    }));
+    box.style.display = failures.length ? 'block' : 'none';
+}
 
 // Get currently filtered items with suggestions
 function getFilteredItemsWithSuggestions() {
@@ -1271,7 +1307,10 @@ function closeBatchModal() {
 // Execute batch rename
 async function executeBatchRename() {
     if (batchRenameItems.length === 0) return;
-    
+
+    const items = batchRenameItems.slice();
+    const runToken = ++batchRunToken;
+    const failures = [];
     batchRenameRunning = true;
     batchRenameCancelled = false;
     
@@ -1282,7 +1321,7 @@ async function executeBatchRename() {
     document.getElementById('batchStartBtn').style.display = 'none';
     document.getElementById('batchCloseBtn').style.display = 'none';
     
-    const total = batchRenameItems.length;
+    const total = items.length;
     let success = 0;
     let failed = 0;
     
@@ -1291,10 +1330,10 @@ async function executeBatchRename() {
     document.getElementById('batchFailedCount').textContent = '0';
     document.getElementById('batchRemainingCount').textContent = total;
     
-    for (let i = 0; i < batchRenameItems.length; i++) {
-        if (batchRenameCancelled) break;
+    for (let i = 0; i < items.length; i++) {
+        if (batchRenameCancelled || runToken !== batchRunToken) break;
         
-        const item = batchRenameItems[i];
+        const item = items[i];
         const progress = Math.round(((i + 1) / total) * 100);
         
         // Update current file display
@@ -1306,7 +1345,7 @@ async function executeBatchRename() {
             const response = await fetch('/api/reports/rename-rom', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ game_id: item.game_id, new_name: item.suggested })
+                body: JSON.stringify({ game_id: item.game_id, old_name: item.filename, new_name: item.suggested })
             });
             
             const data = await response.json();
@@ -1320,11 +1359,11 @@ async function executeBatchRename() {
                 }
             } else {
                 failed++;
-                console.error(`Failed to rename ${item.filename}:`, data.error);
+                failures.push({ name: item.filename, error: data.error });
             }
         } catch (error) {
             failed++;
-            console.error(`Error renaming ${item.filename}:`, error);
+            failures.push({ name: item.filename, error: error.message });
         }
         
         // Update counts
@@ -1333,6 +1372,7 @@ async function executeBatchRename() {
         document.getElementById('batchRemainingCount').textContent = total - (i + 1);
     }
     
+    if (runToken !== batchRunToken) return;  // a newer run owns the modal
     batchRenameRunning = false;
     
     // Show completion view
@@ -1346,6 +1386,7 @@ async function executeBatchRename() {
     if (failed > 0) message += ` Failed: ${failed}.`;
     if (batchRenameCancelled) message += ' (Cancelled by user)';
     document.getElementById('batchCompleteMessage').textContent = message;
+    showBatchFailures(failures);
     document.getElementById('batchModalTitle').textContent = '✅ Batch Complete';
     
     // Update UI
@@ -1418,6 +1459,9 @@ function startMismatchBatchRename() {
 async function executeMismatchBatchRename() {
     if (batchRenameItems.length === 0) return;
 
+    const items = batchRenameItems.slice();
+    const runToken = ++batchRunToken;
+    const failures = [];
     batchRenameRunning = true;
     batchRenameCancelled = false;
 
@@ -1428,7 +1472,7 @@ async function executeMismatchBatchRename() {
     document.getElementById('batchStartBtn').style.display = 'none';
     document.getElementById('batchCloseBtn').style.display = 'none';
 
-    const total = batchRenameItems.length;
+    const total = items.length;
     let success = 0;
     let failed = 0;
 
@@ -1436,10 +1480,10 @@ async function executeMismatchBatchRename() {
     document.getElementById('batchFailedCount').textContent = '0';
     document.getElementById('batchRemainingCount').textContent = total;
 
-    for (let i = 0; i < batchRenameItems.length; i++) {
-        if (batchRenameCancelled) break;
+    for (let i = 0; i < items.length; i++) {
+        if (batchRenameCancelled || runToken !== batchRunToken) break;
 
-        const item = batchRenameItems[i];
+        const item = items[i];
         const progress = Math.round(((i + 1) / total) * 100);
 
         document.getElementById('batchCurrentFile').textContent = `Renaming: ${item.filename}`;
@@ -1460,9 +1504,11 @@ async function executeMismatchBatchRename() {
                 if (idx !== -1) mismatchIssues.splice(idx, 1);
             } else {
                 failed++;
+                failures.push({ name: item.filename, error: data.error });
             }
         } catch (error) {
             failed++;
+            failures.push({ name: item.filename, error: error.message });
         }
 
         document.getElementById('batchSuccessCount').textContent = success;
@@ -1470,6 +1516,7 @@ async function executeMismatchBatchRename() {
         document.getElementById('batchRemainingCount').textContent = total - (i + 1);
     }
 
+    if (runToken !== batchRunToken) return;  // a newer run owns the modal
     batchRenameRunning = false;
 
     // Show completion
@@ -1485,6 +1532,7 @@ async function executeMismatchBatchRename() {
     if (failed > 0) message += ` Failed: ${failed}.`;
     if (batchRenameCancelled) message += ' (Cancelled by user)';
     document.getElementById('batchCompleteMessage').textContent = message;
+    showBatchFailures(failures);
     document.getElementById('batchModalTitle').textContent = '✅ Batch Complete';
 
     // Update UI
