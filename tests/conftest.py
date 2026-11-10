@@ -132,6 +132,51 @@ def setup_complete(monkeypatch):
                         lambda: {'setup_completed': True, 'rom_path': '/tmp'})
 
 
+ANON_CSRF = 'anon-csrf-token'
+
+
+@pytest.fixture
+def anon_client(monkeypatch, setup_complete):
+    """A signed-out client whose requests reach the sign-in check.
+
+    Two hooks answer before any route decorator: `validate_csrf` refuses a
+    POST with no token (403), and the first-run setup gate redirects (302)
+    or answers 503. A sign-in test that accepts those passes with the
+    guard deleted (PASS-59-288). This client carries a valid CSRF token on
+    every request and has setup marked done, so the only thing left to
+    refuse a stranger is the route's own guard. Pair it with
+    `assert_sign_in_refused`.
+    """
+    import app as app_module
+    monkeypatch.setitem(app_module.app.config, 'TESTING', True)
+    client = app_module.app.test_client()
+    with client.session_transaction() as sess:
+        sess.pop('user_id', None)
+        sess['_csrf_token'] = ANON_CSRF
+    client.environ_base['HTTP_X_CSRF_TOKEN'] = ANON_CSRF
+    return client
+
+
+@pytest.fixture
+def assert_sign_in_refused():
+    """Check a reply is the sign-in check's own refusal, nothing earlier.
+
+    `services.auth._deny_unauthenticated` answers /api/* with 401
+    "Authentication required" and a page with a redirect to /login.
+    """
+    def _check(resp, path):
+        if path.startswith('/api/'):
+            assert resp.status_code == 401, (
+                f'{path}: expected the sign-in 401, got {resp.status_code} '
+                f'{resp.get_data(as_text=True)[:200]!r}')
+            assert resp.get_json() == {'success': False,
+                                       'error': 'Authentication required'}
+        else:
+            assert resp.status_code == 302, f'{path}: got {resp.status_code}'
+            assert '/login' in resp.headers.get('Location', ''), path
+    return _check
+
+
 ADMIN_STUB_USER = {'id': 1, 'username': 'admin-stub', 'role': 'admin'}
 ADMIN_STUB_CSRF = 'admin-stub-csrf-token'
 

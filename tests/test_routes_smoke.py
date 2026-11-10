@@ -177,20 +177,16 @@ class TestAuthGuards:
         # unauthenticated POST in this file (Pass 57.7 item 6).
         '/api/missing-media-refs/clear',
     ])
-    def test_protected_post_redirects_unauthenticated(self, app_client, path):
+    def test_protected_post_redirects_unauthenticated(self, anon_client,
+                                                      assert_sign_in_refused,
+                                                      path):
         """Write endpoints must reject unauthenticated POSTs. An unauthenticated
         POST to a mutating endpoint is more dangerous than a GET — pin the
-        login_required guard on a sample of them."""
-        resp = app_client.post(path, follow_redirects=False)
-        # Same shape as the GET case: 30x redirect to /login or /setup, or a
-        # 4xx explicit rejection (401/403). Either proves the endpoint isn't
-        # mutating state for unauthenticated callers.
-        assert resp.status_code in (301, 302, 303, 401, 403), \
-            f"Expected auth rejection for POST {path}, got {resp.status_code}"
-        if resp.status_code in (301, 302, 303):
-            location = resp.headers.get('Location', '')
-            assert '/login' in location or '/setup' in location, \
-                f"Expected redirect to /login or /setup for POST {path}, got {location!r}"
+        login_required guard on a sample of them. `anon_client` carries a
+        CSRF token and has setup done, so the refusal checked is the sign-in
+        guard's own, not the CSRF 403 (PASS-59-288)."""
+        resp = anon_client.post(path, follow_redirects=False)
+        assert_sign_in_refused(resp, path)
 
     def test_login_page_accessible(self, app_client):
         resp = app_client.get('/login', follow_redirects=False)
@@ -205,11 +201,10 @@ class TestAuthGuards:
 class TestHLTBSearchAuth:
     """HLTB endpoints should reject unauthenticated POSTs."""
 
-    def test_hltb_search_requires_auth(self, app_client):
-        resp = app_client.post('/api/hltb/search', json={'query': 'test'},
-                               follow_redirects=False)
-        assert resp.status_code in (301, 302, 303, 401, 403), \
-            f"HLTB search should require auth, got {resp.status_code}"
+    def test_hltb_search_requires_auth(self, anon_client, assert_sign_in_refused):
+        resp = anon_client.post('/api/hltb/search', json={'query': 'test'},
+                                follow_redirects=False)
+        assert_sign_in_refused(resp, '/api/hltb/search')
 
 
 class TestLocalSearchInputValidation:

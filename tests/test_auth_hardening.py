@@ -407,33 +407,19 @@ class TestDestructiveEndpointsRequireAuth:
     callers. Paired with the 24.5 source-level check above, this gives
     us a two-level guarantee: the decorator is correct AND it fires."""
 
-    @pytest.fixture(scope="class")
-    def client(self):
-        import app as app_module
-        # Snapshot + restore — monkeypatch is unavailable in class-scoped
-        # fixtures and a bare assignment would leak TESTING=True onward.
-        _orig_testing = app_module.app.config.get('TESTING', False)
-        app_module.app.config['TESTING'] = True
-        try:
-            with app_module.app.test_client() as c:
-                yield c
-        finally:
-            app_module.app.config['TESTING'] = _orig_testing
-
     @pytest.mark.parametrize("path", [
         '/api/delete-game/1',
         '/api/rename-rom/1',
         '/api/delete-screenshot/1',
     ])
-    def test_destructive_endpoint_rejects_unauthenticated(self, client, path):
-        resp = client.post(path, json={}, follow_redirects=False)
-        # editor_required redirects unauthenticated callers to /login.
-        # On fresh CI the setup middleware may steer to /setup instead.
-        assert resp.status_code in (301, 302, 303, 401, 403)
-        location = resp.headers.get('Location', '')
-        assert '/login' in location or '/setup' in location or resp.status_code in (401, 403)
+    def test_destructive_endpoint_rejects_unauthenticated(
+            self, anon_client, assert_sign_in_refused, path):
+        # anon_client gets past the CSRF and setup checks, so only
+        # @editor_required can refuse this (PASS-59-288).
+        resp = anon_client.post(path, json={}, follow_redirects=False)
+        assert_sign_in_refused(resp, path)
 
-    def test_rename_rom_rejects_path_traversal_in_filename(self, client):
+    def test_rename_rom_rejects_path_traversal_in_filename(self):
         """Functional: the safe_filename primitive (which the rename-rom
         route delegates to) must reject path-traversal and separator inputs.
         Stronger than source-grep — this exercises the validator behavior

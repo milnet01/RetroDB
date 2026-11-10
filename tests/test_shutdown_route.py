@@ -92,10 +92,12 @@ def test_shutdown_route_registered():
     assert 'GET' not in methods, 'shutdown must not be reachable by GET'
 
 
-def test_unauthenticated_post_is_rejected(app_client, armed_threads):
-    resp = app_client.post('/api/shutdown', follow_redirects=False)
-    assert resp.status_code in (301, 302, 303, 400, 401, 403), \
-        f'unauthenticated shutdown should be rejected, got {resp.status_code}'
+def test_unauthenticated_post_is_rejected(anon_client, assert_sign_in_refused,
+                                          armed_threads):
+    # anon_client gets past the CSRF and setup checks, so only
+    # @admin_required can refuse (PASS-59-288).
+    resp = anon_client.post('/api/shutdown', follow_redirects=False)
+    assert_sign_in_refused(resp, '/api/shutdown')
     assert armed_threads == [], 'no shutdown must be armed for an anonymous caller'
 
 
@@ -104,8 +106,10 @@ def test_viewer_cannot_shut_the_server_down(viewer_client, armed_threads):
     and crucially arms nothing on the way out."""
     resp = viewer_client.post('/api/shutdown', headers=_csrf(),
                               follow_redirects=False)
-    assert resp.status_code in (301, 302, 303, 400, 401, 403), \
-        f'viewer shutdown should be rejected, got {resp.status_code}'
+    # admin_required's own refusal, not the CSRF 403 (PASS-59-288).
+    assert resp.status_code == 403, resp.get_data(as_text=True)
+    assert resp.get_json()['error'] == \
+        'You do not have permission to perform this action'
     assert armed_threads == [], 'a non-admin must not arm the shutdown'
 
 

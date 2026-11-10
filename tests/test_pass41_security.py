@@ -1064,24 +1064,14 @@ class TestPass41_11BMuseumGetIdempotent:
             "Pass 41.11.B — cleanup endpoint must accept POST"
         )
 
-    def test_admin_cleanup_endpoint_requires_editor(self, monkeypatch):
-        """Functional: anonymous POST to the cleanup endpoint must redirect
-        (302/401/403); a logged-in caller would still need editor role, but
-        anonymous rejection alone proves an auth decorator fired."""
-        import app as app_module
-        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
-        client = app_module.app.test_client()
-        resp = client.post(
-            '/api/museum/cleanup-controller-images',
-            json={}, follow_redirects=False,
-        )
-        # editor_required redirects anonymous to /login (or /setup on a fresh
-        # CI DB). The forbidden outcome is 200 — that would mean no auth
-        # decorator at all.
-        assert resp.status_code in (301, 302, 303, 401, 403), (
-            f"Pass 41.11.B — cleanup endpoint must reject anonymous POST; "
-            f"got {resp.status_code}"
-        )
+    def test_admin_cleanup_endpoint_requires_editor(self, anon_client,
+                                                    assert_sign_in_refused):
+        """Functional: an anonymous POST to the cleanup endpoint gets the
+        sign-in refusal (Pass 41.11.B). anon_client gets past the CSRF and
+        setup checks, so only the route's guard can answer (PASS-59-288)."""
+        path = '/api/museum/cleanup-controller-images'
+        resp = anon_client.post(path, json={}, follow_redirects=False)
+        assert_sign_in_refused(resp, path)
 
 
 # -----------------------------------------------------------------------------

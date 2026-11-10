@@ -485,10 +485,10 @@ class TestPass40_3ArchiveScannerM3u:
         assert 'safe_path(' in body, \
             'batch_create_m3u must validate each path (Pass 40.3)'
 
-    def test_create_m3u_e2e_rejects_outside_rom_path(self, tmp_path, monkeypatch):
+    def test_create_m3u_e2e_rejects_outside_rom_path(self, tmp_path, monkeypatch,
+                                                     admin_test_client):
         """End-to-end: POST to /create-m3u with a path outside rom_path
         must not call scanner.create_m3u_playlist."""
-        import app as app_module
         from routes import tools as tools_mod
 
         rom_root = tmp_path / 'roms'
@@ -516,20 +516,16 @@ class TestPass40_3ArchiveScannerM3u:
         import scraper.rom_tools as rt_mod
         monkeypatch.setattr(rt_mod, 'ArchiveScanner', _FakeScanner)
 
-        monkeypatch.setitem(app_module.app.config, 'TESTING', True)
-        client = app_module.app.test_client()
-        with client.session_transaction() as sess:
-            sess['user_id'] = 1
-
+        # A signed-in admin with a CSRF token and setup done, so the path
+        # check is what answers, not the CSRF 403 or the setup redirect
+        # (PASS-59-288).
+        client, csrf = admin_test_client()
         resp = client.post(
             '/api/rom-tools/archive-scanner/create-m3u',
             json={'path': str(outside)},
+            headers={'X-CSRF-Token': csrf},
         )
-        # Either rejected (400) or auth-blocked (302/403); never reached scanner.
-        # 500 is intentionally excluded — that would be an unhandled error, not
-        # a valid security outcome.
-        assert resp.status_code in (400, 302, 403), \
-            f"unexpected: {resp.status_code}"
+        assert resp.status_code == 400, resp.get_data(as_text=True)
         assert str(outside) not in called_with, \
             'scanner.create_m3u_playlist invoked with out-of-library path'
 

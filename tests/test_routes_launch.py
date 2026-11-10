@@ -32,12 +32,11 @@ def test_launch_routes_registered(app_module, path):
     assert path in rules
 
 
-def test_unauth_launch_returns_401_or_redirect(app_module):
-    """Without a session, POST /api/game/1/launch must be blocked."""
-    client = app_module.app.test_client()
-    rv = client.post('/api/game/1/launch')
-    # login_required short-circuits with a redirect to /login
-    assert rv.status_code in (302, 401, 403)
+def test_unauth_launch_returns_401(anon_client, assert_sign_in_refused):
+    """Without a session, POST /api/game/1/launch gets the sign-in refusal.
+    anon_client gets past the CSRF and setup checks (PASS-59-288)."""
+    path = '/api/game/1/launch'
+    assert_sign_in_refused(anon_client.post(path), path)
 
 
 def test_active_endpoint_unauth_blocked(app_module, setup_complete):
@@ -136,8 +135,11 @@ class TestLaunchEndpointBehavior:
         )
         self._stub_resolver_and_launcher(monkeypatch)
         rv = client.post('/api/game/1/launch', headers=self._csrf_headers())
-        # has_permission('launch') returns False for viewer; route returns 403
+        # has_permission('launch') returns False for viewer; route returns 403.
+        # Check the body too: a CSRF 403 would match the status alone.
         assert rv.status_code == 403
+        assert rv.get_json()['error'] == \
+            'This action requires the "launch" permission'
 
 
 class TestLaunchArgsOverrideNeedsManageSettings:

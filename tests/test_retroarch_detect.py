@@ -128,11 +128,9 @@ def test_validate_cores_dir_rejects_dir_without_cores(tmp_path):
     assert 'error' in info
 
 
-def test_unauth_detect_blocked():
-    """Unauthenticated callers must be redirected/blocked — the auto-detect
-    endpoint runs filesystem probes and must not leak shape info to anonymous
-    visitors."""
-    import app as app_module
-    client = app_module.app.test_client()
-    rv = client.post('/api/settings/retroarch/detect')
-    assert rv.status_code in (302, 401, 403)
+def test_unauth_detect_blocked(anon_client, assert_sign_in_refused):
+    """Unauthenticated callers must be refused — the auto-detect endpoint runs
+    filesystem probes and must not leak shape info to anonymous visitors.
+    anon_client gets past the CSRF and setup checks (PASS-59-288)."""
+    path = '/api/settings/retroarch/detect'
+    assert_sign_in_refused(anon_client.post(path), path)
