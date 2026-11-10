@@ -912,6 +912,7 @@ const PSNTrophyController = (function() {
         setupSort();
         setupAlphabetNav();
         setupInfiniteScroll();
+        setupBulkCardClicks();
         fetchGames(1, false);
     }
 
@@ -947,6 +948,14 @@ const PSNTrophyController = (function() {
             if (filters.search) {
                 const searchInput = document.getElementById('gameSearch');
                 if (searchInput) searchInput.value = filters.search;
+            }
+
+            // Restore the letter button, or drop a letter with no button,
+            // so the grid is never limited by a letter the page doesn't show
+            if (filters.letter) {
+                const letterBtn = document.querySelector('.alphabet-btn[data-letter="' + CSS.escape(String(filters.letter)) + '"]');
+                if (letterBtn) letterBtn.classList.add('active');
+                else delete filters.letter;
             }
         } catch(e) {}
     }
@@ -1035,6 +1044,7 @@ const PSNTrophyController = (function() {
         const totalGames = window.PSN_TOTAL_GAMES || 0;
         if (totalGames < 20) {
             nav.style.display = 'none';
+            clearLetterJump();
             return;
         }
 
@@ -1141,6 +1151,7 @@ const PSNTrophyController = (function() {
         } catch (err) {
             if (err.name === 'AbortError') return;
             console.error('Failed to fetch PSN games:', err);
+            showFetchError(page, append);
         } finally {
             if (currentFetchController === controller) {
                 isLoading = false;
@@ -1148,6 +1159,32 @@ const PSNTrophyController = (function() {
                 if (loadingEl) loadingEl.style.display = 'none';
             }
         }
+    }
+
+    // A failed page load shows a message with a Retry button. The scroll
+    // trigger is not re-armed here: it would fire again at once and loop.
+    function showFetchError(page, append) {
+        const grid = document.getElementById('gamesGrid');
+        if (!grid) return;
+        grid.querySelector('.psn-fetch-error')?.remove();
+        const row = document.createElement('div');
+        row.className = 'psn-fetch-error';
+        row.setAttribute('role', 'alert');
+        row.style.gridColumn = '1 / -1';
+        row.style.textAlign = 'center';
+        row.style.padding = '2rem';
+        const msg = document.createElement('p');
+        msg.textContent = {{ _('Could not load games.')|tojson }};
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn btn-secondary btn-sm';
+        btn.textContent = {{ _('Retry')|tojson }};
+        btn.addEventListener('click', () => {
+            row.remove();
+            fetchGames(page, append);
+        });
+        row.append(msg, btn);
+        grid.appendChild(row);
     }
 
     function resetAndFetch() {
@@ -1169,6 +1206,7 @@ const PSNTrophyController = (function() {
         if (!grid) return;
         if (!append) grid.innerHTML = '';
 
+        grid.querySelector('.psn-fetch-error')?.remove();
         const fragment = document.createDocumentFragment();
         games.forEach(game => {
             fragment.appendChild(renderGameCard(game));
@@ -1227,7 +1265,7 @@ const PSNTrophyController = (function() {
                                 ? '<span class="sync-status-badge synced" title="Individual trophies synced">✓</span>'
                                 : '<span class="sync-status-badge not-synced" title="Trophy details not synced">○</span>') +
                         '</div>' +
-                        '<span class="psn-platform-badge platform-' + platformLower + '">' + escapeHtml(game.platform) + '</span>' +
+                        '<span class="psn-platform-badge platform-' + escapeHtml(platformLower) + '">' + escapeHtml(game.platform) + '</span>' +
                     '</div>' +
                     '<div class="psn-trophy-game-progress">' +
                         '<div class="progress-track">' +
@@ -1330,11 +1368,6 @@ const PSNTrophyController = (function() {
             if (bulkModeText) bulkModeText.textContent = 'Cancel';
             bulkActionBtns.forEach(btn => btn.style.display = 'inline-flex');
             document.querySelectorAll('.bulk-select-checkbox').forEach(cb => cb.style.display = 'block');
-
-            // Prevent links from navigating in bulk mode
-            document.querySelectorAll('.psn-trophy-game-card').forEach(card => {
-                card.addEventListener('click', handleCardClick);
-            });
         } else {
             exitBulkMode();
         }
@@ -1358,24 +1391,26 @@ const PSNTrophyController = (function() {
         document.querySelectorAll('.game-checkbox').forEach(cb => cb.checked = false);
         document.querySelectorAll('.psn-trophy-game-wrapper').forEach(w => w.classList.remove('selected'));
 
-        document.querySelectorAll('.psn-trophy-game-card').forEach(card => {
-            card.removeEventListener('click', handleCardClick);
-        });
-
         updateSelectedCount();
     }
 
-    function handleCardClick(e) {
-        if (bulkMode) {
+    // One delegated handler on the grid, so cards loaded by infinite
+    // scroll after Select was pressed also select instead of navigating.
+    function setupBulkCardClicks() {
+        const grid = document.getElementById('gamesGrid');
+        if (!grid) return;
+        grid.addEventListener('click', (e) => {
+            if (!bulkMode) return;
+            const card = e.target.closest('.psn-trophy-game-card');
+            if (!card || !grid.contains(card)) return;
             e.preventDefault();
-            const wrapper = e.currentTarget.closest('.psn-trophy-game-wrapper');
-            const npwrId = wrapper.dataset.npwrId;
-            toggleGameSelection(npwrId);
-        }
+            const wrapper = card.closest('.psn-trophy-game-wrapper');
+            if (wrapper) toggleGameSelection(wrapper.dataset.npwrId);
+        });
     }
 
     function toggleGameSelection(npwrId) {
-        const wrapper = document.querySelector('.psn-trophy-game-wrapper[data-npwr-id="' + npwrId + '"]');
+        const wrapper = document.querySelector('.psn-trophy-game-wrapper[data-npwr-id="' + CSS.escape(String(npwrId)) + '"]');
         const checkbox = wrapper?.querySelector('.game-checkbox');
 
         if (selectedGames.has(npwrId)) {
