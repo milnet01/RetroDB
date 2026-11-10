@@ -297,7 +297,7 @@
         <div class="form-group">
             <label for="romsPath">{{ _('Default ROMs Path') }}</label>
             <div class="path-input-row">
-                <input type="text" class="form-input" id="romsPath" value="{{ settings.roms_path }}" placeholder="/mnt/Games/ROMS">
+                <input type="text" class="form-input" id="romsPath" value="{{ settings.roms_path }}" placeholder="{{ defaults.roms_path }}">
                 {{ browse_button('romsPath', 'folder') }}
             </div>
             <p class="form-help">{{ _('Base directory for scanning ROMs') }}</p>
@@ -458,7 +458,7 @@ function renderUnwantedPatterns() {
     const sorted = [...unwantedPatterns].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
     container.innerHTML = sorted.map(pattern => `
         <span class="tag">
-            ${pattern}
+            ${escapeHtml(pattern)}
             <button type="button" class="remove-tag btn-bare" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', pattern))}" data-pattern="${escapeHtml(pattern)}" data-on-click="removeUnwantedPattern" data-args="${actionArgs('$this.dataset.pattern')}" title="${escapeHtml({{ _('Remove')|tojson }})}">×</button>
         </span>
     `).join('');
@@ -497,7 +497,7 @@ function renderExcludedPaths() {
     const sorted = [...excludedPaths].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
     container.innerHTML = sorted.map(path => `
         <span class="tag">
-            ${path}
+            ${escapeHtml(path)}
             <button type="button" class="remove-tag btn-bare" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', path))}" data-path="${escapeHtml(path)}" data-on-click="removeExcludedPathSetting" data-args="${actionArgs('$this.dataset.path')}" title="${escapeHtml({{ _('Remove')|tojson }})}">×</button>
         </span>
     `).join('');
@@ -585,18 +585,21 @@ document.getElementById('settingsForm').addEventListener('submit', async functio
 
 function resetDefaults() {
     showConfirm('🔄 ' + {{ _('Reset Settings')|tojson }}, {{ _('Reset all ROM Tools settings to defaults?')|tojson }}, function() {
-        document.getElementById('romsPath').value = '/mnt/Games/ROMS';
-        document.getElementById('tempPath').value = '';
-        document.getElementById('chdmanPath').value = 'chdman';
-        unwantedPatterns = ['.txt', '.nfo', '.diz', '.url', '.html', '.htm', '.sfv', '.png', '.jpg', '.jpeg', '.gif', '.scr'];
+        // The server's own defaults (routes/tools.rom_tools_defaults), so the
+        // ROM path is this computer's, on any system (PASS-59-285).
+        const d = {{ defaults|tojson }};
+        document.getElementById('romsPath').value = d.roms_path || '';
+        document.getElementById('tempPath').value = d.temp_path;
+        document.getElementById('chdmanPath').value = d.chdman_path;
+        unwantedPatterns = [...d.unwanted_patterns];
         renderUnwantedPatterns();
-        excludedPaths = [];  // No default excluded paths
+        excludedPaths = [...d.excluded_paths];
         renderExcludedPaths();
-        document.getElementById('chdVerifyAfter').checked = true;
-        document.getElementById('chdDeleteOriginals').checked = false;
-        document.getElementById('chdSkipExisting').checked = true;
-        document.getElementById('ignoreRegionTags').checked = true;
-        document.getElementById('includeArchives').checked = false;
+        document.getElementById('chdVerifyAfter').checked = d.chd_verify_after_convert;
+        document.getElementById('chdDeleteOriginals').checked = d.chd_delete_originals;
+        document.getElementById('chdSkipExisting').checked = d.chd_skip_existing;
+        document.getElementById('ignoreRegionTags').checked = d.ignore_region_tags;
+        document.getElementById('includeArchives').checked = d.include_archives;
     });
 }
 </script>

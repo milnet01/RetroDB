@@ -104,10 +104,10 @@ def _guarded_worker(task, body):
 # HELPER FUNCTIONS
 # =============================================================================
 
-def load_rom_tools_config():
-    """Load ROM Tools configuration from JSON file"""
-    config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'rom_tools_config.json')
-    defaults = {
+def rom_tools_defaults():
+    """The ROM Tools settings before any save: what the page's Reset restores
+    (PASS-59-285: it kept its own copy, with a Linux-only ROM path)."""
+    return {
         'roms_path': _get_rom_path(),
         'output_path': '',
         'temp_path': '',  # PASS-59-119 — empty: staging goes under data/
@@ -126,7 +126,13 @@ def load_rom_tools_config():
         'ignore_region_tags': True,
         'include_archives': False
     }
-    
+
+
+def load_rom_tools_config():
+    """Load ROM Tools configuration from JSON file"""
+    config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'rom_tools_config.json')
+    defaults = rom_tools_defaults()
+
     try:
         if os.path.exists(config_path):
             with open(config_path, 'r') as f:
@@ -247,7 +253,8 @@ def rom_tools_settings():
     """ROM Tools Settings page"""
     settings = load_rom_tools_config()
     tool_status = check_rom_tools_availability()
-    return render_template('rom_tools_settings.html', settings=settings, tool_status=tool_status)
+    return render_template('rom_tools_settings.html', settings=settings, tool_status=tool_status,
+                           defaults=rom_tools_defaults())
 
 
 # =============================================================================
