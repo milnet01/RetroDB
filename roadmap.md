@@ -10,974 +10,33 @@ identified in successive reviews (2026-04-21 onwards). Items are ordered so
 that earlier passes establish the patterns used by later ones (service-layer
 carve-outs, response helpers, etc.).
 
-> **Find a specific pass:** `grep -nE "^#### Pass [0-9]+(\.[0-9]+)?(\.[A-Z])?" roadmap.md` lists every pass with its line number. For free-text search use `git log --grep "Pass 41.6"` or `grep "FU.2" roadmap.md`.
+> **Find an item:** every item starts with its id in brackets, so `grep -n "PASS-59-113" roadmap.md` finds it. For history use `git log --grep "PASS-59-113"`.
 
 ## Table of contents
 
-- [§ Active](#active) — open work, grouped by theme
-- [§ Doc-sweep history](#cold-eyes-2026-05-18-doc-sweep-history) — meta-log of cold-eyes / indie-review sessions
-- [§ Done index](#done-index) — landed passes, organised by shipped version
-- [§ Scope notes — considered and dropped](#scope-notes--considered-and-dropped) — work explicitly excluded
-- [§ Audit hygiene](#audit-hygiene) — why audit findings are triaged here, and where the portable recommendations live
-- [§ Periodic Independent Review](#periodic-independent-review) — cadence and procedure for the multi-agent audit
-- [§ Notes](#notes) — standing conventions for working this file
+Open work, by the version it ships in:
 
-Each item lists:
-- **Target** — file(s) and approximate line range / LOC
-- **Why** — the specific issue (oversized function, duplicated logic, mixed
-  concerns, long conditional chain)
-- **Plan** — concrete extraction target: new file, class/function name, what
-  moves where
-- **Est. reduction** — rough LOC delta in the source file
-- **Status** — `todo` / `in-progress` / `done`
+- [4.0.0 — The last web version](#400--the-last-web-version) — the PASS-59-113 plan and every fix before release
+- [4.0.x — Security and data-loss fixes](#40x--security-and-data-loss-fixes-for-the-web-version) — the web version after 4.0.0
+- [4.x.0 — The desktop and Android app](#4x0--the-desktop-and-android-app-piece-by-piece) — new features, built in the native app
+- [5.0.0 — The full desktop app](#500--the-full-desktop-app) — the native app does everything
+- [Ideas, not planned](#ideas-not-planned) — considered or dropped
 
-Open items are grouped by theme below. The 2026-04-24 Tier-1 indie-review
-sweep (Pass 40) is fully landed (v3.4.1 → v3.5.0) — current highest-priority
-active work is the FU.x follow-up chain (CSP enforcing, srcset, WebP
-migration), the Pass 38.1 hybrid-scraper fallback-loop carve-out, and the
-Pass 47.x fundraising-platform chain.
+Reference:
 
-The compact "Done index" near the bottom lists landed passes by version —
-detail lives in git history (`git log --grep "Pass NN"`).
+- [Done index](#done-index) — landed passes up to 3.6.x, by version
+- [Scope notes — considered and dropped](#scope-notes--considered-and-dropped)
+- [Audit hygiene](#audit-hygiene)
+- [Periodic Independent Review](#periodic-independent-review) — cadence and procedure for the multi-agent audit
+- [Notes](#notes) — standing conventions for working this file
 
-See "Scope notes — considered and dropped" for items deliberately excluded,
-and "Periodic Independent Review" at the very end for the cadence on
-re-running the multi-agent audit that surfaces new passes.
+Finished items follow, one block per release from 3.4.1, then "Shipped,
+version not known". The notes from the old "Active" section are in
+[docs/history/roadmap-old-active-notes.md](docs/history/roadmap-old-active-notes.md).
 
----
+## 4.0.0 — The last web version
 
-<a id="active"></a>
-
-## Active
-
-Grouped by theme. Within each theme, items ordered by priority (CRITICAL →
-HIGH → MEDIUM → LOW). The 2026-04-24 indie-review Tier-1 sweep (Pass 40)
-fully landed. FU.2 (grid-card srcset, v3.6.18) and FU.3 (WebP migration,
-v3.6.19) have also landed; the remaining top-priority work is FU.1 phase B/C
-(flip CSP from report-only to enforcing and remove `unsafe-inline`), the
-Pass 38.1 hybrid-scraper fallback-loop carve-out, and the Pass 47.x
-fundraising-platform chain.
-
-<a id="doc-sweep-history"></a>
-
-### Cold-eyes 2026-05-18 (doc-sweep history)
-
-> Docs reviewed: 12. Reviewer lanes: 7 (contracts / design-standards /
-> ops-install / roadmap-active / roadmap-history / dev-hygiene / spec-gaps).
-> Loops to clean: 2. Findings fixed: 30 verified + 8 new spec docs authored.
-> Audit trail; not actionable open work — see git log around 2026-05-18
-> for per-file diffs.
-
-Full `/cold-eyes` documentation sweep with parallel per-lane reviewers,
-all severities folded in, two verify loops to convergence.
-
-- **CLAUDE.md** — 8 fixes: showConfirm/showModal definition site (`templates/base.html` not utils/main/toast/game-modals); EXCLUDE_FILES list rewrite (full set + `data/.secret_key` + INCLUDE_IMAGE_DIRS semantics); STAGING_DIR default path; "22 sections" → "25 sections"; lockfile-hashes "MUST" softened to "prefers, falls back"; `/ultrareview` annotated as Claude Code skill; `data-sticky-scope` claim removed (not implemented); `getThemedIcon` location corrected to `static/js/toast-controller.js`; `--break-system-packages` made cross-platform-conditional.
-- **README.md** — 5 fixes: Python floor 3.8 → 3.10; system count 277 → 150+ (verified against `config.py`); Cathedral display ↔ `christian` token mapping documented; backup-on-update list expanded; end-user-vs-dev install ambiguity resolved.
-- **CONTRIBUTING.md** — 5 fixes: Python floor 3.8 → 3.10; `YOUR_USERNAME` placeholder annotated; relative link `docs/RETRODB_DESIGN_STANDARDS.md` corrected; stale 60-line architecture tree replaced with one-line `ls`-pointer; CI checklist expanded (pip-audit + lockfile-drift).
-- **LEGAL.md** — 2 fixes: LICENSE pointer added at top; PSN URL added.
-- **docs/STANDARDS_ADDENDUM.md** — 3 fixes: stale `1.20.1` example refreshed to `3.6.14`; "MAJOR.FEATURE.PATCH" → "MAJOR.MINOR.PATCH"; "5 log categories" → "4" (`system` dropped per Pass 41.3.C); "should be incorporated" TODO banner removed.
-- **docs/RETRODB_DESIGN_STANDARDS.md** — 9 fixes: §13 `showToast` → `showNotification`; §20 `main-new.css` → `main.css` (3 sites) + `CSS_ORDER` clarified as canonical; §16 `system-type-badge` declared canonical (legacy `.system-type-tag` flagged); §21 changelog date format `YYYY/MM/DD` → `YYYY-MM-DD`; §6.3 `--bg-darker` → `--bg-dark`, `--border-color` → `--card-border` (real CSS vars); §20 `launch-indicator.css` added to inventory; §8 step 7 "rebuild bundle" corrected (`theme.js` not bundled).
-- **docs/PROXY-DEPLOY.md** — 4 fixes: `main.py` → `app.py` (broken on copy-paste); port `8765` → `5000` (4 sites); `app.py:153` line-number anchor replaced with symbol name; `MAX_UPLOAD_BYTES` vs `client_max_body_size` warning added.
-- **docs/ROM_NAMING_STANDARD.md** — 4 fixes: `article_placement` setting caveat added to Core Principle 1; edition-vs-publisher parser-caveat added; region table annotated as curated subset; M3U template `{}` notation reconciled with the rest of the doc.
-- **docs/README.md** — replaced root-README duplicate with a proper docs-folder index pointing at the 8 new specs.
-- **audit_hygiene.md** — 4 fixes: "13 upstream rules" → "14" (`.semgrep.yml:34` also fixed); line-range "40-80" → grep-anchor pattern; "lines 18-34" → grep-anchor; mypy marked CI-only; §3 and §4 marked "Proposed — not yet implemented".
-- **roadmap.md** — 7 fixes: `/mnt/Emulators/` → `/mnt/Games/` in §How-to-run reviewer brief (was sending 14 agents to wrong path); `services/security.py` path fix in §How-to-run partition; Pass 39.6 status-path narrative rewritten with the 2026-05-08 hub-move context; Done-index intro adds "pass numbers reflect planning order" + "LOC numbers are at-landing" notes; Pass 41.13 status sub-letter labels fixed (B is HIGH not MEDIUM); Pass 41.5b → 41.5.B and Pass 41.13c → 41.13.C (consistent suffix convention); new `### v3.5.x — Tier-2 hardening` + `### v3.6.x — multi-emulator launch + audits` Done-index rollup blocks added covering ~60 passes that had landed but were missing from the index.
-- **.semgrep.yml** — 1 fix: "13 excludes" → "14" in the Verified-2026-04-21 header note.
-- **New specs authored** — 8 files in `docs/specs/` covering subsystems that had no contract doc: `jobs.md` (background-job lifecycle, singleton-lock contract, recovery, toast-UI contract), `scrapers.md` (hybrid orchestration, fill-only invariant, COALESCE pattern, source inventory), `auth.md` (roles, permission matrix, per-user partitioning, session model, CSRF), `settings.md` (5-store layering + precedence + atomic-write contract), `api-contracts.md` (envelope, ETag, gzip, rate-limit buckets, status-code policy), `image-pipeline.md` (ESRGAN + Lanczos + WebP variants + dedup + ROCm trap), `migrations.md` (runner + numbering + backup + rollback), `themes.md` (full theme contract: CSS layer + JS ThemeManager + canvas effects + themed icons + FOUC prevention).
-- **CSRF exempt-set duplication** — `auth.md` declared canonical owner; `api-contracts.md §9.1` now points at it instead of listing the set independently.
-- **MCP feedback** — captured in `/mnt/Games/Scripts/Linux/RetroDB_Ants_MCP_Feedback.md` (appended to the existing test-audit feedback). Two HIGH suggestions: case-insensitive contract-name matching in `cold_eyes_partition` + `project_layout`; `data/changelog.yaml` recognition alongside `CHANGELOG.md`. One correctness call-out: `cold_eyes_partition` summary field mentioned files not in `doc_paths`.
-- **Source**: cold-eyes-2026-05-18 docs sweep.
-
-#### Cold-eyes 2026-05-18 sweep #2
-
-Second full `/cold-eyes` sweep on the same day after the 2026-05-18 #1
-landed — driven by user request to re-cover all lanes after the FU.x
-follow-up chain shipped (v3.6.18 / v3.6.19 / v3.6.20). Two loops to
-convergence. 20 doc files edited; ~100 findings across all severities
-verified and fixed in-place. Per-doc highlights:
-
-- **CLAUDE.md** — 7 fixes: DB path corrected (`database/roms.db` not
-  `data/retrodb.db`); `/ultrareview` glossed inline; staging-binary
-  description corrected; theme list rewritten "display-name first"; the
-  hard-coded `/home/ants/Pictures/` operator path removed; `background`
-  themed-icon bucketed under job-states; theme list deduplicated.
-- **README.md** — 3 fixes: backup-on-update list expanded into
-  three-thing list (database/data/config); new "Deployment" section
-  pointing at `docs/PROXY-DEPLOY.md`; theme naming order canonicalised
-  to "Cathedral (`christian` internal key)".
-- **CONTRIBUTING.md** — 5 fixes: clone URL rewritten with upstream +
-  fork variants; Python-version row delegated to README; `database/roms.db`
-  delete now carries a backup-first warning + `RETRODB_DB_PATH` alternative;
-  `30 route files at time of writing` snapshot removed; CI checklist
-  rewritten as full blocking-list (six checks, every one hard-fail).
-- **SECURITY.md** — 1 fix: "thank-you in CONTRIBUTING.md" promise rewritten
-  to "Credit in the changelog (unless you ask to remain anonymous)".
-- **LEGAL.md** — 2 fixes: trademark list annotated as illustrative;
-  duplicate closing License section removed.
-- **roadmap.md** — 6 fixes: TOC + grep recipe added at top; `<a id="…">`
-  anchors added; `Pass 41.6.A-extend` renamed to `Pass 41.6.D`; lowercase
-  `41.13c` survivor → `41.13.C`; §Active opener rewritten; v3.6.18 / 19 / 20
-  added to v3.6.x rollup; Cold-eyes 2026-05-18 #2 entry added (this block);
-  doc-sweep meta heading restructured + emoji dropped.
-- **docs/RETRODB_DESIGN_STANDARDS.md** — 6 fixes: §22 X-XSS-Protection
-  line replaced with "intentionally not set" + rationale; §20 CSS tree
-  added `themes.css` + `fonts.css` to `core/`; §22 CSP "Future
-  recommendation" replaced with FU.1-in-progress note; §23 partials/macros
-  rewritten in present tense (real dirs); status vs neon colour tokens
-  split into distinct token families with explicit guidance on which
-  controls which; standalone doc-version footer dropped.
-- **docs/STANDARDS_ADDENDUM.md** — 2 fixes: stale `3.6.14` / `2026-05-17`
-  example replaced with `X.Y.Z` / `YYYY-MM-DD` placeholders; §16 → §17
-  changelog-tags anchor fix.
-- **docs/specs/api-contracts.md** — 8 fixes: 202 row now reserved /
-  not-currently-emitted; 422 row marked aspirational + new §3.2 describes
-  the legacy auth-validator shape; bulk-scrape paths corrected to
-  hyphen-not-slash form; `/ready` shape documented with `str(e)` carve-out;
-  §1 cross-reference dropped the wrong §10 claim; CSP table row updated
-  to FU.1 chain; `_rate_limit` "in addition to" wording; CSRF "HMAC-equivalent"
-  rewritten as "per-session random token, constant-time compared".
-- **docs/specs/auth.md** — 5 fixes: §11 cross-reference corrected to
-  api-contracts.md + §22; §9 change-password bucket now names the shared
-  `_login_attempts` OrderedDict + LRU eviction; §9 force-change rate-limit
-  justification rewritten with explicit carve-out condition;
-  `TestPass45_1*` glob replaced with exact class name; §3 viewer line
-  rewritten; admin_required/editor_required asymmetric-on-`/api/*` warning
-  callout added; §8 PBKDF2 legacy format shown side-by-side.
-- **docs/specs/image-pipeline.md** — 5 fixes: FU.2 + FU.3 "deferred"
-  paragraphs rewritten as "v3.6.18/19 landed" with contract detail;
-  new §12.1 `WebPMigrateJob` section documenting worklist (`_SOURCES` +
-  `_CONVERTIBLE_EXTS = {.jpg, .jpeg, .png}`), per-file order, disk-space
-  precheck (runs inside `_run()`, not `start()`), resume by adopting
-  existing `.webp` siblings; format-decision table cleaned (non-image
-  rows replaced with prose note); §11 `rom_tools.py` line numbers
-  replaced with grep recipe; §3 `MAX_IMAGE_PIXELS` clarified as
-  process-global singleton (import-order-dependent); §12 `ImageResizeJob`
-  failure-handling bullet added.
-- **docs/specs/jobs.md** — 8 fixes: §2 inventory "Ten singletons" →
-  "Eleven singletons" + new `WebPMigrateJob` row; TL;DR count updated;
-  §4 `_retry_on_locked` "5×" → "3× by default; progress + commit override
-  to 5×"; §5 lock table de-collapsed into per-singleton rows; §6 magic
-  300 s → `FETCH_TIMEOUT = 300` named constant; §8 candidate list
-  enumerated + `webp_migrate_job` carve-out called out; §8 resume-class
-  count corrected (seven) and the four non-resuming jobs named; §13
-  invariant 1 softened (counter reads under lock, derived fields can be
-  inside the same `with`); §11 step 4 `getTypeFromKey` → `getTypeConfig`;
-  §6/§13 Pass 41.6 sub-letter cites replaced with prose pointers.
-- **docs/specs/migrations.md** — 7 fixes: §6 explicit callout for
-  migration 012's inline `conn.commit()` + the crash-window semantics
-  (rewritten to match runner code precisely); §3 quoted error string;
-  §10 `_add_column_if_missing` strict helper required for new migrations;
-  §11 smoke-test command rewritten with `config.DB_PATH` + four boot
-  PRAGMAs; §13 heading rename; §13 migration 012 row caveat; §4 Pass 41.2
-  narrative rewritten with worked-exception framing; `_foreign_key_count`
-  helper home clarified (per-migration local in 011, not in `_helpers.py`).
-- **docs/specs/scrapers.md** — 6 fixes: §2 AI key names corrected to
-  `ai_*` prefix; §2 RAWG key clarified (`rawg` JSON, `RAWG_API_KEY` fallback);
-  §5 fill-only invariant split into "scraper UPDATEs" (COALESCE) vs
-  "AI Fill" (bare `field = ?` + `should_apply` filter) with audit-column
-  exception called out; §3 fallback breaker list narrowed to actual five
-  sources; §4 `user_score` FIELD_SOURCES row corrected (rawg → igdb →
-  screenscraper → ai); §4 `save_type` carve-out described (`['manual']`
-  sentinel); §6 priority-boost formula rewritten.
-- **docs/specs/settings.md** — 9 fixes: explicit blockquote that
-  `settings_manager.py` lives at project root (no `services.` prefix);
-  §322 line citation; "Convention (not enforced by code)" framing for
-  the validators-at-route-layer rule; six-tab partial paths replacing
-  stale `templates/settings.html`; `static/js/settings-page.js` /
-  `emulators-settings.js` replacing non-existent `static/js/settings.js`;
-  canonical test home `tests/test_launch_settings_validators.py` (not
-  `test_settings_validators.py`); `validate_rom_tools_value` testability
-  entry added; `_deep_merge` list-replacement caveat; store-count
-  reconciled to six (matches table).
-- **docs/specs/themes.md** — 5 fixes: theme picker path corrected to
-  `templates/_settings_tabs/library.html`; "Elite 1984" → "Elite"
-  canonicalised across §2 / §8 / §10; `26 keys` → "see §7 category table";
-  last "See also" path updated.
-- **docs/PROXY-DEPLOY.md** — 5 fixes: opener softened ("required when
-  behind a proxy"); ProxyFix multi-hop note now acknowledges patch-every-upgrade
-  burden + env-var feature-request pointer; upload-limits cite corrected
-  to `config.py` (was `app.py`); pass-ID anchor genericised; Related-section
-  grep pointer instead of bare ID.
-- **docs/ROM_NAMING_STANDARD.md** — 7 fixes: M3U folder/M3U structure
-  example rewritten with `(USA)` tags everywhere consistent (top, middle,
-  table); disc-file naming rule clarified (folder + M3U must agree, disc
-  base names free); region table annotated against `region_re` actual
-  allowlist; validation-rules list extended with issue codes; meta-apology
-  parenthetical deleted; archive-scanner staging folder corrected to
-  hard-coded `tempfile.gettempdir()/retrodb_m3u_staging` (not configurable);
-  Systems Classification points at `services.game_utils::get_system_type`;
-  standalone version + date footer dropped.
-- **docs/README.md** — 1 fix: `docs/requirements.txt` description corrected
-  (historical copy of project deps, not docs-build deps).
-- **audit_hygiene.md** — 1 fix: "0 actionable findings" claim dated +
-  "verify before quoting" disclaimer added.
-- **Source**: cold-eyes-2026-05-18 sweep #2 (post-FU.x).
-
-#### Cold-eyes 2026-05-18 #2 — deferred items folded into roadmap
-
-The sweep surfaced several items the cold-eyes skill flags as code-side
-(out of scope for a docs-review skill) or as known follow-up gaps. They
-are tracked here so the next pass picks them up:
-
-- **`services/jobs/base.py::request_shutdown` candidate list** — does
-  not include `webp_migrate_job` today, so SIGTERM mid-WebP-migration
-  doesn't actively cancel the job (relies on `mark_jobs_interrupted` +
-  user-driven re-run on next boot). Decide: add `webp_migrate_job` to
-  the candidate list (active cancel on SIGTERM), or document the carve-out
-  in the spec as intentional. Spec currently documents the carve-out.
-- **`services/jobs/base.py:270` code comment** — says `data/job_locks/`
-  but the resolved path is `database/job_locks/`. Stale code comment.
-- **`services/jobs/base.py:375` resume-helpers docstring** — says "Six
-  job classes" but grep across `services/jobs/*.py` for
-  `def resume_from_params` returns seven. Doc on the spec side now says
-  seven; sync the code-side docstring.
-- **`tests/test_migrations.py:351-353`** — comment encodes the inverted
-  boot order (`ensure_user_tables` after `init_database`). The test
-  passes because it manually skips `ensure_user_tables`, but the comment
-  contradicts `app.py:1545-1546`. Update the comment.
-- **`build_dist.py:38-40` `STAGING_DIR` default** — still points at the
-  retired `/mnt/Storage/Scripts/Linux/Staging_Area/RetroDB` drive. The
-  env-var override (`RETRODB_STAGING_DIR`) covers production use, but the
-  default is dead. Bump the default to the current `/mnt/Games/…` path
-  or to a portable home-dir fallback.
-- **`services/jobs/webp_migrate.py` disk-space precheck position** —
-  precheck runs inside `_run()` after the worker spins, so `start()`
-  returns `success: True` even when the precheck will fail. Move the
-  precheck into `start()` so the user sees the refusal synchronously.
-- **`scraper/rom_tools.py:804`** — `extract_folder.rglob(...)` runs
-  without the `_safe_under_root` guard the other rglob sites carry. The
-  root is a tempdir (not user-controlled) so the risk is bounded, but
-  the invariant should explicitly cover this case (either guard it or
-  document the carve-out).
-- **`retrodb.spec:96` vs `build_dist.py:77` `INCLUDE_IMAGE_DIRS`** — the
-  PyInstaller spec bundles `static/images/controllers/` into standalone
-  builds; the source ZIPs omit it. Decide whether controller images
-  ship with both shapes (add to `INCLUDE_IMAGE_DIRS`) or neither (drop
-  from `retrodb.spec`).
-  - *Resolved (2026-08-06)*: dropped from the spec — `controllers/` was
-    removed from `retrodb.spec` in v3.6.29 (`38d0940`), so neither shape
-    ships it. The `build_dist.py` cite has also drifted:
-    `INCLUDE_IMAGE_DIRS` is now at `build_dist.py:91`. (Pass 57.10)
-- **`templates/base.html` line cite for `<meta name="csrf-token">`** —
-  `api-contracts.md` cites lines 340-352 (the fetch patch); the meta tag
-  itself is at line 27. Minor — refine the cite.
-- **`docs/specs/auth.md` — no TOC** on a 508-line spec; same for several
-  other specs >300 lines. Token-tax for LLM implementers; add anchor lists.
-- **`CLAUDE.md` — no TOC** on a 191-line file with 7 H2s.
-- **`atomic_write_bytes` vs `atomic_write_text` clarification** — the
-  settings spec describes `.secret_key` write semantics as going through
-  `atomic_write_bytes(..., mode=0o600)`; the actual call is
-  `atomic_write_text(..., mode=0o600)` at `app.py:118-119`, and
-  `atomic_write_bytes` itself defaults to `0o644`. Spec wording needs
-  a final pass.
-
-- **Source**: cold-eyes-2026-05-18 sweep #2.
-
-### Carry-overs from landed passes
-
-- 💭 [PASS-12-5] **— FTS5 virtual table for `games.title` + `alternate_titles` (MEDIUM, L)**
-  - **Target**: search endpoints (`routes/games_search.py::api_games_find`
-    and similar), plus filter pages doing `WHERE title LIKE '%q%'`.
-  - **Why**: `LIKE '%q%'` on a 10k-row games table with no index is an
-    O(N) scan every time.  SQLite FTS5 with a porter tokeniser brings
-    this to sub-20 ms on the same dataset.
-  - **Plan**:
-    1. Define a virtual table `games_fts(title, alternate_titles, content='games', content_rowid='id')`.
-    2. Populate from `games` and keep in sync via INSERT/UPDATE/DELETE triggers.
-    3. Replace `WHERE title LIKE` with `WHERE id IN (SELECT rowid FROM games_fts WHERE games_fts MATCH ?)`.
-  - **Caveat**: FTS5 doesn't replace prefix LIKE for all cases (autocomplete,
-    substring mid-word).  Keep LIKE where required.
-  - **Source**: <https://www.sqlite.org/fts5.html>
-  - **Status**: deferred — L-sized; gated on a benchmark run that confirms
-    `WHERE title LIKE '%q%'` is actually the hot path on a realistic
-    10k-row library.  `RETRODB_SLOW_QUERY_MS=100` (Pass 12.4) is the
-    instrument to collect that data.
-  Kind: implement.
-
-- 💭 [PASS-14-2] **— Gradual type hints on high-risk modules (LOW, L)**
-  - **Target**: `scraper/metadata_merger.py`, `services/game_query.py`,
-    `routes/games.py`.
-  - **Why**: largest / most-called modules in the codebase. Type hints on
-    function signatures make IDE autocomplete and `mypy` checks meaningful.
-    Currently the codebase has ~0% type coverage.
-  - **Plan**: adopt one module at a time.  Start with signatures (`-> dict`,
-    `-> list[dict]`, `int | None`) then internal variables only where
-    they help.  Add `mypy` as a CI-only check (not pre-commit) with
-    `--ignore-missing-imports`.
-  - **Status**: deferred (LOW priority, L sized — its own pass)
-
-  ---
-  Kind: implement.
-
-### Pass 56 — Language expansion: eleven new locales (2026-07-05)
-
-> Source: user request 2026-07-05 — "since I am South African, please add these
-> languages: Afrikaans, Zulu, Xhosa … also Dutch, Norwegian, Russian … Polish,
-> Turkish, Ukrainian, Indonesian … and languages used in Israel (Hebrew)."
-
-- 📋 [PASS-56-2] **Further language packs — Czech, Swedish, Thai, Vietnamese (FEATURE, L)**
-  - **Target**: four more locales — **`cs` Czech, `sv` Swedish, `th` Thai,
-    `vi` Vietnamese** — the next-highest-value gaps for a retro-gaming audience
-    after the Pass 56.1 set.
-  - **Why**: all four are widely-spoken, well-resourced for quality translation,
-    all left-to-right (no RTL prerequisite, unlike Pass 43.4's Arabic), and absent
-    from the current 21-language set. Suggested to and approved by the user
-    2026-07-05.
-  - **Plan**: identical pipeline to Pass 56.1 — `pybabel init -l <code>` →
-    per-locale `{msgid: translation}` JSON → `scripts/apply_po_translations.py`
-    (strict: hard-fails on any missing msgid or dropped placeholder) → `pybabel
-    compile`; then the 14-entry `data/changelog.<code>.yaml` + the ~2000-line
-    `templates/help.<code>.html` (copy-then-translate-prose, anchors byte-identical).
-    Zero code changes — `available_locales()` auto-surfaces each new catalog in the
-    Settings dropdown / validator / selector. Plural-form counts (from CLDR, set by
-    `pybabel init`): `cs` 4, `sv` 2, `th` 1, `vi` 1. Would take the shipped set to
-    25 languages.
-  - **Verify**: `available_locales()` returns the four new codes; `pybabel compile`
-    clean; `scripts/check_i18n_fresh.py` green (msgid set unchanged — locales only);
-    each changelog parses at the current recent-entry count; each help file's
-    `id`/`href` anchor set + Jinja-token count byte-identical to `help.html`.
-  - **Status**: planned (2026-07-05). Not started; a self-contained follow-on to
-    Pass 56.1 whenever the user wants the next batch.
-
-  ---
-  Kind: implement.
-
-### Pass 55 — Scraper throughput (2026-07-05)
-
-> Source: user request 2026-07-05 — "are there any performance improvements that
-> can be made to scraping?" Per-game latency is dominated by external API
-> round-trips; an Explore-agent map of `scraper/` found the code made that worse
-> than necessary (sequential source queries, per-image TCP+TLS handshakes).
-
-- 💭 [PASS-55-4] **Overlap whole games in the bulk scrape (PERF, L) — NOT STARTED**
-  - **Status**: considered, not started 2026-07-05. `BulkScrapeManager._run_scrape`
-    processes games one at a time on a single daemon thread; a small worker pool
-    (e.g. 3-4 games in flight) is the largest theoretical win. Risk is real:
-    ScreenScraper enforces per-account daily quotas + concurrent-thread caps
-    (already hard-stops on the daily limit), RAWG self-throttles, and DB writes
-    serialise under WAL. Needs quota-aware bounded concurrency, not a blind pool —
-    held pending user appetite for the extra complexity.
-
-  ---
-  Kind: implement.
-
-### Pass 54 — Media integrity & DB maintenance (2026-07-04)
-
-> Source: user session 2026-07-04, during investigation of an external, recurring
-> mass-deletion of scraped game media (boxart / boxart_3d / screenshots / fanart /
-> manuals) that occurs while RetroDB is NOT running. Root cause is external to
-> RetroDB (disk healthy — SMART pass, no ext4 / I/O errors, empty lost+found, fs
-> clean; RetroDB has no automatic media-delete code path). A fatrace + inotify
-> trap was installed to identify the deleter. These items harden RetroDB so it
-> stops AMPLIFYING such external loss and give the user a controlled cleanup tool.
-> CAUTION: do NOT run any ref-clearing bulk action until the external deleter is
-> identified and stopped — clearing refs erases the record of what art each game
-> had, which is what's needed to know what to re-scrape / re-link.
-
-### Pass 53 — Interface UX review (2026-07-03)
-
-> Source: user-requested interface/usability review 2026-07-03. Code-grounded,
-> not a live walkthrough — the login-gated app was not running and the browser
-> extension was unavailable, so findings were surveyed across `templates/base.html`
-> (nav/chrome), `all_games.html` + `static/js/all-games-controller.js` (browsing),
-> the game detail/edit modals, `settings.html` + `_settings_tabs/*`,
-> `rom_tools_hub.html`, and the toast / modal / empty-state layer. The
-> design-token system, icon+text nav, and a11y work (aria-live, focus traps,
-> aria-current) were confirmed already solid; these items target findability,
-> flow, and first-run. Prioritised T1 (biggest flow wins) → T4
-> (consistency/polish). A live visual pass (desktop + ~375px mobile) is still
-> owed once the app is running and the browser extension is connected.
-
-- 📋 [PASS-53-5] **Role-aware rating display in the edit form (UX, S)**
-  - **Status**: planned.
-  - **Problem**: the Edit form's "Technical" tab stacks all 10 age-rating
-    dropdowns — ESRB/PEGI/CERO/USK/ACB/FPB/GRAC/ClassInd (`base.html:1213-1305`) —
-    for every user, though almost everyone cares about one region.
-  - **Plan** (per user 2026-07-03): **admin** users keep all rating boards visible
-    (they curate cross-region data); **every non-admin** user sees ONLY the single
-    rating system selected in their Settings (`preferred_rating_system`). Gate the
-    extra boards on `current_user.role == 'admin'`; non-admins get one dropdown.
-    Cross-mapping / auto-fill (`map_rating`) is unchanged — this is a display
-    filter, not a data change.
-  - **Est.**: S — a role check + conditional render around the rating block.
-  Kind: implement.
-
-- 📋 [PASS-53-6] **ROM Tools nav link: hub vs last-visited, as a preference (UX, S)**
-  - **Status**: planned (low priority — the maintainer prefers the current
-    last-visited behaviour for their own use; kept as an opt-in option, not a
-    forced change).
-  - **Problem**: the sidebar "ROM Tools" link jumps to the last sub-tool visited
-    (`base.html:840-855`) rather than the hub, so the label and destination
-    disagree — disorienting for a new user.
-  - **Correction** (2026-10-17): the premise is false. The link has always
-    opened the hub: `navigateToRomTools` in `base.html` is defined but nothing
-    calls it, in the whole git history, so the `lastRomToolsPage` script is
-    dead code. A last-visited option would be new behaviour, not a
-    preference over existing behaviour. The dead script is not removed yet.
-  - **Plan**: make it a user preference (Settings): "ROM Tools opens → hub /
-    last-visited", defaulting to hub for new users so power users keep the
-    shortcut. Small, opt-in; no behaviour forced.
-  - **Est.**: S — one setting + a branch in the nav redirect.
-  Kind: implement.
-
-- 📋 [PASS-53-9] **Deep-link from scrape failure to the API-key form (UX, S)**
-  - **Status**: planned.
-  - **Problem**: API keys live three levels deep (Settings → Scraping → sub-tab,
-    `scraping.html:7,265`), yet skipping them causes silent scrape failures whose
-    fix is buried. There's no link from the failure back to the fix.
-  - **Plan**: when a scrape fails for a missing / invalid key, surface a direct
-    link to the API-keys sub-tab (`/settings#scraping` + sub-nav anchor). Pairs
-    with the setup wizard's optional-API-key step (Pass 53.8).
-  - **Est.**: S — a targeted link in the failure message / toast.
-  Kind: implement.
-
-- 📋 [PASS-53-12] **Persistent inline error state for walk-away operations (UX, S)**
-  - **Status**: planned.
-  - **Problem**: errors from user-initiated operations surface only as ephemeral
-    toasts (e.g. AI-fill error `game-modals.js:2311`). If the user walks away, the
-    only record vanishes when the toast times out — no lasting indication on the
-    affected item.
-  - **Plan**: add a durable inline error indicator on the affected item (game card
-    / job row) for scrape / AI-fill / bulk operations, complementing — NOT
-    replacing — the toast system. NOTE (user 2026-07-03): toast timeouts are
-    already per-category user-editable (success / info / warning / error each
-    independently, `notification_timeouts`, injected `base.html:330-335`) — preserve
-    that. This item adds durability; it does not change toast timing.
-  - **Est.**: S — an inline error state hooked into the existing error paths.
-  Kind: implement.
-
-### Pass 52 — Post-v3.14.0 UX & i18n polish (2026-07-01)
-
-> Source: in-session review 2026-07-01, immediately after the v3.14.0 Chinese
-> localization ship. Three improvements surfaced while surveying the app; each
-> was verified against the code so none duplicates existing/rejected scope
-> (reduced-motion, backup/restore, and core a11y were checked and already exist).
-
-- 🚧 [PASS-52-1] **Translate JS-driven toasts / dialogs — the last i18n seam (I18N, M)**
-  - **Status**: in-progress (raises the priority of the Pass 49.x deferral now that
-    v3.14.0 ships ten UI locales, two of them Chinese).
-  - **Problem**: the UI catalogs cover templates and Python, but user-facing
-    strings emitted from JavaScript — `showNotification()` / `showConfirm()` /
-    `showModal()` toast + dialog copy — are largely hard-coded English string
-    literals. ~365 such call-sites exist across the templates; the Pass 49.x
-    deferral estimated ~138 literal strings (~20 templates) can't currently route
-    through gettext. Result: a fully-translated interface that still pops up
-    English "Saved" / "Are you sure?" / "Scrape complete" messages. Each new locale
-    (now Simplified + Traditional Chinese) makes the seam more visible.
-  - **Plan** (per `docs/specs/i18n.md` §6): the JS translation path is `t('...')`
-    with **string literals only**; `python3 build_js.py` regenerates
-    `services/js_i18n_strings.py` (the runtime manifest + `_()` bridge anchors that
-    carry JS msgids into the catalog via the Python extractor — there is no
-    `[javascript:]` babel mapping). Sweep the inline `<script>` blocks + bundled
-    JS, wrap the literal user-facing strings in `t()`, rebuild JS, run the
-    `pybabel extract`/`update` + `gen_pseudolocale` + `compile` chain, translate
-    the new msgids across all ten locales, and gate with
-    `scripts/check_i18n_fresh.py`. Respect the §7 canonical multi-value exclusions
-    — never wrap genre/perspective/dimension/modes/game_structure values.
-  - **Est.**: M — mechanical sweep, but ~138 strings × 10 locales plus a
-    build + catalog round-trip. Supersedes the Pass 49.x inline-`<script>` deferral.
-  - **Progress** (2026-11-03, commit e1769b3): pop-up text wrapped in 34
-    templates and four static/js files. Templates use `{{ _('...')|tojson }}`
-    (PASS-49-6's choice); `t()` only fills in values there. Screenshot
-    Review and the game page called `t('...')` in a template, which is never
-    collected; fixed. Guard: `tests/test_js_popup_strings.py`. Walked on
-    :5001 in the pseudolocale: 26 pages, no script errors.
-    **Still owed**: translating the new strings into the 20 locales, in the
-    v4.0.0 end batch (PASS-59-113 step 7). Not wrapped: button labels and
-    other non-pop-up text set from JS.
-  Kind: implement.
-
-### Pass 51 — Chinese localization + China game-rating system (2026-06-30)
-
-> Source: user request 2026-06-30 — add Chinese (Mandarin + Cantonese) UI
-> languages and, if China has a ratings board, gather its icons + info. Roadmapped
-> for later, not yet started.
-
-### Pass 50 — PSN authentication simplification (2026-06-30)
-
-> Source: user request 2026-06-30 — "simplify the PSN NSO token required for
-> syncing trophies and the PSN library." Hard constraint: Sony exposes no
-> official public trophy/library API, so the NPSSO cookie is unavoidable (it is
-> what PSNAWP and every community PSN tool use). These items can't remove it but
-> they make the user touch it **far less often** and more smoothly. Current flow
-> mapped: NPSSO pasted via a 3-step wizard (`templates/_settings_tabs/account.html:
-> 111-185`) → PSNAWP derives an access/refresh/id bundle (~2-month refresh
-> token, stored per-user in `user_platform_tokens`) → on-demand refresh only when
-> a sync runs (`routes/trophies.py:100-157`). Pain: every ~2 months (or sooner if
-> the NPSSO goes stale) the user must redo the whole browser copy-paste wizard.
-
-### Pass 49 — audit + indie-review 2026-06-30 (fix-pass + deferrals)
-
-> Source: `/audit` (static analysis) + `/indie-review` (14-subsystem cold
-> review) run at v3.12.0. Static analysis was clean (ruff / semgrep / gitleaks /
-> pip-audit all green; 97 bandit + 132 mypy findings triaged to false-positives,
-> logged to `.ants_review_falsepos.jsonl`). The semantic sweep surfaced one
-> **CRITICAL** fresh-install schema gap plus a tier of HIGH/MEDIUM fixes — all
-> verified and **landed in v3.12.1** — and the deferred tail below, calibrated to
-> the single-household-LAN threat model.
-
-**Landed in v3.12.1** (do not re-open; the cold re-read is the verification):
-- **CRITICAL — fresh-install schema backfill** (migration 013). A truly fresh
-  install (`init_database()` runs migrations 001..012 only) built a `games`
-  table missing 12 columns (`critic_score`/`user_score`/`has_retroachievements`/
-  `ra_game_id`/`ra_achievement_count`/`ra_points`/`campaign`/`game_structure`/
-  `edition`/`other_platforms` + the two `*_count`s), a `systems` table missing
-  `system_type`/`default_controller_id`, and the `controllers` /
-  `system_controllers` / `psn_sync_status` tables entirely — they existed only
-  on the maintainer's legacy DB. Card-data (main library view), scraping, and
-  PSN sync 500'd on a clean install. Found only once the test suite was isolated
-  onto a fresh throwaway DB (see below). Migration 013 ensures all of them
-  idempotently; regression-pinned by `tests/test_fresh_install_schema.py`.
-- **HIGH** SSRF DNS-rebinding pin connected to port 0 (`services/ssrf.py`) — the
-  pin was a no-op that only "worked" via connection-pool reuse and hung on a
-  cold pool; now echoes the real port.
-- **HIGH** `ra_sync` / `platform_sync` batched-commit rollback discarded a prior
-  game's already-counted writes → per-game commit.
-- **HIGH** `game_cleanup.clear_scraped_data` deleted image files before nulling
-  DB columns → reordered (null first), no dangling refs on failure.
-- **HIGH** `pytest` (and the `ci_local.sh` pre-push gate) ran migrations +
-  seeder against the real `database/roms.db` → `tests/conftest.py` now points
-  `RETRODB_DB_PATH` at a throwaway DB.
-- **MEDIUM** bare `request.get_json()` on 9 POST endpoints (auth ×4, platform
-  imports ×3, games_media ×2) 500'd on empty/non-JSON bodies → `silent=True or {}`.
-- **MEDIUM** `atomic_write_json` static `.tmp` suffix (torn-write race) → routed
-  through `atomic_write_text`/`mkstemp`.
-- **MEDIUM** IGDB `comp['company']['name']` unguarded discarded the whole IGDB
-  apply on an unexpanded company → shape-guarded.
-- **MEDIUM** raw `{{ name }}` into JS string literals on 8 template sites (a `"`
-  or `</script>` in a system/ROM name hard-broke the page) → `|tojson`.
-- **LOW** `/api/games` pagination `page` floored at 1.
-- **MEDIUM (Loop-2)** PSN trophy-sync upsert used a bare `ON CONFLICT(user_id)`
-  against the **partial** `idx_psn_sync_status_user_id` index
-  (`WHERE user_id IS NOT NULL`), which SQLite refuses — the first PSN full-sync
-  500'd on every install (fresh AND the legacy DB, both carry the partial
-  index). Conflict target now names the partial predicate
-  (`routes/trophies.py`); pinned by `tests/test_fresh_install_schema.py`.
-- **Loop-2 cleanup** removed the now-dead `_pending_commits` flush machinery the
-  per-game-commit fix orphaned (`ra_sync`/`platform_sync`); migration 013 now
-  imports the strict `_add_column_if_missing` from `_helpers` (spec §10/§11)
-  instead of an error-swallowing inline copy.
-
-> **Loop-2 cold re-review** (DB/migrations, jobs, SSRF — briefed cold, no mention
-> of the fixes): the port-0 SSRF fix, the per-game-commit fix, migration 013
-> (idempotency + completeness), and the atomic_write_json refactor were all
-> independently confirmed to hold. The deferred 49.x items below were re-raised
-> or newly surfaced and remain open.
-
-- 💭 [PASS-49-9] **`clear-ra-data` library-wide vs per-user semantics (MEDIUM, S)**
-  - **Status**: deferred — design decision, not a silent fix.
-  - **Lane**: collections/achievements/trophies (Lane 10).
-  - **Finding**: `routes/ra_sync.py` `api_clear_ra_data_all` / `_system` DELETE
-    `game_achievement_progress` with no `user_id` predicate, wiping every user's
-    earned-achievement progress (the table is per-user, migration 009). It is
-    paired with clearing the *shared* `games.ra_game_id` links, so clearing all
-    progress is internally consistent (otherwise orphaned) — which is why this is
-    a semantics call, not a clear bug.
-  - **Decision**: confirm intended meaning — a library-wide admin reset (current)
-    or a per-user clear. If per-user, scope BOTH the link clear and the progress
-    DELETE by `g.user['id']`. Single-household threat model keeps impact LOW.
-  Kind: implement.
-
-- 💭 [PASS-49-2] **bulk-scrape swap/demote counter corruption after join timeout (MEDIUM, M)**
-  - **Status**: deferred — needs careful concurrency design.
-  - **Lane**: background jobs (Lane 7).
-  - **Finding**: `services/jobs/bulk_scrape.py` `swap_with_running` /
-    `demote_running` `join(timeout=60)` then proceed even if the old worker is
-    still alive; a hung scraper's worker can wake after `reset()` and increment
-    the *new* job's `success_count`/`failed_count`.
-  - **Decision**: block or hard-fail the swap when the old thread is still alive
-    rather than "proceed with state mixing possible".
-  Kind: implement.
-
-- 💭 [PASS-49-3] **SSRF redirect-chain HEAD probes are unpinned (MEDIUM, M)**
-  - **Status**: deferred — hardening; the GET is now correctly pinned (Pass 49 port-0 fix).
-  - **Lane**: core/SSRF (Lane 11).
-  - **Finding**: `services/ssrf.py` `validate_redirect_chain` validates each hop
-    then issues `session.head(...)` unpinned, re-resolving DNS — a rebinding
-    server can pass validation and serve a private/metadata IP to the HEAD.
-  - **Decision**: wrap each HEAD hop in `pin_host_ip` (or re-validate the IP the
-    HEAD resolved). Low live risk on a LAN with no internal SSRF targets.
-  Kind: implement.
-
-- 💭 [PASS-49-4] **`organize-multidisc` relies on incidental path-nesting (MEDIUM, S)**
-  - **Status**: deferred — currently safe; explicit hardening.
-  - **Lane**: maintenance/reports (Lane 9).
-  - **Finding**: `routes/reports.py` move branch blocks a traversing `system`
-    param only because `folder_path` nests under `system_path` and `safe_path`
-    catches the escape — there is no independent DB/`safe_path` check on `system`
-    like the multidisc-scan path has.
-  - **Decision**: add an explicit `system` validation mirroring `reports.py:405`.
-  Kind: implement.
-
-- 💭 [PASS-49-6] **i18n — inline-`<script>` toast/modal strings untranslatable (MEDIUM, L)**
-  - **Status**: deferred — large mechanical sweep (~138 strings across ~20 templates).
-  - **Lane**: templates/i18n (Lane 13).
-  - **Finding**: `build_js.py` only scans `static/js/*.js`, so toast/modal string
-    literals inside template inline `<script>` blocks ride neither the JS `t()`
-    path nor `{{ _() }}`; they are permanently English for non-English locales and
-    invisible to `pybabel extract` (`game_detail.html`, `settings.html`,
-    `dashboard.html`, achievement/trophy/chd templates, …). Plus 4 constrained
-    `settings.html` JS-string sites (tz/avatar/role) still want `|tojson` for
-    consistency.
-  - **Decision**: wrap each inline-`<script>` user-facing string in `{{ _('...') }}`
-    (the `wishlist.html` pattern) and regenerate catalogs per `docs/specs/i18n.md`.
-  Kind: implement.
-
-- 💭 [PASS-49-7] **Assorted LOW / INFO review notes (LOW, S)**
-  - **Status**: deferred bundle — verified-but-low; pick up opportunistically.
-  - Items:
-    - `services/migrations/__init__.py` — add a defensive `not conn.in_transaction`
-      assert before `BEGIN IMMEDIATE` so a future stray open transaction fails loudly.
-    - `services/database.py:_fsync_path` duplicates `services/atomic_io.py:fsync_path`
-      — dedupe to prevent drift.
-    - `services/jobs/museum.py` `get_status()` field names (`current_index`/
-      `total_systems`/`success_count`) diverge from the §7/§9 toast contract
-      (`current`/`total`/`success`, no `processing`/`percent`).
-    - `services/jobs/webp_migrate.py` resume path adopts a pre-existing `.webp`
-      sibling without the `verify()` the fresh path does (spec §12.1) → corrupt
-      sibling can silently replace a good boxart.
-    - `image_resize` and `webp_migrate` take distinct singleton locks and can race
-      the same boxart tree (stranded orphan `.png`); responsive-variant regen runs
-      on `'skipped'` files too (disk churn).
-    - `routes/trophies.py` import-time global monkeypatch of `pyrate_limiter`
-      (`_Limiter._try_acquire`) is fragile across library upgrades.
-    - ~~`scraper/scrape_thegamesdb.py` assigns free-text TGDB ratings verbatim into
-      `esrb_rating`; `metadata_merger.py` drops bare single-letter ESRB codes
-      ("E"/"T"/"M") that lack a trailing space.~~ Closed by Pass 59.19 — both
-      parses share one whole-token parser and the verbatim fallback is gone.
-    - `scraper/scrape_rawg.py` defaults `players` to `1` (truthy), pre-filling a
-      weak value that crowds out a better secondary source.
-    - ~~Xbox scrapers (`scrape_xbox.py`) bypass `base_scraper.http_get` — no SSRF
-      risk (hardcoded `*.xboxlive.com`/`login.live.com` hosts) but `docs/specs/
-      scrapers.md` §10 wrongly claims Xbox was migrated; fix the doc.~~ Closed by
-      Pass 59.26 — the code was migrated instead, so §10 is now true as written.
-    - `hybrid_scraper.py` generic-controller `elif` branch is a no-op `pass` whose
-      comment promises to clear generic controller values.
-    - ~~`static/js/main.js` `performGlobalSearch` is dead (`#globalSearch` absent
-      from all templates, `/api/search` route absent) — surface before removing.~~
-      Closed by Pass 59.39 — deleted with its binding and helpers.
-    - `build_dist.py` source-ZIP walk is denylist-only (a gitignored
-      `audit_rule_quality.json` shipped); `EXCLUDE_DIRS` matches by basename at any
-      depth. No secret leaked today, but make the walk respect `.gitignore` and
-      anchor `EXCLUDE_DIRS` to top-level.
-    - **(Loop-2)** `ra_sync`/`platform_sync` skip-path (`if result is None:
-      continue`) bypasses the `shutdown_requested.wait()` rate-limit — a long run
-      of skipped games becomes a tight loop that drains a SIGTERM slightly slower
-      than the per-request budget implies.
-    - **(Loop-2)** `services/ssrf.py` pin host match is exact-string + fail-open
-      (`return _orig_getaddrinfo` on miss); a future caller passing a
-      non-normalized host (trailing dot / uppercase) to `pin_host_ip` would
-      silently skip the pin. Normalize/lower the host on both store and compare.
-  Kind: implement.
-
-- 💭 [PASS-49-8] **Job resume off-by-one silently drops the in-progress game (MEDIUM, S)**
-  - **Status**: deferred — pre-existing (predates the Pass 49 per-game-commit fix);
-    surfaced by the Loop-2 cold re-review.
-  - **Lane**: background jobs (Lane 7).
-  - **Finding**: the periodic-persist block runs at the *top* of iteration `i` and
-    writes `'current': i + 1`, but only games `0..i-1` are committed at that point.
-    `resume_from_params` computes `remaining_ids = game_ids[resume_index:]` =
-    `game_ids[i+1:]`, so the in-progress game at index `i` is skipped on resume and
-    counted in neither success nor failed (`ra_sync.py`, `platform_sync.py` ×2).
-  - **Decision**: persist `current` as completed-count, or resume from
-    `max(resume_index - 1, 0)` — the upserts are idempotent (`ON CONFLICT DO
-    UPDATE`), so re-processing one already-done game is harmless. Re-runnable sync
-    job, so impact is LOW-MEDIUM.
-
-  ---
-  Kind: implement.
-
-### Pass 48 — audit + indie-review fix-pass deferrals (2026-06-05)
-
-> Source: `/audit` (static analysis) + `/indie-review` (14-subsystem cold
-> review) run at v3.6.28. The bulk of findings landed directly in v3.6.29
-> (see changelog). These are the items deliberately deferred — design
-> decisions, risk-of-regression LOWs, and INFO-grade notes — calibrated to the
-> single-user-localhost threat model. False positives logged to
-> `.ants_review_falsepos.jsonl` (incl. the `get_db()`-vs-`g.db` mis-read).
-
-### Pass 47 — Open-source release & donation funnel (2026-05-07)
-
-> User-requested track: flip the GitHub repo from private to public,
-> repurpose Patreon to a pure donation model (the app itself becomes
-> free), add GitHub Sponsors and Buy Me A Coffee, and surface donation
-> links from both the repo and the in-app About panel. The
-> marketing/distribution website (a separate property the user plans
-> to host RetroDB *and* their other apps under, with the same donation
-> model) is **out of scope** for this pass — see "Scope notes —
-> considered and dropped".
->
-> **Recommended donation stack** (rationale captured here so future
-> sessions don't re-litigate the platform choice):
->
-> 1. **GitHub Sponsors** — primary. Free for the recipient, integrated
->    "Sponsor this project" button on the repo page, supports monthly +
->    one-off, no platform fee beyond standard Stripe processing.
->    Strongest alignment with the public-repo move; the donation CTA
->    sits where prospective contributors are already looking.
-> 2. **Buy Me A Coffee** — secondary. Lowest-friction one-off-tip
->    surface for users who don't want a monthly commitment or a GitHub
->    account. ~5% platform fee + Stripe processing.
-> 3. **Patreon** — keep, but de-emphasise. Existing setup with zero
->    subscribers; Patreon's 8–12% take is the steepest of the three so
->    it should not be the primary CTA. Tier copy is rewritten so the
->    perks are cosmetic (the app itself is free).
->
-> Skipped on purpose: Open Collective (fiscal-host overhead is overkill
-> for a solo dev), Liberapay (audience too small for a third recurring
-> platform), Ko-fi (overlaps BMAC — pick one), PayPal Donate (clunky UX,
-> dilutes the funnel), crypto (high friction, signals "shady" to
-> mainstream users).
-
-- 💭 [PASS-47-5] **Buy Me A Coffee (LOW, S)**
-  - **Target**: <https://buymeacoffee.com> profile.
-  - **Why**: lowest-friction one-off-tip surface for users without a
-    GitHub account or who don't want monthly commitment. Stripe-backed;
-    recipient pays standard processing fees (~2.9% + $0.30) plus 5% BMAC
-    fee.
-  - **Plan**:
-    1. Sign up at <https://buymeacoffee.com>; pick a username matching
-       the GitHub handle (`milnet01`) for cross-platform consistency.
-    2. Add the BMAC URL to `.github/FUNDING.yml` (Pass 47.6) under the
-       `custom` field — BMAC isn't a natively-recognised FUNDING.yml
-       platform.
-    3. **Skip the BMAC "memberships" feature** — that overlaps
-       Patreon/Sponsors and fragments the monthly-tier story across
-       three platforms. Use BMAC strictly for one-off coffees.
-  - **Status**: deferred
-  Progress (2026-06-30): Parked by maintainer. Buy Me A Coffee does not support South Africa yet, so this surface can't go live regardless of code. Leave planned; revisit only if/when BMAC adds ZA payouts. GitHub Sponsors already covers the in-app/README/FUNDING donation surfaces, so nothing is blocked on this.
-  Kind: implement.
-
-### Pass 46 — vendor third-party assets / distribution self-containment (2026-04-27)
-
-> User-requested track: drop runtime CDN dependencies (Chart.js, Google
-> Fonts), refresh pinned pip versions within current ranges, and add a
-> PyInstaller-based "no Python install needed" distribution alongside the
-> existing source-zip distribution. Goal — let RetroDB run without
-> reaching out to third-party CDNs and let end users pick between
-> "needs Python" (small zip) and "self-contained" (bigger binary)
-> distribution channels.
-
-### Pass 45 — indie-review 2026-04-25 (post Pass 41 sweep)
-
-> Third 14-agent independent review (v3.5.14). 2 CRIT + 33 HIGH raw →
-> 1 CRITICAL + ~28 HIGH after threat-model calibration. The CRITICAL is
-> a net-new bug introduced by Pass 41.9; everything else is hardening or
-> contract drift surfaced by cold-read agents that don't share the
-> author's mental model. Cross-cutting themes (≥2 reviewers) flagged
-> independently: atomic-write drift, SSRF pin_host_ip unwired, source-
-> grep test antipattern, inline-onclick + CSP zombie nonce, aria-current
-> + ModalFocusTrap rollouts incomplete, Steam/Xbox/PSN sync rate-limit
-> gap, migration runner BEGIN DEFERRED.
-
-### Security & input hardening — Tier-1 (indie-review 2026-04-24)
-
-> Sixteen findings from the 14-agent independent review post-Pass 37 that
-> represent concrete exploit paths or silent-corruption vectors under routine
-> use.  Each has an external anchor (OWASP, CWE, RFC, or prior-pass invariant)
-> and a fix-sketch.  Land one-per-commit with red/green test pairs per the
-> remediation workflow.
-
-### Security & input hardening — Tier-2 (indie-review 2026-04-24)
-
-> Forty-four HIGH findings after threat-model calibration.  Real
-> correctness smells with concrete failure scenarios, but none carries
-> a current-use exploit chain.  Group fixes by subsystem to minimise
-> cross-cutting churn.
-
-### CI/CD hardening round 2
-
-> **Follows Pass 22.**  Action pinning, workflow permissions,
-> `continue-on-error` discipline, lockfile hash verification,
-> Dependabot lockfile regeneration.
-
-### Refactoring & consolidation
-
-> **Pass 38** — Rule-of-Three triggered on five areas surfaced by the
-> 2026-04-24 sweep.  **Pass 42** — MEDIUM/LOW cross-cutting items
-> from the indie-review that aren't urgent but should be scheduled
-> before the next indie-review — opportunistically mergeable into
-> feature PRs that touch adjacent code.
-
-### Internationalization (i18n) — language packs
-
-> **Pass 43** (proposed, deferred until Tier-1 + Tier-2 sweeps are done).
-> Ship-shape RetroDB in any language; UI strings translated, retro-game
-> data (titles, descriptions, scraper output) deliberately untranslated
-> because that's content, not chrome.
-
-- 📋 [PASS-43-4] **RTL layout support + Arabic (MEDIUM, L)**
-  - **Target**: `static/css/core/*.css`, every grid/flex layout, every
-    text-align/margin-left utility.
-  - **Why**: Arabic and Hebrew are RTL; the current CSS bakes
-    left-to-right assumptions deep into the grid/sticky-nav system.
-  - **Plan**: switch directional utilities (`margin-left/right`,
-    `text-align: left`) to logical properties (`margin-inline-start/end`,
-    `text-align: start`).  Add `[dir="rtl"]` overrides where logical
-    properties don't reach (icons, chevrons, sortable column arrows).
-    `<html dir="rtl">` driven by locale class (`app.py::select_locale` result →
-    Babel `Locale.parse(code).text_direction`).  The CSS audit is the bulk:
-    ~360 physical `left/right` rules, zero logical, no `[dir]` handling as of
-    Pass 56.
-  - **Status**: planned — **un-gated (2026-07-05).** Pass 56 shipped a **Hebrew** (`he`)
-    catalog — the first RTL `.po`, so the "needs a real RTL user" gate is now met.
-    Hebrew currently renders correct Hebrew *text* in the still-LTR layout; this
-    pass is what makes the layout mirror properly. **Also add Arabic (`ar`) here:**
-    Arabic was deliberately held out of Pass 56's translation batch precisely
-    because it needs this layout work first — once RTL layout lands, adding the
-    `ar` catalog (same pipeline as Pass 56: `pybabel init` → translate →
-    `scripts/apply_po_translations.py` → compile) is translation-only. Scope:
-    the CSS logical-property conversion (shared by `he` + `ar`) **plus** the `ar`
-    catalog. Bumped priority MEDIUM (was LOW) now that a shipped RTL locale
-    depends on it.
-  Kind: implement.
-
-### Follow-ups from landed passes
-
-Small, well-scoped items that surfaced while finishing an earlier pass but
-weren't worth blocking the ship on.  Ordered by rough priority.
-
-### Pass 59 — audit + indie-review 2026-09-01 (deferrals)
-
-Deferrals from the 2026-09-01 sweep: `check-code` whole-tree, then
-`review-code` over 18 hand-built lanes (the partition verb omitted `app.py`,
-all JS, all templates and all shell — see Pass 58.1). 11 CRITICAL, 37 HIGH,
-54 MEDIUM. Fixed in that pass and NOT listed here: the `retrodb.spec`
-credential leak (`a5e0939`), the 14 workflow-security findings (`f29409b`)
-and the ten authorization-boundary findings incl. Pass 49.5 (`2836bc3`).
-
-Every bullet below was verified against source by the lane that raised it;
-the ones marked **re-verified** were additionally reproduced by the
-orchestrator, several by execution rather than reading.
-
-- ✅ [PASS-59-71] **ACTION REQUIRED — rotate the PSN NPSSO token that standalone builds shipped (HIGH, S)**
-  - **Target**: the live PSN NPSSO credential (`docs/psn-npsso.env`, gitignored).
-    Not a code task: `a5e0939` already closed the leak path.
-  - **Why**: `retrodb.spec` carried `('docs', 'docs')`, and PyInstaller's
-    directory form takes the whole tree with no per-file filter, so every
-    standalone build embedded the real token. Confirmed against a bundle already
-    on disk built 2026-04-27 — `dist/retrodb/_internal/docs/psn-npsso.env` was
-    byte-identical to the live file, so this was shipped, not theoretical. The
-    source ZIPs were never affected (the file is gitignored and `build_dist.py`
-    excludes it by name); only the PyInstaller path, which keeps its own
-    whitelist. `gitleaks` could not have caught it: it is scoped to
-    `git ls-files`, so an untracked secret a build step copies into an artifact
-    is invisible to it.
-  - **Plan**: the code fix has landed and the local `dist/` was deleted. What
-    remains is the credential itself. **Rotate it if any standalone build was
-    ever shared** — Patreon release, a zip sent to a tester, anything off this
-    machine. If no bundle ever left the machine, no rotation is needed; record
-    that conclusion here so the question is not reopened.
-  - **Verify**: a fresh `--standalone` build contains no `docs/` tree
-    (`tests/test_pass58_standalone_docs.py` pins it); then the old token no
-    longer authenticates.
-  - **Resolution** (2026-11-03): rotated. The user signed out of
-    PlayStation, signed in again and saved the new token in Settings. The
-    saved token differs from the one in `docs/psn-npsso.env` (compared
-    by equality, never printed). One sign-in with the old token: Sony
-    refused it (PSNAWPAuthenticationError). One with the new token:
-    accepted, as the user's PSN name. RetroDB reads the token from
-    Settings only; `docs/psn-npsso.env` is an installer template copy.
-  - **Status**: done (2026-11-03). Lanes: security, packaging.
-  - **Source**: in-session 2026-09-01 (`a5e0939`); filed 2026-09-02 because it
-    existed only in a session handoff, which is not somewhere the next session
-    will find it.
-  - **Progress** (2026-09-26): the user is not sure whether a standalone
-    build ever left the machine, and chose to rotate the token. Waiting on the
-    user. The v3.23.12 bundle built today contains no `docs/` tree and no
-    `psn-npsso` file.
-  - **Progress** (2026-10-23): the user got a new token and saved it in
-    docs/psn-npsso.env. A session then printed that file, so the new
-    token is exposed in a conversation log. Get one more token, enter
-    it in Settings and in that file, then check the app signs in.
-  - **Progress** (2026-11-03): still open; the user chose to get the
-    new token later.
-
-  ---
-  Kind: implement.
-  Lanes: security, packaging.
-
-- 📋 [PASS-59-111] **Make renewing the PSN sign-in painless (MEDIUM, M)**
-  - **Target**: the PSN setup in `templates/_settings_tabs/account.html`
-    (NPSSO wizard, Copy NPSSO bookmarklet, paste auto-detect) and
-    `services/jobs/psn_keepalive.py`, which renews a live session daily but
-    only while RetroDB runs.
-  - **Why**: the user wants renewing the token to be as easy as possible.
-    A session left alone for about two months while RetroDB is off expires,
-    and the user goes through the whole wizard again.
-  - **Plan**: first walk the flow end to end as a new user (`verify-delivery`),
-    starting with the PASS-59-71 rotation, and list every rough step. Then fix
-    what the walk finds. No design until the walk is done.
-  - **Status**: todo. Lanes: psn, ui.
-  - **Source**: user, 2026-10-17.
-  - **Idea** (user, 2026-10-22): open Sony's sign-in from RetroDB and
-    collect the token automatically once the user has signed in. Not yet
-    tested against Sony's site: a sign-in page shown inside RetroDB likely
-    fails, since login pages usually refuse to be framed and a page cannot
-    read another site's cookies. Two shapes that can work: guided paste
-    (buttons open Sony's sign-in, then its token page, and the user pastes
-    the one-line reply whole), or a browser window RetroDB drives, which
-    only works on the machine running RetroDB and may meet Sony's bot
-    checks. Try guided paste first, during this item's walk.
-  - **Progress** (2026-11-03): walk started with the PASS-59-71
-    rotation. Found and fixed (commit 5d37d4a): a new token went unused
-    while the cached session lived, and Save & Test reported the old
-    session as working. Rough steps seen so far, not fixed: Paste &
-    Detect raises Brave's clipboard permission prompt; the wizard's
-    messages in `psnQuickSaveAndTest` (templates/settings.html) are
-    English-only; the steps never say to sign out first, which a
-    rotation needs.
-  - **Correction and finding** (2026-11-03, from the log): the user's
-    first Save & Test at 20:13 signed in via the NPSSO; signing out of
-    Sony had already killed the cached session, so the fallback ran.
-    Commit 5d37d4a's message is wrong to call that a passing old
-    session; the flaw it fixes is real only while the old session still
-    works. **Sony's refresh token now lasts 10 days**
-    (`refresh_token_expires_in` 863999, seen twice today), not about
-    two months, and using it does not move its expiry. A lapsed session
-    re-signs from the NPSSO on the next request, but the keep-alive never
-    falls back to the NPSSO (INV-9). So the Settings banner counts down a
-    10-day session the user need not act on. Next: show what the user
-    must act on (the NPSSO's own expiry, which Sony does not report),
-    and reword the banner. The comment "valid ~2 months" in
-    `create_psn_client` and trophies spec §4.5 assume the old lifetime.
-  - **Fixed** (2026-11-03, user chose both designs): the Settings banner
-    no longer counts down Sony's 10-day session. It is green while a
-    session is cached and red only once Sony refuses the saved NPSSO,
-    which `create_psn_client` now records as `npsso_refused_at`; the
-    dashboard notice shows only that refusal. Paste here focuses the box
-    for Ctrl+V instead of reading the clipboard. Step 1 says to sign out
-    first when replacing a working token. `psnQuickSaveAndTest` and its
-    neighbours are translatable. The stale "two months" text in
-    `create_psn_client`, trophies spec §4.5, the help page and the
-    keep-alive header is corrected. Walked headless at 1280 and 375 px on
-    a scratch DB, with Sony's replies faked. Still open: the server's own
-    sign-in error ("PSN authentication failed...") is English-only; the
-    guided-paste idea; translations of the new strings and of the two help
-    paragraphs (step 7).
-
-  ---
-  Kind: implement.
-  Lanes: psn, ui.
-
-- 📋 [PASS-59-112] **Remake the trailer for v4.0.0, with a disclaimer (MEDIUM, M)**
-  - **Target**: new clips for the Hub website session, which builds the
-    trailer (recipe in memory `trailer-footage-owed`).
-  - **Why**: the current trailer skips achievements and trophies and much
-    else. The user wants one new trailer once v4.0.0 ships.
-  - **Plan**: cover achievements and trophies, Play from the library,
-    scraping and AI Fill, tools and stats, and regional versions. End on the
-    disclaimer card the user approved 2026-10-17 (text in memory
-    `trailer-v4-plan`): RetroDB supplies no games, ROMs or BIOS files and does
-    not condone piracy; trademarks belong to their owners; online services
-    need your own account, some limit free use or charge, AI services charge
-    per use.
-  - **Status**: todo; blocked by the v4.0.0 release (PASS-59-113).
-    Lanes: marketing.
-  - **Source**: user, 2026-10-17.
-
-  ---
-  Kind: implement.
+Everything in the PASS-59-113 plan, every fix the reviews found, and the work finished since 3.35.4. RetroDB is a web app up to here, and 4.0.0 stays downloadable after the desktop app ships.
 
 - 📋 [PASS-59-113] **v4.0.0 release plan: what ships before the major bump (HIGH, L)**
   - **Why**: the user set the v4.0.0 scope on 2026-10-17. v4.0.0 ships when
@@ -1041,132 +100,108 @@ orchestrator, several by execution rather than reading.
     know a desktop release before it ships.
 
   ---
+  **Layman:** The list of what must be finished before RetroDB 4.0.0 is released.
   Kind: implement.
   Lanes: release.
 
-- 🚫 [PASS-59-131] **Scrape speed: skip a fallback source that cannot fill any field still empty (MEDIUM, M).**
-  - **Status**: dropped
-  - **Where**: `scraper/hybrid_scraper.py::_run_fallbacks` stops early only
-    when every key of the ~40-field metadata dict is filled, including fields
-    no source supplies (`edition`, `campaign`, `playtime_estimate`). So every
-    enabled source is queried for every game.
-  - **Do**: give each source a list of fields it can supply. Skip a source
-    when none of the still-empty fields is on its list; stop the loop when no
-    remaining source can add anything.
-  - **Keeps**: sources still run in Settings priority order and the first
-    non-empty value still wins; a skipped source could only have added
-    nothing. Manual still never queries an unticked source.
-  - **Risk**: a wrong capability list silently drops data. Pin each list
-    with a test against the source's apply function.
-  - **Progress** (2026-10-21): Dropped 2026-10-21 (user). Every image fallback (TGDB, IGDB, RAWG,
-    ScreenScraper) appends screenshots with no cap, so none can be skipped
-    without losing screenshots; only AI could be skipped, and it nearly
-    always has an empty field. The speed-up moves to PASS-59-132 (parallel
-    fetch).
-
-  ---
+- 🚧 [PASS-52-1] **Translate JS-driven toasts / dialogs — the last i18n seam (I18N, M)**
+  - **Status**: in-progress (raises the priority of the Pass 49.x deferral now that
+    v3.14.0 ships ten UI locales, two of them Chinese).
+  - **Problem**: the UI catalogs cover templates and Python, but user-facing
+    strings emitted from JavaScript — `showNotification()` / `showConfirm()` /
+    `showModal()` toast + dialog copy — are largely hard-coded English string
+    literals. ~365 such call-sites exist across the templates; the Pass 49.x
+    deferral estimated ~138 literal strings (~20 templates) can't currently route
+    through gettext. Result: a fully-translated interface that still pops up
+    English "Saved" / "Are you sure?" / "Scrape complete" messages. Each new locale
+    (now Simplified + Traditional Chinese) makes the seam more visible.
+  - **Plan** (per `docs/specs/i18n.md` §6): the JS translation path is `t('...')`
+    with **string literals only**; `python3 build_js.py` regenerates
+    `services/js_i18n_strings.py` (the runtime manifest + `_()` bridge anchors that
+    carry JS msgids into the catalog via the Python extractor — there is no
+    `[javascript:]` babel mapping). Sweep the inline `<script>` blocks + bundled
+    JS, wrap the literal user-facing strings in `t()`, rebuild JS, run the
+    `pybabel extract`/`update` + `gen_pseudolocale` + `compile` chain, translate
+    the new msgids across all ten locales, and gate with
+    `scripts/check_i18n_fresh.py`. Respect the §7 canonical multi-value exclusions
+    — never wrap genre/perspective/dimension/modes/game_structure values.
+  - **Est.**: M — mechanical sweep, but ~138 strings × 10 locales plus a
+    build + catalog round-trip. Supersedes the Pass 49.x inline-`<script>` deferral.
+  - **Progress** (2026-11-03, commit e1769b3): pop-up text wrapped in 34
+    templates and four static/js files. Templates use `{{ _('...')|tojson }}`
+    (PASS-49-6's choice); `t()` only fills in values there. Screenshot
+    Review and the game page called `t('...')` in a template, which is never
+    collected; fixed. Guard: `tests/test_js_popup_strings.py`. Walked on
+    :5001 in the pseudolocale: 26 pages, no script errors.
+    **Still owed**: translating the new strings into the 20 locales, in the
+    v4.0.0 end batch (PASS-59-113 step 7). Not wrapped: button labels and
+    other non-pop-up text set from JS.
+  **Layman:** Pop-up messages and dialogs show in your own language, not English.
   Kind: implement.
 
-- 💭 [PASS-59-135] **Scrape speed: fetch by stored IGDB or ScreenScraper ID instead of searching (LOW, M).**
-  - **Status**: deferred
-  - **Where**: `hybrid_scraper.py` writes `igdb_id` and `screenscraper_id`
-    but no scrape reads them to skip a search; only
-    `services/version_groups.py` does.
-  - **Held**: PASS-59-124 found 111 games whose stored IDs pointed at the
-    wrong game. Using IDs would repeat those mistakes on every re-scrape.
-    Consider only for normal (fill) mode, never Full Re-scrape, and only once
-    PASS-59-125 makes the search use the filename.
+- 📋 [PASS-59-111] **Make renewing the PSN sign-in painless (MEDIUM, M)**
+  - **Target**: the PSN setup in `templates/_settings_tabs/account.html`
+    (NPSSO wizard, Copy NPSSO bookmarklet, paste auto-detect) and
+    `services/jobs/psn_keepalive.py`, which renews a live session daily but
+    only while RetroDB runs.
+  - **Why**: the user wants renewing the token to be as easy as possible.
+    A session left alone for about two months while RetroDB is off expires,
+    and the user goes through the whole wizard again.
+  - **Plan**: first walk the flow end to end as a new user (`verify-delivery`),
+    starting with the PASS-59-71 rotation, and list every rough step. Then fix
+    what the walk finds. No design until the walk is done.
+  - **Status**: todo. Lanes: psn, ui.
+  - **Source**: user, 2026-10-17.
+  - **Idea** (user, 2026-10-22): open Sony's sign-in from RetroDB and
+    collect the token automatically once the user has signed in. Not yet
+    tested against Sony's site: a sign-in page shown inside RetroDB likely
+    fails, since login pages usually refuse to be framed and a page cannot
+    read another site's cookies. Two shapes that can work: guided paste
+    (buttons open Sony's sign-in, then its token page, and the user pastes
+    the one-line reply whole), or a browser window RetroDB drives, which
+    only works on the machine running RetroDB and may meet Sony's bot
+    checks. Try guided paste first, during this item's walk.
+  - **Progress** (2026-11-03): walk started with the PASS-59-71
+    rotation. Found and fixed (commit 5d37d4a): a new token went unused
+    while the cached session lived, and Save & Test reported the old
+    session as working. Rough steps seen so far, not fixed: Paste &
+    Detect raises Brave's clipboard permission prompt; the wizard's
+    messages in `psnQuickSaveAndTest` (templates/settings.html) are
+    English-only; the steps never say to sign out first, which a
+    rotation needs.
+  - **Correction and finding** (2026-11-03, from the log): the user's
+    first Save & Test at 20:13 signed in via the NPSSO; signing out of
+    Sony had already killed the cached session, so the fallback ran.
+    Commit 5d37d4a's message is wrong to call that a passing old
+    session; the flaw it fixes is real only while the old session still
+    works. **Sony's refresh token now lasts 10 days**
+    (`refresh_token_expires_in` 863999, seen twice today), not about
+    two months, and using it does not move its expiry. A lapsed session
+    re-signs from the NPSSO on the next request, but the keep-alive never
+    falls back to the NPSSO (INV-9). So the Settings banner counts down a
+    10-day session the user need not act on. Next: show what the user
+    must act on (the NPSSO's own expiry, which Sony does not report),
+    and reword the banner. The comment "valid ~2 months" in
+    `create_psn_client` and trophies spec §4.5 assume the old lifetime.
+  - **Fixed** (2026-11-03, user chose both designs): the Settings banner
+    no longer counts down Sony's 10-day session. It is green while a
+    session is cached and red only once Sony refuses the saved NPSSO,
+    which `create_psn_client` now records as `npsso_refused_at`; the
+    dashboard notice shows only that refusal. Paste here focuses the box
+    for Ctrl+V instead of reading the clipboard. Step 1 says to sign out
+    first when replacing a working token. `psnQuickSaveAndTest` and its
+    neighbours are translatable. The stale "two months" text in
+    `create_psn_client`, trophies spec §4.5, the help page and the
+    keep-alive header is corrected. Walked headless at 1280 and 375 px on
+    a scratch DB, with Sony's replies faked. Still open: the server's own
+    sign-in error ("PSN authentication failed...") is English-only; the
+    guided-paste idea; translations of the new strings and of the two help
+    paragraphs (step 7).
 
   ---
+  **Layman:** Renewing your PlayStation Network sign-in takes a few clicks instead of a hunt for a token.
   Kind: implement.
-
-- 📋 [PASS-59-142] **Import Slipcase box files: front, spine and back faces for a game (FEATURE, M).**
-  - **Status**: todo
-  - **Contract**: Slipcase repo, `docs/specs/SLIP-0104-turnable-3d-box.md`
-    § 4.1 (box-file format, `"version": 1`, approved by RetroDB
-    2026-10-15) and § 4.2 / INV-11 (2026-10-21: the case texture is baked
-    into the face PNGs; shading is not).
-  - **RetroDB's checks** (§ 11): each image at most 10 MB; a real image
-    (Pillow verify plus the decompression-bomb guard); re-encoded to WebP
-    at 1080 px tall; no symlinks followed; fill-only unless the user asks
-    to overwrite.
-  - **Open for the user**: where import starts (game page, bulk, or a
-    watched folder) and whether the faces replace `boxart_3d`.
-  - **Verify**: import a Slipcase box file; the three faces land as WebP
-    for that game; a symlinked or oversized face is refused.
-  - **Progress** (2026-10-21): 2026-10-21, Slipcase session: the box file format may move to v2
-    (SLIP-0106, per-system and per-region cases: second spine, per-region
-    sizes, case plastic). Build the importer on v1's current fields only
-    until Slipcase sends its spec for format review. v1 files stay
-    readable.
-  - **Progress** (2026-10-21): 2026-10-21, Slipcase SLIP-0106 phase 1 (Slipcase commit ee8b3d5): the
-    format stays version 1, so the hold above is lifted. SLIP-0104 § 4.1
-    gains an optional fourth face, edge (S.edge.png, the opening side, on
-    the front's right). Null or absent means fill it with colours.edge,
-    and a named but missing file is refused. Run edge through the same
-    image checks as the other faces. Jewel-case fronts now include a tray
-    hinge strip, so never reuse the front face as a flat cover. Case sizes
-    vary by region and arrive through the existing case keys.
-  - **Format update** (Slipcase session, 2026-10-21; SLIP-0110): box files
-    (still version 1) may carry optional `faces.top` / `faces.bottom`
-    (S.top.png / S.bottom.png, or null). Only a PS1 PAL jewel case has
-    them today. Same rule as edge: a non-null name is a plain file name
-    and the file must exist; otherwise use `colours.top` /
-    `colours.bottom`. Contract: Slipcase
-    `docs/specs/SLIP-0104-turnable-3d-box.md` § 4.1. Import them when
-    present.
-  - **Decided** (user, 2026-10-23): import starts on the game's own
-    page (one box file per game); bulk import may follow later. The
-    faces are stored alongside `boxart_3d`; they do not replace it.
-  - **Built** (2026-10-29, in the open 3.34.0; commit e2f2b14): spec
-    `docs/specs/PASS-59-142-box-file-import.md` (fold-back in its loop
-    log). `services/box_faces.py`, migration 025 (`games.box_faces`),
-    POST/DELETE `/api/games/<id>/box-faces`, the Import 3D box line under
-    the game page's cover, the orphan sweep's `box_faces` folder. Tests:
-    `tests/test_box_faces.py`. Browser walk on :5001 with a scratch DB and
-    a box file from Slipcase's `write_box_file`: import, replace, a
-    missing-picture error and Remove all worked. **Still owed**: the 20
-    locale translations of the new strings and help line.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-143] **Turnable 3D box viewer for games with Slipcase faces (FEATURE, M).**
-  - **Status**: todo
-  - **Contract**: SLIP-0104 (Slipcase repo) § 4.2 / INV-11 and INV-12.
-    Show the face images as-is (the case overlay is already baked in; do
-    not add one); apply lighting in the viewer; paint nothing outside the
-    box, so it sits on the page background.
-  - **Plan**: CSS 3D transforms, no new dependency; uses the faces
-    imported by PASS-59-142.
-  - **Verify**: a game with imported faces shows a box that turns with
-    drag and keyboard, has a transparent background, and falls back to
-    the flat cover without faces.
-  - **Format update** (Slipcase session, 2026-10-21; SLIP-0110): draw
-    `faces.top` / `faces.bottom` when present, else fill with
-    `colours.top` / `colours.bottom`. Orientation: seen from outside,
-    spine on the left; the top's picture has the back at its top edge,
-    the bottom's has the front at its top edge. Contract: Slipcase
-    `docs/specs/SLIP-0104-turnable-3d-box.md` § 4.1.
-  - **Zoom behaviour** (user, 2026-10-23): when the player zooms the
-    cover, a game with only a 2D box shows the 2D box; one with only a
-    3D box picture shows that picture; one with the full set of faces
-    shows the turnable 3D box.
-  - **Built** (2026-10-29, in the open 3.34.0; commit 4771a8b):
-    `static/js/box-viewer.js` in the cover zoom
-    (`templates/_modals/boxart_zoom_modal.html`), CSS in
-    `components/modals.css`. Browser walk on :5001 with a scratch DB: a
-    labelled six-face box matched SLIP-0104 § 4.1's orientation on every
-    face; nothing painted behind the box; 2D-only and 3D-only games zoom
-    to their pictures; Remove and re-import update the zoom without a
-    reload. **Still owed**: a real mouse drag by eye (only keys were
-    driven); the 20 locale translations of the two new strings.
-  - **Progress** (2026-11-03): the user dragged the box with a real
-    mouse and it turns correctly. Still owed: the 20 locale
-    translations of the two new strings.
-
-  ---
-  Kind: implement.
+  Lanes: psn, ui.
 
 - 📋 [PASS-59-155] **Cheats for games played in the player, and later the standalone emulators (MEDIUM, M).**
   - **Status**: todo
@@ -1241,45 +276,7 @@ orchestrator, several by execution rather than reading.
     `.cht` keep cheats it could not apply).
 
   ---
-  Kind: implement.
-
-- 📋 [PASS-59-156] **A hung GPU upscale holds the GPU until the server restarts (MEDIUM, M).**
-  - **Status**: todo
-  - **Seen 2026-10-22**: at 17:01 `_gpu_run` timed out ("GPU inference
-    gave no result in 120s") and the breaker in `_upscale_image` moved to
-    CPU. 1.5 h later rocm-smi showed GPU use 99%, VRAM 99% (7.9 GB held
-    by the :5000 server), two server threads in `kfd_wait_on_events`,
-    CPU idle. No amdgpu error in the kernel log. Only a restart frees it.
-  - **Where**: services/image_utils.py `_gpu_inference_worker` /
-    `_gpu_run`. The timeout stops the wait, not the `session.run`, and
-    nothing in-process can cancel a wedged ROCm kernel.
-  - **Plan**: run GPU inference in a child process the server can kill
-    on timeout (killing it frees the card), then fall back to CPU as now.
-    Check first whether onnxruntime's RunOptions.terminate reaches a
-    running ROCm kernel; if it does, that is the smaller fix.
-  - **Verify**: force a hang (a test hook that blocks in the child); after
-    the timeout the child is gone and rocm-smi shows the VRAM released.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-160] **Library filter "Action" also matches "Action-Adventure", so the window's count and the result disagree (LOW, S).**
-  - **Status**: todo
-  - **Seen** 2026-10-23 on the live library copy: the Genre window says
-    Action (755 or 795 depending on version grouping), the filter
-    returns 935.
-  - **Why**: services/game_query.py `_build_games_query` matches each
-    multi-value field with `LIKE '%value%'`, a substring. The window's
-    counts (`_get_filter_options`) split the comma lists into whole
-    values.
-  - **Plan**: match whole comma-separated values, e.g. compare against
-    `',' || REPLACE(field, ', ', ',') || ','` with `'%,value,%'`, for
-    the IS and IS NOT branches alike. Check publisher/developer values
-    that contain a comma themselves before choosing.
-  - **Verify**: count of `?genre=Action` equals the window's Action count
-    under the same grouping; a test pins Action vs Action-Adventure.
-
-  ---
+  **Layman:** Turn cheats on for a game before you play it.
   Kind: implement.
 
 - 🚧 [PASS-59-161] **Screenshots must come from the game's own system, never another platform's version (FEATURE, M).**
@@ -1343,48 +340,7 @@ orchestrator, several by execution rather than reading.
     This corrects the earlier note that the rule had met no originals.
 
   ---
-  Kind: implement.
-
-- 📋 [PASS-59-166] **On an achievements system page, the console tabs scroll under the section tabs (FIX, S).**
-  - **Status**: todo
-  - **Seen 2026-10-23** (Firefox, 500px, /achievements/system/8): the
-    `.tool-tabs.achievement-tabs` bar and the `.system-tabs` bar are both
-    sticky with the same `top`, so the second sits under the first when
-    scrolled. `.system-tabs` is also taller than the screen there when
-    its consoles wrap. Same at desktop before PASS-59-165 (both `top: 0`).
-  - **Verify**: scroll the page at 500px and desktop; no bar covers another.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-167] **On a phone, some sticky filter bars fill a third or more of the screen (UX, S).**
-  - **Status**: todo
-  - **Seen 2026-10-23** (Firefox, 500x900): sticky bar heights at phone
-    width were Library filter bar 273px plus alphabet bar 61px, Logs
-    toolbar 384px, Systems filter bar 199px, ROM Tools tabs 130px. With
-    the phone header and bottom bar, little page is left on a real phone.
-  - **Plan**: decide per bar whether it stays sticky on a phone, or
-    collapses there.
-  - **Verify**: scroll each page at phone width; the content keeps most
-    of the screen.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-168] **Move Get RetroArch to the next stable release and bind network commands to 127.0.0.1 (MEDIUM, S).**
-  - **Status**: planned; waits on upstream's next stable release.
-  - **Why**: official 1.22.2 binds network commands on every interface
-    while a player launch has them on (all launches on Windows and
-    macOS, .m3u games on Linux). Upstream b5172edaa1 adds
-    `network_cmd_bind_address`; no release tag holds it yet (checked
-    2026-10-23). The RetroArch fork session tells RetroDB when one does.
-  - **Do**: bump `VERSION` and the three SHA-256 pins in
-    `services/player_install.py`; write `network_cmd_bind_address =
-    "127.0.0.1"` in the run layer; amend PASS-59-64 §4.4.
-  - **Verify**: a fresh Get RetroArch installs the new version; `ss
-    -ulnp` shows the player's port on 127.0.0.1 only; Next disk works.
-
-  ---
+  **Layman:** A game's screenshots come from its own console, not from a version on another console.
   Kind: implement.
 
 - 📋 [PASS-59-169] **RetroDB updates itself from GitHub Releases (FEATURE, L).**
@@ -1410,6 +366,105 @@ orchestrator, several by execution rather than reading.
     at once) and see the rollback bring the old version back.
 
   ---
+  **Layman:** RetroDB can download and install its own updates.
+  Kind: implement.
+
+- 🚧 [PASS-59-218] **Steam and Xbox imports keep what the services already send (enhancement, M).**
+  - **Status**: in-progress
+  - **Source**: PASS-59-162, 2026-10-31. Notes: ai_steam_xbox S1 to S7, X1 to X7. The library has no Steam or Xbox rows, and Xbox has no real reply, so the Xbox claims are unproven.
+  - **Problem**: `get_app_details` has no callers, so imports stay nearly empty. A title match never links the Steam ID, so no achievements. Play time is fetched then dropped. Xbox may stop at 100 games, and phone and PC titles may be filed as Xbox One.
+  - **Needs**: one real Xbox sign-in to test. Steam store data has real board ratings and a Metacritic score.
+  - **Decided** (user, 2026-11-02): Steam first, tested with the user's
+    own Steam account against a scratch database. Then the user is guided
+    through Microsoft's app registration and one Xbox sign-in;
+    `xbox_client_id` and `xbox_client_secret` are empty, so registration
+    comes first. Xbox fixes wait for real replies.
+  - **Progress** (2026-11-02): Steam built and run against the user's real account on a scratch database (8 games). `SteamSyncJob` fills empty fields once per game from the store, keeps play time in `platform_play_time`, and a Steam or Xbox title match now links its ID. Steam's date and genre are left out: DOOM 3 is dated 2007, its Steam release, and 7 of 8 genres are only Action. Also fixed: an admin's Fetch Library sent Steam the masked key.
+    - **Not done**: Steam's review summary (`appreviews?json=1`) answered with a web page, not data, so no user scores. S6 (achievement language) and the `hidden` flag are left. The S3 note's example was wrong: `generate_sort_title` pads numbers and does not move "The".
+    - **Next**: Xbox X1 to X7, after the user registers a Microsoft app and signs in once.
+  - **Progress** (2026-11-09): **Progress** (2026-11-09): X1-X7 carried out in PASS-59-261 (OpenXBL).
+    A live Xbox reply is still owed there.
+
+  ---
+  **Layman:** Steam and Xbox imports keep the extra details those services already send.
+  Kind: implement.
+
+- 🚧 [PASS-59-261] **Xbox import signs in with a free OpenXBL key, not an Azure app (feature, M).**
+  - **Status**: in-progress
+  - **Why**: the user tried to link Xbox and was asked for an Azure
+    account (2026-11-05). Microsoft app registration needs an Azure
+    account since June 2024. The current redirect is built from
+    `request.host_url` (`routes/platform_import.py`), and Microsoft only
+    accepts http redirects to localhost, so LAN installs cannot sign in.
+  - **Decided** (user, 2026-11-05): OpenXBL per-user free key
+    (https://xbl.io, 150 requests an hour, no card). A shipped public
+    client with device-code sign-in stays a later option. Borrowing
+    Microsoft's own Xbox app id was rejected (impersonation).
+  - **Do**: a per-user OpenXBL key in Profile, stored like other platform
+    tokens; library and achievements through the OpenXBL API, paced under
+    `service_limits`; remove the client id and secret settings and the
+    OAuth routes. Carries PASS-59-218's X1 to X7.
+  - **Source**: research 2026-11-05 (Home Assistant, xbox-webapi-python,
+    Microsoft Entra docs, xbl.io pricing).
+  - Carried from PASS-59-249 group E (audit 2026-11-04, 2026-11-06): the
+    OpenXBL rewrite must not repeat three lows in the code it replaces.
+    `XBOX_PLATFORM_MAP` has no `PC` device, so PC titles may file as Xbox
+    One; Xbox 360 achievements read with contract 2 may come back empty
+    and count as 0/0; title history stops at 1000 and returns a partial
+    list on errors with no warning (`scraper/scrape_xbox.py`). Not fixed
+    in place: that code goes with this item.
+  - **Progress** (2026-11-09): **Progress** (2026-11-09): built in the open 4.0.0 (commits cea95e44,
+    ee45243f). Per-user OpenXBL key in Settings > My Profile
+    (`/api/xbox/key` saves only a key OpenXBL accepts; the key is never
+    sent back); client id/secret settings, setup guide and OAuth routes
+    removed; migration 042 drops old sign-in rows. X1-X6 fixed, X7 gone
+    with OAuth. A 429 is never retried and stops that key for the hour;
+    the bulk sync takes never-synced games first. Tests:
+    `tests/test_xbox_openxbl.py`; headless walk at 1400 and 375 px on a
+    scratch DB. **Still owed**: one real OpenXBL key, to confirm the base
+    URL (`https://api.xbl.io/v2`) and the reply shapes, which are
+    Microsoft's and not yet seen through OpenXBL.
+
+  ---
+  **Layman:** Xbox import works with a free key from OpenXBL instead of a Microsoft developer account.
+  Kind: implement.
+
+- 📋 [PASS-59-227] **MAME games show their real names, and scrape by them, with the file names left alone (enhancement, M).**
+  - **Target**: `games.title` for the MAME system comes from MAME's own list: the set name (`dyger`) to its description (`Dyger (Korea set 1)`), year and manufacturer. `rom_path` never changes. Scrapers then search by the real name.
+  - **Why**: 6,291 MAME rows are titled by short name and 2 are scraped (2026-11-02), so a scrape searches for `dyger` or `peps0275`. Hold them out of the bulk Fill Missing until this lands.
+  - **Data** (MAME Curator session, measured 2026-11-02): the title from the 0.284 non-merged DAT, which holds all 6,291 zips; other fields from `listxml-0.287.xml`, joined by set name, which lacks 10 of them. Keep the full description, since 627 zips share a base title. A shipped feature needs the user to point at their own file; RetroDB cannot assume these paths.
+  - **Sources**: arcadeDB is keyed by set name; libretro-thumbnails by description. ScreenScraper's romnom with a set's zip name is untested. Read each one's terms first.
+  - **Open**: gambling, slot, handheld, computer, tabletop and board-game sets per catver.ini, and BIOS sets, are in the same folder. Whether they show is the user's call.
+  - **Status**: todo. Lanes: scraper, services.
+  - **Source**: user, 2026-11-02.
+  - **Progress** (2026-11-02): Built 2026-11-02: naming tool, category filter, BIOS hidden, search by
+    title, ScreenScraper lookup by zip name, reports refuse a rename.
+    Still to do when worthwhile: arcadeDB and libretro-thumbnails as
+    sources, after reading their terms. A scrape of a named game through
+    every source has not been run.
+
+  ---
+  **Layman:** Arcade games show their real names and are looked up by them, while their files keep the names MAME needs.
+  Kind: implement.
+  Lanes: scraper, services.
+
+- 📋 [PASS-59-252] **The box viewer reads Slipcase's two new finger-recess keys (enhancement, S).**
+  - **Status**: todo
+  - **Why**: the Slipcase session, 2026-11-04 (SLIP-0130, Slipcase commit
+    4de187b, SLIP-0125 § 4.1 amended). Box file version stays 1.
+  - **Keys** in `shape`:
+    - `recess_end_radius_mm`: 0 square ends; half `recess_height_mm` round
+      (missing means half, the old look); at most half.
+    - `recess_offset_mm`: slot middle above the opening side's middle,
+      negative below; missing 0. Limit: `recess_length_mm + 2*|offset| <
+      height_mm - 2*max(corner_radius_mm, lip_width_mm)`.
+    - A shape breaking either limit is ignored whole.
+  - Ignoring the keys still draws a round, centred slot, so nothing breaks
+    today. Xbox One and Series X cases are newly shaped.
+  - **Source**: Slipcase session, 2026-11-04.
+
+  ---
+  **Layman:** The 3D box viewer reads two new settings from Slipcase for the finger hole in a case.
   Kind: implement.
 
 - 📋 [PASS-59-170] **Verify release signatures before an update installs (SECURITY, M).**
@@ -1427,36 +482,7 @@ orchestrator, several by execution rather than reading.
   - **Verify**: a tampered zip with a matching checksum file is refused.
 
   ---
-  Kind: implement.
-
-- 📋 [PASS-59-171] **Cheats for PSP games in PPSSPP (MEDIUM, S).**
-  - **Status**: todo
-  - Deferred from PASS-59-155 (user, 2026-10-23: not in v4.0.0).
-  - The user's PSP cheat database is in `/mnt/Emulators/Cheats/Sony
-    PlayStation Portable/PPSSPP` (`cheat.db`, and per-game `.ini` files
-    named by game id). PPSSPP's own enable mechanism: not researched.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-172] **Research RPCS3 game patches as cheats (LOW, S).**
-  - **Status**: todo
-  - Deferred from PASS-59-155 (user, 2026-10-23: research before
-    deciding; not committed to v4.0.0).
-  - RPCS3 cheats are game patches in `patch.yml`, a different and
-    larger format than the other emulators' cheat files.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-173] **Cheats when a game runs in the user's own RetroArch (LOW, S).**
-  - **Status**: todo
-  - Deferred from PASS-59-155 (2026-10-23).
-  - The user's RetroArch reads its own `cheat_database_path`; RetroDB
-    would write the `.cht` there through the overrides layer
-    (`services/launch_resolver.py::_retroarch_overrides`).
-
-  ---
+  **Layman:** An update is checked for a genuine signature before it installs.
   Kind: implement.
 
 - 📋 [PASS-59-174] **A failed update rolls back packages and keeps writes made after its backup (MEDIUM, M).**
@@ -1473,8 +499,432 @@ orchestrator, several by execution rather than reading.
   - **Source**: code review of PR #23, 2026-10-29.
 
   ---
+  **Layman:** If an update fails, RetroDB goes back to how it was without losing anything saved since.
   Kind: implement.
   Lanes: updater.
+
+- 📋 [PASS-59-168] **Move Get RetroArch to the next stable release and bind network commands to 127.0.0.1 (MEDIUM, S).**
+  - **Status**: planned; waits on upstream's next stable release.
+  - **Why**: official 1.22.2 binds network commands on every interface
+    while a player launch has them on (all launches on Windows and
+    macOS, .m3u games on Linux). Upstream b5172edaa1 adds
+    `network_cmd_bind_address`; no release tag holds it yet (checked
+    2026-10-23). The RetroArch fork session tells RetroDB when one does.
+  - **Do**: bump `VERSION` and the three SHA-256 pins in
+    `services/player_install.py`; write `network_cmd_bind_address =
+    "127.0.0.1"` in the run layer; amend PASS-59-64 §4.4.
+  - **Verify**: a fresh Get RetroArch installs the new version; `ss
+    -ulnp` shows the player's port on 127.0.0.1 only; Next disk works.
+
+  ---
+  **Layman:** Get RetroArch downloads a newer version, and its remote-control commands only listen on this computer.
+  Kind: implement.
+
+- 📋 [PASS-59-275] **Keyboard and screen readers: the remaining controls with no focus or no name (accessibility, M).**
+  - **Status**: todo
+  - **Source**: PASS-59-251 review 2026-11-09.
+  - **After**: PASS-59-274, which adds the standard these follow.
+  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
+  - **Findings**:
+  - M `static/css/pages/game-list.css:155-158`: Checked scrape-mode toggle's box-shadow beats the focus rule, so focusing the default-checked toggle…
+  - M `static/css/pages/game-list.css:392; pages.css:2366-2376`: Search clear button and museum controller image actions are opacity 0, so Tab lands on invisible…
+  - M `static/js/all-games-controller.js:1188,1191,1197,1202,1206`: Filter-tag remove × is a span with no focus or name, so keyboard users cannot drop a single filter value.
+  - M `static/js/all-games-controller.js:757`: Bulk-select checkbox has no label, so screen readers announce 'checkbox' with no game name.
+  - M `static/js/all-games-controller.js:865-878,897`: Source and Rating filter options are divs, unlike the generic button form, so keyboard users cannot pick…
+  - M `static/js/game-modals.js:1370-1376`: Tag remove × in quick edit is a <span> with no tabindex, role or name, so keyboard and screen-reader…
+  - M `templates/_settings_tabs/account.html:20,52,60`: Avatar wrapper, avatar choices and upload zone are unfocusable clickable divs, so the avatar cannot be…
+  - M `templates/_settings_tabs/library.html:64-119`: Theme radiogroup options are divs with no role=radio, tabindex or aria-checked, so themes cannot be…
+  - M `templates/edit_modal.html:458`: Label for='edit_emulator_override' names a non-existent id, so the Emulator override select has no…
+  - M `templates/game_detail.html:2198-2200,2220`: Screenshot delete button is shown only on hover, so keyboard and touch users land on or miss an…
+  - M `templates/settings.html:1576,1586,3041,3433,3228,1953`: Naming-builder, remove controls, controller expander and bonus-disc parent picker are spans/divs…
+  - M `templates/steam_achievements.html:72; xbox_achievements.html:72…`: Game search inputs and progress filter selects have no label or aria-label; placeholder is not an…
+  - M `templates/wishlist.html:552-558,586`: While anything is scraping, every wishlist card is rebuilt every 3 s, dropping keyboard focus to <body>.
+  - Low: static/js/utils.js:1130; static/js/global-search.js:125-129; static/js/apply-progress.js:50-75…; templates/changelog.html (Load More script); static/js/game-modals.js:548,1215; templates/game_detail.html:4113 (and other tag renderers); templates/game_detail.html:598-602; static/js/all-games-controller.js:1276-1278; templates/setup.html:35; templates/login.html:251…; templates/rom_tools_settings.html:462,501; templates/archive_scanner.html:1285-1286,1350; templates/archive_scanner.html:1312,1366,1597; templates/achievements_system.html:158; templates/reports.html:359-447; templates/reports.html:966,967,1086,1087…; templates/analytics.html (chart canvases); templates/dashboard.html:29,37; modals.css:97-107,184-187; buttons.css:27-31,164-167…; static/css/features/manual-reader.css:50-53
+  - Open questions (answer first): static/js/main.js:861-864; static/js/utils.js:549; templates/base.html:707; static/js/toast-controller.js:1052; static/js/game-modals.js (_createTag); templates/base.html (showConfirm)…; docs/RETRODB_DESIGN_STANDARDS.md §11; ModalFocusTrap; templates/archive_scanner.html (archive and…; templates/logs.html (level/view/filter/category toggle…; templates/psn_trophies.html (platform buttons); templates/psn_trophies.html (syncTrophies, startBulkRefresh); templates/reports.html (batchRenameModal onescape); templates/systems.html:26-41; pages.css:915,929; _tab_bar.html:29-31; reports.html:287-296
+
+  ---
+  **Layman:** The last buttons a keyboard can't reach, or a screen reader can't name, get fixed.
+  Kind: implement.
+
+- 📋 [PASS-59-278] **Translate the page scripts still in English: Lists, settings, achievements, trophies, reports, dashboard (i18n, L).**
+  - **Status**: todo
+  - **Source**: PASS-59-251 review 2026-11-09.
+  - **Do**: wrap per CLAUDE.md step 8 and `docs/specs/i18n.md` §6; regenerate the catalogs.
+  - **Follows**: PASS-59-246 (shipped). Number formats are PASS-59-256.
+  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
+  - **Findings**:
+  - H `templates/lists.html:4-79,339,354,358-359,369-370,391-392`: The Lists page is almost wholly untranslated (title, placeholders, modal labels, English plural logic)…
+  - M `static/css/components/tags.css:223`: CSS content 'None selected' is English text that can never be translated; it shows in the edit modal's…
+  - M `static/js/bulk-edit.js:81,109,137,165`: Bulk-edit genre/structure/perspective/dimension options show canonical English instead of tField labels.
+  - M `static/js/game-modals.js:1406-1408,1487-1489,1568-1570,1893-1895,1975-…`: Quick-edit dropdown options show raw canonical English and placeholders/optgroup labels are hardcoded…
+  - M `static/js/toast-controller.js:1055,1125,1237,795-800,1361`: Job names are English literals outside t() and are concatenated with translated fragments, which i18n §6…
+  - M `templates/_settings_tabs/scraping.html, system.html, library.html…`: Large blocks of settings, login and password-change text and role names are hardcoded English, not…
+  - M `templates/achievements_system.html, achievement_game.html…`: Many script and markup strings on achievement pages are hardcoded English, including relative-time text…
+  - M `templates/base.html:578-579,596,599,628,635,637,642-643,649`: Folder-browser strings in a template script stay English in every locale, and counts skip formatNumber.
+  - M `templates/collector_trophies.html:99`: earned_at UTC string cut to 10 chars, so users outside UTC see the wrong day near midnight.
+  - M `templates/dashboard.html:1146,1288,1292,1300,1310,1317,1336,1339`: Dashboard script strings are hardcoded English with English-only plurals, overwriting translated banner…
+  - M `templates/duplicate_finder.html, screenshot_dedup.html…`: Many user-facing strings on maintenance pages are hardcoded English, including an English-only plural.
+  - M `templates/game_detail.html:4021-6032 (many, listed in report)`: Many hardcoded English strings in the inline script: rename errors, placeholders, optgroups…
+  - M `templates/game_detail.html:5707,5750-5763,5977`: JS overwrites server-translated labels (Lookup HLTB, HLTB labels, Screenshots heading) with English…
+  - M `templates/game_imports.html:928`: Dates use a hardcoded en-US locale ('Mar 15, 2024') instead of the required YYYY-MM-DD via DateUtils.
+  - M `templates/psn_trophies.html, psn_trophy_detail.html…`: Many script strings on trophy pages are hardcoded English, some overwriting translated labels after one…
+  - M `templates/reports.html (many lines)…`: Report and export script strings are hardcoded English, permanently replacing translated button labels…
+  - M `templates/settings.html:1307-4889 (many, listed in report)`: Large blocks of user-facing English in the settings script never go through {{ _()|tojson }}.
+  - M `templates/systems.html:727,734-744,776,780,783,917`: Systems page script strings (spec labels, empty text, 'Showing X of Y') are hardcoded English.
+  - M `templates/xbox_achievement_game.html:104,212…`: UTC ISO strings cut at 16 chars show a literal 'T' in UTC, ignoring user timezone and the date format…
+
+  ---
+  **Layman:** The Lists, Settings, achievements, trophies, reports and dashboard pages show in your language.
+  Kind: implement.
+
+- 📋 [PASS-59-279] **Translation follow-ups: small untranslated strings, plurals and dates (i18n, S).**
+  - **Status**: todo
+  - **Source**: PASS-59-251 review 2026-11-09.
+  - **After**: PASS-59-278.
+  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
+  - **Findings**:
+  - Low: static/js/utils.js:885-888,643,60; static/js/main.js:1501,1623; static/js/main.js:1660; static/js/utils.js:860; static/js/updates.js:37; templates/_macros/breadcrumb.html:15…; static/js/game-modals.js:2330,137,384,391,2238-2239…; templates/game_detail.html:46; templates/game_detail.html:265; static/js/all-games-controller.js:706-710,715,720…; templates/all_games.html:155…; templates/museum.html:4,11,37-39,131…; templates/lists.html:487-494…; templates/settings.html:2643,5073,2641-2647; templates/archive_scanner.html, chd_verify.html…; templates/archive_scanner.html:1304,1279; templates/game_imports.html:838; templates/achievements_system.html:16-24,88,104,297,342,469…; templates/local_trophy_detail.html:261,299; templates/psn_trophy_detail.html:6,195…; templates/psn_trophies.html:132-141; templates/analytics.html:2691,2748,2735,2810; templates/systems.html:11; templates/dashboard.html:236,300; templates/systems.html:78; install.py; install_gui.py:45-54; routes/launch_settings.py:65-91…
+  - Open questions (answer first): templates/game_detail.html:46; docs/specs/i18n.md §6; templates/_bulk_edit_modal.html:30; static/js/emulators-settings.js:644; templates/chd_converter.html:75; templates/achievements_system.html:421; templates/dashboard.html:303; templates/systems.html:83; docs/specs/i18n.md; docs/specs/i18n.md
+
+  ---
+  **Layman:** Small leftover English words, plurals and dates get translated.
+  Kind: implement.
+
+- 📋 [PASS-59-280] **Python: emulator setup on Windows and macOS, installer safety, and the GPU helpers (audit-fix, M).**
+  - **Status**: todo
+  - **Source**: PASS-59-251 review 2026-11-09.
+  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
+  - **Findings**:
+  - H `services/upscale_worker.py:38,120,140-148; services/rembg_worker.py:96`: The 600s watchdog counts a slow first model download as a crash, so on slower links background removal…
+  - M `install.py:149; install_gui.py:435`: Fallback Pillow install is unpinned and unhashed, bypassing the --require-hashes lock exactly when the…
+  - M `install.py:166; install_gui.py:457`: copy2 gives config.py, scraper settings and PSN credentials file 0644, readable by every local user.
+  - M `install_gui.py:586; install.py:249`: Installer opens/prints a hard-coded localhost:5000 after 2.5s, ignoring the saved port and slow first…
+  - M `installer_core.py:135-137`: Installer silently retries with --break-system-packages, installing pinned packages into the distro…
+  - M `installer_core.py:52; start.bat:23`: MIN_PYTHON (3,8) passes interpreters the dependencies can't install on, giving a pip resolver error…
+  - M `routes/emulators.py:246-259`: Clearing is_default runs outside a transaction with unvalidated ids; a failed upsert leaves the system…
+  - M `routes/launch_settings.py:28-38,129-136,163,167-169…`: Emulator Detect uses Linux-only paths and file patterns, so it finds nothing on Windows (.exe) or macOS…
+  - M `services/disc_files.py:19,89,96`: Playlist rewrite is in place: a failed read writes an empty .m3u, and non-UTF-8 disc names are corrupted…
+  - M `services/disc_files.py:36`: Absolute or ../ track names in .cue/.gdi escape the sheet folder, so CHD conversion can delete files…
+  - M `services/emulator_adapters.py:65-81`: DuckStation and PCSX2 data-folder lists are Linux-only, so per-game settings and BIOS status never work…
+  - M `services/rembg_worker.py:77-79`: ROCm provider is used without the spec's /dev/kfd R/W check, so AMD users outside the render group lose…
+  - M `services/rembg_worker.py:99-106`: Any rembg error, even a non-image upload, is treated as GPU failure, switching to CPU for good and…
+  - M `services/upscale_worker.py:167-171`: One failed first model download marks AI upscaling unavailable until restart; jobs silently fall back to…
+  - Low: install.py:162-166; install_gui.py:453-457; install_gui.py:576-581; install_gui.py:553-558; install_gui.py:245; install_gui.py:339-341; installer_core.py:69-81; install.py:23-25; .gitleaks.toml; routes/emulators.py:110,113-114,146-147,152; services/player_cores.py:378-383,429-432; services/player_cores.py:470-476; services/launcher/local.py:64-75; routes/emulators.py:258-259; services/emulator_seeder.py:59-69; services/player_cores.py:191-205; services/upscale_worker.py:132,136-137,150-156; services/upscale_worker.py:232-240; services/upscale_worker.py:197-198
+  - Open questions (answer first): install.py; install_gui.py; installer_core.py; requirements.lock; routes/launch_settings.py; services/player_cores.py:401; services/standalone_settings.py (write_lines, _target); routes/emulators.py; services/upscale_worker.py:167-171; services/upscale_worker.py:120,140-148; services/upscale_worker.py:211-213,245; services/upscale_worker.py (Popen pipes)
+
+  ---
+  **Layman:** Fixes for emulator setup on Windows and macOS, the installer, and the image helpers that use the graphics card.
+  Kind: implement.
+
+- 📋 [PASS-59-281] **Text contrast and brand colours: raise --text-muted, and name the brand colours (accessibility, M).**
+  - **Status**: todo
+  - **Source**: PASS-59-251 review 2026-11-09.
+  - **User decisions 2026-11-10**: (1) raise `--text-muted` in the six failing themes and drop the "documented acceptable" note in `docs/theme_contrast.md`; (3) brand colours (Steam, Xbox, PSN, rating boards, system badges) become named tokens, with a written exemption from "no hard-coded colours".
+  - **Then**: rerun `scripts/audit_contrast.py`. Fixed cyan is PASS-59-255.
+  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
+  - **Findings**:
+  - H `static/css/core/variables.css:41; themes.css:46,148,249,352,559`: --text-muted is under 4.5:1 in six themes incl. the default, on small hints, placeholders, nav titles…
+  - H `trophies.css:633,704-707,750; hltb.css:189; game-modals.css:380…`: --text-muted (~3.6:1) and --neon-gray (~3.7:1) are used for small informative text, failing 4.5:1 on the…
+  - M `game-list.css:1057-1060; settings.html:888-891`: White text on PEGI green (~2.0:1) and grey 'unknown' system badge (~3.6:1) fail 4.5:1 for small text.
+  - M `game_detail.html:3912-3914,3926-3928; game-modals.css:226-227`: White on cyan rename button (~1.9:1), white on orange RA badge (~2.2-3.2:1) and error text (~3.6:1) fail…
+  - Low: themes.css (Christian); cards.css:280; utilities.css:158…; game-list.css:1384-1388; pages.css:589-594,1274-1277
+  - Open questions (answer first): static/css/components/badges.css:116-246; static/css/core/variables.css:41; game-list.css:1086-1179,1288-1320,1464-1555; core/variables.css (--text-muted, --neon-gray); game_detail.html:1232-1266,2058-2061,2090-2093
+
+  ---
+  **Layman:** Faint grey text becomes easier to read in every theme.
+  Kind: implement.
+
+- 📋 [PASS-59-282] **Layout: phone gaps, hidden sticky headers and duplicated CSS (ux, M).**
+  - **Status**: todo
+  - **Source**: PASS-59-251 review 2026-11-09.
+  - **Check**: desktop and 375px after each fix.
+  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
+  - **Findings**:
+  - H `templates/systems.html:1017-1019,589-596`: Masonry inline grid-row styles override the <=480px auto-rows rule, adding thousands of px of empty…
+  - M `pages.css:1489-1569; game-list.css:796-866`: .alphabet-nav exists in two drifted copies, so library pages get a mix of both and other pages a…
+  - M `static/css/components/tables.css:86-88`: Sticky table headers use top:0, so between 601 and 992px they stick under the fixed phone header and are…
+  - M `static/css/pages/game-list.css:807`: A-Z strip assumes the filter bar is <=80px; at <=768px the bar wraps taller and the strip likely slides…
+  - M `static/css/pages/pages.css:1076`: Unscoped .tag rule under detail-page styles overrides the tags component on every page.
+  - M `templates/game_detail.html:2897-2898`: Scrape modal overlay offsets by the 260px sidebar width, so with a collapsed sidebar a ~190px strip…
+  - M `templates/game_detail.html:983-3938`: Game page inline <style> redeclares many external classes (.hltb-*, .game-hero, .stat-value, .modal…
+  - Low: static/js/utils.js:967-970; static/js/main.js:153; static/js/theme.js:189; templates/changelog.html (.version-badge); templates/game_detail.html:4470; templates/tags.html:142,54; templates/wishlist.html:623; templates/lists.html:262,209…; templates/rom_tools_settings.html:192-193,197…; static/js/log-viewer.js:284; templates/logs.html:508-513; templates/logs.html:470; templates/screenshot_dedup.html:149-151; templates/analytics.html:2477; templates/systems.html:621,642-643…; static/css/core/typography.css:7; responsive.css:122; forms.css:383-387; static/css/pages/game-list.css:1097,1114,1156; static/css/pages/game-list.css:319,316; settings.html:156-168,400-410,527-530; static/css/pages/game-list.css:877; static/css/pages/pages.css:2097; game_detail.html:2181 vs 2874/2880; 1698 vs 2474; 1715 vs…; trophies.css:220-233; filters.css:198-207; game-modals.css:375-383; game_detail.html:1925
+  - Open questions (answer first): templates/game_detail.html:64; static/css pages.css:2092-2101; templates/settings.html (~958, .confirm-modal-message); templates/archive_scanner.html:346; templates/achievements_system.html:690,743,774; templates/achievement_game.html:391-394; templates/analytics.html:1529-1530; static/css/components/tables.css:86-88; pages.css:1778; typography.css:111; game-cards.css:248; stat-boxes.css:47; achievements.css:16…
+
+  ---
+  **Layman:** Fixes for empty gaps and hidden headers on phones, and for duplicated page styles.
+  Kind: implement.
+
+- 📋 [PASS-59-287] **Docs and comments the review found out of step with the code (doc-fix, S).**
+  - **Status**: todo
+  - **Source**: PASS-59-251 review 2026-11-09.
+  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
+  - **Findings**:
+  - Low: static/js/utils.js:74; services/template_filters.py:38; static/js/theme.js:141; templates/base.html:17-19; static/js/main.js:1362; static/js/all-games-controller.js:1615; templates/settings.html:1075,1114; docs/specs/rom-tools.md §4.3-4.4; routes/tools.py:412-421; static/js/achievements.js; templates/help.html:731,872,900-915,988,1377; templates/help.html:360,373; templates/help.html:1818; docs/RETRODB_DESIGN_STANDARDS.md §8; .claude/rules/distribution.md; .semgrep.yml:35,106,109,118
+  - Open questions (answer first): static/js/utils.js:280-284; docs/reviews/2026-11-04-independent-audit.md; roadmap.md; static/js/toast-controller.js…; static/js/toast-controller.js:1397,1400; templates/game_detail.html:5027-5134; templates/help.html:1869,121,1695; templates/help.html:233,511,561; docs/RETRODB_DESIGN_STANDARDS.md §8,§20…; .semgrep.yml
+
+  ---
+  **Layman:** Help pages and code notes that no longer match the app get corrected.
+  Kind: implement.
+
+- 📋 [PASS-59-289] **Tests: clean up shared test state, and keep the player profile out of reach (test, M).**
+  - **Status**: todo
+  - **Source**: PASS-59-251 review 2026-11-09.
+  - **User decision 2026-11-10**: the player-profile gap (H) tightens the shipped PASS-59-239 isolation work.
+  - **Related**: the Steam-key flake fixed 2026-11-09 was this class.
+  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
+  - **Findings**:
+  - H `tests/test_player_cores.py:73`: Player profile isolation rests on a config.BASE_DIR monkeypatch alone (also player_install:31…
+  - M `tests/test_etag_and_gzip.py:111`: Clears force_password_change on seeded admin id 1 in the shared DB on every run and never…
+  - M `tests/test_log_redactor.py:118`: Strips SecretRedactor from the root logger (also :155) and never restores it for later tests…
+  - M `tests/test_mame_names.py:167`: Fixture leaks a 'mame' systems row, and the job's counts depend on no other test leaving…
+  - M `tests/test_observability.py:112`: factory_snapshot restores the record factory but not _request_id_installed, so request_id…
+  - M `tests/test_pass46_frozen_paths.py:171`: reloaded_app restores only app and config; modules first imported in the reload (e.g.…
+  - M `tests/test_pass54_media_integrity.py:136`: clear_missing_media_refs sweeps every row in the shared DB, so leftover rows break the count…
+  - M `tests/test_pass59_118_trophies.py:75`: Inserts users row id 2 ('other-stub') and the finally never deletes it; it stays in the shared…
+  - M `tests/test_pass59_133_keep_media.py:10`: Relies on conftest's shared IMAGE_PATH/screenshots being empty; a leftover file flips the…
+  - M `tests/test_pass59_248_hardening.py:21`: _make_user commits admin users and user_settings rows to the shared DB and never deletes them…
+  - M `tests/test_pass59_249_gpu_env.py:42`: delenv(raising=False) on an absent var records no restore, so the 10.3.0 set by the code leaks…
+  - M `tests/test_pass59_268_ra_queue.py:60`: Fixture clears ra_queue _items but leaves the watcher thread alive, so it can call…
+  - M `tests/test_password_floor.py:52`: Posting /api/setup renames the shared seeded admin to 'boss' and changes its password; nothing…
+  - Low: tests/test_bulk_scrape_race.py:115; tests/test_fresh_install_schema.py:102; tests/test_pass45_security.py:1897; tests/test_pass59_118_trophies.py:157; tests/test_pass59_119_rom_tools.py:91; tests/test_pass59_241_silent_failures.py:97; tests/test_pass59_240_secrets.py:46; tests/test_pass59_238_media.py:79; tests/test_pass59_frontend.py:243; tests/test_psn_new_npsso.py:25; tests/test_rpcs3_compat.py:24; tests/test_shutdown_route.py:64
+  - Open questions (answer first): tests/_versions_util.py; tests/test_etag_and_gzip.py:111; tests/test_fresh_install_schema.py; tests/test_log_redactor.py:118; tests/test_log_redactor.py:118; tests/test_observability.py:112; tests/test_observability.py:112; tests/test_pass38_region_helper.py:51; tests/test_pass41_security.py:667; tests/test_pass46_frozen_paths.py:171; tests/test_pass46_frozen_paths.py:171; tests/test_pass46_frozen_paths.py:1; tests/test_pass59_133_keep_media.py:10; tests/test_pass59_rom_tools.py:174; tests/test_pass59_118_trophies.py:135; tests/test_pass59_133_keep_media.py:10; tests/test_pass59_206_canonical_labels.py:1; tests/_versions_util.py:1; tests/test_pass59_249_gpu_env.py:42; tests/test_pass59_248_hardening.py:21; tests/test_pass59_268_ra_queue.py:60; tests/test_pass59_268_ra_queue.py:60; tests/test_password_floor.py:52; tests/test_player_launch.py:36; tests/test_psn_new_npsso.py:25; tests/test_player_cores.py:73; tests/test_pass59_rom_tools.py:175; tests/test_scan_library_rom_path.py:215
+
+  ---
+  **Layman:** Tests clean up after themselves so one test can't change another's result.
+  Kind: implement.
+
+- 📋 [PASS-59-291] **Tests that check too little to catch the bug they are named for (test, M).**
+  - **Status**: todo
+  - **Source**: PASS-59-251 review 2026-11-09.
+  - **After**: PASS-59-290.
+  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
+  - **Findings**:
+  - M `tests/test_auth_hardening.py:142`: Nothing checks the planted session key is gone, and the refused login never…
+  - M `tests/test_auth_hardening.py:395`: Only checks words before the token survive; a redactor that wipes every long…
+  - M `tests/test_emulator_autodetect.py:297`: _walk_appimages sorts dirnames, so both mine_first cases walk the same order; the…
+  - M `tests/test_fresh_install_schema.py:99`: Runs its own copy of the upsert SQL, so a regression in the routes/trophies.py…
+  - M `tests/test_graceful_shutdown.py:18`: _SINGLETON_NAMES omits museum_images_job and ai_fill_bulk_job, so their cancel is…
+  - M `tests/test_hltb_alt_titles.py:160`: lookup_playtime returns None on any exception, so 'result is None' (also :99)…
+  - M `tests/test_input_hardening_app.py:59`: Named for rate limits but only asserts three view functions exist; removing every…
+  - M `tests/test_input_hardening_museum.py:60`: Sends no upload; compares two config constants, so the route could stop checking…
+  - M `tests/test_metadata_merger.py:420`: assert meta['genre'] passes for any non-empty value, including the char-iteration…
+  - M `tests/test_observability.py:207`: SLOW_REQUEST_MS=0 returns before the probe exemption is checked, so deleting the…
+  - M `tests/test_official_names.py:174`: Asserts only title != LOCKED_NAME; a Reset that blanks the title or restores the…
+  - M `tests/test_pass35_36_hardening.py:90`: Checks init_database's pragma, but FK pragma is per-connection; deleting get_db's…
+  - M `tests/test_pass38_region_helper.py:63`: The first match is also the first part, so the test passes with region matching…
+  - M `tests/test_pass39_supply_chain.py:76`: Compares total pin and hash counts, so one unhashed pin passes; marker-bearing…
+  - M `tests/test_pass45_security.py:839`: Image.MAX_IMAGE_PIXELS is one Pillow-wide global, so neither test can tell which…
+  - M `tests/test_pass48_media_cleanup.py:85`: No -sm/-md fanart files exist, so wrongly deleting fanart variants would still…
+  - M `tests/test_pass59_119_rom_tools.py:204`: Proves a paused task stops by sleeping 0.3 s; a slow worker passes on broken…
+  - M `tests/test_pass59_216_extra_data.py:235`: Return of queue_stored_suspects() is ignored; if nothing is queued, approve_all…
+  - M `tests/test_pass59_217_identify_by_file.py:42`: Checks for escaped.bin in tmp_path.parent, where a ../../ escape cannot land; the…
+  - M `tests/test_pass59_237_disc_files.py:114`: deleted == 0 can come from 'not in scan results' or the playlist guard; groups…
+  - M `tests/test_pass59_237_disc_files.py:64`: Poll gives up after ~4 s without failing and returns empty groups, so the…
+  - M `tests/test_pass59_247_scrapers.py:179`: Assertion only inside the loop; an empty suggest_groups result passes, so 'kept…
+  - M `tests/test_pass59_auth_api.py:125`: Forced-change form check accepts any 200 page with '<form' or 'password', so it…
+  - M `tests/test_pass59_auth_api.py:57`: 'still masks unexpected errors' checks only status 500; a regression leaking…
+  - M `tests/test_pass59_rom_tools_js.py:30`: Node catch swallows any load-time error except 't is not defined', so an early…
+  - M `tests/test_rembg_worker.py:97`: Compares against prior 'rembg' in sys.modules; if an earlier test imported rembg…
+  - M `tests/test_review_fixes_gamepage.py:109`: Response unchecked and no record that the injected failing() raised; assertions…
+  - M `tests/test_routes_launch.py:173`: Override 'unchanged' is also what an unprocessed POST shows; the only co-field…
+  - M `tests/test_server_port.py:183`: Both sides resolve to default 5000 from inherited temp settings, so a CLI…
+
+  ---
+  **Layman:** Tests that check too little to catch their bug get stronger checks.
+  Kind: implement.
+
+- 📋 [PASS-59-292] **Tests: check behaviour instead of source text, and stop depending on the working folder (test, M).**
+  - **Status**: todo
+  - **Source**: PASS-59-251 review 2026-11-09.
+  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
+  - **Findings**:
+  - H `tests/test_pass40_9_16_security.py:386`: Source window around 'Cleared' includes a comment holding 'AND ' and ' = ?', so the check is always true.
+  - M `tests/test_auth_hardening.py:82`: A negative string match on one spacing of 'password_hash = None' stands in for checking non-admins get…
+  - M `tests/test_pass37_a11y.py:215`: The <h4> guard reads only the settings.html shell; tab content moved to _settings_tabs partials is…
+  - M `tests/test_pass38_template_macros.py:208`: Scans only settings.html; a raw tab-subnav class re-added in a _settings_tabs partial is not caught.
+  - M `tests/test_pass41_security.py:1561`: Claim that api_track_view no longer writes games.last_viewed is checked only by a comment marker in…
+  - M `tests/test_pass41_security.py:317`: Two tests check only that 'get_request_db' appears in the file; the import satisfies it, so reverting…
+  - M `tests/test_pass45_security.py:904`: Computes open_count but never compares it; extra Image.open sites with no bomb catch pass if four…
+  - M `tests/test_pass59_208_wrong_game.py:247`: Checks only that the DEFAULT_SCRAPER_PRIORITY name appears in four files; its value (rawg last) is never…
+  - M `tests/test_pass59_245_focus.py:22`: Globs at :22 and :55 are CWD-relative; from outside the repo root they match nothing and pass; CSS glob…
+  - M `tests/test_pass59_destructive_ops.py:337`: Claims batch_create_m3u honours delete_archives but only checks a substring in its source; dead or…
+  - M `tests/test_pass59_packaging.py:62`: Positive checks (also :105, :179, :423) search raw source incl. comments; a comment naming the call…
+  - M `tests/test_sidebar_nav.py:91`: Greps the template for the tabs macro call; passes inside a comment or dead branch and never checks the…
+  - M `tests/test_units_sold.py:44`: Two tests check SQL/name substrings in source for fill-only and integer storage; comments or dead code…
+  - Low: tests/test_ai_fill_bulk.py:192; tests/test_input_hardening_uploads.py:38; tests/test_mame_names.py:240; tests/test_modal_plain_text.py:50; tests/test_pass29_frontend.py:47; tests/test_pass39_supply_chain.py:247; tests/test_pass35_36_hardening.py:328; tests/test_pass41_security.py:1731; tests/test_pass45_security.py:2427; tests/test_pass45_security.py:795; tests/test_pass59_258_a11y.py:15; tests/test_pass59_scrapers.py:87; tests/test_release_dates.py:58; tests/test_scraper_settings_cache.py:105; tests/test_sidebar_nav.py:92
+  - Open questions (answer first): tests/test_ai_fill_bulk.py:192; tests/test_pass35_36_hardening.py:290; tests/test_pass40_9_16_security.py:386; tests/test_pass59_scrapers.py:87; tests/test_units_sold.py:44
+
+  ---
+  **Layman:** Tests check what the app does, not how its code is written.
+  Kind: implement.
+
+- 📋 [PASS-59-293] **Tests: fixed waits, slow waits and other test hygiene (test, S).**
+  - **Status**: todo
+  - **Source**: PASS-59-251 review 2026-11-09.
+  - **Related**: PASS-59-221 holds the two slowest tests.
+  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
+  - **Findings**:
+  - M `tests/test_bulk_scrape_race.py:225`: A fixed 0.3 s wait before asserting one live worker can fail falsely under load and miss a late…
+  - M `tests/test_emulator_autodetect.py:160`: fake_home moves only $HOME, so a system-wide Flatpak under /var/lib/flatpak changes results at :160…
+  - M `tests/test_i18n_longform.py:58`: Three tests (:58, :69, :90) each re-parse every changelog YAML, about 9.7 s together.
+  - M `tests/test_pass59_132_parallel_fallbacks.py:53`: Finish order rests on a 0.2 s sleep and a 2 s Barrier timeout; under -n 4 load the order flips or the…
+  - M `tests/test_pass59_243_jobs.py:81`: Fixed 0.3 s wait assumes the old worker reached its pause; under load it fails without a regression or…
+  - M `tests/test_pass59_268_ra_queue.py:133`: time.sleep(2.5) costs 2.5 s and buys nothing; the property is already proven and the negative assert…
+  - M `tests/test_pass59_268_ra_queue.py:94`: Waits out the real POLL_SECONDS = 2 (2.01 s measured) though _watch reads the global each loop.
+  - Low: tests/test_auth_hardening.py:410; tests/test_game_logo.py:133; tests/test_launcher_local.py:169; tests/test_migrations.py:320; tests/test_pass38_region_helper.py:71; tests/test_pass59_244_recover.py:13; tests/test_pass59_249_database.py:121; tests/test_pass59_auth_api.py:155; tests/test_pass59_frontend.py:271; tests/test_rembg_worker.py:119; tests/test_rembg_worker.py:128; tests/test_shutdown_route.py:142; tests/test_updater.py:297; tests/test_xbox_openxbl.py:231
+  - Open questions (answer first): tests/test_emulator_autodetect.py:160; tests/_bulk_scrape_fixtures.py; tests/test_game_logo.py:133; tests/test_migrations.py:320; tests/test_museum_job.py; tests/test_pass59_161_screenshot_fit.py:21; tests/test_pass59_243_jobs.py:81; tests/test_pass59_auth_api.py:155; tests/test_pass59_trophy_dataloss.py:71; tests/test_launch_resolver.py:10; tests/test_upload_image_pipeline.py:34; tests/test_upload_image_pipeline.py:34; tests/test_upload_limits.py:29
+  **Layman:** Tests stop waiting longer than they need to.
+  Kind: implement.
+
+- 📋 [PASS-59-255] **Every theme colours the whole page: the remaining fixed cyan becomes theme colours (ux, M).**
+  - **Status**: todo
+  - **Why**: component CSS still names the cyberpunk cyan directly
+    (`rgba(76, 201, 240, …)`, `#4cc9f0`), so those parts stay cyan in the
+    Matrix, Amber and other themes. PASS-59-245 moved the focus rings and
+    focus glows; `docs/specs/themes.md` §1 now says the rest are not done.
+  - **Fix**: replace each with a theme colour, for example
+    `color-mix(in srgb, var(--primary-cyan) 15%, transparent)`, and look at
+    every theme at desktop and 375px. Then drop the caveat from themes.md.
+  - **Find them**: `grep -rnE "rgba\(76, ?201, ?240|#4cc9f0" static/css/*/`.
+  - **Progress** (2026-11-10): PASS-59-251 review 2026-11-09 adds these places (lanes 05, 15, 16,
+    17). Medium: `static/css/components/buttons.css:63-67` and the other
+    components, with the `*-bg` tokens in `variables.css`; `pages.css`
+    tabs, alphabet nav and panels, with `game-list.css` and settings
+    selects; `progress.css:312`, `toasts.css:54-61` (duplicate rules, some
+    dead); the game page's inline styles in `game_detail.html`. Low:
+    `templates/all_games.html:260,281-282`; `game_detail.html:2255`
+    against `hltb.css:45`; `game_detail.html:2078-2081` against
+    `trophies.css:364-367`. Contrast and brand colours: PASS-59-281.
+
+  ---
+  **Layman:** Every theme colours the whole page, with no leftover fixed blue-green.
+  Kind: implement.
+
+- 📋 [PASS-59-256] **Numbers and sizes are written the way the reader's language writes them (i18n, S).**
+  - **Status**: todo
+  - **Why**: `formatNumber` (thin-space thousands) and `formatBytes` in
+    `static/js/utils.js`, and the Jinja `format_number` filter, ignore the
+    language, so a German reader sees English decimal points.
+  - **Fix**: format with the page's locale (`Intl.NumberFormat` from the
+    `<html lang>`; Babel's `format_decimal` on the server), keeping the thin
+    space where a locale has no grouping rule of its own.
+  - Not done in PASS-59-246, which wrapped text only.
+  - **Progress** (2026-11-10): PASS-59-251 review 2026-11-09 adds (lanes 01-14). Medium:
+    `templates/analytics.html:1529`, where Chart.js formats numbers in the
+    browser's own way. Low, counts shown without `formatNumber`:
+    toast-controller, game-modals, all-games-controller, mame-names,
+    museum, settings, the CHD and archive pages, hltb_review, reports,
+    dashboard. Also: `static/js/utils.js:74` puts separators into the
+    decimal part (0.12345 becomes 0.12 345), while the Jinja copy
+    truncates to a whole number; `game_detail.html:840` uses
+    `filesizeformat` (English units). Full list: the PASS-59-251 triage
+    ledger.
+
+  ---
+  **Layman:** Numbers and file sizes are written the way your language writes them.
+  Kind: implement.
+
+- 📋 [PASS-59-221] **The slowest test runs real image work: speed up test_screenshot_duplicates_are_dropped (test, S).**
+  - **Status**: todo
+  - **Source**: measured 2026-10-31, while aligning the local gate with GitHub CI.
+  - **Problem**: in the gate's environment, which has the CPU onnxruntime from the lockfile, `tests/test_upload_image_pipeline.py::test_screenshot_duplicates_are_dropped` took 66 to 148 s of a suite that takes 79 to 198 s, depending on machine load. The whole suite on the system Python took 61 s. `test_fu1_csp.py::test_every_action_is_defined` is next, at 37 to 55 s.
+  - **Fix**: find what makes it slow; a duplicate check should not need a real upscale. Every push and both GitHub Python versions run it, so this is the largest saving available in the gate.
+  - **Progress** (2026-11-10): PASS-59-251 review 2026-11-09 found both slow tests (High, test lane
+    T17). `tests/test_upload_image_pipeline.py:34`: `_get_upscaler` is not
+    stubbed, so two tests start the real upscaler; stubbing it took the
+    file from 50.0 s to 1.3 s (measured by the review).
+    `tests/test_fu1_csp.py:234`: `test_every_action_is_defined` took 24.4
+    s, running three regex scans over all source for each action and
+    reading files twice. Other slow and timing tests: PASS-59-293.
+
+  ---
+  **Layman:** The slowest test runs faster.
+  Kind: implement.
+
+- 📋 [PASS-59-262] **Auto-link leaves alone a disc the user unmarked as a bonus disc (audit-fix, S).**
+  - **Status**: todo
+  - **Why**: `unlink_bonus_disc` (routes/bonus_discs.py) sets
+    `is_bonus_disc = 0`, and `auto_detect_bonus_discs` reads 0 as never
+    judged, so the next auto-link marks the disc again.
+  - **Fix**: a new column (a migration) recording that a person said "not
+    a bonus disc"; unlink sets it, a manual link clears it, detection skips
+    it. Not a new `is_bonus_disc` value: every game list reads any value
+    other than 0 or NULL as hidden.
+  - **Not fixed in PASS-59-249** because it needs a schema change; the loop
+    half of the same finding shipped there.
+
+  ---
+  **Layman:** Auto-link stops re-marking a disc you said is not a bonus disc.
+  Kind: implement.
+
+- 📋 [PASS-59-156] **A hung GPU upscale holds the GPU until the server restarts (MEDIUM, M).**
+  - **Status**: todo
+  - **Seen 2026-10-22**: at 17:01 `_gpu_run` timed out ("GPU inference
+    gave no result in 120s") and the breaker in `_upscale_image` moved to
+    CPU. 1.5 h later rocm-smi showed GPU use 99%, VRAM 99% (7.9 GB held
+    by the :5000 server), two server threads in `kfd_wait_on_events`,
+    CPU idle. No amdgpu error in the kernel log. Only a restart frees it.
+  - **Where**: services/image_utils.py `_gpu_inference_worker` /
+    `_gpu_run`. The timeout stops the wait, not the `session.run`, and
+    nothing in-process can cancel a wedged ROCm kernel.
+  - **Plan**: run GPU inference in a child process the server can kill
+    on timeout (killing it frees the card), then fall back to CPU as now.
+    Check first whether onnxruntime's RunOptions.terminate reaches a
+    running ROCm kernel; if it does, that is the smaller fix.
+  - **Verify**: force a hang (a test hook that blocks in the child); after
+    the timeout the child is gone and rocm-smi shows the VRAM released.
+
+  ---
+  **Layman:** A graphics-card upscale that hangs lets go of the card without a server restart.
+  Kind: implement.
+
+- 📋 [PASS-59-160] **Library filter "Action" also matches "Action-Adventure", so the window's count and the result disagree (LOW, S).**
+  - **Status**: todo
+  - **Seen** 2026-10-23 on the live library copy: the Genre window says
+    Action (755 or 795 depending on version grouping), the filter
+    returns 935.
+  - **Why**: services/game_query.py `_build_games_query` matches each
+    multi-value field with `LIKE '%value%'`, a substring. The window's
+    counts (`_get_filter_options`) split the comma lists into whole
+    values.
+  - **Plan**: match whole comma-separated values, e.g. compare against
+    `',' || REPLACE(field, ', ', ',') || ','` with `'%,value,%'`, for
+    the IS and IS NOT branches alike. Check publisher/developer values
+    that contain a comma themselves before choosing.
+  - **Verify**: count of `?genre=Action` equals the window's Action count
+    under the same grouping; a test pins Action vs Action-Adventure.
+
+  ---
+  **Layman:** The Library's "Action" filter shows the same number of games as its count says.
+  Kind: implement.
+
+- 📋 [PASS-59-166] **On an achievements system page, the console tabs scroll under the section tabs (FIX, S).**
+  - **Status**: todo
+  - **Seen 2026-10-23** (Firefox, 500px, /achievements/system/8): the
+    `.tool-tabs.achievement-tabs` bar and the `.system-tabs` bar are both
+    sticky with the same `top`, so the second sits under the first when
+    scrolled. `.system-tabs` is also taller than the screen there when
+    its consoles wrap. Same at desktop before PASS-59-165 (both `top: 0`).
+  - **Verify**: scroll the page at 500px and desktop; no bar covers another.
+
+  ---
+  **Layman:** On an achievements console page, the console tabs stop sliding under the section tabs.
+  Kind: implement.
+
+- 📋 [PASS-59-167] **On a phone, some sticky filter bars fill a third or more of the screen (UX, S).**
+  - **Status**: todo
+  - **Seen 2026-10-23** (Firefox, 500x900): sticky bar heights at phone
+    width were Library filter bar 273px plus alphabet bar 61px, Logs
+    toolbar 384px, Systems filter bar 199px, ROM Tools tabs 130px. With
+    the phone header and bottom bar, little page is left on a real phone.
+  - **Plan**: decide per bar whether it stays sticky on a phone, or
+    collapses there.
+  - **Verify**: scroll each page at phone width; the content keeps most
+    of the screen.
+
+  ---
+  **Layman:** On a phone, filter bars stop taking up a third of the screen.
+  Kind: implement.
 
 - 📋 [PASS-59-175] **Edit-form uploads stop blocking the request, and media removals wait for the save (MEDIUM, S).**
   - **Why**: each uploaded screenshot or fanart runs
@@ -1487,6 +937,7 @@ orchestrator, several by execution rather than reading.
   - **Source**: code review of PR #25, 2026-10-29.
 
   ---
+  **Layman:** Saving the edit form with uploaded pictures stops being slow, and removed pictures go only when you save.
   Kind: implement.
   Lanes: routes, media.
 
@@ -1500,6 +951,7 @@ orchestrator, several by execution rather than reading.
   - **Source**: code review of PR #25, 2026-10-29.
 
   ---
+  **Layman:** Small tidy-ups on the game page and the console page's missing-details count.
   Kind: implement.
   Lanes: ui, routes.
 
@@ -1514,6 +966,7 @@ orchestrator, several by execution rather than reading.
   - **Source**: found while merging PRs, 2026-10-29.
 
   ---
+  **Layman:** Old duplicate entries are removed from the translation files.
   Kind: implement.
   Lanes: i18n.
 
@@ -1525,6 +978,7 @@ orchestrator, several by execution rather than reading.
   - **Source**: code review of PR #23, 2026-10-29.
 
   ---
+  **Layman:** The duplicate check on Game Imports looks only at the consoles it needs, so it is faster.
   Kind: implement.
   Lanes: routes.
 
@@ -1538,117 +992,7 @@ orchestrator, several by execution rather than reading.
   the catalogs and translate the new msgids into every locale.
 
   ---
-  Kind: implement.
-
-- 📋 [PASS-59-180] **A game series timeline: what changed from game to game, and between regions and consoles (FEATURE, L).**
-  - **Target**: a timeline of a series showing what each game changed,
-    and how its regional and console versions differ, graphics too.
-  - **Mockups**: HTML mockups under `docs/mockups/series-timeline/`,
-    for the user to choose from.
-  - **Open**: where the change data comes from (AI, scraped, typed in);
-    how it ties to franchise/series fields and regional versions
-    (PASS-59-106).
-  - **Status**: todo.
-  - **Source**: user, 2026-10-29.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-181] **Console museum: three new presentations to choose from (UX, M).**
-  - **Target**: three mockups of how the console museum could be
-    presented, by Claude's own design; the user picks one.
-  - **Mockups**: `docs/mockups/museum/`. Building waits for the pick.
-  - **Status**: todo.
-  - **Source**: user, 2026-10-29.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-182] **A missing emulator falls back to a RetroArch that can play the game (ENHANCEMENT, S).**
-  - **Report**: Tomb Raider (GBC) failed with "Emulator binary not
-    found on PATH: 'mgba-qt'". The user expects RetroArch to play it.
-  - **Found** (2026-10-29): gb, gbc and gba default to mGBA, not
-    installed. `launch_resolver.pick_launch_mapping` already falls back
-    to the player when the default does not resolve, but
-    `_player_serves` needs the player's program, and RetroArch
-    (RetroDB) is not downloaded yet (no `data/player/`). The user's own
-    RetroArch row is never tried.
-  - **Target**: (1) the error offers Get RetroArch where the player
-    could serve the system; (2) consider the user's own RetroArch with
-    a core for the system as a further fallback.
-  - **Status**: todo.
-  - **Source**: user, 2026-10-29.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-183] **MobyGames as a scrape source (FEATURE, M).**
-  - **Target**: RetroDB fetches game details from MobyGames. The user
-    has no API key.
-  - **Research first** (unverified): whether MobyGames' API needs a
-    paid or approved key, its rate limits and terms, and whether any
-    keyless route is allowed. Scraping its web pages may breach its
-    terms. Fits PASS-59-162's source review.
-  - **Status**: todo.
-  - **Source**: user, 2026-10-29.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-184] **3D box art matches the ROM's region (ENHANCEMENT, M).**
-  - **Target**: a game's 3D box shows its own region's case; many
-    regions' cases look different.
-  - **Open**: which sources give region-tagged 3D boxes, and how the
-    region is read (the `region` field, the ROM name's tags). Related:
-    PASS-59-162, PASS-59-143.
-  - **Status**: todo.
-  - **Source**: user, 2026-10-29.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-185] **One AI Fill tool in ROM Tools, with a switch for each kind of fill (UX, M).**
-  - **Target**: ROM Tools shows two AI tools today, Official Names and
-    Backfill Alternate Titles. Merge them into one AI Fill with an
-    on/off switch per kind, plus release dates for all regions.
-  - **Status**: todo.
-  - **Source**: user, 2026-10-29.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-186] **Claude API as an AI provider (FEATURE, M).**
-  - **Target**: AI Fill and the other AI features can use Anthropic's
-    Claude with the user's API key.
-  - **Note**: the key goes in the settings store the other AI keys
-    use, never a tracked file. Default to the newest Claude models.
-  - **Status**: todo.
-  - **Source**: user, 2026-10-29.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-187] **One place to update RetroDB's RetroArch and its cores, with a dashboard reminder when they are out of date (ENHANCEMENT, M).**
-  - **Ask** (user, 2026-10-29): RetroArch downloaded beside RetroDB
-    needs a way to stay updated: a dedicated place to run updates, and
-    a dashboard note when RetroArch has not been updated in a while.
-  - **Today** (read 2026-10-29): RetroArch is pinned per RetroDB
-    release (`services/player_install.py` VERSION + SHA-256); "Download
-    RetroArch again" reinstalls the pin. "Update cores" in Settings >
-    Emulators re-downloads cores whose buildbot CRC changed. Nothing
-    says either is due. RetroArch's own Online Updater inside the
-    player is untested (it would bypass `cores/installed.json`).
-  - **Target**: one Updates card (beside Settings > System > Updates,
-    or in Settings > Emulators) showing the installed RetroArch against
-    the pin this RetroDB carries, and how many cores have newer builds;
-    one button runs both. The dashboard shows a note when the pin is
-    newer than the install or cores were last checked long ago.
-  - **Open**: how long "a while" is; whether the core check runs
-    daily like the RetroDB update check (PASS-59-169).
-  - **Status**: todo.
-  - **Source**: user, 2026-10-29.
-
-  ---
+  **Layman:** The maintenance tools in Settings can be translated.
   Kind: implement.
 
 - 📋 [PASS-59-188] **Popups placed inside a page's content can sit under the sidebar and phone bars (LOW, S).**
@@ -1667,6 +1011,7 @@ orchestrator, several by execution rather than reading.
   the cover zoom in Firefox before being reverted for the local fix.
 
   ---
+  **Layman:** Pop-ups stop appearing under the sidebar or the phone's top bar.
   Kind: implement.
 
 - 📋 [PASS-59-189] **Tell the user when the AI service refuses a scrape's request (UX, S).**
@@ -1685,62 +1030,251 @@ orchestrator, several by execution rather than reading.
   - **Source**: user, 2026-10-29.
 
   ---
+  **Layman:** RetroDB tells you when the AI service refuses a scrape, instead of failing silently.
   Kind: implement.
 
-- 📋 [PASS-59-190] **A Sales card on the Analytics page (feature, M).**
-  - **Target**: a Sales card on `templates/analytics.html` built from
-    `games.units_sold`: total copies sold, a bar chart of totals per
-    system, the 10 best-selling games (linked), and coverage (games
-    with a figure / all games).
-  - **Why**: AI Fill and Bulk AI Fill now fill sales figures; nothing
-    shows them except the game page.
+- 📋 [PASS-59-254] **Syncing one PlayStation game asks Sony about that game only (perf, S).**
+  - **Status**: todo
+  - **Why**: `routes/trophies.py::api_psn_sync_game` pulls the user's whole
+    trophy-title list (`client.trophy_titles()`) to find one game, then
+    downloads every trophy icon one at a time, all inside the request.
+  - **Fix**: ask for the one game (`trophy_groups_summary(npwr_id,
+    platform)` or `trophy_titles_for_title`), and fetch icons in the
+    background or in parallel.
+  - **Hazard**: those calls return another shape than `TrophyTitle`, which
+    `_psn_trophy_counts` reads. Needs a live PSN account to test, so it was
+    not done untested in PASS-59-243.
+
+  ---
+  **Layman:** Syncing one PlayStation game asks Sony about that game only, so it is faster.
+  Kind: implement.
+
+- 📋 [PASS-59-272] **Regroup the roadmap into version blocks and archive finished items (chore, M).**
+  - **Why**: the user, 2026-11-09: align with roadmap-format.md §3.2
+    (version blocks) and archive what is finished.
+  - **Agreed** (user, 2026-11-09): blocks v4.0.0 (last web version, the
+    PASS-59-113 plan), v4.0.x (security and data-loss fixes), v4.x.0
+    (desktop/Android app pieces), v5.0.0 (full desktop release). Open
+    feature ideas outside the 4.0.0 plan go to the desktop app. Finished
+    items move to an archive file, word for word. PASS ids stay.
+  - **First**: check which "open" items already shipped (PASS-59-169,
+    PASS-59-142, PASS-59-143, PASS-59-186, PASS-59-227 look done).
+  - **Blocked-by**: ANTS-6724 (Ants MCP: convert a pass-headings roadmap
+    to ants-v1, keeping PASS ids). No hand edits: the store reverts them.
   - **Status**: todo.
+  - **Progress** (2026-11-09): **Progress** (2026-11-09): checked the five. Shipped: PASS-59-142 and
+    PASS-59-143 (every locale translates the box-face strings),
+    PASS-59-186 (commits c0c13e61 to 446b991e). PASS-59-227: core built
+    2026-11-02; arcadeDB and libretro-thumbnails as sources remain
+    optional. PASS-59-169: built, but its Verify needs a real published
+    release, so it is not done until 4.0.0 ships. Agreed with
+    ants-terminal for ANTS-6724/6725: PASS ids kept (prefix PASS-59,
+    explicit ids on append). A shipped item's version comes from (a) its
+    own status text, then (b) the oldest data/changelog.yaml entry citing
+    it, then (c) the earliest tag containing a commit citing it; unknown
+    goes to a "Shipped, version not known" archive block. Scratch-run
+    counts come to RetroDB before any real convert.
+  - **Progress** (2026-11-10): ants-terminal reported ANTS-6725 option 2 shipped
+    (commit_evidence:false); the convert is ready. Order, all in one
+    session after /mcp reconnects (session_orient server_build 0e6e5bdb or
+    5b24a45d): (1) project_settings: set id_format, prefix PASS, pattern
+    PASS-\d+(?:-\d+)*(?:-[A-Z])?. (2) roadmap_migrate convert: dry run,
+    then real (it snapshots the store first). (3) roadmap_log
+    op:"place_by_release" dry_run:true, unknown_section:"Shipped, version
+    not known", commit_evidence:false. (4) Apply with its plan_id in the
+    same session; a plan does not survive a server restart. Expected from
+    its scratch run: placed 117, moved to "Shipped, version not known"
+    213, unreleased 34 (likely 35 now: c084e5de shipped PASS-59-251 with
+    no tag yet), 10 status-vs-changelog disagreements (status wins). If
+    counts differ otherwise, send them to ants-terminal. Full scratch
+    JSON: /mnt/Games/tmp/ants-6725-proto/pbr-retrodb-nocommit.json.
 
   ---
+  - **Progress** (2026-11-10, later): open work regrouped. Blocks 4.0.0
+  (93 items: the plan, every review fix, and the work finished but not
+  released), 4.0.x (empty for now), 4.x.0 (26), 5.0.0 (PASS-59-270),
+  "Ideas, not planned" (14 considered or dropped). User, 2026-11-10: the
+  small web bugs outside the plan and the update-safety items
+  (PASS-59-168, 170, 174) ship before 4.0.0. PASS-59-236 goes to 4.x.0
+  (user, 2026-11-04: after v4.0.0). PASS-59-142, 143 and 186 flipped to
+  shipped. Every open item got a Layman line. The old Active headings
+  were removed; their notes are word for word in
+  docs/history/roadmap-old-active-notes.md. Left: moving finished
+  release blocks to an archive file.
+  **Layman:** The roadmap is grouped by version, like other projects.
   Kind: implement.
 
-- 📋 [PASS-59-191] **Sort and filter the Library by copies sold (feature, S).**
-  - **Target**: a Copies sold sort option beside Critic score and User
-    score (`templates/system_games.html`, `AllGamesController`, so the
-    Library and system pages stay in sync), and a "has a sales figure"
-    filter.
+- 📋 [PASS-59-112] **Remake the trailer for v4.0.0, with a disclaimer (MEDIUM, M)**
+  - **Target**: new clips for the Hub website session, which builds the
+    trailer (recipe in memory `trailer-footage-owed`).
+  - **Why**: the current trailer skips achievements and trophies and much
+    else. The user wants one new trailer once v4.0.0 ships.
+  - **Plan**: cover achievements and trophies, Play from the library,
+    scraping and AI Fill, tools and stats, and regional versions. End on the
+    disclaimer card the user approved 2026-10-17 (text in memory
+    `trailer-v4-plan`): RetroDB supplies no games, ROMs or BIOS files and does
+    not condone piracy; trademarks belong to their owners; online services
+    need your own account, some limit free use or charge, AI services charge
+    per use.
+  - **Status**: todo; blocked by the v4.0.0 release (PASS-59-113).
+    Lanes: marketing.
+  - **Source**: user, 2026-10-17.
+
+  ---
+  **Layman:** A new trailer for 4.0.0, with a disclaimer.
+  Kind: implement.
+
+- ✅ [PASS-59-142] **Import Slipcase box files: front, spine and back faces for a game (FEATURE, M).**
+  - **Status**: todo
+  - **Contract**: Slipcase repo, `docs/specs/SLIP-0104-turnable-3d-box.md`
+    § 4.1 (box-file format, `"version": 1`, approved by RetroDB
+    2026-10-15) and § 4.2 / INV-11 (2026-10-21: the case texture is baked
+    into the face PNGs; shading is not).
+  - **RetroDB's checks** (§ 11): each image at most 10 MB; a real image
+    (Pillow verify plus the decompression-bomb guard); re-encoded to WebP
+    at 1080 px tall; no symlinks followed; fill-only unless the user asks
+    to overwrite.
+  - **Open for the user**: where import starts (game page, bulk, or a
+    watched folder) and whether the faces replace `boxart_3d`.
+  - **Verify**: import a Slipcase box file; the three faces land as WebP
+    for that game; a symlinked or oversized face is refused.
+  - **Progress** (2026-10-21): 2026-10-21, Slipcase session: the box file format may move to v2
+    (SLIP-0106, per-system and per-region cases: second spine, per-region
+    sizes, case plastic). Build the importer on v1's current fields only
+    until Slipcase sends its spec for format review. v1 files stay
+    readable.
+  - **Progress** (2026-10-21): 2026-10-21, Slipcase SLIP-0106 phase 1 (Slipcase commit ee8b3d5): the
+    format stays version 1, so the hold above is lifted. SLIP-0104 § 4.1
+    gains an optional fourth face, edge (S.edge.png, the opening side, on
+    the front's right). Null or absent means fill it with colours.edge,
+    and a named but missing file is refused. Run edge through the same
+    image checks as the other faces. Jewel-case fronts now include a tray
+    hinge strip, so never reuse the front face as a flat cover. Case sizes
+    vary by region and arrive through the existing case keys.
+  - **Format update** (Slipcase session, 2026-10-21; SLIP-0110): box files
+    (still version 1) may carry optional `faces.top` / `faces.bottom`
+    (S.top.png / S.bottom.png, or null). Only a PS1 PAL jewel case has
+    them today. Same rule as edge: a non-null name is a plain file name
+    and the file must exist; otherwise use `colours.top` /
+    `colours.bottom`. Contract: Slipcase
+    `docs/specs/SLIP-0104-turnable-3d-box.md` § 4.1. Import them when
+    present.
+  - **Decided** (user, 2026-10-23): import starts on the game's own
+    page (one box file per game); bulk import may follow later. The
+    faces are stored alongside `boxart_3d`; they do not replace it.
+  - **Built** (2026-10-29, in the open 3.34.0; commit e2f2b14): spec
+    `docs/specs/PASS-59-142-box-file-import.md` (fold-back in its loop
+    log). `services/box_faces.py`, migration 025 (`games.box_faces`),
+    POST/DELETE `/api/games/<id>/box-faces`, the Import 3D box line under
+    the game page's cover, the orphan sweep's `box_faces` folder. Tests:
+    `tests/test_box_faces.py`. Browser walk on :5001 with a scratch DB and
+    a box file from Slipcase's `write_box_file`: import, replace, a
+    missing-picture error and Remove all worked. **Still owed**: the 20
+    locale translations of the new strings and help line.
+
+  ---
+  Shipped (confirmed 2026-11-09, PASS-59-272 check):
+  services/box_faces.py; every locale translates the box-face strings.
+  Kind: implement.
+
+- ✅ [PASS-59-143] **Turnable 3D box viewer for games with Slipcase faces (FEATURE, M).**
+  - **Status**: todo
+  - **Contract**: SLIP-0104 (Slipcase repo) § 4.2 / INV-11 and INV-12.
+    Show the face images as-is (the case overlay is already baked in; do
+    not add one); apply lighting in the viewer; paint nothing outside the
+    box, so it sits on the page background.
+  - **Plan**: CSS 3D transforms, no new dependency; uses the faces
+    imported by PASS-59-142.
+  - **Verify**: a game with imported faces shows a box that turns with
+    drag and keyboard, has a transparent background, and falls back to
+    the flat cover without faces.
+  - **Format update** (Slipcase session, 2026-10-21; SLIP-0110): draw
+    `faces.top` / `faces.bottom` when present, else fill with
+    `colours.top` / `colours.bottom`. Orientation: seen from outside,
+    spine on the left; the top's picture has the back at its top edge,
+    the bottom's has the front at its top edge. Contract: Slipcase
+    `docs/specs/SLIP-0104-turnable-3d-box.md` § 4.1.
+  - **Zoom behaviour** (user, 2026-10-23): when the player zooms the
+    cover, a game with only a 2D box shows the 2D box; one with only a
+    3D box picture shows that picture; one with the full set of faces
+    shows the turnable 3D box.
+  - **Built** (2026-10-29, in the open 3.34.0; commit 4771a8b):
+    `static/js/box-viewer.js` in the cover zoom
+    (`templates/_modals/boxart_zoom_modal.html`), CSS in
+    `components/modals.css`. Browser walk on :5001 with a scratch DB: a
+    labelled six-face box matched SLIP-0104 § 4.1's orientation on every
+    face; nothing painted behind the box; 2D-only and 3D-only games zoom
+    to their pictures; Remove and re-import update the zoom without a
+    reload. **Still owed**: a real mouse drag by eye (only keys were
+    driven); the 20 locale translations of the two new strings.
+  - **Progress** (2026-11-03): the user dragged the box with a real
+    mouse and it turns correctly. Still owed: the 20 locale
+    translations of the two new strings.
+
+  ---
+  Shipped (confirmed 2026-11-09, PASS-59-272 check):
+  static/js/box-viewer.js, commit 4771a8be.
+  Kind: implement.
+
+- ✅ [PASS-59-186] **Claude API as an AI provider (FEATURE, M).**
+  - **Target**: AI Fill and the other AI features can use Anthropic's
+    Claude with the user's API key.
+  - **Note**: the key goes in the settings store the other AI keys
+    use, never a tracked file. Default to the newest Claude models.
   - **Status**: todo.
+  - **Source**: user, 2026-10-29.
+
+  ---
+  Shipped (confirmed 2026-11-09, PASS-59-272 check): commits c0c13e61 to
+  446b991e; tests/test_ai_claude_provider.py.
+  Kind: implement.
+
+- ✅ [PASS-59-71] **ACTION REQUIRED — rotate the PSN NPSSO token that standalone builds shipped (HIGH, S)**
+  - **Target**: the live PSN NPSSO credential (`docs/psn-npsso.env`, gitignored).
+    Not a code task: `a5e0939` already closed the leak path.
+  - **Why**: `retrodb.spec` carried `('docs', 'docs')`, and PyInstaller's
+    directory form takes the whole tree with no per-file filter, so every
+    standalone build embedded the real token. Confirmed against a bundle already
+    on disk built 2026-04-27 — `dist/retrodb/_internal/docs/psn-npsso.env` was
+    byte-identical to the live file, so this was shipped, not theoretical. The
+    source ZIPs were never affected (the file is gitignored and `build_dist.py`
+    excludes it by name); only the PyInstaller path, which keeps its own
+    whitelist. `gitleaks` could not have caught it: it is scoped to
+    `git ls-files`, so an untracked secret a build step copies into an artifact
+    is invisible to it.
+  - **Plan**: the code fix has landed and the local `dist/` was deleted. What
+    remains is the credential itself. **Rotate it if any standalone build was
+    ever shared** — Patreon release, a zip sent to a tester, anything off this
+    machine. If no bundle ever left the machine, no rotation is needed; record
+    that conclusion here so the question is not reopened.
+  - **Verify**: a fresh `--standalone` build contains no `docs/` tree
+    (`tests/test_pass58_standalone_docs.py` pins it); then the old token no
+    longer authenticates.
+  - **Resolution** (2026-11-03): rotated. The user signed out of
+    PlayStation, signed in again and saved the new token in Settings. The
+    saved token differs from the one in `docs/psn-npsso.env` (compared
+    by equality, never printed). One sign-in with the old token: Sony
+    refused it (PSNAWPAuthenticationError). One with the new token:
+    accepted, as the user's PSN name. RetroDB reads the token from
+    Settings only; `docs/psn-npsso.env` is an installer template copy.
+  - **Status**: done (2026-11-03). Lanes: security, packaging.
+  - **Source**: in-session 2026-09-01 (`a5e0939`); filed 2026-09-02 because it
+    existed only in a session handoff, which is not somewhere the next session
+    will find it.
+  - **Progress** (2026-09-26): the user is not sure whether a standalone
+    build ever left the machine, and chose to rotate the token. Waiting on the
+    user. The v3.23.12 bundle built today contains no `docs/` tree and no
+    `psn-npsso` file.
+  - **Progress** (2026-10-23): the user got a new token and saved it in
+    docs/psn-npsso.env. A session then printed that file, so the new
+    token is exposed in a conversation log. Get one more token, enter
+    it in Settings and in that file, then check the app signs in.
+  - **Progress** (2026-11-03): still open; the user chose to get the
+    new token later.
 
   ---
   Kind: implement.
-
-- 📋 [PASS-59-192] **Sales totals by publisher, genre and decade (feature, M).**
-  - **Target**: tabs on the Analytics Sales card (PASS-59-190)
-    totalling `units_sold` by publisher, by genre (multi-value: a game
-    counts under each of its genres, and the card says so) and by
-    release decade.
-  - **Blocked by**: PASS-59-190.
-  - **Status**: todo.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-193] **Best-seller badges on a game's page (feature, S).**
-  - **Target**: a badge on the game page from `units_sold`: its rank
-    among the system's games with a figure ("#3 best seller on SNES in
-    your library"), shown only for the top 10.
-  - **Status**: todo.
-
-  ---
-  Kind: implement.
-
-- 🚫 [PASS-59-196] **Fewer Claude web searches per game, and log how many each uses (perf, S).**
-  - **Target**: lower CLAUDE_MAX_SEARCHES in scraper/scrape_ai.py from 5 to 2, and
-    log each game's search count from the reply. The changelog's '5 searches, 5
-    US cents' wording and test_search_is_capped_per_game move with it.
-  - **Why**: nothing records real use. A system with no published sales figures
-    probably spends the whole cap and finds nothing (Atari 5200 found none).
-  - **Status**: dropped; declined by the user 2026-10-30.
-  - **Decision** (user, 2026-10-30): declined. The limit stays at 5
-    searches per game and no per-game count is logged.
-
-  ---
-  Kind: implement.
+  Lanes: security, packaging.
 
 - ✅ [PASS-59-209] **HowLongToBeat: right game, right platform, and minutes counted as minutes (fix, M).**
   - **Resolution** (2026-11-02): Done 2026-11-02, opening 3.35.2. Limits: Check Saved Play Times (ROM
@@ -1779,53 +1313,6 @@ orchestrator, several by execution rather than reading.
   ---
   Kind: implement.
 
-- 🚧 [PASS-59-218] **Steam and Xbox imports keep what the services already send (enhancement, M).**
-  - **Status**: in-progress
-  - **Source**: PASS-59-162, 2026-10-31. Notes: ai_steam_xbox S1 to S7, X1 to X7. The library has no Steam or Xbox rows, and Xbox has no real reply, so the Xbox claims are unproven.
-  - **Problem**: `get_app_details` has no callers, so imports stay nearly empty. A title match never links the Steam ID, so no achievements. Play time is fetched then dropped. Xbox may stop at 100 games, and phone and PC titles may be filed as Xbox One.
-  - **Needs**: one real Xbox sign-in to test. Steam store data has real board ratings and a Metacritic score.
-  - **Decided** (user, 2026-11-02): Steam first, tested with the user's
-    own Steam account against a scratch database. Then the user is guided
-    through Microsoft's app registration and one Xbox sign-in;
-    `xbox_client_id` and `xbox_client_secret` are empty, so registration
-    comes first. Xbox fixes wait for real replies.
-  - **Progress** (2026-11-02): Steam built and run against the user's real account on a scratch database (8 games). `SteamSyncJob` fills empty fields once per game from the store, keeps play time in `platform_play_time`, and a Steam or Xbox title match now links its ID. Steam's date and genre are left out: DOOM 3 is dated 2007, its Steam release, and 7 of 8 genres are only Action. Also fixed: an admin's Fetch Library sent Steam the masked key.
-    - **Not done**: Steam's review summary (`appreviews?json=1`) answered with a web page, not data, so no user scores. S6 (achievement language) and the `hidden` flag are left. The S3 note's example was wrong: `generate_sort_title` pads numbers and does not move "The".
-    - **Next**: Xbox X1 to X7, after the user registers a Microsoft app and signs in once.
-  - **Progress** (2026-11-09): **Progress** (2026-11-09): X1-X7 carried out in PASS-59-261 (OpenXBL).
-    A live Xbox reply is still owed there.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-220] **Sales figures for 8-bit games: cited numbers and period sources (enhancement, M).**
-  - **Status**: todo
-  - **Request** (user, 2026-10-31): a Gemini answer listed sources for 8-bit sales figures; see if it can be used.
-  - **Measured 2026-10-31**: `units_sold` is empty on every Commodore 64, ZX Spectrum and Atari 5200 game in one library, and on most Atari 2600 games. Only the AI fills it, and `_build_prompt` already names Wikipedia's lists and VGChartz, with nothing for 8-bit computers.
-  - **Treat the answer as leads, not data**: checked against Wikipedia, its Pitfall! and Asteroids figures differ (about 4.5m and 4.3m against 4,000,000 and 3,832,886), and Sensible Soccer is not listed for Spectrum or C64.
-  - **Plan**: 1. A small shipped table of cited figures, each with its source link, starting with Wikipedia's Atari 2600 list (24 games, each row referenced; text CC BY-SA 4.0, so credit it). It fills `units_sold` fill-only, without paying for AI. 2. For 8-bit systems, add to the AI prompt: the C64 Wiki, Spectrum Computing, World of Spectrum, AtariAge and period magazines on archive.org. Keep "a published figure, never your own estimate", and accept a stated milestone only as that game's figure. 3. Show the source beside the number, with PASS-59-211.
-  - **Not planned**: scraping VGChartz, forums or magazine scans; no API, and terms not checked. A forum estimate is not a published figure.
-  - **Limit**: most 8-bit games have no published figure, so most stay empty, which is the true answer.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-221] **The slowest test runs real image work: speed up test_screenshot_duplicates_are_dropped (test, S).**
-  - **Status**: todo
-  - **Source**: measured 2026-10-31, while aligning the local gate with GitHub CI.
-  - **Problem**: in the gate's environment, which has the CPU onnxruntime from the lockfile, `tests/test_upload_image_pipeline.py::test_screenshot_duplicates_are_dropped` took 66 to 148 s of a suite that takes 79 to 198 s, depending on machine load. The whole suite on the system Python took 61 s. `test_fu1_csp.py::test_every_action_is_defined` is next, at 37 to 55 s.
-  - **Fix**: find what makes it slow; a duplicate check should not need a real upscale. Every push and both GitHub Python versions run it, so this is the largest saving available in the gate.
-  - **Progress** (2026-11-10): PASS-59-251 review 2026-11-09 found both slow tests (High, test lane
-    T17). `tests/test_upload_image_pipeline.py:34`: `_get_upscaler` is not
-    stubbed, so two tests start the real upscaler; stubbing it took the
-    file from 50.0 s to 1.3 s (measured by the review).
-    `tests/test_fu1_csp.py:234`: `test_every_action_is_defined` took 24.4
-    s, running three regex scans over all source for each action and
-    reading files twice. Other slow and timing tests: PASS-59-293.
-
-  ---
-  Kind: implement.
-
 - ✅ [PASS-59-223] **The translated help manuals catch up with older English sections (doc-fix, M).**
   - **Resolution** (2026-11-03): Shipped 2026-11-03 in 419ae7e, into the open 4.0.0 entry. All 20
     manuals match help.html by section structure, <code>/<pre> text, ids,
@@ -1847,24 +1334,6 @@ orchestrator, several by execution rather than reading.
 
   ---
   Kind: implement.
-
-- 📋 [PASS-59-227] **MAME games show their real names, and scrape by them, with the file names left alone (enhancement, M).**
-  - **Target**: `games.title` for the MAME system comes from MAME's own list: the set name (`dyger`) to its description (`Dyger (Korea set 1)`), year and manufacturer. `rom_path` never changes. Scrapers then search by the real name.
-  - **Why**: 6,291 MAME rows are titled by short name and 2 are scraped (2026-11-02), so a scrape searches for `dyger` or `peps0275`. Hold them out of the bulk Fill Missing until this lands.
-  - **Data** (MAME Curator session, measured 2026-11-02): the title from the 0.284 non-merged DAT, which holds all 6,291 zips; other fields from `listxml-0.287.xml`, joined by set name, which lacks 10 of them. Keep the full description, since 627 zips share a base title. A shipped feature needs the user to point at their own file; RetroDB cannot assume these paths.
-  - **Sources**: arcadeDB is keyed by set name; libretro-thumbnails by description. ScreenScraper's romnom with a set's zip name is untested. Read each one's terms first.
-  - **Open**: gambling, slot, handheld, computer, tabletop and board-game sets per catver.ini, and BIOS sets, are in the same folder. Whether they show is the user's call.
-  - **Status**: todo. Lanes: scraper, services.
-  - **Source**: user, 2026-11-02.
-  - **Progress** (2026-11-02): Built 2026-11-02: naming tool, category filter, BIOS hidden, search by
-    title, ScreenScraper lookup by zip name, reports refuse a rename.
-    Still to do when worthwhile: arcadeDB and libretro-thumbnails as
-    sources, after reading their terms. A scrape of a named game through
-    every source has not been run.
-
-  ---
-  Kind: implement.
-  Lanes: scraper, services.
 
 - ✅ [PASS-59-228] **A full-screen play screen that shows the game's logo while it starts (feature, M).**
   - **Target**: when you press Play, a full-screen screen shows the game's logo while the emulator starts.
@@ -1899,17 +1368,6 @@ orchestrator, several by execution rather than reading.
     `ci_local.sh --docs` pass.
   - **Status**: done.
   - **Source**: build of PASS-59-224, 2026-11-03.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-230] **Arcade flyers on the game page (enhancement, S).**
-  - **Status**: todo
-  - **Decided** (user, 2026-11-02): after v4.0.0.
-  - **What the sources send**: ScreenScraper `flyer` (documentation only,
-    in no sample seen). Check a real arcade answer before building.
-  - **Pattern**: the box back (PASS-59-225) — its own column and folder,
-    fill-only, and a place on the game page.
 
   ---
   Kind: implement.
@@ -1979,76 +1437,6 @@ orchestrator, several by execution rather than reading.
     also has Sync and Refresh Progress buttons, so each button must say
     plainly what it does (label and a short line under it), so no one
     mixes them up.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-233] **Check each ROM is a good copy against No-Intro and Redump lists (feature, M).**
-  - **When**: after v4.0.0 (user, 2026-11-04).
-  - **Why**: a bad dump plays wrongly or not at all, and nothing in
-    RetroDB says so today. The CHD check covers CHD files only.
-  - **Start from**: `services/rom_identity.py` already gives a file's
-    name, size and CRC (PASS-59-217). Compare those to No-Intro and
-    Redump DAT files the user supplies.
-  - **Open**: where the result shows (ROM Tools, the game page, both),
-    and how DAT files reach the app. Ask the user before building.
-  - **Status**: todo.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-234] **Back up and restore each game's saves (feature, M).**
-  - **When**: after v4.0.0 (user, 2026-11-04).
-  - **Why**: saves live only in each emulator's folders; a lost disk or
-    a bad emulator update loses them. Nothing in RetroDB copies them.
-  - **Start from**: `services/player.py` names RetroArch's
-    `savefile_directory` and `savestate_directory` keys; DuckStation,
-    PCSX2 and the other standalone emulators keep their own folders.
-  - **Open**: which emulators first, where copies go, and how many
-    copies to keep. Ask the user before building.
-  - **Status**: todo.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-235] **TV mode: a big-text Library you steer with a game controller (feature, L).**
-  - **When**: after v4.0.0 (user, 2026-11-04).
-  - **Why**: RetroDB launches games, but choosing one needs a mouse and
-    keyboard. No page reads a game controller today (no `getGamepads`
-    in `static/js`).
-  - **Open**: a separate page or a mode of the Library; which actions it
-    offers (browse, details, Play). Likely needs a spec
-    (`spec-format.md` §1): it spans pages, input and layout.
-  - **Status**: todo.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-236] **ROCm's roctracer aborts every GPU process at exit: find a fix that needs no copy of ROCm (investigate, S).**
-  - **When**: after v4.0.0 (user, 2026-11-04).
-  - **Why**: `roctracer` 6.4.0 (openSUSE build) fails an assertion in
-    `hsa_support::Finalize` at exit. pytest exits 134, and a plain kill
-    of a server writes a core dump of hundreds of MB.
-  - **Try, in order**: a newer ROCm; keeping `libroctracer64` from
-    loading; reporting it to AMD or openSUSE.
-  - **Decided** (user, 2026-11-04): no fork of ROCm. Measured that day
-    for this machine's gfx1032 card (run as gfx1030): the ROCm files the
-    upscaler loads are 2.48 GB on disk, 534 MB packed with `xz -1`, for
-    one card family only.
-  - **Status**: todo.
-  - **Found** 2026-11-04: installed ROCm is mixed 6.4 (rocblas from AMD's
-    SLES 15.6 build in /opt/rocm-6.4.0; roctracer 6.4.0 from OBS
-    science:GPU:ROCm; hip 6.4.2), and zypper shows roctracer locked.
-    Tumbleweed's main repo has ROCm 7.2.0. Its librocblas5 7.2.0-10.1
-    builds for gfx1031 but not gfx1032 (rpm -qlp, 2026-11-04).
-    - **Idea** (user, 2026-11-04): ask openSUSE to add gfx1032 to the
-    build targets, and report the roctracer abort. Test 7.2 first: a
-    report against 6.4 would likely be answered "upgrade". Moving to 7.2
-    must keep onnxruntime's ROCm provider working (memories
-    onnxruntime_rocm_trap, rocsolver_missing). The user posts any report.
-  - **Decided** (user, 2026-11-04): after v4.0.0, draft the openSUSE
-    gfx1032 build-target request and test the roctracer abort on 7.2;
-    show the user the report text to post.
 
   ---
   Kind: implement.
@@ -2618,24 +2006,6 @@ orchestrator, several by execution rather than reading.
   ---
   Kind: implement.
 
-- 📋 [PASS-59-252] **The box viewer reads Slipcase's two new finger-recess keys (enhancement, S).**
-  - **Status**: todo
-  - **Why**: the Slipcase session, 2026-11-04 (SLIP-0130, Slipcase commit
-    4de187b, SLIP-0125 § 4.1 amended). Box file version stays 1.
-  - **Keys** in `shape`:
-    - `recess_end_radius_mm`: 0 square ends; half `recess_height_mm` round
-      (missing means half, the old look); at most half.
-    - `recess_offset_mm`: slot middle above the opening side's middle,
-      negative below; missing 0. Limit: `recess_length_mm + 2*|offset| <
-      height_mm - 2*max(corner_radius_mm, lip_width_mm)`.
-    - A shape breaking either limit is ignored whole.
-  - Ignoring the keys still draws a round, centred slot, so nothing breaks
-    today. Xbox One and Series X cases are newly shaped.
-  - **Source**: Slipcase session, 2026-11-04.
-
-  ---
-  Kind: implement.
-
 - ✅ [PASS-59-253] **Each member can save their own Steam key and Steam ID in Profile (feature, S).**
   - **Resolution** (2026-11-06): Done 2026-11-06. Profile has Steam key and Steam ID boxes; the ID must
     be the number, since the sync job does not look up profile names.
@@ -2649,67 +2019,6 @@ orchestrator, several by execution rather than reading.
   - **Fix**: add both to `routes/auth.py` `allowed_fields` and to the
     Profile page; the key masked like the others.
   - **Decided** (user, 2026-11-06): yes, add both boxes before v4.0.0.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-254] **Syncing one PlayStation game asks Sony about that game only (perf, S).**
-  - **Status**: todo
-  - **Why**: `routes/trophies.py::api_psn_sync_game` pulls the user's whole
-    trophy-title list (`client.trophy_titles()`) to find one game, then
-    downloads every trophy icon one at a time, all inside the request.
-  - **Fix**: ask for the one game (`trophy_groups_summary(npwr_id,
-    platform)` or `trophy_titles_for_title`), and fetch icons in the
-    background or in parallel.
-  - **Hazard**: those calls return another shape than `TrophyTitle`, which
-    `_psn_trophy_counts` reads. Needs a live PSN account to test, so it was
-    not done untested in PASS-59-243.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-255] **Every theme colours the whole page: the remaining fixed cyan becomes theme colours (ux, M).**
-  - **Status**: todo
-  - **Why**: component CSS still names the cyberpunk cyan directly
-    (`rgba(76, 201, 240, …)`, `#4cc9f0`), so those parts stay cyan in the
-    Matrix, Amber and other themes. PASS-59-245 moved the focus rings and
-    focus glows; `docs/specs/themes.md` §1 now says the rest are not done.
-  - **Fix**: replace each with a theme colour, for example
-    `color-mix(in srgb, var(--primary-cyan) 15%, transparent)`, and look at
-    every theme at desktop and 375px. Then drop the caveat from themes.md.
-  - **Find them**: `grep -rnE "rgba\(76, ?201, ?240|#4cc9f0" static/css/*/`.
-  - **Progress** (2026-11-10): PASS-59-251 review 2026-11-09 adds these places (lanes 05, 15, 16,
-    17). Medium: `static/css/components/buttons.css:63-67` and the other
-    components, with the `*-bg` tokens in `variables.css`; `pages.css`
-    tabs, alphabet nav and panels, with `game-list.css` and settings
-    selects; `progress.css:312`, `toasts.css:54-61` (duplicate rules, some
-    dead); the game page's inline styles in `game_detail.html`. Low:
-    `templates/all_games.html:260,281-282`; `game_detail.html:2255`
-    against `hltb.css:45`; `game_detail.html:2078-2081` against
-    `trophies.css:364-367`. Contrast and brand colours: PASS-59-281.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-256] **Numbers and sizes are written the way the reader's language writes them (i18n, S).**
-  - **Status**: todo
-  - **Why**: `formatNumber` (thin-space thousands) and `formatBytes` in
-    `static/js/utils.js`, and the Jinja `format_number` filter, ignore the
-    language, so a German reader sees English decimal points.
-  - **Fix**: format with the page's locale (`Intl.NumberFormat` from the
-    `<html lang>`; Babel's `format_decimal` on the server), keeping the thin
-    space where a locale has no grouping rule of its own.
-  - Not done in PASS-59-246, which wrapped text only.
-  - **Progress** (2026-11-10): PASS-59-251 review 2026-11-09 adds (lanes 01-14). Medium:
-    `templates/analytics.html:1529`, where Chart.js formats numbers in the
-    browser's own way. Low, counts shown without `formatNumber`:
-    toast-controller, game-modals, all-games-controller, mame-names,
-    museum, settings, the CHD and archive pages, hltb_review, reports,
-    dashboard. Also: `static/js/utils.js:74` puts separators into the
-    decimal part (0.12345 becomes 0.12 345), while the Jinja copy
-    truncates to a whole number; `game_detail.html:840` uses
-    `filesizeformat` (English units). Full list: the PASS-59-251 triage
-    ledger.
 
   ---
   Kind: implement.
@@ -2814,60 +2123,6 @@ orchestrator, several by execution rather than reading.
       tag id is kept elsewhere (saved filters, URLs); check, then fix
       or dismiss.
   - **Source**: session_message 1388 from contact-list.
-
-  ---
-  Kind: implement.
-
-- 🚧 [PASS-59-261] **Xbox import signs in with a free OpenXBL key, not an Azure app (feature, M).**
-  - **Status**: in-progress
-  - **Why**: the user tried to link Xbox and was asked for an Azure
-    account (2026-11-05). Microsoft app registration needs an Azure
-    account since June 2024. The current redirect is built from
-    `request.host_url` (`routes/platform_import.py`), and Microsoft only
-    accepts http redirects to localhost, so LAN installs cannot sign in.
-  - **Decided** (user, 2026-11-05): OpenXBL per-user free key
-    (https://xbl.io, 150 requests an hour, no card). A shipped public
-    client with device-code sign-in stays a later option. Borrowing
-    Microsoft's own Xbox app id was rejected (impersonation).
-  - **Do**: a per-user OpenXBL key in Profile, stored like other platform
-    tokens; library and achievements through the OpenXBL API, paced under
-    `service_limits`; remove the client id and secret settings and the
-    OAuth routes. Carries PASS-59-218's X1 to X7.
-  - **Source**: research 2026-11-05 (Home Assistant, xbox-webapi-python,
-    Microsoft Entra docs, xbl.io pricing).
-  - Carried from PASS-59-249 group E (audit 2026-11-04, 2026-11-06): the
-    OpenXBL rewrite must not repeat three lows in the code it replaces.
-    `XBOX_PLATFORM_MAP` has no `PC` device, so PC titles may file as Xbox
-    One; Xbox 360 achievements read with contract 2 may come back empty
-    and count as 0/0; title history stops at 1000 and returns a partial
-    list on errors with no warning (`scraper/scrape_xbox.py`). Not fixed
-    in place: that code goes with this item.
-  - **Progress** (2026-11-09): **Progress** (2026-11-09): built in the open 4.0.0 (commits cea95e44,
-    ee45243f). Per-user OpenXBL key in Settings > My Profile
-    (`/api/xbox/key` saves only a key OpenXBL accepts; the key is never
-    sent back); client id/secret settings, setup guide and OAuth routes
-    removed; migration 042 drops old sign-in rows. X1-X6 fixed, X7 gone
-    with OAuth. A 429 is never retried and stops that key for the hour;
-    the bulk sync takes never-synced games first. Tests:
-    `tests/test_xbox_openxbl.py`; headless walk at 1400 and 375 px on a
-    scratch DB. **Still owed**: one real OpenXBL key, to confirm the base
-    URL (`https://api.xbl.io/v2`) and the reply shapes, which are
-    Microsoft's and not yet seen through OpenXBL.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-262] **Auto-link leaves alone a disc the user unmarked as a bonus disc (audit-fix, S).**
-  - **Status**: todo
-  - **Why**: `unlink_bonus_disc` (routes/bonus_discs.py) sets
-    `is_bonus_disc = 0`, and `auto_detect_bonus_discs` reads 0 as never
-    judged, so the next auto-link marks the disc again.
-  - **Fix**: a new column (a migration) recording that a person said "not
-    a bonus disc"; unlink sets it, a manual link clears it, detection skips
-    it. Not a new `is_bonus_disc` value: every game list reads any value
-    other than 0 or NULL as hidden.
-  - **Not fixed in PASS-59-249** because it needs a schema change; the loop
-    half of the same finding shipped there.
 
   ---
   Kind: implement.
@@ -2996,20 +2251,6 @@ orchestrator, several by execution rather than reading.
   ---
   Kind: implement.
 
-- 📋 [PASS-59-270] **Port RetroDB to a native app in Rust + Slint for Windows, Linux, macOS and Android (feature, XL).**
-  - **Status**: todo
-  Decisions (user, 2026-11-09): Rust + Slint; one codebase for
-  desktop and Android; Android runs standalone or as a companion to
-  the PC over Wi-Fi, and can copy all or chosen ROMs from the PC to
-  the phone for use on the go; WebAssembly plugins; two-level themes
-  (skins, layout themes); each screen keeps its state and drops its
-  view. Build starts after v4.0.0 ships (PASS-59-113). Spec:
-  docs/specs/PASS-59-270-native-app-port.md. Plan:
-  docs/plans/PASS-59-270-native-app-port.md.
-
-  ---
-  Kind: implement.
-
 - ✅ [PASS-59-271] **4.0.0 is the last web version: say so everywhere, and its updater points to the desktop app (feature, M).**
   - **Decisions** (user, 2026-11-09): the web version stays available
     to download after 4.0.0; future versions are desktop and Android
@@ -3026,49 +2267,6 @@ orchestrator, several by execution rather than reading.
     Updates, dashboard banner, Help, README and the 4.0.0 notes say it, in
     every language. Website asked to say it at the 4.0.0 release.
   - **Status**: done.
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-272] **Regroup the roadmap into version blocks and archive finished items (chore, M).**
-  - **Why**: the user, 2026-11-09: align with roadmap-format.md §3.2
-    (version blocks) and archive what is finished.
-  - **Agreed** (user, 2026-11-09): blocks v4.0.0 (last web version, the
-    PASS-59-113 plan), v4.0.x (security and data-loss fixes), v4.x.0
-    (desktop/Android app pieces), v5.0.0 (full desktop release). Open
-    feature ideas outside the 4.0.0 plan go to the desktop app. Finished
-    items move to an archive file, word for word. PASS ids stay.
-  - **First**: check which "open" items already shipped (PASS-59-169,
-    PASS-59-142, PASS-59-143, PASS-59-186, PASS-59-227 look done).
-  - **Blocked-by**: ANTS-6724 (Ants MCP: convert a pass-headings roadmap
-    to ants-v1, keeping PASS ids). No hand edits: the store reverts them.
-  - **Status**: todo.
-  - **Progress** (2026-11-09): **Progress** (2026-11-09): checked the five. Shipped: PASS-59-142 and
-    PASS-59-143 (every locale translates the box-face strings),
-    PASS-59-186 (commits c0c13e61 to 446b991e). PASS-59-227: core built
-    2026-11-02; arcadeDB and libretro-thumbnails as sources remain
-    optional. PASS-59-169: built, but its Verify needs a real published
-    release, so it is not done until 4.0.0 ships. Agreed with
-    ants-terminal for ANTS-6724/6725: PASS ids kept (prefix PASS-59,
-    explicit ids on append). A shipped item's version comes from (a) its
-    own status text, then (b) the oldest data/changelog.yaml entry citing
-    it, then (c) the earliest tag containing a commit citing it; unknown
-    goes to a "Shipped, version not known" archive block. Scratch-run
-    counts come to RetroDB before any real convert.
-  - **Progress** (2026-11-10): ants-terminal reported ANTS-6725 option 2 shipped
-    (commit_evidence:false); the convert is ready. Order, all in one
-    session after /mcp reconnects (session_orient server_build 0e6e5bdb or
-    5b24a45d): (1) project_settings: set id_format, prefix PASS, pattern
-    PASS-\d+(?:-\d+)*(?:-[A-Z])?. (2) roadmap_migrate convert: dry run,
-    then real (it snapshots the store first). (3) roadmap_log
-    op:"place_by_release" dry_run:true, unknown_section:"Shipped, version
-    not known", commit_evidence:false. (4) Apply with its plan_id in the
-    same session; a plan does not survive a server restart. Expected from
-    its scratch run: placed 117, moved to "Shipped, version not known"
-    213, unreleased 34 (likely 35 now: c084e5de shipped PASS-59-251 with
-    no tag yet), 10 status-vs-changelog disagreements (status wins). If
-    counts differ otherwise, send them to ants-terminal. Full scratch
-    JSON: /mnt/Games/tmp/ants-6725-proto/pbr-retrodb-nocommit.json.
 
   ---
   Kind: implement.
@@ -3136,31 +2334,6 @@ orchestrator, several by execution rather than reading.
   (needs a live bulk scrape), M4 (needs PSN sign-in).
   Kind: implement.
 
-- 📋 [PASS-59-275] **Keyboard and screen readers: the remaining controls with no focus or no name (accessibility, M).**
-  - **Status**: todo
-  - **Source**: PASS-59-251 review 2026-11-09.
-  - **After**: PASS-59-274, which adds the standard these follow.
-  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
-  - **Findings**:
-  - M `static/css/pages/game-list.css:155-158`: Checked scrape-mode toggle's box-shadow beats the focus rule, so focusing the default-checked toggle…
-  - M `static/css/pages/game-list.css:392; pages.css:2366-2376`: Search clear button and museum controller image actions are opacity 0, so Tab lands on invisible…
-  - M `static/js/all-games-controller.js:1188,1191,1197,1202,1206`: Filter-tag remove × is a span with no focus or name, so keyboard users cannot drop a single filter value.
-  - M `static/js/all-games-controller.js:757`: Bulk-select checkbox has no label, so screen readers announce 'checkbox' with no game name.
-  - M `static/js/all-games-controller.js:865-878,897`: Source and Rating filter options are divs, unlike the generic button form, so keyboard users cannot pick…
-  - M `static/js/game-modals.js:1370-1376`: Tag remove × in quick edit is a <span> with no tabindex, role or name, so keyboard and screen-reader…
-  - M `templates/_settings_tabs/account.html:20,52,60`: Avatar wrapper, avatar choices and upload zone are unfocusable clickable divs, so the avatar cannot be…
-  - M `templates/_settings_tabs/library.html:64-119`: Theme radiogroup options are divs with no role=radio, tabindex or aria-checked, so themes cannot be…
-  - M `templates/edit_modal.html:458`: Label for='edit_emulator_override' names a non-existent id, so the Emulator override select has no…
-  - M `templates/game_detail.html:2198-2200,2220`: Screenshot delete button is shown only on hover, so keyboard and touch users land on or miss an…
-  - M `templates/settings.html:1576,1586,3041,3433,3228,1953`: Naming-builder, remove controls, controller expander and bonus-disc parent picker are spans/divs…
-  - M `templates/steam_achievements.html:72; xbox_achievements.html:72…`: Game search inputs and progress filter selects have no label or aria-label; placeholder is not an…
-  - M `templates/wishlist.html:552-558,586`: While anything is scraping, every wishlist card is rebuilt every 3 s, dropping keyboard focus to <body>.
-  - Low: static/js/utils.js:1130; static/js/global-search.js:125-129; static/js/apply-progress.js:50-75…; templates/changelog.html (Load More script); static/js/game-modals.js:548,1215; templates/game_detail.html:4113 (and other tag renderers); templates/game_detail.html:598-602; static/js/all-games-controller.js:1276-1278; templates/setup.html:35; templates/login.html:251…; templates/rom_tools_settings.html:462,501; templates/archive_scanner.html:1285-1286,1350; templates/archive_scanner.html:1312,1366,1597; templates/achievements_system.html:158; templates/reports.html:359-447; templates/reports.html:966,967,1086,1087…; templates/analytics.html (chart canvases); templates/dashboard.html:29,37; modals.css:97-107,184-187; buttons.css:27-31,164-167…; static/css/features/manual-reader.css:50-53
-  - Open questions (answer first): static/js/main.js:861-864; static/js/utils.js:549; templates/base.html:707; static/js/toast-controller.js:1052; static/js/game-modals.js (_createTag); templates/base.html (showConfirm)…; docs/RETRODB_DESIGN_STANDARDS.md §11; ModalFocusTrap; templates/archive_scanner.html (archive and…; templates/logs.html (level/view/filter/category toggle…; templates/psn_trophies.html (platform buttons); templates/psn_trophies.html (syncTrophies, startBulkRefresh); templates/reports.html (batchRenameModal onescape); templates/systems.html:26-41; pages.css:915,929; _tab_bar.html:29-31; reports.html:287-296
-
-  ---
-  Kind: implement.
-
 - ✅ [PASS-59-276] **Escape every value put into page HTML, and close the data-on-* gadget (security, M).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
@@ -3223,109 +2396,6 @@ orchestrator, several by execution rather than reading.
   Manager: queued scrape toasts get a Reorder button (jobs.md §9
   updated). Pollers handle failed/404/idle, completion keys age by write
   time, failures shown. Q answered: the client owns the PSN idle case.
-  Kind: implement.
-
-- 📋 [PASS-59-278] **Translate the page scripts still in English: Lists, settings, achievements, trophies, reports, dashboard (i18n, L).**
-  - **Status**: todo
-  - **Source**: PASS-59-251 review 2026-11-09.
-  - **Do**: wrap per CLAUDE.md step 8 and `docs/specs/i18n.md` §6; regenerate the catalogs.
-  - **Follows**: PASS-59-246 (shipped). Number formats are PASS-59-256.
-  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
-  - **Findings**:
-  - H `templates/lists.html:4-79,339,354,358-359,369-370,391-392`: The Lists page is almost wholly untranslated (title, placeholders, modal labels, English plural logic)…
-  - M `static/css/components/tags.css:223`: CSS content 'None selected' is English text that can never be translated; it shows in the edit modal's…
-  - M `static/js/bulk-edit.js:81,109,137,165`: Bulk-edit genre/structure/perspective/dimension options show canonical English instead of tField labels.
-  - M `static/js/game-modals.js:1406-1408,1487-1489,1568-1570,1893-1895,1975-…`: Quick-edit dropdown options show raw canonical English and placeholders/optgroup labels are hardcoded…
-  - M `static/js/toast-controller.js:1055,1125,1237,795-800,1361`: Job names are English literals outside t() and are concatenated with translated fragments, which i18n §6…
-  - M `templates/_settings_tabs/scraping.html, system.html, library.html…`: Large blocks of settings, login and password-change text and role names are hardcoded English, not…
-  - M `templates/achievements_system.html, achievement_game.html…`: Many script and markup strings on achievement pages are hardcoded English, including relative-time text…
-  - M `templates/base.html:578-579,596,599,628,635,637,642-643,649`: Folder-browser strings in a template script stay English in every locale, and counts skip formatNumber.
-  - M `templates/collector_trophies.html:99`: earned_at UTC string cut to 10 chars, so users outside UTC see the wrong day near midnight.
-  - M `templates/dashboard.html:1146,1288,1292,1300,1310,1317,1336,1339`: Dashboard script strings are hardcoded English with English-only plurals, overwriting translated banner…
-  - M `templates/duplicate_finder.html, screenshot_dedup.html…`: Many user-facing strings on maintenance pages are hardcoded English, including an English-only plural.
-  - M `templates/game_detail.html:4021-6032 (many, listed in report)`: Many hardcoded English strings in the inline script: rename errors, placeholders, optgroups…
-  - M `templates/game_detail.html:5707,5750-5763,5977`: JS overwrites server-translated labels (Lookup HLTB, HLTB labels, Screenshots heading) with English…
-  - M `templates/game_imports.html:928`: Dates use a hardcoded en-US locale ('Mar 15, 2024') instead of the required YYYY-MM-DD via DateUtils.
-  - M `templates/psn_trophies.html, psn_trophy_detail.html…`: Many script strings on trophy pages are hardcoded English, some overwriting translated labels after one…
-  - M `templates/reports.html (many lines)…`: Report and export script strings are hardcoded English, permanently replacing translated button labels…
-  - M `templates/settings.html:1307-4889 (many, listed in report)`: Large blocks of user-facing English in the settings script never go through {{ _()|tojson }}.
-  - M `templates/systems.html:727,734-744,776,780,783,917`: Systems page script strings (spec labels, empty text, 'Showing X of Y') are hardcoded English.
-  - M `templates/xbox_achievement_game.html:104,212…`: UTC ISO strings cut at 16 chars show a literal 'T' in UTC, ignoring user timezone and the date format…
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-279] **Translation follow-ups: small untranslated strings, plurals and dates (i18n, S).**
-  - **Status**: todo
-  - **Source**: PASS-59-251 review 2026-11-09.
-  - **After**: PASS-59-278.
-  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
-  - **Findings**:
-  - Low: static/js/utils.js:885-888,643,60; static/js/main.js:1501,1623; static/js/main.js:1660; static/js/utils.js:860; static/js/updates.js:37; templates/_macros/breadcrumb.html:15…; static/js/game-modals.js:2330,137,384,391,2238-2239…; templates/game_detail.html:46; templates/game_detail.html:265; static/js/all-games-controller.js:706-710,715,720…; templates/all_games.html:155…; templates/museum.html:4,11,37-39,131…; templates/lists.html:487-494…; templates/settings.html:2643,5073,2641-2647; templates/archive_scanner.html, chd_verify.html…; templates/archive_scanner.html:1304,1279; templates/game_imports.html:838; templates/achievements_system.html:16-24,88,104,297,342,469…; templates/local_trophy_detail.html:261,299; templates/psn_trophy_detail.html:6,195…; templates/psn_trophies.html:132-141; templates/analytics.html:2691,2748,2735,2810; templates/systems.html:11; templates/dashboard.html:236,300; templates/systems.html:78; install.py; install_gui.py:45-54; routes/launch_settings.py:65-91…
-  - Open questions (answer first): templates/game_detail.html:46; docs/specs/i18n.md §6; templates/_bulk_edit_modal.html:30; static/js/emulators-settings.js:644; templates/chd_converter.html:75; templates/achievements_system.html:421; templates/dashboard.html:303; templates/systems.html:83; docs/specs/i18n.md; docs/specs/i18n.md
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-280] **Python: emulator setup on Windows and macOS, installer safety, and the GPU helpers (audit-fix, M).**
-  - **Status**: todo
-  - **Source**: PASS-59-251 review 2026-11-09.
-  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
-  - **Findings**:
-  - H `services/upscale_worker.py:38,120,140-148; services/rembg_worker.py:96`: The 600s watchdog counts a slow first model download as a crash, so on slower links background removal…
-  - M `install.py:149; install_gui.py:435`: Fallback Pillow install is unpinned and unhashed, bypassing the --require-hashes lock exactly when the…
-  - M `install.py:166; install_gui.py:457`: copy2 gives config.py, scraper settings and PSN credentials file 0644, readable by every local user.
-  - M `install_gui.py:586; install.py:249`: Installer opens/prints a hard-coded localhost:5000 after 2.5s, ignoring the saved port and slow first…
-  - M `installer_core.py:135-137`: Installer silently retries with --break-system-packages, installing pinned packages into the distro…
-  - M `installer_core.py:52; start.bat:23`: MIN_PYTHON (3,8) passes interpreters the dependencies can't install on, giving a pip resolver error…
-  - M `routes/emulators.py:246-259`: Clearing is_default runs outside a transaction with unvalidated ids; a failed upsert leaves the system…
-  - M `routes/launch_settings.py:28-38,129-136,163,167-169…`: Emulator Detect uses Linux-only paths and file patterns, so it finds nothing on Windows (.exe) or macOS…
-  - M `services/disc_files.py:19,89,96`: Playlist rewrite is in place: a failed read writes an empty .m3u, and non-UTF-8 disc names are corrupted…
-  - M `services/disc_files.py:36`: Absolute or ../ track names in .cue/.gdi escape the sheet folder, so CHD conversion can delete files…
-  - M `services/emulator_adapters.py:65-81`: DuckStation and PCSX2 data-folder lists are Linux-only, so per-game settings and BIOS status never work…
-  - M `services/rembg_worker.py:77-79`: ROCm provider is used without the spec's /dev/kfd R/W check, so AMD users outside the render group lose…
-  - M `services/rembg_worker.py:99-106`: Any rembg error, even a non-image upload, is treated as GPU failure, switching to CPU for good and…
-  - M `services/upscale_worker.py:167-171`: One failed first model download marks AI upscaling unavailable until restart; jobs silently fall back to…
-  - Low: install.py:162-166; install_gui.py:453-457; install_gui.py:576-581; install_gui.py:553-558; install_gui.py:245; install_gui.py:339-341; installer_core.py:69-81; install.py:23-25; .gitleaks.toml; routes/emulators.py:110,113-114,146-147,152; services/player_cores.py:378-383,429-432; services/player_cores.py:470-476; services/launcher/local.py:64-75; routes/emulators.py:258-259; services/emulator_seeder.py:59-69; services/player_cores.py:191-205; services/upscale_worker.py:132,136-137,150-156; services/upscale_worker.py:232-240; services/upscale_worker.py:197-198
-  - Open questions (answer first): install.py; install_gui.py; installer_core.py; requirements.lock; routes/launch_settings.py; services/player_cores.py:401; services/standalone_settings.py (write_lines, _target); routes/emulators.py; services/upscale_worker.py:167-171; services/upscale_worker.py:120,140-148; services/upscale_worker.py:211-213,245; services/upscale_worker.py (Popen pipes)
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-281] **Text contrast and brand colours: raise --text-muted, and name the brand colours (accessibility, M).**
-  - **Status**: todo
-  - **Source**: PASS-59-251 review 2026-11-09.
-  - **User decisions 2026-11-10**: (1) raise `--text-muted` in the six failing themes and drop the "documented acceptable" note in `docs/theme_contrast.md`; (3) brand colours (Steam, Xbox, PSN, rating boards, system badges) become named tokens, with a written exemption from "no hard-coded colours".
-  - **Then**: rerun `scripts/audit_contrast.py`. Fixed cyan is PASS-59-255.
-  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
-  - **Findings**:
-  - H `static/css/core/variables.css:41; themes.css:46,148,249,352,559`: --text-muted is under 4.5:1 in six themes incl. the default, on small hints, placeholders, nav titles…
-  - H `trophies.css:633,704-707,750; hltb.css:189; game-modals.css:380…`: --text-muted (~3.6:1) and --neon-gray (~3.7:1) are used for small informative text, failing 4.5:1 on the…
-  - M `game-list.css:1057-1060; settings.html:888-891`: White text on PEGI green (~2.0:1) and grey 'unknown' system badge (~3.6:1) fail 4.5:1 for small text.
-  - M `game_detail.html:3912-3914,3926-3928; game-modals.css:226-227`: White on cyan rename button (~1.9:1), white on orange RA badge (~2.2-3.2:1) and error text (~3.6:1) fail…
-  - Low: themes.css (Christian); cards.css:280; utilities.css:158…; game-list.css:1384-1388; pages.css:589-594,1274-1277
-  - Open questions (answer first): static/css/components/badges.css:116-246; static/css/core/variables.css:41; game-list.css:1086-1179,1288-1320,1464-1555; core/variables.css (--text-muted, --neon-gray); game_detail.html:1232-1266,2058-2061,2090-2093
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-282] **Layout: phone gaps, hidden sticky headers and duplicated CSS (ux, M).**
-  - **Status**: todo
-  - **Source**: PASS-59-251 review 2026-11-09.
-  - **Check**: desktop and 375px after each fix.
-  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
-  - **Findings**:
-  - H `templates/systems.html:1017-1019,589-596`: Masonry inline grid-row styles override the <=480px auto-rows rule, adding thousands of px of empty…
-  - M `pages.css:1489-1569; game-list.css:796-866`: .alphabet-nav exists in two drifted copies, so library pages get a mix of both and other pages a…
-  - M `static/css/components/tables.css:86-88`: Sticky table headers use top:0, so between 601 and 992px they stick under the fixed phone header and are…
-  - M `static/css/pages/game-list.css:807`: A-Z strip assumes the filter bar is <=80px; at <=768px the bar wraps taller and the strip likely slides…
-  - M `static/css/pages/pages.css:1076`: Unscoped .tag rule under detail-page styles overrides the tags component on every page.
-  - M `templates/game_detail.html:2897-2898`: Scrape modal overlay offsets by the 260px sidebar width, so with a collapsed sidebar a ~190px strip…
-  - M `templates/game_detail.html:983-3938`: Game page inline <style> redeclares many external classes (.hltb-*, .game-hero, .stat-value, .modal…
-  - Low: static/js/utils.js:967-970; static/js/main.js:153; static/js/theme.js:189; templates/changelog.html (.version-badge); templates/game_detail.html:4470; templates/tags.html:142,54; templates/wishlist.html:623; templates/lists.html:262,209…; templates/rom_tools_settings.html:192-193,197…; static/js/log-viewer.js:284; templates/logs.html:508-513; templates/logs.html:470; templates/screenshot_dedup.html:149-151; templates/analytics.html:2477; templates/systems.html:621,642-643…; static/css/core/typography.css:7; responsive.css:122; forms.css:383-387; static/css/pages/game-list.css:1097,1114,1156; static/css/pages/game-list.css:319,316; settings.html:156-168,400-410,527-530; static/css/pages/game-list.css:877; static/css/pages/pages.css:2097; game_detail.html:2181 vs 2874/2880; 1698 vs 2474; 1715 vs…; trophies.css:220-233; filters.css:198-207; game-modals.css:375-383; game_detail.html:1925
-  - Open questions (answer first): templates/game_detail.html:64; static/css pages.css:2092-2101; templates/settings.html (~958, .confirm-modal-message); templates/archive_scanner.html:346; templates/achievements_system.html:690,743,774; templates/achievement_game.html:391-394; templates/analytics.html:1529-1530; static/css/components/tables.css:86-88; pages.css:1778; typography.css:111; game-cards.css:248; stat-boxes.css:47; achievements.css:16…
-
-  ---
   Kind: implement.
 
 - ✅ [PASS-59-283] **Game, Library, Collections and Museum pages: bugs found by the review (audit-fix, M).**
@@ -3425,17 +2495,6 @@ orchestrator, several by execution rather than reading.
   now editor/admin only.
   Kind: implement.
 
-- 📋 [PASS-59-287] **Docs and comments the review found out of step with the code (doc-fix, S).**
-  - **Status**: todo
-  - **Source**: PASS-59-251 review 2026-11-09.
-  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
-  - **Findings**:
-  - Low: static/js/utils.js:74; services/template_filters.py:38; static/js/theme.js:141; templates/base.html:17-19; static/js/main.js:1362; static/js/all-games-controller.js:1615; templates/settings.html:1075,1114; docs/specs/rom-tools.md §4.3-4.4; routes/tools.py:412-421; static/js/achievements.js; templates/help.html:731,872,900-915,988,1377; templates/help.html:360,373; templates/help.html:1818; docs/RETRODB_DESIGN_STANDARDS.md §8; .claude/rules/distribution.md; .semgrep.yml:35,106,109,118
-  - Open questions (answer first): static/js/utils.js:280-284; docs/reviews/2026-11-04-independent-audit.md; roadmap.md; static/js/toast-controller.js…; static/js/toast-controller.js:1397,1400; templates/game_detail.html:5027-5134; templates/help.html:1869,121,1695; templates/help.html:233,511,561; docs/RETRODB_DESIGN_STANDARDS.md §8,§20…; .semgrep.yml
-
-  ---
-  Kind: implement.
-
 - ✅ [PASS-59-288] **Tests: sign-in refusal tests must reach the sign-in check, not stop at the CSRF check (test, S).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
@@ -3459,32 +2518,6 @@ orchestrator, several by execution rather than reading.
   PASS-59-292.
   Kind: implement.
 
-- 📋 [PASS-59-289] **Tests: clean up shared test state, and keep the player profile out of reach (test, M).**
-  - **Status**: todo
-  - **Source**: PASS-59-251 review 2026-11-09.
-  - **User decision 2026-11-10**: the player-profile gap (H) tightens the shipped PASS-59-239 isolation work.
-  - **Related**: the Steam-key flake fixed 2026-11-09 was this class.
-  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
-  - **Findings**:
-  - H `tests/test_player_cores.py:73`: Player profile isolation rests on a config.BASE_DIR monkeypatch alone (also player_install:31…
-  - M `tests/test_etag_and_gzip.py:111`: Clears force_password_change on seeded admin id 1 in the shared DB on every run and never…
-  - M `tests/test_log_redactor.py:118`: Strips SecretRedactor from the root logger (also :155) and never restores it for later tests…
-  - M `tests/test_mame_names.py:167`: Fixture leaks a 'mame' systems row, and the job's counts depend on no other test leaving…
-  - M `tests/test_observability.py:112`: factory_snapshot restores the record factory but not _request_id_installed, so request_id…
-  - M `tests/test_pass46_frozen_paths.py:171`: reloaded_app restores only app and config; modules first imported in the reload (e.g.…
-  - M `tests/test_pass54_media_integrity.py:136`: clear_missing_media_refs sweeps every row in the shared DB, so leftover rows break the count…
-  - M `tests/test_pass59_118_trophies.py:75`: Inserts users row id 2 ('other-stub') and the finally never deletes it; it stays in the shared…
-  - M `tests/test_pass59_133_keep_media.py:10`: Relies on conftest's shared IMAGE_PATH/screenshots being empty; a leftover file flips the…
-  - M `tests/test_pass59_248_hardening.py:21`: _make_user commits admin users and user_settings rows to the shared DB and never deletes them…
-  - M `tests/test_pass59_249_gpu_env.py:42`: delenv(raising=False) on an absent var records no restore, so the 10.3.0 set by the code leaks…
-  - M `tests/test_pass59_268_ra_queue.py:60`: Fixture clears ra_queue _items but leaves the watcher thread alive, so it can call…
-  - M `tests/test_password_floor.py:52`: Posting /api/setup renames the shared seeded admin to 'boss' and changes its password; nothing…
-  - Low: tests/test_bulk_scrape_race.py:115; tests/test_fresh_install_schema.py:102; tests/test_pass45_security.py:1897; tests/test_pass59_118_trophies.py:157; tests/test_pass59_119_rom_tools.py:91; tests/test_pass59_241_silent_failures.py:97; tests/test_pass59_240_secrets.py:46; tests/test_pass59_238_media.py:79; tests/test_pass59_frontend.py:243; tests/test_psn_new_npsso.py:25; tests/test_rpcs3_compat.py:24; tests/test_shutdown_route.py:64
-  - Open questions (answer first): tests/_versions_util.py; tests/test_etag_and_gzip.py:111; tests/test_fresh_install_schema.py; tests/test_log_redactor.py:118; tests/test_log_redactor.py:118; tests/test_observability.py:112; tests/test_observability.py:112; tests/test_pass38_region_helper.py:51; tests/test_pass41_security.py:667; tests/test_pass46_frozen_paths.py:171; tests/test_pass46_frozen_paths.py:171; tests/test_pass46_frozen_paths.py:1; tests/test_pass59_133_keep_media.py:10; tests/test_pass59_rom_tools.py:174; tests/test_pass59_118_trophies.py:135; tests/test_pass59_133_keep_media.py:10; tests/test_pass59_206_canonical_labels.py:1; tests/_versions_util.py:1; tests/test_pass59_249_gpu_env.py:42; tests/test_pass59_248_hardening.py:21; tests/test_pass59_268_ra_queue.py:60; tests/test_pass59_268_ra_queue.py:60; tests/test_password_floor.py:52; tests/test_player_launch.py:36; tests/test_psn_new_npsso.py:25; tests/test_player_cores.py:73; tests/test_pass59_rom_tools.py:175; tests/test_scan_library_rom_path.py:215
-
-  ---
-  Kind: implement.
-
 - ✅ [PASS-59-290] **Tests that cannot fail: stubs on names the code never reads, and asserts that never run (test, M).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
@@ -3506,86 +2539,6 @@ orchestrator, several by execution rather than reading.
   ---
   Shipped 2026-11-10 (f16e3765). All nine tests confirmed and each
   proven red against broken code.
-  Kind: implement.
-
-- 📋 [PASS-59-291] **Tests that check too little to catch the bug they are named for (test, M).**
-  - **Status**: todo
-  - **Source**: PASS-59-251 review 2026-11-09.
-  - **After**: PASS-59-290.
-  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
-  - **Findings**:
-  - M `tests/test_auth_hardening.py:142`: Nothing checks the planted session key is gone, and the refused login never…
-  - M `tests/test_auth_hardening.py:395`: Only checks words before the token survive; a redactor that wipes every long…
-  - M `tests/test_emulator_autodetect.py:297`: _walk_appimages sorts dirnames, so both mine_first cases walk the same order; the…
-  - M `tests/test_fresh_install_schema.py:99`: Runs its own copy of the upsert SQL, so a regression in the routes/trophies.py…
-  - M `tests/test_graceful_shutdown.py:18`: _SINGLETON_NAMES omits museum_images_job and ai_fill_bulk_job, so their cancel is…
-  - M `tests/test_hltb_alt_titles.py:160`: lookup_playtime returns None on any exception, so 'result is None' (also :99)…
-  - M `tests/test_input_hardening_app.py:59`: Named for rate limits but only asserts three view functions exist; removing every…
-  - M `tests/test_input_hardening_museum.py:60`: Sends no upload; compares two config constants, so the route could stop checking…
-  - M `tests/test_metadata_merger.py:420`: assert meta['genre'] passes for any non-empty value, including the char-iteration…
-  - M `tests/test_observability.py:207`: SLOW_REQUEST_MS=0 returns before the probe exemption is checked, so deleting the…
-  - M `tests/test_official_names.py:174`: Asserts only title != LOCKED_NAME; a Reset that blanks the title or restores the…
-  - M `tests/test_pass35_36_hardening.py:90`: Checks init_database's pragma, but FK pragma is per-connection; deleting get_db's…
-  - M `tests/test_pass38_region_helper.py:63`: The first match is also the first part, so the test passes with region matching…
-  - M `tests/test_pass39_supply_chain.py:76`: Compares total pin and hash counts, so one unhashed pin passes; marker-bearing…
-  - M `tests/test_pass45_security.py:839`: Image.MAX_IMAGE_PIXELS is one Pillow-wide global, so neither test can tell which…
-  - M `tests/test_pass48_media_cleanup.py:85`: No -sm/-md fanart files exist, so wrongly deleting fanart variants would still…
-  - M `tests/test_pass59_119_rom_tools.py:204`: Proves a paused task stops by sleeping 0.3 s; a slow worker passes on broken…
-  - M `tests/test_pass59_216_extra_data.py:235`: Return of queue_stored_suspects() is ignored; if nothing is queued, approve_all…
-  - M `tests/test_pass59_217_identify_by_file.py:42`: Checks for escaped.bin in tmp_path.parent, where a ../../ escape cannot land; the…
-  - M `tests/test_pass59_237_disc_files.py:114`: deleted == 0 can come from 'not in scan results' or the playlist guard; groups…
-  - M `tests/test_pass59_237_disc_files.py:64`: Poll gives up after ~4 s without failing and returns empty groups, so the…
-  - M `tests/test_pass59_247_scrapers.py:179`: Assertion only inside the loop; an empty suggest_groups result passes, so 'kept…
-  - M `tests/test_pass59_auth_api.py:125`: Forced-change form check accepts any 200 page with '<form' or 'password', so it…
-  - M `tests/test_pass59_auth_api.py:57`: 'still masks unexpected errors' checks only status 500; a regression leaking…
-  - M `tests/test_pass59_rom_tools_js.py:30`: Node catch swallows any load-time error except 't is not defined', so an early…
-  - M `tests/test_rembg_worker.py:97`: Compares against prior 'rembg' in sys.modules; if an earlier test imported rembg…
-  - M `tests/test_review_fixes_gamepage.py:109`: Response unchecked and no record that the injected failing() raised; assertions…
-  - M `tests/test_routes_launch.py:173`: Override 'unchanged' is also what an unprocessed POST shows; the only co-field…
-  - M `tests/test_server_port.py:183`: Both sides resolve to default 5000 from inherited temp settings, so a CLI…
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-292] **Tests: check behaviour instead of source text, and stop depending on the working folder (test, M).**
-  - **Status**: todo
-  - **Source**: PASS-59-251 review 2026-11-09.
-  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
-  - **Findings**:
-  - H `tests/test_pass40_9_16_security.py:386`: Source window around 'Cleared' includes a comment holding 'AND ' and ' = ?', so the check is always true.
-  - M `tests/test_auth_hardening.py:82`: A negative string match on one spacing of 'password_hash = None' stands in for checking non-admins get…
-  - M `tests/test_pass37_a11y.py:215`: The <h4> guard reads only the settings.html shell; tab content moved to _settings_tabs partials is…
-  - M `tests/test_pass38_template_macros.py:208`: Scans only settings.html; a raw tab-subnav class re-added in a _settings_tabs partial is not caught.
-  - M `tests/test_pass41_security.py:1561`: Claim that api_track_view no longer writes games.last_viewed is checked only by a comment marker in…
-  - M `tests/test_pass41_security.py:317`: Two tests check only that 'get_request_db' appears in the file; the import satisfies it, so reverting…
-  - M `tests/test_pass45_security.py:904`: Computes open_count but never compares it; extra Image.open sites with no bomb catch pass if four…
-  - M `tests/test_pass59_208_wrong_game.py:247`: Checks only that the DEFAULT_SCRAPER_PRIORITY name appears in four files; its value (rawg last) is never…
-  - M `tests/test_pass59_245_focus.py:22`: Globs at :22 and :55 are CWD-relative; from outside the repo root they match nothing and pass; CSS glob…
-  - M `tests/test_pass59_destructive_ops.py:337`: Claims batch_create_m3u honours delete_archives but only checks a substring in its source; dead or…
-  - M `tests/test_pass59_packaging.py:62`: Positive checks (also :105, :179, :423) search raw source incl. comments; a comment naming the call…
-  - M `tests/test_sidebar_nav.py:91`: Greps the template for the tabs macro call; passes inside a comment or dead branch and never checks the…
-  - M `tests/test_units_sold.py:44`: Two tests check SQL/name substrings in source for fill-only and integer storage; comments or dead code…
-  - Low: tests/test_ai_fill_bulk.py:192; tests/test_input_hardening_uploads.py:38; tests/test_mame_names.py:240; tests/test_modal_plain_text.py:50; tests/test_pass29_frontend.py:47; tests/test_pass39_supply_chain.py:247; tests/test_pass35_36_hardening.py:328; tests/test_pass41_security.py:1731; tests/test_pass45_security.py:2427; tests/test_pass45_security.py:795; tests/test_pass59_258_a11y.py:15; tests/test_pass59_scrapers.py:87; tests/test_release_dates.py:58; tests/test_scraper_settings_cache.py:105; tests/test_sidebar_nav.py:92
-  - Open questions (answer first): tests/test_ai_fill_bulk.py:192; tests/test_pass35_36_hardening.py:290; tests/test_pass40_9_16_security.py:386; tests/test_pass59_scrapers.py:87; tests/test_units_sold.py:44
-
-  ---
-  Kind: implement.
-
-- 📋 [PASS-59-293] **Tests: fixed waits, slow waits and other test hygiene (test, S).**
-  - **Status**: todo
-  - **Source**: PASS-59-251 review 2026-11-09.
-  - **Related**: PASS-59-221 holds the two slowest tests.
-  - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
-  - **Findings**:
-  - M `tests/test_bulk_scrape_race.py:225`: A fixed 0.3 s wait before asserting one live worker can fail falsely under load and miss a late…
-  - M `tests/test_emulator_autodetect.py:160`: fake_home moves only $HOME, so a system-wide Flatpak under /var/lib/flatpak changes results at :160…
-  - M `tests/test_i18n_longform.py:58`: Three tests (:58, :69, :90) each re-parse every changelog YAML, about 9.7 s together.
-  - M `tests/test_pass59_132_parallel_fallbacks.py:53`: Finish order rests on a 0.2 s sleep and a 2 s Barrier timeout; under -n 4 load the order flips or the…
-  - M `tests/test_pass59_243_jobs.py:81`: Fixed 0.3 s wait assumes the old worker reached its pause; under load it fails without a regression or…
-  - M `tests/test_pass59_268_ra_queue.py:133`: time.sleep(2.5) costs 2.5 s and buys nothing; the property is already proven and the negative assert…
-  - M `tests/test_pass59_268_ra_queue.py:94`: Waits out the real POLL_SECONDS = 2 (2.01 s measured) though _watch reads the global each loop.
-  - Low: tests/test_auth_hardening.py:410; tests/test_game_logo.py:133; tests/test_launcher_local.py:169; tests/test_migrations.py:320; tests/test_pass38_region_helper.py:71; tests/test_pass59_244_recover.py:13; tests/test_pass59_249_database.py:121; tests/test_pass59_auth_api.py:155; tests/test_pass59_frontend.py:271; tests/test_rembg_worker.py:119; tests/test_rembg_worker.py:128; tests/test_shutdown_route.py:142; tests/test_updater.py:297; tests/test_xbox_openxbl.py:231
-  - Open questions (answer first): tests/test_emulator_autodetect.py:160; tests/_bulk_scrape_fixtures.py; tests/test_game_logo.py:133; tests/test_migrations.py:320; tests/test_museum_job.py; tests/test_pass59_161_screenshot_fit.py:21; tests/test_pass59_243_jobs.py:81; tests/test_pass59_auth_api.py:155; tests/test_pass59_trophy_dataloss.py:71; tests/test_launch_resolver.py:10; tests/test_upload_image_pipeline.py:34; tests/test_upload_image_pipeline.py:34; tests/test_upload_limits.py:29
   Kind: implement.
 
 - ✅ [PASS-59-294] **The Logs page lists files it then refuses to open (fix, S).**
@@ -3641,6 +2594,688 @@ orchestrator, several by execution rather than reading.
   **Layman:** Nothing breaks on screen, but for a viewer every page quietly asks the server for things only an admin may see.
   Kind: fix.
   Source: browser walk 2026-11-10.
+
+## 4.0.x — Security and data-loss fixes for the web version
+
+After 4.0.0 the web version gets security and data-loss fixes only, always as 4.0.x: the 4.0 updater treats 4.1.0 and up as the desktop app.
+
+## 4.x.0 — The desktop and Android app, piece by piece
+
+The native app (Rust + Slint) ships in pieces as 4.1.0, 4.2.0 and on. New features outside the 4.0.0 plan are built here, not in the web version.
+
+- 📋 [PASS-53-5] **Role-aware rating display in the edit form (UX, S)**
+  - **Status**: planned.
+  - **Problem**: the Edit form's "Technical" tab stacks all 10 age-rating
+    dropdowns — ESRB/PEGI/CERO/USK/ACB/FPB/GRAC/ClassInd (`base.html:1213-1305`) —
+    for every user, though almost everyone cares about one region.
+  - **Plan** (per user 2026-07-03): **admin** users keep all rating boards visible
+    (they curate cross-region data); **every non-admin** user sees ONLY the single
+    rating system selected in their Settings (`preferred_rating_system`). Gate the
+    extra boards on `current_user.role == 'admin'`; non-admins get one dropdown.
+    Cross-mapping / auto-fill (`map_rating`) is unchanged — this is a display
+    filter, not a data change.
+  - **Est.**: S — a role check + conditional render around the rating block.
+  **Layman:** The edit form shows only the age-rating boxes that matter to you.
+  Kind: implement.
+
+- 📋 [PASS-53-6] **ROM Tools nav link: hub vs last-visited, as a preference (UX, S)**
+  - **Status**: planned (low priority — the maintainer prefers the current
+    last-visited behaviour for their own use; kept as an opt-in option, not a
+    forced change).
+  - **Problem**: the sidebar "ROM Tools" link jumps to the last sub-tool visited
+    (`base.html:840-855`) rather than the hub, so the label and destination
+    disagree — disorienting for a new user.
+  - **Correction** (2026-10-17): the premise is false. The link has always
+    opened the hub: `navigateToRomTools` in `base.html` is defined but nothing
+    calls it, in the whole git history, so the `lastRomToolsPage` script is
+    dead code. A last-visited option would be new behaviour, not a
+    preference over existing behaviour. The dead script is not removed yet.
+  - **Plan**: make it a user preference (Settings): "ROM Tools opens → hub /
+    last-visited", defaulting to hub for new users so power users keep the
+    shortcut. Small, opt-in; no behaviour forced.
+  - **Est.**: S — one setting + a branch in the nav redirect.
+  **Layman:** A setting chooses whether the ROM Tools link opens the tool list or the last tool you used.
+  Kind: implement.
+
+- 📋 [PASS-53-9] **Deep-link from scrape failure to the API-key form (UX, S)**
+  - **Status**: planned.
+  - **Problem**: API keys live three levels deep (Settings → Scraping → sub-tab,
+    `scraping.html:7,265`), yet skipping them causes silent scrape failures whose
+    fix is buried. There's no link from the failure back to the fix.
+  - **Plan**: when a scrape fails for a missing / invalid key, surface a direct
+    link to the API-keys sub-tab (`/settings#scraping` + sub-nav anchor). Pairs
+    with the setup wizard's optional-API-key step (Pass 53.8).
+  - **Est.**: S — a targeted link in the failure message / toast.
+  **Layman:** A scrape that fails for a missing key takes you straight to where you enter it.
+  Kind: implement.
+
+- 📋 [PASS-53-12] **Persistent inline error state for walk-away operations (UX, S)**
+  - **Status**: planned.
+  - **Problem**: errors from user-initiated operations surface only as ephemeral
+    toasts (e.g. AI-fill error `game-modals.js:2311`). If the user walks away, the
+    only record vanishes when the toast times out — no lasting indication on the
+    affected item.
+  - **Plan**: add a durable inline error indicator on the affected item (game card
+    / job row) for scrape / AI-fill / bulk operations, complementing — NOT
+    replacing — the toast system. NOTE (user 2026-07-03): toast timeouts are
+    already per-category user-editable (success / info / warning / error each
+    independently, `notification_timeouts`, injected `base.html:330-335`) — preserve
+    that. This item adds durability; it does not change toast timing.
+  - **Est.**: S — an inline error state hooked into the existing error paths.
+  **Layman:** An error from a long task stays on screen until you have seen it.
+  Kind: implement.
+
+- 📋 [PASS-56-2] **Further language packs — Czech, Swedish, Thai, Vietnamese (FEATURE, L)**
+  - **Target**: four more locales — **`cs` Czech, `sv` Swedish, `th` Thai,
+    `vi` Vietnamese** — the next-highest-value gaps for a retro-gaming audience
+    after the Pass 56.1 set.
+  - **Why**: all four are widely-spoken, well-resourced for quality translation,
+    all left-to-right (no RTL prerequisite, unlike Pass 43.4's Arabic), and absent
+    from the current 21-language set. Suggested to and approved by the user
+    2026-07-05.
+  - **Plan**: identical pipeline to Pass 56.1 — `pybabel init -l <code>` →
+    per-locale `{msgid: translation}` JSON → `scripts/apply_po_translations.py`
+    (strict: hard-fails on any missing msgid or dropped placeholder) → `pybabel
+    compile`; then the 14-entry `data/changelog.<code>.yaml` + the ~2000-line
+    `templates/help.<code>.html` (copy-then-translate-prose, anchors byte-identical).
+    Zero code changes — `available_locales()` auto-surfaces each new catalog in the
+    Settings dropdown / validator / selector. Plural-form counts (from CLDR, set by
+    `pybabel init`): `cs` 4, `sv` 2, `th` 1, `vi` 1. Would take the shipped set to
+    25 languages.
+  - **Verify**: `available_locales()` returns the four new codes; `pybabel compile`
+    clean; `scripts/check_i18n_fresh.py` green (msgid set unchanged — locales only);
+    each changelog parses at the current recent-entry count; each help file's
+    `id`/`href` anchor set + Jinja-token count byte-identical to `help.html`.
+  - **Status**: planned (2026-07-05). Not started; a self-contained follow-on to
+    Pass 56.1 whenever the user wants the next batch.
+
+  ---
+  **Layman:** Czech, Swedish, Thai and Vietnamese translations.
+  Kind: implement.
+
+- 📋 [PASS-43-4] **RTL layout support + Arabic (MEDIUM, L)**
+  - **Target**: `static/css/core/*.css`, every grid/flex layout, every
+    text-align/margin-left utility.
+  - **Why**: Arabic and Hebrew are RTL; the current CSS bakes
+    left-to-right assumptions deep into the grid/sticky-nav system.
+  - **Plan**: switch directional utilities (`margin-left/right`,
+    `text-align: left`) to logical properties (`margin-inline-start/end`,
+    `text-align: start`).  Add `[dir="rtl"]` overrides where logical
+    properties don't reach (icons, chevrons, sortable column arrows).
+    `<html dir="rtl">` driven by locale class (`app.py::select_locale` result →
+    Babel `Locale.parse(code).text_direction`).  The CSS audit is the bulk:
+    ~360 physical `left/right` rules, zero logical, no `[dir]` handling as of
+    Pass 56.
+  - **Status**: planned — **un-gated (2026-07-05).** Pass 56 shipped a **Hebrew** (`he`)
+    catalog — the first RTL `.po`, so the "needs a real RTL user" gate is now met.
+    Hebrew currently renders correct Hebrew *text* in the still-LTR layout; this
+    pass is what makes the layout mirror properly. **Also add Arabic (`ar`) here:**
+    Arabic was deliberately held out of Pass 56's translation batch precisely
+    because it needs this layout work first — once RTL layout lands, adding the
+    `ar` catalog (same pipeline as Pass 56: `pybabel init` → translate →
+    `scripts/apply_po_translations.py` → compile) is translation-only. Scope:
+    the CSS logical-property conversion (shared by `he` + `ar`) **plus** the `ar`
+    catalog. Bumped priority MEDIUM (was LOW) now that a shipped RTL locale
+    depends on it.
+  **Layman:** Arabic, with pages laid out right to left.
+  Kind: implement.
+
+- 📋 [PASS-59-171] **Cheats for PSP games in PPSSPP (MEDIUM, S).**
+  - **Status**: todo
+  - Deferred from PASS-59-155 (user, 2026-10-23: not in v4.0.0).
+  - The user's PSP cheat database is in `/mnt/Emulators/Cheats/Sony
+    PlayStation Portable/PPSSPP` (`cheat.db`, and per-game `.ini` files
+    named by game id). PPSSPP's own enable mechanism: not researched.
+
+  ---
+  **Layman:** Cheats for PSP games played in PPSSPP.
+  Kind: implement.
+
+- 📋 [PASS-59-172] **Research RPCS3 game patches as cheats (LOW, S).**
+  - **Status**: todo
+  - Deferred from PASS-59-155 (user, 2026-10-23: research before
+    deciding; not committed to v4.0.0).
+  - RPCS3 cheats are game patches in `patch.yml`, a different and
+    larger format than the other emulators' cheat files.
+
+  ---
+  **Layman:** Find out whether RPCS3's game patches can work as cheats.
+  Kind: implement.
+
+- 📋 [PASS-59-173] **Cheats when a game runs in the user's own RetroArch (LOW, S).**
+  - **Status**: todo
+  - Deferred from PASS-59-155 (2026-10-23).
+  - The user's RetroArch reads its own `cheat_database_path`; RetroDB
+    would write the `.cht` there through the overrides layer
+    (`services/launch_resolver.py::_retroarch_overrides`).
+
+  ---
+  **Layman:** Cheats for games played in your own RetroArch.
+  Kind: implement.
+
+- 📋 [PASS-59-180] **A game series timeline: what changed from game to game, and between regions and consoles (FEATURE, L).**
+  - **Target**: a timeline of a series showing what each game changed,
+    and how its regional and console versions differ, graphics too.
+  - **Mockups**: HTML mockups under `docs/mockups/series-timeline/`,
+    for the user to choose from.
+  - **Open**: where the change data comes from (AI, scraped, typed in);
+    how it ties to franchise/series fields and regional versions
+    (PASS-59-106).
+  - **Status**: todo.
+  - **Source**: user, 2026-10-29.
+
+  ---
+  **Layman:** A timeline of a game series showing what changed from game to game.
+  Kind: implement.
+
+- 📋 [PASS-59-181] **Console museum: three new presentations to choose from (UX, M).**
+  - **Target**: three mockups of how the console museum could be
+    presented, by Claude's own design; the user picks one.
+  - **Mockups**: `docs/mockups/museum/`. Building waits for the pick.
+  - **Status**: todo.
+  - **Source**: user, 2026-10-29.
+
+  ---
+  **Layman:** Three new looks for the console museum to choose from.
+  Kind: implement.
+
+- 📋 [PASS-59-182] **A missing emulator falls back to a RetroArch that can play the game (ENHANCEMENT, S).**
+  - **Report**: Tomb Raider (GBC) failed with "Emulator binary not
+    found on PATH: 'mgba-qt'". The user expects RetroArch to play it.
+  - **Found** (2026-10-29): gb, gbc and gba default to mGBA, not
+    installed. `launch_resolver.pick_launch_mapping` already falls back
+    to the player when the default does not resolve, but
+    `_player_serves` needs the player's program, and RetroArch
+    (RetroDB) is not downloaded yet (no `data/player/`). The user's own
+    RetroArch row is never tried.
+  - **Target**: (1) the error offers Get RetroArch where the player
+    could serve the system; (2) consider the user's own RetroArch with
+    a core for the system as a further fallback.
+  - **Status**: todo.
+  - **Source**: user, 2026-10-29.
+
+  ---
+  **Layman:** If a game's emulator is missing, RetroArch plays it instead.
+  Kind: implement.
+
+- 📋 [PASS-59-183] **MobyGames as a scrape source (FEATURE, M).**
+  - **Target**: RetroDB fetches game details from MobyGames. The user
+    has no API key.
+  - **Research first** (unverified): whether MobyGames' API needs a
+    paid or approved key, its rate limits and terms, and whether any
+    keyless route is allowed. Scraping its web pages may breach its
+    terms. Fits PASS-59-162's source review.
+  - **Status**: todo.
+  - **Source**: user, 2026-10-29.
+
+  ---
+  **Layman:** MobyGames as another place to look up game details.
+  Kind: implement.
+
+- 📋 [PASS-59-184] **3D box art matches the ROM's region (ENHANCEMENT, M).**
+  - **Target**: a game's 3D box shows its own region's case; many
+    regions' cases look different.
+  - **Open**: which sources give region-tagged 3D boxes, and how the
+    region is read (the `region` field, the ROM name's tags). Related:
+    PASS-59-162, PASS-59-143.
+  - **Status**: todo.
+  - **Source**: user, 2026-10-29.
+
+  ---
+  **Layman:** A game's 3D box matches its region's case.
+  Kind: implement.
+
+- 📋 [PASS-59-185] **One AI Fill tool in ROM Tools, with a switch for each kind of fill (UX, M).**
+  - **Target**: ROM Tools shows two AI tools today, Official Names and
+    Backfill Alternate Titles. Merge them into one AI Fill with an
+    on/off switch per kind, plus release dates for all regions.
+  - **Status**: todo.
+  - **Source**: user, 2026-10-29.
+
+  ---
+  **Layman:** One AI Fill tool, with a switch for each kind of detail it fills.
+  Kind: implement.
+
+- 📋 [PASS-59-187] **One place to update RetroDB's RetroArch and its cores, with a dashboard reminder when they are out of date (ENHANCEMENT, M).**
+  - **Ask** (user, 2026-10-29): RetroArch downloaded beside RetroDB
+    needs a way to stay updated: a dedicated place to run updates, and
+    a dashboard note when RetroArch has not been updated in a while.
+  - **Today** (read 2026-10-29): RetroArch is pinned per RetroDB
+    release (`services/player_install.py` VERSION + SHA-256); "Download
+    RetroArch again" reinstalls the pin. "Update cores" in Settings >
+    Emulators re-downloads cores whose buildbot CRC changed. Nothing
+    says either is due. RetroArch's own Online Updater inside the
+    player is untested (it would bypass `cores/installed.json`).
+  - **Target**: one Updates card (beside Settings > System > Updates,
+    or in Settings > Emulators) showing the installed RetroArch against
+    the pin this RetroDB carries, and how many cores have newer builds;
+    one button runs both. The dashboard shows a note when the pin is
+    newer than the install or cores were last checked long ago.
+  - **Open**: how long "a while" is; whether the core check runs
+    daily like the RetroDB update check (PASS-59-169).
+  - **Status**: todo.
+  - **Source**: user, 2026-10-29.
+
+  ---
+  **Layman:** One place to update RetroArch and its cores, with a reminder when they are out of date.
+  Kind: implement.
+
+- 📋 [PASS-59-190] **A Sales card on the Analytics page (feature, M).**
+  - **Target**: a Sales card on `templates/analytics.html` built from
+    `games.units_sold`: total copies sold, a bar chart of totals per
+    system, the 10 best-selling games (linked), and coverage (games
+    with a figure / all games).
+  - **Why**: AI Fill and Bulk AI Fill now fill sales figures; nothing
+    shows them except the game page.
+  - **Status**: todo.
+
+  ---
+  **Layman:** An Analytics card showing how many copies your games sold.
+  Kind: implement.
+
+- 📋 [PASS-59-191] **Sort and filter the Library by copies sold (feature, S).**
+  - **Target**: a Copies sold sort option beside Critic score and User
+    score (`templates/system_games.html`, `AllGamesController`, so the
+    Library and system pages stay in sync), and a "has a sales figure"
+    filter.
+  - **Status**: todo.
+
+  ---
+  **Layman:** Sort and filter the Library by copies sold.
+  Kind: implement.
+
+- 📋 [PASS-59-192] **Sales totals by publisher, genre and decade (feature, M).**
+  - **Target**: tabs on the Analytics Sales card (PASS-59-190)
+    totalling `units_sold` by publisher, by genre (multi-value: a game
+    counts under each of its genres, and the card says so) and by
+    release decade.
+  - **Blocked by**: PASS-59-190.
+  - **Status**: todo.
+
+  ---
+  **Layman:** Copies sold, added up by publisher, genre and decade.
+  Kind: implement.
+
+- 📋 [PASS-59-193] **Best-seller badges on a game's page (feature, S).**
+  - **Target**: a badge on the game page from `units_sold`: its rank
+    among the system's games with a figure ("#3 best seller on SNES in
+    your library"), shown only for the top 10.
+  - **Status**: todo.
+
+  ---
+  **Layman:** Best-seller badges on a game's page.
+  Kind: implement.
+
+- 📋 [PASS-59-220] **Sales figures for 8-bit games: cited numbers and period sources (enhancement, M).**
+  - **Status**: todo
+  - **Request** (user, 2026-10-31): a Gemini answer listed sources for 8-bit sales figures; see if it can be used.
+  - **Measured 2026-10-31**: `units_sold` is empty on every Commodore 64, ZX Spectrum and Atari 5200 game in one library, and on most Atari 2600 games. Only the AI fills it, and `_build_prompt` already names Wikipedia's lists and VGChartz, with nothing for 8-bit computers.
+  - **Treat the answer as leads, not data**: checked against Wikipedia, its Pitfall! and Asteroids figures differ (about 4.5m and 4.3m against 4,000,000 and 3,832,886), and Sensible Soccer is not listed for Spectrum or C64.
+  - **Plan**: 1. A small shipped table of cited figures, each with its source link, starting with Wikipedia's Atari 2600 list (24 games, each row referenced; text CC BY-SA 4.0, so credit it). It fills `units_sold` fill-only, without paying for AI. 2. For 8-bit systems, add to the AI prompt: the C64 Wiki, Spectrum Computing, World of Spectrum, AtariAge and period magazines on archive.org. Keep "a published figure, never your own estimate", and accept a stated milestone only as that game's figure. 3. Show the source beside the number, with PASS-59-211.
+  - **Not planned**: scraping VGChartz, forums or magazine scans; no API, and terms not checked. A forum estimate is not a published figure.
+  - **Limit**: most 8-bit games have no published figure, so most stay empty, which is the true answer.
+
+  ---
+  **Layman:** Sales figures for 8-bit games, with their sources.
+  Kind: implement.
+
+- 📋 [PASS-59-230] **Arcade flyers on the game page (enhancement, S).**
+  - **Status**: todo
+  - **Decided** (user, 2026-11-02): after v4.0.0.
+  - **What the sources send**: ScreenScraper `flyer` (documentation only,
+    in no sample seen). Check a real arcade answer before building.
+  - **Pattern**: the box back (PASS-59-225) — its own column and folder,
+    fill-only, and a place on the game page.
+
+  ---
+  **Layman:** Arcade flyers on the game page.
+  Kind: implement.
+
+- 📋 [PASS-59-233] **Check each ROM is a good copy against No-Intro and Redump lists (feature, M).**
+  - **When**: after v4.0.0 (user, 2026-11-04).
+  - **Why**: a bad dump plays wrongly or not at all, and nothing in
+    RetroDB says so today. The CHD check covers CHD files only.
+  - **Start from**: `services/rom_identity.py` already gives a file's
+    name, size and CRC (PASS-59-217). Compare those to No-Intro and
+    Redump DAT files the user supplies.
+  - **Open**: where the result shows (ROM Tools, the game page, both),
+    and how DAT files reach the app. Ask the user before building.
+  - **Status**: todo.
+
+  ---
+  **Layman:** Check each ROM is a good copy against the No-Intro and Redump lists.
+  Kind: implement.
+
+- 📋 [PASS-59-234] **Back up and restore each game's saves (feature, M).**
+  - **When**: after v4.0.0 (user, 2026-11-04).
+  - **Why**: saves live only in each emulator's folders; a lost disk or
+    a bad emulator update loses them. Nothing in RetroDB copies them.
+  - **Start from**: `services/player.py` names RetroArch's
+    `savefile_directory` and `savestate_directory` keys; DuckStation,
+    PCSX2 and the other standalone emulators keep their own folders.
+  - **Open**: which emulators first, where copies go, and how many
+    copies to keep. Ask the user before building.
+  - **Status**: todo.
+
+  ---
+  **Layman:** Back up and restore each game's saves.
+  Kind: implement.
+
+- 📋 [PASS-59-235] **TV mode: a big-text Library you steer with a game controller (feature, L).**
+  - **When**: after v4.0.0 (user, 2026-11-04).
+  - **Why**: RetroDB launches games, but choosing one needs a mouse and
+    keyboard. No page reads a game controller today (no `getGamepads`
+    in `static/js`).
+  - **Open**: a separate page or a mode of the Library; which actions it
+    offers (browse, details, Play). Likely needs a spec
+    (`spec-format.md` §1): it spans pages, input and layout.
+  - **Status**: todo.
+
+  ---
+  **Layman:** TV mode: a big-text Library you steer with a game controller.
+  Kind: implement.
+
+- 📋 [PASS-59-236] **ROCm's roctracer aborts every GPU process at exit: find a fix that needs no copy of ROCm (investigate, S).**
+  - **When**: after v4.0.0 (user, 2026-11-04).
+  - **Why**: `roctracer` 6.4.0 (openSUSE build) fails an assertion in
+    `hsa_support::Finalize` at exit. pytest exits 134, and a plain kill
+    of a server writes a core dump of hundreds of MB.
+  - **Try, in order**: a newer ROCm; keeping `libroctracer64` from
+    loading; reporting it to AMD or openSUSE.
+  - **Decided** (user, 2026-11-04): no fork of ROCm. Measured that day
+    for this machine's gfx1032 card (run as gfx1030): the ROCm files the
+    upscaler loads are 2.48 GB on disk, 534 MB packed with `xz -1`, for
+    one card family only.
+  - **Status**: todo.
+  - **Found** 2026-11-04: installed ROCm is mixed 6.4 (rocblas from AMD's
+    SLES 15.6 build in /opt/rocm-6.4.0; roctracer 6.4.0 from OBS
+    science:GPU:ROCm; hip 6.4.2), and zypper shows roctracer locked.
+    Tumbleweed's main repo has ROCm 7.2.0. Its librocblas5 7.2.0-10.1
+    builds for gfx1031 but not gfx1032 (rpm -qlp, 2026-11-04).
+    - **Idea** (user, 2026-11-04): ask openSUSE to add gfx1032 to the
+    build targets, and report the roctracer abort. Test 7.2 first: a
+    report against 6.4 would likely be answered "upgrade". Moving to 7.2
+    must keep onnxruntime's ROCm provider working (memories
+    onnxruntime_rocm_trap, rocsolver_missing). The user posts any report.
+  - **Decided** (user, 2026-11-04): after v4.0.0, draft the openSUSE
+    gfx1032 build-target request and test the roctracer abort on 7.2;
+    show the user the report text to post.
+
+  ---
+  **Layman:** Find a fix for the graphics-card library that crashes every program using it when it closes.
+  Kind: implement.
+
+## 5.0.0 — The full desktop app
+
+The native app does everything the web version did, on Windows, Linux, macOS and Android.
+
+- 📋 [PASS-59-270] **Port RetroDB to a native app in Rust + Slint for Windows, Linux, macOS and Android (feature, XL).**
+  - **Status**: todo
+  Decisions (user, 2026-11-09): Rust + Slint; one codebase for
+  desktop and Android; Android runs standalone or as a companion to
+  the PC over Wi-Fi, and can copy all or chosen ROMs from the PC to
+  the phone for use on the go; WebAssembly plugins; two-level themes
+  (skins, layout themes); each screen keeps its state and drops its
+  view. Build starts after v4.0.0 ships (PASS-59-113). Spec:
+  docs/specs/PASS-59-270-native-app-port.md. Plan:
+  docs/plans/PASS-59-270-native-app-port.md.
+
+  ---
+  **Layman:** RetroDB becomes a desktop and Android app instead of a web page.
+  Kind: implement.
+
+## Ideas, not planned
+
+Considered or dropped. Kept so the reasoning is not lost.
+
+- 💭 [PASS-12-5] **— FTS5 virtual table for `games.title` + `alternate_titles` (MEDIUM, L)**
+  - **Target**: search endpoints (`routes/games_search.py::api_games_find`
+    and similar), plus filter pages doing `WHERE title LIKE '%q%'`.
+  - **Why**: `LIKE '%q%'` on a 10k-row games table with no index is an
+    O(N) scan every time.  SQLite FTS5 with a porter tokeniser brings
+    this to sub-20 ms on the same dataset.
+  - **Plan**:
+    1. Define a virtual table `games_fts(title, alternate_titles, content='games', content_rowid='id')`.
+    2. Populate from `games` and keep in sync via INSERT/UPDATE/DELETE triggers.
+    3. Replace `WHERE title LIKE` with `WHERE id IN (SELECT rowid FROM games_fts WHERE games_fts MATCH ?)`.
+  - **Caveat**: FTS5 doesn't replace prefix LIKE for all cases (autocomplete,
+    substring mid-word).  Keep LIKE where required.
+  - **Source**: <https://www.sqlite.org/fts5.html>
+  - **Status**: deferred — L-sized; gated on a benchmark run that confirms
+    `WHERE title LIKE '%q%'` is actually the hot path on a realistic
+    10k-row library.  `RETRODB_SLOW_QUERY_MS=100` (Pass 12.4) is the
+    instrument to collect that data.
+  **Layman:** Faster title search on very large libraries.
+  Kind: implement.
+
+- 💭 [PASS-14-2] **— Gradual type hints on high-risk modules (LOW, L)**
+  - **Target**: `scraper/metadata_merger.py`, `services/game_query.py`,
+    `routes/games.py`.
+  - **Why**: largest / most-called modules in the codebase. Type hints on
+    function signatures make IDE autocomplete and `mypy` checks meaningful.
+    Currently the codebase has ~0% type coverage.
+  - **Plan**: adopt one module at a time.  Start with signatures (`-> dict`,
+    `-> list[dict]`, `int | None`) then internal variables only where
+    they help.  Add `mypy` as a CI-only check (not pre-commit) with
+    `--ignore-missing-imports`.
+  - **Status**: deferred (LOW priority, L sized — its own pass)
+
+  ---
+  **Layman:** Add type labels to the biggest code files so mistakes show up sooner.
+  Kind: implement.
+
+- 💭 [PASS-55-4] **Overlap whole games in the bulk scrape (PERF, L) — NOT STARTED**
+  - **Status**: considered, not started 2026-07-05. `BulkScrapeManager._run_scrape`
+    processes games one at a time on a single daemon thread; a small worker pool
+    (e.g. 3-4 games in flight) is the largest theoretical win. Risk is real:
+    ScreenScraper enforces per-account daily quotas + concurrent-thread caps
+    (already hard-stops on the daily limit), RAWG self-throttles, and DB writes
+    serialise under WAL. Needs quota-aware bounded concurrency, not a blind pool —
+    held pending user appetite for the extra complexity.
+
+  ---
+  **Layman:** Scrape several games at once to finish a bulk scrape sooner.
+  Kind: implement.
+
+- 💭 [PASS-49-9] **`clear-ra-data` library-wide vs per-user semantics (MEDIUM, S)**
+  - **Status**: deferred — design decision, not a silent fix.
+  - **Lane**: collections/achievements/trophies (Lane 10).
+  - **Finding**: `routes/ra_sync.py` `api_clear_ra_data_all` / `_system` DELETE
+    `game_achievement_progress` with no `user_id` predicate, wiping every user's
+    earned-achievement progress (the table is per-user, migration 009). It is
+    paired with clearing the *shared* `games.ra_game_id` links, so clearing all
+    progress is internally consistent (otherwise orphaned) — which is why this is
+    a semantics call, not a clear bug.
+  - **Decision**: confirm intended meaning — a library-wide admin reset (current)
+    or a per-user clear. If per-user, scope BOTH the link clear and the progress
+    DELETE by `g.user['id']`. Single-household threat model keeps impact LOW.
+  **Layman:** Decide whether clearing RetroAchievements data clears everyone's or only yours.
+  Kind: implement.
+
+- 💭 [PASS-49-2] **bulk-scrape swap/demote counter corruption after join timeout (MEDIUM, M)**
+  - **Status**: deferred — needs careful concurrency design.
+  - **Lane**: background jobs (Lane 7).
+  - **Finding**: `services/jobs/bulk_scrape.py` `swap_with_running` /
+    `demote_running` `join(timeout=60)` then proceed even if the old worker is
+    still alive; a hung scraper's worker can wake after `reset()` and increment
+    the *new* job's `success_count`/`failed_count`.
+  - **Decision**: block or hard-fail the swap when the old thread is still alive
+    rather than "proceed with state mixing possible".
+  **Layman:** Swapping a running bulk scrape could mix up its counts.
+  Kind: implement.
+
+- 💭 [PASS-49-3] **SSRF redirect-chain HEAD probes are unpinned (MEDIUM, M)**
+  - **Status**: deferred — hardening; the GET is now correctly pinned (Pass 49 port-0 fix).
+  - **Lane**: core/SSRF (Lane 11).
+  - **Finding**: `services/ssrf.py` `validate_redirect_chain` validates each hop
+    then issues `session.head(...)` unpinned, re-resolving DNS — a rebinding
+    server can pass validation and serve a private/metadata IP to the HEAD.
+  - **Decision**: wrap each HEAD hop in `pin_host_ip` (or re-validate the IP the
+    HEAD resolved). Low live risk on a LAN with no internal SSRF targets.
+  **Layman:** A web-safety check on followed links could be tightened further.
+  Kind: implement.
+
+- 💭 [PASS-49-4] **`organize-multidisc` relies on incidental path-nesting (MEDIUM, S)**
+  - **Status**: deferred — currently safe; explicit hardening.
+  - **Lane**: maintenance/reports (Lane 9).
+  - **Finding**: `routes/reports.py` move branch blocks a traversing `system`
+    param only because `folder_path` nests under `system_path` and `safe_path`
+    catches the escape — there is no independent DB/`safe_path` check on `system`
+    like the multidisc-scan path has.
+  - **Decision**: add an explicit `system` validation mirroring `reports.py:405`.
+  **Layman:** Add an extra check on the multi-disc organiser, which is safe today.
+  Kind: implement.
+
+- 💭 [PASS-49-6] **i18n — inline-`<script>` toast/modal strings untranslatable (MEDIUM, L)**
+  - **Status**: deferred — large mechanical sweep (~138 strings across ~20 templates).
+  - **Lane**: templates/i18n (Lane 13).
+  - **Finding**: `build_js.py` only scans `static/js/*.js`, so toast/modal string
+    literals inside template inline `<script>` blocks ride neither the JS `t()`
+    path nor `{{ _() }}`; they are permanently English for non-English locales and
+    invisible to `pybabel extract` (`game_detail.html`, `settings.html`,
+    `dashboard.html`, achievement/trophy/chd templates, …). Plus 4 constrained
+    `settings.html` JS-string sites (tz/avatar/role) still want `|tojson` for
+    consistency.
+  - **Decision**: wrap each inline-`<script>` user-facing string in `{{ _('...') }}`
+    (the `wishlist.html` pattern) and regenerate catalogs per `docs/specs/i18n.md`.
+  **Layman:** Translate pop-up text written inside page scripts.
+  Kind: implement.
+
+- 💭 [PASS-49-7] **Assorted LOW / INFO review notes (LOW, S)**
+  - **Status**: deferred bundle — verified-but-low; pick up opportunistically.
+  - Items:
+    - `services/migrations/__init__.py` — add a defensive `not conn.in_transaction`
+      assert before `BEGIN IMMEDIATE` so a future stray open transaction fails loudly.
+    - `services/database.py:_fsync_path` duplicates `services/atomic_io.py:fsync_path`
+      — dedupe to prevent drift.
+    - `services/jobs/museum.py` `get_status()` field names (`current_index`/
+      `total_systems`/`success_count`) diverge from the §7/§9 toast contract
+      (`current`/`total`/`success`, no `processing`/`percent`).
+    - `services/jobs/webp_migrate.py` resume path adopts a pre-existing `.webp`
+      sibling without the `verify()` the fresh path does (spec §12.1) → corrupt
+      sibling can silently replace a good boxart.
+    - `image_resize` and `webp_migrate` take distinct singleton locks and can race
+      the same boxart tree (stranded orphan `.png`); responsive-variant regen runs
+      on `'skipped'` files too (disk churn).
+    - `routes/trophies.py` import-time global monkeypatch of `pyrate_limiter`
+      (`_Limiter._try_acquire`) is fragile across library upgrades.
+    - ~~`scraper/scrape_thegamesdb.py` assigns free-text TGDB ratings verbatim into
+      `esrb_rating`; `metadata_merger.py` drops bare single-letter ESRB codes
+      ("E"/"T"/"M") that lack a trailing space.~~ Closed by Pass 59.19 — both
+      parses share one whole-token parser and the verbatim fallback is gone.
+    - `scraper/scrape_rawg.py` defaults `players` to `1` (truthy), pre-filling a
+      weak value that crowds out a better secondary source.
+    - ~~Xbox scrapers (`scrape_xbox.py`) bypass `base_scraper.http_get` — no SSRF
+      risk (hardcoded `*.xboxlive.com`/`login.live.com` hosts) but `docs/specs/
+      scrapers.md` §10 wrongly claims Xbox was migrated; fix the doc.~~ Closed by
+      Pass 59.26 — the code was migrated instead, so §10 is now true as written.
+    - `hybrid_scraper.py` generic-controller `elif` branch is a no-op `pass` whose
+      comment promises to clear generic controller values.
+    - ~~`static/js/main.js` `performGlobalSearch` is dead (`#globalSearch` absent
+      from all templates, `/api/search` route absent) — surface before removing.~~
+      Closed by Pass 59.39 — deleted with its binding and helpers.
+    - `build_dist.py` source-ZIP walk is denylist-only (a gitignored
+      `audit_rule_quality.json` shipped); `EXCLUDE_DIRS` matches by basename at any
+      depth. No secret leaked today, but make the walk respect `.gitignore` and
+      anchor `EXCLUDE_DIRS` to top-level.
+    - **(Loop-2)** `ra_sync`/`platform_sync` skip-path (`if result is None:
+      continue`) bypasses the `shutdown_requested.wait()` rate-limit — a long run
+      of skipped games becomes a tight loop that drains a SIGTERM slightly slower
+      than the per-request budget implies.
+    - **(Loop-2)** `services/ssrf.py` pin host match is exact-string + fail-open
+      (`return _orig_getaddrinfo` on miss); a future caller passing a
+      non-normalized host (trailing dot / uppercase) to `pin_host_ip` would
+      silently skip the pin. Normalize/lower the host on both store and compare.
+  **Layman:** A bundle of small, low-risk code notes from a review.
+  Kind: implement.
+
+- 💭 [PASS-49-8] **Job resume off-by-one silently drops the in-progress game (MEDIUM, S)**
+  - **Status**: deferred — pre-existing (predates the Pass 49 per-game-commit fix);
+    surfaced by the Loop-2 cold re-review.
+  - **Lane**: background jobs (Lane 7).
+  - **Finding**: the periodic-persist block runs at the *top* of iteration `i` and
+    writes `'current': i + 1`, but only games `0..i-1` are committed at that point.
+    `resume_from_params` computes `remaining_ids = game_ids[resume_index:]` =
+    `game_ids[i+1:]`, so the in-progress game at index `i` is skipped on resume and
+    counted in neither success nor failed (`ra_sync.py`, `platform_sync.py` ×2).
+  - **Decision**: persist `current` as completed-count, or resume from
+    `max(resume_index - 1, 0)` — the upserts are idempotent (`ON CONFLICT DO
+    UPDATE`), so re-processing one already-done game is harmless. Re-runnable sync
+    job, so impact is LOW-MEDIUM.
+
+  ---
+  **Layman:** A resumed job could skip the game it was on.
+  Kind: implement.
+
+- 💭 [PASS-47-5] **Buy Me A Coffee (LOW, S)**
+  - **Target**: <https://buymeacoffee.com> profile.
+  - **Why**: lowest-friction one-off-tip surface for users without a
+    GitHub account or who don't want monthly commitment. Stripe-backed;
+    recipient pays standard processing fees (~2.9% + $0.30) plus 5% BMAC
+    fee.
+  - **Plan**:
+    1. Sign up at <https://buymeacoffee.com>; pick a username matching
+       the GitHub handle (`milnet01`) for cross-platform consistency.
+    2. Add the BMAC URL to `.github/FUNDING.yml` (Pass 47.6) under the
+       `custom` field — BMAC isn't a natively-recognised FUNDING.yml
+       platform.
+    3. **Skip the BMAC "memberships" feature** — that overlaps
+       Patreon/Sponsors and fragments the monthly-tier story across
+       three platforms. Use BMAC strictly for one-off coffees.
+  - **Status**: deferred
+  Progress (2026-06-30): Parked by maintainer. Buy Me A Coffee does not support South Africa yet, so this surface can't go live regardless of code. Leave planned; revisit only if/when BMAC adds ZA payouts. GitHub Sponsors already covers the in-app/README/FUNDING donation surfaces, so nothing is blocked on this.
+  **Layman:** A Buy Me A Coffee page for one-off tips.
+  Kind: implement.
+
+- 🚫 [PASS-59-131] **Scrape speed: skip a fallback source that cannot fill any field still empty (MEDIUM, M).**
+  - **Status**: dropped
+  - **Where**: `scraper/hybrid_scraper.py::_run_fallbacks` stops early only
+    when every key of the ~40-field metadata dict is filled, including fields
+    no source supplies (`edition`, `campaign`, `playtime_estimate`). So every
+    enabled source is queried for every game.
+  - **Do**: give each source a list of fields it can supply. Skip a source
+    when none of the still-empty fields is on its list; stop the loop when no
+    remaining source can add anything.
+  - **Keeps**: sources still run in Settings priority order and the first
+    non-empty value still wins; a skipped source could only have added
+    nothing. Manual still never queries an unticked source.
+  - **Risk**: a wrong capability list silently drops data. Pin each list
+    with a test against the source's apply function.
+  - **Progress** (2026-10-21): Dropped 2026-10-21 (user). Every image fallback (TGDB, IGDB, RAWG,
+    ScreenScraper) appends screenshots with no cap, so none can be skipped
+    without losing screenshots; only AI could be skipped, and it nearly
+    always has an empty field. The speed-up moves to PASS-59-132 (parallel
+    fetch).
+
+  ---
+  Kind: implement.
+
+- 💭 [PASS-59-135] **Scrape speed: fetch by stored IGDB or ScreenScraper ID instead of searching (LOW, M).**
+  - **Status**: deferred
+  - **Where**: `hybrid_scraper.py` writes `igdb_id` and `screenscraper_id`
+    but no scrape reads them to skip a search; only
+    `services/version_groups.py` does.
+  - **Held**: PASS-59-124 found 111 games whose stored IDs pointed at the
+    wrong game. Using IDs would repeat those mistakes on every re-scrape.
+    Consider only for normal (fill) mode, never Full Re-scrape, and only once
+    PASS-59-125 makes the search use the filename.
+
+  ---
+  **Layman:** Look up games by their saved IGDB or ScreenScraper ID instead of searching again.
+  Kind: implement.
+
+- 🚫 [PASS-59-196] **Fewer Claude web searches per game, and log how many each uses (perf, S).**
+  - **Target**: lower CLAUDE_MAX_SEARCHES in scraper/scrape_ai.py from 5 to 2, and
+    log each game's search count from the reply. The changelog's '5 searches, 5
+    US cents' wording and test_search_is_capped_per_game move with it.
+  - **Why**: nothing records real use. A system with no published sales figures
+    probably spends the whole cap and finds nothing (Atari 5200 found none).
+  - **Status**: dropped; declined by the user 2026-10-30.
+  - **Decision** (user, 2026-10-30): declined. The limit stays at 5
+    searches per game and no per-game count is logged.
+
+  ---
+  Kind: implement.
 
 ## Done index
 
