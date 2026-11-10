@@ -65,13 +65,13 @@
                 {% if game.publisher %}
                 <div class="kd-item">
                     <span class="kd-label">{{ _('Publisher') }}</span>
-                    <span class="kd-value">{{ game.publisher.split(',')[0] }}</span>
+                    <span class="kd-value">{{ (game.publisher|company_names)[0] }}</span>
                 </div>
                 {% endif %}
                 {% if game.developer %}
                 <div class="kd-item">
                     <span class="kd-label">{{ _('Developer') }}</span>
-                    <span class="kd-value">{{ game.developer.split(',')[0] }}</span>
+                    <span class="kd-value">{{ (game.developer|company_names)[0] }}</span>
                 </div>
                 {% endif %}
             </div>

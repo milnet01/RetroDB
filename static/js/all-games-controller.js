@@ -29,6 +29,21 @@ const AllGamesController = (function() {
     // PASS-53-11 — these filters hold a list of values (any of them
     // matches); MULTI_FILTER_FIELDS in services/game_query.py.
     const MULTI_FIELDS = ['genre', 'franchise', 'developer', 'publisher', 'modes', 'perspective', 'dimension', 'arcade_category'];
+
+    // PASS-59-299 — "Nintendo Co., Ltd." is one company: a suffix after a comma
+    // stays with the name before it. Kept in step with _COMPANY_SUFFIX in
+    // services/normalization.py.
+    const COMPANY_SUFFIX = /^(?:ltd|limited|inc|incorporated|co|corp|corporation|llc|l\.l\.c|plc|gmbh|ag|s\.?a|s\.?a\.?s|s\.?l|s\.?r\.?l|b\.?v|n\.?v|pty|k\.?k|oy|ab)\.?$/i;
+
+    function firstCompany(text) {
+        const parts = text.split(',').map(p => p.trim()).filter(p => p);
+        let name = parts[0] || '';
+        for (const part of parts.slice(1)) {
+            if (!COMPANY_SUFFIX.test(part)) break;
+            name += ', ' + part;
+        }
+        return name;
+    }
     const isMulti = type => MULTI_FIELDS.includes(type);
     // A filter value as a list; a single value saved by an older build
     // becomes a one-item list.
@@ -653,11 +668,11 @@ const AllGamesController = (function() {
             metaHtml += `<div class="meta-item"><span class="meta-label">${esc(t('Series'))}</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('franchise', game.franchise, '$event')}" data-stop data-prevent aria-label="${esc(t('Filter by {field}: {value}', {field: t('Series'), value: game.franchise}))}" title="${esc(t('Click to filter, Shift+click to exclude'))}">${esc(game.franchise.substring(0, 20))}${game.franchise.length > 20 ? '...' : ''}</button></div>`;
         }
         if (game.developer) {
-            const firstDev = game.developer.split(',')[0].trim();
+            const firstDev = firstCompany(game.developer);
             metaHtml += `<div class="meta-item"><span class="meta-label">${esc(t('Developer'))}</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('developer', firstDev, '$event')}" data-stop data-prevent aria-label="${esc(t('Filter by {field}: {value}', {field: t('Developer'), value: firstDev}))}" title="${esc(t('Click to filter, Shift+click to exclude'))}">${esc(firstDev.substring(0, 20))}${firstDev.length > 20 ? '...' : ''}</button></div>`;
         }
         if (game.publisher) {
-            const firstPub = game.publisher.split(',')[0].trim();
+            const firstPub = firstCompany(game.publisher);
             metaHtml += `<div class="meta-item"><span class="meta-label">${esc(t('Publisher'))}</span><button type="button" class="meta-value meta-clickable" data-on-click="AllGamesController.metaFilterClick" data-args="${actionArgs('publisher', firstPub, '$event')}" data-stop data-prevent aria-label="${esc(t('Filter by {field}: {value}', {field: t('Publisher'), value: firstPub}))}" title="${esc(t('Click to filter, Shift+click to exclude'))}">${esc(firstPub.substring(0, 20))}${firstPub.length > 20 ? '...' : ''}</button></div>`;
         }
         if (game.release_date) {

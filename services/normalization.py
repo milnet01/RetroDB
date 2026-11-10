@@ -526,14 +526,35 @@ COMPANY_ALIASES = {
     'acclaim': 'Acclaim Entertainment',
     'ocean software': 'Ocean',
     'ocean software ltd.': 'Ocean',
+    'ocean software, ltd.': 'Ocean',
 }
+
+# A part of a name list that only ends the company before it: "Nintendo Co., Ltd."
+# is one company, not "Nintendo Co." and "Ltd." (PASS-59-299). Kept in step with
+# COMPANY_SUFFIX in static/js/all-games-controller.js.
+_COMPANY_SUFFIX = re.compile(
+    r'(?:ltd|limited|inc|incorporated|co|corp|corporation|llc|l\.l\.c|plc|gmbh|ag'
+    r'|s\.?a|s\.?a\.?s|s\.?l|s\.?r\.?l|b\.?v|n\.?v|pty|k\.?k|oy|ab)\.?', re.IGNORECASE)
+
+
+def split_names(value):
+    """A comma-separated name list as names, each company suffix kept with its name."""
+    names = []
+    for part in str(value or '').split(','):
+        part = part.strip()
+        if not part:
+            continue
+        if names and _COMPANY_SUFFIX.fullmatch(part):
+            names[-1] = f'{names[-1]}, {part}'
+        else:
+            names.append(part)
+    return names
 
 
 def canonical_companies(value):
     """A publisher or developer list with one spelling per company, each once."""
-    names = (name.strip() for name in str(value).split(','))
     return ', '.join(dict.fromkeys(
-        COMPANY_ALIASES.get(name.casefold(), name) for name in names if name))
+        COMPANY_ALIASES.get(name.casefold(), name) for name in split_names(value)))
 
 
 def canonicalize_metadata(metadata, keep=()):
@@ -717,7 +738,7 @@ def _name_counts(field):
     counts = {}
     # field is one of NAME_FIELDS — safe for SQL interpolation
     for row in query(f"SELECT {field} FROM games WHERE {field} IS NOT NULL AND {field} != ''"):
-        for name in dict.fromkeys(n.strip() for n in row[field].split(',')):
+        for name in dict.fromkeys(split_names(row[field])):
             if name:
                 spellings = counts.setdefault(name.casefold(), {})
                 spellings[name] = spellings.get(name, 0) + 1
@@ -755,9 +776,8 @@ def use_library_spellings(metadata, keep=()):
         # A company alias names the spelling itself, whatever the library holds.
         library = {**_library_spellings(field),
                    **(COMPANY_ALIASES if field != 'franchise' else {})}
-        names = (n.strip() for n in value.split(','))
         metadata[field] = ', '.join(dict.fromkeys(
-            library.get(n.casefold(), n) for n in names if n))
+            library.get(n.casefold(), n) for n in split_names(value)))
 
 
 def case_twin_groups(field):
@@ -795,7 +815,7 @@ def apply_spellings(field, chosen):
             f"SELECT id, {field} FROM games WHERE {field} IS NOT NULL AND {field} != ''"
         ).fetchall()
         for game_id, value in rows:
-            names = [n.strip() for n in value.split(',') if n.strip()]
+            names = split_names(value)
             new_names = [wanted.get(n.casefold(), n) for n in names]
             if new_names == names:
                 continue

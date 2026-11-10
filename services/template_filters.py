@@ -11,6 +11,7 @@ from flask import g
 
 from services.formatters import format_size
 from services.image_utils import boxart_srcset
+from services.normalization import split_names
 
 
 def timestamp_to_date(timestamp):
@@ -117,6 +118,11 @@ def tz_filter(value, fmt='datetime'):
         return value
 
 
+def company_names_filter(value):
+    """A publisher or developer list as names, "Foo, Ltd." kept whole (PASS-59-299)."""
+    return split_names(value)
+
+
 def register_filters(app):
     """Register all RetroDB Jinja filters on the given Flask app."""
     app.template_filter('timestamp_to_date')(timestamp_to_date)
@@ -125,4 +131,5 @@ def register_filters(app):
     app.template_filter('format_size')(format_size_filter)
     app.template_filter('format_ratio')(format_ratio_filter)
     app.template_filter('tz')(tz_filter)
+    app.template_filter('company_names')(company_names_filter)
     app.jinja_env.globals['boxart_srcset'] = boxart_srcset

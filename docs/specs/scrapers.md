@@ -366,7 +366,7 @@ Text-only. AI never returns images, screenshots, videos, or manuals — `AI_FILL
 **Clean text (PASS-59-213).** `canonicalize_metadata` cleans what is about to be saved, from any source.
 
 - **Descriptions**: `normalization.clean_description` removes web codes, Windows line endings, heading and bullet marks, and footnote marks. ScreenScraper's is taken only in a wanted language, so a French-only one leaves the field for the next source. IGDB's `summary` comes before `storyline`.
-- **Companies**: `normalization.COMPANY_ALIASES` holds plainly one company under several spellings. Separate companies stay separate.
+- **Companies**: `normalization.COMPANY_ALIASES` holds plainly one company under several spellings. Separate companies stay separate. A suffix after a comma ("Co., Ltd.", ", Inc.") belongs to the name before it: `normalization.split_names` splits a name list, and the Library cards' `firstCompany` keeps the same suffix list (PASS-59-299).
 - **One spelling per name (PASS-59-298)**: a new franchise, publisher or developer that differs from a library name only in capitals takes the library's most-used spelling (`normalization.use_library_spellings`, run by the scrape save and AI Fill); a company alias wins over it, and a game's own stored name is not changed. The AI is asked for official capitals. Spellings already saved change only when the user picks one in Settings > Normalization.
 - **Alternate titles**: IGDB's executable names are skipped; RAWG's are used only from a one-console record.
 - **Region**: `_normalize_region` keeps one value from `USA/Europe` and turns `North America` into `USA`. A single value outside the options stays, as `France` is true and the default would not be.

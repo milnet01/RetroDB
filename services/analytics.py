@@ -12,6 +12,7 @@ import time
 import settings_manager
 from services.database import query
 from services.formatters import format_size, get_manufacturer
+from services.normalization import split_names
 from services.game_utils import RATING_SYSTEM_KEYS, RATING_SYSTEMS, RATING_VALUES
 from services.playtime import main_story_hours
 
@@ -391,10 +392,8 @@ def _get_developer_publisher_data():
     dev_rows = query("SELECT developer FROM games WHERE developer IS NOT NULL AND developer != ''")
     dev_counts = {}
     for row in dev_rows:
-        for dev in row['developer'].split(','):
-            dev = dev.strip()
-            if dev:
-                dev_counts[dev] = dev_counts.get(dev, 0) + 1
+        for dev in split_names(row['developer']):
+            dev_counts[dev] = dev_counts.get(dev, 0) + 1
     sorted_devs = sorted(dev_counts.items(), key=lambda x: x[1], reverse=True)[:15]
     dev_labels = [d[0] for d in sorted_devs]
     dev_data = [d[1] for d in sorted_devs]
@@ -402,10 +401,8 @@ def _get_developer_publisher_data():
     pub_rows = query("SELECT publisher FROM games WHERE publisher IS NOT NULL AND publisher != ''")
     pub_counts = {}
     for row in pub_rows:
-        for pub in row['publisher'].split(','):
-            pub = pub.strip()
-            if pub:
-                pub_counts[pub] = pub_counts.get(pub, 0) + 1
+        for pub in split_names(row['publisher']):
+            pub_counts[pub] = pub_counts.get(pub, 0) + 1
     sorted_pubs = sorted(pub_counts.items(), key=lambda x: x[1], reverse=True)[:15]
     pub_labels = [p[0] for p in sorted_pubs]
     pub_data = [p[1] for p in sorted_pubs]

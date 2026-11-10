@@ -15,6 +15,7 @@ from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required
 from services.database import query
 from services.game_query import escape_like, listed_sql, whole_value_param, whole_value_sql
+from services.normalization import split_names
 
 logger = logging.getLogger(__name__)
 
@@ -154,7 +155,7 @@ def api_similar_games(game_id):
         # Match by genre + developer
         if game['genre'] and game['developer']:
             genres = [g.strip() for g in game['genre'].split(',') if g.strip()]
-            devs = [d.strip() for d in game['developer'].split(',') if d.strip()]
+            devs = split_names(game['developer'])
             if genres and devs:
                 _take(query(f"""
                     SELECT {columns}

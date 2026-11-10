@@ -13,6 +13,7 @@ import time
 
 from services.database import query
 from services.game_utils import RATING_SYSTEM_KEYS, RATING_SYSTEMS
+from services.normalization import split_names
 
 logger = logging.getLogger(__name__)
 
@@ -180,10 +181,8 @@ def _get_filter_options(system_id=None):
         for field in field_counts:
             raw = row[field]
             if raw:
-                for v in raw.split(','):
-                    v = v.strip()
-                    if v:
-                        field_counts[field][v] = field_counts[field].get(v, 0) + 1
+                for v in split_names(raw):
+                    field_counts[field][v] = field_counts[field].get(v, 0) + 1
 
     options = {f: sorted(counts.items(), key=lambda x: x[0].lower())
                for f, counts in field_counts.items()}

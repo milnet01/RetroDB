@@ -328,9 +328,7 @@
                 <div class="kd-item">
                     <span class="kd-label">{{ _('Publisher') }}</span>
                     <span class="kd-value">
-                        {% set publishers = game.publisher.split(',') %}
-                        {% for pub in publishers %}
-                            {% set pub_trimmed = pub.strip() %}
+                        {% for pub_trimmed in game.publisher|company_names %}
                             <a href="#" class="filter-link" data-filter-type="publisher" data-filter-value="{{ pub_trimmed }}">{{ pub_trimmed }}</a>{% if not loop.last %}, {% endif %}
                         {% endfor %}
                     </span>
@@ -340,9 +338,7 @@
                 <div class="kd-item">
                     <span class="kd-label">{{ _('Developer') }}</span>
                     <span class="kd-value">
-                        {% set developers = game.developer.split(',') %}
-                        {% for dev in developers %}
-                            {% set dev_trimmed = dev.strip() %}
+                        {% for dev_trimmed in game.developer|company_names %}
                             <a href="#" class="filter-link" data-filter-type="developer" data-filter-value="{{ dev_trimmed }}">{{ dev_trimmed }}</a>{% if not loop.last %}, {% endif %}
                         {% endfor %}
                     </span>
