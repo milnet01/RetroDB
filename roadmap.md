@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=299 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=300 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -2645,19 +2645,44 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: enhancement.
   Source: user-request-2026-11-10.
 
-- 📋 [PASS-59-299] **Company names ending ", Ltd." or ", Inc." are split into two names (fix, S).**
+- ✅ [PASS-59-299] **Company names ending ", Ltd." or ", Inc." are split into two names (fix, S).**
   - **Why**: found 2026-11-10 in the PASS-59-298 walk. publisher and
     developer split on every comma, so "Foo, Ltd." becomes "Foo" and
     "Ltd."; Settings > Normalization > Publisher lists "Ltd, LTD" and
     "Ltd., LTD." as names. On 2026-11-10 the live library held 187
     games with ", Ltd" or ", Inc" in either field.
   - **Fix**: keep a company suffix (Ltd., Inc., Co., Corp., LLC) with
-    the name before it wherever these fields are split, or store it
-    without the comma. Decide which before building.
+    the name before it wherever these fields are split, and never
+    rewrite stored names (user, 2026-11-10: keep the name whole, comma
+    included).
   - **Status**: todo.
+  - **Shipped** 2026-11-10 (b72874a1): `normalization.split_names` keeps
+    a suffix with its name everywhere the fields are split; the Library
+    cards use `firstCompany`. No stored name was rewritten, and a
+    2026-10-22 backup shows the old dropped-suffix bug never hit a row.
+  - **Left open**: a filter on a bare name ("Sega Enterprises") also
+    matches "Sega Enterprises, Ltd." in `whole_value_sql`. Extra games
+    shown, none hidden; PASS-59-300's merge makes it rarer.
   **Layman:** A company such as "Foo, Ltd." shows as two names, "Foo" and "Ltd.", in filters and Settings.
   Kind: fix.
   Source: pass59-298-live-check-2026-11-10.
+
+- 📋 [PASS-59-300] **One company under different names: suggest look-alikes, the user merges them (feature, M).**
+  - **Why**: the user, 2026-11-10: "Eidos" and "Eidos Interactive" are
+    one company and should show as one name.
+  - **Decision** (user, 2026-11-10): Settings > Normalization suggests
+    publisher and developer names that look like one company; the user
+    picks the name to keep and ticks which to merge. Nothing merges by
+    itself: "Atari, Inc." and "Atari Games" are two companies.
+  - **Fix**: group names where one is the other plus a common company
+    word (Interactive, Entertainment, Software, Games, Studios, a
+    suffix such as Ltd.). The merge rewrites stored names, like the
+    PASS-59-298 spellings, and later scrapes take the chosen name.
+  - **Builds on**: PASS-59-299 (whole company names) and PASS-59-298.
+  - **Status**: todo.
+  **Layman:** "Eidos" on one game and "Eidos Interactive" on another become one name, once you confirm it in Settings.
+  Kind: feature.
+  Source: user-request-2026-11-10.
 
 ## 4.0.x — Security and data-loss fixes for the web version
 
