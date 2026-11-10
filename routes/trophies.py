@@ -1881,6 +1881,13 @@ def api_psn_save_npsso():
     db = get_request_db()
     row = db.execute("SELECT psn_npsso FROM user_settings WHERE user_id = ?",
                      (g.user['id'],)).fetchone()
+    # The box shows only a mask of the stored token: testing it as it
+    # stands tests the stored one (PASS-59-295).
+    from routes.scraper import is_masked_sentinel
+    if is_masked_sentinel(npsso):
+        npsso = (row[0] if row else None) or ''
+        if not npsso:
+            return error(_('No NPSSO token provided'), 400)
     is_new = not row or row[0] != npsso
 
     # A new token signs in by itself; otherwise the cached session would

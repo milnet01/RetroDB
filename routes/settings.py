@@ -182,7 +182,12 @@ def settings():
         # Load user settings (including logging settings)
         user_settings = settings_manager.load_settings()
 
+        # PASS-59-295 — My Profile's keys, masked like the ones above.
+        from routes.auth import mask_user_keys
+        user_key_masks = mask_user_keys(g.get('user_settings'))
+
         return render_template('settings.html',
+                             user_key_masks=user_key_masks,
                              stats=stats,
                              api_status=api_status,
                              scraper_settings=scraper_settings,

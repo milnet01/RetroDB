@@ -107,7 +107,7 @@
         <div class="form-group mb-lg">
             <label class="form-label" for="userRaApiKey">{{ _('Your RA API Key') }}</label>
             <input type="password" class="form-input" id="userRaApiKey" autocomplete="off"
-                   value="{{ current_user_settings.ra_api_key if current_user_settings else '' }}"
+                   value="{{ user_key_masks.ra_api_key }}"
                    placeholder="{{ _('Your RetroAchievements API Key') }}">
             <span class="field-tip">{% trans %}Get your API key from <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer" style="color: var(--primary-cyan);">RetroAchievements Control Panel</a>{% endtrans %}</span>
         </div>
@@ -193,7 +193,7 @@
                         <div style="color: var(--text-primary); font-weight: 600; margin-bottom: 4px;">{{ _('Paste the token') }}</div>
                         <div style="display: flex; gap: var(--spacing-sm); align-items: center; flex-wrap: wrap;">
                             <input type="password" class="form-input" id="userPsnNpsso" autocomplete="off"
-                                   value="{{ current_user_settings.psn_npsso if current_user_settings else '' }}"
+                                   value="{{ user_key_masks.psn_npsso }}"
                                    placeholder="{{ _('Paste JSON or token here') }}"
                                    style="flex: 1; min-width: 200px;"
                                    data-on-input="psnNpssoAutoDetect" data-args='["$this"]'>
@@ -238,7 +238,7 @@
         <div class="form-group mb-md">
             <label class="form-label" for="userSteamApiKey">{{ _('Your Steam Web API Key') }}</label>
             <input type="password" class="form-input" id="userSteamApiKey" autocomplete="off"
-                   value="{{ current_user_settings.steam_api_key if current_user_settings else '' }}">
+                   value="{{ user_key_masks.steam_api_key }}">
             <span class="field-tip">{% trans %}Get your key from <a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener noreferrer" style="color: var(--primary-cyan);">Steam's API key page</a>{% endtrans %}</span>
         </div>
 

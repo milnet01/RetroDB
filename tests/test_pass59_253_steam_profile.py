@@ -51,6 +51,7 @@ def test_profile_shows_the_steam_boxes(monkeypatch):
     soup = _settings_page(monkeypatch, VIEWER,
                           {'steam_api_key': 'MEMBERKEY', 'steam_id': '76561198012345678'})
     key = soup.select_one('#userSteamApiKey')
-    assert key['type'] == 'password' and key['value'] == 'MEMBERKEY'
+    # Only a mask of the stored key reaches the page (PASS-59-295).
+    assert key['type'] == 'password' and key['value'] == '***RKEY'
     assert soup.select_one('#userSteamId')['value'] == '76561198012345678'
     assert "document.getElementById('userSteamApiKey')" in str(soup)

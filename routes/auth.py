@@ -24,6 +24,20 @@ from services.security import rate_limit_login, record_login_attempt, safe_filen
 
 bp = Blueprint('auth', __name__)
 
+# PASS-59-295 — the per-user keys in user_settings. They reach the browser
+# only as the Scraping tab's keys do, `***<last4>`, and a save that echoes
+# that mask keeps the stored key (routes/scraper.py, Pass 26.5).
+USER_SECRET_FIELDS = ('ra_api_key', 'psn_npsso', 'steam_api_key')
+
+
+def mask_user_keys(settings):
+    """A copy of a user_settings dict with USER_SECRET_FIELDS masked."""
+    from routes.scraper import mask_api_key
+    masked = dict(settings or {})
+    for field in USER_SECRET_FIELDS:
+        masked[field] = mask_api_key(masked.get(field))
+    return masked
+
 
 # =============================================================================
 # LOGIN / LOGOUT ROUTES
@@ -367,7 +381,7 @@ def api_user_settings():
     if request.method == 'GET':
         settings = get_user_settings(g.user['id'])
         if settings:
-            return success(settings=dict(settings))
+            return success(settings=mask_user_keys(dict(settings)))
         return success(settings={})
     
     # POST - update settings. silent=True + `or {}` so a non-JSON body yields an
@@ -420,6 +434,12 @@ def api_user_settings():
             return error(_('Invalid RPCS3 trophy folder: %(reason)s') % {'reason': result},
                          code=422, field='rpcs3_trophy_path')
         data['rpcs3_trophy_path'] = result
+
+    # A key box left showing its mask means "unchanged" (PASS-59-295).
+    from routes.scraper import is_masked_sentinel
+    for field in USER_SECRET_FIELDS:
+        if isinstance(data, dict) and is_masked_sentinel(data.get(field)):
+            del data[field]
 
     for field in allowed_fields:
         if field in data:
