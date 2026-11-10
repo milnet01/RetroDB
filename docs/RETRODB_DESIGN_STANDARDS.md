@@ -713,7 +713,8 @@ showConfirm('🗑️ Delete?', 'Are you sure?', () => { deleteItem(); });
 ### Focus States
 One rule in `core/reset.css` gives every control a 3px ring in the theme's
 own colour when reached by keyboard (PASS-59-245). It uses `!important`, so a
-component's `outline: none` cannot hide it. Do not add another focus outline;
+component's `outline: none` cannot hide it. Do not add another focus outline,
+except on a hidden input's visible stand-in (§ Keyboard, below);
 a component may add a glow beside it, from theme colours
 (`color-mix(in srgb, var(--primary-cyan) 15%, transparent)`), never a fixed one.
 ```css
@@ -722,6 +723,20 @@ a component may add a glow beside it, from theme colours
     outline-offset: 2px !important;
 }
 ```
+
+### Keyboard
+Every control works from the keyboard alone (WCAG 2.1.1) and gives a screen
+reader its name and role (WCAG 4.1.2). Whatever a click does, Tab and then
+Enter or Space does too.
+- Use a real `<button type="button">` or `<a href>`. Never put a click handler
+  on a `div`, `span`, `img`, `td` or `tr`.
+- Hide a styled input with `.visually-hidden` (`utilities.css`), never
+  `display: none`, which takes it out of the Tab order.
+- When the input is hidden, the part the user sees shows the focus ring:
+  `input:focus-visible + .toggle-slider { outline: … }`.
+- A control that appears on hover also appears on `:focus-within`.
+
+Nothing checks this automatically. Walk a changed page with the keyboard alone.
 
 ### Color Contrast
 - Minimum 4.5:1 for body text
