@@ -18,7 +18,7 @@
     <div class="compare-slot" id="slot0">
         {% if games|length > 0 %}
         <div class="slot-filled" data-game-id="{{ games[0].id }}">
-            <img src="{{ '/static/images/boxart/' + games[0].boxart if games[0].boxart else '/static/images/placeholder.png' }}"
+            <img src="{{ '/static/images/boxart/' + games[0].boxart|urlencode if games[0].boxart else '/static/images/placeholder.png' }}"
                  alt="" class="slot-thumb">
             <span class="slot-title">{{ games[0].title }}</span>
             <button type="button" class="slot-remove" data-on-click="removeSlot" data-args='[0]' title="{{ _('Remove') }}">&times;</button>
@@ -34,7 +34,7 @@
     <div class="compare-slot" id="slot1">
         {% if games|length > 1 %}
         <div class="slot-filled" data-game-id="{{ games[1].id }}">
-            <img src="{{ '/static/images/boxart/' + games[1].boxart if games[1].boxart else '/static/images/placeholder.png' }}"
+            <img src="{{ '/static/images/boxart/' + games[1].boxart|urlencode if games[1].boxart else '/static/images/placeholder.png' }}"
                  alt="" class="slot-thumb">
             <span class="slot-title">{{ games[1].title }}</span>
             <button type="button" class="slot-remove" data-on-click="removeSlot" data-args='[1]' title="{{ _('Remove') }}">&times;</button>
@@ -143,12 +143,12 @@
                 <td class="compare-label">{{ _('Box Art') }}</td>
                 <td class="compare-value">
                     {% if games[0].boxart %}
-                    <img src="/static/images/boxart/{{ games[0].boxart }}" alt="" class="compare-media-thumb">
+                    <img src="/static/images/boxart/{{ games[0].boxart|urlencode }}" alt="" class="compare-media-thumb">
                     {% else %}—{% endif %}
                 </td>
                 <td class="compare-value">
                     {% if games[1].boxart %}
-                    <img src="/static/images/boxart/{{ games[1].boxart }}" alt="" class="compare-media-thumb">
+                    <img src="/static/images/boxart/{{ games[1].boxart|urlencode }}" alt="" class="compare-media-thumb">
                     {% else %}—{% endif %}
                 </td>
                 <td class="compare-match-indicator">

@@ -326,7 +326,7 @@ function fetchControllerImage(controllerId) {
     var card = document.querySelector('[data-controller-id="' + controllerId + '"]');
     var placeholder = card ? card.querySelector('.museum-controller-placeholder') : null;
     if (placeholder) {
-        placeholder.innerHTML = `<span class="spinner"></span><span class="text-muted" style="font-size:0.75rem">${t('Searching & removing background...')}</span>`;
+        placeholder.innerHTML = `<span class="spinner"></span><span class="text-muted" style="font-size:0.75rem">${escapeHtml(t('Searching & removing background...'))}</span>`;
     }
 
     API.post('/api/museum/controller-image/' + controllerId)

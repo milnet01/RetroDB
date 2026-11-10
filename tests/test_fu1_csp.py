@@ -289,3 +289,32 @@ class TestDelegatedActionDispatcher:
         m = re.search(r'function initializeDelegatedActions\(\) \{(.+?)^\}',
                       src, re.DOTALL | re.MULTILINE)
         assert m and re.search(r'\}\s*,\s*/\*[^*]*\*/\s*true\s*\)', m.group(1))
+
+
+class TestActionAllowlist:
+    """PASS-59-276: data-on-* runs only names the app's own source writes.
+    `base.html` hands the page the list from services/action_names.py and
+    main.js refuses any other name, so injected HTML cannot call API.post."""
+
+    def test_list_holds_every_written_name(self):
+        from services.action_names import action_names
+        names = set(action_names(str(REPO_ROOT / 'templates'), str(STATIC_JS_DIR)))
+        text = "\n".join(p.read_text(encoding='utf-8') for p in _iter_source_files())
+        written = set(TestDelegatedActionsResolve._ACTION.findall(text))
+        assert written <= names, sorted(written - names)
+        # Set from a script, not written as an attribute.
+        assert 'executeBatchRename' in names
+        assert 'API.post' not in names and 'location.assign' not in names
+
+    def test_main_js_checks_the_list_before_looking_up(self):
+        src = (STATIC_JS_DIR / 'main.js').read_text(encoding='utf-8')
+        body = re.search(r'function _runAction\(.+?^\}', src, re.DOTALL | re.MULTILINE).group(0)
+        assert body.index('_isKnownAction(name)') < body.index('_resolveActionPath(window')
+
+    def test_page_carries_the_list(self, admin_test_client):
+        client, _csrf = admin_test_client()
+        html = client.get('/changelog').get_data(as_text=True)
+        m = re.search(r"defineProperty\(window, 'RETRODB_ACTIONS', \{value: Object\.freeze\((\[.*?\])\)\}\)", html)
+        assert m, "base.html no longer hands the page its handler list"
+        import json
+        assert 'executeBatchRename' in json.loads(m.group(1))

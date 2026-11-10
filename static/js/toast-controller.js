@@ -1562,9 +1562,8 @@ const UnifiedToastController = {
      */
     _isSafeReturnUrl(url) {
         if (typeof url !== 'string' || !url) return false;
-        // Same-origin path: starts with `/` but not `//` (which would be
-        // protocol-relative and could land on any host).
-        if (url.startsWith('/') && !url.startsWith('//')) return true;
+        // Always parse: a browser reads `/\evil.example` or `/<tab>/evil.example`
+        // as `//evil.example`, so "starts with one slash" is no test (PASS-59-276).
         try {
             const parsed = new URL(url, window.location.origin);
             return parsed.origin === window.location.origin &&

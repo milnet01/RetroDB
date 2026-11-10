@@ -1401,19 +1401,19 @@ class TestPass41_12BNavigateToOpenRedirect:
         )
 
     def test_protocol_relative_url_rejected(self):
-        """Functional smoke: `//evil.example/path` is protocol-relative
-        and resolves to a different host. The guard must reject it."""
-        # Source-level pin: we explicitly check that the helper rejects
-        # `//`-prefixed input (the common protocol-relative attack shape).
+        """`//evil.example/path` is protocol-relative and resolves to a
+        different host. tests/test_pass59_276_return_url.py runs the guard
+        on it and on `/\\evil.example`; this pins that no "starts with one
+        slash" shortcut lets either past the origin check (PASS-59-276)."""
         body = read_source('static/js/toast-controller.js')
         # Locate the helper *definition* (skip past the call site that uses
         # the same identifier above).
         idx = body.find('_isSafeReturnUrl(url) {')
         assert idx != -1, "_isSafeReturnUrl helper definition not found"
         helper_body = body[idx:idx + 600]
-        assert "startsWith('//')" in helper_body, (
-            "Guard must explicitly reject `//`-prefixed protocol-relative "
-            "URLs (Pass 41.12.B)"
+        assert "startsWith('/')" not in helper_body, (
+            "A one-slash shortcut accepts `/\\evil.example`; parse and "
+            "compare origins instead (PASS-59-276)"
         )
 
 

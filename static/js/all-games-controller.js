@@ -591,7 +591,7 @@ const AllGamesController = (function() {
         let boxartHtml;
         if (boxartToShow) {
             const fallbackAttr = fallbackBoxart
-                ? ` data-on-error="src" data-on-error-remove-class="boxart-3d" data-on-error-src="/static/images/boxart/${esc(fallbackBoxart)}"`
+                ? ` data-on-error="src" data-on-error-remove-class="boxart-3d" data-on-error-src="/static/images/boxart/${esc(encodeURIComponent(fallbackBoxart))}"`
                 : ` data-on-error="hide-show-next"`;
             // Pass FU.2 — pre-computed srcset (boxart 160 w / 320 w variants
             // plus the original) shipped from build_game_card(). `sizes`
@@ -604,7 +604,7 @@ const AllGamesController = (function() {
                 ? ` srcset="${esc(srcset)}" sizes="(max-width: 768px) 100px, 135px"`
                 : '';
             boxartHtml = `
-                <img src="/static/images/${boxartFolder}/${esc(boxartToShow)}"${responsiveAttr}
+                <img src="/static/images/${boxartFolder}/${esc(encodeURIComponent(boxartToShow))}"${responsiveAttr}
                      alt="${esc(game.title)}"
                      class="game-boxart-img${use3d ? ' boxart-3d' : ''}"
                      loading="lazy"

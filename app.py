@@ -277,6 +277,16 @@ app.jinja_env.globals['field_labels_map'] = field_labels_map
 app.jinja_env.globals['js_i18n_map'] = js_i18n_map
 
 
+def page_action_names():
+    """The data-on-* handler names main.js may run (PASS-59-276)."""
+    from services.action_names import action_names
+    return action_names(os.path.join(app.root_path, app.template_folder),
+                        os.path.join(app.static_folder, 'js'))
+
+
+app.jinja_env.globals['page_action_names'] = page_action_names
+
+
 def current_locale_tag():
     """Active locale as an HTML lang tag (underscore -> hyphen, e.g. pt_BR ->
     pt-BR) for the <html lang> attribute. Defaults to 'en' outside a request."""

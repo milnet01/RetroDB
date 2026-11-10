@@ -2557,7 +2557,6 @@ const UnifiedToastController = {
      */
     _isSafeReturnUrl(url) {
         if (typeof url !== 'string' || !url) return false;
-        if (url.startsWith('/') && !url.startsWith('//')) return true;
         try {
             const parsed = new URL(url, window.location.origin);
             return parsed.origin === window.location.origin &&
@@ -2858,12 +2857,22 @@ function _resolveActionArg(arg, el, event) {
     return match[2] ? _resolveActionPath(base, match[2]) : base;
 }
 
+let _knownActions = null;
+function _isKnownAction(name) {
+    if (!_knownActions) _knownActions = new Set(window.RETRODB_ACTIONS || []);
+    return _knownActions.has(name);
+}
+
 function _runAction(el, eventName, event) {
     const name = el.getAttribute('data-on-' + eventName);
     if (el.hasAttribute('data-self-only') && event.target !== el) return;
     if (el.dataset.key && event.key !== el.dataset.key) return;
     if (el.hasAttribute('data-prevent')) event.preventDefault();
     if (!name) return;  // a bare data-on-<event> only stops or prevents
+    if (!_isKnownAction(name)) {
+        console.error(`data-on-${eventName}: "${name}" is not a handler this app writes`);
+        return;
+    }
     const dot = name.lastIndexOf('.');
     const owner = dot === -1 ? window : _resolveActionPath(window, name.slice(0, dot));
     const fn = owner ? owner[name.slice(dot + 1)] : undefined;
@@ -4278,7 +4287,7 @@ function _setupAutoFocusTraps() {
     document.querySelectorAll('[data-focus-trap]').forEach(modalEl => {
         const onEscapeFn = modalEl.getAttribute('data-focus-trap-onescape');
         let onEscape = null;
-        if (onEscapeFn && typeof window[onEscapeFn] === 'function') {
+        if (onEscapeFn && _isKnownAction(onEscapeFn) && typeof window[onEscapeFn] === 'function') {
             onEscape = window[onEscapeFn];
         } else if (onEscapeFn) {
             console.error(`data-focus-trap-onescape on #${modalEl.id}: no function "${onEscapeFn}"`);
@@ -4443,7 +4452,7 @@ document.addEventListener('DOMContentLoaded', () => UpscaleStatus.init());
             html += `<div class="global-search-group" role="presentation">${escapeHtml(t('Games'))}</div>`;
             for (const g of games) {
                 const img = g.boxart
-                    ? `<img src="/static/images/boxart/${escapeHtml(g.boxart)}" alt="" loading="lazy" data-on-error="hide">`
+                    ? `<img src="/static/images/boxart/${encodeURIComponent(g.boxart)}" alt="" loading="lazy" data-on-error="hide">`
                     : '';
                 html += optionHtml(`gs-opt-${n++}`, `/game/${g.id}`, g.title, g.system_name, img);
             }

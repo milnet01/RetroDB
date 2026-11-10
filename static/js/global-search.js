@@ -93,7 +93,7 @@
             html += `<div class="global-search-group" role="presentation">${escapeHtml(t('Games'))}</div>`;
             for (const g of games) {
                 const img = g.boxart
-                    ? `<img src="/static/images/boxart/${escapeHtml(g.boxart)}" alt="" loading="lazy" data-on-error="hide">`
+                    ? `<img src="/static/images/boxart/${encodeURIComponent(g.boxart)}" alt="" loading="lazy" data-on-error="hide">`
                     : '';
                 html += optionHtml(`gs-opt-${n++}`, `/game/${g.id}`, g.title, g.system_name, img);
             }

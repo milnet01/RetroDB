@@ -4125,7 +4125,7 @@ function renderGameStructureTags() {
 
     container.innerHTML = selectedGameStructures.map(structure => `
         <span class="genre-tag">
-            ${structure}
+            ${escapeHtml(structure)}
             <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', structure))}" data-value="${escapeHtml(structure)}" data-on-click="removeGameStructure" data-args="${actionArgs('$this.dataset.value')}">×</button>
         </span>
     `).join('');
@@ -4316,7 +4316,7 @@ function renderPerspectiveTags() {
 
     container.innerHTML = selectedPerspectives.map(perspective => `
         <span class="genre-tag">
-            ${perspective}
+            ${escapeHtml(perspective)}
             <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', perspective))}" data-value="${escapeHtml(perspective)}" data-on-click="removePerspective" data-args="${actionArgs('$this.dataset.value')}">×</button>
         </span>
     `).join('');
@@ -4396,7 +4396,7 @@ function renderDimensionTags() {
 
     container.innerHTML = selectedDimensions.map(dimension => `
         <span class="genre-tag">
-            ${dimension}
+            ${escapeHtml(dimension)}
             <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', dimension))}" data-value="${escapeHtml(dimension)}" data-on-click="removeDimension" data-args="${actionArgs('$this.dataset.value')}">×</button>
         </span>
     `).join('');
@@ -4648,7 +4648,7 @@ function renderGenreTags() {
     
     container.innerHTML = selectedGenres.map(genre => `
         <span class="genre-tag">
-            ${genre}
+            ${escapeHtml(genre)}
             <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', genre))}" data-value="${escapeHtml(genre)}" data-on-click="removeGenre" data-args="${actionArgs('$this.dataset.value')}">×</button>
         </span>
     `).join('');
@@ -4732,7 +4732,7 @@ function renderModesTags() {
 
     container.innerHTML = selectedModes.map(mode => `
         <span class="genre-tag">
-            ${mode}
+            ${escapeHtml(mode)}
             <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', mode))}" data-value="${escapeHtml(mode)}" data-on-click="removeMode" data-args="${actionArgs('$this.dataset.value')}">×</button>
         </span>
     `).join('');
@@ -4816,7 +4816,7 @@ function renderControllerTags() {
     
     container.innerHTML = selectedControllers.map(controller => `
         <span class="controller-tag">
-            ${controller}
+            ${escapeHtml(controller)}
             <button type="button" class="remove-controller" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', controller))}" data-value="${escapeHtml(controller)}" data-on-click="removeController" data-args="${actionArgs('$this.dataset.value')}">×</button>
         </span>
     `).join('');
@@ -4944,7 +4944,7 @@ function renderSaveTypeTags() {
 
     container.innerHTML = selectedSaveTypes.map(saveType => `
         <span class="genre-tag">
-            ${saveType}
+            ${escapeHtml(saveType)}
             <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', saveType))}" data-value="${escapeHtml(saveType)}" data-on-click="removeSaveType" data-args="${actionArgs('$this.dataset.value')}">×</button>
         </span>
     `).join('');
@@ -5153,9 +5153,13 @@ function closeScrapeModal() {
 function deleteGame(gameId) {
     const gameTitle = document.querySelector('.game-page-title')?.textContent?.trim() || 'this game';
     // Remember where user came from (for redirect after delete)
-    const returnUrl = document.referrer && document.referrer.includes(window.location.host)
-        ? document.referrer
-        : {{ url_for("games.all_games")|tojson }};
+    // Only a page of this site: a referrer merely naming our host elsewhere in
+    // its address must not send the user off-site after the delete.
+    const sameSite = (() => {
+        try { return new URL(document.referrer).origin === window.location.origin; }
+        catch (e) { return false; }
+    })();
+    const returnUrl = sameSite ? document.referrer : {{ url_for("games.all_games")|tojson }};
 
     showConfirm(
         '🗑️ ' + {{ _('Delete Game')|tojson }},
@@ -5574,7 +5578,7 @@ function openGameDetailFilterModal(filterType, filterValue, sortBy = null) {
                 
                 data.games.forEach(game => {
                     const thumbUrl = game.boxart 
-                        ? `/static/images/boxart/${game.boxart}` 
+                        ? `/static/images/boxart/${encodeURIComponent(game.boxart)}` 
                         : '/static/images/placeholder.png';
                     
                     html += `
@@ -5685,7 +5689,7 @@ async function lookupHLTB() {
                 headerHtml += `<span class="hltb-match-warning">Platform not found</span>`;
             }
             if (pendingHltbData.release_year) {
-                headerHtml += `<span class="hltb-match-year">${pendingHltbData.release_year}</span>`;
+                headerHtml += `<span class="hltb-match-year">${escapeHtml(String(pendingHltbData.release_year))}</span>`;
             }
             if (confidence > 0) {
                 headerHtml += `<span class="hltb-match-confidence">${confidence}% match</span>`;
@@ -5754,7 +5758,7 @@ async function confirmHLTB() {
                     <span class="hltb-match-title">${escapeHtml(pendingHltbData.match_name)}</span>
                     ${pendingHltbData.match_platform ? `<span class="hltb-match-platform">${escapeHtml(pendingHltbData.match_platform)}</span>` : ''}
                     ${pendingHltbData.platform_mismatch ? `<span class="hltb-match-warning">Platform not found</span>` : ''}
-                    ${pendingHltbData.release_year ? `<span class="hltb-match-year">${pendingHltbData.release_year}</span>` : ''}
+                    ${pendingHltbData.release_year ? `<span class="hltb-match-year">${escapeHtml(String(pendingHltbData.release_year))}</span>` : ''}
                     ${confidence > 0 ? `<span class="hltb-match-confidence">${confidence}% match</span>` : ''}
                 </div>`;
             }
@@ -5764,15 +5768,15 @@ async function confirmHLTB() {
                 <div class="hltb-results">
                     <div class="hltb-time-row">
                         <span class="hltb-label">Main Story</span>
-                        <span class="hltb-value">${pendingHltbData.main_story}</span>
+                        <span class="hltb-value">${escapeHtml(String(pendingHltbData.main_story))}</span>
                     </div>
                     <div class="hltb-time-row">
                         <span class="hltb-label">Main + Extras</span>
-                        <span class="hltb-value">${pendingHltbData.main_extra}</span>
+                        <span class="hltb-value">${escapeHtml(String(pendingHltbData.main_extra))}</span>
                     </div>
                     <div class="hltb-time-row">
                         <span class="hltb-label">Completionist</span>
-                        <span class="hltb-value">${pendingHltbData.completionist}</span>
+                        <span class="hltb-value">${escapeHtml(String(pendingHltbData.completionist))}</span>
                     </div>
                 </div>
                 <div class="hltb-actions" style="margin-top: var(--spacing-sm);">

@@ -848,7 +848,8 @@ const FanartController = {
     show(fanartPath) {
         if (!fanartPath || !this.element) return;
         clearTimeout(this.timeout);
-        this.element.style.backgroundImage = `url('/static/images/fanart/${fanartPath}')`;
+        const file = encodeURIComponent(fanartPath).replace(/'/g, '%27');
+        this.element.style.backgroundImage = `url('/static/images/fanart/${file}')`;
         this.element.classList.add('active');
     },
 

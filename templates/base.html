@@ -364,10 +364,10 @@
     <!-- Notification Settings (from user preferences) -->
     <script nonce="{{ csp_nonce }}">
         window.NOTIFICATION_TIMEOUTS = {
-            success: {{ user_settings.notification_timeouts.success if user_settings and user_settings.notification_timeouts else 3 }},
-            info: {{ user_settings.notification_timeouts.info if user_settings and user_settings.notification_timeouts else 3 }},
-            warning: {{ user_settings.notification_timeouts.warning if user_settings and user_settings.notification_timeouts else 5 }},
-            error: {{ user_settings.notification_timeouts.error if user_settings and user_settings.notification_timeouts else 8 }}
+            success: {{ (user_settings.notification_timeouts.success if user_settings and user_settings.notification_timeouts else 3)|int }},
+            info: {{ (user_settings.notification_timeouts.info if user_settings and user_settings.notification_timeouts else 3)|int }},
+            warning: {{ (user_settings.notification_timeouts.warning if user_settings and user_settings.notification_timeouts else 5)|int }},
+            error: {{ (user_settings.notification_timeouts.error if user_settings and user_settings.notification_timeouts else 8)|int }}
         };
         window.AI_SCRAPER_ENABLED = {{ 'true' if ai_scraper_enabled else 'false' }};
 
@@ -417,6 +417,8 @@
     <script nonce="{{ csp_nonce }}">
         window.I18N = {{ js_i18n_map() | tojson }}; // nosemgrep: var-in-script-tag
         window.FIELD_LABELS = {{ field_labels_map() | tojson }}; // nosemgrep: var-in-script-tag
+        // The only names data-on-* may run; fixed, so injected HTML cannot add one (PASS-59-276).
+        Object.defineProperty(window, 'RETRODB_ACTIONS', {value: Object.freeze({{ page_action_names() | tojson }})}); // nosemgrep: var-in-script-tag
     </script>
 
     <!-- Core JavaScript Bundle (utils + page-lifecycle + toast-controller + main) - loaded on every page -->

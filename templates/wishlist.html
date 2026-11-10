@@ -612,7 +612,7 @@ function renderWishlistCard(item) {
 
     const boxartHtml = item.boxart
         ? `<div class="wishlist-item-boxart"><img src="/static/images/boxart/${escapeHtml(encodeURIComponent(item.boxart))}" alt="" loading="lazy" decoding="async"></div>`
-        : `<div class="wishlist-item-boxart" title="${ {{ _('No boxart yet')|tojson }} }">&#127918;</div>`;
+        : `<div class="wishlist-item-boxart" title="${escapeHtml({{ _('No boxart yet')|tojson }})}">&#127918;</div>`;
 
     const rescrapeTitle = status === 'scraped' ? {{ _('Re-scrape metadata')|tojson }} : {{ _('Scrape metadata')|tojson }};
     const rescrapeDisabled = status === 'scraping' ? 'disabled' : '';
@@ -634,12 +634,12 @@ function renderWishlistCard(item) {
                 ${chips.length ? `<div class="wishlist-item-meta">${chips.join('')}</div>` : ''}
                 ${item.description ? `<div class="wishlist-item-description">${escapeHtml(item.description)}</div>` : ''}
                 ${item.notes ? `<div class="wishlist-item-notes">${escapeHtml(item.notes)}</div>` : ''}
-                ${date ? '<div class="wishlist-item-date">' + {{ _('Added {date}')|tojson }}.replace('{date}', date) + '</div>' : ''}
+                ${date ? '<div class="wishlist-item-date">' + escapeHtml({{ _('Added {date}')|tojson }}.replace('{date}', () => date)) + '</div>' : ''}
             </div>
             <div class="wishlist-item-actions">
-                <button type="button" class="wishlist-action-btn" data-on-click="scrapeWishlistItem" data-args="${actionArgs(item.id)}" title="${rescrapeTitle}" ${rescrapeDisabled}>${rescrapeIcon}</button>
-                <button type="button" class="wishlist-action-btn" data-on-click="openEditWishlistModal" data-args="${actionArgs(item.id)}" title="${ {{ _('Edit')|tojson }} }">&#9998;</button>
-                <button type="button" class="wishlist-action-btn danger" data-title="${escapeHtml(item.title)}" data-on-click="confirmDeleteWishlistItem" data-args="${actionArgs(item.id, '$this.dataset.title')}" title="${ {{ _('Delete')|tojson }} }">&#10005;</button>
+                <button type="button" class="wishlist-action-btn" data-on-click="scrapeWishlistItem" data-args="${actionArgs(item.id)}" title="${escapeHtml(rescrapeTitle)}" ${rescrapeDisabled}>${rescrapeIcon}</button>
+                <button type="button" class="wishlist-action-btn" data-on-click="openEditWishlistModal" data-args="${actionArgs(item.id)}" title="${escapeHtml({{ _('Edit')|tojson }})}">&#9998;</button>
+                <button type="button" class="wishlist-action-btn danger" data-title="${escapeHtml(item.title)}" data-on-click="confirmDeleteWishlistItem" data-args="${actionArgs(item.id, '$this.dataset.title')}" title="${escapeHtml({{ _('Delete')|tojson }})}">&#10005;</button>
             </div>
         </div>
     `;
