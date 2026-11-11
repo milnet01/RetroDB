@@ -214,6 +214,16 @@
         <div id="normEmptyNames" style="display: none; text-align: center; padding: var(--spacing-xl); color: var(--text-muted);">
             <p>{{ _('Every name in this field has one spelling.') }}</p>
         </div>
+
+        <!-- One company under different names (PASS-59-300) -->
+        <div id="normCompanies" style="display: none; margin-top: var(--spacing-xl);">
+            <h3>{{ _('Names that may be one company') }}</h3>
+            <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
+                {{ _('Names such as "Eidos" and "Eidos Interactive" may be one company, or two: "Atari Games" and "Atari, Inc." are different companies. For each row, pick the name to keep, tick the names that are the same company, and press Merge. The merge changes Publisher and Developer on every game, and later scrapes use the kept name.') }}
+            </p>
+            <div id="normCompaniesTable" style="overflow-x: auto;"></div>
+            <p id="normCompaniesEmpty" class="text-muted" style="display: none;">{{ _('No names look like one company.') }}</p>
+        </div>
     </div>
 </section>
 {% endif %}

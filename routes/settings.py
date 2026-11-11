@@ -22,7 +22,8 @@ from services.auth import login_required, admin_required
 from services.security import safe_filename, validate_settings_path
 from services.settings_validators import validate_settings_value, known_keys
 from services.normalization import (
-    NAME_FIELDS, apply_normalization, apply_spellings, case_twin_groups, get_unique_values,
+    COMPANY_FIELDS, NAME_FIELDS, apply_normalization, apply_spellings, case_twin_groups,
+    company_lookalike_groups, get_unique_values, merge_companies,
 )
 
 logger = logging.getLogger(__name__)
@@ -713,3 +714,28 @@ def api_normalize_spellings_apply():
     if not isinstance(spellings, list) or not spellings:
         return error(_('No spellings chosen'), 400)
     return success(games_updated=apply_spellings(field, spellings))
+
+
+@bp.route('/api/normalize/companies/<field>')
+@admin_required
+@handle_api_errors
+def api_normalize_companies(field):
+    """Names that may be one company, for the user to judge (PASS-59-300)."""
+    if field not in COMPANY_FIELDS:
+        return error(_('Invalid field'), 400)
+    return success(groups=company_lookalike_groups(field))
+
+
+@bp.route('/api/normalize/companies', methods=['POST'])
+@admin_required
+@handle_api_errors
+def api_normalize_companies_merge():
+    """Write the kept company name over the names the user ticked."""
+    data = request.get_json() or {}
+    keep = data.get('keep')
+    merge = data.get('merge')
+    if not isinstance(keep, str) or not keep.strip():
+        return error(_('No name to keep'), 400)
+    if not isinstance(merge, list) or not merge:
+        return error(_('No names ticked to merge'), 400)
+    return success(games_updated=merge_companies(keep, merge))

@@ -65,6 +65,7 @@ const NormalizationManager = {
                 : `/api/normalize/preview/${field}`);
 
             if (loading) loading.style.display = 'none';
+            CompanyMerge.load(this.currentField);
 
             if (result.success) {
                 // A spelling group becomes a row: every spelling with its count,
@@ -312,4 +313,117 @@ const NormalizationManager = {
 };
 
 
+// =============================================================================
+// ONE COMPANY UNDER DIFFERENT NAMES (PASS-59-300)
+// =============================================================================
+
+// Look-alike publisher and developer names, one row each. Nothing is ticked:
+// only the user says two names are one company.
+const CompanyMerge = {
+    groups: [],
+
+    /** List the look-alikes for publisher or developer; hide the list otherwise. */
+    async load(field) {
+        const box = document.getElementById('normCompanies');
+        if (!box) return;
+        if (field !== 'publisher' && field !== 'developer') {
+            box.style.display = 'none';
+            return;
+        }
+        try {
+            const result = await API.get(`/api/normalize/companies/${encodeURIComponent(field)}`);
+            if (!result.success) {
+                showNotification(result.error || t('Failed to load normalization data'), 'error');
+                return;
+            }
+            this.groups = result.groups || [];
+            box.style.display = '';
+            this.render();
+        } catch (err) {
+            console.error('Company look-alike load error:', err);
+            showNotification(t('Failed to load normalization data'), 'error');
+        }
+    },
+
+    render() {
+        const table = document.getElementById('normCompaniesTable');
+        const empty = document.getElementById('normCompaniesEmpty');
+        if (empty) empty.style.display = this.groups.length ? 'none' : '';
+        if (!table) return;
+        if (!this.groups.length) {
+            table.innerHTML = '';
+            return;
+        }
+        // One block per group: the names to tick, then the kept name and Merge.
+        // Blocks, not a table, so a phone wraps them instead of cutting them off.
+        const keepLabel = escapeHtml(t('Name to keep'));
+        let html = '';
+        this.groups.forEach((g, i) => {
+            const args = escapeHtml(JSON.stringify([i]));
+            html += '<div class="norm-company-row" style="padding: var(--spacing-md) 0; border-bottom: 1px solid var(--border-color);">';
+            g.names.forEach(n => {
+                html += `<label style="display: block;"><input type="checkbox" class="norm-company-check" data-group="${i}" value="${escapeHtml(n.value)}" data-on-change="CompanyMerge.sync" data-args="${args}"> ${escapeHtml(n.value)} (${formatNumber(n.count)})</label>`;
+            });
+            html += `<div style="display: flex; flex-wrap: wrap; gap: var(--spacing-sm); align-items: center; margin-top: var(--spacing-sm);"><span>${keepLabel}</span>`;
+            html += `<select class="form-select norm-company-keep" data-group="${i}" aria-label="${keepLabel}" style="flex: 1 1 200px; max-width: 360px;" data-on-change="CompanyMerge.sync" data-args="${args}">`;
+            g.names.forEach(n => {
+                const selected = n.value === g.suggested ? ' selected' : '';
+                html += `<option value="${escapeHtml(n.value)}"${selected}>${escapeHtml(n.value)}</option>`;
+            });
+            html += `</select><button type="button" class="btn btn-sm btn-primary norm-company-merge" data-group="${i}" data-on-click="CompanyMerge.merge" data-args="${args}" disabled>${escapeHtml(t('Merge'))}</button></div></div>`;
+        });
+        table.innerHTML = html;
+        this.groups.forEach((g, i) => this.sync(i));
+    },
+
+    _keep(i) {
+        return document.querySelector(`.norm-company-keep[data-group="${i}"]`)?.value || '';
+    },
+
+    /** Names ticked in row i, apart from the kept one. */
+    _ticked(i) {
+        const keep = this._keep(i);
+        return Array.from(document.querySelectorAll(`.norm-company-check[data-group="${i}"]:checked`))
+            .map(cb => cb.value).filter(v => v !== keep);
+    },
+
+    /** The kept name cannot be ticked; Merge needs one ticked name. */
+    sync(i) {
+        const keep = this._keep(i);
+        document.querySelectorAll(`.norm-company-check[data-group="${i}"]`).forEach(cb => {
+            const isKeep = cb.value === keep;
+            cb.disabled = isKeep;
+            if (isKeep) cb.checked = false;
+        });
+        const btn = document.querySelector(`.norm-company-merge[data-group="${i}"]`);
+        if (btn) btn.disabled = this._ticked(i).length === 0;
+    },
+
+    merge(i) {
+        const keep = this._keep(i);
+        const merge = this._ticked(i);
+        if (!keep || !merge.length) return;
+        // Renders with allowHtml, so every name goes through escapeHtml.
+        let msg = `<p>${escapeHtml(t('Change these names to "{name}" on every game?', {name: keep}))}</p><ul>`;
+        merge.forEach(m => { msg += `<li><code>${escapeHtml(m)}</code></li>`; });
+        msg += '</ul>';
+        showConfirm(t('Merge'), msg, async () => {
+            try {
+                const result = await API.post('/api/normalize/companies', {keep, merge});
+                if (result.success) {
+                    showNotification(t('Names merged: {games} games updated', {games: formatNumber(result.games_updated)}), 'success');
+                    await NormalizationManager.load();
+                } else {
+                    showNotification(result.error || t('Failed to apply normalization'), 'error');
+                }
+            } catch (err) {
+                console.error('Company merge error:', err);
+                showNotification(t('Failed to apply normalization'), 'error');
+            }
+        }, { allowHtml: true });
+    },
+};
+
+
 window.NormalizationManager = NormalizationManager;
+window.CompanyMerge = CompanyMerge;

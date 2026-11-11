@@ -434,6 +434,7 @@ def invalidate_normalization_cache():
     _canonical_cache_time.clear()
     _spelling_cache.clear()
     _spelling_cache_time.clear()
+    _company_alias_cache.clear()
 
 
 # =============================================================================
@@ -551,10 +552,45 @@ def split_names(value):
     return names
 
 
+# Merges the user made in Settings > Normalization (PASS-59-300), as
+# normalization_rules rows: from_value a casefolded name, to_value the kept one.
+COMPANY_RULES = 'company'
+_company_alias_cache = {}
+
+
+def company_aliases():
+    """{casefolded name: company name}: COMPANY_ALIASES, then the user's merges.
+
+    A merge wins over the built-in list, and one merge followed by another
+    ends at the last kept name.
+    """
+    import time as _time
+    now = _time.time()
+    if _company_alias_cache and now - _company_alias_cache['time'] < _COMBINED_MAP_CACHE_TTL:
+        return _company_alias_cache['map']
+    aliases = dict(COMPANY_ALIASES)
+    try:
+        for row in query("SELECT from_value, to_value FROM normalization_rules WHERE category = ?",
+                         (COMPANY_RULES,)):
+            aliases[row['from_value']] = row['to_value']
+    except Exception:
+        pass  # Table may not exist yet during startup
+    resolved = {}
+    for key, name in aliases.items():
+        seen = {key}
+        while name.casefold() in aliases and name.casefold() not in seen:
+            seen.add(name.casefold())
+            name = aliases[name.casefold()]
+        resolved[key] = name
+    _company_alias_cache.update(map=resolved, time=now)
+    return resolved
+
+
 def canonical_companies(value):
     """A publisher or developer list with one spelling per company, each once."""
+    aliases = company_aliases()
     return ', '.join(dict.fromkeys(
-        COMPANY_ALIASES.get(name.casefold(), name) for name in split_names(value)))
+        aliases.get(name.casefold(), name) for name in split_names(value)))
 
 
 def canonicalize_metadata(metadata, keep=()):
@@ -775,7 +811,7 @@ def use_library_spellings(metadata, keep=()):
             continue
         # A company alias names the spelling itself, whatever the library holds.
         library = {**_library_spellings(field),
-                   **(COMPANY_ALIASES if field != 'franchise' else {})}
+                   **(company_aliases() if field != 'franchise' else {})}
         metadata[field] = ', '.join(dict.fromkeys(
             library.get(n.casefold(), n) for n in split_names(value)))
 
@@ -826,3 +862,91 @@ def apply_spellings(field, chosen):
     invalidate_normalization_cache()
     logger.info(f"Spellings applied for {field}: {updated} games updated")
     return updated
+
+
+# =============================================================================
+# ONE COMPANY UNDER DIFFERENT NAMES (PASS-59-300)
+# =============================================================================
+
+COMPANY_FIELDS = ('publisher', 'developer')
+
+# Words that end a company's name without naming it: "Eidos Interactive" is Eidos.
+_COMPANY_WORDS = frozenset({
+    'interactive', 'entertainment', 'software', 'games', 'game', 'studios',
+    'studio', 'productions', 'publishing', 'digital', 'multimedia',
+})
+
+
+def _company_key(name):
+    """A name without its company words, suffixes, spaces and punctuation.
+
+    "Eidos Interactive, Ltd." and "Eidos" share the key "eidos"; so do
+    "Ubi Soft" and "Ubisoft". A name made only of such words keeps them all.
+    """
+    words = [w for w in re.split(r'[\s,]+', name.casefold()) if w]
+    while len(words) > 1 and (words[-1] in _COMPANY_WORDS or _COMPANY_SUFFIX.fullmatch(words[-1])):
+        words.pop()
+    return re.sub(r'\W', '', ''.join(words)) or name.casefold()
+
+
+def company_lookalike_groups(field):
+    """Names in a company field that may be one company, for the user to judge.
+
+    Returns [{suggested, count, names: [{value, count}]}], the name on most
+    games first and as the suggestion. Lists only; merge_companies merges.
+    """
+    if field not in COMPANY_FIELDS:
+        raise ValueError(f"Invalid company field: {field!r}")
+    buckets = {}
+    for spellings in _name_counts(field).values():
+        name = _most_used(spellings)
+        buckets.setdefault(_company_key(name), []).append(
+            {'value': name, 'count': sum(spellings.values())})
+    groups = []
+    for names in buckets.values():
+        if len(names) < 2:
+            continue
+        names.sort(key=lambda n: (-n['count'], n['value'].casefold()))
+        groups.append({'suggested': names[0]['value'],
+                       'count': sum(n['count'] for n in names), 'names': names})
+    return sorted(groups, key=lambda g: g['suggested'].casefold())
+
+
+def merge_companies(keep, merge):
+    """Write `keep` over each name in `merge`, in both company fields.
+
+    Names are matched apart from capitals. Each merged name, and the kept one,
+    is saved as a rule, so a later scrape of any of them gives `keep`.
+    Returns the number of games updated.
+    """
+    keep = keep.strip() if isinstance(keep, str) else ''
+    gone = {m.strip().casefold() for m in merge
+            if isinstance(m, str) and m.strip()} - {keep.casefold()}
+    if not keep or not gone:
+        return 0
+    updated = set()
+    with get_db_with_context() as conn:
+        for field in COMPANY_FIELDS:
+            # field is one of COMPANY_FIELDS — safe for SQL interpolation
+            rows = conn.execute(
+                f"SELECT id, {field} FROM games WHERE {field} IS NOT NULL AND {field} != ''"
+            ).fetchall()
+            for game_id, value in rows:
+                names = split_names(value)
+                new_names = [keep if n.casefold() in gone else n for n in names]
+                if new_names == names:
+                    continue
+                conn.execute(f"UPDATE games SET {field} = ? WHERE id = ?",
+                             (', '.join(dict.fromkeys(new_names)), game_id))
+                updated.add(game_id)
+        # The kept name's own rule outranks a built-in alias that renamed it.
+        for name in gone | {keep.casefold()}:
+            conn.execute("""
+                INSERT INTO normalization_rules (category, from_value, to_value)
+                VALUES (?, ?, ?)
+                ON CONFLICT(category, from_value) DO UPDATE SET to_value = excluded.to_value
+            """, (COMPANY_RULES, name, keep))
+        conn.commit()
+    invalidate_normalization_cache()
+    logger.info(f"Companies merged into {keep!r}: {len(updated)} games updated")
+    return len(updated)
