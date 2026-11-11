@@ -846,7 +846,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** The slowest test runs faster.
   Kind: implement.
 
-- 📋 [PASS-59-262] **Auto-link leaves alone a disc the user unmarked as a bonus disc (audit-fix, S).**
+- ✅ [PASS-59-262] **Auto-link leaves alone a disc the user unmarked as a bonus disc (audit-fix, S).**
   - **Status**: todo
   - **Why**: `unlink_bonus_disc` (routes/bonus_discs.py) sets
     `is_bonus_disc = 0`, and `auto_detect_bonus_discs` reads 0 as never
@@ -859,6 +859,12 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     half of the same finding shipped there.
 
   ---
+  Shipped 2026-11-11 in the open 4.0.0: migration 043 adds
+  games.not_bonus_disc; unlink and unmark set it, a manual link or mark
+  clears it, auto-detect skips it. Tests:
+  tests/test_pass59_249_bonus_discs.py, tests/test_migration_043.py. No
+  changelog line: the web UI has no unlink or unmark button, so only the
+  API routes reached the bug.
   **Layman:** Auto-link stops re-marking a disc you said is not a bonus disc.
   Kind: implement.
 
