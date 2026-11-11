@@ -295,8 +295,11 @@ with the image count and seconds taken.
   boxart, 3D boxart or screenshot, or no longer exist. Maintenance "Clear
   scraped data", the edit window's save, screenshot delete and game
   delete call it.
-- **Scope.** Only those two entry points defer. Admin uploads, museum
-  images and `ImageResizeJob` upscale inline as before. A thread started
+- **Scope.** Only those two entry points and the Edit form's save defer.
+  The Edit form (PASS-59-175) defers a boxart, 3D boxart or screenshot
+  upload through `upscale_queue.defer_for` and lists the game after its
+  UPDATE. Other admin uploads, museum images and `ImageResizeJob`
+  upscale inline as before. A thread started
   without `contextvars.copy_context()` does not inherit the switch and
   upscales inline, which is the old behaviour.
 - **Shown** (PASS-59-153). While rows remain, the sidebar of every

@@ -75,6 +75,22 @@ def upscale_later(game_id):
         enqueue(game_id)
 
 
+@contextlib.contextmanager
+def defer_for(image_type):
+    """Defer upscaling for an `image_type` image saved inside the block,
+    when the worker upscales that type (PASS-59-175: an Edit-form upload).
+    Yields whether it deferred; the caller then enqueues the game once its
+    row names the file."""
+    if image_type not in _MEDIA_FIELDS:
+        yield False
+        return
+    token = defer_upscale.set(True)
+    try:
+        yield True
+    finally:
+        defer_upscale.reset(token)
+
+
 def pending_status(game_id=None):
     """(games still listed, whether `game_id` is one of them), for the
     PASS-59-153 indicator. (0, False) when the table cannot be read."""

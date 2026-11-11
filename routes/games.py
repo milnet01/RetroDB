@@ -531,41 +531,44 @@ def game_detail(game_id):
                     screenshots = game['screenshots'] or ''
                     video_filename = game['video'] if game['video'] else ''
 
-                    if request.form.get('remove_boxart') == '1' and boxart_filename:
-                        remove_media_file(boxart_filename, 'boxart')
-                        boxart_filename = ''
-                    if request.form.get('remove_boxart_3d') == '1' and boxart_3d_filename:
-                        remove_media_file(boxart_3d_filename, 'boxart_3d')
-                        boxart_3d_filename = ''
-                    if request.form.get('remove_fanart') == '1' and fanart_filename:
-                        remove_media_file(fanart_filename, 'fanart')
-                        fanart_filename = ''
-                    if request.form.get('remove_game_logo') == '1' and logo_filename:
-                        remove_media_file(logo_filename, 'game_logo')
-                        logo_filename = ''
-                    if request.form.get('remove_boxart_back') == '1' and back_filename:
-                        remove_media_file(back_filename, 'boxart_back')
-                        back_filename = ''
-                    if request.form.get('remove_video') == '1' and video_filename:
-                        remove_media_file(video_filename, 'video')
-                        video_filename = ''
+                    # Files go only once the UPDATE below no longer points
+                    # at them, so a failed save loses no picture (PASS-59-175):
+                    # a ticked removal, and the file an upload replaces when
+                    # no other game uses it.
+                    to_delete = []
+
+                    def _remove(field, media_type, current):
+                        if request.form.get(field) == '1' and current:
+                            to_delete.append((current, media_type))
+                            return ''
+                        return current
+
+                    boxart_filename = _remove('remove_boxart', 'boxart', boxart_filename)
+                    boxart_3d_filename = _remove('remove_boxart_3d', 'boxart_3d', boxart_3d_filename)
+                    fanart_filename = _remove('remove_fanart', 'fanart', fanart_filename)
+                    logo_filename = _remove('remove_game_logo', 'game_logo', logo_filename)
+                    back_filename = _remove('remove_boxart_back', 'boxart_back', back_filename)
+                    video_filename = _remove('remove_video', 'video', video_filename)
 
                     # Uploads go through the scraper's image pipeline
-                    # (format, size, responsive variants). The file an
-                    # upload replaces is removed when no other game uses it,
-                    # once the UPDATE below no longer points at it.
-                    replaced = []
+                    # (format, size, responsive variants), except that a
+                    # small one is left for the background upscaler, which
+                    # the game is listed for after the UPDATE.
+                    upscale_after_save = False
 
                     def _upload(field, media_type, prefix, current):
-                        uploaded = save_upload(request.files.get(field), image_dir(media_folder(media_type)),
-                                               game_id, prefix, ALLOWED_IMAGE_EXT, image_type=media_type)
+                        nonlocal upscale_after_save
+                        with upscale_queue.defer_for(media_type) as deferred:
+                            uploaded = save_upload(request.files.get(field), image_dir(media_folder(media_type)),
+                                                   game_id, prefix, ALLOWED_IMAGE_EXT, image_type=media_type)
                         if not uploaded:
                             return current
+                        upscale_after_save |= deferred
                         if current and current != uploaded and not query(
                                 f"SELECT 1 FROM games WHERE "
                                 f"{safe_column(media_type, ('boxart', 'boxart_3d', 'boxart_back', 'fanart', 'game_logo'))} = ? AND id != ?",
                                 (current, game_id), one=True):
-                            replaced.append((current, media_type))
+                            to_delete.append((current, media_type))
                         return uploaded
 
                     boxart_filename = _upload('custom_boxart', 'boxart', 'custom', boxart_filename)
@@ -583,11 +586,14 @@ def game_detail(game_id):
                                 "of up to %(mb)s MB.",
                                 mb=config.MAX_VIDEO_SIZE // (1024 * 1024)), "error")
 
-                    screenshots, duplicate_shots = save_screenshots(
-                        request.files.getlist('custom_screenshots'),
-                        game_id,
-                        screenshots,
-                    )
+                    shots_before = screenshots
+                    with upscale_queue.defer_for('screenshots') as deferred:
+                        screenshots, duplicate_shots = save_screenshots(
+                            request.files.getlist('custom_screenshots'),
+                            game_id,
+                            screenshots,
+                        )
+                    upscale_after_save |= deferred and screenshots != shots_before
                     if duplicate_shots:
                         flash(_("Screenshots not added because they match ones the game "
                                 "already has: %(count)s", count=duplicate_shots), "warning")
@@ -654,8 +660,10 @@ def game_detail(game_id):
                                         request.form.get('edit_title_locked') == '1'),
                         game_id
                     ))
-                    for old_file, media_type in replaced:
+                    for old_file, media_type in to_delete:
                         remove_media_file(old_file, media_type)
+                    if upscale_after_save:
+                        upscale_queue.enqueue(game_id)
 
                     message = "Metadata updated successfully!"
 
