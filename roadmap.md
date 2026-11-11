@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=302 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=304 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -656,6 +656,8 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - Open questions (answer first): templates/game_detail.html:64; static/css pages.css:2092-2101; templates/settings.html (~958, .confirm-modal-message); templates/archive_scanner.html:346; templates/achievements_system.html:690,743,774; templates/achievement_game.html:391-394; templates/analytics.html:1529-1530; static/css/components/tables.css:86-88; pages.css:1778; typography.css:111; game-cards.css:248; stat-boxes.css:47; achievements.css:16…
 
   ---
+  2026-11-11 (user): also on a 375px phone the Settings page overflows
+  sideways; a `.detail-value` span is wider than the screen.
   **Layman:** Fixes for empty gaps and hidden headers on phones, and for duplicated page styles.
   Kind: implement.
 
@@ -2748,6 +2750,24 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** You can tell RetroDB a disc is not a bonus disc, and Auto-Link will leave it alone.
   Kind: ux.
   Source: user, 2026-11-11 (found in PASS-59-262).
+
+- ✅ [PASS-59-303] **Removing a picture in the Edit form keeps the file when another game still uses it (fix, S).**
+  routes/games.py: the Edit form's `_remove` queues the old file for deletion
+  without the sharing check `_upload` makes, so a file another games row
+  names is deleted from under it. Both paths should use one check.
+  Shipped 2026-11-11 in fd197bcd.
+  **Layman:** If two games share one picture, removing it from one game no longer deletes it from the other.
+  Kind: fix.
+  Source: user-request-2026-11-11.
+
+- ✅ [PASS-59-304] **Small back-of-box pictures from a scrape get upscaled like the front (fix, S).**
+  A scrape defers every small image's upscale (upscale_later), but the
+  worker's list services/upscale_queue.py `_MEDIA_FIELDS` has no
+  `boxart_back`, so a deferred back cover is never upscaled.
+  Shipped 2026-11-11 in fd197bcd.
+  **Layman:** Back covers saved small by a scrape are now enlarged in the background, as front covers already are.
+  Kind: fix.
+  Source: user-request-2026-11-11.
 
 ## 4.0.x — Security and data-loss fixes for the web version
 
