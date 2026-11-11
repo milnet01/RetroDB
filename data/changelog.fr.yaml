@@ -1,8 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-10'
+  date: '2026-11-11'
   tags:
   - type: fix
     label: 'Les noms de sociétés comme « Nintendo Co., Ltd. » et « GameTek, Inc. » restent désormais entiers. Ils étaient coupés à la virgule, si bien que « Ltd. » et « Inc. » apparaissaient comme des noms à part dans les filtres de la Bibliothèque, dans Paramètres → Normalisation des données et dans Statistiques. Les pages des jeux les affichent aussi en entier'
+  - type: enhancement
+    label: 'Paramètres → Normalisation des données peut maintenant fusionner les différents noms d''une même société. Sous Éditeur et Développeur, une nouvelle liste montre les noms semblables, comme « Eidos » et « Eidos Interactive ». Rien n''est fusionné tout seul, car des noms semblables peuvent être des sociétés différentes : choisissez le nom à garder, cochez les noms de la même société et appuyez sur Merge. Les noms changent sur chaque jeu, et les scrapes suivants utilisent le nom gardé'
   - type: enhancement
     label: 'Paramètres → Normalisation des données propose maintenant les boutons Franchise, Éditeur et Développeur. Chacun liste les noms écrits avec des majuscules différentes, comme « Doom » et « DOOM », avec le nombre de jeux par graphie et la plus utilisée déjà choisie. Choisissez-en une et appuyez sur Appliquer pour n''en faire qu''un seul nom. Un nom nouvellement récupéré qui ne diffère que par les majuscules prend la graphie de votre bibliothèque, et Remplissage IA demande les majuscules officielles'
   - type: fix

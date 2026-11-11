@@ -1,8 +1,10 @@
 - version: 4.0.0
-  date: '2026-11-10'
+  date: '2026-11-11'
   tags:
   - type: fix
     label: 'Firmennamen wie „Nintendo Co., Ltd.“ und „GameTek, Inc.“ bleiben jetzt ganz. Sie wurden am Komma getrennt, sodass „Ltd.“ und „Inc.“ als eigene Namen in den Filtern der Bibliothek, unter Einstellungen → Datennormalisierung und in Statistiken erschienen. Spielseiten zeigen sie ebenfalls ganz'
+  - type: enhancement
+    label: 'Einstellungen → Datennormalisierung kann jetzt verschiedene Namen einer Firma zusammenführen. Unter Publisher und Entwickler zeigt eine neue Liste ähnliche Namen wie „Eidos“ und „Eidos Interactive“. Nichts wird von selbst zusammengeführt, denn ähnliche Namen können verschiedene Firmen sein: Wähle den Namen, der bleibt, hake die Namen derselben Firma an und drücke Merge. Die Namen ändern sich bei jedem Spiel, und spätere Scrapes verwenden den behaltenen Namen'
   - type: enhancement
     label: 'Einstellungen → Datennormalisierung hat jetzt die Schaltflächen Franchise, Publisher und Entwickler. Jede listet Namen, die mit unterschiedlicher Groß- und Kleinschreibung vorkommen, etwa „Doom“ und „DOOM“, mit der Zahl der Spiele je Schreibweise; die häufigste ist vorausgewählt. Wähle eine und drücke Anwenden, damit daraus ein Name wird. Ein neu gescrapter Name, der sich nur in der Großschreibung unterscheidet, übernimmt die Schreibweise deiner Bibliothek, und AI-Auffüllen fragt nach der offiziellen Schreibweise'
   - type: fix
