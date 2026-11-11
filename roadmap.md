@@ -973,7 +973,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: implement.
   Lanes: ui, routes.
 
-- 📋 [PASS-59-177] **Translation catalogs: drop obsolete duplicates that msgfmt rejects (LOW, S).**
+- ✅ [PASS-59-177] **Translation catalogs: drop obsolete duplicates that msgfmt rejects (LOW, S).**
   - **Why**: `msgfmt --statistics` fails on every
     `translations/*/messages.po` with duplicate definitions: obsolete
     `#~` copies of active msgids ("Loading…", "(not set)", "Apply").
@@ -984,6 +984,10 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - **Source**: found while merging PRs, 2026-10-29.
 
   ---
+  Shipped 2026-11-11: already done by 1359721e (dropped obsolete catalog
+  entries). Checked: msgfmt -c passes on every
+  translations/*/messages.po, no #~ entries remain, German "Apply" reads
+  "Anwenden".
   **Layman:** Old duplicate entries are removed from the translation files.
   Kind: implement.
   Lanes: i18n.
@@ -2720,7 +2724,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: fix.
   Source: pass-59-300-walk-2026-11-11.
 
-- 📋 [PASS-59-302] **Settings > Bonus Discs gets a "Not a bonus disc" button, so a wrong Auto-Link mark can be undone (ux, S).**
+- ✅ [PASS-59-302] **Settings > Bonus Discs gets a "Not a bonus disc" button, so a wrong Auto-Link mark can be undone (ux, S).**
   - **Why**: the Bonus Discs panel in `templates/settings.html` can only
     mark and link. `/api/bonus-discs/unlink/<id>` and `/api/bonus-discs/mark`
     with `is_bonus: false` have no button, so a disc Auto-Link marked
@@ -2728,6 +2732,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     (`games.not_bonus_disc`).
   - **Do**: list current bonus discs with a "Not a bonus disc" button
     (editors only) calling the unmark route; translate the new strings.
+  Shipped 2026-11-11: Settings > Bonus Discs lists current bonus discs
+  (from /api/bonus-discs/stats) with a "Not a bonus disc" button for
+  editors, calling /api/bonus-discs/mark with is_bonus false. No server
+  change. Checked on a :5001 scratch copy: desktop, 375px, viewer (no
+  buttons), failed request (button re-enabled, error toast).
   **Layman:** You can tell RetroDB a disc is not a bonus disc, and Auto-Link will leave it alone.
   Kind: ux.
   Source: user, 2026-11-11 (found in PASS-59-262).
