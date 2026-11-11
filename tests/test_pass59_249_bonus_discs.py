@@ -67,3 +67,50 @@ def test_auto_link_never_picks_a_disc_it_marks_in_the_same_sweep(discs):
     rows = dict(conn.execute("SELECT id, parent_game_id FROM games WHERE system_id = ?", (sid,)).fetchall())
     bonus = {r[0] for r in conn.execute("SELECT id FROM games WHERE system_id = ? AND is_bonus_disc = 1", (sid,))}
     assert not any(parent in bonus for parent in rows.values() if parent)
+
+
+# PASS-59-262: a person's "not a bonus disc" outlasts the next auto-link.
+
+def _auto_link(client, csrf, sid):
+    reply = client.post(f'/api/bonus-discs/auto-link?system_id={sid}', headers={'X-CSRF-Token': csrf})
+    assert reply.status_code == 200, reply.get_json()
+
+
+def _is_bonus(conn, gid):
+    return conn.execute("SELECT is_bonus_disc FROM games WHERE id = ?", (gid,)).fetchone()[0] == 1
+
+
+def test_auto_link_leaves_alone_a_disc_the_user_unlinked(discs):
+    client, csrf, add, conn, sid = discs
+    add('Quest')
+    disc = add('Quest (Bonus Disc)')
+    _auto_link(client, csrf, sid)
+    assert _is_bonus(conn, disc)
+    assert client.post(f'/api/bonus-discs/unlink/{disc}', headers={'X-CSRF-Token': csrf}).status_code == 200
+    _auto_link(client, csrf, sid)
+    assert not _is_bonus(conn, disc)
+
+
+def test_auto_link_leaves_alone_a_disc_the_user_unmarked(discs):
+    client, csrf, add, conn, sid = discs
+    disc = add('Quest (Bonus Disc)', is_bonus_disc=1)
+    reply = client.post('/api/bonus-discs/mark', json={'game_id': disc, 'is_bonus': False},
+                        headers={'X-CSRF-Token': csrf})
+    assert reply.status_code == 200
+    _auto_link(client, csrf, sid)
+    assert not _is_bonus(conn, disc)
+
+
+def test_a_manual_link_or_mark_clears_the_users_no(discs):
+    client, csrf, add, conn, sid = discs
+    main = add('Quest')
+    disc = add('Quest (Bonus Disc)')
+    other = add('Quest (Making Of Disc)', is_bonus_disc=1)
+    for gid in (disc, other):
+        client.post('/api/bonus-discs/mark', json={'game_id': gid, 'is_bonus': False},
+                    headers={'X-CSRF-Token': csrf})
+    assert _link(client, csrf, disc, main).status_code == 200
+    client.post('/api/bonus-discs/mark', json={'game_id': other, 'is_bonus': True},
+                headers={'X-CSRF-Token': csrf})
+    flags = conn.execute("SELECT not_bonus_disc FROM games WHERE id IN (?, ?)", (disc, other)).fetchall()
+    assert [f[0] for f in flags] == [0, 0]

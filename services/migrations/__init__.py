@@ -67,6 +67,7 @@ MIGRATIONS = [
     '040_game_delete_cleans_rows',
     '041_psn_hand_links',
     '042_drop_xbox_oauth_tokens',
+    '043_not_bonus_disc',
 ]
 
 

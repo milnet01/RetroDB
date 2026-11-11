@@ -113,7 +113,8 @@ def find_potential_parent_games(bonus_game_id, system_id):
 
 def auto_detect_bonus_discs(system_id=None):
     """
-    Scan games and auto-detect bonus discs based on title patterns.
+    Scan games and auto-detect bonus discs based on title patterns. A disc a
+    person unlinked or unmarked (not_bonus_disc = 1) is skipped (PASS-59-262).
 
     Args:
         system_id: Optional - limit scan to specific system
@@ -127,13 +128,15 @@ def auto_detect_bonus_discs(system_id=None):
             FROM games g
             JOIN systems s ON g.system_id = s.id
             WHERE g.system_id = ? AND (g.is_bonus_disc = 0 OR g.is_bonus_disc IS NULL)
+              AND g.not_bonus_disc = 0
         """, (system_id,))
     else:
         games = query("""
             SELECT g.id, g.title, g.system_id, g.rom_path, s.name as system_name
             FROM games g
             JOIN systems s ON g.system_id = s.id
-            WHERE g.is_bonus_disc = 0 OR g.is_bonus_disc IS NULL
+            WHERE (g.is_bonus_disc = 0 OR g.is_bonus_disc IS NULL)
+              AND g.not_bonus_disc = 0
         """)
 
     detected = []
@@ -207,7 +210,7 @@ def link_bonus_disc_to_parent(bonus_game_id, parent_game_id):
         # Update the bonus disc
         execute("""
             UPDATE games
-            SET is_bonus_disc = 1, parent_game_id = ?
+            SET is_bonus_disc = 1, not_bonus_disc = 0, parent_game_id = ?
             WHERE id = ?
         """, (parent_game_id, bonus_game_id))
 
@@ -226,7 +229,7 @@ def unlink_bonus_disc(bonus_game_id):
     try:
         execute("""
             UPDATE games
-            SET is_bonus_disc = 0, parent_game_id = NULL
+            SET is_bonus_disc = 0, not_bonus_disc = 1, parent_game_id = NULL
             WHERE id = ?
         """, (bonus_game_id,))
 
@@ -322,11 +325,12 @@ def api_mark_bonus_disc():
         return error(_('Missing game_id'), 400)
 
     if is_bonus:
-        execute("UPDATE games SET is_bonus_disc = 1 WHERE id = ?", (game_id,))
+        execute("UPDATE games SET is_bonus_disc = 1, not_bonus_disc = 0 WHERE id = ?", (game_id,))
     else:
         # Unmarking also detaches it: a kept parent_game_id still counts toward
         # the parent's bonus discs (game detail counts by parent_game_id alone).
-        execute("UPDATE games SET is_bonus_disc = 0, parent_game_id = NULL WHERE id = ?",
+        execute("UPDATE games SET is_bonus_disc = 0, not_bonus_disc = 1, parent_game_id = NULL "
+                "WHERE id = ?",
                 (game_id,))
 
     return success()
