@@ -959,7 +959,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: implement.
   Lanes: routes, media.
 
-- 📋 [PASS-59-176] **Game page follow-ups: one RPCS3 label table, console missing-metadata count per group (LOW, S).**
+- ✅ [PASS-59-176] **Game page follow-ups: one RPCS3 label table, console missing-metadata count per group (LOW, S).**
   - **Why**: the RPCS3 status labels are written twice, in
     `templates/game_detail.html` and `static/js/game-modals.js`
     (`rpcs3CompatBadgeHtml`). The console page's missing-metadata header
@@ -969,6 +969,10 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - **Source**: code review of PR #25, 2026-10-29.
 
   ---
+  Shipped 2026-11-11 in b65ce2b6: total_missing counts version groups
+  (Library and console page); RPCS3 label and hover text come from
+  services/rpcs3_compat.status_for_game, printed by game_detail.html and
+  rpcs3CompatBadgeHtml.
   **Layman:** Small tidy-ups on the game page and the console page's missing-details count.
   Kind: implement.
   Lanes: ui, routes.
