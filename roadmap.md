@@ -2693,13 +2693,19 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: feature.
   Source: user-request-2026-11-10.
 
-- 📋 [PASS-59-301] **A comma inside brackets splits a company name in two (fix, S).**
+- ✅ [PASS-59-301] **A comma inside brackets splits a company name in two (fix, S).**
   - **Seen**: the PASS-59-300 browser walk listed "Majesco (licensed
     from Konami" and "Disney)" as names: split_names cuts at every
     comma, even inside brackets.
   - **Fix**: split_names (and the JS firstCompany twin) skip commas
     inside brackets; check what the stored rows hold first.
   - **Status**: todo.
+  - **Shipped** 2026-11-11 (8ca9476e): split_names and firstCompany split
+    only at commas outside () and []; a stray closer is ignored. The live
+    library held three such publishers, all balanced; no stored name was
+    rewritten. ada1166d also stops the PASS-59-300 tests leaking company
+    merges into other tests (it broke the PASS-59-213 Acclaim case under
+    shuffled order).
   **Layman:** A publisher such as "Majesco (licensed from Konami, ...)" shows as broken pieces like "Disney)"; it should stay one name.
   Kind: fix.
   Source: pass-59-300-walk-2026-11-11.
