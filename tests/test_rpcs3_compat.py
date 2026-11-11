@@ -5,6 +5,8 @@ GuiConfigs/compat_database.dat in its config folder, keyed by title ID with
 no dash. Only PS3 games with a local ROM are looked up.
 """
 import json
+import os
+import sqlite3
 
 import pytest
 
@@ -94,3 +96,44 @@ def test_windows_rpcs3_keeps_config_beside_the_program(tmp_path):
     exe = tmp_path / 'RPCS3' / 'rpcs3.exe'
     dirs = _rpcs3_dirs(exe)
     assert exe.parent in dirs and exe.parent / 'portable' in dirs
+
+
+def test_status_carries_its_label_and_hover_text(compat_db):
+    """PASS-59-176: the server names the status once, for the game page and
+    the JS badge alike."""
+    compat_db({'BLUS30443': {'status': 'Ingame', 'date': '2024-05-01'},
+               'BLUS30444': {'status': 'Nothing', 'date': ''}})
+    got = rpcs3_compat.status_for_game(_game())
+    assert got['label'] == 'RPCS3: Ingame'
+    assert got['title'] == ('Gets in game, but cannot be finished, has serious glitches '
+                            'or runs too slowly. Last tested 2024-05-01.')
+    got = rpcs3_compat.status_for_game(_game(disc_serial='BLUS-30444'))
+    assert got['title'] == 'Does not start, or crashes the emulator.'
+
+
+def test_status_labels_are_written_once():
+    from pathlib import Path
+    root = Path(__file__).resolve().parent.parent
+    for rel in ('templates/game_detail.html', 'static/js/game-modals.js'):
+        assert 'or crashes the emulator' not in (root / rel).read_text(), rel
+
+
+def test_game_page_and_quick_view_show_the_server_text(monkeypatch, admin_test_client):
+    conn = sqlite3.connect(os.environ['RETRODB_DB_PATH'])
+    sid = conn.execute("INSERT INTO systems (name, folder) VALUES ('rpcs3 t', 'rpcs3t')").lastrowid
+    gid = conn.execute("INSERT INTO games (system_id, title, rom_path) "
+                       "VALUES (?, 'PS3 Game', '/roms/rpcs3t/G.PS3')", (sid,)).lastrowid
+    conn.commit()
+    compat = {'status': 'intro', 'date': '', 'label': 'LABEL-X', 'title': 'TITLE-Y'}
+    monkeypatch.setattr(rpcs3_compat, 'status_for_game', lambda g: dict(compat))
+    try:
+        client, _ = admin_test_client()
+        html = client.get(f'/game/{gid}').get_data(as_text=True)
+        assert 'title="TITLE-Y"' in html and 'LABEL-X' in html
+        data = client.get(f'/api/game/{gid}/detail').get_json()
+        assert data['game']['rpcs3_compat']['label'] == 'LABEL-X'
+    finally:
+        conn.execute("DELETE FROM games WHERE id = ?", (gid,))
+        conn.execute("DELETE FROM systems WHERE id = ?", (sid,))
+        conn.commit()
+        conn.close()

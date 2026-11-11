@@ -83,22 +83,13 @@ function _getPreferredRatingFromGame(game) {
 }
 
 /**
- * Badge for a PS3 game's RPCS3 compatibility status ({status, date} from the
- * server, read from the local RPCS3's list), or '' when there is none.
- * The game page renders the same badge server-side.
+ * Badge for a PS3 game's RPCS3 compatibility status ({status, label, title}
+ * from the server, read from the local RPCS3's list), or '' when there is
+ * none. The game page renders the same badge server-side.
  */
 function rpcs3CompatBadgeHtml(compat) {
-    if (!compat || !compat.status) return '';
-    const text = {
-        playable: [t('RPCS3: Playable'), t('Can be completed with playable performance and no game-breaking glitches.')],
-        ingame: [t('RPCS3: Ingame'), t('Gets in game, but cannot be finished, has serious glitches or runs too slowly.')],
-        intro: [t('RPCS3: Intro'), t('Shows an image but does not get past the menus.')],
-        loadable: [t('RPCS3: Loadable'), t('Shows a black screen with a frame rate in the window title.')],
-        nothing: [t('RPCS3: Nothing'), t('Does not start, or crashes the emulator.')],
-    }[compat.status];
-    if (!text) return '';
-    const title = compat.date ? `${text[1]} ${t('Last tested {date}.', {date: compat.date})}` : text[1];
-    return `<span class="game-badge rpcs3-compat compat-${compat.status}" title="${escapeHtml(title)}">🧩 ${escapeHtml(text[0])}</span>`;
+    if (!compat || !compat.label) return '';
+    return `<span class="game-badge rpcs3-compat compat-${escapeHtml(compat.status)}" title="${escapeHtml(compat.title)}">🧩 ${escapeHtml(compat.label)}</span>`;
 }
 
 /** Score, sales and RPCS3 badges shown after the age ratings in the quick view. */

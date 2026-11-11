@@ -28,3 +28,18 @@ def test_unscraped_games_are_counted(vdb, admin_test_client):
     html = client.get('/systems').get_data(as_text=True)
     card = html[html.index(f'/system/{vdb.sid}"'):]
     assert re.search(r'2\s*unscraped', card[:card.index('</a>')])
+
+
+def test_console_page_counts_missing_per_version_group(vdb, admin_test_client):
+    """PASS-59-176: the console page's "missing metadata" header counts a
+    version group once, as its Unscraped filter shows it once."""
+    from services import version_groups as vg
+    vg.link([vdb.game('Alpha', scraped=0),
+             vdb.game('Alpha', rom='Alpha (Japan).zip', scraped=0)])
+    vdb.game('Beta', scraped=0)
+    client, _ = admin_test_client()
+    html = client.get(f'/system/{vdb.sid}').get_data(as_text=True)
+    assert re.search(r'>\s*2\s+missing metadata', html), \
+        re.findall(r'[^>]{0,20}missing metadata', html)
+    data = client.get(f'/api/games?system={vdb.sid}&unscraped=1').get_json()
+    assert data['total'] == 2

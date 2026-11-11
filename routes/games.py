@@ -80,13 +80,15 @@ except ImportError:
 
 
 # The Library and console page headers. PASS-59-106: a version group is one
-# game, and total_roms counts rows. A BIOS set is not counted (PASS-59-227).
+# game (in total_games and total_missing), and total_roms counts rows. A BIOS
+# set is not counted (PASS-59-227).
 _LIST_COUNTS_SQL = """
     SELECT
         COUNT(DISTINCT CASE WHEN COALESCE(is_bonus_disc, 0) = 0
                             THEN COALESCE(version_group_id, -id) END) AS total_games,
         COUNT(CASE WHEN COALESCE(is_bonus_disc, 0) = 0 THEN 1 END) AS total_roms,
-        COUNT(CASE WHEN scraped = 0 AND COALESCE(is_bonus_disc, 0) = 0 THEN 1 END) AS total_missing,
+        COUNT(DISTINCT CASE WHEN scraped = 0 AND COALESCE(is_bonus_disc, 0) = 0
+                            THEN COALESCE(version_group_id, -id) END) AS total_missing,
         COUNT(CASE WHEN is_bonus_disc = 1 THEN 1 END) AS bonus_count
     FROM games
     WHERE COALESCE(arcade_category, '') != 'BIOS'

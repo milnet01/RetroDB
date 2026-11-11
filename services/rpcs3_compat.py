@@ -22,6 +22,8 @@ import time
 from pathlib import Path
 from typing import Optional
 
+from flask_babel import gettext as _
+
 from services.database import get_db_with_context, query
 
 logger = logging.getLogger(__name__)
@@ -135,12 +137,29 @@ def applies_to(game) -> bool:
     return folder == 'ps3' and bool(rom_path) and import_source_for_rom_path(rom_path) is None
 
 
+def _status_text(status):
+    """(badge label, hover text) for a status, in the reader's language."""
+    return {
+        'playable': (_('RPCS3: Playable'), _('Can be completed with playable performance and no game-breaking glitches.')),
+        'ingame': (_('RPCS3: Ingame'), _('Gets in game, but cannot be finished, has serious glitches or runs too slowly.')),
+        'intro': (_('RPCS3: Intro'), _('Shows an image but does not get past the menus.')),
+        'loadable': (_('RPCS3: Loadable'), _('Shows a black screen with a frame rate in the window title.')),
+        'nothing': (_('RPCS3: Nothing'), _('Does not start, or crashes the emulator.')),
+    }[status]
+
+
 def status_for_game(game) -> Optional[dict]:
     """The status of a games row (with system_folder, rom_path and
-    disc_serial), or None. Reads nothing from disc."""
+    disc_serial), or None. Reads nothing from disc. Adds the badge's `label`
+    and hover `title`, which the game page and the JS badge both show."""
     if not applies_to(game):
         return None
-    return status_for_serial(game['disc_serial'] if 'disc_serial' in game.keys() else None)
+    compat = status_for_serial(game['disc_serial'] if 'disc_serial' in game.keys() else None)
+    if compat:
+        compat['label'], compat['title'] = _status_text(compat['status'])
+        if compat['date']:
+            compat['title'] += ' ' + _('Last tested %(date)s.', date=compat['date'])
+    return compat
 
 
 def ensure_serial(game) -> None:
