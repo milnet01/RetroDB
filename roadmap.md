@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=301 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=302 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -988,7 +988,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: implement.
   Lanes: i18n.
 
-- 📋 [PASS-59-178] **Library-import duplicate check reads only the systems it matches (LOW, S).**
+- ✅ [PASS-59-178] **Library-import duplicate check reads only the systems it matches (LOW, S).**
   - **Why**: `routes/platform_import.py::_DuplicateIndex` normalises every
     game title in the library on each fetch-library request; before
     PR #21 it read only the target system.
@@ -996,6 +996,10 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - **Source**: code review of PR #23, 2026-10-29.
 
   ---
+  Shipped 2026-11-11 in the open 4.0.0: `_DuplicateIndex(field,
+  system_ids)` reads and normalises titles of the import's target
+  systems only; platform-ID matches still search the whole library.
+  Test: tests/test_review_routes_core.py. No changelog line.
   **Layman:** The duplicate check on Game Imports looks only at the consoles it needs, so it is faster.
   Kind: implement.
   Lanes: routes.
@@ -2715,6 +2719,18 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** A publisher such as "Majesco (licensed from Konami, ...)" shows as broken pieces like "Disney)"; it should stay one name.
   Kind: fix.
   Source: pass-59-300-walk-2026-11-11.
+
+- 📋 [PASS-59-302] **Settings > Bonus Discs gets a "Not a bonus disc" button, so a wrong Auto-Link mark can be undone (ux, S).**
+  - **Why**: the Bonus Discs panel in `templates/settings.html` can only
+    mark and link. `/api/bonus-discs/unlink/<id>` and `/api/bonus-discs/mark`
+    with `is_bonus: false` have no button, so a disc Auto-Link marked
+    wrongly stays hidden. PASS-59-262 made the server remember the answer
+    (`games.not_bonus_disc`).
+  - **Do**: list current bonus discs with a "Not a bonus disc" button
+    (editors only) calling the unmark route; translate the new strings.
+  **Layman:** You can tell RetroDB a disc is not a bonus disc, and Auto-Link will leave it alone.
+  Kind: ux.
+  Source: user, 2026-11-11 (found in PASS-59-262).
 
 ## 4.0.x — Security and data-loss fixes for the web version
 
