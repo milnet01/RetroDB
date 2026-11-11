@@ -918,7 +918,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** The Library's "Action" filter shows the same number of games as its count says.
   Kind: implement.
 
-- 📋 [PASS-59-166] **On an achievements system page, the console tabs scroll under the section tabs (FIX, S).**
+- ✅ [PASS-59-166] **On an achievements system page, the console tabs scroll under the section tabs (FIX, S).**
   - **Status**: todo
   - **Seen 2026-10-23** (Firefox, 500px, /achievements/system/8): the
     `.tool-tabs.achievement-tabs` bar and the `.system-tabs` bar are both
@@ -928,6 +928,10 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - **Verify**: scroll the page at 500px and desktop; no bar covers another.
 
   ---
+  Shipped 2026-11-11 (24feb965). .system-tabs is no longer sticky; the
+  section tabs and each achievements page's A-Z bar carry
+  data-sticky-nav, so StickyScroll stacks them. Checked at 500px and
+  1280px on a scratch server.
   **Layman:** On an achievements console page, the console tabs stop sliding under the section tabs.
   Kind: implement.
 
