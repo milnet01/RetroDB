@@ -944,7 +944,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** On a phone, filter bars stop taking up a third of the screen.
   Kind: implement.
 
-- 📋 [PASS-59-175] **Edit-form uploads stop blocking the request, and media removals wait for the save (MEDIUM, S).**
+- ✅ [PASS-59-175] **Edit-form uploads stop blocking the request, and media removals wait for the save (MEDIUM, S).**
   - **Why**: each uploaded screenshot or fanart runs
     `finalize_downloaded_image` (upscaling included) inside the edit
     POST (`services/game_media_service.py`), so several small
@@ -955,6 +955,10 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - **Source**: code review of PR #25, 2026-10-29.
 
   ---
+  Shipped 2026-11-11. Removals and replaced files are deleted after the
+  games UPDATE; boxart, 3D boxart and screenshot uploads defer upscaling
+  via upscale_queue.defer_for and list the game after the UPDATE. Tests:
+  tests/test_pass59_175_edit_media.py.
   **Layman:** Saving the edit form with uploaded pictures stops being slow, and removed pictures go only when you save.
   Kind: implement.
   Lanes: routes, media.
