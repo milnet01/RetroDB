@@ -18,7 +18,7 @@ def queue_env(tmp_path, monkeypatch):
     db = tmp_path / 'roms.db'
     conn = sqlite3.connect(db)
     conn.execute("CREATE TABLE games (id INTEGER PRIMARY KEY, boxart TEXT, "
-                 "boxart_3d TEXT, screenshots TEXT)")
+                 "boxart_3d TEXT, boxart_back TEXT, screenshots TEXT)")
     migrations._load('019_pending_upscales').apply(conn)
     conn.execute("INSERT INTO games (id, screenshots) VALUES (?, ?)",
                  (GAME_ID, 'a.png,b.png'))
@@ -83,6 +83,26 @@ def test_worker_upscales_listed_game_and_clears_it(queue_env):
     for name in ('a.png', 'b.png'):
         assert _height(tmp / 'screenshots' / name) == config.IMAGE_TARGET_HEIGHT
     assert _listed(connect) == []
+
+
+def test_worker_upscales_a_scraped_back_cover(queue_env, monkeypatch):
+    # PASS-59-304 — a scrape defers every small image, the back cover too, so
+    # the worker must take the back cover or it stays small.
+    tmp, connect = queue_env
+    (tmp / 'boxart_back').mkdir()
+    back = tmp / 'boxart_back' / 'back.png'
+    _image(back, 100)
+    monkeypatch.setattr(image_utils, '_make_responsive_variants', lambda *a: None)
+    c = connect()
+    c.execute("UPDATE games SET screenshots = NULL, boxart_back = 'back.png' WHERE id = ?",
+              (GAME_ID,))
+    c.commit()
+    c.close()
+    with upscale_queue.upscale_later(GAME_ID):
+        image_utils.standardize_downloaded_image(str(back), 'boxart_back')
+    assert _height(back) == 100
+    assert upscale_queue.run_pending() == 1
+    assert _height(back) == config.IMAGE_TARGET_HEIGHT
 
 
 def test_game_listed_again_mid_run_keeps_its_row(queue_env):

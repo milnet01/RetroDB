@@ -92,8 +92,9 @@ def test_a_bad_cached_model_is_downloaded_again(tmp_path, monkeypatch):
 def test_the_upscale_queue_ignores_a_name_outside_its_folder(tmp_path, monkeypatch):
     conn = sqlite3.connect(':memory:')
     conn.row_factory = sqlite3.Row
-    conn.execute("CREATE TABLE games (id INTEGER PRIMARY KEY, boxart TEXT, boxart_3d TEXT, screenshots TEXT)")
-    conn.execute("INSERT INTO games VALUES (1, '../../outside.png', NULL, 'ok.png,../x.png')")
+    conn.execute("CREATE TABLE games (id INTEGER PRIMARY KEY, boxart TEXT, boxart_3d TEXT, "
+                 "boxart_back TEXT, screenshots TEXT)")
+    conn.execute("INSERT INTO games VALUES (1, '../../outside.png', NULL, NULL, 'ok.png,../x.png')")
     monkeypatch.setattr(config, 'IMAGE_PATH', str(tmp_path))
     names = [os.path.basename(p) for p, _ in upscale_queue._media_files(conn, 1)]
     assert names == ['ok.png']

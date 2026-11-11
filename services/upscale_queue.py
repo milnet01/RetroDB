@@ -26,8 +26,9 @@ from services.image_utils import (
 
 logger = logging.getLogger(__name__)
 
-# The per-game media columns a scrape fills. Fanart is never standardized.
-_MEDIA_FIELDS = ('boxart', 'boxart_3d', 'screenshots')
+# The per-game media columns whose small images a scrape leaves for this
+# worker. Fanart is never standardized, and a logo is shown at its own size.
+_MEDIA_FIELDS = ('boxart', 'boxart_3d', 'boxart_back', 'screenshots')
 
 # How long the idle worker sleeps before looking at the table again. An
 # enqueue in this process wakes it at once; this catches rows another process

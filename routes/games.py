@@ -533,13 +533,20 @@ def game_detail(game_id):
 
                     # Files go only once the UPDATE below no longer points
                     # at them, so a failed save loses no picture (PASS-59-175):
-                    # a ticked removal, and the file an upload replaces when
-                    # no other game uses it.
+                    # a ticked removal, and the file an upload replaces. A
+                    # file another game also names stays (PASS-59-303).
                     to_delete = []
+
+                    def _drop_later(filename, media_type):
+                        if not query(
+                                f"SELECT 1 FROM games WHERE "
+                                f"{safe_column(media_type, ('boxart', 'boxart_3d', 'boxart_back', 'fanart', 'game_logo', 'video'))} = ? AND id != ?",
+                                (filename, game_id), one=True):
+                            to_delete.append((filename, media_type))
 
                     def _remove(field, media_type, current):
                         if request.form.get(field) == '1' and current:
-                            to_delete.append((current, media_type))
+                            _drop_later(current, media_type)
                             return ''
                         return current
 
@@ -564,11 +571,8 @@ def game_detail(game_id):
                         if not uploaded:
                             return current
                         upscale_after_save |= deferred
-                        if current and current != uploaded and not query(
-                                f"SELECT 1 FROM games WHERE "
-                                f"{safe_column(media_type, ('boxart', 'boxart_3d', 'boxart_back', 'fanart', 'game_logo'))} = ? AND id != ?",
-                                (current, game_id), one=True):
-                            to_delete.append((current, media_type))
+                        if current and current != uploaded:
+                            _drop_later(current, media_type)
                         return uploaded
 
                     boxart_filename = _upload('custom_boxart', 'boxart', 'custom', boxart_filename)

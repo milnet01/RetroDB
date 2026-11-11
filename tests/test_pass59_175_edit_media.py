@@ -78,6 +78,26 @@ def test_removed_boxart_goes_after_a_save(admin_test_client, edit_game):
     assert not os.path.exists(path)
 
 
+def test_removed_boxart_kept_while_another_game_uses_it(admin_test_client, edit_game):
+    # PASS-59-303 — two games may name one file; removing it from one game
+    # must leave it for the other, as replacing it already does.
+    from services.database import execute, query
+    game_id, folder, row = edit_game
+    client, csrf = admin_test_client()
+    name, path = _stored_boxart(game_id, folder)
+    system_id = row()['system_id']
+    other = execute("INSERT INTO games (system_id, title, rom_path, boxart) VALUES (?, ?, ?, ?)",
+                    (system_id, 'Edit Media Twin', '/tmp/edit-media-twin.bin', name))
+    try:
+        rv = _post(client, csrf, game_id, remove_boxart='1')
+        assert rv.status_code == 200
+        assert row()['boxart'] is None
+        assert query("SELECT boxart FROM games WHERE id = ?", (other,), one=True)['boxart'] == name
+        assert os.path.exists(path), 'the other game lost its picture'
+    finally:
+        execute("DELETE FROM games WHERE id = ?", (other,))
+
+
 def test_small_upload_is_upscaled_later(admin_test_client, edit_game):
     import services.upscale_queue as upscale_queue
     game_id, _folder, row = edit_game

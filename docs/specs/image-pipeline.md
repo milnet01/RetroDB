@@ -278,7 +278,8 @@ When the apply ends, the game is listed in the `pending_upscales` table
 (migration 019). Screenshot dedup (§8) has already run by then, so a
 duplicate is never upscaled. The `upscale-queue` thread starts with the
 server, beside the PSN keep-alive. For each listed game it standardizes
-every boxart, 3D boxart and screenshot the game names, regenerates
+every boxart, 3D boxart, back cover and screenshot the game names (back
+covers since PASS-59-304), regenerates
 variants, and deletes the row. It logs one `Upscale queue:` line per game
 with the image count and seconds taken.
 
@@ -292,12 +293,12 @@ with the image count and seconds taken.
   variants, the worker checks the game still names the file and the file
   is still there; if not, it saves nothing, so a clear mid-upscale leaves
   no orphan. `forget_cleared()` deletes the rows of games that name no
-  boxart, 3D boxart or screenshot, or no longer exist. Maintenance "Clear
+  boxart, 3D boxart, back cover or screenshot, or no longer exist. Maintenance "Clear
   scraped data", the edit window's save, screenshot delete and game
   delete call it.
 - **Scope.** Only those two entry points and the Edit form's save defer.
-  The Edit form (PASS-59-175) defers a boxart, 3D boxart or screenshot
-  upload through `upscale_queue.defer_for` and lists the game after its
+  The Edit form (PASS-59-175) defers a boxart, 3D boxart, back cover or
+  screenshot upload through `upscale_queue.defer_for` and lists the game after its
   UPDATE. Other admin uploads, museum images and `ImageResizeJob`
   upscale inline as before. A thread started
   without `contextvars.copy_context()` does not inherit the switch and
