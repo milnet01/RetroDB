@@ -16,9 +16,14 @@ from tests._versions_util import vdb  # noqa: F401 — fixture
 
 @pytest.fixture(autouse=True)
 def _fresh_aliases():
-    # A merge is cached for a while; never let one reach another test.
+    # A merge is cached for a while and saved in the shared test database;
+    # never let one reach another test ("Acclaim" broke the PASS-59-213 test).
     normalization.invalidate_normalization_cache()
     yield
+    with normalization.get_db_with_context() as db:
+        db.execute("DELETE FROM normalization_rules WHERE category = ?",
+                   (normalization.COMPANY_RULES,))
+        db.commit()
     normalization.invalidate_normalization_cache()
 
 
