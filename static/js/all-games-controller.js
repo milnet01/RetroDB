@@ -35,8 +35,23 @@ const AllGamesController = (function() {
     // services/normalization.py.
     const COMPANY_SUFFIX = /^(?:ltd|limited|inc|incorporated|co|corp|corporation|llc|l\.l\.c|plc|gmbh|ag|s\.?a|s\.?a\.?s|s\.?l|s\.?r\.?l|b\.?v|n\.?v|pty|k\.?k|oy|ab)\.?$/i;
 
+    // A comma inside () or [] is part of the name: "Majesco (licensed from
+    // Konami, Disney)" (PASS-59-301). Same rule as _split_outside_brackets.
+    function splitOutsideBrackets(text) {
+        const parts = [];
+        let start = 0, depth = 0;
+        for (let i = 0; i < text.length; i++) {
+            const ch = text[i];
+            if (ch === '(' || ch === '[') depth++;
+            else if (ch === ')' || ch === ']') depth = Math.max(depth - 1, 0);
+            else if (ch === ',' && depth === 0) { parts.push(text.slice(start, i)); start = i + 1; }
+        }
+        parts.push(text.slice(start));
+        return parts;
+    }
+
     function firstCompany(text) {
-        const parts = text.split(',').map(p => p.trim()).filter(p => p);
+        const parts = splitOutsideBrackets(text).map(p => p.trim()).filter(p => p);
         let name = parts[0] || '';
         for (const part of parts.slice(1)) {
             if (!COMPANY_SUFFIX.test(part)) break;

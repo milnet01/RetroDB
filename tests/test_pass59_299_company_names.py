@@ -20,6 +20,12 @@ from tests._versions_util import vdb  # noqa: F401 — fixture
     ('Konami, Capcom', ['Konami', 'Capcom']),
     ('Ltd., Foo', ['Ltd.', 'Foo']),       # nothing before it to belong to
     ('Coconut, Incredible', ['Coconut', 'Incredible']),  # whole words only
+    # PASS-59-301: a comma inside brackets is part of the name.
+    ('Majesco (licensed from Konami, Disney)', ['Majesco (licensed from Konami, Disney)']),
+    ('Orca (Esco Trading Co., Inc. license), Sega',
+     ['Orca (Esco Trading Co., Inc. license)', 'Sega']),
+    ('Foo [Bar, Baz], Qux', ['Foo [Bar, Baz]', 'Qux']),
+    ('Foo), Bar', ['Foo)', 'Bar']),       # a stray closer does not swallow the rest
     ('', []),
     (None, []),
 ])

@@ -538,10 +538,29 @@ _COMPANY_SUFFIX = re.compile(
     r'|s\.?a|s\.?a\.?s|s\.?l|s\.?r\.?l|b\.?v|n\.?v|pty|k\.?k|oy|ab)\.?', re.IGNORECASE)
 
 
+def _split_outside_brackets(text):
+    """Parts of text between the commas that are not inside () or [] (PASS-59-301).
+
+    "Majesco (licensed from Konami, Disney)" is one name. A stray closing
+    bracket is ignored, so it cannot hide every comma after it.
+    """
+    parts, start, depth = [], 0, 0
+    for i, ch in enumerate(text):
+        if ch in '([':
+            depth += 1
+        elif ch in ')]':
+            depth = max(depth - 1, 0)
+        elif ch == ',' and depth == 0:
+            parts.append(text[start:i])
+            start = i + 1
+    parts.append(text[start:])
+    return parts
+
+
 def split_names(value):
     """A comma-separated name list as names, each company suffix kept with its name."""
     names = []
-    for part in str(value or '').split(','):
+    for part in _split_outside_brackets(str(value or '')):
         part = part.strip()
         if not part:
             continue
