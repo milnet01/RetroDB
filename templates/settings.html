@@ -1881,6 +1881,7 @@ function autoLinkBonusDiscs() {
                 showNotification(t({{ _('Bonus discs linked to parent games: {count}')|tojson }}, {count: data.linked}), 'success');
                 // Refresh the detected list
                 detectBonusDiscs();
+                loadCurrentBonusDiscs();
             } else {
                 showNotification(t({{ _('Auto-link failed: {error}')|tojson }}, {error: data.error}), 'error');
             }
@@ -1933,6 +1934,7 @@ function markAsBonusDisc(gameId) {
         if (data.success) {
             showNotification({{ _('Game marked as bonus disc')|tojson }}, 'success');
             detectBonusDiscs(); // Refresh list
+            loadCurrentBonusDiscs();
         } else {
             showNotification(t({{ _('Failed: {error}')|tojson }}, {error: data.error}), 'error');
         }
@@ -1980,12 +1982,82 @@ function linkBonusToParent(bonusId, parentId) {
             showNotification(data.message, 'success');
             closeModal();
             detectBonusDiscs(); // Refresh list
+            loadCurrentBonusDiscs();
         } else {
             showNotification(t({{ _('Failed: {error}')|tojson }}, {error: data.error}), 'error');
         }
     })
     .catch(e => showNotification(t({{ _('Error: {error}')|tojson }}, {error: e}), 'error'));
 }
+
+// The discs now marked, each with a "Not a bonus disc" button for editors
+// (PASS-59-302). Unmarking sets games.not_bonus_disc, so Auto-Link skips it.
+function loadCurrentBonusDiscs() {
+    const listDiv = document.getElementById('currentBonusDiscs');
+    if (!listDiv) return;
+    fetch('/api/bonus-discs/stats')
+        .then(r => r.json())
+        .then(data => {
+            if (!data.success) {
+                listDiv.textContent = t({{ _('Failed to load: {error}')|tojson }}, {error: data.error});
+                return;
+            }
+            if (data.bonus_discs.length === 0) {
+                listDiv.innerHTML = `<span class="text-muted">${escapeHtml({{ _('No games are marked as bonus discs.')|tojson }})}</span>`;
+                return;
+            }
+            const notLinked = {{ _('Not linked to a game')|tojson }};
+            let html = '<div style="max-height: 400px; overflow-y: auto;">';
+            data.bonus_discs.forEach(disc => {
+                const parent = disc.parent_title
+                    ? escapeHtml(t({{ _('Bonus disc of {title}')|tojson }}, {title: disc.parent_title}))
+                    : escapeHtml(notLinked);
+                const button = window.IS_EDITOR
+                    ? `<button type="button" class="btn btn-sm btn-secondary" data-on-click="unmarkBonusDisc" data-args="${actionArgs(disc.id, '$this')}">
+                           ${escapeHtml({{ _('Not a bonus disc')|tojson }})}
+                       </button>`
+                    : '';
+                html += `
+                    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--spacing-sm); padding: var(--spacing-sm); border-bottom: 1px solid var(--card-border);">
+                        <div style="flex: 1 1 12rem; min-width: 0;">
+                            <strong>${escapeHtml(disc.title)}</strong>
+                            <span class="badge badge-secondary" style="margin-left: var(--spacing-sm); font-size: 0.7rem;">${escapeHtml(disc.system_name || '')}</span>
+                            <br><span class="text-muted" style="font-size: 0.85rem;">${parent}</span>
+                        </div>
+                        <div style="flex-shrink: 0;">${button}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            listDiv.innerHTML = html;
+        })
+        .catch(e => { listDiv.textContent = t({{ _('Error: {error}')|tojson }}, {error: e}); });
+}
+
+function unmarkBonusDisc(gameId, btn) {
+    btn.disabled = true;  // the reply can take seconds while the page's scraper checks run
+    fetch('/api/bonus-discs/mark', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ game_id: gameId, is_bonus: false })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            showNotification({{ _('Back in your game lists. Auto-Link will leave it alone.')|tojson }}, 'success');
+            loadCurrentBonusDiscs();
+        } else {
+            btn.disabled = false;
+            showNotification(t({{ _('Failed: {error}')|tojson }}, {error: data.error}), 'error');
+        }
+    })
+    .catch(e => {
+        btn.disabled = false;
+        showNotification(t({{ _('Error: {error}')|tojson }}, {error: e}), 'error');
+    });
+}
+
+document.addEventListener('DOMContentLoaded', loadCurrentBonusDiscs);
 
 // =============================================================================
 // DATABASE BACKUP & RESTORE

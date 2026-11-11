@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-11 17:03+0200\n"
+"POT-Creation-Date: 2026-11-11 21:21+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant\n"
@@ -193,7 +193,7 @@ msgid "System not found or has no achievement games"
 msgstr "未找到系統，或該系統沒有包含成就的遊戲"
 
 #: routes/achievements.py:177 routes/achievements.py:468
-#: routes/bonus_discs.py:273 routes/bulk_scrape.py:48 routes/cheats.py:32
+#: routes/bonus_discs.py:276 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
 #: routes/emulators.py:306 routes/emulators.py:320 routes/games.py:396
 #: routes/games.py:930 routes/games.py:1049 routes/games.py:1130
@@ -240,8 +240,8 @@ msgstr "此系統中沒有帶 RetroAchievements 的遊戲"
 msgid "Sync already in progress for %(name)s"
 msgstr "%(name)s 的同步已在進行中"
 
-#: routes/achievements.py:392 routes/platform_import.py:392
-#: routes/platform_import.py:695 routes/ra_sync.py:146
+#: routes/achievements.py:392 routes/platform_import.py:398
+#: routes/platform_import.py:701 routes/ra_sync.py:146
 msgid "That job belongs to another user"
 msgstr "該工作屬於其他使用者"
 
@@ -552,25 +552,25 @@ msgstr "上傳頭像需要 Pillow；請聯絡操作員安裝專案相依套件�
 msgid "Invalid image file"
 msgstr "無效的圖片檔案"
 
-#: routes/bonus_discs.py:193
+#: routes/bonus_discs.py:196
 msgid "Bonus disc not found"
 msgstr "未找到附贈光碟"
 
-#: routes/bonus_discs.py:195
+#: routes/bonus_discs.py:198
 msgid "Parent game not found"
 msgstr "未找到父遊戲"
 
-#: routes/bonus_discs.py:197
+#: routes/bonus_discs.py:200
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "附贈光碟與主遊戲必須屬於同一系統"
 
-#: routes/bonus_discs.py:204
+#: routes/bonus_discs.py:207
 msgid "A bonus disc links to a main game, one level only"
 msgstr "額外光碟可連結到一款主遊戲,且僅限一層"
 
-#: routes/bonus_discs.py:219 routes/bonus_discs.py:237 routes/games.py:1400
-#: routes/games.py:1430 routes/platform_import.py:355
-#: routes/platform_import.py:660 routes/platform_import.py:1044
+#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1400
+#: routes/games.py:1430 routes/platform_import.py:361
+#: routes/platform_import.py:666 routes/platform_import.py:1050
 #: routes/scrape_logs.py:89 routes/scrape_logs.py:174 routes/scrape_logs.py:187
 #: routes/scrape_logs.py:225 routes/scraper.py:204 routes/scraper.py:535
 #: routes/scraper.py:926 routes/settings.py:327 routes/settings.py:351
@@ -584,18 +584,18 @@ msgstr "額外光碟可連結到一款主遊戲,且僅限一層"
 msgid "An internal error occurred"
 msgstr "發生內部錯誤"
 
-#: routes/bonus_discs.py:286 routes/bonus_discs.py:317
+#: routes/bonus_discs.py:289 routes/bonus_discs.py:320
 #: routes/controllers.py:216 routes/controllers.py:280
 #: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:231
 #: routes/settings.py:474 routes/settings.py:557 routes/systems.py:185
 msgid "Request body must be a JSON object"
 msgstr "請求正文必須是 JSON 物件"
 
-#: routes/bonus_discs.py:291
+#: routes/bonus_discs.py:294
 msgid "Missing bonus_id or parent_id"
 msgstr "缺少 bonus_id 或 parent_id"
 
-#: routes/bonus_discs.py:322 routes/reports.py:835
+#: routes/bonus_discs.py:325 routes/reports.py:835
 msgid "Missing game_id"
 msgstr "缺少 game_id"
 
@@ -842,8 +842,8 @@ msgstr "套用中繼資料失敗。"
 msgid "No fields to update"
 msgstr "沒有可更新的欄位"
 
-#: routes/games.py:1208 routes/platform_import.py:261
-#: routes/platform_import.py:566 routes/platform_import.py:930
+#: routes/games.py:1208 routes/platform_import.py:267
+#: routes/platform_import.py:572 routes/platform_import.py:936
 #: routes/trophies.py:1928 templates/game_imports.html:579
 #: templates/game_imports.html:852
 msgid "No games selected"
@@ -1148,63 +1148,63 @@ msgstr "未找到圖片檔案"
 msgid "Background removal failed"
 msgstr "背景移除失敗"
 
-#: routes/platform_import.py:193
+#: routes/platform_import.py:199
 msgid "No Steam key yet. Add yours under Settings → My Profile."
 msgstr "還沒有 Steam 金鑰。請在 設定 → 我的資料 中加入你自己的。"
 
-#: routes/platform_import.py:195
+#: routes/platform_import.py:201
 msgid "No Steam ID yet. Add yours under Settings → My Profile."
 msgstr "還沒有 Steam ID。請在 設定 → 我的資料 中加入你自己的。"
 
-#: routes/platform_import.py:201
+#: routes/platform_import.py:207
 #, python-format
 msgid ""
 "Could not resolve Steam vanity URL \"%(steam_id)s\". Use your 17-digit "
 "Steam ID instead."
 msgstr "無法解析 Steam 個性網址「%(steam_id)s」。請改用你的 17 位 Steam ID。"
 
-#: routes/platform_import.py:207
+#: routes/platform_import.py:213
 msgid ""
 "No games found. Check that your Steam profile and game details are set to"
 " Public."
 msgstr "未找到遊戲。請檢查您的 Steam 個人資料和遊戲詳情是否設定為公開。"
 
-#: routes/platform_import.py:266
+#: routes/platform_import.py:272
 msgid "Could not create Windows system entry"
 msgstr "無法建立 Windows 系統項目"
 
-#: routes/platform_import.py:412 templates/settings.html:5049
+#: routes/platform_import.py:418 templates/settings.html:5116
 msgid "Paste your OpenXBL key first."
 msgstr "請先貼上你的 OpenXBL 金鑰。"
 
-#: routes/platform_import.py:417
+#: routes/platform_import.py:423
 msgid "OpenXBL did not accept that key. Copy it again from xbl.io."
 msgstr "OpenXBL 不接受此金鑰。請從 xbl.io 重新複製。"
 
-#: routes/platform_import.py:421 routes/platform_import.py:481
+#: routes/platform_import.py:427 routes/platform_import.py:487
 #: routes/xbox_achievements.py:137
 #, python-format
 msgid "OpenXBL's hourly limit was reached. Try again in %(minutes)s minutes."
 msgstr "已達到 OpenXBL 每小時的請求上限。請在 %(minutes)s 分鐘後再試。"
 
-#: routes/platform_import.py:423 routes/platform_import.py:483
+#: routes/platform_import.py:429 routes/platform_import.py:489
 msgid "OpenXBL did not answer. Try again later."
 msgstr "OpenXBL 沒有回應。請稍後再試。"
 
-#: routes/platform_import.py:475 routes/xbox_achievements.py:123
+#: routes/platform_import.py:481 routes/xbox_achievements.py:123
 #: services/jobs/platform_sync.py:783
 msgid "Add your OpenXBL key in Settings > My Profile first."
 msgstr "請先在「設定 > 我的資料」中新增你的 OpenXBL 金鑰。"
 
-#: routes/platform_import.py:485
+#: routes/platform_import.py:491
 msgid "No games found in Xbox title history."
 msgstr "在 Xbox 遊戲歷史記錄中未找到遊戲。"
 
-#: routes/platform_import.py:770
+#: routes/platform_import.py:776
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr "尚未設定 PSN NPSSO。請在「設定 → API 金鑰」中新增。"
 
-#: routes/platform_import.py:797
+#: routes/platform_import.py:803
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr "取得 PSN 遊戲清單失敗。請先嘗試同步獎盃。"
 
@@ -1418,7 +1418,7 @@ msgstr "無效的 %(field)s：%(result)s"
 
 #: routes/settings.py:514 routes/settings.py:588 routes/settings.py:637
 #: routes/tools.py:301 services/js_i18n_strings.py:778
-#: templates/settings.html:1150 templates/settings.html:2676
+#: templates/settings.html:1150 templates/settings.html:2743
 msgid "Failed to save settings"
 msgstr "儲存設定失敗"
 
@@ -2252,7 +2252,7 @@ msgstr ""
 msgid "Are you sure you want to cancel?"
 msgstr "確定要取消嗎？"
 
-#: services/js_i18n_strings.py:630 templates/settings.html:4854
+#: services/js_i18n_strings.py:630 templates/settings.html:4921
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "確定要刪除「{filename}」嗎？"
@@ -2660,7 +2660,7 @@ msgstr "目前設定"
 msgid "Default emulator for {system}"
 msgstr "{system} 的預設模擬器"
 
-#: services/js_i18n_strings.py:719 templates/settings.html:4854
+#: services/js_i18n_strings.py:719 templates/settings.html:4921
 msgid "Delete Log File"
 msgstr "刪除日誌檔案"
 
@@ -2821,21 +2821,21 @@ msgstr "請輸入一個資料夾路徑。"
 #: templates/multi_disc_organizer.html:371 templates/reports.html:1144
 #: templates/reports.html:1147 templates/reports.html:1213
 #: templates/reports.html:1216 templates/rom_tools_settings.html:579
-#: templates/rom_tools_settings.html:582 templates/settings.html:2854
-#: templates/settings.html:2858 templates/settings.html:2877
-#: templates/settings.html:2881 templates/settings.html:3479
-#: templates/settings.html:3483 templates/settings.html:3551
-#: templates/settings.html:3555 templates/settings.html:3586
-#: templates/settings.html:3590 templates/settings.html:3616
-#: templates/settings.html:3620 templates/settings.html:4114
-#: templates/settings.html:4118 templates/settings.html:4136
-#: templates/settings.html:4167 templates/settings.html:4227
-#: templates/settings.html:4231 templates/settings.html:4361
-#: templates/settings.html:4365 templates/settings.html:4391
-#: templates/settings.html:4395 templates/settings.html:4842
-#: templates/settings.html:4845 templates/settings.html:4864
-#: templates/settings.html:4867 templates/settings.html:4882
-#: templates/settings.html:4885
+#: templates/rom_tools_settings.html:582 templates/settings.html:2921
+#: templates/settings.html:2925 templates/settings.html:2944
+#: templates/settings.html:2948 templates/settings.html:3546
+#: templates/settings.html:3550 templates/settings.html:3618
+#: templates/settings.html:3622 templates/settings.html:3653
+#: templates/settings.html:3657 templates/settings.html:3683
+#: templates/settings.html:3687 templates/settings.html:4181
+#: templates/settings.html:4185 templates/settings.html:4203
+#: templates/settings.html:4234 templates/settings.html:4294
+#: templates/settings.html:4298 templates/settings.html:4428
+#: templates/settings.html:4432 templates/settings.html:4458
+#: templates/settings.html:4462 templates/settings.html:4909
+#: templates/settings.html:4912 templates/settings.html:4931
+#: templates/settings.html:4934 templates/settings.html:4949
+#: templates/settings.html:4952
 msgid "Error"
 msgstr "錯誤"
 
@@ -2971,8 +2971,8 @@ msgstr "更新完成狀態失敗:{error}"
 msgid "Failed to update status: {error}"
 msgstr "更新狀態失敗：{error}"
 
-#: services/js_i18n_strings.py:784 templates/settings.html:1937
-#: templates/settings.html:1984
+#: services/js_i18n_strings.py:784 templates/settings.html:1939
+#: templates/settings.html:1987 templates/settings.html:2049
 #, python-brace-format
 msgid "Failed: {error}"
 msgstr "失敗：{error}"
@@ -3287,8 +3287,8 @@ msgstr "正在載入日誌檔案…"
 msgid "Loading the manual…"
 msgstr "正在載入手冊…"
 
-#: services/js_i18n_strings.py:855 templates/settings_emulators.html:201
-#: templates/settings_emulators.html:219
+#: services/js_i18n_strings.py:855 templates/_settings_tabs/library.html:284
+#: templates/settings_emulators.html:201 templates/settings_emulators.html:219
 msgid "Loading…"
 msgstr "載入中…"
 
@@ -3772,8 +3772,8 @@ msgstr "要移除 3D 包裝盒嗎？"
 #: templates/game_detail.html:4655 templates/game_detail.html:4739
 #: templates/game_detail.html:4823 templates/game_detail.html:4951
 #: templates/rom_tools_settings.html:462 templates/rom_tools_settings.html:501
-#: templates/settings.html:1571 templates/settings.html:2973
-#: templates/settings.html:3369
+#: templates/settings.html:1571 templates/settings.html:3040
+#: templates/settings.html:3436
 #, python-brace-format
 msgid "Remove {name}"
 msgstr ""
@@ -4400,7 +4400,7 @@ msgid "Unhandled rejection: {error}"
 msgstr "未處理的拒絕:{error}"
 
 #: services/js_i18n_strings.py:1098 templates/rom_tools_settings.html:579
-#: templates/settings.html:1965 templates/setup.html:372
+#: templates/settings.html:1967 templates/setup.html:372
 #: templates/setup.html:432
 msgid "Unknown error"
 msgstr "未知錯誤"
@@ -4448,7 +4448,7 @@ msgstr "上傳"
 msgid "Upload Controller Image"
 msgstr "上傳手把圖片"
 
-#: services/js_i18n_strings.py:1107 templates/settings.html:5171
+#: services/js_i18n_strings.py:1107 templates/settings.html:5238
 msgid "Upload failed"
 msgstr "上傳失敗"
 
@@ -6284,8 +6284,8 @@ msgid "Processed"
 msgstr "已處理"
 
 #: templates/archive_scanner.html:782 templates/game_detail.html:4086
-#: templates/reports.html:497 templates/settings.html:3477
-#: templates/settings.html:4225 templates/settings.html:4879
+#: templates/reports.html:497 templates/settings.html:3544
+#: templates/settings.html:4292 templates/settings.html:4946
 msgid "Success"
 msgstr "成功"
 
@@ -9494,10 +9494,11 @@ msgid "No match found."
 msgstr "找不到配對。"
 
 #: templates/local_trophy_detail.html:429 templates/settings.html:1852
-#: templates/settings.html:1888 templates/settings.html:1922
-#: templates/settings.html:1940 templates/settings.html:1965
-#: templates/settings.html:1968 templates/settings.html:1987
-#: templates/settings.html:2081 templates/steam_achievement_game.html:302
+#: templates/settings.html:1889 templates/settings.html:1923
+#: templates/settings.html:1942 templates/settings.html:1967
+#: templates/settings.html:1970 templates/settings.html:1990
+#: templates/settings.html:2034 templates/settings.html:2052
+#: templates/settings.html:2148 templates/steam_achievement_game.html:302
 #: templates/xbox_achievement_game.html:293
 #, python-brace-format
 msgid "Error: {error}"
@@ -11531,74 +11532,100 @@ msgstr "偵測失敗：{error}"
 msgid "Bonus discs linked to parent games: {count}"
 msgstr "已連結到主遊戲的額外光碟：{count}"
 
-#: templates/settings.html:1885
+#: templates/settings.html:1886
 #, python-brace-format
 msgid "Auto-link failed: {error}"
 msgstr "自動連結失敗：{error}"
 
-#: templates/settings.html:1907
+#: templates/settings.html:1908
 msgid "Bonus Disc Statistics"
 msgstr "額外光碟統計"
 
-#: templates/settings.html:1910
+#: templates/settings.html:1911
 msgid "Total Bonus Discs:"
 msgstr "額外光碟總數："
 
-#: templates/settings.html:1911
+#: templates/settings.html:1912
 msgid "Linked to Parent:"
 msgstr "已連結到主遊戲："
 
-#: templates/settings.html:1912
+#: templates/settings.html:1913
 msgid "Unlinked:"
 msgstr "未連結："
 
-#: templates/settings.html:1913
+#: templates/settings.html:1914
 msgid "Games with Bonus Content:"
 msgstr "含額外內容的遊戲："
 
-#: templates/settings.html:1919
+#: templates/settings.html:1920
 #, python-brace-format
 msgid "Failed to load stats: {error}"
 msgstr "無法載入統計資料：{error}"
 
-#: templates/settings.html:1934
+#: templates/settings.html:1935
 msgid "Game marked as bonus disc"
 msgstr "遊戲已標記為額外光碟"
 
-#: templates/settings.html:1955
+#: templates/settings.html:1957
 msgid "Select Parent Game"
 msgstr "選擇主遊戲"
 
-#: templates/settings.html:1956
+#: templates/settings.html:1958
 msgid "Choose the parent game for this bonus disc:"
 msgstr "請為這張額外光碟選擇主遊戲："
 
-#: templates/settings.html:1963
+#: templates/settings.html:1965
 msgid ""
 "No potential parent games found. Try using \"Mark\" instead to just hide "
 "this from listings."
 msgstr "找不到可能的主遊戲。請改用「標記」，只將它從列表中隱藏。"
 
-#: templates/settings.html:2003
+#: templates/settings.html:2002
+#, python-brace-format
+msgid "Failed to load: {error}"
+msgstr "載入失敗：{error}"
+
+#: templates/settings.html:2006
+msgid "No games are marked as bonus discs."
+msgstr "沒有遊戲被標為附贈光碟。"
+
+#: templates/settings.html:2009
+msgid "Not linked to a game"
+msgstr "未連結到遊戲"
+
+#: templates/settings.html:2013
+#, python-brace-format
+msgid "Bonus disc of {title}"
+msgstr "{title} 的附贈光碟"
+
+#: templates/settings.html:2017
+msgid "Not a bonus disc"
+msgstr "不是附贈光碟"
+
+#: templates/settings.html:2046
+msgid "Back in your game lists. Auto-Link will leave it alone."
+msgstr "已回到你的遊戲清單。Auto-Link 不會再動它。"
+
+#: templates/settings.html:2070
 #, python-brace-format
 msgid "Backup created: {filename} ({size})"
 msgstr "已建立備份：{filename}（{size}）"
 
-#: templates/settings.html:2006
+#: templates/settings.html:2073
 #, python-brace-format
 msgid "Backup failed: {error}"
 msgstr "備份失敗：{error}"
 
-#: templates/settings.html:2009
+#: templates/settings.html:2076
 #, python-brace-format
 msgid "Backup error: {error}"
 msgstr "備份錯誤：{error}"
 
-#: templates/settings.html:2050
+#: templates/settings.html:2117
 msgid "Restore Backup"
 msgstr "還原備份"
 
-#: templates/settings.html:2051
+#: templates/settings.html:2118
 #, python-brace-format
 msgid ""
 "Are you sure you want to restore from \"{filename}\"?\n"
@@ -11610,166 +11637,166 @@ msgstr ""
 "\n"
 "這會取代你目前的資料庫。系統會自動先建立一份還原前備份。"
 
-#: templates/settings.html:2057
+#: templates/settings.html:2124
 msgid "Database restored! Reloading page..."
 msgstr "資料庫已還原！正在重新載入頁面…"
 
-#: templates/settings.html:2061
+#: templates/settings.html:2128
 #, python-brace-format
 msgid "Restore failed: {error}"
 msgstr "還原失敗：{error}"
 
-#: templates/settings.html:2064
+#: templates/settings.html:2131
 #, python-brace-format
 msgid "Restore error: {error}"
 msgstr "還原錯誤：{error}"
 
-#: templates/settings.html:2071
+#: templates/settings.html:2138
 msgid "Calculating file sizes..."
 msgstr "正在計算檔案大小…"
 
-#: templates/settings.html:2078
+#: templates/settings.html:2145
 #, python-brace-format
 msgid "Calculation failed: {error}"
 msgstr "計算失敗：{error}"
 
-#: templates/settings.html:2228
+#: templates/settings.html:2295
 msgid "Failed to save scraper setting"
 msgstr "無法儲存抓取器設定"
 
-#: templates/settings.html:2240
+#: templates/settings.html:2307
 msgid "AI Metadata"
 msgstr "AI 中繼資料"
 
-#: templates/settings.html:2241
+#: templates/settings.html:2308
 #, python-brace-format
 msgid "{name} enabled"
 msgstr "{name} 已啟用"
 
-#: templates/settings.html:2241
+#: templates/settings.html:2308
 #, python-brace-format
 msgid "{name} disabled"
 msgstr "{name} 已停用"
 
-#: templates/settings.html:2350
+#: templates/settings.html:2417
 msgid "Testing…"
 msgstr "正在測試…"
 
-#: templates/settings.html:2355
+#: templates/settings.html:2422
 #, python-format
 msgid "The key works: %(provider)s answered, using %(model)s."
 msgstr "金鑰有效：%(provider)s 已使用 %(model)s 回應。"
 
-#: templates/settings.html:2360
+#: templates/settings.html:2427
 msgid "The key test failed."
 msgstr "金鑰測試失敗。"
 
-#: templates/settings.html:2837
+#: templates/settings.html:2904
 msgid "Invalid Input"
 msgstr "輸入無效"
 
-#: templates/settings.html:2837
+#: templates/settings.html:2904
 msgid "Please enter a value"
 msgstr "請輸入一個值"
 
-#: templates/settings.html:2854 templates/settings.html:2858
+#: templates/settings.html:2921 templates/settings.html:2925
 msgid "Failed to add option"
 msgstr "新增選項失敗"
 
-#: templates/settings.html:2864
+#: templates/settings.html:2931
 msgid "Delete Option"
 msgstr "刪除選項"
 
-#: templates/settings.html:2865
+#: templates/settings.html:2932
 msgid "Are you sure you want to delete this option?"
 msgstr "確定要刪除這個選項嗎?"
 
-#: templates/settings.html:2877 templates/settings.html:2881
+#: templates/settings.html:2944 templates/settings.html:2948
 msgid "Failed to delete option"
 msgstr "刪除選項失敗"
 
-#: templates/settings.html:3433 templates/settings.html:4187
+#: templates/settings.html:3500 templates/settings.html:4254
 msgid "Missing Input"
 msgstr "缺少輸入內容"
 
-#: templates/settings.html:3433 templates/settings.html:4187
+#: templates/settings.html:3500 templates/settings.html:4254
 msgid "Please enter a controller name"
 msgstr "請輸入手把名稱"
 
-#: templates/settings.html:3477
+#: templates/settings.html:3544
 #, python-brace-format
 msgid "Controller \"{name}\" has been added to the library."
 msgstr "手把「{name}」已加入遊戲庫。"
 
-#: templates/settings.html:3479 templates/settings.html:3483
+#: templates/settings.html:3546 templates/settings.html:3550
 msgid "Failed to add controller"
 msgstr "新增手把失敗"
 
-#: templates/settings.html:3551 templates/settings.html:3555
+#: templates/settings.html:3618 templates/settings.html:3622
 msgid "Failed to set default controller"
 msgstr "設定預設手把失敗"
 
-#: templates/settings.html:3586 templates/settings.html:3590
+#: templates/settings.html:3653 templates/settings.html:3657
 msgid "Failed to add default controller"
 msgstr "新增預設手把失敗"
 
-#: templates/settings.html:3616 templates/settings.html:3620
+#: templates/settings.html:3683 templates/settings.html:3687
 msgid "Failed to remove default controller"
 msgstr "移除預設手把失敗"
 
-#: templates/settings.html:3723
+#: templates/settings.html:3790
 msgid "ALL SYSTEMS"
 msgstr "所有系統"
 
-#: templates/settings.html:3727
+#: templates/settings.html:3794
 msgid "Clear Scraped Data"
 msgstr "清除抓取的資料"
 
-#: templates/settings.html:3728
+#: templates/settings.html:3795
 #, python-brace-format
 msgid "This will clear all scraped metadata from games in {system}."
 msgstr "這會清除{system}中所有遊戲已抓取的中繼資料。"
 
-#: templates/settings.html:3729
+#: templates/settings.html:3796
 msgid "Downloaded images will also be deleted!"
 msgstr "已下載的圖片也會一併刪除!"
 
-#: templates/settings.html:3730
+#: templates/settings.html:3797
 msgid "This cannot be undone. Are you sure?"
 msgstr "此操作無法復原。確定要繼續嗎?"
 
-#: templates/settings.html:3854
+#: templates/settings.html:3921
 msgid "No Files"
 msgstr "沒有檔案"
 
-#: templates/settings.html:3854
+#: templates/settings.html:3921
 msgid "Please scan for orphaned files first."
 msgstr "請先掃描孤立檔案。"
 
-#: templates/settings.html:3859
+#: templates/settings.html:3926
 msgid "Delete Orphaned Files"
 msgstr "刪除孤立檔案"
 
-#: templates/settings.html:3860
+#: templates/settings.html:3927
 #, python-brace-format
 msgid ""
 "Orphaned media files to delete permanently: {count}. This action cannot "
 "be undone.<br><br>Proceed?"
 msgstr "將永久刪除的孤立媒體檔案數量:{count}。此操作無法復原。<br><br>要繼續嗎?"
 
-#: templates/settings.html:3988
+#: templates/settings.html:4055
 msgid "Nothing to Clear"
 msgstr "沒有可清除的項目"
 
-#: templates/settings.html:3988
+#: templates/settings.html:4055
 msgid "Please scan for missing media references first."
 msgstr "請先掃描遺失的媒體參照。"
 
-#: templates/settings.html:3993
+#: templates/settings.html:4060
 msgid "Clear Missing References"
 msgstr "清除遺失的參照"
 
-#: templates/settings.html:3994
+#: templates/settings.html:4061
 #, python-brace-format
 msgid ""
 "Database references to clear: {count}. They point to media files that no "
@@ -11777,224 +11804,224 @@ msgid ""
 "entries are not affected.<br><br>Proceed?"
 msgstr "要清除的資料庫參照數量:{count}。這些參照指向磁碟上已不存在的媒體檔案,因此抓取工具可以重新下載。您的遊戲項目不受影響。<br><br>要繼續嗎?"
 
-#: templates/settings.html:4090
+#: templates/settings.html:4157
 msgid "Delete Controller"
 msgstr "刪除手把"
 
-#: templates/settings.html:4091
+#: templates/settings.html:4158
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete {name}?<br><br>This will remove it from "
 "the library and any systems using it as default."
 msgstr "確定要刪除 {name} 嗎?<br><br>這會將它從遊戲庫以及所有以它作為預設的系統中移除。"
 
-#: templates/settings.html:4112
+#: templates/settings.html:4179
 msgid "Deleted"
 msgstr "已刪除"
 
-#: templates/settings.html:4112
+#: templates/settings.html:4179
 #, python-brace-format
 msgid "Controller \"{name}\" has been removed."
 msgstr "手把「{name}」已移除。"
 
-#: templates/settings.html:4114 templates/settings.html:4118
+#: templates/settings.html:4181 templates/settings.html:4185
 msgid "Failed to delete controller"
 msgstr "刪除手把失敗"
 
-#: templates/settings.html:4136
+#: templates/settings.html:4203
 msgid "Failed to load controller"
 msgstr "載入手把失敗"
 
-#: templates/settings.html:4167
+#: templates/settings.html:4234
 msgid "Failed to load controller data"
 msgstr "載入手把資料失敗"
 
-#: templates/settings.html:4225
+#: templates/settings.html:4292
 #, python-brace-format
 msgid "Controller \"{name}\" has been updated."
 msgstr "手把「{name}」已更新。"
 
-#: templates/settings.html:4227 templates/settings.html:4231
+#: templates/settings.html:4294 templates/settings.html:4298
 msgid "Failed to update controller"
 msgstr "更新手把失敗"
 
-#: templates/settings.html:4358
+#: templates/settings.html:4425
 msgid "Logos Refreshed"
 msgstr "標誌已重新整理"
 
-#: templates/settings.html:4359
+#: templates/settings.html:4426
 #, python-brace-format
 msgid "System logos updated: {count}. The table has been refreshed."
 msgstr "已更新的系統標誌數量:{count}。表格已重新整理。"
 
-#: templates/settings.html:4361
+#: templates/settings.html:4428
 msgid "Failed to refresh logos"
 msgstr "重新整理標誌失敗"
 
-#: templates/settings.html:4365
+#: templates/settings.html:4432
 msgid "Failed to refresh system logos"
 msgstr "重新整理系統標誌失敗"
 
-#: templates/settings.html:4387
+#: templates/settings.html:4454
 msgid "Names Refreshed"
 msgstr "名稱已重新整理"
 
-#: templates/settings.html:4388
+#: templates/settings.html:4455
 #, python-brace-format
 msgid "System names updated: {count}. Click OK to refresh the page."
 msgstr "已更新的系統名稱數量:{count}。按一下「確定」重新整理頁面。"
 
-#: templates/settings.html:4391
+#: templates/settings.html:4458
 msgid "Failed to refresh names"
 msgstr "重新整理名稱失敗"
 
-#: templates/settings.html:4395
+#: templates/settings.html:4462
 msgid "Failed to refresh system names"
 msgstr "重新整理系統名稱失敗"
 
-#: templates/settings.html:4838
+#: templates/settings.html:4905
 #, python-brace-format
 msgid "Log: {filename}"
 msgstr "記錄檔:{filename}"
 
-#: templates/settings.html:4839
+#: templates/settings.html:4906
 msgid "Log file is empty"
 msgstr "記錄檔是空的"
 
-#: templates/settings.html:4842
+#: templates/settings.html:4909
 msgid "Failed to load log file"
 msgstr "無法載入記錄檔"
 
-#: templates/settings.html:4845
+#: templates/settings.html:4912
 #, python-brace-format
 msgid "Error loading log file: {error}"
 msgstr "載入記錄檔時發生錯誤:{error}"
 
-#: templates/settings.html:4864
+#: templates/settings.html:4931
 msgid "Failed to delete log file"
 msgstr "無法刪除記錄檔"
 
-#: templates/settings.html:4867
+#: templates/settings.html:4934
 #, python-brace-format
 msgid "Error deleting log file: {error}"
 msgstr "刪除記錄檔時發生錯誤:{error}"
 
-#: templates/settings.html:4873
+#: templates/settings.html:4940
 msgid "Clear Old Logs"
 msgstr "清除舊記錄"
 
-#: templates/settings.html:4873
+#: templates/settings.html:4940
 msgid "This will delete all log files older than 5 days. Continue?"
 msgstr "這會刪除所有超過 5 天的記錄檔。要繼續嗎?"
 
-#: templates/settings.html:4879
+#: templates/settings.html:4946
 #, python-brace-format
 msgid "Old log files removed: {count}"
 msgstr "已移除的舊記錄檔:{count}"
 
-#: templates/settings.html:4882
+#: templates/settings.html:4949
 msgid "Failed to clear old logs"
 msgstr "無法清除舊記錄"
 
-#: templates/settings.html:4885
+#: templates/settings.html:4952
 #, python-brace-format
 msgid "Error clearing old logs: {error}"
 msgstr "清除舊記錄時發生錯誤:{error}"
 
-#: templates/settings.html:4930
+#: templates/settings.html:4997
 msgid "Token extracted from the pasted page"
 msgstr "已從貼上的頁面擷取權杖"
 
-#: templates/settings.html:4932
+#: templates/settings.html:4999
 msgid "Token detected"
 msgstr "已偵測到權杖"
 
-#: templates/settings.html:4934
+#: templates/settings.html:5001
 msgid "Could not detect a valid NPSSO token"
 msgstr "無法偵測到有效的 NPSSO 權杖"
 
-#: templates/settings.html:4946
+#: templates/settings.html:5013
 msgid "Now press Ctrl+V to paste."
 msgstr "現在請按 Ctrl+V 貼上。"
 
-#: templates/settings.html:4958
+#: templates/settings.html:5025
 msgid "Enter an NPSSO token first"
 msgstr "請先輸入 NPSSO 權杖"
 
-#: templates/settings.html:4963
+#: templates/settings.html:5030
 msgid "Testing..."
 msgstr "測試中..."
 
-#: templates/settings.html:4964 templates/settings.html:5053
+#: templates/settings.html:5031 templates/settings.html:5120
 msgid "Saving and connecting..."
 msgstr "正在儲存並連線..."
 
-#: templates/settings.html:4975 templates/settings.html:5062
+#: templates/settings.html:5042 templates/settings.html:5129
 #, python-format
 msgid "Connected as %(name)s"
 msgstr "已連線為 %(name)s"
 
-#: templates/settings.html:4982 templates/settings.html:5066
+#: templates/settings.html:5049 templates/settings.html:5133
 msgid "Connection failed"
 msgstr "連線失敗"
 
-#: templates/settings.html:4985 templates/settings.html:5069
+#: templates/settings.html:5052 templates/settings.html:5136
 #, python-format
 msgid "Error: %(msg)s"
 msgstr "錯誤:%(msg)s"
 
-#: templates/settings.html:5004
+#: templates/settings.html:5071
 #, python-format
 msgid ""
 "Sony refused your saved NPSSO token on %(date)s. Get a new one with the "
 "steps below."
 msgstr "Sony 已在 %(date)s 拒絕你儲存的 NPSSO 權杖。請依照下方步驟取得新的權杖。"
 
-#: templates/settings.html:5007
+#: templates/settings.html:5074
 msgid ""
 "Connected to PSN. RetroDB keeps the sign-in going by itself. You need a "
 "new token only if Sony refuses this one."
 msgstr "已連線到 PSN。RetroDB 會自動維持登入狀態。只有在 Sony 拒絕此權杖時,你才需要新的權杖。"
 
-#: templates/settings.html:5036
+#: templates/settings.html:5103
 #, python-format
 msgid "Key saved. Connected as %(name)s."
 msgstr "金鑰已儲存。已連線為 %(name)s。"
 
-#: templates/settings.html:5037
+#: templates/settings.html:5104
 msgid "No key saved."
 msgstr "尚未儲存金鑰。"
 
-#: templates/settings.html:5075
+#: templates/settings.html:5142
 msgid "Remove Xbox key"
 msgstr "移除 Xbox 金鑰"
 
-#: templates/settings.html:5075
+#: templates/settings.html:5142
 msgid "Remove your OpenXBL key? Your imported games and achievements stay."
 msgstr "要移除你的 OpenXBL 金鑰嗎？已匯入的遊戲和成就會保留。"
 
-#: templates/settings.html:5080
+#: templates/settings.html:5147
 msgid "Could not remove the Xbox key."
 msgstr ""
 
-#: templates/settings.html:5169 templates/settings.html:5216
+#: templates/settings.html:5236 templates/settings.html:5283
 msgid "Avatar updated!"
 msgstr "大頭貼已更新!"
 
-#: templates/settings.html:5174
+#: templates/settings.html:5241
 #, python-brace-format
 msgid "Upload failed: {error}"
 msgstr "上傳失敗:{error}"
 
-#: templates/settings.html:5191
+#: templates/settings.html:5258
 msgid "Avatar removed"
 msgstr "大頭貼已移除"
 
-#: templates/settings.html:5193 templates/settings.html:5196
+#: templates/settings.html:5260 templates/settings.html:5263
 msgid "Failed to remove avatar"
 msgstr "無法移除大頭貼"
 
-#: templates/settings.html:5218 templates/settings.html:5221
+#: templates/settings.html:5285 templates/settings.html:5288
 msgid "Failed to save avatar"
 msgstr "無法儲存大頭貼"
 
@@ -14522,6 +14549,16 @@ msgstr "設定可用的地區值和預設地區。抓取時如果未偵測到地
 #: templates/_settings_tabs/library.html:220
 msgid "Default Region"
 msgstr "預設地區"
+
+#: templates/_settings_tabs/library.html:278
+msgid "Current Bonus Discs"
+msgstr "目前的附贈光碟"
+
+#: templates/_settings_tabs/library.html:281
+msgid ""
+"A disc marked by mistake can go back in your game lists. Auto-Link then "
+"leaves it alone."
+msgstr "誤標的光碟可以回到你的遊戲清單。之後 Auto-Link 不會再動它。"
 
 #: templates/_settings_tabs/scraping.html:421
 #, python-format

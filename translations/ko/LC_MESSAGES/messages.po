@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-11 17:03+0200\n"
+"POT-Creation-Date: 2026-11-11 21:21+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -194,7 +194,7 @@ msgid "System not found or has no achievement games"
 msgstr "시스템을 찾을 수 없거나 업적이 있는 게임이 없습니다"
 
 #: routes/achievements.py:177 routes/achievements.py:468
-#: routes/bonus_discs.py:273 routes/bulk_scrape.py:48 routes/cheats.py:32
+#: routes/bonus_discs.py:276 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
 #: routes/emulators.py:306 routes/emulators.py:320 routes/games.py:396
 #: routes/games.py:930 routes/games.py:1049 routes/games.py:1130
@@ -241,8 +241,8 @@ msgstr "이 시스템에 RetroAchievements가 있는 게임이 없습니다"
 msgid "Sync already in progress for %(name)s"
 msgstr "%(name)s에 대한 동기화가 이미 진행 중입니다"
 
-#: routes/achievements.py:392 routes/platform_import.py:392
-#: routes/platform_import.py:695 routes/ra_sync.py:146
+#: routes/achievements.py:392 routes/platform_import.py:398
+#: routes/platform_import.py:701 routes/ra_sync.py:146
 msgid "That job belongs to another user"
 msgstr "해당 작업은 다른 사용자의 것입니다"
 
@@ -553,25 +553,25 @@ msgstr "아바타 업로드에는 Pillow가 필요합니다. 운영자에게 프
 msgid "Invalid image file"
 msgstr "잘못된 이미지 파일입니다"
 
-#: routes/bonus_discs.py:193
+#: routes/bonus_discs.py:196
 msgid "Bonus disc not found"
 msgstr "보너스 디스크를 찾을 수 없습니다"
 
-#: routes/bonus_discs.py:195
+#: routes/bonus_discs.py:198
 msgid "Parent game not found"
 msgstr "상위 게임을 찾을 수 없습니다"
 
-#: routes/bonus_discs.py:197
+#: routes/bonus_discs.py:200
 msgid "Bonus disc and parent game must be in the same system"
 msgstr "보너스 디스크와 상위 게임은 같은 시스템에 있어야 합니다"
 
-#: routes/bonus_discs.py:204
+#: routes/bonus_discs.py:207
 msgid "A bonus disc links to a main game, one level only"
 msgstr "보너스 디스크는 메인 게임 하나에만 연결되며, 한 단계까지만 가능합니다"
 
-#: routes/bonus_discs.py:219 routes/bonus_discs.py:237 routes/games.py:1400
-#: routes/games.py:1430 routes/platform_import.py:355
-#: routes/platform_import.py:660 routes/platform_import.py:1044
+#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1400
+#: routes/games.py:1430 routes/platform_import.py:361
+#: routes/platform_import.py:666 routes/platform_import.py:1050
 #: routes/scrape_logs.py:89 routes/scrape_logs.py:174 routes/scrape_logs.py:187
 #: routes/scrape_logs.py:225 routes/scraper.py:204 routes/scraper.py:535
 #: routes/scraper.py:926 routes/settings.py:327 routes/settings.py:351
@@ -585,18 +585,18 @@ msgstr "보너스 디스크는 메인 게임 하나에만 연결되며, 한 단�
 msgid "An internal error occurred"
 msgstr "내부 오류가 발생했습니다"
 
-#: routes/bonus_discs.py:286 routes/bonus_discs.py:317
+#: routes/bonus_discs.py:289 routes/bonus_discs.py:320
 #: routes/controllers.py:216 routes/controllers.py:280
 #: routes/controllers.py:413 routes/controllers.py:465 routes/settings.py:231
 #: routes/settings.py:474 routes/settings.py:557 routes/systems.py:185
 msgid "Request body must be a JSON object"
 msgstr "요청 본문은 JSON 객체여야 합니다"
 
-#: routes/bonus_discs.py:291
+#: routes/bonus_discs.py:294
 msgid "Missing bonus_id or parent_id"
 msgstr "bonus_id 또는 parent_id가 누락되었습니다"
 
-#: routes/bonus_discs.py:322 routes/reports.py:835
+#: routes/bonus_discs.py:325 routes/reports.py:835
 msgid "Missing game_id"
 msgstr "game_id가 누락되었습니다"
 
@@ -845,8 +845,8 @@ msgstr "메타데이터 적용에 실패했습니다."
 msgid "No fields to update"
 msgstr "업데이트할 필드가 없습니다"
 
-#: routes/games.py:1208 routes/platform_import.py:261
-#: routes/platform_import.py:566 routes/platform_import.py:930
+#: routes/games.py:1208 routes/platform_import.py:267
+#: routes/platform_import.py:572 routes/platform_import.py:936
 #: routes/trophies.py:1928 templates/game_imports.html:579
 #: templates/game_imports.html:852
 msgid "No games selected"
@@ -1153,63 +1153,63 @@ msgstr "이미지 파일을 찾을 수 없습니다"
 msgid "Background removal failed"
 msgstr "배경 제거에 실패했습니다"
 
-#: routes/platform_import.py:193
+#: routes/platform_import.py:199
 msgid "No Steam key yet. Add yours under Settings → My Profile."
 msgstr "아직 Steam 키가 없습니다. 설정 → 내 프로필에서 추가하세요."
 
-#: routes/platform_import.py:195
+#: routes/platform_import.py:201
 msgid "No Steam ID yet. Add yours under Settings → My Profile."
 msgstr "아직 Steam ID가 없습니다. 설정 → 내 프로필에서 추가하세요."
 
-#: routes/platform_import.py:201
+#: routes/platform_import.py:207
 #, python-format
 msgid ""
 "Could not resolve Steam vanity URL \"%(steam_id)s\". Use your 17-digit "
 "Steam ID instead."
 msgstr "Steam 커스텀 URL \"%(steam_id)s\"을(를) 확인할 수 없습니다. 대신 17자리 Steam ID를 사용하세요."
 
-#: routes/platform_import.py:207
+#: routes/platform_import.py:213
 msgid ""
 "No games found. Check that your Steam profile and game details are set to"
 " Public."
 msgstr "게임을 찾을 수 없습니다. Steam 프로필과 게임 세부 정보가 공개로 설정되어 있는지 확인하세요."
 
-#: routes/platform_import.py:266
+#: routes/platform_import.py:272
 msgid "Could not create Windows system entry"
 msgstr "Windows 시스템 항목을 생성할 수 없습니다"
 
-#: routes/platform_import.py:412 templates/settings.html:5049
+#: routes/platform_import.py:418 templates/settings.html:5116
 msgid "Paste your OpenXBL key first."
 msgstr "먼저 OpenXBL 키를 붙여 넣으세요."
 
-#: routes/platform_import.py:417
+#: routes/platform_import.py:423
 msgid "OpenXBL did not accept that key. Copy it again from xbl.io."
 msgstr "OpenXBL이 그 키를 받아들이지 않았습니다. xbl.io에서 다시 복사하세요."
 
-#: routes/platform_import.py:421 routes/platform_import.py:481
+#: routes/platform_import.py:427 routes/platform_import.py:487
 #: routes/xbox_achievements.py:137
 #, python-format
 msgid "OpenXBL's hourly limit was reached. Try again in %(minutes)s minutes."
 msgstr "OpenXBL의 시간당 한도에 도달했습니다. %(minutes)s분 뒤에 다시 시도하세요."
 
-#: routes/platform_import.py:423 routes/platform_import.py:483
+#: routes/platform_import.py:429 routes/platform_import.py:489
 msgid "OpenXBL did not answer. Try again later."
 msgstr "OpenXBL이 응답하지 않았습니다. 나중에 다시 시도하세요."
 
-#: routes/platform_import.py:475 routes/xbox_achievements.py:123
+#: routes/platform_import.py:481 routes/xbox_achievements.py:123
 #: services/jobs/platform_sync.py:783
 msgid "Add your OpenXBL key in Settings > My Profile first."
 msgstr "먼저 설정 > 내 프로필에서 OpenXBL 키를 추가하세요."
 
-#: routes/platform_import.py:485
+#: routes/platform_import.py:491
 msgid "No games found in Xbox title history."
 msgstr "Xbox 타이틀 기록에서 게임을 찾을 수 없습니다."
 
-#: routes/platform_import.py:770
+#: routes/platform_import.py:776
 msgid "PSN NPSSO not configured. Add it in Settings → API Keys."
 msgstr "PSN NPSSO가 설정되지 않았습니다. 설정 → API 키에서 추가하세요."
 
-#: routes/platform_import.py:797
+#: routes/platform_import.py:803
 msgid "Failed to fetch PSN game list. Try syncing trophies first."
 msgstr "PSN 게임 목록을 가져오지 못했습니다. 먼저 트로피를 동기화해 보세요."
 
@@ -1423,7 +1423,7 @@ msgstr "잘못된 %(field)s: %(result)s"
 
 #: routes/settings.py:514 routes/settings.py:588 routes/settings.py:637
 #: routes/tools.py:301 services/js_i18n_strings.py:778
-#: templates/settings.html:1150 templates/settings.html:2676
+#: templates/settings.html:1150 templates/settings.html:2743
 msgid "Failed to save settings"
 msgstr "설정 저장에 실패했습니다"
 
@@ -2257,7 +2257,7 @@ msgstr ""
 msgid "Are you sure you want to cancel?"
 msgstr "취소하시겠습니까?"
 
-#: services/js_i18n_strings.py:630 templates/settings.html:4854
+#: services/js_i18n_strings.py:630 templates/settings.html:4921
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "\"{filename}\"을(를) 삭제하시겠습니까?"
@@ -2665,7 +2665,7 @@ msgstr "현재 설정"
 msgid "Default emulator for {system}"
 msgstr "{system}의 기본 에뮬레이터"
 
-#: services/js_i18n_strings.py:719 templates/settings.html:4854
+#: services/js_i18n_strings.py:719 templates/settings.html:4921
 msgid "Delete Log File"
 msgstr "로그 파일 삭제"
 
@@ -2826,21 +2826,21 @@ msgstr "폴더 경로를 하나 입력하세요."
 #: templates/multi_disc_organizer.html:371 templates/reports.html:1144
 #: templates/reports.html:1147 templates/reports.html:1213
 #: templates/reports.html:1216 templates/rom_tools_settings.html:579
-#: templates/rom_tools_settings.html:582 templates/settings.html:2854
-#: templates/settings.html:2858 templates/settings.html:2877
-#: templates/settings.html:2881 templates/settings.html:3479
-#: templates/settings.html:3483 templates/settings.html:3551
-#: templates/settings.html:3555 templates/settings.html:3586
-#: templates/settings.html:3590 templates/settings.html:3616
-#: templates/settings.html:3620 templates/settings.html:4114
-#: templates/settings.html:4118 templates/settings.html:4136
-#: templates/settings.html:4167 templates/settings.html:4227
-#: templates/settings.html:4231 templates/settings.html:4361
-#: templates/settings.html:4365 templates/settings.html:4391
-#: templates/settings.html:4395 templates/settings.html:4842
-#: templates/settings.html:4845 templates/settings.html:4864
-#: templates/settings.html:4867 templates/settings.html:4882
-#: templates/settings.html:4885
+#: templates/rom_tools_settings.html:582 templates/settings.html:2921
+#: templates/settings.html:2925 templates/settings.html:2944
+#: templates/settings.html:2948 templates/settings.html:3546
+#: templates/settings.html:3550 templates/settings.html:3618
+#: templates/settings.html:3622 templates/settings.html:3653
+#: templates/settings.html:3657 templates/settings.html:3683
+#: templates/settings.html:3687 templates/settings.html:4181
+#: templates/settings.html:4185 templates/settings.html:4203
+#: templates/settings.html:4234 templates/settings.html:4294
+#: templates/settings.html:4298 templates/settings.html:4428
+#: templates/settings.html:4432 templates/settings.html:4458
+#: templates/settings.html:4462 templates/settings.html:4909
+#: templates/settings.html:4912 templates/settings.html:4931
+#: templates/settings.html:4934 templates/settings.html:4949
+#: templates/settings.html:4952
 msgid "Error"
 msgstr "오류"
 
@@ -2976,8 +2976,8 @@ msgstr "완료 상태 업데이트 실패: {error}"
 msgid "Failed to update status: {error}"
 msgstr "상태 업데이트 실패: {error}"
 
-#: services/js_i18n_strings.py:784 templates/settings.html:1937
-#: templates/settings.html:1984
+#: services/js_i18n_strings.py:784 templates/settings.html:1939
+#: templates/settings.html:1987 templates/settings.html:2049
 #, python-brace-format
 msgid "Failed: {error}"
 msgstr "실패: {error}"
@@ -3292,8 +3292,8 @@ msgstr "로그 파일 불러오는 중..."
 msgid "Loading the manual…"
 msgstr "설명서를 불러오는 중…"
 
-#: services/js_i18n_strings.py:855 templates/settings_emulators.html:201
-#: templates/settings_emulators.html:219
+#: services/js_i18n_strings.py:855 templates/_settings_tabs/library.html:284
+#: templates/settings_emulators.html:201 templates/settings_emulators.html:219
 msgid "Loading…"
 msgstr "불러오는 중…"
 
@@ -3777,8 +3777,8 @@ msgstr "3D 박스를 제거할까요?"
 #: templates/game_detail.html:4655 templates/game_detail.html:4739
 #: templates/game_detail.html:4823 templates/game_detail.html:4951
 #: templates/rom_tools_settings.html:462 templates/rom_tools_settings.html:501
-#: templates/settings.html:1571 templates/settings.html:2973
-#: templates/settings.html:3369
+#: templates/settings.html:1571 templates/settings.html:3040
+#: templates/settings.html:3436
 #, python-brace-format
 msgid "Remove {name}"
 msgstr ""
@@ -4415,7 +4415,7 @@ msgid "Unhandled rejection: {error}"
 msgstr "처리되지 않은 거부: {error}"
 
 #: services/js_i18n_strings.py:1098 templates/rom_tools_settings.html:579
-#: templates/settings.html:1965 templates/setup.html:372
+#: templates/settings.html:1967 templates/setup.html:372
 #: templates/setup.html:432
 msgid "Unknown error"
 msgstr "알 수 없는 오류"
@@ -4463,7 +4463,7 @@ msgstr "업로드"
 msgid "Upload Controller Image"
 msgstr "컨트롤러 이미지 업로드"
 
-#: services/js_i18n_strings.py:1107 templates/settings.html:5171
+#: services/js_i18n_strings.py:1107 templates/settings.html:5238
 msgid "Upload failed"
 msgstr "업로드 실패"
 
@@ -6304,8 +6304,8 @@ msgid "Processed"
 msgstr "처리됨"
 
 #: templates/archive_scanner.html:782 templates/game_detail.html:4086
-#: templates/reports.html:497 templates/settings.html:3477
-#: templates/settings.html:4225 templates/settings.html:4879
+#: templates/reports.html:497 templates/settings.html:3544
+#: templates/settings.html:4292 templates/settings.html:4946
 msgid "Success"
 msgstr "성공"
 
@@ -9519,10 +9519,11 @@ msgid "No match found."
 msgstr "일치하는 항목이 없습니다."
 
 #: templates/local_trophy_detail.html:429 templates/settings.html:1852
-#: templates/settings.html:1888 templates/settings.html:1922
-#: templates/settings.html:1940 templates/settings.html:1965
-#: templates/settings.html:1968 templates/settings.html:1987
-#: templates/settings.html:2081 templates/steam_achievement_game.html:302
+#: templates/settings.html:1889 templates/settings.html:1923
+#: templates/settings.html:1942 templates/settings.html:1967
+#: templates/settings.html:1970 templates/settings.html:1990
+#: templates/settings.html:2034 templates/settings.html:2052
+#: templates/settings.html:2148 templates/steam_achievement_game.html:302
 #: templates/xbox_achievement_game.html:293
 #, python-brace-format
 msgid "Error: {error}"
@@ -11584,74 +11585,100 @@ msgstr "감지 실패: {error}"
 msgid "Bonus discs linked to parent games: {count}"
 msgstr "상위 게임에 연결된 보너스 디스크: {count}개"
 
-#: templates/settings.html:1885
+#: templates/settings.html:1886
 #, python-brace-format
 msgid "Auto-link failed: {error}"
 msgstr "자동 연결 실패: {error}"
 
-#: templates/settings.html:1907
+#: templates/settings.html:1908
 msgid "Bonus Disc Statistics"
 msgstr "보너스 디스크 통계"
 
-#: templates/settings.html:1910
+#: templates/settings.html:1911
 msgid "Total Bonus Discs:"
 msgstr "보너스 디스크 전체:"
 
-#: templates/settings.html:1911
+#: templates/settings.html:1912
 msgid "Linked to Parent:"
 msgstr "상위 게임에 연결됨:"
 
-#: templates/settings.html:1912
+#: templates/settings.html:1913
 msgid "Unlinked:"
 msgstr "연결 안 됨:"
 
-#: templates/settings.html:1913
+#: templates/settings.html:1914
 msgid "Games with Bonus Content:"
 msgstr "보너스 콘텐츠가 있는 게임:"
 
-#: templates/settings.html:1919
+#: templates/settings.html:1920
 #, python-brace-format
 msgid "Failed to load stats: {error}"
 msgstr "통계를 불러오지 못했습니다: {error}"
 
-#: templates/settings.html:1934
+#: templates/settings.html:1935
 msgid "Game marked as bonus disc"
 msgstr "게임을 보너스 디스크로 표시했습니다"
 
-#: templates/settings.html:1955
+#: templates/settings.html:1957
 msgid "Select Parent Game"
 msgstr "상위 게임 선택"
 
-#: templates/settings.html:1956
+#: templates/settings.html:1958
 msgid "Choose the parent game for this bonus disc:"
 msgstr "이 보너스 디스크의 상위 게임을 선택하세요:"
 
-#: templates/settings.html:1963
+#: templates/settings.html:1965
 msgid ""
 "No potential parent games found. Try using \"Mark\" instead to just hide "
 "this from listings."
 msgstr "상위 게임 후보를 찾지 못했습니다. 대신 \"표시\"를 사용하여 목록에서만 숨겨 보세요."
 
-#: templates/settings.html:2003
+#: templates/settings.html:2002
+#, python-brace-format
+msgid "Failed to load: {error}"
+msgstr "불러오지 못했습니다: {error}"
+
+#: templates/settings.html:2006
+msgid "No games are marked as bonus discs."
+msgstr "보너스 디스크로 표시된 게임이 없습니다."
+
+#: templates/settings.html:2009
+msgid "Not linked to a game"
+msgstr "게임에 연결되지 않음"
+
+#: templates/settings.html:2013
+#, python-brace-format
+msgid "Bonus disc of {title}"
+msgstr "{title}의 보너스 디스크"
+
+#: templates/settings.html:2017
+msgid "Not a bonus disc"
+msgstr "보너스 디스크 아님"
+
+#: templates/settings.html:2046
+msgid "Back in your game lists. Auto-Link will leave it alone."
+msgstr "게임 목록으로 돌아왔습니다. Auto-Link는 이 디스크를 건드리지 않습니다."
+
+#: templates/settings.html:2070
 #, python-brace-format
 msgid "Backup created: {filename} ({size})"
 msgstr "백업을 만들었습니다: {filename} ({size})"
 
-#: templates/settings.html:2006
+#: templates/settings.html:2073
 #, python-brace-format
 msgid "Backup failed: {error}"
 msgstr "백업 실패: {error}"
 
-#: templates/settings.html:2009
+#: templates/settings.html:2076
 #, python-brace-format
 msgid "Backup error: {error}"
 msgstr "백업 오류: {error}"
 
-#: templates/settings.html:2050
+#: templates/settings.html:2117
 msgid "Restore Backup"
 msgstr "백업 복원"
 
-#: templates/settings.html:2051
+#: templates/settings.html:2118
 #, python-brace-format
 msgid ""
 "Are you sure you want to restore from \"{filename}\"?\n"
@@ -11663,166 +11690,166 @@ msgstr ""
 "\n"
 "현재 데이터베이스가 교체됩니다. 복원 전 백업이 자동으로 만들어집니다."
 
-#: templates/settings.html:2057
+#: templates/settings.html:2124
 msgid "Database restored! Reloading page..."
 msgstr "데이터베이스를 복원했습니다! 페이지를 다시 불러오는 중..."
 
-#: templates/settings.html:2061
+#: templates/settings.html:2128
 #, python-brace-format
 msgid "Restore failed: {error}"
 msgstr "복원 실패: {error}"
 
-#: templates/settings.html:2064
+#: templates/settings.html:2131
 #, python-brace-format
 msgid "Restore error: {error}"
 msgstr "복원 오류: {error}"
 
-#: templates/settings.html:2071
+#: templates/settings.html:2138
 msgid "Calculating file sizes..."
 msgstr "파일 크기 계산 중..."
 
-#: templates/settings.html:2078
+#: templates/settings.html:2145
 #, python-brace-format
 msgid "Calculation failed: {error}"
 msgstr "계산 실패: {error}"
 
-#: templates/settings.html:2228
+#: templates/settings.html:2295
 msgid "Failed to save scraper setting"
 msgstr "스크래핑 설정을 저장하지 못했습니다"
 
-#: templates/settings.html:2240
+#: templates/settings.html:2307
 msgid "AI Metadata"
 msgstr "AI 메타데이터"
 
-#: templates/settings.html:2241
+#: templates/settings.html:2308
 #, python-brace-format
 msgid "{name} enabled"
 msgstr "{name} 사용함"
 
-#: templates/settings.html:2241
+#: templates/settings.html:2308
 #, python-brace-format
 msgid "{name} disabled"
 msgstr "{name} 사용 안 함"
 
-#: templates/settings.html:2350
+#: templates/settings.html:2417
 msgid "Testing…"
 msgstr "테스트 중…"
 
-#: templates/settings.html:2355
+#: templates/settings.html:2422
 #, python-format
 msgid "The key works: %(provider)s answered, using %(model)s."
 msgstr "키가 작동합니다: %(provider)s에서 %(model)s(으)로 응답했습니다."
 
-#: templates/settings.html:2360
+#: templates/settings.html:2427
 msgid "The key test failed."
 msgstr "키 테스트에 실패했습니다."
 
-#: templates/settings.html:2837
+#: templates/settings.html:2904
 msgid "Invalid Input"
 msgstr "잘못된 입력"
 
-#: templates/settings.html:2837
+#: templates/settings.html:2904
 msgid "Please enter a value"
 msgstr "값을 입력하세요"
 
-#: templates/settings.html:2854 templates/settings.html:2858
+#: templates/settings.html:2921 templates/settings.html:2925
 msgid "Failed to add option"
 msgstr "옵션을 추가하지 못했습니다"
 
-#: templates/settings.html:2864
+#: templates/settings.html:2931
 msgid "Delete Option"
 msgstr "옵션 삭제"
 
-#: templates/settings.html:2865
+#: templates/settings.html:2932
 msgid "Are you sure you want to delete this option?"
 msgstr "이 옵션을 삭제하시겠습니까?"
 
-#: templates/settings.html:2877 templates/settings.html:2881
+#: templates/settings.html:2944 templates/settings.html:2948
 msgid "Failed to delete option"
 msgstr "옵션을 삭제하지 못했습니다"
 
-#: templates/settings.html:3433 templates/settings.html:4187
+#: templates/settings.html:3500 templates/settings.html:4254
 msgid "Missing Input"
 msgstr "입력 누락"
 
-#: templates/settings.html:3433 templates/settings.html:4187
+#: templates/settings.html:3500 templates/settings.html:4254
 msgid "Please enter a controller name"
 msgstr "컨트롤러 이름을 입력하세요"
 
-#: templates/settings.html:3477
+#: templates/settings.html:3544
 #, python-brace-format
 msgid "Controller \"{name}\" has been added to the library."
 msgstr "컨트롤러 \"{name}\"을(를) 라이브러리에 추가했습니다."
 
-#: templates/settings.html:3479 templates/settings.html:3483
+#: templates/settings.html:3546 templates/settings.html:3550
 msgid "Failed to add controller"
 msgstr "컨트롤러를 추가하지 못했습니다"
 
-#: templates/settings.html:3551 templates/settings.html:3555
+#: templates/settings.html:3618 templates/settings.html:3622
 msgid "Failed to set default controller"
 msgstr "기본 컨트롤러를 설정하지 못했습니다"
 
-#: templates/settings.html:3586 templates/settings.html:3590
+#: templates/settings.html:3653 templates/settings.html:3657
 msgid "Failed to add default controller"
 msgstr "기본 컨트롤러를 추가하지 못했습니다"
 
-#: templates/settings.html:3616 templates/settings.html:3620
+#: templates/settings.html:3683 templates/settings.html:3687
 msgid "Failed to remove default controller"
 msgstr "기본 컨트롤러를 제거하지 못했습니다"
 
-#: templates/settings.html:3723
+#: templates/settings.html:3790
 msgid "ALL SYSTEMS"
 msgstr "모든 시스템"
 
-#: templates/settings.html:3727
+#: templates/settings.html:3794
 msgid "Clear Scraped Data"
 msgstr "스크래핑 데이터 지우기"
 
-#: templates/settings.html:3728
+#: templates/settings.html:3795
 #, python-brace-format
 msgid "This will clear all scraped metadata from games in {system}."
 msgstr "{system}에 있는 게임의 스크래핑 메타데이터가 모두 지워집니다."
 
-#: templates/settings.html:3729
+#: templates/settings.html:3796
 msgid "Downloaded images will also be deleted!"
 msgstr "다운로드한 이미지도 삭제됩니다!"
 
-#: templates/settings.html:3730
+#: templates/settings.html:3797
 msgid "This cannot be undone. Are you sure?"
 msgstr "이 작업은 되돌릴 수 없습니다. 계속하시겠습니까?"
 
-#: templates/settings.html:3854
+#: templates/settings.html:3921
 msgid "No Files"
 msgstr "파일 없음"
 
-#: templates/settings.html:3854
+#: templates/settings.html:3921
 msgid "Please scan for orphaned files first."
 msgstr "먼저 고아 파일을 검사하세요."
 
-#: templates/settings.html:3859
+#: templates/settings.html:3926
 msgid "Delete Orphaned Files"
 msgstr "고아 파일 삭제"
 
-#: templates/settings.html:3860
+#: templates/settings.html:3927
 #, python-brace-format
 msgid ""
 "Orphaned media files to delete permanently: {count}. This action cannot "
 "be undone.<br><br>Proceed?"
 msgstr "영구 삭제할 고아 미디어 파일: {count}개. 이 작업은 되돌릴 수 없습니다.<br><br>계속하시겠습니까?"
 
-#: templates/settings.html:3988
+#: templates/settings.html:4055
 msgid "Nothing to Clear"
 msgstr "지울 항목 없음"
 
-#: templates/settings.html:3988
+#: templates/settings.html:4055
 msgid "Please scan for missing media references first."
 msgstr "먼저 누락된 미디어 참조를 검사하세요."
 
-#: templates/settings.html:3993
+#: templates/settings.html:4060
 msgid "Clear Missing References"
 msgstr "누락된 참조 지우기"
 
-#: templates/settings.html:3994
+#: templates/settings.html:4061
 #, python-brace-format
 msgid ""
 "Database references to clear: {count}. They point to media files that no "
@@ -11832,224 +11859,224 @@ msgstr ""
 "지울 데이터베이스 참조: {count}개. 디스크에 더 이상 없는 미디어 파일을 가리키므로 스크래퍼가 다시 다운로드할 수 있습니다."
 " 게임 항목은 영향을 받지 않습니다.<br><br>계속하시겠습니까?"
 
-#: templates/settings.html:4090
+#: templates/settings.html:4157
 msgid "Delete Controller"
 msgstr "컨트롤러 삭제"
 
-#: templates/settings.html:4091
+#: templates/settings.html:4158
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete {name}?<br><br>This will remove it from "
 "the library and any systems using it as default."
 msgstr "{name}을(를) 삭제하시겠습니까?<br><br>라이브러리와 이를 기본값으로 사용하는 모든 시스템에서 제거됩니다."
 
-#: templates/settings.html:4112
+#: templates/settings.html:4179
 msgid "Deleted"
 msgstr "삭제됨"
 
-#: templates/settings.html:4112
+#: templates/settings.html:4179
 #, python-brace-format
 msgid "Controller \"{name}\" has been removed."
 msgstr "컨트롤러 \"{name}\"을(를) 제거했습니다."
 
-#: templates/settings.html:4114 templates/settings.html:4118
+#: templates/settings.html:4181 templates/settings.html:4185
 msgid "Failed to delete controller"
 msgstr "컨트롤러를 삭제하지 못했습니다"
 
-#: templates/settings.html:4136
+#: templates/settings.html:4203
 msgid "Failed to load controller"
 msgstr "컨트롤러를 불러오지 못했습니다"
 
-#: templates/settings.html:4167
+#: templates/settings.html:4234
 msgid "Failed to load controller data"
 msgstr "컨트롤러 데이터를 불러오지 못했습니다"
 
-#: templates/settings.html:4225
+#: templates/settings.html:4292
 #, python-brace-format
 msgid "Controller \"{name}\" has been updated."
 msgstr "컨트롤러 \"{name}\"을(를) 업데이트했습니다."
 
-#: templates/settings.html:4227 templates/settings.html:4231
+#: templates/settings.html:4294 templates/settings.html:4298
 msgid "Failed to update controller"
 msgstr "컨트롤러를 업데이트하지 못했습니다"
 
-#: templates/settings.html:4358
+#: templates/settings.html:4425
 msgid "Logos Refreshed"
 msgstr "로고 새로고침됨"
 
-#: templates/settings.html:4359
+#: templates/settings.html:4426
 #, python-brace-format
 msgid "System logos updated: {count}. The table has been refreshed."
 msgstr "업데이트된 시스템 로고: {count}개. 표를 새로고침했습니다."
 
-#: templates/settings.html:4361
+#: templates/settings.html:4428
 msgid "Failed to refresh logos"
 msgstr "로고를 새로고침하지 못했습니다"
 
-#: templates/settings.html:4365
+#: templates/settings.html:4432
 msgid "Failed to refresh system logos"
 msgstr "시스템 로고를 새로고침하지 못했습니다"
 
-#: templates/settings.html:4387
+#: templates/settings.html:4454
 msgid "Names Refreshed"
 msgstr "이름 새로고침됨"
 
-#: templates/settings.html:4388
+#: templates/settings.html:4455
 #, python-brace-format
 msgid "System names updated: {count}. Click OK to refresh the page."
 msgstr "업데이트된 시스템 이름: {count}개. 확인을 누르면 페이지를 새로고침합니다."
 
-#: templates/settings.html:4391
+#: templates/settings.html:4458
 msgid "Failed to refresh names"
 msgstr "이름 새로 고침 실패"
 
-#: templates/settings.html:4395
+#: templates/settings.html:4462
 msgid "Failed to refresh system names"
 msgstr "시스템 이름 새로 고침 실패"
 
-#: templates/settings.html:4838
+#: templates/settings.html:4905
 #, python-brace-format
 msgid "Log: {filename}"
 msgstr "로그: {filename}"
 
-#: templates/settings.html:4839
+#: templates/settings.html:4906
 msgid "Log file is empty"
 msgstr "로그 파일이 비어 있습니다"
 
-#: templates/settings.html:4842
+#: templates/settings.html:4909
 msgid "Failed to load log file"
 msgstr "로그 파일을 불러오지 못했습니다"
 
-#: templates/settings.html:4845
+#: templates/settings.html:4912
 #, python-brace-format
 msgid "Error loading log file: {error}"
 msgstr "로그 파일을 불러오는 중 오류: {error}"
 
-#: templates/settings.html:4864
+#: templates/settings.html:4931
 msgid "Failed to delete log file"
 msgstr "로그 파일을 삭제하지 못했습니다"
 
-#: templates/settings.html:4867
+#: templates/settings.html:4934
 #, python-brace-format
 msgid "Error deleting log file: {error}"
 msgstr "로그 파일 삭제 중 오류: {error}"
 
-#: templates/settings.html:4873
+#: templates/settings.html:4940
 msgid "Clear Old Logs"
 msgstr "오래된 로그 지우기"
 
-#: templates/settings.html:4873
+#: templates/settings.html:4940
 msgid "This will delete all log files older than 5 days. Continue?"
 msgstr "5일이 지난 로그 파일이 모두 삭제됩니다. 계속할까요?"
 
-#: templates/settings.html:4879
+#: templates/settings.html:4946
 #, python-brace-format
 msgid "Old log files removed: {count}"
 msgstr "삭제된 오래된 로그 파일: {count}개"
 
-#: templates/settings.html:4882
+#: templates/settings.html:4949
 msgid "Failed to clear old logs"
 msgstr "오래된 로그를 지우지 못했습니다"
 
-#: templates/settings.html:4885
+#: templates/settings.html:4952
 #, python-brace-format
 msgid "Error clearing old logs: {error}"
 msgstr "오래된 로그를 지우는 중 오류: {error}"
 
-#: templates/settings.html:4930
+#: templates/settings.html:4997
 msgid "Token extracted from the pasted page"
 msgstr "붙여넣은 페이지에서 토큰을 추출했습니다"
 
-#: templates/settings.html:4932
+#: templates/settings.html:4999
 msgid "Token detected"
 msgstr "토큰을 찾았습니다"
 
-#: templates/settings.html:4934
+#: templates/settings.html:5001
 msgid "Could not detect a valid NPSSO token"
 msgstr "올바른 NPSSO 토큰을 찾을 수 없습니다"
 
-#: templates/settings.html:4946
+#: templates/settings.html:5013
 msgid "Now press Ctrl+V to paste."
 msgstr "이제 Ctrl+V를 눌러 붙여넣으세요."
 
-#: templates/settings.html:4958
+#: templates/settings.html:5025
 msgid "Enter an NPSSO token first"
 msgstr "먼저 NPSSO 토큰을 입력하세요"
 
-#: templates/settings.html:4963
+#: templates/settings.html:5030
 msgid "Testing..."
 msgstr "테스트 중..."
 
-#: templates/settings.html:4964 templates/settings.html:5053
+#: templates/settings.html:5031 templates/settings.html:5120
 msgid "Saving and connecting..."
 msgstr "저장하고 연결하는 중..."
 
-#: templates/settings.html:4975 templates/settings.html:5062
+#: templates/settings.html:5042 templates/settings.html:5129
 #, python-format
 msgid "Connected as %(name)s"
 msgstr "%(name)s 님으로 연결됨"
 
-#: templates/settings.html:4982 templates/settings.html:5066
+#: templates/settings.html:5049 templates/settings.html:5133
 msgid "Connection failed"
 msgstr "연결 실패"
 
-#: templates/settings.html:4985 templates/settings.html:5069
+#: templates/settings.html:5052 templates/settings.html:5136
 #, python-format
 msgid "Error: %(msg)s"
 msgstr "오류: %(msg)s"
 
-#: templates/settings.html:5004
+#: templates/settings.html:5071
 #, python-format
 msgid ""
 "Sony refused your saved NPSSO token on %(date)s. Get a new one with the "
 "steps below."
 msgstr "%(date)s에 Sony가 저장된 NPSSO 토큰을 거부했습니다. 아래 단계에 따라 새 토큰을 받으세요."
 
-#: templates/settings.html:5007
+#: templates/settings.html:5074
 msgid ""
 "Connected to PSN. RetroDB keeps the sign-in going by itself. You need a "
 "new token only if Sony refuses this one."
 msgstr "PSN에 연결되었습니다. RetroDB가 로그인 상태를 자동으로 유지합니다. Sony가 이 토큰을 거부할 때만 새 토큰이 필요합니다."
 
-#: templates/settings.html:5036
+#: templates/settings.html:5103
 #, python-format
 msgid "Key saved. Connected as %(name)s."
 msgstr "키를 저장했습니다. %(name)s 님으로 연결됨."
 
-#: templates/settings.html:5037
+#: templates/settings.html:5104
 msgid "No key saved."
 msgstr "저장된 키가 없습니다."
 
-#: templates/settings.html:5075
+#: templates/settings.html:5142
 msgid "Remove Xbox key"
 msgstr "Xbox 키 제거"
 
-#: templates/settings.html:5075
+#: templates/settings.html:5142
 msgid "Remove your OpenXBL key? Your imported games and achievements stay."
 msgstr "OpenXBL 키를 제거할까요? 가져온 게임과 업적은 그대로 남습니다."
 
-#: templates/settings.html:5080
+#: templates/settings.html:5147
 msgid "Could not remove the Xbox key."
 msgstr ""
 
-#: templates/settings.html:5169 templates/settings.html:5216
+#: templates/settings.html:5236 templates/settings.html:5283
 msgid "Avatar updated!"
 msgstr "아바타가 업데이트되었습니다!"
 
-#: templates/settings.html:5174
+#: templates/settings.html:5241
 #, python-brace-format
 msgid "Upload failed: {error}"
 msgstr "업로드 실패: {error}"
 
-#: templates/settings.html:5191
+#: templates/settings.html:5258
 msgid "Avatar removed"
 msgstr "아바타가 제거되었습니다"
 
-#: templates/settings.html:5193 templates/settings.html:5196
+#: templates/settings.html:5260 templates/settings.html:5263
 msgid "Failed to remove avatar"
 msgstr "아바타를 제거하지 못했습니다"
 
-#: templates/settings.html:5218 templates/settings.html:5221
+#: templates/settings.html:5285 templates/settings.html:5288
 msgid "Failed to save avatar"
 msgstr "아바타를 저장하지 못했습니다"
 
@@ -14609,6 +14636,16 @@ msgstr "사용 가능한 지역 값과 기본값을 설정합니다. 기본 지�
 #: templates/_settings_tabs/library.html:220
 msgid "Default Region"
 msgstr "기본 지역"
+
+#: templates/_settings_tabs/library.html:278
+msgid "Current Bonus Discs"
+msgstr "현재 보너스 디스크"
+
+#: templates/_settings_tabs/library.html:281
+msgid ""
+"A disc marked by mistake can go back in your game lists. Auto-Link then "
+"leaves it alone."
+msgstr "실수로 표시한 디스크를 게임 목록으로 되돌릴 수 있습니다. 그 후 Auto-Link는 이 디스크를 건드리지 않습니다."
 
 #: templates/_settings_tabs/scraping.html:421
 #, python-format
