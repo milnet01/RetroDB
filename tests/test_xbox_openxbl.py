@@ -210,7 +210,7 @@ def test_the_library_leaves_out_apps_and_phone_titles(admin_test_client, key_sto
     import routes.platform_import as pi
     monkeypatch.setattr(pi, '_ensure_system_exists', lambda folder, name=None: {
         'id': {'xbox360': 9001, 'xboxone': 9002}.get(folder, 9003), 'name': folder})
-    monkeypatch.setattr(pi._DuplicateIndex, '__init__', lambda self, _f: None)
+    monkeypatch.setattr(pi._DuplicateIndex, '__init__', lambda self, *_a: None)
     monkeypatch.setattr(pi._DuplicateIndex, 'find', lambda *a: None)
     monkeypatch.setattr(pi._DuplicateIndex, 'can_link', lambda *a: False)
     key_store[1] = {'api_key': 'KEY', 'xuid': '9'}

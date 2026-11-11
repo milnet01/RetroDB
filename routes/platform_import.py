@@ -116,23 +116,29 @@ class _DuplicateIndex:
 
     `find()` answers as the per-title check did: the platform-ID match
     anywhere in the library first, then a normalised-title match among the
-    games of the given system. The first row in rowid order wins.
+    games of the given system. The first row in rowid order wins. Only the
+    titles of `system_ids`, the systems the import fills, are read and
+    normalised (PASS-59-178).
     """
 
-    def __init__(self, platform_field):
+    def __init__(self, platform_field, system_ids):
         if platform_field not in _PLATFORM_ID_FIELDS:
             raise ValueError(f"unknown platform field {platform_field!r}")
         self._by_platform_id = {}
         self._by_title = {}
         self._holding_an_id = set()
+        systems = {sid for sid in system_ids if sid is not None}
+        marks = ', '.join('?' * len(systems)) or 'NULL'
         for row in query(f"SELECT id, title, system_id, {platform_field} AS pid "
-                         f"FROM games ORDER BY id"):
+                         f"FROM games WHERE COALESCE({platform_field}, '') != '' "
+                         f"OR system_id IN ({marks}) ORDER BY id", tuple(systems)):
             if row['pid']:
                 self._by_platform_id.setdefault(row['pid'], row['id'])
                 self._holding_an_id.add(row['id'])
-            norm = normalize_title(row['title'])
-            if norm:
-                self._by_title.setdefault((norm, row['system_id']), row['id'])
+            if row['system_id'] in systems:
+                norm = normalize_title(row['title'])
+                if norm:
+                    self._by_title.setdefault((norm, row['system_id']), row['id'])
 
     def find(self, title, system_id, platform_value=None):
         """Existing game_id for this title / platform ID, else None."""
@@ -214,7 +220,7 @@ def api_steam_fetch_library():
     system_id = system['id'] if system else None
 
     # Check duplicates for each game
-    dupes = _DuplicateIndex('steam_app_id')
+    dupes = _DuplicateIndex('steam_app_id', {system_id})
     result_games = []
     for game in games:
         app_id = str(game.get('appid', ''))
@@ -496,7 +502,7 @@ def api_xbox_fetch_library():
     if windows_system:
         xbox_systems['windows'] = windows_system
 
-    dupes = _DuplicateIndex('xbox_title_id')
+    dupes = _DuplicateIndex('xbox_title_id', {sys['id'] for sys in xbox_systems.values()})
     result_games = []
     left_out = 0
     for title in titles:
@@ -835,7 +841,7 @@ def _build_psn_library_response(games_data, from_api=False):
         if system:
             psn_systems[platform_str] = system
 
-    dupes = _DuplicateIndex('psn_npwr_id')
+    dupes = _DuplicateIndex('psn_npwr_id', {sys['id'] for sys in psn_systems.values()})
     result_games = []
     for game in games_data:
         if from_api:

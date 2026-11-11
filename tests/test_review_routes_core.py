@@ -133,7 +133,7 @@ def test_duplicate_index_matches_like_the_per_title_check(monkeypatch):
         return rows
 
     monkeypatch.setattr(pi, 'query', fake_query)
-    idx = pi._DuplicateIndex('steam_app_id')
+    idx = pi._DuplicateIndex('steam_app_id', {10, 20})
     # Platform ID wins over title, across systems; first row wins.
     assert idx.find('Something else', 10, '400') == 2
     # Normalised title, same system only; first row wins.
@@ -145,7 +145,28 @@ def test_duplicate_index_matches_like_the_per_title_check(monkeypatch):
     assert len(seen_sql) == 1
 
     with pytest.raises(ValueError):
-        pi._DuplicateIndex('title; DROP TABLE games')
+        pi._DuplicateIndex('title; DROP TABLE games', {10})
+
+
+def test_duplicate_index_reads_titles_of_the_target_systems_only(monkeypatch):
+    # PASS-59-178: normalising every title in the library on each fetch
+    # undid the index's saving; only the systems the import fills count.
+    import routes.platform_import as pi
+    rows = [
+        {'id': 1, 'title': 'Halo', 'system_id': 10, 'pid': None},
+        {'id': 2, 'title': 'Portal', 'system_id': 20, 'pid': '400'},
+        {'id': 3, 'title': 'Tetris', 'system_id': 30, 'pid': None},
+    ]
+    seen_sql, normalised = [], []
+    monkeypatch.setattr(pi, 'query', lambda sql, args=(), one=False: seen_sql.append((sql, args)) or rows)
+    real = pi.normalize_title
+    monkeypatch.setattr(pi, 'normalize_title', lambda t: normalised.append(t) or real(t))
+    idx = pi._DuplicateIndex('steam_app_id', {10})
+    assert normalised == ['Halo']
+    assert 'system_id IN' in seen_sql[0][0] and 10 in seen_sql[0][1]
+    # A platform ID still matches anywhere in the library.
+    assert idx.find('Something else', 10, '400') == 2
+    assert idx.find('Halo', 10) == 1
 
 
 # ---------------------------------------------------------------------------
