@@ -201,7 +201,7 @@
 
 <!-- Alphabet Jump Navigation -->
 {% if games|length >= 20 %}
-<div class="alphabet-nav" id="alphabetNav">
+<div class="alphabet-nav" id="alphabetNav" data-sticky-nav>
     <span class="alphabet-label">{{ _('Jump to:') }}</span>
     <div class="alphabet-letters">
         <button class="alphabet-btn alphabet-all" data-letter="" title="{{ _('Back to the first game') }}">{{ _('All') }}</button>
@@ -405,14 +405,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializeFromHTML();
 
-    // Initialize alphabet nav - position below sticky system tabs
+    // Alphabet nav: StickyScroll stacks it under the section tabs (data-sticky-nav)
     if (typeof AlphabetNav !== 'undefined') {
         AlphabetNav.init({ itemSelector: '.achievement-game-card' });
-        const systemTabs = document.getElementById('systemTabs');
-        const alphaNav = document.getElementById('alphabetNav');
-        if (systemTabs && alphaNav) {
-            alphaNav.style.top = (StickyScroll.baseTop() + systemTabs.offsetHeight + 4) + 'px';
-        }
     }
 
     // Check if sync is running
@@ -429,11 +424,6 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof AlphabetNav !== 'undefined') {
         AlphabetNav.init({ itemSelector: '.achievement-game-card' });
-        const systemTabs = document.getElementById('systemTabs');
-        const alphaNav = document.getElementById('alphabetNav');
-        if (systemTabs && alphaNav) {
-            alphaNav.style.top = (StickyScroll.baseTop() + systemTabs.offsetHeight + 4) + 'px';
-        }
     }
 });
 {% endif %}
@@ -660,11 +650,6 @@ function scrollToTop() {
 .cache-status {
     font-size: 0.85rem;
     color: var(--text-muted);
-}
-
-/* Alphabet nav sits below sticky system tabs */
-.alphabet-nav {
-    top: calc(var(--sticky-top) + 55px);
 }
 </style>
 {% endblock %}

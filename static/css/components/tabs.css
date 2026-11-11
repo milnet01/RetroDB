@@ -66,6 +66,8 @@
 
 /* =============================================================================
    SYSTEM TABS - For Achievements page (flex-wrap for many tabs)
+   Not sticky: with many consoles it wraps taller than a phone screen, and
+   the section tabs above it already stick (PASS-59-166).
    ============================================================================= */
 
 .system-tabs {
@@ -79,10 +81,6 @@
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--card-border);
     border-radius: var(--radius-lg);
-    /* Sticky positioning */
-    position: sticky;
-    top: var(--sticky-top);
-    z-index: 100;
 }
 
 .system-tab {

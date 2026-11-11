@@ -21,7 +21,7 @@
 {%- endmacro %}
 
 {% macro achievement_tabs(active) %}
-<nav class="tool-tabs achievement-tabs" aria-label="{{ _('Achievements') }}">
+<nav class="tool-tabs achievement-tabs" aria-label="{{ _('Achievements') }}" data-sticky-nav>
     {{ _tab(url_for('achievements.achievements'), '🎖️', 'RetroAchievements', active == 'retroachievements') }}
     {{ _tab(url_for('trophies.trophies'), '🏆', 'RPCS3', active == 'rpcs3') }}
     {{ _tab(url_for('trophies.psn_trophies'), '🎮', 'PSN', active == 'psn') }}
