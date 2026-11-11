@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=300 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=301 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -2670,7 +2670,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: fix.
   Source: pass59-298-live-check-2026-11-10.
 
-- 📋 [PASS-59-300] **One company under different names: suggest look-alikes, the user merges them (feature, M).**
+- ✅ [PASS-59-300] **One company under different names: suggest look-alikes, the user merges them (feature, M).**
   - **Why**: the user, 2026-11-10: "Eidos" and "Eidos Interactive" are
     one company and should show as one name.
   - **Decision** (user, 2026-11-10): Settings > Normalization suggests
@@ -2683,9 +2683,26 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     PASS-59-298 spellings, and later scrapes take the chosen name.
   - **Builds on**: PASS-59-299 (whole company names) and PASS-59-298.
   - **Status**: todo.
+  - **Shipped** (2026-11-11, 4af900c6): Settings > Normalization >
+    Publisher / Developer lists look-alikes (normalization
+    .company_lookalike_groups), none ticked. Merge rewrites both company
+    fields and saves `company` rules that company_aliases() lays over
+    COMPANY_ALIASES. On the live library it suggests 162 publisher and
+    142 developer groups. Test: tests/test_pass59_300_company_lookalikes.py.
   **Layman:** "Eidos" on one game and "Eidos Interactive" on another become one name, once you confirm it in Settings.
   Kind: feature.
   Source: user-request-2026-11-10.
+
+- 📋 [PASS-59-301] **A comma inside brackets splits a company name in two (fix, S).**
+  - **Seen**: the PASS-59-300 browser walk listed "Majesco (licensed
+    from Konami" and "Disney)" as names: split_names cuts at every
+    comma, even inside brackets.
+  - **Fix**: split_names (and the JS firstCompany twin) skip commas
+    inside brackets; check what the stored rows hold first.
+  - **Status**: todo.
+  **Layman:** A publisher such as "Majesco (licensed from Konami, ...)" shows as broken pieces like "Disney)"; it should stay one name.
+  Kind: fix.
+  Source: pass-59-300-walk-2026-11-11.
 
 ## 4.0.x — Security and data-loss fixes for the web version
 
