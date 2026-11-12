@@ -658,6 +658,9 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   ---
   2026-11-11 (user): also on a 375px phone the Settings page overflows
   sideways; a `.detail-value` span is wider than the screen.
+  2026-11-12 (PASS-59-179 walk, German, 375px): Settings > System card
+  heading "📋 PROTOKOLLEINSTELLUNGEN" (`h2.card-title`) ends 3px past the
+  screen; a long one-word title has no wrap rule.
   **Layman:** Fixes for empty gaps and hidden headers on phones, and for duplicated page styles.
   Kind: implement.
 
@@ -1022,7 +1025,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: implement.
   Lanes: routes.
 
-- 📋 [PASS-59-179] **Settings > System maintenance tools are wrapped for translation (LOW, S).**
+- ✅ [PASS-59-179] **Settings > System maintenance tools are wrapped for translation (LOW, S).**
   - **Status**: todo
   templates/_settings_tabs/system.html has "Clear Scraped Data" as bare
   text, and the maintenance JS in templates/settings.html (CLEAR SCRAPED
@@ -1032,6 +1035,9 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   the catalogs and translate the new msgids into every locale.
 
   ---
+  Shipped 2026-11-12 (1b1c40cc). The whole System tab and its script
+  messages are wrapped; 69 older untranslated msgids were filled in the
+  same pass. Left English on purpose: the raw bulk-scrape state dump.
   **Layman:** The maintenance tools in Settings can be translated.
   Kind: implement.
 
