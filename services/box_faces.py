@@ -28,11 +28,15 @@ REQUIRED_FACES = ('front', 'spine')
 COLOURS = ('top', 'bottom', 'edge')
 SIZES = ('width_mm', 'height_mm', 'depth_mm')
 # The case's shape (Slipcase SLIP-0125 § 4.1): the first two keys are
-# required; a missing lip, seam or recess key means 0.
+# required; a missing lip, seam or recess key means 0, but a missing
+# recess_end_radius_mm means half the recess's height: half-round ends.
 SHAPE_KEYS = ('corner_radius_mm', 'edge_radius_mm', 'lip_width_mm', 'lip_height_mm',
               'seam_width_mm', 'seam_depth_mm', 'recess_length_mm',
-              'recess_height_mm', 'recess_depth_mm')
+              'recess_height_mm', 'recess_depth_mm', 'recess_end_radius_mm',
+              'recess_offset_mm')
 SHAPE_REQUIRED = ('corner_radius_mm', 'edge_radius_mm')
+# The one key that may be below 0: a recess below the side's middle.
+SHAPE_SIGNED = ('recess_offset_mm',)
 
 MAX_BOX_FILE_SIZE = 64 * 1024
 TARGET_HEIGHT = 1080          # the front's height after import; never enlarged
@@ -151,11 +155,16 @@ def _shape(data, case):
         return None
     s = {}
     for key in SHAPE_KEYS:
+        if key == 'recess_end_radius_mm' and key not in shape:
+            continue    # filled in below, once the shape is known not to be flat
         value = shape.get(key, 0)
         if (isinstance(value, bool) or not isinstance(value, (int, float))
-                or not math.isfinite(value) or value < 0):
+                or not math.isfinite(value) or (value < 0 and key not in SHAPE_SIGNED)):
             return None
         s[key] = value
+    if not any(s.values()):
+        return None
+    s.setdefault('recess_end_radius_mm', s['recess_height_mm'] / 2)
     width, height, depth = case['width_mm'], case['height_mm'], case['depth_mm']
     side = min(width, height) / 4
     corner, edge = s['corner_radius_mm'], s['edge_radius_mm']
@@ -164,14 +173,14 @@ def _shape(data, case):
             or lip_h > depth / 8 or s['seam_width_mm'] > depth / 8
             or s['seam_depth_mm'] > s['seam_width_mm']
             or (lip_h > 0 and (lip_w == 0 or lip_w < edge))
-            or s['recess_length_mm'] >= height - 2 * max(corner, lip_w)
+            or (s['recess_length_mm'] + 2 * abs(s['recess_offset_mm'])
+                >= height - 2 * max(corner, lip_w))
+            or s['recess_end_radius_mm'] > s['recess_height_mm'] / 2
             or s['recess_depth_mm'] > side
             or (s['recess_height_mm'] > 0
                 and (s['recess_length_mm'] <= s['recess_height_mm']
                      or s['recess_height_mm'] <= s['seam_width_mm']))
             or s['recess_height_mm'] / 2 >= depth / 2 - lip_h - edge):
-        return None
-    if not any(s.values()):
         return None
     return s
 

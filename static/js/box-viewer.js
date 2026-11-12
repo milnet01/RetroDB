@@ -46,7 +46,7 @@
 
     const CORNER_SEGMENTS = 8;
     const EDGE_SEGMENTS = 3;
-    const RECESS_SEGMENTS = 4;  // per quarter of the slot's half-round ends
+    const RECESS_SEGMENTS = 4;  // per rounded corner of the slot's ends
     const SAME_MM = 1e-9;
     const FULL_PICTURE = [[0, 0], [1, 0], [1, 1], [0, 1]];
     const FACE_NORMALS = {
@@ -113,6 +113,10 @@
     }
 
     const hasRecess = s => s.recess_length_mm > 0 && s.recess_height_mm > 0 && s.recess_depth_mm > 0;
+    // A record stored before PASS-59-252 has neither key: half-round ends,
+    // the slot in the middle of the side.
+    const recessEndRadius = s => s.recess_end_radius_mm ?? s.recess_height_mm / 2;
+    const recessOffset = s => s.recess_offset_mm ?? 0;
 
     // The rings, front sheet to back sheet, `d` being half the depth. Each
     // ring: [[inset, height] on the lip sides, [inset, height] on the spine
@@ -144,11 +148,21 @@
         if (!hasRecess(s)) {
             straight = seam.map(([lipSide, spineSide]) => [lipSide, spineSide, null]);
         } else {
-            const end = s.recess_height_mm / 2;
-            const reach = z => s.recess_length_mm / 2 - end + Math.sqrt(Math.max(0, end * end - z * z));
+            const end = s.recess_height_mm / 2, rho = recessEndRadius(s);
+            const flat = end - rho;     // the slot's ends run straight up to here each way
+            const reach = z => {
+                const past = Math.max(0, Math.abs(z) - flat);
+                return s.recess_length_mm / 2 - rho + Math.sqrt(Math.max(0, rho * rho - past * past));
+            };
+            // Rings round each end's two rounded corners, top then bottom; a
+            // square end needs only its top and bottom rings.
+            const quarter = [];
+            for (let j = 0; j <= RECESS_SEGMENTS; j++) {
+                quarter.push(flat + rho * Math.cos(Math.PI / 2 * j / RECESS_SEGMENTS));
+            }
             const levels = [];
-            for (let j = 0; j <= 2 * RECESS_SEGMENTS; j++) {
-                levels.push(end * Math.cos(Math.PI * j / (2 * RECESS_SEGMENTS)));
+            for (const z of quarter.concat(quarter.slice().reverse().map(q => -q))) {
+                if (!levels.length || levels[levels.length - 1] - z > SAME_MM) levels.push(z);
             }
             // Levels inside the seam would cut its V; the seam's own rings stand in.
             const cut = levels.filter(z => sw === 0 || Math.abs(z) > sw / 2 + SAME_MM)
@@ -194,10 +208,12 @@
             let floor = x - s.recess_depth_mm;
             if (reach === null) {
                 // Uncut: the points sit where the slot's straight edges end.
-                reach = s.recess_length_mm / 2 - s.recess_height_mm / 2;
+                reach = s.recess_length_mm / 2 - recessEndRadius(s);
                 floor = x;
             }
-            points.push([x, -reach, z], [floor, -reach, z], [floor, reach, z], [x, reach, z]);
+            const mid = recessOffset(s);
+            points.push([x, mid - reach, z], [floor, mid - reach, z],
+                [floor, mid + reach, z], [x, mid + reach, z]);
         }
         return points;
     }

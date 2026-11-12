@@ -98,7 +98,20 @@ def _shape_stored(game, shape):
 
 
 def test_a_good_shape_is_kept_whole(game, images):
-    assert _shape_stored(game, PS5_SHAPE) == PS5_SHAPE
+    assert _shape_stored(game, PS5_SHAPE) == {
+        **PS5_SHAPE, 'recess_end_radius_mm': 3, 'recess_offset_mm': 0}
+
+
+def test_a_square_off_centre_recess_is_kept(game, images):
+    # PASS-59-252, Slipcase SLIP-0130: square ends, the slot below the middle.
+    shape = {**PS5_SHAPE, 'recess_end_radius_mm': 0, 'recess_offset_mm': -20}
+    assert _shape_stored(game, shape) == shape
+
+
+def test_a_missing_end_radius_means_half_round_ends(game, images):
+    stored = _shape_stored(game, {**PS5_SHAPE, 'recess_height_mm': 4})
+    assert stored['recess_end_radius_mm'] == 2
+    assert stored['recess_offset_mm'] == 0
 
 
 def test_a_missing_lip_seam_or_recess_key_means_zero(game, images):
@@ -125,9 +138,16 @@ def test_no_shape_stores_no_shape(game, images):
     {**PS5_SHAPE, 'recess_height_mm': 11},              # runs into the lips' rounding
     {**PS5_SHAPE, 'recess_height_mm': 0.8},             # no taller than the seam
     {**PS5_SHAPE, 'recess_length_mm': 6},               # no longer than it is tall
+    {**PS5_SHAPE, 'recess_end_radius_mm': 3.1},         # rounder than half its height
+    {**PS5_SHAPE, 'recess_end_radius_mm': -1},          # only the offset may be below 0
+    {**PS5_SHAPE, 'recess_offset_mm': 70},              # pushed up into the corner
+    {**PS5_SHAPE, 'recess_offset_mm': -70},             # pushed down into the corner
+    {**PS5_SHAPE, 'recess_offset_mm': True},            # a bool is not a number
     {key: 0 for key in PS5_SHAPE},                      # every value 0 is a flat box
 ], ids=['not-object', 'required', 'bool', 'negative', 'corner', 'edge', 'seam',
         'lip', 'recess-length', 'recess-height', 'recess-seam', 'recess-short',
+        'recess-end-radius', 'recess-end-negative', 'recess-offset-up',
+        'recess-offset-down', 'recess-offset-bool',
         'all-zero'])
 def test_a_bad_shape_draws_flat_but_the_box_still_imports(game, images, shape):
     assert _shape_stored(game, shape) is None

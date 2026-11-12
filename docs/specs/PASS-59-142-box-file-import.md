@@ -70,8 +70,12 @@ A new column, `games.box_faces` (TEXT, migration 025, NULL = no faces):
 - `faces` holds all six keys. A face the box file left null or absent is
   `null`.
 - `shape` (PASS-59-231) is present only when the box file's `shape` passes
-  Slipcase SLIP-0125 § 4.1's reading rules. It holds all nine keys in mm,
-  a missing lip, seam or recess key stored as 0. A shape breaking any rule
+  Slipcase SLIP-0125 § 4.1's reading rules. It holds every key of
+  `box_faces.SHAPE_KEYS` in mm, a missing lip, seam or recess key stored
+  as 0. Two exceptions (PASS-59-252): a missing `recess_end_radius_mm` is
+  stored as half `recess_height_mm`, and `recess_offset_mm` may be below 0.
+  A record stored before PASS-59-252 has neither key, and the viewer reads
+  it the same way. A shape breaking any rule
   is dropped and the box imports flat; it never refuses the file. A box
   imported before PASS-59-231 has no `shape` until it is imported again.
 - The files live in `<IMAGE_PATH>/box_faces/`, named
