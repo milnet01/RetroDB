@@ -453,7 +453,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: implement.
   Lanes: scraper, services.
 
-- 📋 [PASS-59-252] **The box viewer reads Slipcase's two new finger-recess keys (enhancement, S).**
+- ✅ [PASS-59-252] **The box viewer reads Slipcase's two new finger-recess keys (enhancement, S).**
   - **Status**: todo
   - **Why**: the Slipcase session, 2026-11-04 (SLIP-0130, Slipcase commit
     4de187b, SLIP-0125 § 4.1 amended). Box file version stays 1.
@@ -469,6 +469,9 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - **Source**: Slipcase session, 2026-11-04.
 
   ---
+  Shipped 2026-11-12 (a989bf48). Importer and viewer read both keys;
+  the viewer matches Slipcase's box_patches to 0 mm on four slot shapes.
+  Not run: an import of a real Xbox box file from Slipcase.
   **Layman:** The 3D box viewer reads two new settings from Slipcase for the finger hole in a case.
   Kind: implement.
 
