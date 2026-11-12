@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-11 22:13+0200\n"
+"POT-Creation-Date: 2026-11-12 14:22+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: id\n"
@@ -199,8 +199,8 @@ msgstr "Sistem tidak ditemukan atau tidak memiliki game achievement"
 #: routes/achievements.py:177 routes/achievements.py:468
 #: routes/bonus_discs.py:276 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
-#: routes/emulators.py:306 routes/emulators.py:320 routes/games.py:397
-#: routes/games.py:931 routes/games.py:1050 routes/games.py:1131
+#: routes/emulators.py:306 routes/emulators.py:320 routes/games.py:398
+#: routes/games.py:944 routes/games.py:1063 routes/games.py:1144
 #: routes/games_ai.py:41 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
 #: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:706
@@ -574,8 +574,8 @@ msgstr "Disc bonus dan game induk harus berada di sistem yang sama"
 msgid "A bonus disc links to a main game, one level only"
 msgstr "Disk bonus terhubung ke satu game utama, hanya satu tingkat"
 
-#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1401
-#: routes/games.py:1431 routes/platform_import.py:361
+#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1414
+#: routes/games.py:1444 routes/platform_import.py:361
 #: routes/platform_import.py:666 routes/platform_import.py:1050
 #: routes/scrape_logs.py:89 routes/scrape_logs.py:174 routes/scrape_logs.py:187
 #: routes/scrape_logs.py:225 routes/scraper.py:204 routes/scraper.py:535
@@ -805,22 +805,22 @@ msgstr ""
 msgid "Emulator not found"
 msgstr "Emulator tidak ditemukan"
 
-#: routes/games.py:270 routes/games.py:304
+#: routes/games.py:271 routes/games.py:305
 msgid "No IDs provided"
 msgstr "Tidak ada ID yang diberikan"
 
-#: routes/games.py:312
+#: routes/games.py:313
 msgid "Provide 1-50 valid IDs"
 msgstr "Berikan 1-50 ID yang valid"
 
-#: routes/games.py:581
+#: routes/games.py:589
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
 "Video tidak disimpan: harus berupa berkas MP4, WebM, atau OGG maksimal "
 "%(mb)s MB."
 
-#: routes/games.py:591
+#: routes/games.py:602
 #, python-format
 msgid ""
 "Screenshots not added because they match ones the game already has: "
@@ -829,19 +829,19 @@ msgstr ""
 "Tangkapan layar yang tidak ditambahkan karena sama dengan yang sudah "
 "dimiliki game: %(count)s"
 
-#: routes/games.py:736
+#: routes/games.py:749
 msgid "Game not found after update"
 msgstr "Game tidak ditemukan setelah pembaruan"
 
-#: routes/games.py:1054
+#: routes/games.py:1067
 msgid "No game selected."
 msgstr "Tidak ada game yang dipilih."
 
-#: routes/games.py:1078
+#: routes/games.py:1091
 msgid "This metadata apply is no longer running."
 msgstr "Penerapan metadata ini sudah tidak berjalan."
 
-#: routes/games.py:1087
+#: routes/games.py:1100
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -850,51 +850,51 @@ msgstr ""
 "Metadata diterapkan dari %(sources)s! (%(filled)d kolom terisi, "
 "%(missing)d masih kosong)"
 
-#: routes/games.py:1093
+#: routes/games.py:1106
 msgid "Failed to apply metadata."
 msgstr "Gagal menerapkan metadata."
 
-#: routes/games.py:1167 routes/games.py:1216
+#: routes/games.py:1180 routes/games.py:1229
 msgid "No fields to update"
 msgstr "Tidak ada kolom untuk diperbarui"
 
-#: routes/games.py:1209 routes/platform_import.py:267
+#: routes/games.py:1222 routes/platform_import.py:267
 #: routes/platform_import.py:572 routes/platform_import.py:936
 #: routes/trophies.py:1928 templates/game_imports.html:579
 #: templates/game_imports.html:852
 msgid "No games selected"
 msgstr "Tidak ada game yang dipilih"
 
-#: routes/games.py:1213
+#: routes/games.py:1226
 msgid "Invalid game selection"
 msgstr "Pilihan game tidak valid"
 
-#: routes/games.py:1225
+#: routes/games.py:1238
 msgid "Invalid completion status"
 msgstr "Status penyelesaian tidak valid"
 
-#: routes/games.py:1263 services/api_helpers.py:114
+#: routes/games.py:1276 services/api_helpers.py:114
 #, python-format
 msgid "%(field)s must be text"
 msgstr "%(field)s harus berupa teks"
 
-#: routes/games.py:1275
+#: routes/games.py:1288
 msgid "No valid fields to update"
 msgstr "Tidak ada kolom valid untuk diperbarui"
 
-#: routes/games.py:1394
+#: routes/games.py:1407
 msgid "Invalid status"
 msgstr "Status tidak valid"
 
-#: routes/games.py:1419
+#: routes/games.py:1432
 msgid "Not authenticated"
 msgstr "Belum terautentikasi"
 
-#: routes/games.py:1450
+#: routes/games.py:1463
 msgid "Filter type and value required"
 msgstr "Jenis dan nilai filter wajib diisi"
 
-#: routes/games.py:1463
+#: routes/games.py:1476
 msgid "Invalid filter type"
 msgstr "Jenis filter tidak valid"
 
@@ -1201,7 +1201,7 @@ msgstr ""
 msgid "Could not create Windows system entry"
 msgstr "Tidak dapat membuat entri sistem Windows"
 
-#: routes/platform_import.py:418 templates/settings.html:5121
+#: routes/platform_import.py:418 templates/settings.html:5118
 msgid "Paste your OpenXBL key first."
 msgstr "Tempelkan kunci OpenXBL Anda terlebih dahulu."
 
@@ -1246,8 +1246,9 @@ msgstr ""
 "Posisi dalam antrean: %(num)s."
 
 #: routes/ra_sync.py:75 services/js_i18n_strings.py:602
-#: templates/all_games.html:42 templates/reports.html:329
-#: templates/reports.html:410 templates/reports.html:485
+#: templates/_settings_tabs/system.html:64 templates/all_games.html:42
+#: templates/reports.html:329 templates/reports.html:410
+#: templates/reports.html:485
 msgid "All Systems"
 msgstr "Semua Sistem"
 
@@ -1304,6 +1305,8 @@ msgstr "Jalur ROM belum diatur"
 #: routes/reports.py:718
 msgid "This file was renamed after the last scan. Scan again, then rename."
 msgstr ""
+"File ini diganti namanya setelah pemindaian terakhir. Pindai lagi, lalu "
+"ganti namanya."
 
 #: routes/reports.py:733 routes/reports.py:858
 msgid "ROM file not found"
@@ -1489,19 +1492,19 @@ msgstr "Tidak ada pemetaan yang diberikan"
 
 #: routes/settings.py:700 routes/settings.py:713 routes/settings.py:725
 msgid "Invalid field"
-msgstr ""
+msgstr "Kolom tidak valid"
 
 #: routes/settings.py:715
 msgid "No spellings chosen"
-msgstr ""
+msgstr "Tidak ada ejaan yang dipilih"
 
 #: routes/settings.py:738
 msgid "No name to keep"
-msgstr ""
+msgstr "Tidak ada nama untuk dipertahankan"
 
 #: routes/settings.py:740
 msgid "No names ticked to merge"
-msgstr ""
+msgstr "Tidak ada nama yang dicentang untuk digabungkan"
 
 #: routes/steam_achievements.py:112
 msgid "Steam credentials not configured"
@@ -2202,7 +2205,7 @@ msgstr "AI tidak menemukan kolom kosong untuk diisi"
 #: services/js_i18n_strings.py:598 templates/_settings_tabs/account.html:331
 #: templates/archive_scanner.html:726 templates/list_detail.html:47
 #: templates/multi_disc_organizer.html:217 templates/reports.html:372
-#: templates/reports.html:455
+#: templates/reports.html:455 templates/settings.html:4856
 msgid "Actions"
 msgstr "Tindakan"
 
@@ -2300,7 +2303,7 @@ msgstr ""
 msgid "Are you sure you want to cancel?"
 msgstr "Apakah Anda yakin ingin membatalkan?"
 
-#: services/js_i18n_strings.py:619 templates/settings.html:4926
+#: services/js_i18n_strings.py:619 templates/settings.html:4923
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "Apakah Anda yakin ingin menghapus \"{filename}\"?"
@@ -2429,7 +2432,7 @@ msgstr "Dibatalkan oleh pengguna"
 #: services/js_i18n_strings.py:645
 #, python-brace-format
 msgid "Change these names to \"{name}\" on every game?"
-msgstr ""
+msgstr "Ubah nama-nama ini menjadi \"{name}\" di setiap game?"
 
 #: services/js_i18n_strings.py:646
 msgid "Cheat list changed."
@@ -2443,11 +2446,11 @@ msgstr "Cheat disimpan."
 msgid "Checking RetroAchievements…"
 msgstr "Memeriksa RetroAchievements…"
 
-#: services/js_i18n_strings.py:649
+#: services/js_i18n_strings.py:649 templates/_settings_tabs/system.html:26
 msgid "Clean Missing ROMs"
 msgstr "Bersihkan ROM yang Hilang"
 
-#: services/js_i18n_strings.py:650
+#: services/js_i18n_strings.py:650 templates/_settings_tabs/system.html:48
 msgid "Clear CLZ Imports"
 msgstr "Hapus Impor CLZ"
 
@@ -2477,7 +2480,8 @@ msgstr "Data RA dihapus untuk {count} game di {system}"
 msgid "Cleared RA data for {n} games"
 msgstr "Data RA dihapus untuk {n} game"
 
-#: services/js_i18n_strings.py:657
+#: services/js_i18n_strings.py:657 templates/settings.html:3806
+#: templates/settings.html:4070
 msgid "Clearing..."
 msgstr "Menghapus..."
 
@@ -2593,7 +2597,7 @@ msgstr "Tidak dapat menerapkan metadata."
 
 #: services/js_i18n_strings.py:679
 msgid "Could not cancel it"
-msgstr ""
+msgstr "Tidak dapat membatalkannya"
 
 #: services/js_i18n_strings.py:680
 msgid "Could not change the cheat list."
@@ -2609,7 +2613,7 @@ msgstr "Tidak dapat menghitung game."
 
 #: services/js_i18n_strings.py:683
 msgid "Could not download the update."
-msgstr ""
+msgstr "Tidak dapat mengunduh pembaruan."
 
 #: services/js_i18n_strings.py:684
 #, python-brace-format
@@ -2630,7 +2634,7 @@ msgstr "Tidak dapat memuat saran."
 
 #: services/js_i18n_strings.py:687
 msgid "Could not load the log files"
-msgstr ""
+msgstr "Tidak dapat memuat file log"
 
 #: services/js_i18n_strings.py:688
 msgid "Could not open this manual. Use \"Open PDF in a new tab\" instead."
@@ -2640,7 +2644,7 @@ msgstr ""
 
 #: services/js_i18n_strings.py:689
 msgid "Could not pause or resume it"
-msgstr ""
+msgstr "Tidak dapat menjeda atau melanjutkannya"
 
 #: services/js_i18n_strings.py:690
 msgid "Could not read the run status."
@@ -2669,6 +2673,8 @@ msgstr "Tidak dapat menyimpan cheat."
 #: services/js_i18n_strings.py:696
 msgid "Could not save the theme; it will reset on the next page."
 msgstr ""
+"Tidak dapat menyimpan tema; tema akan kembali semula di halaman "
+"berikutnya."
 
 #: services/js_i18n_strings.py:697
 msgid "Could not show this page of the manual."
@@ -2680,7 +2686,7 @@ msgstr "Tidak dapat memulai proses."
 
 #: services/js_i18n_strings.py:699
 msgid "Could not stop the game"
-msgstr ""
+msgstr "Tidak dapat menghentikan game"
 
 #: services/js_i18n_strings.py:700
 msgid "Could not stop the run."
@@ -2712,7 +2718,7 @@ msgstr "Pengaturan saat ini"
 msgid "Default emulator for {system}"
 msgstr "Emulator default untuk {system}"
 
-#: services/js_i18n_strings.py:707 templates/settings.html:4926
+#: services/js_i18n_strings.py:707 templates/settings.html:4923
 msgid "Delete Log File"
 msgstr "Hapus Berkas Log"
 
@@ -2741,6 +2747,7 @@ msgid "Done."
 msgstr "Selesai."
 
 #: services/js_i18n_strings.py:714 templates/logs.html:740
+#: templates/settings.html:4874
 msgid "Download"
 msgstr "Unduh"
 
@@ -2843,7 +2850,7 @@ msgstr "Emulator"
 #: services/js_i18n_strings.py:737
 #, python-brace-format
 msgid "Enlarge {name}"
-msgstr ""
+msgstr "Perbesar {name}"
 
 #: services/js_i18n_strings.py:738
 msgid "Enter one folder path."
@@ -2875,15 +2882,15 @@ msgstr "Masukkan satu jalur folder."
 #: templates/settings.html:3555 templates/settings.html:3623
 #: templates/settings.html:3627 templates/settings.html:3658
 #: templates/settings.html:3662 templates/settings.html:3688
-#: templates/settings.html:3692 templates/settings.html:4186
-#: templates/settings.html:4190 templates/settings.html:4208
-#: templates/settings.html:4239 templates/settings.html:4299
-#: templates/settings.html:4303 templates/settings.html:4433
-#: templates/settings.html:4437 templates/settings.html:4463
-#: templates/settings.html:4467 templates/settings.html:4914
-#: templates/settings.html:4917 templates/settings.html:4936
-#: templates/settings.html:4939 templates/settings.html:4954
-#: templates/settings.html:4957
+#: templates/settings.html:3692 templates/settings.html:4183
+#: templates/settings.html:4187 templates/settings.html:4205
+#: templates/settings.html:4236 templates/settings.html:4296
+#: templates/settings.html:4300 templates/settings.html:4430
+#: templates/settings.html:4434 templates/settings.html:4460
+#: templates/settings.html:4464 templates/settings.html:4911
+#: templates/settings.html:4914 templates/settings.html:4933
+#: templates/settings.html:4936 templates/settings.html:4951
+#: templates/settings.html:4954
 msgid "Error"
 msgstr "Kesalahan"
 
@@ -3342,6 +3349,8 @@ msgstr "Mencari versi…"
 #: services/js_i18n_strings.py:843
 msgid "Lost contact with RetroDB. Reload the page to see the generation progress."
 msgstr ""
+"Kontak dengan RetroDB terputus. Muat ulang halaman untuk melihat progres "
+"pembuatan."
 
 #: services/js_i18n_strings.py:844 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
@@ -3396,11 +3405,11 @@ msgstr ""
 
 #: services/js_i18n_strings.py:850
 msgid "Merge"
-msgstr ""
+msgstr "Gabungkan"
 
 #: services/js_i18n_strings.py:851
 msgid "Missing box art"
-msgstr ""
+msgstr "Boxart tidak ada"
 
 #: services/js_i18n_strings.py:852
 #, python-brace-format
@@ -3427,12 +3436,12 @@ msgstr "TIDAK"
 
 #: services/js_i18n_strings.py:857
 msgid "Name to keep"
-msgstr ""
+msgstr "Nama yang dipertahankan"
 
 #: services/js_i18n_strings.py:858
 #, python-brace-format
 msgid "Names merged: {games} games updated"
-msgstr ""
+msgstr "Nama digabungkan: {games} game diperbarui"
 
 #: services/js_i18n_strings.py:859
 #, python-brace-format
@@ -3444,7 +3453,10 @@ msgid "Navigation"
 msgstr "Navigasi"
 
 #: services/js_i18n_strings.py:861 templates/psn_trophy_detail.html:944
-#: templates/psn_trophy_detail.html:964
+#: templates/psn_trophy_detail.html:964 templates/settings.html:3782
+#: templates/settings.html:3840 templates/settings.html:3916
+#: templates/settings.html:3973 templates/settings.html:4049
+#: templates/settings.html:4100 templates/settings.html:4144
 msgid "Network error"
 msgstr "Kesalahan jaringan"
 
@@ -3502,7 +3514,7 @@ msgstr "Tidak ada achievement yang ditemukan"
 
 #: services/js_i18n_strings.py:874
 msgid "No answer from RetroDB"
-msgstr ""
+msgstr "Tidak ada jawaban dari RetroDB"
 
 #: services/js_i18n_strings.py:875 templates/achievement_game.html:72
 #: templates/steam_achievement_game.html:69
@@ -3803,7 +3815,7 @@ msgstr "Hapus kotak 3D?"
 #: templates/settings.html:3441
 #, python-brace-format
 msgid "Remove {name}"
-msgstr ""
+msgstr "Hapus {name}"
 
 #: services/js_i18n_strings.py:942
 #, python-brace-format
@@ -3835,7 +3847,7 @@ msgstr "Menghapus..."
 
 #: services/js_i18n_strings.py:948
 msgid "Reorder queue"
-msgstr ""
+msgstr "Urutkan ulang antrean"
 
 #: services/js_i18n_strings.py:949 templates/_bulk_edit_modal.html:42
 #: templates/_bulk_edit_modal.html:56 templates/_bulk_edit_modal.html:70
@@ -3971,7 +3983,8 @@ msgstr "Tersimpan. Berlaku saat Anda menekan Mainkan berikutnya."
 msgid "Saving to the database…"
 msgstr "Menyimpan ke database…"
 
-#: services/js_i18n_strings.py:978 templates/setup.html:483
+#: services/js_i18n_strings.py:978 templates/settings.html:4787
+#: templates/setup.html:483
 msgid "Saving..."
 msgstr "Menyimpan..."
 
@@ -3995,6 +4008,8 @@ msgid "Scanned {paths} paths · found {found} matches."
 msgstr "Memindai {paths} jalur · menemukan {found} kecocokan."
 
 #: services/js_i18n_strings.py:983 templates/multi_disc_organizer.html:204
+#: templates/settings.html:1803 templates/settings.html:3861
+#: templates/settings.html:4000 templates/settings.html:4510
 msgid "Scanning..."
 msgstr "Memindai..."
 
@@ -4175,7 +4190,7 @@ msgstr "Sedang masuk…"
 #: services/js_i18n_strings.py:1022
 #, python-brace-format
 msgid "Spellings applied: {games} games updated"
-msgstr ""
+msgstr "Ejaan diterapkan: {games} game diperbarui"
 
 #: services/js_i18n_strings.py:1023 templates/_modals/edit_modal.html:50
 #: templates/base.html:1103 templates/game_detail.html:4270
@@ -4499,7 +4514,7 @@ msgstr "Unggah"
 msgid "Upload Controller Image"
 msgstr "Unggah Gambar Kontroler"
 
-#: services/js_i18n_strings.py:1085 templates/settings.html:5243
+#: services/js_i18n_strings.py:1085 templates/settings.html:5240
 msgid "Upload failed"
 msgstr "Unggah gagal"
 
@@ -4526,11 +4541,11 @@ msgstr "Gunakan pengaturan sistem"
 #: services/js_i18n_strings.py:1091
 #, python-brace-format
 msgid "Use these {n} spellings?"
-msgstr ""
+msgstr "Gunakan {n} ejaan ini?"
 
 #: services/js_i18n_strings.py:1092
 msgid "Use this spelling?"
-msgstr ""
+msgstr "Gunakan ejaan ini?"
 
 #: services/js_i18n_strings.py:1093
 #, python-brace-format
@@ -5461,6 +5476,8 @@ msgstr ""
 "Unduh achievement yang sudah Anda raih di game %(system)s Anda. Jalankan "
 "setelah bermain."
 
+#: templates/_settings_tabs/system.html:430
+#: templates/_settings_tabs/system.html:448
 #: templates/achievements_system.html:162 templates/changelog.html:179
 #: templates/logs.html:737 templates/setup.html:354 templates/setup.html:355
 #: templates/setup.html:419 templates/tags.html:595
@@ -5679,7 +5696,8 @@ msgstr "Filter"
 msgid "Select"
 msgstr "Pilih"
 
-#: templates/all_games.html:94 templates/system_games.html:85
+#: templates/all_games.html:94 templates/settings.html:4853
+#: templates/system_games.html:85
 msgid "Category"
 msgstr "Kategori"
 
@@ -6196,7 +6214,7 @@ msgstr "Game Terbesar"
 msgid "Game"
 msgstr "Game"
 
-#: templates/analytics.html:604
+#: templates/analytics.html:604 templates/settings.html:4855
 msgid "Size"
 msgstr "Ukuran"
 
@@ -6258,7 +6276,7 @@ msgstr "Statistik disalin ke papan klip."
 
 #: templates/analytics.html:2772
 msgid "Could not copy to the clipboard."
-msgstr ""
+msgstr "Tidak dapat menyalin ke clipboard."
 
 #: templates/analytics.html:2826
 msgid "CSV data exported."
@@ -6434,7 +6452,7 @@ msgstr "Diproses"
 
 #: templates/archive_scanner.html:782 templates/game_detail.html:4079
 #: templates/reports.html:497 templates/settings.html:3549
-#: templates/settings.html:4297 templates/settings.html:4951
+#: templates/settings.html:4294 templates/settings.html:4948
 msgid "Success"
 msgstr "Berhasil"
 
@@ -6455,7 +6473,7 @@ msgstr "Menunggu untuk mulai..."
 
 #: templates/archive_scanner.html:886 templates/archive_scanner.html:890
 msgid "Could not save your scanner choices."
-msgstr ""
+msgstr "Tidak dapat menyimpan pilihan pemindai Anda."
 
 #: templates/archive_scanner.html:1127
 msgid "No Types Selected"
@@ -6950,7 +6968,7 @@ msgstr "Tutup pengelola antrean"
 
 #: templates/base.html:754
 msgid "Could not change the queue"
-msgstr ""
+msgstr "Tidak dapat mengubah antrean"
 
 #: templates/base.html:811
 #, python-brace-format
@@ -8078,7 +8096,7 @@ msgstr "Terjadi kesalahan saat melanjutkan tugas"
 
 #: templates/dashboard.html:1173
 msgid "Could not dismiss the job"
-msgstr ""
+msgstr "Tidak dapat menutup tugas"
 
 #: templates/dashboard.html:1204
 #, python-brace-format
@@ -8092,12 +8110,12 @@ msgstr "Semua tugas dilanjutkan"
 #: templates/dashboard.html:1208
 #, python-brace-format
 msgid "{ok} of {total} jobs resumed"
-msgstr ""
+msgstr "{ok} dari {total} tugas dilanjutkan"
 
 #: templates/dashboard.html:1219
 #, python-brace-format
 msgid "Could not dismiss job {id}"
-msgstr ""
+msgstr "Tidak dapat menutup tugas {id}"
 
 #: templates/dashboard.html:1249
 msgid "No games found"
@@ -8109,16 +8127,16 @@ msgstr "Terjadi kesalahan saat memilih game acak"
 
 #: templates/dashboard.html:1273
 msgid "1 configured API is offline"
-msgstr ""
+msgstr "1 API yang dikonfigurasi sedang offline"
 
 #: templates/dashboard.html:1274
 #, python-brace-format
 msgid "{count} configured APIs are offline"
-msgstr ""
+msgstr "{count} API yang dikonfigurasi sedang offline"
 
 #: templates/dashboard.html:1309
 msgid "Offline"
-msgstr ""
+msgstr "Offline"
 
 #: templates/dashboard.html:1414
 msgid ""
@@ -8282,7 +8300,7 @@ msgstr "Atur Kata Sandi Baru"
 #: templates/force_change_password.html:61 templates/login.html:304
 #: templates/setup.html:522
 msgid "The server answered with an error."
-msgstr ""
+msgstr "Server menjawab dengan kesalahan."
 
 #: templates/_macros/nav_tabs.html:45 templates/game_detail.html:19
 #: templates/reports.html:269 templates/rom_tools_hub.html:261
@@ -8373,7 +8391,7 @@ msgstr "Hapus"
 #: templates/museum_system.html:194
 #, python-format
 msgid "Enlarge %(name)s"
-msgstr ""
+msgstr "Perbesar %(name)s"
 
 #: templates/game_detail.html:185 templates/game_detail.html:198
 #: templates/game_detail.html:219
@@ -8867,7 +8885,7 @@ msgstr "Judul pengurutan dibuat"
 
 #: templates/game_detail.html:5687 templates/game_detail.html:5757
 msgid "match"
-msgstr ""
+msgstr "cocok"
 
 #: templates/game_detail.html:5690
 #, python-brace-format
@@ -8918,11 +8936,11 @@ msgstr "Gagal menghapus screenshot: {error}"
 
 #: templates/game_detail.html:6050
 msgid "No similar games found in library"
-msgstr ""
+msgstr "Tidak ada game serupa yang ditemukan di pustaka"
 
 #: templates/game_detail.html:6054
 msgid "Could not load similar games."
-msgstr ""
+msgstr "Tidak dapat memuat game serupa."
 
 #: templates/_settings_tabs/account.html:233 templates/game_imports.html:171
 msgid "Steam"
@@ -9013,6 +9031,11 @@ msgid ""
 "href=\"%(settings_url)s\" style=\"color: var(--primary-cyan);\">Settings "
 "&rarr; My Profile</a>, or enter them below."
 msgstr ""
+"Impor pustaka game Steam Anda. Game dibuat di bawah sistem "
+"<strong>Microsoft Windows</strong>. Konfigurasikan kunci API Steam dan "
+"Steam ID Anda di <a href=\"%(settings_url)s\" style=\"color: var"
+"(--primary-cyan);\">Pengaturan &rarr; Profil Saya</a>, atau masukkan di "
+"bawah ini."
 
 #: templates/game_imports.html:249
 msgid "Steam Credentials"
@@ -9116,6 +9139,12 @@ msgid ""
 "href=\"%(trophies_url)s\" style=\"color: var(--primary-cyan);\">PSN "
 "Trophies</a> page."
 msgstr ""
+"Impor pustaka game PlayStation Anda. Game berasal dari daftar trofi PSN "
+"Anda. Konfigurasikan token PSN NPSSO Anda di <a href=\"%(settings_url)s\""
+" style=\"color: var(--primary-cyan);\">Pengaturan &rarr; Profil Saya</a>."
+" Agar impor lebih cepat, sinkronkan trofi Anda terlebih dahulu melalui "
+"halaman <a href=\"%(trophies_url)s\" style=\"color: var(--primary-"
+"cyan);\">Trofi PSN</a>."
 
 #: templates/game_imports.html:365
 msgid "PSN Account"
@@ -9193,11 +9222,11 @@ msgstr "Melalui kunci OpenXBL Anda."
 
 #: templates/game_imports.html:701 templates/game_imports.html:911
 msgid "Could not check the connection"
-msgstr ""
+msgstr "Tidak dapat memeriksa koneksi"
 
 #: templates/game_imports.html:702 templates/game_imports.html:912
 msgid "Reload the page to try again."
-msgstr ""
+msgstr "Muat ulang halaman untuk mencoba lagi."
 
 #: templates/game_imports.html:727
 #, python-brace-format
@@ -9224,20 +9253,22 @@ msgstr "Detail sedang dikirim dari Steam di latar belakang"
 
 #: templates/game_imports.html:897
 msgid "PSN Configured"
-msgstr ""
+msgstr "PSN Dikonfigurasi"
 
 #: templates/game_imports.html:899
 #, python-brace-format
 msgid "Games in your trophy list: {count}"
-msgstr ""
+msgstr "Game dalam daftar trofi Anda: {count}"
 
 #: templates/game_imports.html:900
 msgid "No trophy list saved yet; Fetch will read it from PSN."
-msgstr ""
+msgstr "Belum ada daftar trofi yang tersimpan; Ambil akan membacanya dari PSN."
 
 #: templates/game_imports.html:905
 msgid "Add your PSN NPSSO token in Settings > My Profile to import games."
 msgstr ""
+"Tambahkan token PSN NPSSO Anda di Pengaturan > Profil Saya untuk "
+"mengimpor game."
 
 #: templates/game_imports.html:946
 #, python-brace-format
@@ -9369,7 +9400,7 @@ msgstr ""
 
 #: templates/hltb_review.html:238
 msgid "No pending matches under this filter."
-msgstr ""
+msgstr "Tidak ada kecocokan tertunda dengan filter ini."
 
 #: templates/hltb_review.html:295
 msgid "Match approved"
@@ -9510,7 +9541,7 @@ msgstr "Terjadi kesalahan saat mengeluarkan game."
 
 #: templates/lists.html:315 templates/lists.html:318
 msgid "Could not load your lists."
-msgstr ""
+msgstr "Tidak dapat memuat daftar Anda."
 
 #: templates/lists.html:437
 msgid "Please enter a list name."
@@ -9687,7 +9718,7 @@ msgstr ""
 
 #: templates/local_trophy_detail.html:374
 msgid "Failed to save HLTB data."
-msgstr ""
+msgstr "Gagal menyimpan data HLTB."
 
 #: templates/local_trophy_detail.html:422
 msgid "HLTB Lookup Failed"
@@ -9702,7 +9733,8 @@ msgstr "Tidak ada kecocokan."
 #: templates/settings.html:1942 templates/settings.html:1967
 #: templates/settings.html:1970 templates/settings.html:1990
 #: templates/settings.html:2034 templates/settings.html:2056
-#: templates/settings.html:2153 templates/steam_achievement_game.html:302
+#: templates/settings.html:2153 templates/settings.html:4832
+#: templates/steam_achievement_game.html:302
 #: templates/xbox_achievement_game.html:293
 #, python-brace-format
 msgid "Error: {error}"
@@ -9751,7 +9783,7 @@ msgstr "Level"
 
 #: templates/logs.html:759
 msgid "DEBUG"
-msgstr ""
+msgstr "DEBUG"
 
 #: templates/logs.html:760
 msgid "INFO"
@@ -9763,13 +9795,13 @@ msgstr "WARN"
 
 #: templates/logs.html:762
 msgid "Errors and critical errors"
-msgstr ""
+msgstr "Kesalahan dan kesalahan kritis"
 
 #: templates/logs.html:762
 msgid "ERROR"
 msgstr "ERROR"
 
-#: templates/logs.html:778
+#: templates/logs.html:778 templates/settings.html:4871
 msgid "View"
 msgstr "Lihat"
 
@@ -10409,15 +10441,15 @@ msgstr "Dibatasi kecepatan: ~2,5 detik antar game untuk mematuhi batas API PSN"
 
 #: templates/psn_trophies.html:1177
 msgid "Could not load games."
-msgstr ""
+msgstr "Tidak dapat memuat game."
 
 #: templates/psn_trophies.html:1181
 msgid "Retry"
-msgstr ""
+msgstr "Coba lagi"
 
 #: templates/psn_trophies.html:1648
 msgid "The sync is no longer running. Close this window and start it again."
-msgstr ""
+msgstr "Sinkronisasi sudah tidak berjalan. Tutup jendela ini dan mulai lagi."
 
 #: templates/psn_trophies.html:1674
 msgid "Please select at least one game to refresh."
@@ -10668,7 +10700,7 @@ msgstr "Penggantian Nama Massal Selesai"
 
 #: templates/reports.html:524
 msgid "These files were not renamed:"
-msgstr ""
+msgstr "File-file ini tidak diganti namanya:"
 
 #: templates/reports.html:532
 msgid "Start Rename"
@@ -11739,7 +11771,7 @@ msgstr "Kesalahan jaringan saat menyimpan pengaturan"
 
 #: templates/settings.html:1193
 msgid "Could not load the timezone list."
-msgstr ""
+msgstr "Tidak dapat memuat daftar zona waktu."
 
 #: templates/settings.html:1226
 msgid "Timezone saved! Page will reload to apply."
@@ -11779,7 +11811,7 @@ msgstr "Kesalahan jaringan saat mengubah kata sandi"
 
 #: templates/settings.html:1342 templates/settings.html:1344
 msgid "Could not load that user."
-msgstr ""
+msgstr "Tidak dapat memuat pengguna itu."
 
 #: templates/settings.html:1379
 msgid "User saved successfully!"
@@ -11832,11 +11864,11 @@ msgstr "Pengaturan tampilan disimpan!"
 
 #: templates/settings.html:1571
 msgid "Move left"
-msgstr ""
+msgstr "Pindah ke kiri"
 
 #: templates/settings.html:1571
 msgid "Move right"
-msgstr ""
+msgstr "Pindah ke kanan"
 
 #: templates/settings.html:1671
 msgid "Region already exists"
@@ -12071,11 +12103,11 @@ msgstr "Yakin ingin menghapus opsi ini?"
 msgid "Failed to delete option"
 msgstr "Gagal menghapus opsi"
 
-#: templates/settings.html:3505 templates/settings.html:4259
+#: templates/settings.html:3505 templates/settings.html:4256
 msgid "Missing Input"
 msgstr "Input Kosong"
 
-#: templates/settings.html:3505 templates/settings.html:4259
+#: templates/settings.html:3505 templates/settings.html:4256
 msgid "Please enter a controller name"
 msgstr "Silakan masukkan nama kontroler"
 
@@ -12100,42 +12132,108 @@ msgstr "Gagal menambahkan kontroler default"
 msgid "Failed to remove default controller"
 msgstr "Gagal menghapus kontroler default"
 
-#: templates/settings.html:3795
+#: templates/settings.html:3763
+msgid "Preview:"
+msgstr "Pratinjau:"
+
+#: templates/settings.html:3764
+#, python-brace-format
+msgid "This will clear scraped data from {count} games in {system}."
+msgstr "Ini akan menghapus data hasil scrape dari {count} game di {system}."
+
+#: templates/settings.html:3765
+#, python-brace-format
+msgid "This will clear scraped data from {count} games (all systems)."
+msgstr "Ini akan menghapus data hasil scrape dari {count} game (semua sistem)."
+
+#: templates/settings.html:3766
+msgid ""
+"Fields: description, genre, publisher, developer, players, modes, "
+"ratings, scores, images, etc."
+msgstr ""
+"Kolom: deskripsi, genre, penerbit, pengembang, pemain, mode, rating, "
+"skor, gambar, dll."
+
+#: templates/settings.html:3773
+msgid "Failed to preview"
+msgstr "Gagal menampilkan pratinjau"
+
+#: templates/settings.html:3796
 msgid "ALL SYSTEMS"
 msgstr "SEMUA SISTEM"
 
-#: templates/settings.html:3799
+#: templates/_settings_tabs/system.html:84 templates/settings.html:3800
+#: templates/settings.html:3845
 msgid "Clear Scraped Data"
 msgstr "Hapus Data Scrape"
 
-#: templates/settings.html:3800
+#: templates/settings.html:3801
 #, python-brace-format
 msgid "This will clear all scraped metadata from games in {system}."
 msgstr ""
 "Tindakan ini akan menghapus semua metadata hasil scrape dari game di "
 "{system}."
 
-#: templates/settings.html:3801
+#: templates/settings.html:3802
 msgid "Downloaded images will also be deleted!"
 msgstr "Gambar yang diunduh juga akan dihapus!"
 
-#: templates/settings.html:3802
+#: templates/settings.html:3803
 msgid "This cannot be undone. Are you sure?"
 msgstr "Tindakan ini tidak dapat dibatalkan. Yakin?"
 
-#: templates/settings.html:3926
+#: templates/settings.html:3824
+#, python-brace-format
+msgid "Cleared scraped data from {count} games."
+msgstr "Data hasil scrape dihapus dari {count} game."
+
+#: templates/settings.html:3824
+#, python-brace-format
+msgid "Deleted {count} image files."
+msgstr "{count} file gambar dihapus."
+
+#: templates/settings.html:3831
+msgid "Failed to clear data"
+msgstr "Gagal menghapus data"
+
+#: templates/settings.html:3877
+msgid "No orphaned media files found. All files are linked to existing games."
+msgstr ""
+"Tidak ada file media yatim yang ditemukan. Semua file tertaut ke game "
+"yang ada."
+
+#: templates/settings.html:3890 templates/setup.html:404
+#, python-brace-format
+msgid "{count} files"
+msgstr "{count} berkas"
+
+#: templates/settings.html:3895
+#, python-brace-format
+msgid "Found {count} orphaned files ({size} MB)"
+msgstr "Ditemukan {count} file yatim ({size} MB)"
+
+#: templates/settings.html:3907
+msgid "Failed to scan for orphaned files"
+msgstr "Gagal memindai file yatim"
+
+#: templates/_settings_tabs/system.html:100 templates/settings.html:3921
+msgid "Scan for Orphaned Files"
+msgstr "Pindai File Yatim"
+
+#: templates/settings.html:3927
 msgid "No Files"
 msgstr "Tidak Ada File"
 
-#: templates/settings.html:3926
+#: templates/settings.html:3927
 msgid "Please scan for orphaned files first."
 msgstr "Silakan pindai file yatim terlebih dahulu."
 
-#: templates/settings.html:3931
+#: templates/_settings_tabs/system.html:104 templates/settings.html:3932
+#: templates/settings.html:3978
 msgid "Delete Orphaned Files"
 msgstr "Hapus File Yatim"
 
-#: templates/settings.html:3932
+#: templates/settings.html:3933
 #, python-brace-format
 msgid ""
 "Orphaned media files to delete permanently: {count}. This action cannot "
@@ -12144,19 +12242,85 @@ msgstr ""
 "File media yatim yang akan dihapus permanen: {count}. Tindakan ini tidak "
 "dapat dibatalkan.<br><br>Lanjutkan?"
 
-#: templates/settings.html:4060
+#: templates/settings.html:3939
+msgid "Deleting..."
+msgstr "Menghapus..."
+
+#: templates/settings.html:3957
+#, python-brace-format
+msgid "Deleted {count} orphaned files."
+msgstr "{count} file yatim dihapus."
+
+#: templates/settings.html:3957
+#, python-brace-format
+msgid "Freed {size} MB of disk space."
+msgstr "{size} MB ruang disk dibebaskan."
+
+#: templates/settings.html:3957
+#, python-brace-format
+msgid "{count} files could not be deleted."
+msgstr "{count} file tidak dapat dihapus."
+
+#: templates/settings.html:3965
+msgid "Failed to delete files"
+msgstr "Gagal menghapus file"
+
+#: templates/settings.html:4016
+#, python-brace-format
+msgid "{count} reference(s)"
+msgstr "{count} referensi"
+
+#: templates/settings.html:4020
+msgid ""
+"Some media folders look missing or empty (possibly an unmounted drive or "
+"a bulk deletion). Their references were <strong>kept, not "
+"cleared</strong>, to protect against wiping your whole library by "
+"accident:"
+msgstr ""
+"Beberapa folder media tampak hilang atau kosong (mungkin drive tidak "
+"terpasang atau penghapusan massal). Referensinya <strong>dipertahankan, "
+"tidak dihapus</strong>, agar seluruh pustaka Anda tidak terhapus tanpa "
+"sengaja:"
+
+#: templates/settings.html:4022
+msgid "Re-mount the media folder (or re-scrape) and scan again."
+msgstr "Pasang kembali folder media (atau scrape ulang) lalu pindai lagi."
+
+#: templates/settings.html:4029
+msgid "No clearable missing-media references found."
+msgstr "Tidak ada referensi media hilang yang dapat dihapus."
+
+#: templates/settings.html:4034
+#, python-brace-format
+msgid ""
+"Found {refs} stale reference(s) across {games} game(s) pointing to files "
+"no longer on disk."
+msgstr ""
+"Ditemukan {refs} referensi usang di {games} game yang menunjuk ke file "
+"yang sudah tidak ada di disk."
+
+#: templates/settings.html:4042
+msgid "Failed to scan for missing media references"
+msgstr "Gagal memindai referensi media yang hilang"
+
+#: templates/_settings_tabs/system.html:119 templates/settings.html:4052
+msgid "Scan for Missing Media"
+msgstr "Pindai Media yang Hilang"
+
+#: templates/settings.html:4058
 msgid "Nothing to Clear"
 msgstr "Tidak Ada yang Dihapus"
 
-#: templates/settings.html:4060
+#: templates/settings.html:4058
 msgid "Please scan for missing media references first."
 msgstr "Silakan pindai referensi media yang hilang terlebih dahulu."
 
-#: templates/settings.html:4065
+#: templates/_settings_tabs/system.html:123 templates/settings.html:4063
+#: templates/settings.html:4103
 msgid "Clear Missing References"
 msgstr "Hapus Referensi yang Hilang"
 
-#: templates/settings.html:4066
+#: templates/settings.html:4064
 #, python-brace-format
 msgid ""
 "Database references to clear: {count}. They point to media files that no "
@@ -12167,11 +12331,52 @@ msgstr ""
 "file media yang sudah tidak ada di disk, sehingga scraper dapat "
 "mengunduhnya lagi. Entri game Anda tidak terpengaruh.<br><br>Lanjutkan?"
 
-#: templates/settings.html:4162
+#: templates/settings.html:4083
+#, python-brace-format
+msgid "{count} reference(s) in missing/empty folders were preserved."
+msgstr "{count} referensi di folder yang hilang/kosong dipertahankan."
+
+#: templates/settings.html:4087
+#, python-brace-format
+msgid "Cleared {refs} stale reference(s) across {games} game(s)."
+msgstr "{refs} referensi usang di {games} game dihapus."
+
+#: templates/settings.html:4094
+msgid "Failed to clear references"
+msgstr "Gagal menghapus referensi"
+
+#: templates/settings.html:4115
+msgid "Optimizing..."
+msgstr "Mengoptimalkan..."
+
+#: templates/settings.html:4127
+#, python-brace-format
+msgid "Database optimized successfully in {seconds}s."
+msgstr "Database berhasil dioptimalkan dalam {seconds} dtk."
+
+#: templates/settings.html:4128
+#, python-brace-format
+msgid "Size: {before} MB → {after} MB"
+msgstr "Ukuran: {before} MB → {after} MB"
+
+#: templates/settings.html:4129
+#, python-brace-format
+msgid "(saved {size} MB)"
+msgstr "(hemat {size} MB)"
+
+#: templates/settings.html:4135
+msgid "Failed to optimize database"
+msgstr "Gagal mengoptimalkan database"
+
+#: templates/_settings_tabs/system.html:137 templates/settings.html:4149
+msgid "Optimize Database"
+msgstr "Optimalkan Database"
+
+#: templates/settings.html:4159
 msgid "Delete Controller"
 msgstr "Hapus Kontroler"
 
-#: templates/settings.html:4163
+#: templates/settings.html:4160
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete {name}?<br><br>This will remove it from "
@@ -12180,162 +12385,215 @@ msgstr ""
 "Yakin ingin menghapus {name}?<br><br>Ini akan menghapusnya dari pustaka "
 "dan dari sistem mana pun yang memakainya sebagai default."
 
-#: templates/settings.html:4184
+#: templates/settings.html:4181
 msgid "Deleted"
 msgstr "Terhapus"
 
-#: templates/settings.html:4184
+#: templates/settings.html:4181
 #, python-brace-format
 msgid "Controller \"{name}\" has been removed."
 msgstr "Kontroler \"{name}\" telah dihapus."
 
-#: templates/settings.html:4186 templates/settings.html:4190
+#: templates/settings.html:4183 templates/settings.html:4187
 msgid "Failed to delete controller"
 msgstr "Gagal menghapus kontroler"
 
-#: templates/settings.html:4208
+#: templates/settings.html:4205
 msgid "Failed to load controller"
 msgstr "Gagal memuat kontroler"
 
-#: templates/settings.html:4239
+#: templates/settings.html:4236
 msgid "Failed to load controller data"
 msgstr "Gagal memuat data kontroler"
 
-#: templates/settings.html:4297
+#: templates/settings.html:4294
 #, python-brace-format
 msgid "Controller \"{name}\" has been updated."
 msgstr "Kontroler \"{name}\" telah diperbarui."
 
-#: templates/settings.html:4299 templates/settings.html:4303
+#: templates/settings.html:4296 templates/settings.html:4300
 msgid "Failed to update controller"
 msgstr "Gagal memperbarui kontroler"
 
-#: templates/settings.html:4430
+#: templates/settings.html:4427
 msgid "Logos Refreshed"
 msgstr "Logo Diperbarui"
 
-#: templates/settings.html:4431
+#: templates/settings.html:4428
 #, python-brace-format
 msgid "System logos updated: {count}. The table has been refreshed."
 msgstr "Logo sistem yang diperbarui: {count}. Tabel telah dimuat ulang."
 
-#: templates/settings.html:4433
+#: templates/settings.html:4430
 msgid "Failed to refresh logos"
 msgstr "Gagal memperbarui logo"
 
-#: templates/settings.html:4437
+#: templates/settings.html:4434
 msgid "Failed to refresh system logos"
 msgstr "Gagal memperbarui logo sistem"
 
-#: templates/settings.html:4459
+#: templates/settings.html:4456
 msgid "Names Refreshed"
 msgstr "Nama Diperbarui"
 
-#: templates/settings.html:4460
+#: templates/settings.html:4457
 #, python-brace-format
 msgid "System names updated: {count}. Click OK to refresh the page."
 msgstr "Nama sistem yang diperbarui: {count}. Klik OK untuk memuat ulang halaman."
 
-#: templates/settings.html:4463
+#: templates/settings.html:4460
 msgid "Failed to refresh names"
 msgstr "Gagal memuat ulang nama"
 
-#: templates/settings.html:4467
+#: templates/settings.html:4464
 msgid "Failed to refresh system names"
 msgstr "Gagal memuat ulang nama sistem"
 
-#: templates/settings.html:4910
+#: templates/settings.html:4563
+msgid "No bulk scrape state found (all clear)"
+msgstr "Tidak ada status scrape massal yang ditemukan (semua bersih)"
+
+#: templates/settings.html:4626
+msgid "Bulk scrape state cleared successfully!"
+msgstr "Status scrape massal berhasil dihapus!"
+
+#: templates/settings.html:4650
+msgid "RA sync state and queue cleared!"
+msgstr "Status dan antrean sinkronisasi RA dihapus!"
+
+#: templates/settings.html:4664
+msgid "RA sync queue cleared (server unreachable)"
+msgstr "Antrean sinkronisasi RA dihapus (server tidak terjangkau)"
+
+#: templates/settings.html:4683
+msgid "No items in queue, no active sync."
+msgstr "Tidak ada item dalam antrean, tidak ada sinkronisasi aktif."
+
+#: templates/settings.html:4827
+msgid "Logging settings saved!"
+msgstr "Pengaturan logging disimpan!"
+
+#: templates/settings.html:4829
+msgid "Failed to save"
+msgstr "Gagal menyimpan"
+
+#: templates/_settings_tabs/system.html:382 templates/settings.html:4835
+msgid "Save Logging Settings"
+msgstr "Simpan Pengaturan Logging"
+
+#: templates/settings.html:4842
+msgid "Loading log files..."
+msgstr "Memuat file log..."
+
+#: templates/settings.html:4854
+msgid "Date"
+msgstr "Tanggal"
+
+#: templates/settings.html:4887
+msgid ""
+"No log files found. Logs will appear here after scraping or ROM "
+"operations."
+msgstr ""
+"Tidak ada file log yang ditemukan. Log akan muncul di sini setelah "
+"scraping atau operasi ROM."
+
+#: templates/settings.html:4890
+#, python-brace-format
+msgid "Error loading log files: {error}"
+msgstr "Kesalahan saat memuat file log: {error}"
+
+#: templates/settings.html:4907
 #, python-brace-format
 msgid "Log: {filename}"
 msgstr "Log: {filename}"
 
-#: templates/settings.html:4911
+#: templates/settings.html:4908
 msgid "Log file is empty"
 msgstr "File log kosong"
 
-#: templates/settings.html:4914
+#: templates/settings.html:4911
 msgid "Failed to load log file"
 msgstr "Gagal memuat file log"
 
-#: templates/settings.html:4917
+#: templates/settings.html:4914
 #, python-brace-format
 msgid "Error loading log file: {error}"
 msgstr "Terjadi kesalahan saat memuat file log: {error}"
 
-#: templates/settings.html:4936
+#: templates/settings.html:4933
 msgid "Failed to delete log file"
 msgstr "Gagal menghapus file log"
 
-#: templates/settings.html:4939
+#: templates/settings.html:4936
 #, python-brace-format
 msgid "Error deleting log file: {error}"
 msgstr "Terjadi kesalahan saat menghapus file log: {error}"
 
-#: templates/settings.html:4945
+#: templates/settings.html:4942
 msgid "Clear Old Logs"
 msgstr "Bersihkan Log Lama"
 
-#: templates/settings.html:4945
+#: templates/settings.html:4942
 msgid "This will delete all log files older than 5 days. Continue?"
 msgstr "Ini akan menghapus semua file log yang lebih lama dari 5 hari. Lanjutkan?"
 
-#: templates/settings.html:4951
+#: templates/settings.html:4948
 #, python-brace-format
 msgid "Old log files removed: {count}"
 msgstr "File log lama dihapus: {count}"
 
-#: templates/settings.html:4954
+#: templates/settings.html:4951
 msgid "Failed to clear old logs"
 msgstr "Gagal membersihkan log lama"
 
-#: templates/settings.html:4957
+#: templates/settings.html:4954
 #, python-brace-format
 msgid "Error clearing old logs: {error}"
 msgstr "Terjadi kesalahan saat membersihkan log lama: {error}"
 
-#: templates/settings.html:5002
+#: templates/settings.html:4999
 msgid "Token extracted from the pasted page"
 msgstr "Token diambil dari halaman yang ditempel"
 
-#: templates/settings.html:5004
+#: templates/settings.html:5001
 msgid "Token detected"
 msgstr "Token terdeteksi"
 
-#: templates/settings.html:5006
+#: templates/settings.html:5003
 msgid "Could not detect a valid NPSSO token"
 msgstr "Token NPSSO yang valid tidak ditemukan"
 
-#: templates/settings.html:5018
+#: templates/settings.html:5015
 msgid "Now press Ctrl+V to paste."
 msgstr "Sekarang tekan Ctrl+V untuk menempel."
 
-#: templates/settings.html:5030
+#: templates/settings.html:5027
 msgid "Enter an NPSSO token first"
 msgstr "Masukkan token NPSSO terlebih dahulu"
 
-#: templates/settings.html:5035
+#: templates/settings.html:5032
 msgid "Testing..."
 msgstr "Menguji..."
 
-#: templates/settings.html:5036 templates/settings.html:5125
+#: templates/settings.html:5033 templates/settings.html:5122
 msgid "Saving and connecting..."
 msgstr "Menyimpan dan menghubungkan..."
 
-#: templates/settings.html:5047 templates/settings.html:5134
+#: templates/settings.html:5044 templates/settings.html:5131
 #, python-format
 msgid "Connected as %(name)s"
 msgstr "Terhubung sebagai %(name)s"
 
-#: templates/settings.html:5054 templates/settings.html:5138
+#: templates/settings.html:5051 templates/settings.html:5135
 msgid "Connection failed"
 msgstr "Koneksi gagal"
 
-#: templates/settings.html:5057 templates/settings.html:5141
+#: templates/settings.html:5054 templates/settings.html:5138
 #, python-format
 msgid "Error: %(msg)s"
 msgstr "Kesalahan: %(msg)s"
 
-#: templates/settings.html:5076
+#: templates/settings.html:5073
 #, python-format
 msgid ""
 "Sony refused your saved NPSSO token on %(date)s. Get a new one with the "
@@ -12344,7 +12602,7 @@ msgstr ""
 "Sony menolak token NPSSO tersimpan Anda pada %(date)s. Dapatkan yang baru"
 " dengan langkah di bawah."
 
-#: templates/settings.html:5079
+#: templates/settings.html:5076
 msgid ""
 "Connected to PSN. RetroDB keeps the sign-in going by itself. You need a "
 "new token only if Sony refuses this one."
@@ -12352,47 +12610,47 @@ msgstr ""
 "Terhubung ke PSN. RetroDB menjaga proses masuk tetap berjalan sendiri. "
 "Anda hanya perlu token baru jika Sony menolak token ini."
 
-#: templates/settings.html:5108
+#: templates/settings.html:5105
 #, python-format
 msgid "Key saved. Connected as %(name)s."
 msgstr "Kunci disimpan. Terhubung sebagai %(name)s."
 
-#: templates/settings.html:5109
+#: templates/settings.html:5106
 msgid "No key saved."
 msgstr "Belum ada kunci yang disimpan."
 
-#: templates/settings.html:5147
+#: templates/settings.html:5144
 msgid "Remove Xbox key"
 msgstr "Hapus kunci Xbox"
 
-#: templates/settings.html:5147
+#: templates/settings.html:5144
 msgid "Remove your OpenXBL key? Your imported games and achievements stay."
 msgstr ""
 "Hapus kunci OpenXBL Anda? Game dan achievement yang sudah diimpor tetap "
 "ada."
 
-#: templates/settings.html:5152
+#: templates/settings.html:5149
 msgid "Could not remove the Xbox key."
-msgstr ""
+msgstr "Tidak dapat menghapus kunci Xbox."
 
-#: templates/settings.html:5241 templates/settings.html:5288
+#: templates/settings.html:5238 templates/settings.html:5285
 msgid "Avatar updated!"
 msgstr "Avatar diperbarui!"
 
-#: templates/settings.html:5246
+#: templates/settings.html:5243
 #, python-brace-format
 msgid "Upload failed: {error}"
 msgstr "Unggahan gagal: {error}"
 
-#: templates/settings.html:5263
+#: templates/settings.html:5260
 msgid "Avatar removed"
 msgstr "Avatar dihapus"
 
-#: templates/settings.html:5265 templates/settings.html:5268
+#: templates/settings.html:5262 templates/settings.html:5265
 msgid "Failed to remove avatar"
 msgstr "Gagal menghapus avatar"
 
-#: templates/settings.html:5290 templates/settings.html:5293
+#: templates/settings.html:5287 templates/settings.html:5290
 msgid "Failed to save avatar"
 msgstr "Gagal menyimpan avatar"
 
@@ -13006,11 +13264,6 @@ msgstr "Tidak ada subfolder"
 msgid "1 file"
 msgstr "1 berkas"
 
-#: templates/setup.html:404
-#, python-brace-format
-msgid "{count} files"
-msgstr "{count} berkas"
-
 #: templates/setup.html:405
 msgid "1 folder"
 msgstr "1 folder"
@@ -13283,7 +13536,7 @@ msgstr ""
 
 #: templates/tags.html:396 templates/tags.html:399
 msgid "Could not load your tags."
-msgstr ""
+msgstr "Tidak dapat memuat tag Anda."
 
 #: templates/tags.html:440
 msgid "Edit tag"
@@ -13481,7 +13734,7 @@ msgstr "Tidak Cocok"
 
 #: templates/wishlist.html:543 templates/wishlist.html:546
 msgid "Could not load your wishlist."
-msgstr ""
+msgstr "Tidak dapat memuat wishlist Anda."
 
 #: templates/wishlist.html:593
 msgid "No items match this filter."
@@ -14416,7 +14669,7 @@ msgstr "Manajemen Pengguna"
 
 #: templates/_settings_tabs/account.html:314
 msgid "Manage users who can access RetroDB."
-msgstr ""
+msgstr "Kelola pengguna yang dapat mengakses RetroDB."
 
 #: templates/_settings_tabs/account.html:319
 #: templates/_settings_tabs/account.html:393
@@ -14774,6 +15027,8 @@ msgid ""
 "Set the RPCS3 Trophy Path in <a href=\"#esde\">ES-DE Integration</a> on "
 "the Scraping tab"
 msgstr ""
+"Atur Path Trofi RPCS3 di <a href=\"#esde\">Integrasi ES-DE</a> pada tab "
+"Scraping"
 
 #: templates/_settings_tabs/data.html:64
 msgid "Scan your RPCS3 trophy folder for unlocked trophies"
@@ -14831,6 +15086,10 @@ msgid ""
 "nothing changes until you press Apply. Later scrapes then use that "
 "spelling."
 msgstr ""
+"Waralaba, Penerbit, dan Pengembang mencantumkan setiap nama yang dieja "
+"dengan huruf kapital berbeda, seperti \"Doom\" dan \"DOOM\". Pilih satu "
+"ejaan untuk masing-masing; tidak ada yang berubah sampai Anda menekan "
+"Terapkan. Scrape berikutnya akan memakai ejaan itu."
 
 #: templates/_settings_tabs/data.html:170
 msgid "Show only values needing changes"
@@ -14866,11 +15125,11 @@ msgstr ""
 
 #: templates/_settings_tabs/data.html:215
 msgid "Every name in this field has one spelling."
-msgstr ""
+msgstr "Setiap nama di kolom ini memiliki satu ejaan."
 
 #: templates/_settings_tabs/data.html:220
 msgid "Names that may be one company"
-msgstr ""
+msgstr "Nama yang mungkin satu perusahaan"
 
 #: templates/_settings_tabs/data.html:222
 msgid ""
@@ -14880,10 +15139,16 @@ msgid ""
 "company, and press Merge. The merge changes Publisher and Developer on "
 "every game, and later scrapes use the kept name."
 msgstr ""
+"Nama seperti \"Eidos\" dan \"Eidos Interactive\" mungkin satu perusahaan,"
+" atau dua: \"Atari Games\" dan \"Atari, Inc.\" adalah perusahaan yang "
+"berbeda. Untuk setiap baris, pilih nama yang dipertahankan, centang nama-"
+"nama yang merupakan perusahaan yang sama, lalu tekan Gabungkan. "
+"Penggabungan mengubah Penerbit dan Pengembang di setiap game, dan scrape "
+"berikutnya memakai nama yang dipertahankan."
 
 #: templates/_settings_tabs/data.html:225
 msgid "No names look like one company."
-msgstr ""
+msgstr "Tidak ada nama yang tampak seperti satu perusahaan."
 
 #: templates/_settings_tabs/library.html:4
 msgid "Library settings"
@@ -15121,10 +15386,43 @@ msgstr ""
 " hingga 5 sen AS, ditambah sedikit untuk membaca hasilnya. Matikan "
 "sebelum scrape massal besar agar biaya tetap rendah."
 
+#: templates/_settings_tabs/system.html:2
+msgid "System settings"
+msgstr "Pengaturan sistem"
+
+#: templates/_settings_tabs/system.html:6
+msgid "Maintenance"
+msgstr "Pemeliharaan"
+
 #: templates/_settings_tabs/system.html:7
-#: templates/_settings_tabs/system.html:152
+#: templates/_settings_tabs/system.html:147
 msgid "Updates"
 msgstr "Pembaruan"
+
+#: templates/_settings_tabs/system.html:8
+msgid "Server"
+msgstr "Server"
+
+#: templates/_settings_tabs/system.html:10
+msgid "Logging"
+msgstr "Logging"
+
+#: templates/_settings_tabs/system.html:11
+#: templates/_settings_tabs/system.html:412
+msgid "Troubleshooting"
+msgstr "Pemecahan Masalah"
+
+#: templates/_settings_tabs/system.html:12
+msgid "Support"
+msgstr "Dukungan"
+
+#: templates/_settings_tabs/system.html:19
+msgid "Database Maintenance"
+msgstr "Pemeliharaan Database"
+
+#: templates/_settings_tabs/system.html:29
+msgid "Remove database entries for ROMs that have been deleted from disk"
+msgstr "Hapus entri database untuk ROM yang telah dihapus dari disk"
 
 #: templates/_settings_tabs/system.html:33
 msgid "Finding and clearing RetroAchievements games is on the"
@@ -15134,12 +15432,95 @@ msgstr "Fitur mencari dan menghapus game RetroAchievements ada di"
 msgid "Achievements page"
 msgstr "halaman Achievement"
 
-#: templates/_settings_tabs/system.html:155
+#: templates/_settings_tabs/system.html:41
+msgid "Clear Data"
+msgstr "Hapus Data"
+
+#: templates/_settings_tabs/system.html:51
+msgid "Remove all games imported via CLZ Games Import"
+msgstr "Hapus semua game yang diimpor melalui CLZ Games Import"
+
+#: templates/_settings_tabs/system.html:58
+msgid ""
+"Clear scraped metadata from games to start fresh. Useful before a full "
+"re-scrape."
+msgstr ""
+"Hapus metadata hasil scrape dari game untuk memulai dari awal. Berguna "
+"sebelum scrape ulang penuh."
+
+#: templates/_settings_tabs/system.html:59
+msgid "Note:"
+msgstr "Catatan:"
+
+#: templates/_settings_tabs/system.html:59
+msgid ""
+"This does NOT delete your game entries, only the scraped metadata "
+"(description, genre, publisher, ratings, images, etc.)"
+msgstr ""
+"Ini TIDAK menghapus entri game Anda, hanya metadata hasil scrape "
+"(deskripsi, genre, penerbit, rating, gambar, dll.)"
+
+#: templates/_settings_tabs/system.html:71
+#: templates/_settings_tabs/system.html:74
+msgid "Also delete downloaded images"
+msgstr "Hapus juga gambar yang diunduh"
+
+#: templates/_settings_tabs/system.html:80
+msgid "Preview"
+msgstr "Pratinjau"
+
+#: templates/_settings_tabs/system.html:92
+msgid "Orphaned Media Cleanup"
+msgstr "Pembersihan Media Yatim"
+
+#: templates/_settings_tabs/system.html:95
+msgid ""
+"Find and delete media files (boxart, screenshots, videos, etc.) for ROMs "
+"that no longer exist in the database. This cleans up leftover files from "
+"deleted games."
+msgstr ""
+"Temukan dan hapus file media (boxart, screenshot, video, dll.) untuk ROM "
+"yang sudah tidak ada di database. Ini membersihkan file sisa dari game "
+"yang dihapus."
+
+#: templates/_settings_tabs/system.html:111
+msgid "Missing Media References"
+msgstr "Referensi Media yang Hilang"
+
+#: templates/_settings_tabs/system.html:114
+msgid ""
+"The reverse of orphaned-media cleanup: find games whose boxart, "
+"screenshots, video or manual point to files that are no longer on disk, "
+"and clear those stale references so scrapers can re-download them. If a "
+"whole media folder looks missing or empty (for example an unmounted "
+"drive), its references are kept and flagged rather than wiped."
+msgstr ""
+"Kebalikan dari pembersihan media yatim: temukan game yang boxart, "
+"screenshot, video, atau manualnya menunjuk ke file yang sudah tidak ada "
+"di disk, lalu hapus referensi usang itu agar scraper dapat mengunduhnya "
+"lagi. Jika seluruh folder media tampak hilang atau kosong (misalnya drive"
+" tidak terpasang), referensinya dipertahankan dan ditandai, bukan "
+"dihapus."
+
+#: templates/_settings_tabs/system.html:130
+msgid "Database Optimization"
+msgstr "Optimalisasi Database"
+
+#: templates/_settings_tabs/system.html:133
+msgid ""
+"Optimize the database for better performance. Runs VACUUM to reclaim "
+"unused space and ANALYZE to update query planner statistics."
+msgstr ""
+"Optimalkan database agar kinerjanya lebih baik. Menjalankan VACUUM untuk "
+"mengambil kembali ruang yang tidak terpakai dan ANALYZE untuk memperbarui"
+" statistik perencana kueri."
+
+#: templates/_settings_tabs/system.html:150
 #, python-format
 msgid "This is RetroDB %(version)s."
 msgstr "Ini adalah RetroDB %(version)s."
 
-#: templates/_settings_tabs/system.html:159
+#: templates/_settings_tabs/system.html:154
 msgid ""
 "Version 4.0 is the last web version of RetroDB. New versions will be a "
 "desktop app for Windows, Linux and macOS, and an Android app. They will "
@@ -15152,35 +15533,43 @@ msgstr ""
 "versi 4.0 hanya mendapat perbaikan keamanan dan perbaikan bug yang "
 "menyebabkan data hilang."
 
-#: templates/_settings_tabs/system.html:162
+#: templates/_settings_tabs/system.html:157
 msgid "Download the desktop app"
 msgstr "Unduh aplikasi desktop"
 
-#: templates/_settings_tabs/system.html:169
+#: templates/_settings_tabs/system.html:164
 msgid "Release page"
 msgstr "Halaman rilis"
 
-#: templates/_settings_tabs/system.html:176
+#: templates/_settings_tabs/system.html:171
 msgid "Check for updates"
 msgstr "Periksa pembaruan"
 
-#: templates/_settings_tabs/system.html:177
+#: templates/_settings_tabs/system.html:172
 msgid "Download update"
 msgstr "Unduh pembaruan"
 
-#: templates/_settings_tabs/system.html:178
+#: templates/_settings_tabs/system.html:173
 msgid "Install and restart"
 msgstr "Pasang dan mulai ulang"
 
-#: templates/_settings_tabs/system.html:182
+#: templates/_settings_tabs/system.html:177
 msgid "Check for updates once a day"
 msgstr "Periksa pembaruan sekali sehari"
 
-#: templates/_settings_tabs/system.html:199
+#: templates/_settings_tabs/system.html:185
+msgid "Server Controls"
+msgstr "Kontrol Server"
+
+#: templates/_settings_tabs/system.html:190
+msgid "Restart Server"
+msgstr "Mulai Ulang Server"
+
+#: templates/_settings_tabs/system.html:194
 msgid "Shut Down Server"
 msgstr "Matikan Server"
 
-#: templates/_settings_tabs/system.html:202
+#: templates/_settings_tabs/system.html:197
 msgid ""
 "Restart the Flask server (useful after configuration changes), or shut it"
 " down completely"
@@ -15188,11 +15577,191 @@ msgstr ""
 "Mulai ulang server Flask (berguna setelah perubahan konfigurasi), atau "
 "matikan sepenuhnya"
 
-#: templates/_settings_tabs/system.html:461
+#: templates/_settings_tabs/system.html:206
+msgid "Logging Settings"
+msgstr "Pengaturan Logging"
+
+#: templates/_settings_tabs/system.html:210
+#, python-format
+msgid ""
+"Configure which log levels are written to log files. Logs are saved to "
+"the %(folder)s folder with date-based filenames (e.g., %(example)s)."
+msgstr ""
+"Atur level log mana yang ditulis ke file log. Log disimpan di folder "
+"%(folder)s dengan nama file berdasarkan tanggal (mis. %(example)s)."
+
+#: templates/_settings_tabs/system.html:216
+#: templates/_settings_tabs/system.html:224
+#: templates/_settings_tabs/system.html:231
+#: templates/_settings_tabs/system.html:238
+msgid "Scraping Logs"
+msgstr "Log Scraping"
+
+#: templates/_settings_tabs/system.html:219
+msgid ""
+"Logs from metadata scraping operations (IGDB, TGDB, ScreenScraper, RAWG, "
+"ES-DE)"
+msgstr ""
+"Log dari operasi scraping metadata (IGDB, TGDB, ScreenScraper, RAWG, ES-"
+"DE)"
+
+#: templates/_settings_tabs/system.html:224
+#: templates/_settings_tabs/system.html:227
+#: templates/_settings_tabs/system.html:257
+#: templates/_settings_tabs/system.html:260
+#: templates/_settings_tabs/system.html:290
+#: templates/_settings_tabs/system.html:293
+#: templates/_settings_tabs/system.html:323
+#: templates/_settings_tabs/system.html:326
+#: templates/_settings_tabs/system.html:356
+#: templates/_settings_tabs/system.html:359
+msgid "Informational"
+msgstr "Informasi"
+
+#: templates/_settings_tabs/system.html:231
+#: templates/_settings_tabs/system.html:234
+#: templates/_settings_tabs/system.html:264
+#: templates/_settings_tabs/system.html:267
+#: templates/_settings_tabs/system.html:297
+#: templates/_settings_tabs/system.html:300
+#: templates/_settings_tabs/system.html:330
+#: templates/_settings_tabs/system.html:333
+#: templates/_settings_tabs/system.html:363
+#: templates/_settings_tabs/system.html:366
+msgid "Warnings"
+msgstr "Peringatan"
+
+#: templates/_settings_tabs/system.html:238
+#: templates/_settings_tabs/system.html:241
+#: templates/_settings_tabs/system.html:271
+#: templates/_settings_tabs/system.html:274
+#: templates/_settings_tabs/system.html:304
+#: templates/_settings_tabs/system.html:307
+#: templates/_settings_tabs/system.html:337
+#: templates/_settings_tabs/system.html:340
+#: templates/_settings_tabs/system.html:370
+#: templates/_settings_tabs/system.html:373
+msgid "Errors"
+msgstr "Kesalahan"
+
+#: templates/_settings_tabs/system.html:249
+#: templates/_settings_tabs/system.html:257
+#: templates/_settings_tabs/system.html:264
+#: templates/_settings_tabs/system.html:271
+msgid "ROM Tools Logs"
+msgstr "Log Alat ROM"
+
+#: templates/_settings_tabs/system.html:252
+msgid ""
+"Logs from ROM scanning, CHD conversion, archive extraction, and M3U "
+"creation"
+msgstr "Log dari pemindaian ROM, konversi CHD, ekstraksi arsip, dan pembuatan M3U"
+
+#: templates/_settings_tabs/system.html:282
+#: templates/_settings_tabs/system.html:290
+#: templates/_settings_tabs/system.html:297
+#: templates/_settings_tabs/system.html:304
+msgid "ROM Reports Logs"
+msgstr "Log Laporan ROM"
+
+#: templates/_settings_tabs/system.html:285
+msgid ""
+"Logs from ROM naming checks, mismatch detection, and batch rename "
+"operations"
+msgstr ""
+"Log dari pemeriksaan penamaan ROM, deteksi ketidakcocokan, dan operasi "
+"ganti nama massal"
+
+#: templates/_settings_tabs/system.html:315
+#: templates/_settings_tabs/system.html:323
+#: templates/_settings_tabs/system.html:330
+#: templates/_settings_tabs/system.html:337
+msgid "Image Resize Logs"
+msgstr "Log Ubah Ukuran Gambar"
+
+#: templates/_settings_tabs/system.html:318
+msgid "Logs from image standardization (upscale/downscale) operations"
+msgstr "Log dari operasi standardisasi gambar (perbesar/perkecil)"
+
+#: templates/_settings_tabs/system.html:348
+#: templates/_settings_tabs/system.html:356
+#: templates/_settings_tabs/system.html:363
+#: templates/_settings_tabs/system.html:370
+msgid "System Logs"
+msgstr "Log Sistem"
+
+#: templates/_settings_tabs/system.html:351
+msgid ""
+"General system operations including achievements sync, page loads, and "
+"API calls"
+msgstr ""
+"Operasi sistem umum termasuk sinkronisasi achievement, pemuatan halaman, "
+"dan panggilan API"
+
+#: templates/_settings_tabs/system.html:390
+msgid "Log Files"
+msgstr "File Log"
+
+#: templates/_settings_tabs/system.html:395
+msgid "Refresh Log List"
+msgstr "Segarkan Daftar Log"
+
+#: templates/_settings_tabs/system.html:399
+msgid "Clear Logs Older Than 5 Days"
+msgstr "Hapus Log yang Lebih Lama dari 5 Hari"
+
+#: templates/_settings_tabs/system.html:403
+msgid "Click \"Refresh Log List\" to see available log files."
+msgstr "Klik \"Segarkan Daftar Log\" untuk melihat file log yang tersedia."
+
+#: templates/_settings_tabs/system.html:416
+msgid "Bulk Scrape Issues"
+msgstr "Masalah Scrape Massal"
+
+#: templates/_settings_tabs/system.html:419
+msgid ""
+"If a bulk scrape gets stuck or won't clear from the toast notification, "
+"use this button to force clear all bulk scrape state from your browser's "
+"local storage."
+msgstr ""
+"Jika scrape massal macet atau tidak mau hilang dari notifikasi toast, "
+"gunakan tombol ini untuk menghapus paksa semua status scrape massal dari "
+"penyimpanan lokal browser Anda."
+
+#: templates/_settings_tabs/system.html:424
+msgid "Clear Stuck Bulk Scrape"
+msgstr "Hapus Scrape Massal yang Macet"
+
+#: templates/_settings_tabs/system.html:429
+msgid "Current Bulk Scrape State:"
+msgstr "Status Scrape Massal Saat Ini:"
+
+#: templates/_settings_tabs/system.html:434
+msgid "Achievement Sync Issues"
+msgstr "Masalah Sinkronisasi Achievement"
+
+#: templates/_settings_tabs/system.html:437
+msgid ""
+"If achievement syncs get stuck or the queue won't process, use this "
+"button to clear the sync queue and reset the sync state."
+msgstr ""
+"Jika sinkronisasi achievement macet atau antrean tidak diproses, gunakan "
+"tombol ini untuk menghapus antrean sinkronisasi dan mengatur ulang status"
+" sinkronisasi."
+
+#: templates/_settings_tabs/system.html:442
+msgid "Clear Stuck RA Sync"
+msgstr "Hapus Sinkronisasi RA yang Macet"
+
+#: templates/_settings_tabs/system.html:447
+msgid "Current RA Sync Queue:"
+msgstr "Antrean Sinkronisasi RA Saat Ini:"
+
+#: templates/_settings_tabs/system.html:456
 msgid "Support Development"
 msgstr "Dukung Pengembangan"
 
-#: templates/_settings_tabs/system.html:465
+#: templates/_settings_tabs/system.html:460
 msgid ""
 "RetroDB is free and open source. If it saves you time, consider "
 "sponsoring — every bit helps keep solo development sustainable."
@@ -15201,11 +15770,11 @@ msgstr ""
 "pertimbangkan untuk memberikan dukungan — setiap kontribusi membantu "
 "menjaga pengembangan solo tetap berkelanjutan."
 
-#: templates/_settings_tabs/system.html:469
+#: templates/_settings_tabs/system.html:464
 msgid "Sponsor on GitHub"
 msgstr "Sponsor di GitHub"
 
-#: templates/_settings_tabs/system.html:473
+#: templates/_settings_tabs/system.html:468
 msgid "Support on Patreon"
 msgstr "Dukung di Patreon"
 

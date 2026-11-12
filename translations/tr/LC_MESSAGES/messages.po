@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-11 22:13+0200\n"
+"POT-Creation-Date: 2026-11-12 14:22+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: tr\n"
@@ -201,8 +201,8 @@ msgstr "Sistem bulunamadı veya başarım içeren oyunu yok"
 #: routes/achievements.py:177 routes/achievements.py:468
 #: routes/bonus_discs.py:276 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
-#: routes/emulators.py:306 routes/emulators.py:320 routes/games.py:397
-#: routes/games.py:931 routes/games.py:1050 routes/games.py:1131
+#: routes/emulators.py:306 routes/emulators.py:320 routes/games.py:398
+#: routes/games.py:944 routes/games.py:1063 routes/games.py:1144
 #: routes/games_ai.py:41 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
 #: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:706
@@ -578,8 +578,8 @@ msgstr "Bonus disk ve ana oyun aynı sistemde olmalıdır"
 msgid "A bonus disc links to a main game, one level only"
 msgstr "Bonus disk, yalnızca bir seviye olacak şekilde bir ana Oyun'a bağlanır"
 
-#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1401
-#: routes/games.py:1431 routes/platform_import.py:361
+#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1414
+#: routes/games.py:1444 routes/platform_import.py:361
 #: routes/platform_import.py:666 routes/platform_import.py:1050
 #: routes/scrape_logs.py:89 routes/scrape_logs.py:174 routes/scrape_logs.py:187
 #: routes/scrape_logs.py:225 routes/scraper.py:204 routes/scraper.py:535
@@ -809,22 +809,22 @@ msgstr ""
 msgid "Emulator not found"
 msgstr "Emülatör bulunamadı"
 
-#: routes/games.py:270 routes/games.py:304
+#: routes/games.py:271 routes/games.py:305
 msgid "No IDs provided"
 msgstr "ID sağlanmadı"
 
-#: routes/games.py:312
+#: routes/games.py:313
 msgid "Provide 1-50 valid IDs"
 msgstr "1-50 arası geçerli ID sağlayın"
 
-#: routes/games.py:581
+#: routes/games.py:589
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
 "Video kaydedilmedi: en fazla %(mb)s MB boyutunda bir MP4, WebM veya OGG "
 "dosyası olmalıdır."
 
-#: routes/games.py:591
+#: routes/games.py:602
 #, python-format
 msgid ""
 "Screenshots not added because they match ones the game already has: "
@@ -833,19 +833,19 @@ msgstr ""
 "Oyunda zaten bulunanlarla eşleştiği için eklenmeyen ekran görüntüleri: "
 "%(count)s"
 
-#: routes/games.py:736
+#: routes/games.py:749
 msgid "Game not found after update"
 msgstr "Güncellemeden sonra oyun bulunamadı"
 
-#: routes/games.py:1054
+#: routes/games.py:1067
 msgid "No game selected."
 msgstr "Oyun seçilmedi."
 
-#: routes/games.py:1078
+#: routes/games.py:1091
 msgid "This metadata apply is no longer running."
 msgstr "Bu meta veri uygulaması artık çalışmıyor."
 
-#: routes/games.py:1087
+#: routes/games.py:1100
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -854,51 +854,51 @@ msgstr ""
 "Meta veriler %(sources)s kaynağından uygulandı! (%(filled)d alan "
 "dolduruldu, %(missing)d alan hâlâ eksik)"
 
-#: routes/games.py:1093
+#: routes/games.py:1106
 msgid "Failed to apply metadata."
 msgstr "Meta veriler uygulanamadı."
 
-#: routes/games.py:1167 routes/games.py:1216
+#: routes/games.py:1180 routes/games.py:1229
 msgid "No fields to update"
 msgstr "Güncellenecek alan yok"
 
-#: routes/games.py:1209 routes/platform_import.py:267
+#: routes/games.py:1222 routes/platform_import.py:267
 #: routes/platform_import.py:572 routes/platform_import.py:936
 #: routes/trophies.py:1928 templates/game_imports.html:579
 #: templates/game_imports.html:852
 msgid "No games selected"
 msgstr "Oyun seçilmedi"
 
-#: routes/games.py:1213
+#: routes/games.py:1226
 msgid "Invalid game selection"
 msgstr "Geçersiz oyun seçimi"
 
-#: routes/games.py:1225
+#: routes/games.py:1238
 msgid "Invalid completion status"
 msgstr "Geçersiz tamamlanma durumu"
 
-#: routes/games.py:1263 services/api_helpers.py:114
+#: routes/games.py:1276 services/api_helpers.py:114
 #, python-format
 msgid "%(field)s must be text"
 msgstr "%(field)s metin olmalıdır"
 
-#: routes/games.py:1275
+#: routes/games.py:1288
 msgid "No valid fields to update"
 msgstr "Güncellenecek geçerli alan yok"
 
-#: routes/games.py:1394
+#: routes/games.py:1407
 msgid "Invalid status"
 msgstr "Geçersiz durum"
 
-#: routes/games.py:1419
+#: routes/games.py:1432
 msgid "Not authenticated"
 msgstr "Kimlik doğrulanmadı"
 
-#: routes/games.py:1450
+#: routes/games.py:1463
 msgid "Filter type and value required"
 msgstr "Filtre türü ve değeri gereklidir"
 
-#: routes/games.py:1463
+#: routes/games.py:1476
 msgid "Invalid filter type"
 msgstr "Geçersiz filtre türü"
 
@@ -1208,7 +1208,7 @@ msgstr ""
 msgid "Could not create Windows system entry"
 msgstr "Windows sistem girişi oluşturulamadı"
 
-#: routes/platform_import.py:418 templates/settings.html:5121
+#: routes/platform_import.py:418 templates/settings.html:5118
 msgid "Paste your OpenXBL key first."
 msgstr "Önce OpenXBL anahtarınızı yapıştırın."
 
@@ -1255,8 +1255,9 @@ msgstr ""
 "yeri: %(num)s."
 
 #: routes/ra_sync.py:75 services/js_i18n_strings.py:602
-#: templates/all_games.html:42 templates/reports.html:329
-#: templates/reports.html:410 templates/reports.html:485
+#: templates/_settings_tabs/system.html:64 templates/all_games.html:42
+#: templates/reports.html:329 templates/reports.html:410
+#: templates/reports.html:485
 msgid "All Systems"
 msgstr "Tüm Sistemler"
 
@@ -1315,6 +1316,8 @@ msgstr "ROM yolu ayarlanmamış"
 #: routes/reports.py:718
 msgid "This file was renamed after the last scan. Scan again, then rename."
 msgstr ""
+"Bu dosya son taramadan sonra yeniden adlandırılmış. Yeniden tarayın, "
+"sonra adlandırın."
 
 #: routes/reports.py:733 routes/reports.py:858
 msgid "ROM file not found"
@@ -1498,19 +1501,19 @@ msgstr "Eşleme sağlanmadı"
 
 #: routes/settings.py:700 routes/settings.py:713 routes/settings.py:725
 msgid "Invalid field"
-msgstr ""
+msgstr "Geçersiz alan"
 
 #: routes/settings.py:715
 msgid "No spellings chosen"
-msgstr ""
+msgstr "Yazım seçilmedi"
 
 #: routes/settings.py:738
 msgid "No name to keep"
-msgstr ""
+msgstr "Korunacak ad yok"
 
 #: routes/settings.py:740
 msgid "No names ticked to merge"
-msgstr ""
+msgstr "Birleştirilecek ad işaretlenmedi"
 
 #: routes/steam_achievements.py:112
 msgid "Steam credentials not configured"
@@ -2207,7 +2210,7 @@ msgstr "Yapay zeka doldurulacak eksik alan bulamadı"
 #: services/js_i18n_strings.py:598 templates/_settings_tabs/account.html:331
 #: templates/archive_scanner.html:726 templates/list_detail.html:47
 #: templates/multi_disc_organizer.html:217 templates/reports.html:372
-#: templates/reports.html:455
+#: templates/reports.html:455 templates/settings.html:4856
 msgid "Actions"
 msgstr "İşlemler"
 
@@ -2303,7 +2306,7 @@ msgstr ""
 msgid "Are you sure you want to cancel?"
 msgstr "İptal etmek istediğinizden emin misiniz?"
 
-#: services/js_i18n_strings.py:619 templates/settings.html:4926
+#: services/js_i18n_strings.py:619 templates/settings.html:4923
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "\"{filename}\" dosyasını silmek istediğinizden emin misiniz?"
@@ -2432,7 +2435,7 @@ msgstr "Kullanıcı tarafından iptal edildi"
 #: services/js_i18n_strings.py:645
 #, python-brace-format
 msgid "Change these names to \"{name}\" on every game?"
-msgstr ""
+msgstr "Bu adlar her oyunda \"{name}\" olarak değiştirilsin mi?"
 
 #: services/js_i18n_strings.py:646
 msgid "Cheat list changed."
@@ -2446,11 +2449,11 @@ msgstr "Hileler kaydedildi."
 msgid "Checking RetroAchievements…"
 msgstr "RetroAchievements denetleniyor…"
 
-#: services/js_i18n_strings.py:649
+#: services/js_i18n_strings.py:649 templates/_settings_tabs/system.html:26
 msgid "Clean Missing ROMs"
 msgstr "Eksik ROM'ları Temizle"
 
-#: services/js_i18n_strings.py:650
+#: services/js_i18n_strings.py:650 templates/_settings_tabs/system.html:48
 msgid "Clear CLZ Imports"
 msgstr "CLZ İçe Aktarmalarını Temizle"
 
@@ -2480,7 +2483,8 @@ msgstr "{system} sisteminde {count} oyun için RA verisi temizlendi"
 msgid "Cleared RA data for {n} games"
 msgstr "{n} oyun için RA verisi temizlendi"
 
-#: services/js_i18n_strings.py:657
+#: services/js_i18n_strings.py:657 templates/settings.html:3806
+#: templates/settings.html:4070
 msgid "Clearing..."
 msgstr "Temizleniyor..."
 
@@ -2596,7 +2600,7 @@ msgstr "Meta veriler uygulanamadı."
 
 #: services/js_i18n_strings.py:679
 msgid "Could not cancel it"
-msgstr ""
+msgstr "İptal edilemedi"
 
 #: services/js_i18n_strings.py:680
 msgid "Could not change the cheat list."
@@ -2612,7 +2616,7 @@ msgstr "Oyunlar sayılamadı."
 
 #: services/js_i18n_strings.py:683
 msgid "Could not download the update."
-msgstr ""
+msgstr "Güncelleme indirilemedi."
 
 #: services/js_i18n_strings.py:684
 #, python-brace-format
@@ -2633,7 +2637,7 @@ msgstr "Öneriler yüklenemedi."
 
 #: services/js_i18n_strings.py:687
 msgid "Could not load the log files"
-msgstr ""
+msgstr "Günlük dosyaları yüklenemedi"
 
 #: services/js_i18n_strings.py:688
 msgid "Could not open this manual. Use \"Open PDF in a new tab\" instead."
@@ -2643,7 +2647,7 @@ msgstr ""
 
 #: services/js_i18n_strings.py:689
 msgid "Could not pause or resume it"
-msgstr ""
+msgstr "Duraklatılamadı veya sürdürülemedi"
 
 #: services/js_i18n_strings.py:690
 msgid "Could not read the run status."
@@ -2671,7 +2675,7 @@ msgstr "Hileler kaydedilemedi."
 
 #: services/js_i18n_strings.py:696
 msgid "Could not save the theme; it will reset on the next page."
-msgstr ""
+msgstr "Tema kaydedilemedi; sonraki sayfada sıfırlanacak."
 
 #: services/js_i18n_strings.py:697
 msgid "Could not show this page of the manual."
@@ -2683,7 +2687,7 @@ msgstr "Tarama başlatılamadı."
 
 #: services/js_i18n_strings.py:699
 msgid "Could not stop the game"
-msgstr ""
+msgstr "Oyun durdurulamadı"
 
 #: services/js_i18n_strings.py:700
 msgid "Could not stop the run."
@@ -2715,7 +2719,7 @@ msgstr "Şu anki ayar"
 msgid "Default emulator for {system}"
 msgstr "{system} için varsayılan emülatör"
 
-#: services/js_i18n_strings.py:707 templates/settings.html:4926
+#: services/js_i18n_strings.py:707 templates/settings.html:4923
 msgid "Delete Log File"
 msgstr "Günlük Dosyasını Sil"
 
@@ -2744,6 +2748,7 @@ msgid "Done."
 msgstr "Bitti."
 
 #: services/js_i18n_strings.py:714 templates/logs.html:740
+#: templates/settings.html:4874
 msgid "Download"
 msgstr "İndir"
 
@@ -2846,7 +2851,7 @@ msgstr "Emülatör"
 #: services/js_i18n_strings.py:737
 #, python-brace-format
 msgid "Enlarge {name}"
-msgstr ""
+msgstr "{name} öğesini büyüt"
 
 #: services/js_i18n_strings.py:738
 msgid "Enter one folder path."
@@ -2878,15 +2883,15 @@ msgstr "Tek bir klasör yolu girin."
 #: templates/settings.html:3555 templates/settings.html:3623
 #: templates/settings.html:3627 templates/settings.html:3658
 #: templates/settings.html:3662 templates/settings.html:3688
-#: templates/settings.html:3692 templates/settings.html:4186
-#: templates/settings.html:4190 templates/settings.html:4208
-#: templates/settings.html:4239 templates/settings.html:4299
-#: templates/settings.html:4303 templates/settings.html:4433
-#: templates/settings.html:4437 templates/settings.html:4463
-#: templates/settings.html:4467 templates/settings.html:4914
-#: templates/settings.html:4917 templates/settings.html:4936
-#: templates/settings.html:4939 templates/settings.html:4954
-#: templates/settings.html:4957
+#: templates/settings.html:3692 templates/settings.html:4183
+#: templates/settings.html:4187 templates/settings.html:4205
+#: templates/settings.html:4236 templates/settings.html:4296
+#: templates/settings.html:4300 templates/settings.html:4430
+#: templates/settings.html:4434 templates/settings.html:4460
+#: templates/settings.html:4464 templates/settings.html:4911
+#: templates/settings.html:4914 templates/settings.html:4933
+#: templates/settings.html:4936 templates/settings.html:4951
+#: templates/settings.html:4954
 msgid "Error"
 msgstr "Hata"
 
@@ -3349,6 +3354,8 @@ msgstr "Sürümler aranıyor…"
 #: services/js_i18n_strings.py:843
 msgid "Lost contact with RetroDB. Reload the page to see the generation progress."
 msgstr ""
+"RetroDB ile bağlantı kesildi. Oluşturma ilerlemesini görmek için sayfayı "
+"yeniden yükleyin."
 
 #: services/js_i18n_strings.py:844 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
@@ -3403,11 +3410,11 @@ msgstr ""
 
 #: services/js_i18n_strings.py:850
 msgid "Merge"
-msgstr ""
+msgstr "Birleştir"
 
 #: services/js_i18n_strings.py:851
 msgid "Missing box art"
-msgstr ""
+msgstr "Kutu kapağı eksik"
 
 #: services/js_i18n_strings.py:852
 #, python-brace-format
@@ -3434,12 +3441,12 @@ msgstr "DEĞİL"
 
 #: services/js_i18n_strings.py:857
 msgid "Name to keep"
-msgstr ""
+msgstr "Korunacak ad"
 
 #: services/js_i18n_strings.py:858
 #, python-brace-format
 msgid "Names merged: {games} games updated"
-msgstr ""
+msgstr "Adlar birleştirildi: {games} oyun güncellendi"
 
 #: services/js_i18n_strings.py:859
 #, python-brace-format
@@ -3451,7 +3458,10 @@ msgid "Navigation"
 msgstr "Gezinme"
 
 #: services/js_i18n_strings.py:861 templates/psn_trophy_detail.html:944
-#: templates/psn_trophy_detail.html:964
+#: templates/psn_trophy_detail.html:964 templates/settings.html:3782
+#: templates/settings.html:3840 templates/settings.html:3916
+#: templates/settings.html:3973 templates/settings.html:4049
+#: templates/settings.html:4100 templates/settings.html:4144
 msgid "Network error"
 msgstr "Ağ hatası"
 
@@ -3509,7 +3519,7 @@ msgstr "Başarım bulunamadı"
 
 #: services/js_i18n_strings.py:874
 msgid "No answer from RetroDB"
-msgstr ""
+msgstr "RetroDB yanıt vermiyor"
 
 #: services/js_i18n_strings.py:875 templates/achievement_game.html:72
 #: templates/steam_achievement_game.html:69
@@ -3812,7 +3822,7 @@ msgstr "3D kutu kaldırılsın mı?"
 #: templates/settings.html:3441
 #, python-brace-format
 msgid "Remove {name}"
-msgstr ""
+msgstr "{name} öğesini kaldır"
 
 #: services/js_i18n_strings.py:942
 #, python-brace-format
@@ -3844,7 +3854,7 @@ msgstr "Kaldırılıyor..."
 
 #: services/js_i18n_strings.py:948
 msgid "Reorder queue"
-msgstr ""
+msgstr "Kuyruğu yeniden sırala"
 
 #: services/js_i18n_strings.py:949 templates/_bulk_edit_modal.html:42
 #: templates/_bulk_edit_modal.html:56 templates/_bulk_edit_modal.html:70
@@ -3979,7 +3989,8 @@ msgstr "Kaydedildi. Bir dahaki sefer Oyna'ya bastığınızda uygulanır."
 msgid "Saving to the database…"
 msgstr "Veritabanına kaydediliyor…"
 
-#: services/js_i18n_strings.py:978 templates/setup.html:483
+#: services/js_i18n_strings.py:978 templates/settings.html:4787
+#: templates/setup.html:483
 msgid "Saving..."
 msgstr "Kaydediliyor..."
 
@@ -4003,6 +4014,8 @@ msgid "Scanned {paths} paths · found {found} matches."
 msgstr "{paths} yol tarandı · {found} eşleşme bulundu."
 
 #: services/js_i18n_strings.py:983 templates/multi_disc_organizer.html:204
+#: templates/settings.html:1803 templates/settings.html:3861
+#: templates/settings.html:4000 templates/settings.html:4510
 msgid "Scanning..."
 msgstr "Taranıyor..."
 
@@ -4183,7 +4196,7 @@ msgstr "Giriş yapılıyor…"
 #: services/js_i18n_strings.py:1022
 #, python-brace-format
 msgid "Spellings applied: {games} games updated"
-msgstr ""
+msgstr "Yazımlar uygulandı: {games} oyun güncellendi"
 
 #: services/js_i18n_strings.py:1023 templates/_modals/edit_modal.html:50
 #: templates/base.html:1103 templates/game_detail.html:4270
@@ -4513,7 +4526,7 @@ msgstr "Yükle"
 msgid "Upload Controller Image"
 msgstr "Kontrolcü Resmi Yükle"
 
-#: services/js_i18n_strings.py:1085 templates/settings.html:5243
+#: services/js_i18n_strings.py:1085 templates/settings.html:5240
 msgid "Upload failed"
 msgstr "Yükleme başarısız oldu"
 
@@ -4540,11 +4553,11 @@ msgstr "Sistem ayarını kullan"
 #: services/js_i18n_strings.py:1091
 #, python-brace-format
 msgid "Use these {n} spellings?"
-msgstr ""
+msgstr "Bu {n} yazım kullanılsın mı?"
 
 #: services/js_i18n_strings.py:1092
 msgid "Use this spelling?"
-msgstr ""
+msgstr "Bu yazım kullanılsın mı?"
 
 #: services/js_i18n_strings.py:1093
 #, python-brace-format
@@ -5480,6 +5493,8 @@ msgstr ""
 "%(system)s oyunlarınızda kazandığınız başarımları indirir. Oynadıktan "
 "sonra çalıştırın."
 
+#: templates/_settings_tabs/system.html:430
+#: templates/_settings_tabs/system.html:448
 #: templates/achievements_system.html:162 templates/changelog.html:179
 #: templates/logs.html:737 templates/setup.html:354 templates/setup.html:355
 #: templates/setup.html:419 templates/tags.html:595
@@ -5698,7 +5713,8 @@ msgstr "Filtreler"
 msgid "Select"
 msgstr "Seç"
 
-#: templates/all_games.html:94 templates/system_games.html:85
+#: templates/all_games.html:94 templates/settings.html:4853
+#: templates/system_games.html:85
 msgid "Category"
 msgstr "Kategori"
 
@@ -6215,7 +6231,7 @@ msgstr "En Büyük Oyunlar"
 msgid "Game"
 msgstr "Oyun"
 
-#: templates/analytics.html:604
+#: templates/analytics.html:604 templates/settings.html:4855
 msgid "Size"
 msgstr "Boyut"
 
@@ -6277,7 +6293,7 @@ msgstr "İstatistikler panoya kopyalandı."
 
 #: templates/analytics.html:2772
 msgid "Could not copy to the clipboard."
-msgstr ""
+msgstr "Panoya kopyalanamadı."
 
 #: templates/analytics.html:2826
 msgid "CSV data exported."
@@ -6453,7 +6469,7 @@ msgstr "İşlendi"
 
 #: templates/archive_scanner.html:782 templates/game_detail.html:4079
 #: templates/reports.html:497 templates/settings.html:3549
-#: templates/settings.html:4297 templates/settings.html:4951
+#: templates/settings.html:4294 templates/settings.html:4948
 msgid "Success"
 msgstr "Başarılı"
 
@@ -6474,7 +6490,7 @@ msgstr "Başlaması bekleniyor..."
 
 #: templates/archive_scanner.html:886 templates/archive_scanner.html:890
 msgid "Could not save your scanner choices."
-msgstr ""
+msgstr "Tarayıcı seçimleriniz kaydedilemedi."
 
 #: templates/archive_scanner.html:1127
 msgid "No Types Selected"
@@ -6969,7 +6985,7 @@ msgstr "Kuyruk yöneticisini kapat"
 
 #: templates/base.html:754
 msgid "Could not change the queue"
-msgstr ""
+msgstr "Kuyruk değiştirilemedi"
 
 #: templates/base.html:811
 #, python-brace-format
@@ -8094,7 +8110,7 @@ msgstr "İş devam ettirilirken hata oluştu"
 
 #: templates/dashboard.html:1173
 msgid "Could not dismiss the job"
-msgstr ""
+msgstr "İş kapatılamadı"
 
 #: templates/dashboard.html:1204
 #, python-brace-format
@@ -8108,12 +8124,12 @@ msgstr "Tüm işler devam ettirildi"
 #: templates/dashboard.html:1208
 #, python-brace-format
 msgid "{ok} of {total} jobs resumed"
-msgstr ""
+msgstr "{total} işten {ok} tanesi sürdürüldü"
 
 #: templates/dashboard.html:1219
 #, python-brace-format
 msgid "Could not dismiss job {id}"
-msgstr ""
+msgstr "{id} numaralı iş kapatılamadı"
 
 #: templates/dashboard.html:1249
 msgid "No games found"
@@ -8125,16 +8141,16 @@ msgstr "Rastgele oyun seçilirken hata oluştu"
 
 #: templates/dashboard.html:1273
 msgid "1 configured API is offline"
-msgstr ""
+msgstr "Yapılandırılmış 1 API çevrimdışı"
 
 #: templates/dashboard.html:1274
 #, python-brace-format
 msgid "{count} configured APIs are offline"
-msgstr ""
+msgstr "Yapılandırılmış {count} API çevrimdışı"
 
 #: templates/dashboard.html:1309
 msgid "Offline"
-msgstr ""
+msgstr "Çevrimdışı"
 
 #: templates/dashboard.html:1414
 msgid ""
@@ -8299,7 +8315,7 @@ msgstr "Yeni Şifre Belirle"
 #: templates/force_change_password.html:61 templates/login.html:304
 #: templates/setup.html:522
 msgid "The server answered with an error."
-msgstr ""
+msgstr "Sunucu bir hata ile yanıt verdi."
 
 #: templates/_macros/nav_tabs.html:45 templates/game_detail.html:19
 #: templates/reports.html:269 templates/rom_tools_hub.html:261
@@ -8390,7 +8406,7 @@ msgstr "Sil"
 #: templates/museum_system.html:194
 #, python-format
 msgid "Enlarge %(name)s"
-msgstr ""
+msgstr "%(name)s öğesini büyüt"
 
 #: templates/game_detail.html:185 templates/game_detail.html:198
 #: templates/game_detail.html:219
@@ -8882,7 +8898,7 @@ msgstr "Sıralama başlığı oluşturuldu"
 
 #: templates/game_detail.html:5687 templates/game_detail.html:5757
 msgid "match"
-msgstr ""
+msgstr "eşleşme"
 
 #: templates/game_detail.html:5690
 #, python-brace-format
@@ -8933,11 +8949,11 @@ msgstr "Ekran görüntüsü silinemedi: {error}"
 
 #: templates/game_detail.html:6050
 msgid "No similar games found in library"
-msgstr ""
+msgstr "Kütüphanede benzer oyun bulunamadı"
 
 #: templates/game_detail.html:6054
 msgid "Could not load similar games."
-msgstr ""
+msgstr "Benzer oyunlar yüklenemedi."
 
 #: templates/_settings_tabs/account.html:233 templates/game_imports.html:171
 msgid "Steam"
@@ -9028,6 +9044,11 @@ msgid ""
 "href=\"%(settings_url)s\" style=\"color: var(--primary-cyan);\">Settings "
 "&rarr; My Profile</a>, or enter them below."
 msgstr ""
+"Steam oyun kütüphanenizi içe aktarın. Oyunlar <strong>Microsoft "
+"Windows</strong> sistemi altında oluşturulur. Steam API anahtarınızı ve "
+"Steam kimliğinizi <a href=\"%(settings_url)s\" style=\"color: var"
+"(--primary-cyan);\">Ayarlar &rarr; Profilim</a> bölümünde ayarlayın veya "
+"aşağıya girin."
 
 #: templates/game_imports.html:249
 msgid "Steam Credentials"
@@ -9131,6 +9152,12 @@ msgid ""
 "href=\"%(trophies_url)s\" style=\"color: var(--primary-cyan);\">PSN "
 "Trophies</a> page."
 msgstr ""
+"PlayStation oyun kütüphanenizi içe aktarın. Oyunlar PSN kupa listenizden "
+"gelir. PSN NPSSO jetonunuzu <a href=\"%(settings_url)s\" style=\"color: "
+"var(--primary-cyan);\">Ayarlar &rarr; Profilim</a> bölümünde ayarlayın. "
+"Daha hızlı içe aktarma için önce <a href=\"%(trophies_url)s\" "
+"style=\"color: var(--primary-cyan);\">PSN Kupaları</a> sayfasından "
+"kupalarınızı eşitleyin."
 
 #: templates/game_imports.html:365
 msgid "PSN Account"
@@ -9208,11 +9235,11 @@ msgstr "OpenXBL anahtarınız aracılığıyla."
 
 #: templates/game_imports.html:701 templates/game_imports.html:911
 msgid "Could not check the connection"
-msgstr ""
+msgstr "Bağlantı denetlenemedi"
 
 #: templates/game_imports.html:702 templates/game_imports.html:912
 msgid "Reload the page to try again."
-msgstr ""
+msgstr "Yeniden denemek için sayfayı yeniden yükleyin."
 
 #: templates/game_imports.html:727
 #, python-brace-format
@@ -9239,20 +9266,22 @@ msgstr "Ayrıntılar arka planda Steam'den geliyor"
 
 #: templates/game_imports.html:897
 msgid "PSN Configured"
-msgstr ""
+msgstr "PSN Yapılandırıldı"
 
 #: templates/game_imports.html:899
 #, python-brace-format
 msgid "Games in your trophy list: {count}"
-msgstr ""
+msgstr "Kupa listenizdeki oyunlar: {count}"
 
 #: templates/game_imports.html:900
 msgid "No trophy list saved yet; Fetch will read it from PSN."
-msgstr ""
+msgstr "Henüz kayıtlı kupa listesi yok; Al düğmesi listeyi PSN'den okur."
 
 #: templates/game_imports.html:905
 msgid "Add your PSN NPSSO token in Settings > My Profile to import games."
 msgstr ""
+"Oyunları içe aktarmak için PSN NPSSO jetonunuzu Ayarlar > Profilim "
+"bölümünde ekleyin."
 
 #: templates/game_imports.html:946
 #, python-brace-format
@@ -9384,7 +9413,7 @@ msgstr ""
 
 #: templates/hltb_review.html:238
 msgid "No pending matches under this filter."
-msgstr ""
+msgstr "Bu filtrede bekleyen eşleşme yok."
 
 #: templates/hltb_review.html:295
 msgid "Match approved"
@@ -9525,7 +9554,7 @@ msgstr "Oyun kaldırılırken hata oluştu."
 
 #: templates/lists.html:315 templates/lists.html:318
 msgid "Could not load your lists."
-msgstr ""
+msgstr "Listeleriniz yüklenemedi."
 
 #: templates/lists.html:437
 msgid "Please enter a list name."
@@ -9702,7 +9731,7 @@ msgstr ""
 
 #: templates/local_trophy_detail.html:374
 msgid "Failed to save HLTB data."
-msgstr ""
+msgstr "HLTB verisi kaydedilemedi."
 
 #: templates/local_trophy_detail.html:422
 msgid "HLTB Lookup Failed"
@@ -9717,7 +9746,8 @@ msgstr "Eşleşme bulunamadı."
 #: templates/settings.html:1942 templates/settings.html:1967
 #: templates/settings.html:1970 templates/settings.html:1990
 #: templates/settings.html:2034 templates/settings.html:2056
-#: templates/settings.html:2153 templates/steam_achievement_game.html:302
+#: templates/settings.html:2153 templates/settings.html:4832
+#: templates/steam_achievement_game.html:302
 #: templates/xbox_achievement_game.html:293
 #, python-brace-format
 msgid "Error: {error}"
@@ -9766,7 +9796,7 @@ msgstr "Seviye"
 
 #: templates/logs.html:759
 msgid "DEBUG"
-msgstr ""
+msgstr "DEBUG"
 
 #: templates/logs.html:760
 msgid "INFO"
@@ -9778,13 +9808,13 @@ msgstr "UYARI"
 
 #: templates/logs.html:762
 msgid "Errors and critical errors"
-msgstr ""
+msgstr "Hatalar ve kritik hatalar"
 
 #: templates/logs.html:762
 msgid "ERROR"
 msgstr "HATA"
 
-#: templates/logs.html:778
+#: templates/logs.html:778 templates/settings.html:4871
 msgid "View"
 msgstr "Görüntüle"
 
@@ -10423,15 +10453,15 @@ msgstr "Hız sınırlı: PSN API sınırlarına uymak için oyunlar arasında ~2
 
 #: templates/psn_trophies.html:1177
 msgid "Could not load games."
-msgstr ""
+msgstr "Oyunlar yüklenemedi."
 
 #: templates/psn_trophies.html:1181
 msgid "Retry"
-msgstr ""
+msgstr "Yeniden dene"
 
 #: templates/psn_trophies.html:1648
 msgid "The sync is no longer running. Close this window and start it again."
-msgstr ""
+msgstr "Eşitleme artık çalışmıyor. Bu pencereyi kapatın ve yeniden başlatın."
 
 #: templates/psn_trophies.html:1674
 msgid "Please select at least one game to refresh."
@@ -10682,7 +10712,7 @@ msgstr "Toplu Yeniden Adlandırma Tamamlandı"
 
 #: templates/reports.html:524
 msgid "These files were not renamed:"
-msgstr ""
+msgstr "Bu dosyalar yeniden adlandırılmadı:"
 
 #: templates/reports.html:532
 msgid "Start Rename"
@@ -11757,7 +11787,7 @@ msgstr "Ayarlar kaydedilirken ağ hatası oluştu"
 
 #: templates/settings.html:1193
 msgid "Could not load the timezone list."
-msgstr ""
+msgstr "Saat dilimi listesi yüklenemedi."
 
 #: templates/settings.html:1226
 msgid "Timezone saved! Page will reload to apply."
@@ -11797,7 +11827,7 @@ msgstr "Parola değiştirilirken ağ hatası oluştu"
 
 #: templates/settings.html:1342 templates/settings.html:1344
 msgid "Could not load that user."
-msgstr ""
+msgstr "Bu kullanıcı yüklenemedi."
 
 #: templates/settings.html:1379
 msgid "User saved successfully!"
@@ -11850,11 +11880,11 @@ msgstr "Görüntü ayarları kaydedildi!"
 
 #: templates/settings.html:1571
 msgid "Move left"
-msgstr ""
+msgstr "Sola taşı"
 
 #: templates/settings.html:1571
 msgid "Move right"
-msgstr ""
+msgstr "Sağa taşı"
 
 #: templates/settings.html:1671
 msgid "Region already exists"
@@ -12089,11 +12119,11 @@ msgstr "Bu seçeneği silmek istediğinizden emin misiniz?"
 msgid "Failed to delete option"
 msgstr "Seçenek silinemedi"
 
-#: templates/settings.html:3505 templates/settings.html:4259
+#: templates/settings.html:3505 templates/settings.html:4256
 msgid "Missing Input"
 msgstr "Eksik Giriş"
 
-#: templates/settings.html:3505 templates/settings.html:4259
+#: templates/settings.html:3505 templates/settings.html:4256
 msgid "Please enter a controller name"
 msgstr "Lütfen bir kontrolcü adı girin"
 
@@ -12118,42 +12148,108 @@ msgstr "Varsayılan kontrolcü eklenemedi"
 msgid "Failed to remove default controller"
 msgstr "Varsayılan kontrolcü kaldırılamadı"
 
-#: templates/settings.html:3795
+#: templates/settings.html:3763
+msgid "Preview:"
+msgstr "Önizleme:"
+
+#: templates/settings.html:3764
+#, python-brace-format
+msgid "This will clear scraped data from {count} games in {system}."
+msgstr ""
+"Bu işlem {system} sistemindeki {count} oyunun kazınmış verilerini "
+"temizler."
+
+#: templates/settings.html:3765
+#, python-brace-format
+msgid "This will clear scraped data from {count} games (all systems)."
+msgstr "Bu işlem {count} oyunun kazınmış verilerini temizler (tüm sistemler)."
+
+#: templates/settings.html:3766
+msgid ""
+"Fields: description, genre, publisher, developer, players, modes, "
+"ratings, scores, images, etc."
+msgstr ""
+"Alanlar: açıklama, tür, yayıncı, geliştirici, oyuncu sayısı, modlar, "
+"derecelendirmeler, puanlar, görseller vb."
+
+#: templates/settings.html:3773
+msgid "Failed to preview"
+msgstr "Önizleme yapılamadı"
+
+#: templates/settings.html:3796
 msgid "ALL SYSTEMS"
 msgstr "TÜM SİSTEMLER"
 
-#: templates/settings.html:3799
+#: templates/_settings_tabs/system.html:84 templates/settings.html:3800
+#: templates/settings.html:3845
 msgid "Clear Scraped Data"
 msgstr "Kazınan Verileri Temizle"
 
-#: templates/settings.html:3800
+#: templates/settings.html:3801
 #, python-brace-format
 msgid "This will clear all scraped metadata from games in {system}."
 msgstr ""
 "Bu işlem, {system} sistemindeki oyunlardan kazınan tüm meta verileri "
 "temizler."
 
-#: templates/settings.html:3801
+#: templates/settings.html:3802
 msgid "Downloaded images will also be deleted!"
 msgstr "İndirilen görseller de silinecek!"
 
-#: templates/settings.html:3802
+#: templates/settings.html:3803
 msgid "This cannot be undone. Are you sure?"
 msgstr "Bu işlem geri alınamaz. Emin misiniz?"
 
-#: templates/settings.html:3926
+#: templates/settings.html:3824
+#, python-brace-format
+msgid "Cleared scraped data from {count} games."
+msgstr "{count} oyunun kazınmış verileri temizlendi."
+
+#: templates/settings.html:3824
+#, python-brace-format
+msgid "Deleted {count} image files."
+msgstr "{count} görsel dosyası silindi."
+
+#: templates/settings.html:3831
+msgid "Failed to clear data"
+msgstr "Veriler temizlenemedi"
+
+#: templates/settings.html:3877
+msgid "No orphaned media files found. All files are linked to existing games."
+msgstr "Artık medya dosyası bulunamadı. Tüm dosyalar mevcut oyunlara bağlı."
+
+#: templates/settings.html:3890 templates/setup.html:404
+#, python-brace-format
+msgid "{count} files"
+msgstr "{count} dosya"
+
+#: templates/settings.html:3895
+#, python-brace-format
+msgid "Found {count} orphaned files ({size} MB)"
+msgstr "{count} artık dosya bulundu ({size} MB)"
+
+#: templates/settings.html:3907
+msgid "Failed to scan for orphaned files"
+msgstr "Artık dosyalar taranamadı"
+
+#: templates/_settings_tabs/system.html:100 templates/settings.html:3921
+msgid "Scan for Orphaned Files"
+msgstr "Artık Dosyaları Tara"
+
+#: templates/settings.html:3927
 msgid "No Files"
 msgstr "Dosya Yok"
 
-#: templates/settings.html:3926
+#: templates/settings.html:3927
 msgid "Please scan for orphaned files first."
 msgstr "Lütfen önce artık dosyaları taramayı çalıştırın."
 
-#: templates/settings.html:3931
+#: templates/_settings_tabs/system.html:104 templates/settings.html:3932
+#: templates/settings.html:3978
 msgid "Delete Orphaned Files"
 msgstr "Artık Dosyaları Sil"
 
-#: templates/settings.html:3932
+#: templates/settings.html:3933
 #, python-brace-format
 msgid ""
 "Orphaned media files to delete permanently: {count}. This action cannot "
@@ -12162,19 +12258,86 @@ msgstr ""
 "Kalıcı olarak silinecek artık medya dosyaları: {count}. Bu işlem geri "
 "alınamaz.<br><br>Devam edilsin mi?"
 
-#: templates/settings.html:4060
+#: templates/settings.html:3939
+msgid "Deleting..."
+msgstr "Siliniyor..."
+
+#: templates/settings.html:3957
+#, python-brace-format
+msgid "Deleted {count} orphaned files."
+msgstr "{count} artık dosya silindi."
+
+#: templates/settings.html:3957
+#, python-brace-format
+msgid "Freed {size} MB of disk space."
+msgstr "{size} MB disk alanı boşaltıldı."
+
+#: templates/settings.html:3957
+#, python-brace-format
+msgid "{count} files could not be deleted."
+msgstr "{count} dosya silinemedi."
+
+#: templates/settings.html:3965
+msgid "Failed to delete files"
+msgstr "Dosyalar silinemedi"
+
+#: templates/settings.html:4016
+#, python-brace-format
+msgid "{count} reference(s)"
+msgstr "{count} başvuru"
+
+#: templates/settings.html:4020
+msgid ""
+"Some media folders look missing or empty (possibly an unmounted drive or "
+"a bulk deletion). Their references were <strong>kept, not "
+"cleared</strong>, to protect against wiping your whole library by "
+"accident:"
+msgstr ""
+"Bazı medya klasörleri eksik veya boş görünüyor (bağlanmamış bir sürücü "
+"veya toplu silme olabilir). Tüm kütüphanenizin yanlışlıkla silinmesini "
+"önlemek için bunların başvuruları <strong>korundu, temizlenmedi</strong>:"
+
+#: templates/settings.html:4022
+msgid "Re-mount the media folder (or re-scrape) and scan again."
+msgstr ""
+"Medya klasörünü yeniden bağlayın (veya yeniden kazıyın) ve yeniden "
+"tarayın."
+
+#: templates/settings.html:4029
+msgid "No clearable missing-media references found."
+msgstr "Temizlenebilecek eksik medya başvurusu bulunamadı."
+
+#: templates/settings.html:4034
+#, python-brace-format
+msgid ""
+"Found {refs} stale reference(s) across {games} game(s) pointing to files "
+"no longer on disk."
+msgstr ""
+"{games} oyunda, artık diskte olmayan dosyaları gösteren {refs} eski "
+"başvuru bulundu."
+
+#: templates/settings.html:4042
+msgid "Failed to scan for missing media references"
+msgstr "Eksik medya başvuruları taranamadı"
+
+#: templates/_settings_tabs/system.html:119 templates/settings.html:4052
+msgid "Scan for Missing Media"
+msgstr "Eksik Medyayı Tara"
+
+#: templates/settings.html:4058
 msgid "Nothing to Clear"
 msgstr "Temizlenecek Bir Şey Yok"
 
-#: templates/settings.html:4060
+#: templates/settings.html:4058
 msgid "Please scan for missing media references first."
 msgstr "Lütfen önce eksik medya referanslarını taramayı çalıştırın."
 
-#: templates/settings.html:4065
+#: templates/_settings_tabs/system.html:123 templates/settings.html:4063
+#: templates/settings.html:4103
 msgid "Clear Missing References"
 msgstr "Eksik Referansları Temizle"
 
-#: templates/settings.html:4066
+#: templates/settings.html:4064
 #, python-brace-format
 msgid ""
 "Database references to clear: {count}. They point to media files that no "
@@ -12186,11 +12349,52 @@ msgstr ""
 "yeniden indirebilir. Oyun kayıtlarınız etkilenmez.<br><br>Devam edilsin "
 "mi?"
 
-#: templates/settings.html:4162
+#: templates/settings.html:4083
+#, python-brace-format
+msgid "{count} reference(s) in missing/empty folders were preserved."
+msgstr "Eksik/boş klasörlerdeki {count} başvuru korundu."
+
+#: templates/settings.html:4087
+#, python-brace-format
+msgid "Cleared {refs} stale reference(s) across {games} game(s)."
+msgstr "{games} oyunda {refs} eski başvuru temizlendi."
+
+#: templates/settings.html:4094
+msgid "Failed to clear references"
+msgstr "Başvurular temizlenemedi"
+
+#: templates/settings.html:4115
+msgid "Optimizing..."
+msgstr "En iyileştiriliyor..."
+
+#: templates/settings.html:4127
+#, python-brace-format
+msgid "Database optimized successfully in {seconds}s."
+msgstr "Veritabanı {seconds} sn içinde başarıyla en iyileştirildi."
+
+#: templates/settings.html:4128
+#, python-brace-format
+msgid "Size: {before} MB → {after} MB"
+msgstr "Boyut: {before} MB → {after} MB"
+
+#: templates/settings.html:4129
+#, python-brace-format
+msgid "(saved {size} MB)"
+msgstr "({size} MB kazanıldı)"
+
+#: templates/settings.html:4135
+msgid "Failed to optimize database"
+msgstr "Veritabanı en iyileştirilemedi"
+
+#: templates/_settings_tabs/system.html:137 templates/settings.html:4149
+msgid "Optimize Database"
+msgstr "Veritabanını En İyileştir"
+
+#: templates/settings.html:4159
 msgid "Delete Controller"
 msgstr "Kontrolcüyü Sil"
 
-#: templates/settings.html:4163
+#: templates/settings.html:4160
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete {name}?<br><br>This will remove it from "
@@ -12199,164 +12403,217 @@ msgstr ""
 "{name} öğesini silmek istediğinizden emin misiniz?<br><br>Bu işlem, onu "
 "kütüphaneden ve varsayılan olarak kullanan tüm sistemlerden kaldırır."
 
-#: templates/settings.html:4184
+#: templates/settings.html:4181
 msgid "Deleted"
 msgstr "Silindi"
 
-#: templates/settings.html:4184
+#: templates/settings.html:4181
 #, python-brace-format
 msgid "Controller \"{name}\" has been removed."
 msgstr "\"{name}\" kontrolcüsü kaldırıldı."
 
-#: templates/settings.html:4186 templates/settings.html:4190
+#: templates/settings.html:4183 templates/settings.html:4187
 msgid "Failed to delete controller"
 msgstr "Kontrolcü silinemedi"
 
-#: templates/settings.html:4208
+#: templates/settings.html:4205
 msgid "Failed to load controller"
 msgstr "Kontrolcü yüklenemedi"
 
-#: templates/settings.html:4239
+#: templates/settings.html:4236
 msgid "Failed to load controller data"
 msgstr "Kontrolcü verileri yüklenemedi"
 
-#: templates/settings.html:4297
+#: templates/settings.html:4294
 #, python-brace-format
 msgid "Controller \"{name}\" has been updated."
 msgstr "\"{name}\" kontrolcüsü güncellendi."
 
-#: templates/settings.html:4299 templates/settings.html:4303
+#: templates/settings.html:4296 templates/settings.html:4300
 msgid "Failed to update controller"
 msgstr "Kontrolcü güncellenemedi"
 
-#: templates/settings.html:4430
+#: templates/settings.html:4427
 msgid "Logos Refreshed"
 msgstr "Logolar Yenilendi"
 
-#: templates/settings.html:4431
+#: templates/settings.html:4428
 #, python-brace-format
 msgid "System logos updated: {count}. The table has been refreshed."
 msgstr "Güncellenen sistem logoları: {count}. Tablo yenilendi."
 
-#: templates/settings.html:4433
+#: templates/settings.html:4430
 msgid "Failed to refresh logos"
 msgstr "Logolar yenilenemedi"
 
-#: templates/settings.html:4437
+#: templates/settings.html:4434
 msgid "Failed to refresh system logos"
 msgstr "Sistem logoları yenilenemedi"
 
-#: templates/settings.html:4459
+#: templates/settings.html:4456
 msgid "Names Refreshed"
 msgstr "Adlar Yenilendi"
 
-#: templates/settings.html:4460
+#: templates/settings.html:4457
 #, python-brace-format
 msgid "System names updated: {count}. Click OK to refresh the page."
 msgstr ""
 "Güncellenen sistem adları: {count}. Sayfayı yenilemek için Tamam'a "
 "tıklayın."
 
-#: templates/settings.html:4463
+#: templates/settings.html:4460
 msgid "Failed to refresh names"
 msgstr "Adlar yenilenemedi"
 
-#: templates/settings.html:4467
+#: templates/settings.html:4464
 msgid "Failed to refresh system names"
 msgstr "Sistem adları yenilenemedi"
 
-#: templates/settings.html:4910
+#: templates/settings.html:4563
+msgid "No bulk scrape state found (all clear)"
+msgstr "Toplu kazıma durumu bulunamadı (her şey temiz)"
+
+#: templates/settings.html:4626
+msgid "Bulk scrape state cleared successfully!"
+msgstr "Toplu kazıma durumu başarıyla temizlendi!"
+
+#: templates/settings.html:4650
+msgid "RA sync state and queue cleared!"
+msgstr "RA eşitleme durumu ve kuyruğu temizlendi!"
+
+#: templates/settings.html:4664
+msgid "RA sync queue cleared (server unreachable)"
+msgstr "RA eşitleme kuyruğu temizlendi (sunucuya ulaşılamıyor)"
+
+#: templates/settings.html:4683
+msgid "No items in queue, no active sync."
+msgstr "Kuyrukta öğe yok, etkin eşitleme yok."
+
+#: templates/settings.html:4827
+msgid "Logging settings saved!"
+msgstr "Günlükleme ayarları kaydedildi!"
+
+#: templates/settings.html:4829
+msgid "Failed to save"
+msgstr "Kaydedilemedi"
+
+#: templates/_settings_tabs/system.html:382 templates/settings.html:4835
+msgid "Save Logging Settings"
+msgstr "Günlükleme Ayarlarını Kaydet"
+
+#: templates/settings.html:4842
+msgid "Loading log files..."
+msgstr "Günlük dosyaları yükleniyor..."
+
+#: templates/settings.html:4854
+msgid "Date"
+msgstr "Tarih"
+
+#: templates/settings.html:4887
+msgid ""
+"No log files found. Logs will appear here after scraping or ROM "
+"operations."
+msgstr ""
+"Günlük dosyası bulunamadı. Günlükler, kazıma veya ROM işlemlerinden sonra"
+" burada görünür."
+
+#: templates/settings.html:4890
+#, python-brace-format
+msgid "Error loading log files: {error}"
+msgstr "Günlük dosyaları yüklenirken hata: {error}"
+
+#: templates/settings.html:4907
 #, python-brace-format
 msgid "Log: {filename}"
 msgstr "Günlük: {filename}"
 
-#: templates/settings.html:4911
+#: templates/settings.html:4908
 msgid "Log file is empty"
 msgstr "Günlük dosyası boş"
 
-#: templates/settings.html:4914
+#: templates/settings.html:4911
 msgid "Failed to load log file"
 msgstr "Günlük dosyası yüklenemedi"
 
-#: templates/settings.html:4917
+#: templates/settings.html:4914
 #, python-brace-format
 msgid "Error loading log file: {error}"
 msgstr "Günlük dosyası yüklenirken hata oluştu: {error}"
 
-#: templates/settings.html:4936
+#: templates/settings.html:4933
 msgid "Failed to delete log file"
 msgstr "Günlük dosyası silinemedi"
 
-#: templates/settings.html:4939
+#: templates/settings.html:4936
 #, python-brace-format
 msgid "Error deleting log file: {error}"
 msgstr "Günlük dosyası silinirken hata oluştu: {error}"
 
-#: templates/settings.html:4945
+#: templates/settings.html:4942
 msgid "Clear Old Logs"
 msgstr "Eski Günlükleri Temizle"
 
-#: templates/settings.html:4945
+#: templates/settings.html:4942
 msgid "This will delete all log files older than 5 days. Continue?"
 msgstr "5 günden eski tüm günlük dosyaları silinecek. Devam edilsin mi?"
 
-#: templates/settings.html:4951
+#: templates/settings.html:4948
 #, python-brace-format
 msgid "Old log files removed: {count}"
 msgstr "Kaldırılan eski günlük dosyaları: {count}"
 
-#: templates/settings.html:4954
+#: templates/settings.html:4951
 msgid "Failed to clear old logs"
 msgstr "Eski günlükler temizlenemedi"
 
-#: templates/settings.html:4957
+#: templates/settings.html:4954
 #, python-brace-format
 msgid "Error clearing old logs: {error}"
 msgstr "Eski günlükler temizlenirken hata oluştu: {error}"
 
-#: templates/settings.html:5002
+#: templates/settings.html:4999
 msgid "Token extracted from the pasted page"
 msgstr "Belirteç yapıştırılan sayfadan alındı"
 
-#: templates/settings.html:5004
+#: templates/settings.html:5001
 msgid "Token detected"
 msgstr "Belirteç bulundu"
 
-#: templates/settings.html:5006
+#: templates/settings.html:5003
 msgid "Could not detect a valid NPSSO token"
 msgstr "Geçerli bir NPSSO belirteci bulunamadı"
 
-#: templates/settings.html:5018
+#: templates/settings.html:5015
 msgid "Now press Ctrl+V to paste."
 msgstr "Şimdi yapıştırmak için Ctrl+V tuşlarına basın."
 
-#: templates/settings.html:5030
+#: templates/settings.html:5027
 msgid "Enter an NPSSO token first"
 msgstr "Önce bir NPSSO belirteci girin"
 
-#: templates/settings.html:5035
+#: templates/settings.html:5032
 msgid "Testing..."
 msgstr "Test ediliyor..."
 
-#: templates/settings.html:5036 templates/settings.html:5125
+#: templates/settings.html:5033 templates/settings.html:5122
 msgid "Saving and connecting..."
 msgstr "Kaydediliyor ve bağlanılıyor..."
 
-#: templates/settings.html:5047 templates/settings.html:5134
+#: templates/settings.html:5044 templates/settings.html:5131
 #, python-format
 msgid "Connected as %(name)s"
 msgstr "%(name)s olarak bağlanıldı"
 
-#: templates/settings.html:5054 templates/settings.html:5138
+#: templates/settings.html:5051 templates/settings.html:5135
 msgid "Connection failed"
 msgstr "Bağlantı başarısız"
 
-#: templates/settings.html:5057 templates/settings.html:5141
+#: templates/settings.html:5054 templates/settings.html:5138
 #, python-format
 msgid "Error: %(msg)s"
 msgstr "Hata: %(msg)s"
 
-#: templates/settings.html:5076
+#: templates/settings.html:5073
 #, python-format
 msgid ""
 "Sony refused your saved NPSSO token on %(date)s. Get a new one with the "
@@ -12365,7 +12622,7 @@ msgstr ""
 "Sony, kayıtlı NPSSO belirtecinizi %(date)s tarihinde reddetti. Aşağıdaki "
 "adımlarla yeni bir tane alın."
 
-#: templates/settings.html:5079
+#: templates/settings.html:5076
 msgid ""
 "Connected to PSN. RetroDB keeps the sign-in going by itself. You need a "
 "new token only if Sony refuses this one."
@@ -12373,47 +12630,47 @@ msgstr ""
 "PSN'e bağlanıldı. RetroDB oturumu kendi kendine açık tutar. Yeni "
 "belirtece yalnızca Sony bunu reddederse ihtiyacınız olur."
 
-#: templates/settings.html:5108
+#: templates/settings.html:5105
 #, python-format
 msgid "Key saved. Connected as %(name)s."
 msgstr "Anahtar kaydedildi. %(name)s olarak bağlanıldı."
 
-#: templates/settings.html:5109
+#: templates/settings.html:5106
 msgid "No key saved."
 msgstr "Kayıtlı anahtar yok."
 
-#: templates/settings.html:5147
+#: templates/settings.html:5144
 msgid "Remove Xbox key"
 msgstr "Xbox anahtarını kaldır"
 
-#: templates/settings.html:5147
+#: templates/settings.html:5144
 msgid "Remove your OpenXBL key? Your imported games and achievements stay."
 msgstr ""
 "OpenXBL anahtarınız kaldırılsın mı? İçe aktarılan oyunlarınız ve "
 "başarımlarınız kalır."
 
-#: templates/settings.html:5152
+#: templates/settings.html:5149
 msgid "Could not remove the Xbox key."
-msgstr ""
+msgstr "Xbox anahtarı kaldırılamadı."
 
-#: templates/settings.html:5241 templates/settings.html:5288
+#: templates/settings.html:5238 templates/settings.html:5285
 msgid "Avatar updated!"
 msgstr "Avatar güncellendi!"
 
-#: templates/settings.html:5246
+#: templates/settings.html:5243
 #, python-brace-format
 msgid "Upload failed: {error}"
 msgstr "Yükleme başarısız: {error}"
 
-#: templates/settings.html:5263
+#: templates/settings.html:5260
 msgid "Avatar removed"
 msgstr "Avatar kaldırıldı"
 
-#: templates/settings.html:5265 templates/settings.html:5268
+#: templates/settings.html:5262 templates/settings.html:5265
 msgid "Failed to remove avatar"
 msgstr "Avatar kaldırılamadı"
 
-#: templates/settings.html:5290 templates/settings.html:5293
+#: templates/settings.html:5287 templates/settings.html:5290
 msgid "Failed to save avatar"
 msgstr "Avatar kaydedilemedi"
 
@@ -13031,11 +13288,6 @@ msgstr "Alt klasör yok"
 msgid "1 file"
 msgstr "1 dosya"
 
-#: templates/setup.html:404
-#, python-brace-format
-msgid "{count} files"
-msgstr "{count} dosya"
-
 #: templates/setup.html:405
 msgid "1 folder"
 msgstr "1 klasör"
@@ -13308,7 +13560,7 @@ msgstr ""
 
 #: templates/tags.html:396 templates/tags.html:399
 msgid "Could not load your tags."
-msgstr ""
+msgstr "Etiketleriniz yüklenemedi."
 
 #: templates/tags.html:440
 msgid "Edit tag"
@@ -13507,7 +13759,7 @@ msgstr "Eşleşme Yok"
 
 #: templates/wishlist.html:543 templates/wishlist.html:546
 msgid "Could not load your wishlist."
-msgstr ""
+msgstr "İstek listeniz yüklenemedi."
 
 #: templates/wishlist.html:593
 msgid "No items match this filter."
@@ -14450,7 +14702,7 @@ msgstr "Kullanıcı Yönetimi"
 
 #: templates/_settings_tabs/account.html:314
 msgid "Manage users who can access RetroDB."
-msgstr ""
+msgstr "RetroDB'ye erişebilen kullanıcıları yönetin."
 
 #: templates/_settings_tabs/account.html:319
 #: templates/_settings_tabs/account.html:393
@@ -14808,6 +15060,8 @@ msgid ""
 "Set the RPCS3 Trophy Path in <a href=\"#esde\">ES-DE Integration</a> on "
 "the Scraping tab"
 msgstr ""
+"RPCS3 Kupa Yolunu Kazıma sekmesindeki <a href=\"#esde\">ES-DE "
+"Entegrasyonu</a> bölümünde ayarlayın"
 
 #: templates/_settings_tabs/data.html:64
 msgid "Scan your RPCS3 trophy folder for unlocked trophies"
@@ -14864,6 +15118,10 @@ msgid ""
 "nothing changes until you press Apply. Later scrapes then use that "
 "spelling."
 msgstr ""
+"Seri, Yayıncı ve Geliştirici alanları, \"Doom\" ve \"DOOM\" gibi farklı "
+"büyük harflerle yazılmış adları listeler. Her biri için tek bir yazım "
+"seçin; Uygula düğmesine basana kadar hiçbir şey değişmez. Sonraki "
+"kazımalar bu yazımı kullanır."
 
 #: templates/_settings_tabs/data.html:170
 msgid "Show only values needing changes"
@@ -14899,11 +15157,11 @@ msgstr ""
 
 #: templates/_settings_tabs/data.html:215
 msgid "Every name in this field has one spelling."
-msgstr ""
+msgstr "Bu alandaki her adın tek bir yazımı var."
 
 #: templates/_settings_tabs/data.html:220
 msgid "Names that may be one company"
-msgstr ""
+msgstr "Aynı şirket olabilecek adlar"
 
 #: templates/_settings_tabs/data.html:222
 msgid ""
@@ -14913,10 +15171,16 @@ msgid ""
 "company, and press Merge. The merge changes Publisher and Developer on "
 "every game, and later scrapes use the kept name."
 msgstr ""
+"\"Eidos\" ve \"Eidos Interactive\" gibi adlar tek bir şirket de olabilir,"
+" iki ayrı şirket de: \"Atari Games\" ve \"Atari, Inc.\" farklı "
+"şirketlerdir. Her satırda korunacak adı seçin, aynı şirkete ait adları "
+"işaretleyin ve Birleştir düğmesine basın. Birleştirme her oyunda Yayıncı "
+"ve Geliştirici alanlarını değiştirir ve sonraki kazımalar korunan adı "
+"kullanır."
 
 #: templates/_settings_tabs/data.html:225
 msgid "No names look like one company."
-msgstr ""
+msgstr "Aynı şirket gibi görünen ad yok."
 
 #: templates/_settings_tabs/library.html:4
 msgid "Library settings"
@@ -15158,10 +15422,43 @@ msgstr ""
 " küçük bir ücret. Maliyeti düşük tutmak için büyük bir toplu kazımadan "
 "önce kapatın."
 
+#: templates/_settings_tabs/system.html:2
+msgid "System settings"
+msgstr "Sistem ayarları"
+
+#: templates/_settings_tabs/system.html:6
+msgid "Maintenance"
+msgstr "Bakım"
+
 #: templates/_settings_tabs/system.html:7
-#: templates/_settings_tabs/system.html:152
+#: templates/_settings_tabs/system.html:147
 msgid "Updates"
 msgstr "Güncellemeler"
+
+#: templates/_settings_tabs/system.html:8
+msgid "Server"
+msgstr "Sunucu"
+
+#: templates/_settings_tabs/system.html:10
+msgid "Logging"
+msgstr "Günlükleme"
+
+#: templates/_settings_tabs/system.html:11
+#: templates/_settings_tabs/system.html:412
+msgid "Troubleshooting"
+msgstr "Sorun Giderme"
+
+#: templates/_settings_tabs/system.html:12
+msgid "Support"
+msgstr "Destek"
+
+#: templates/_settings_tabs/system.html:19
+msgid "Database Maintenance"
+msgstr "Veritabanı Bakımı"
+
+#: templates/_settings_tabs/system.html:29
+msgid "Remove database entries for ROMs that have been deleted from disk"
+msgstr "Diskten silinmiş ROM'ların veritabanı kayıtlarını kaldır"
 
 #: templates/_settings_tabs/system.html:33
 msgid "Finding and clearing RetroAchievements games is on the"
@@ -15171,12 +15468,94 @@ msgstr "RetroAchievements oyunlarını bulma ve temizleme işlemleri şurada:"
 msgid "Achievements page"
 msgstr "Başarımlar sayfası"
 
-#: templates/_settings_tabs/system.html:155
+#: templates/_settings_tabs/system.html:41
+msgid "Clear Data"
+msgstr "Verileri Temizle"
+
+#: templates/_settings_tabs/system.html:51
+msgid "Remove all games imported via CLZ Games Import"
+msgstr "CLZ Games içe aktarmasıyla eklenen tüm oyunları kaldır"
+
+#: templates/_settings_tabs/system.html:58
+msgid ""
+"Clear scraped metadata from games to start fresh. Useful before a full "
+"re-scrape."
+msgstr ""
+"Baştan başlamak için oyunların kazınmış meta verilerini temizleyin. Tam "
+"bir yeniden kazımadan önce kullanışlıdır."
+
+#: templates/_settings_tabs/system.html:59
+msgid "Note:"
+msgstr "Not:"
+
+#: templates/_settings_tabs/system.html:59
+msgid ""
+"This does NOT delete your game entries, only the scraped metadata "
+"(description, genre, publisher, ratings, images, etc.)"
+msgstr ""
+"Bu işlem oyun kayıtlarınızı SİLMEZ, yalnızca kazınmış meta verileri siler"
+" (açıklama, tür, yayıncı, derecelendirmeler, görseller vb.)"
+
+#: templates/_settings_tabs/system.html:71
+#: templates/_settings_tabs/system.html:74
+msgid "Also delete downloaded images"
+msgstr "İndirilen görselleri de sil"
+
+#: templates/_settings_tabs/system.html:80
+msgid "Preview"
+msgstr "Önizleme"
+
+#: templates/_settings_tabs/system.html:92
+msgid "Orphaned Media Cleanup"
+msgstr "Artık Medya Temizliği"
+
+#: templates/_settings_tabs/system.html:95
+msgid ""
+"Find and delete media files (boxart, screenshots, videos, etc.) for ROMs "
+"that no longer exist in the database. This cleans up leftover files from "
+"deleted games."
+msgstr ""
+"Veritabanında artık bulunmayan ROM'lara ait medya dosyalarını (kutu "
+"kapağı, ekran görüntüleri, videolar vb.) bulup siler. Silinen oyunlardan "
+"kalan dosyaları temizler."
+
+#: templates/_settings_tabs/system.html:111
+msgid "Missing Media References"
+msgstr "Eksik Medya Başvuruları"
+
+#: templates/_settings_tabs/system.html:114
+msgid ""
+"The reverse of orphaned-media cleanup: find games whose boxart, "
+"screenshots, video or manual point to files that are no longer on disk, "
+"and clear those stale references so scrapers can re-download them. If a "
+"whole media folder looks missing or empty (for example an unmounted "
+"drive), its references are kept and flagged rather than wiped."
+msgstr ""
+"Artık medya temizliğinin tersi: kutu kapağı, ekran görüntüleri, videosu "
+"veya kılavuzu artık diskte olmayan dosyaları gösteren oyunları bulur ve "
+"kazıyıcıların yeniden indirebilmesi için bu eski başvuruları temizler. "
+"Bir medya klasörünün tamamı eksik veya boş görünüyorsa (örneğin "
+"bağlanmamış bir sürücü), başvuruları silinmez; korunur ve işaretlenir."
+
+#: templates/_settings_tabs/system.html:130
+msgid "Database Optimization"
+msgstr "Veritabanı En İyileştirme"
+
+#: templates/_settings_tabs/system.html:133
+msgid ""
+"Optimize the database for better performance. Runs VACUUM to reclaim "
+"unused space and ANALYZE to update query planner statistics."
+msgstr ""
+"Daha iyi performans için veritabanını en iyileştirin. Kullanılmayan alanı"
+" geri kazanmak için VACUUM, sorgu planlayıcı istatistiklerini güncellemek"
+" için ANALYZE çalıştırır."
+
+#: templates/_settings_tabs/system.html:150
 #, python-format
 msgid "This is RetroDB %(version)s."
 msgstr "Bu, RetroDB %(version)s."
 
-#: templates/_settings_tabs/system.html:159
+#: templates/_settings_tabs/system.html:154
 msgid ""
 "Version 4.0 is the last web version of RetroDB. New versions will be a "
 "desktop app for Windows, Linux and macOS, and an Android app. They will "
@@ -15189,35 +15568,43 @@ msgstr ""
 "güvenlik düzeltmeleri ve veri kaybına yol açan hataların düzeltmeleri "
 "gelecek."
 
-#: templates/_settings_tabs/system.html:162
+#: templates/_settings_tabs/system.html:157
 msgid "Download the desktop app"
 msgstr "Masaüstü uygulamasını indir"
 
-#: templates/_settings_tabs/system.html:169
+#: templates/_settings_tabs/system.html:164
 msgid "Release page"
 msgstr "Sürüm sayfası"
 
-#: templates/_settings_tabs/system.html:176
+#: templates/_settings_tabs/system.html:171
 msgid "Check for updates"
 msgstr "Güncellemeleri denetle"
 
-#: templates/_settings_tabs/system.html:177
+#: templates/_settings_tabs/system.html:172
 msgid "Download update"
 msgstr "Güncellemeyi indir"
 
-#: templates/_settings_tabs/system.html:178
+#: templates/_settings_tabs/system.html:173
 msgid "Install and restart"
 msgstr "Kur ve yeniden başlat"
 
-#: templates/_settings_tabs/system.html:182
+#: templates/_settings_tabs/system.html:177
 msgid "Check for updates once a day"
 msgstr "Güncellemeleri günde bir kez denetle"
 
-#: templates/_settings_tabs/system.html:199
+#: templates/_settings_tabs/system.html:185
+msgid "Server Controls"
+msgstr "Sunucu Denetimleri"
+
+#: templates/_settings_tabs/system.html:190
+msgid "Restart Server"
+msgstr "Sunucuyu Yeniden Başlat"
+
+#: templates/_settings_tabs/system.html:194
 msgid "Shut Down Server"
 msgstr "Sunucuyu Kapat"
 
-#: templates/_settings_tabs/system.html:202
+#: templates/_settings_tabs/system.html:197
 msgid ""
 "Restart the Flask server (useful after configuration changes), or shut it"
 " down completely"
@@ -15225,11 +15612,193 @@ msgstr ""
 "Flask sunucusunu yeniden başlatın (yapılandırma değişikliklerinden sonra "
 "yararlıdır) veya tamamen kapatın"
 
-#: templates/_settings_tabs/system.html:461
+#: templates/_settings_tabs/system.html:206
+msgid "Logging Settings"
+msgstr "Günlükleme Ayarları"
+
+#: templates/_settings_tabs/system.html:210
+#, python-format
+msgid ""
+"Configure which log levels are written to log files. Logs are saved to "
+"the %(folder)s folder with date-based filenames (e.g., %(example)s)."
+msgstr ""
+"Günlük dosyalarına hangi günlük düzeylerinin yazılacağını ayarlayın. "
+"Günlükler %(folder)s klasörüne tarihli dosya adlarıyla kaydedilir (ör. "
+"%(example)s)."
+
+#: templates/_settings_tabs/system.html:216
+#: templates/_settings_tabs/system.html:224
+#: templates/_settings_tabs/system.html:231
+#: templates/_settings_tabs/system.html:238
+msgid "Scraping Logs"
+msgstr "Kazıma Günlükleri"
+
+#: templates/_settings_tabs/system.html:219
+msgid ""
+"Logs from metadata scraping operations (IGDB, TGDB, ScreenScraper, RAWG, "
+"ES-DE)"
+msgstr ""
+"Meta veri kazıma işlemlerinin günlükleri (IGDB, TGDB, ScreenScraper, "
+"RAWG, ES-DE)"
+
+#: templates/_settings_tabs/system.html:224
+#: templates/_settings_tabs/system.html:227
+#: templates/_settings_tabs/system.html:257
+#: templates/_settings_tabs/system.html:260
+#: templates/_settings_tabs/system.html:290
+#: templates/_settings_tabs/system.html:293
+#: templates/_settings_tabs/system.html:323
+#: templates/_settings_tabs/system.html:326
+#: templates/_settings_tabs/system.html:356
+#: templates/_settings_tabs/system.html:359
+msgid "Informational"
+msgstr "Bilgilendirme"
+
+#: templates/_settings_tabs/system.html:231
+#: templates/_settings_tabs/system.html:234
+#: templates/_settings_tabs/system.html:264
+#: templates/_settings_tabs/system.html:267
+#: templates/_settings_tabs/system.html:297
+#: templates/_settings_tabs/system.html:300
+#: templates/_settings_tabs/system.html:330
+#: templates/_settings_tabs/system.html:333
+#: templates/_settings_tabs/system.html:363
+#: templates/_settings_tabs/system.html:366
+msgid "Warnings"
+msgstr "Uyarılar"
+
+#: templates/_settings_tabs/system.html:238
+#: templates/_settings_tabs/system.html:241
+#: templates/_settings_tabs/system.html:271
+#: templates/_settings_tabs/system.html:274
+#: templates/_settings_tabs/system.html:304
+#: templates/_settings_tabs/system.html:307
+#: templates/_settings_tabs/system.html:337
+#: templates/_settings_tabs/system.html:340
+#: templates/_settings_tabs/system.html:370
+#: templates/_settings_tabs/system.html:373
+msgid "Errors"
+msgstr "Hatalar"
+
+#: templates/_settings_tabs/system.html:249
+#: templates/_settings_tabs/system.html:257
+#: templates/_settings_tabs/system.html:264
+#: templates/_settings_tabs/system.html:271
+msgid "ROM Tools Logs"
+msgstr "ROM Araçları Günlükleri"
+
+#: templates/_settings_tabs/system.html:252
+msgid ""
+"Logs from ROM scanning, CHD conversion, archive extraction, and M3U "
+"creation"
+msgstr "ROM tarama, CHD dönüştürme, arşiv çıkarma ve M3U oluşturma günlükleri"
+
+#: templates/_settings_tabs/system.html:282
+#: templates/_settings_tabs/system.html:290
+#: templates/_settings_tabs/system.html:297
+#: templates/_settings_tabs/system.html:304
+msgid "ROM Reports Logs"
+msgstr "ROM Raporları Günlükleri"
+
+#: templates/_settings_tabs/system.html:285
+msgid ""
+"Logs from ROM naming checks, mismatch detection, and batch rename "
+"operations"
+msgstr ""
+"ROM adlandırma denetimleri, uyuşmazlık tespiti ve toplu yeniden "
+"adlandırma işlemlerinin günlükleri"
+
+#: templates/_settings_tabs/system.html:315
+#: templates/_settings_tabs/system.html:323
+#: templates/_settings_tabs/system.html:330
+#: templates/_settings_tabs/system.html:337
+msgid "Image Resize Logs"
+msgstr "Görsel Boyutlandırma Günlükleri"
+
+#: templates/_settings_tabs/system.html:318
+msgid "Logs from image standardization (upscale/downscale) operations"
+msgstr "Görsel standartlaştırma (büyütme/küçültme) işlemlerinin günlükleri"
+
+#: templates/_settings_tabs/system.html:348
+#: templates/_settings_tabs/system.html:356
+#: templates/_settings_tabs/system.html:363
+#: templates/_settings_tabs/system.html:370
+msgid "System Logs"
+msgstr "Sistem Günlükleri"
+
+#: templates/_settings_tabs/system.html:351
+msgid ""
+"General system operations including achievements sync, page loads, and "
+"API calls"
+msgstr ""
+"Başarım eşitleme, sayfa yüklemeleri ve API çağrıları dahil genel sistem "
+"işlemleri"
+
+#: templates/_settings_tabs/system.html:390
+msgid "Log Files"
+msgstr "Günlük Dosyaları"
+
+#: templates/_settings_tabs/system.html:395
+msgid "Refresh Log List"
+msgstr "Günlük Listesini Yenile"
+
+#: templates/_settings_tabs/system.html:399
+msgid "Clear Logs Older Than 5 Days"
+msgstr "5 Günden Eski Günlükleri Temizle"
+
+#: templates/_settings_tabs/system.html:403
+msgid "Click \"Refresh Log List\" to see available log files."
+msgstr ""
+"Mevcut günlük dosyalarını görmek için \"Günlük Listesini Yenile\" "
+"düğmesine tıklayın."
+
+#: templates/_settings_tabs/system.html:416
+msgid "Bulk Scrape Issues"
+msgstr "Toplu Kazıma Sorunları"
+
+#: templates/_settings_tabs/system.html:419
+msgid ""
+"If a bulk scrape gets stuck or won't clear from the toast notification, "
+"use this button to force clear all bulk scrape state from your browser's "
+"local storage."
+msgstr ""
+"Toplu kazıma takılırsa veya bildirim balonundan kalkmazsa, tarayıcınızın "
+"yerel depolamasındaki tüm toplu kazıma durumunu zorla temizlemek için bu "
+"düğmeyi kullanın."
+
+#: templates/_settings_tabs/system.html:424
+msgid "Clear Stuck Bulk Scrape"
+msgstr "Takılan Toplu Kazımayı Temizle"
+
+#: templates/_settings_tabs/system.html:429
+msgid "Current Bulk Scrape State:"
+msgstr "Geçerli Toplu Kazıma Durumu:"
+
+#: templates/_settings_tabs/system.html:434
+msgid "Achievement Sync Issues"
+msgstr "Başarım Eşitleme Sorunları"
+
+#: templates/_settings_tabs/system.html:437
+msgid ""
+"If achievement syncs get stuck or the queue won't process, use this "
+"button to clear the sync queue and reset the sync state."
+msgstr ""
+"Başarım eşitlemeleri takılırsa veya kuyruk işlenmezse, eşitleme kuyruğunu"
+" temizlemek ve eşitleme durumunu sıfırlamak için bu düğmeyi kullanın."
+
+#: templates/_settings_tabs/system.html:442
+msgid "Clear Stuck RA Sync"
+msgstr "Takılan RA Eşitlemesini Temizle"
+
+#: templates/_settings_tabs/system.html:447
+msgid "Current RA Sync Queue:"
+msgstr "Geçerli RA Eşitleme Kuyruğu:"
+
+#: templates/_settings_tabs/system.html:456
 msgid "Support Development"
 msgstr "Geliştirmeyi Destekle"
 
-#: templates/_settings_tabs/system.html:465
+#: templates/_settings_tabs/system.html:460
 msgid ""
 "RetroDB is free and open source. If it saves you time, consider "
 "sponsoring — every bit helps keep solo development sustainable."
@@ -15238,11 +15807,11 @@ msgstr ""
 "desteklemeyi düşünün — her katkı tek başına sürdürülen geliştirmenin "
 "devamını sağlamaya yardımcı olur."
 
-#: templates/_settings_tabs/system.html:469
+#: templates/_settings_tabs/system.html:464
 msgid "Sponsor on GitHub"
 msgstr "GitHub'da Destekle"
 
-#: templates/_settings_tabs/system.html:473
+#: templates/_settings_tabs/system.html:468
 msgid "Support on Patreon"
 msgstr "Patreon'da Destekle"
 

@@ -1,32 +1,32 @@
 {% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
-<div class="settings-tab-panel" id="tab-system" role="tabpanel" aria-label="System settings">
+<div class="settings-tab-panel" id="tab-system" role="tabpanel" aria-label="{{ _('System settings') }}">
     {% set _is_admin = current_user and current_user.role == 'admin' %}
     {% call tab_subnav('system') %}
         {% if _is_admin %}
-        {{ subnav_link('maintenance', '🛠️ Maintenance', active=True) }}
+        {{ subnav_link('maintenance', '🛠️ ' ~ _('Maintenance'), active=True) }}
         {{ subnav_link('updates', '⬆️ ' ~ _('Updates')) }}
-        {{ subnav_link('server', '⚙️ Server') }}
+        {{ subnav_link('server', '⚙️ ' ~ _('Server')) }}
         {% endif %}
-        {{ subnav_link('logging', '📋 Logging', active=not _is_admin) }}
-        {{ subnav_link('troubleshooting', '🔧 Troubleshooting') }}
-        {{ subnav_link('support', '💝 Support') }}
+        {{ subnav_link('logging', '📋 ' ~ _('Logging'), active=not _is_admin) }}
+        {{ subnav_link('troubleshooting', '🔧 ' ~ _('Troubleshooting')) }}
+        {{ subnav_link('support', '💝 ' ~ _('Support')) }}
     {% endcall %}
 
     <!-- Database Maintenance (Admin Only) -->
     {% if current_user and current_user.role == 'admin' %}
     <section class="card" id="maintenance">
     <div class="card-header">
-        <h2 class="card-title">Database Maintenance</h2>
+        <h2 class="card-title">{{ _('Database Maintenance') }}</h2>
     </div>
     <div class="card-body">
         <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; align-items: flex-start;">
             <div>
                 <button type="button" data-on-click="cleanMissingRoms" class="btn btn-danger" id="cleanMissingBtn">
                     <span class="btn-icon">🧹</span>
-                    Clean Missing ROMs
+                    {{ _('Clean Missing ROMs') }}
                 </button>
                 <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
-                    Remove database entries for ROMs that have been deleted from disk
+                    {{ _('Remove database entries for ROMs that have been deleted from disk') }}
                 </p>
             </div>
             <p class="text-muted" style="font-size: 0.85rem;">
@@ -38,50 +38,50 @@
         
         <!-- Clear Data Section -->
         <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
-            <span>🗑️</span> Clear Data
+            <span>🗑️</span> {{ _('Clear Data') }}
         </h3>
 
         <div style="display: flex; gap: var(--spacing-md); align-items: flex-start; flex-wrap: wrap; margin-bottom: var(--spacing-lg);">
             <div>
                 <button type="button" data-on-click="clearClzImports" class="btn btn-danger" id="clearClzBtn">
                     <span class="btn-icon">📋</span>
-                    Clear CLZ Imports
+                    {{ _('Clear CLZ Imports') }}
                 </button>
                 <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
-                    Remove all games imported via CLZ Games Import
+                    {{ _('Remove all games imported via CLZ Games Import') }}
                 </p>
             </div>
         </div>
         <div id="clearClzResult" style="margin-top: var(--spacing-md); display: none;"></div>
 
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-            Clear scraped metadata from games to start fresh. Useful before a full re-scrape.
-            <strong>Note:</strong> This does NOT delete your game entries, only the scraped metadata (description, genre, publisher, ratings, images, etc.)
+            {{ _('Clear scraped metadata from games to start fresh. Useful before a full re-scrape.') }}
+            <strong>{{ _('Note:') }}</strong> {{ _('This does NOT delete your game entries, only the scraped metadata (description, genre, publisher, ratings, images, etc.)') }}
         </p>
         <div class="clear-scrape-options" style="display: flex; flex-direction: column; gap: var(--spacing-md);">
             <div class="clear-scrape-row" style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
                 <select id="clearScrapedSystemSelect" class="form-select" style="max-width: 300px;">
-                    <option value="all">All Systems</option>
+                    <option value="all">{{ _('All Systems') }}</option>
                     {% for system in systems %}
                     <option value="{{ system.id }}">{{ system.name }}</option>
                     {% endfor %}
                 </select>
                 <div class="toggle-item">
                     <label class="toggle-switch">
-                        <input type="checkbox" id="clearImagesCheckbox" aria-label="Also delete downloaded images">
+                        <input type="checkbox" id="clearImagesCheckbox" aria-label="{{ _('Also delete downloaded images') }}">
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="toggle-label">Also delete downloaded images</span>
+                    <span class="toggle-label">{{ _('Also delete downloaded images') }}</span>
                 </div>
             </div>
             <div style="display: flex; gap: var(--spacing-md); align-items: center;">
                 <button type="button" data-on-click="previewClearScrapedData" class="btn btn-secondary" id="previewClearBtn">
                     <span class="btn-icon">👁️</span>
-                    Preview
+                    {{ _('Preview') }}
                 </button>
                 <button type="button" data-on-click="clearScrapedData" class="btn btn-danger" id="clearScrapedBtn">
                     <span class="btn-icon">🗑️</span>
-                    Clear Scraped Data
+                    {{ _('Clear Scraped Data') }}
                 </button>
             </div>
         </div>
@@ -89,57 +89,52 @@
         
         <!-- Orphaned Media Cleanup Section -->
         <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
-            <span>🗂️</span> Orphaned Media Cleanup
+            <span>🗂️</span> {{ _('Orphaned Media Cleanup') }}
         </h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-            Find and delete media files (boxart, screenshots, videos, etc.) for ROMs that no longer exist in the database. 
-            This cleans up leftover files from deleted games.
+            {{ _('Find and delete media files (boxart, screenshots, videos, etc.) for ROMs that no longer exist in the database. This cleans up leftover files from deleted games.') }}
         </p>
         <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
             <button type="button" data-on-click="previewOrphanedMedia" class="btn btn-secondary" id="previewOrphanedBtn">
                 <span class="btn-icon">🔍</span>
-                Scan for Orphaned Files
+                {{ _('Scan for Orphaned Files') }}
             </button>
             <button type="button" data-on-click="cleanOrphanedMedia" class="btn btn-danger" id="cleanOrphanedBtn" style="display: none;">
                 <span class="btn-icon">🗑️</span>
-                Delete Orphaned Files
+                {{ _('Delete Orphaned Files') }}
             </button>
         </div>
         <div id="orphanedMediaResult" style="margin-top: var(--spacing-md); display: none;"></div>
 
         <!-- Missing Media References Section -->
         <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
-            <span>🖼️</span> Missing Media References
+            <span>🖼️</span> {{ _('Missing Media References') }}
         </h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-            The reverse of orphaned-media cleanup: find games whose boxart, screenshots, video or
-            manual point to files that are no longer on disk, and clear those stale references so
-            scrapers can re-download them. If a whole media folder looks missing or empty (for
-            example an unmounted drive), its references are kept and flagged rather than wiped.
+            {{ _('The reverse of orphaned-media cleanup: find games whose boxart, screenshots, video or manual point to files that are no longer on disk, and clear those stale references so scrapers can re-download them. If a whole media folder looks missing or empty (for example an unmounted drive), its references are kept and flagged rather than wiped.') }}
         </p>
         <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
             <button type="button" data-on-click="previewMissingMediaRefs" class="btn btn-secondary" id="previewMissingRefsBtn">
                 <span class="btn-icon">🔍</span>
-                Scan for Missing Media
+                {{ _('Scan for Missing Media') }}
             </button>
             <button type="button" data-on-click="clearMissingMediaRefs" class="btn btn-danger" id="clearMissingRefsBtn" style="display: none;">
                 <span class="btn-icon">🧹</span>
-                Clear Missing References
+                {{ _('Clear Missing References') }}
             </button>
         </div>
         <div id="missingMediaRefsResult" style="margin-top: var(--spacing-md); display: none;"></div>
 
         <!-- Database Optimization Section -->
         <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
-            <span>💾</span> Database Optimization
+            <span>💾</span> {{ _('Database Optimization') }}
         </h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-            Optimize the database for better performance. Runs VACUUM to reclaim unused space
-            and ANALYZE to update query planner statistics.
+            {{ _('Optimize the database for better performance. Runs VACUUM to reclaim unused space and ANALYZE to update query planner statistics.') }}
         </p>
         <div>
             <button type="button" data-on-click="optimizeDatabase" class="btn btn-primary" id="optimizeDbBtn">
-                <span class="btn-icon">⚡</span> Optimize Database
+                <span class="btn-icon">⚡</span> {{ _('Optimize Database') }}
             </button>
         </div>
         <div id="optimizeDbResult" style="margin-top: var(--spacing-md); display: none;"></div>
@@ -187,12 +182,12 @@
 <!-- Server Controls -->
 <section class="card" id="server">
     <div class="card-header">
-        <h2 class="card-title">Server Controls</h2>
+        <h2 class="card-title">{{ _('Server Controls') }}</h2>
     </div>
     <div class="card-body">
         <button type="button" data-on-click="restartServer" class="btn btn-warning">
             <span class="btn-icon">🔄</span>
-            Restart Server
+            {{ _('Restart Server') }}
         </button>
         <button type="button" data-on-click="shutdownServer" class="btn btn-danger">
             <span class="btn-icon">🛑</span>
@@ -208,42 +203,42 @@
 <!-- Logging Settings -->
 <section class="card mt-xl" id="logging">
     <div class="card-header">
-        <h2 class="card-title">📋 Logging Settings</h2>
+        <h2 class="card-title">📋 {{ _('Logging Settings') }}</h2>
     </div>
     <div class="card-body">
         <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
-            Configure which log levels are written to log files. Logs are saved to the <code>logs/</code> folder with date-based filenames (e.g., <code>scraping_2026-01-21.log</code>).
+            {% trans folder='<code>logs/</code>'|safe, example='<code>scraping_2026-01-21.log</code>'|safe %}Configure which log levels are written to log files. Logs are saved to the {{ folder }} folder with date-based filenames (e.g., {{ example }}).{% endtrans %}
         </p>
         
         <!-- Scraping Logs -->
         <div class="log-category-section">
             <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
-                <span>🔍</span> Scraping Logs
+                <span>🔍</span> {{ _('Scraping Logs') }}
             </h3>
             <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-md);">
-                Logs from metadata scraping operations (IGDB, TGDB, ScreenScraper, RAWG, ES-DE)
+                {{ _('Logs from metadata scraping operations (IGDB, TGDB, ScreenScraper, RAWG, ES-DE)') }}
             </p>
             <div class="log-toggles">
                 <div class="toggle-item">
                     <label class="toggle-switch">
-                        <input type="checkbox" name="log_scraping_info" id="log_scraping_info" aria-label="Enable scraping informational logs" {% if settings.logging.scraping.info %}checked{% endif %}>
+                        <input type="checkbox" name="log_scraping_info" id="log_scraping_info" aria-label="{{ _('Scraping Logs') }}: {{ _('Informational') }}" {% if settings.logging.scraping.info %}checked{% endif %}>
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="toggle-label">ℹ️ Informational</span>
+                    <span class="toggle-label">ℹ️ {{ _('Informational') }}</span>
                 </div>
                 <div class="toggle-item">
                     <label class="toggle-switch">
-                        <input type="checkbox" name="log_scraping_warning" id="log_scraping_warning" aria-label="Enable scraping warning logs" {% if settings.logging.scraping.warning %}checked{% endif %}>
+                        <input type="checkbox" name="log_scraping_warning" id="log_scraping_warning" aria-label="{{ _('Scraping Logs') }}: {{ _('Warnings') }}" {% if settings.logging.scraping.warning %}checked{% endif %}>
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="toggle-label">⚠️ Warnings</span>
+                    <span class="toggle-label">⚠️ {{ _('Warnings') }}</span>
                 </div>
                 <div class="toggle-item">
                     <label class="toggle-switch">
-                        <input type="checkbox" name="log_scraping_error" id="log_scraping_error" aria-label="Enable scraping error logs" {% if settings.logging.scraping.error %}checked{% endif %}>
+                        <input type="checkbox" name="log_scraping_error" id="log_scraping_error" aria-label="{{ _('Scraping Logs') }}: {{ _('Errors') }}" {% if settings.logging.scraping.error %}checked{% endif %}>
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="toggle-label">❌ Errors</span>
+                    <span class="toggle-label">❌ {{ _('Errors') }}</span>
                 </div>
             </div>
         </div>
@@ -251,32 +246,32 @@
         <!-- ROM Tools Logs -->
         <div class="log-category-section" style="margin-top: var(--spacing-xl);">
             <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
-                <span>🛠️</span> ROM Tools Logs
+                <span>🛠️</span> {{ _('ROM Tools Logs') }}
             </h3>
             <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-md);">
-                Logs from ROM scanning, CHD conversion, archive extraction, and M3U creation
+                {{ _('Logs from ROM scanning, CHD conversion, archive extraction, and M3U creation') }}
             </p>
             <div class="log-toggles">
                 <div class="toggle-item">
                     <label class="toggle-switch">
-                        <input type="checkbox" name="log_rom_tools_info" id="log_rom_tools_info" aria-label="Enable ROM tools informational logs" {% if settings.logging.rom_tools.info %}checked{% endif %}>
+                        <input type="checkbox" name="log_rom_tools_info" id="log_rom_tools_info" aria-label="{{ _('ROM Tools Logs') }}: {{ _('Informational') }}" {% if settings.logging.rom_tools.info %}checked{% endif %}>
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="toggle-label">ℹ️ Informational</span>
+                    <span class="toggle-label">ℹ️ {{ _('Informational') }}</span>
                 </div>
                 <div class="toggle-item">
                     <label class="toggle-switch">
-                        <input type="checkbox" name="log_rom_tools_warning" id="log_rom_tools_warning" aria-label="Enable ROM tools warning logs" {% if settings.logging.rom_tools.warning %}checked{% endif %}>
+                        <input type="checkbox" name="log_rom_tools_warning" id="log_rom_tools_warning" aria-label="{{ _('ROM Tools Logs') }}: {{ _('Warnings') }}" {% if settings.logging.rom_tools.warning %}checked{% endif %}>
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="toggle-label">⚠️ Warnings</span>
+                    <span class="toggle-label">⚠️ {{ _('Warnings') }}</span>
                 </div>
                 <div class="toggle-item">
                     <label class="toggle-switch">
-                        <input type="checkbox" name="log_rom_tools_error" id="log_rom_tools_error" aria-label="Enable ROM tools error logs" {% if settings.logging.rom_tools.error %}checked{% endif %}>
+                        <input type="checkbox" name="log_rom_tools_error" id="log_rom_tools_error" aria-label="{{ _('ROM Tools Logs') }}: {{ _('Errors') }}" {% if settings.logging.rom_tools.error %}checked{% endif %}>
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="toggle-label">❌ Errors</span>
+                    <span class="toggle-label">❌ {{ _('Errors') }}</span>
                 </div>
             </div>
         </div>
@@ -284,32 +279,32 @@
         <!-- ROM Reports Logs -->
         <div class="log-category-section" style="margin-top: var(--spacing-xl);">
             <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
-                <span>📊</span> ROM Reports Logs
+                <span>📊</span> {{ _('ROM Reports Logs') }}
             </h3>
             <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-md);">
-                Logs from ROM naming checks, mismatch detection, and batch rename operations
+                {{ _('Logs from ROM naming checks, mismatch detection, and batch rename operations') }}
             </p>
             <div class="log-toggles">
                 <div class="toggle-item">
                     <label class="toggle-switch">
-                        <input type="checkbox" name="log_rom_reports_info" id="log_rom_reports_info" aria-label="Enable ROM reports informational logs" {% if settings.logging.rom_reports.info %}checked{% endif %}>
+                        <input type="checkbox" name="log_rom_reports_info" id="log_rom_reports_info" aria-label="{{ _('ROM Reports Logs') }}: {{ _('Informational') }}" {% if settings.logging.rom_reports.info %}checked{% endif %}>
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="toggle-label">ℹ️ Informational</span>
+                    <span class="toggle-label">ℹ️ {{ _('Informational') }}</span>
                 </div>
                 <div class="toggle-item">
                     <label class="toggle-switch">
-                        <input type="checkbox" name="log_rom_reports_warning" id="log_rom_reports_warning" aria-label="Enable ROM reports warning logs" {% if settings.logging.rom_reports.warning %}checked{% endif %}>
+                        <input type="checkbox" name="log_rom_reports_warning" id="log_rom_reports_warning" aria-label="{{ _('ROM Reports Logs') }}: {{ _('Warnings') }}" {% if settings.logging.rom_reports.warning %}checked{% endif %}>
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="toggle-label">⚠️ Warnings</span>
+                    <span class="toggle-label">⚠️ {{ _('Warnings') }}</span>
                 </div>
                 <div class="toggle-item">
                     <label class="toggle-switch">
-                        <input type="checkbox" name="log_rom_reports_error" id="log_rom_reports_error" aria-label="Enable ROM reports error logs" {% if settings.logging.rom_reports.error %}checked{% endif %}>
+                        <input type="checkbox" name="log_rom_reports_error" id="log_rom_reports_error" aria-label="{{ _('ROM Reports Logs') }}: {{ _('Errors') }}" {% if settings.logging.rom_reports.error %}checked{% endif %}>
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="toggle-label">❌ Errors</span>
+                    <span class="toggle-label">❌ {{ _('Errors') }}</span>
                 </div>
             </div>
         </div>
@@ -317,32 +312,32 @@
         <!-- Image Resize Logs -->
         <div class="log-category-section" style="margin-top: var(--spacing-xl);">
             <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
-                <span>🖼️</span> Image Resize Logs
+                <span>🖼️</span> {{ _('Image Resize Logs') }}
             </h3>
             <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-md);">
-                Logs from image standardization (upscale/downscale) operations
+                {{ _('Logs from image standardization (upscale/downscale) operations') }}
             </p>
             <div class="log-toggles">
                 <div class="toggle-item">
                     <label class="toggle-switch">
-                        <input type="checkbox" name="log_image_resize_info" id="log_image_resize_info" aria-label="Enable image resize informational logs" {% if settings.logging.image_resize.info %}checked{% endif %}>
+                        <input type="checkbox" name="log_image_resize_info" id="log_image_resize_info" aria-label="{{ _('Image Resize Logs') }}: {{ _('Informational') }}" {% if settings.logging.image_resize.info %}checked{% endif %}>
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="toggle-label">ℹ️ Informational</span>
+                    <span class="toggle-label">ℹ️ {{ _('Informational') }}</span>
                 </div>
                 <div class="toggle-item">
                     <label class="toggle-switch">
-                        <input type="checkbox" name="log_image_resize_warning" id="log_image_resize_warning" aria-label="Enable image resize warning logs" {% if settings.logging.image_resize.warning %}checked{% endif %}>
+                        <input type="checkbox" name="log_image_resize_warning" id="log_image_resize_warning" aria-label="{{ _('Image Resize Logs') }}: {{ _('Warnings') }}" {% if settings.logging.image_resize.warning %}checked{% endif %}>
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="toggle-label">⚠️ Warnings</span>
+                    <span class="toggle-label">⚠️ {{ _('Warnings') }}</span>
                 </div>
                 <div class="toggle-item">
                     <label class="toggle-switch">
-                        <input type="checkbox" name="log_image_resize_error" id="log_image_resize_error" aria-label="Enable image resize error logs" {% if settings.logging.image_resize.error %}checked{% endif %}>
+                        <input type="checkbox" name="log_image_resize_error" id="log_image_resize_error" aria-label="{{ _('Image Resize Logs') }}: {{ _('Errors') }}" {% if settings.logging.image_resize.error %}checked{% endif %}>
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="toggle-label">❌ Errors</span>
+                    <span class="toggle-label">❌ {{ _('Errors') }}</span>
                 </div>
             </div>
         </div>
@@ -350,32 +345,32 @@
         <!-- System Logs -->
         <div class="log-category-section" style="margin-top: var(--spacing-xl);">
             <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
-                <span>🖥️</span> System Logs
+                <span>🖥️</span> {{ _('System Logs') }}
             </h3>
             <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-md);">
-                General system operations including achievements sync, page loads, and API calls
+                {{ _('General system operations including achievements sync, page loads, and API calls') }}
             </p>
             <div class="log-toggles">
                 <div class="toggle-item">
                     <label class="toggle-switch">
-                        <input type="checkbox" name="log_system_info" id="log_system_info" aria-label="Enable system informational logs" {% if settings.logging.system.info %}checked{% endif %}>
+                        <input type="checkbox" name="log_system_info" id="log_system_info" aria-label="{{ _('System Logs') }}: {{ _('Informational') }}" {% if settings.logging.system.info %}checked{% endif %}>
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="toggle-label">ℹ️ Informational</span>
+                    <span class="toggle-label">ℹ️ {{ _('Informational') }}</span>
                 </div>
                 <div class="toggle-item">
                     <label class="toggle-switch">
-                        <input type="checkbox" name="log_system_warning" id="log_system_warning" aria-label="Enable system warning logs" {% if settings.logging.system.warning %}checked{% endif %}>
+                        <input type="checkbox" name="log_system_warning" id="log_system_warning" aria-label="{{ _('System Logs') }}: {{ _('Warnings') }}" {% if settings.logging.system.warning %}checked{% endif %}>
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="toggle-label">⚠️ Warnings</span>
+                    <span class="toggle-label">⚠️ {{ _('Warnings') }}</span>
                 </div>
                 <div class="toggle-item">
                     <label class="toggle-switch">
-                        <input type="checkbox" name="log_system_error" id="log_system_error" aria-label="Enable system error logs" {% if settings.logging.system.error %}checked{% endif %}>
+                        <input type="checkbox" name="log_system_error" id="log_system_error" aria-label="{{ _('System Logs') }}: {{ _('Errors') }}" {% if settings.logging.system.error %}checked{% endif %}>
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="toggle-label">❌ Errors</span>
+                    <span class="toggle-label">❌ {{ _('Errors') }}</span>
                 </div>
             </div>
         </div>
@@ -384,7 +379,7 @@
         <div style="margin-top: var(--spacing-xl); display: flex; gap: var(--spacing-md); flex-wrap: wrap; align-items: center;">
             <button type="button" data-on-click="saveLoggingSettings" class="btn btn-primary" id="saveLoggingBtn">
                 <span class="btn-icon">💾</span>
-                Save Logging Settings
+                {{ _('Save Logging Settings') }}
             </button>
             <span id="loggingSettingsResult" style="font-size: 0.9rem;"></span>
         </div>
@@ -392,20 +387,20 @@
         <!-- Log Files Section -->
         <div style="margin-top: var(--spacing-2xl); padding-top: var(--spacing-lg); border-top: 1px solid var(--card-border);">
             <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
-                <span>📁</span> Log Files
+                <span>📁</span> {{ _('Log Files') }}
             </h3>
             <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; align-items: center; margin-bottom: var(--spacing-md);">
                 <button type="button" data-on-click="loadLogFiles" class="btn btn-secondary">
                     <span class="btn-icon">🔄</span>
-                    Refresh Log List
+                    {{ _('Refresh Log List') }}
                 </button>
                 <button type="button" data-on-click="clearOldLogs" class="btn btn-danger">
                     <span class="btn-icon">🧹</span>
-                    Clear Logs Older Than 5 Days
+                    {{ _('Clear Logs Older Than 5 Days') }}
                 </button>
             </div>
             <div id="logFilesContainer" style="margin-top: var(--spacing-md);">
-                <p class="text-muted">Click "Refresh Log List" to see available log files.</p>
+                <p class="text-muted">{{ _('Click "Refresh Log List" to see available log files.') }}</p>
             </div>
         </div>
     </div>
@@ -414,43 +409,43 @@
 <!-- Troubleshooting -->
 <section class="card mt-xl" id="troubleshooting">
     <div class="card-header">
-        <h2 class="card-title">🔧 Troubleshooting</h2>
+        <h2 class="card-title">🔧 {{ _('Troubleshooting') }}</h2>
     </div>
     <div class="card-body">
         <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
-            <span>🔄</span> Bulk Scrape Issues
+            <span>🔄</span> {{ _('Bulk Scrape Issues') }}
         </h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-            If a bulk scrape gets stuck or won't clear from the toast notification, use this button to force clear all bulk scrape state from your browser's local storage.
+            {{ _('If a bulk scrape gets stuck or won\'t clear from the toast notification, use this button to force clear all bulk scrape state from your browser\'s local storage.') }}
         </p>
         <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
             <button type="button" data-on-click="clearStuckBulkScrape" class="btn btn-danger">
                 <span class="btn-icon">🧹</span>
-                Clear Stuck Bulk Scrape
+                {{ _('Clear Stuck Bulk Scrape') }}
             </button>
             <span id="bulkScrapeClearResult" role="status" aria-live="polite" style="font-size: 0.9rem;"></span>
         </div>
         <div id="bulkScrapeStatusInfo" style="margin-top: var(--spacing-lg); padding: var(--spacing-md); background: rgba(0, 0, 0, 0.2); border-radius: var(--radius-md);">
-            <h5 style="color: var(--text-secondary); margin-bottom: var(--spacing-sm);">Current Bulk Scrape State:</h5>
-            <pre id="bulkScrapeStateDisplay" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); white-space: pre-wrap; margin: 0;">Loading...</pre>
+            <h5 style="color: var(--text-secondary); margin-bottom: var(--spacing-sm);">{{ _('Current Bulk Scrape State:') }}</h5>
+            <pre id="bulkScrapeStateDisplay" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); white-space: pre-wrap; margin: 0;">{{ _('Loading...') }}</pre>
         </div>
         
         <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
-            <span>🏆</span> Achievement Sync Issues
+            <span>🏆</span> {{ _('Achievement Sync Issues') }}
         </h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-            If achievement syncs get stuck or the queue won't process, use this button to clear the sync queue and reset the sync state.
+            {{ _('If achievement syncs get stuck or the queue won\'t process, use this button to clear the sync queue and reset the sync state.') }}
         </p>
         <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
             <button type="button" data-on-click="clearStuckRASync" class="btn btn-danger">
                 <span class="btn-icon">🧹</span>
-                Clear Stuck RA Sync
+                {{ _('Clear Stuck RA Sync') }}
             </button>
             <span id="raSyncClearResult" role="status" aria-live="polite" style="font-size: 0.9rem;"></span>
         </div>
         <div id="raSyncStatusInfo" style="margin-top: var(--spacing-lg); padding: var(--spacing-md); background: rgba(0, 0, 0, 0.2); border-radius: var(--radius-md);">
-            <h5 style="color: var(--text-secondary); margin-bottom: var(--spacing-sm);">Current RA Sync Queue:</h5>
-            <pre id="raSyncStateDisplay" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); white-space: pre-wrap; margin: 0;">Loading...</pre>
+            <h5 style="color: var(--text-secondary); margin-bottom: var(--spacing-sm);">{{ _('Current RA Sync Queue:') }}</h5>
+            <pre id="raSyncStateDisplay" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); white-space: pre-wrap; margin: 0;">{{ _('Loading...') }}</pre>
         </div>
     </div>
 </section>

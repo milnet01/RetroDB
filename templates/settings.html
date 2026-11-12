@@ -1800,7 +1800,7 @@ function detectBonusDiscs() {
     const resultDiv = document.getElementById('detectedBonusDiscs');
     
     btn.disabled = true;
-    btn.innerHTML = '<span class="btn-icon">⏳</span> Scanning...';
+    btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Scanning...')|tojson }});
     
     fetch('/api/bonus-discs/detect')
         .then(r => r.json())
@@ -3760,16 +3760,17 @@ async function previewClearScrapedData() {
             resultDiv.style.display = 'block';
             resultDiv.innerHTML = `
                 <div class="alert alert-info" style="margin: 0;">
-                    <strong>Preview:</strong> This will clear scraped data from <strong>${data.count}</strong> games
-                    ${systemId !== 'all' ? ` in ${escapeHtml(systemSelect.options[systemSelect.selectedIndex].text)}` : ' (all systems)'}.
-                    <br><small class="text-muted">Fields: description, genre, publisher, developer, players, modes, ratings, scores, images, etc.</small>
+                    <strong>${escapeHtml({{ _('Preview:')|tojson }})}</strong> ${systemId !== 'all'
+                        ? t({{ _('This will clear scraped data from {count} games in {system}.')|tojson }}, {count: '<strong>' + data.count + '</strong>', system: escapeHtml(systemSelect.options[systemSelect.selectedIndex].text)})
+                        : t({{ _('This will clear scraped data from {count} games (all systems).')|tojson }}, {count: '<strong>' + data.count + '</strong>'})}
+                    <br><small class="text-muted">${escapeHtml({{ _('Fields: description, genre, publisher, developer, players, modes, ratings, scores, images, etc.')|tojson }})}</small>
                 </div>
             `;
         } else {
             resultDiv.style.display = 'block';
             resultDiv.innerHTML = `
                 <div class="alert alert-error" style="margin: 0;">
-                    ❌ ${escapeHtml(data.error || 'Failed to preview')}
+                    ❌ ${escapeHtml(data.error || {{ _('Failed to preview')|tojson }})}
                 </div>
             `;
         }
@@ -3778,7 +3779,7 @@ async function previewClearScrapedData() {
         resultDiv.style.display = 'block';
         resultDiv.innerHTML = `
             <div class="alert alert-error" style="margin: 0;">
-                ❌ Network error
+                ❌ ${escapeHtml({{ _('Network error')|tojson }})}
             </div>
         `;
     }
@@ -3802,7 +3803,7 @@ async function clearScrapedData() {
          + {{ _('This cannot be undone. Are you sure?')|tojson }},
         async () => {
             btn.disabled = true;
-            btn.innerHTML = '<span class="btn-icon">⏳</span> Clearing...';
+            btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Clearing...')|tojson }});
             
             try {
                 const response = await fetch('/api/clear-scraped-data', {
@@ -3820,14 +3821,14 @@ async function clearScrapedData() {
                     resultDiv.style.display = 'block';
                     resultDiv.innerHTML = `
                         <div class="alert alert-success" style="margin: 0;">
-                            ✅ Cleared scraped data from <strong>${data.cleared}</strong> games.${data.images_deleted ? ` Deleted <strong>${data.images_deleted}</strong> image files.` : ''}
+                            ✅ ${t({{ _('Cleared scraped data from {count} games.')|tojson }}, {count: '<strong>' + data.cleared + '</strong>'})}${data.images_deleted ? ' ' + t({{ _('Deleted {count} image files.')|tojson }}, {count: '<strong>' + data.images_deleted + '</strong>'}) : ''}
                         </div>
                     `;
                 } else {
                     resultDiv.style.display = 'block';
                     resultDiv.innerHTML = `
                         <div class="alert alert-error" style="margin: 0;">
-                            ❌ ${escapeHtml(data.error || 'Failed to clear data')}
+                            ❌ ${escapeHtml(data.error || {{ _('Failed to clear data')|tojson }})}
                         </div>
                     `;
                 }
@@ -3836,12 +3837,12 @@ async function clearScrapedData() {
                 resultDiv.style.display = 'block';
                 resultDiv.innerHTML = `
                     <div class="alert alert-error" style="margin: 0;">
-                        ❌ Network error
+                        ❌ ${escapeHtml({{ _('Network error')|tojson }})}
                     </div>
                 `;
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<span class="btn-icon">🗑️</span> Clear Scraped Data';
+                btn.innerHTML = '<span class="btn-icon">🗑️</span> ' + escapeHtml({{ _('Clear Scraped Data')|tojson }});
             }
         },
         {allowHtml: true}
@@ -3857,7 +3858,7 @@ async function previewOrphanedMedia() {
     const cleanBtn = document.getElementById('cleanOrphanedBtn');
     
     btn.disabled = true;
-    btn.innerHTML = '<span class="btn-icon">⏳</span> Scanning...';
+    btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Scanning...')|tojson }});
     resultDiv.style.display = 'none';
     cleanBtn.style.display = 'none';
     
@@ -3873,7 +3874,7 @@ async function previewOrphanedMedia() {
             if (data.files.length === 0) {
                 resultDiv.innerHTML = `
                     <div class="alert alert-success" style="margin: 0;">
-                        ✅ No orphaned media files found. All files are linked to existing games.
+                        ✅ ${escapeHtml({{ _('No orphaned media files found. All files are linked to existing games.')|tojson }})}
                     </div>
                 `;
             } else {
@@ -3886,12 +3887,12 @@ async function previewOrphanedMedia() {
                 });
                 
                 let summaryHtml = Object.entries(byType).map(([type, files]) => 
-                    `<li><strong>${escapeHtml(type)}</strong>: ${files.length} files</li>`
+                    `<li><strong>${escapeHtml(type)}</strong>: ${escapeHtml(t({{ _('{count} files')|tojson }}, {count: files.length}))}</li>`
                 ).join('');
                 
                 resultDiv.innerHTML = `
                     <div class="alert alert-warning" style="margin: 0;">
-                        <strong>Found ${data.files.length} orphaned files (${totalSize} MB)</strong>
+                        <strong>${escapeHtml(t({{ _('Found {count} orphaned files ({size} MB)')|tojson }}, {count: data.files.length, size: totalSize}))}</strong>
                         <ul style="margin: 0.5rem 0 0 1rem; padding: 0;">
                             ${summaryHtml}
                         </ul>
@@ -3903,7 +3904,7 @@ async function previewOrphanedMedia() {
             resultDiv.style.display = 'block';
             resultDiv.innerHTML = `
                 <div class="alert alert-error" style="margin: 0;">
-                    ❌ ${escapeHtml(data.error || 'Failed to scan for orphaned files')}
+                    ❌ ${escapeHtml(data.error || {{ _('Failed to scan for orphaned files')|tojson }})}
                 </div>
             `;
         }
@@ -3912,12 +3913,12 @@ async function previewOrphanedMedia() {
         resultDiv.style.display = 'block';
         resultDiv.innerHTML = `
             <div class="alert alert-error" style="margin: 0;">
-                ❌ Network error
+                ❌ ${escapeHtml({{ _('Network error')|tojson }})}
             </div>
         `;
     } finally {
         btn.disabled = false;
-        btn.innerHTML = '<span class="btn-icon">🔍</span> Scan for Orphaned Files';
+        btn.innerHTML = '<span class="btn-icon">🔍</span> ' + escapeHtml({{ _('Scan for Orphaned Files')|tojson }});
     }
 }
 
@@ -3935,7 +3936,7 @@ async function cleanOrphanedMedia() {
             const resultDiv = document.getElementById('orphanedMediaResult');
             
             btn.disabled = true;
-            btn.innerHTML = '<span class="btn-icon">⏳</span> Deleting...';
+            btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Deleting...')|tojson }});
             
             try {
                 // Pass 48.4 — echo back the scan-start time from the preview
@@ -3953,7 +3954,7 @@ async function cleanOrphanedMedia() {
                 if (data.success) {
                     resultDiv.innerHTML = `
                         <div class="alert alert-success" style="margin: 0;">
-                            ✅ Deleted <strong>${data.deleted}</strong> orphaned files.${data.freed_mb ? ` Freed <strong>${data.freed_mb.toFixed(2)} MB</strong> of disk space.` : ''}${data.errors > 0 ? ` <span style="color: var(--neon-orange);">⚠️ ${data.errors} files could not be deleted.</span>` : ''}
+                            ✅ ${t({{ _('Deleted {count} orphaned files.')|tojson }}, {count: '<strong>' + data.deleted + '</strong>'})}${data.freed_mb ? ' ' + t({{ _('Freed {size} MB of disk space.')|tojson }}, {size: '<strong>' + data.freed_mb.toFixed(2) + '</strong>'}) : ''}${data.errors > 0 ? ` <span style="color: var(--neon-orange);">⚠️ ${escapeHtml(t({{ _('{count} files could not be deleted.')|tojson }}, {count: data.errors}))}</span>` : ''}
                         </div>
                     `;
                     orphanedMediaList = null;
@@ -3961,7 +3962,7 @@ async function cleanOrphanedMedia() {
                 } else {
                     resultDiv.innerHTML = `
                         <div class="alert alert-error" style="margin: 0;">
-                            ❌ ${data.error || 'Failed to delete files'}
+                            ❌ ${escapeHtml(data.error || {{ _('Failed to delete files')|tojson }})}
                         </div>
                     `;
                 }
@@ -3969,12 +3970,12 @@ async function cleanOrphanedMedia() {
                 console.error('Error cleaning orphaned media:', error);
                 resultDiv.innerHTML = `
                     <div class="alert alert-error" style="margin: 0;">
-                        ❌ Network error
+                        ❌ ${escapeHtml({{ _('Network error')|tojson }})}
                     </div>
                 `;
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<span class="btn-icon">🗑️</span> Delete Orphaned Files';
+                btn.innerHTML = '<span class="btn-icon">🗑️</span> ' + escapeHtml({{ _('Delete Orphaned Files')|tojson }});
             }
         },
         // showConfirm shows text by default; this message embeds <br> tags
@@ -3996,7 +3997,7 @@ async function previewMissingMediaRefs() {
     const clearBtn = document.getElementById('clearMissingRefsBtn');
 
     btn.disabled = true;
-    btn.innerHTML = '<span class="btn-icon">⏳</span> Scanning...';
+    btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Scanning...')|tojson }});
     resultDiv.style.display = 'none';
     clearBtn.style.display = 'none';
 
@@ -4012,28 +4013,25 @@ async function previewMissingMediaRefs() {
             let guardHtml = '';
             if (guarded.length > 0) {
                 const items = guarded.map(g =>
-                    `<li><strong>${_escMediaField(g.field)}</strong>: ${g.count} reference(s)</li>`
+                    `<li><strong>${_escMediaField(g.field)}</strong>: ${escapeHtml(t({{ _('{count} reference(s)')|tojson }}, {count: g.count}))}</li>`
                 ).join('');
                 guardHtml = `
                     <div class="alert alert-warning" style="margin: 0 0 var(--spacing-md) 0;">
-                        ⚠️ Some media folders look missing or empty (possibly an unmounted drive
-                        or a bulk deletion). Their references were <strong>kept, not cleared</strong>,
-                        to protect against wiping your whole library by accident:
+                        ⚠️ ${ {{ _('Some media folders look missing or empty (possibly an unmounted drive or a bulk deletion). Their references were <strong>kept, not cleared</strong>, to protect against wiping your whole library by accident:')|tojson }} }
                         <ul style="margin: 0.5rem 0 0 1rem; padding: 0;">${items}</ul>
-                        Re-mount the media folder (or re-scrape) and scan again.
+                        ${escapeHtml({{ _('Re-mount the media folder (or re-scrape) and scan again.')|tojson }})}
                     </div>`;
             }
 
             if (missingMediaRefsCount === 0) {
                 resultDiv.innerHTML = guardHtml + `
                     <div class="alert alert-success" style="margin: 0;">
-                        ✅ No clearable missing-media references found.
+                        ✅ ${escapeHtml({{ _('No clearable missing-media references found.')|tojson }})}
                     </div>`;
             } else {
                 resultDiv.innerHTML = guardHtml + `
                     <div class="alert alert-warning" style="margin: 0;">
-                        <strong>Found ${missingMediaRefsCount} stale reference(s)</strong>
-                        across ${data.game_count} game(s) pointing to files no longer on disk.
+                        ${t({{ _('Found {refs} stale reference(s) across {games} game(s) pointing to files no longer on disk.')|tojson }}, {refs: '<strong>' + missingMediaRefsCount + '</strong>', games: data.game_count})}
                     </div>`;
                 clearBtn.style.display = 'inline-flex';
             }
@@ -4041,17 +4039,17 @@ async function previewMissingMediaRefs() {
             resultDiv.style.display = 'block';
             resultDiv.innerHTML = `
                 <div class="alert alert-error" style="margin: 0;">
-                    ❌ ${escapeHtml(data.error || 'Failed to scan for missing media references')}
+                    ❌ ${escapeHtml(data.error || {{ _('Failed to scan for missing media references')|tojson }})}
                 </div>`;
         }
     } catch (error) {
         console.error('Error scanning missing media references:', error);
         resultDiv.style.display = 'block';
         resultDiv.innerHTML = `
-            <div class="alert alert-error" style="margin: 0;">❌ Network error</div>`;
+            <div class="alert alert-error" style="margin: 0;">❌ ${escapeHtml({{ _('Network error')|tojson }})}</div>`;
     } finally {
         btn.disabled = false;
-        btn.innerHTML = '<span class="btn-icon">🔍</span> Scan for Missing Media';
+        btn.innerHTML = '<span class="btn-icon">🔍</span> ' + escapeHtml({{ _('Scan for Missing Media')|tojson }});
     }
 }
 
@@ -4069,7 +4067,7 @@ async function clearMissingMediaRefs() {
             const resultDiv = document.getElementById('missingMediaRefsResult');
 
             btn.disabled = true;
-            btn.innerHTML = '<span class="btn-icon">⏳</span> Clearing...';
+            btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Clearing...')|tojson }});
 
             try {
                 const response = await fetch('/api/missing-media-refs/clear', {
@@ -4082,28 +4080,27 @@ async function clearMissingMediaRefs() {
                 if (data.success) {
                     const guarded = data.guarded || [];
                     const guardNote = guarded.length > 0
-                        ? ` <span style="color: var(--neon-orange);">⚠️ ${guarded.reduce((n, g) => n + g.count, 0)} reference(s) in missing/empty folders were preserved.</span>`
+                        ? ` <span style="color: var(--neon-orange);">⚠️ ${escapeHtml(t({{ _('{count} reference(s) in missing/empty folders were preserved.')|tojson }}, {count: guarded.reduce((n, g) => n + g.count, 0)}))}</span>`
                         : '';
                     resultDiv.innerHTML = `
                         <div class="alert alert-success" style="margin: 0;">
-                            ✅ Cleared <strong>${data.cleared}</strong> stale reference(s) across
-                            <strong>${data.game_count}</strong> game(s).${guardNote}
+                            ✅ ${t({{ _('Cleared {refs} stale reference(s) across {games} game(s).')|tojson }}, {refs: '<strong>' + data.cleared + '</strong>', games: '<strong>' + data.game_count + '</strong>'})}${guardNote}
                         </div>`;
                     missingMediaRefsCount = 0;
                     btn.style.display = 'none';
                 } else {
                     resultDiv.innerHTML = `
                         <div class="alert alert-error" style="margin: 0;">
-                            ❌ ${escapeHtml(data.error || 'Failed to clear references')}
+                            ❌ ${escapeHtml(data.error || {{ _('Failed to clear references')|tojson }})}
                         </div>`;
                 }
             } catch (error) {
                 console.error('Error clearing missing media references:', error);
                 resultDiv.innerHTML = `
-                    <div class="alert alert-error" style="margin: 0;">❌ Network error</div>`;
+                    <div class="alert alert-error" style="margin: 0;">❌ ${escapeHtml({{ _('Network error')|tojson }})}</div>`;
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<span class="btn-icon">🧹</span> Clear Missing References';
+                btn.innerHTML = '<span class="btn-icon">🧹</span> ' + escapeHtml({{ _('Clear Missing References')|tojson }});
             }
         },
         {allowHtml: true}
@@ -4115,7 +4112,7 @@ async function optimizeDatabase() {
     const resultDiv = document.getElementById('optimizeDbResult');
 
     btn.disabled = true;
-    btn.innerHTML = '<span class="btn-icon">⏳</span> Optimizing...';
+    btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Optimizing...')|tojson }});
     resultDiv.style.display = 'none';
 
     try {
@@ -4127,15 +4124,15 @@ async function optimizeDatabase() {
             const saved = (data.size_before_mb - data.size_after_mb).toFixed(2);
             resultDiv.innerHTML = `
                 <div class="alert alert-success" style="margin: 0;">
-                    ✅ Database optimized successfully in <strong>${data.duration_seconds}s</strong>.<br>
-                    Size: <strong>${data.size_before_mb} MB</strong> → <strong>${data.size_after_mb} MB</strong>
-                    ${saved > 0 ? ` (saved <strong>${saved} MB</strong>)` : ''}
+                    ✅ ${t({{ _('Database optimized successfully in {seconds}s.')|tojson }}, {seconds: '<strong>' + data.duration_seconds + '</strong>'})}<br>
+                    ${t({{ _('Size: {before} MB → {after} MB')|tojson }}, {before: '<strong>' + data.size_before_mb + '</strong>', after: '<strong>' + data.size_after_mb + '</strong>'})}
+                    ${saved > 0 ? ' ' + t({{ _('(saved {size} MB)')|tojson }}, {size: '<strong>' + saved + '</strong>'}) : ''}
                 </div>
             `;
         } else {
             resultDiv.innerHTML = `
                 <div class="alert alert-error" style="margin: 0;">
-                    ❌ ${escapeHtml(data.error || 'Failed to optimize database')}
+                    ❌ ${escapeHtml(data.error || {{ _('Failed to optimize database')|tojson }})}
                 </div>
             `;
         }
@@ -4144,12 +4141,12 @@ async function optimizeDatabase() {
         resultDiv.style.display = 'block';
         resultDiv.innerHTML = `
             <div class="alert alert-error" style="margin: 0;">
-                ❌ Network error
+                ❌ ${escapeHtml({{ _('Network error')|tojson }})}
             </div>
         `;
     } finally {
         btn.disabled = false;
-        btn.innerHTML = '<span class="btn-icon">⚡</span> Optimize Database';
+        btn.innerHTML = '<span class="btn-icon">⚡</span> ' + escapeHtml({{ _('Optimize Database')|tojson }});
     }
 }
 
@@ -4510,7 +4507,7 @@ async function scanTrophies() {
     const resultDiv = document.getElementById('trophyScanResult');
     
     btn.disabled = true;
-    btn.innerHTML = '<span class="btn-icon">⏳</span> Scanning...';
+    btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Scanning...')|tojson }});
     resultDiv.innerHTML = '<p class="text-muted">Scanning trophy folders...</p>';
     
     try {
@@ -4563,7 +4560,7 @@ function displayBulkScrapeState() {
     const pausedFromToast = localStorage.getItem('bulkScrapePausedFromToast');
     
     if (!state && !gameIds && !queue) {
-        stateDisplay.textContent = 'No bulk scrape state found (all clear)';
+        stateDisplay.textContent = {{ _('No bulk scrape state found (all clear)')|tojson }};
         stateDisplay.style.color = 'var(--neon-green)';
         return;
     }
@@ -4626,7 +4623,7 @@ function clearStuckBulkScrape() {
         UnifiedToastController.hideActiveToast('bulk-scrape');
     }
     
-    resultEl.innerHTML = '<span style="color: var(--neon-green);">✅ Bulk scrape state cleared successfully!</span>';
+    resultEl.innerHTML = '<span style="color: var(--neon-green);">✅ ' + escapeHtml({{ _('Bulk scrape state cleared successfully!')|tojson }}) + '</span>';
     
     // Refresh the state display
     displayBulkScrapeState();
@@ -4650,7 +4647,7 @@ function clearStuckRASync() {
     fetch('/api/achievements/sync-cancel', { method: 'POST' })
         .then(r => r.json())
         .then(data => {
-            resultEl.innerHTML = '<span style="color: var(--neon-green);">✅ RA sync state and queue cleared!</span>';
+            resultEl.innerHTML = '<span style="color: var(--neon-green);">✅ ' + escapeHtml({{ _('RA sync state and queue cleared!')|tojson }}) + '</span>';
             
             // Hide any RA sync toasts
             const toast = document.getElementById('raSyncToast');
@@ -4664,7 +4661,7 @@ function clearStuckRASync() {
             displayRASyncState();
         })
         .catch(() => {
-            resultEl.innerHTML = '<span style="color: var(--neon-green);">✅ RA sync queue cleared (server unreachable)</span>';
+            resultEl.innerHTML = '<span style="color: var(--neon-green);">✅ ' + escapeHtml({{ _('RA sync queue cleared (server unreachable)')|tojson }}) + '</span>';
             displayRASyncState();
         });
     
@@ -4683,7 +4680,7 @@ function displayRASyncState() {
         const sessionSystemId = sessionStorage.getItem('raSyncSystemId');
         
         if (queue.length === 0 && !sessionSystemId) {
-            display.textContent = 'No items in queue, no active sync.';
+            display.textContent = {{ _('No items in queue, no active sync.')|tojson }};
         } else {
             let text = '';
             if (sessionSystemId) {
@@ -4787,7 +4784,7 @@ async function saveLoggingSettings() {
     const result = document.getElementById('loggingSettingsResult');
     
     btn.disabled = true;
-    btn.innerHTML = '<span class="btn-icon">⏳</span> Saving...';
+    btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Saving...')|tojson }});
     
     const settings = {
         scraping: {
@@ -4827,22 +4824,22 @@ async function saveLoggingSettings() {
         const data = await response.json();
         
         if (data.success) {
-            result.innerHTML = '<span style="color: var(--neon-green);">✓ Logging settings saved!</span>';
+            result.innerHTML = '<span style="color: var(--neon-green);">✓ ' + escapeHtml({{ _('Logging settings saved!')|tojson }}) + '</span>';
         } else {
-            result.innerHTML = `<span style="color: var(--neon-red);">✗ ${escapeHtml(data.error || 'Failed to save')}</span>`;
+            result.innerHTML = `<span style="color: var(--neon-red);">✗ ${escapeHtml(data.error || {{ _('Failed to save')|tojson }})}</span>`;
         }
     } catch (error) {
-        result.innerHTML = `<span style="color: var(--neon-red);">✗ Error: ${escapeHtml(error.message)}</span>`;
+        result.innerHTML = `<span style="color: var(--neon-red);">✗ ${escapeHtml(t({{ _('Error: {error}')|tojson }}, {error: error.message}))}</span>`;
     } finally {
         btn.disabled = false;
-        btn.innerHTML = '<span class="btn-icon">💾</span> Save Logging Settings';
+        btn.innerHTML = '<span class="btn-icon">💾</span> ' + escapeHtml({{ _('Save Logging Settings')|tojson }});
         setTimeout(() => { result.innerHTML = ''; }, 5000);
     }
 }
 
 async function loadLogFiles() {
     const container = document.getElementById('logFilesContainer');
-    container.innerHTML = '<p class="text-muted">Loading log files...</p>';
+    container.innerHTML = '<p class="text-muted">' + escapeHtml({{ _('Loading log files...')|tojson }}) + '</p>';
     
     try {
         const response = await fetch('/api/logs/list');
@@ -4853,10 +4850,10 @@ async function loadLogFiles() {
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Category</th>
-                            <th>Date</th>
-                            <th>Size</th>
-                            <th>Actions</th>
+                            <th>${escapeHtml({{ _('Category')|tojson }})}</th>
+                            <th>${escapeHtml({{ _('Date')|tojson }})}</th>
+                            <th>${escapeHtml({{ _('Size')|tojson }})}</th>
+                            <th>${escapeHtml({{ _('Actions')|tojson }})}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -4871,10 +4868,10 @@ async function loadLogFiles() {
                         <td>${sizeKB} KB</td>
                         <td>
                             <button type="button" data-on-click="viewLogFile" data-args="${actionArgs(String(file.filename))}" class="btn btn-sm btn-secondary">
-                                👁️ View
+                                👁️ ${escapeHtml({{ _('View')|tojson }})}
                             </button>
                             <button type="button" data-on-click="downloadLogFile" data-args="${actionArgs(String(file.filename))}" class="btn btn-sm btn-primary">
-                                📥 Download
+                                📥 ${escapeHtml({{ _('Download')|tojson }})}
                             </button>
                             <button type="button" data-on-click="deleteLogFile" data-args="${actionArgs(String(file.filename))}" class="btn btn-sm btn-danger">
                                 🗑️
@@ -4887,10 +4884,10 @@ async function loadLogFiles() {
             html += '</tbody></table>';
             container.innerHTML = html;
         } else {
-            container.innerHTML = '<p class="text-muted">No log files found. Logs will appear here after scraping or ROM operations.</p>';
+            container.innerHTML = '<p class="text-muted">' + escapeHtml({{ _('No log files found. Logs will appear here after scraping or ROM operations.')|tojson }}) + '</p>';
         }
     } catch (error) {
-        container.innerHTML = `<p style="color: var(--neon-red);">Error loading log files: ${escapeHtml(error.message)}</p>`;
+        container.innerHTML = `<p style="color: var(--neon-red);">${escapeHtml(t({{ _('Error loading log files: {error}')|tojson }}, {error: error.message}))}</p>`;
     }
 }
 

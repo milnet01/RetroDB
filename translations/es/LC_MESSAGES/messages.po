@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-11 22:13+0200\n"
+"POT-Creation-Date: 2026-11-12 14:22+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -204,8 +204,8 @@ msgstr "Sistema no encontrado o sin juegos con logros"
 #: routes/achievements.py:177 routes/achievements.py:468
 #: routes/bonus_discs.py:276 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
-#: routes/emulators.py:306 routes/emulators.py:320 routes/games.py:397
-#: routes/games.py:931 routes/games.py:1050 routes/games.py:1131
+#: routes/emulators.py:306 routes/emulators.py:320 routes/games.py:398
+#: routes/games.py:944 routes/games.py:1063 routes/games.py:1144
 #: routes/games_ai.py:41 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
 #: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:706
@@ -581,8 +581,8 @@ msgstr "El disco extra y el juego principal deben estar en el mismo sistema"
 msgid "A bonus disc links to a main game, one level only"
 msgstr "Un disco extra se vincula a un juego principal, solo un nivel"
 
-#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1401
-#: routes/games.py:1431 routes/platform_import.py:361
+#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1414
+#: routes/games.py:1444 routes/platform_import.py:361
 #: routes/platform_import.py:666 routes/platform_import.py:1050
 #: routes/scrape_logs.py:89 routes/scrape_logs.py:174 routes/scrape_logs.py:187
 #: routes/scrape_logs.py:225 routes/scraper.py:204 routes/scraper.py:535
@@ -810,20 +810,20 @@ msgstr "RetroDB gestiona ajustes por juego solo para DuckStation, PCSX2 y RPCS3.
 msgid "Emulator not found"
 msgstr "Emulador no encontrado"
 
-#: routes/games.py:270 routes/games.py:304
+#: routes/games.py:271 routes/games.py:305
 msgid "No IDs provided"
 msgstr "No se proporcionaron IDs"
 
-#: routes/games.py:312
+#: routes/games.py:313
 msgid "Provide 1-50 valid IDs"
 msgstr "Proporciona entre 1 y 50 IDs válidos"
 
-#: routes/games.py:581
+#: routes/games.py:589
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr "Vídeo no guardado: debe ser un archivo MP4, WebM u OGG de hasta %(mb)s MB."
 
-#: routes/games.py:591
+#: routes/games.py:602
 #, python-format
 msgid ""
 "Screenshots not added because they match ones the game already has: "
@@ -832,19 +832,19 @@ msgstr ""
 "Capturas no añadidas porque coinciden con otras que el juego ya tiene: "
 "%(count)s"
 
-#: routes/games.py:736
+#: routes/games.py:749
 msgid "Game not found after update"
 msgstr "Juego no encontrado tras la actualización"
 
-#: routes/games.py:1054
+#: routes/games.py:1067
 msgid "No game selected."
 msgstr "No se ha seleccionado ningún juego."
 
-#: routes/games.py:1078
+#: routes/games.py:1091
 msgid "This metadata apply is no longer running."
 msgstr "Esta aplicación de metadatos ya no se está ejecutando."
 
-#: routes/games.py:1087
+#: routes/games.py:1100
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -853,51 +853,51 @@ msgstr ""
 "¡Metadatos aplicados desde %(sources)s! (%(filled)d campos completados, "
 "%(missing)d aún faltan)"
 
-#: routes/games.py:1093
+#: routes/games.py:1106
 msgid "Failed to apply metadata."
 msgstr "Error al aplicar los metadatos."
 
-#: routes/games.py:1167 routes/games.py:1216
+#: routes/games.py:1180 routes/games.py:1229
 msgid "No fields to update"
 msgstr "No hay campos que actualizar"
 
-#: routes/games.py:1209 routes/platform_import.py:267
+#: routes/games.py:1222 routes/platform_import.py:267
 #: routes/platform_import.py:572 routes/platform_import.py:936
 #: routes/trophies.py:1928 templates/game_imports.html:579
 #: templates/game_imports.html:852
 msgid "No games selected"
 msgstr "Ningún juego seleccionado"
 
-#: routes/games.py:1213
+#: routes/games.py:1226
 msgid "Invalid game selection"
 msgstr "Selección de juego no válida"
 
-#: routes/games.py:1225
+#: routes/games.py:1238
 msgid "Invalid completion status"
 msgstr "Estado de finalización no válido"
 
-#: routes/games.py:1263 services/api_helpers.py:114
+#: routes/games.py:1276 services/api_helpers.py:114
 #, python-format
 msgid "%(field)s must be text"
 msgstr "%(field)s debe ser texto"
 
-#: routes/games.py:1275
+#: routes/games.py:1288
 msgid "No valid fields to update"
 msgstr "No hay campos válidos que actualizar"
 
-#: routes/games.py:1394
+#: routes/games.py:1407
 msgid "Invalid status"
 msgstr "Estado no válido"
 
-#: routes/games.py:1419
+#: routes/games.py:1432
 msgid "Not authenticated"
 msgstr "No autenticado"
 
-#: routes/games.py:1450
+#: routes/games.py:1463
 msgid "Filter type and value required"
 msgstr "Se requieren el tipo y el valor del filtro"
 
-#: routes/games.py:1463
+#: routes/games.py:1476
 msgid "Invalid filter type"
 msgstr "Tipo de filtro no válido"
 
@@ -1207,7 +1207,7 @@ msgstr ""
 msgid "Could not create Windows system entry"
 msgstr "No se pudo crear la entrada del sistema Windows"
 
-#: routes/platform_import.py:418 templates/settings.html:5121
+#: routes/platform_import.py:418 templates/settings.html:5118
 msgid "Paste your OpenXBL key first."
 msgstr "Primero pega tu clave de OpenXBL."
 
@@ -1256,8 +1256,9 @@ msgstr ""
 "Posición en la cola: %(num)s."
 
 #: routes/ra_sync.py:75 services/js_i18n_strings.py:602
-#: templates/all_games.html:42 templates/reports.html:329
-#: templates/reports.html:410 templates/reports.html:485
+#: templates/_settings_tabs/system.html:64 templates/all_games.html:42
+#: templates/reports.html:329 templates/reports.html:410
+#: templates/reports.html:485
 msgid "All Systems"
 msgstr "Todos los sistemas"
 
@@ -1316,6 +1317,8 @@ msgstr "No se ha establecido ninguna ruta de ROMs"
 #: routes/reports.py:718
 msgid "This file was renamed after the last scan. Scan again, then rename."
 msgstr ""
+"Este archivo cambió de nombre después del último escaneo. Vuelve a "
+"escanear y luego renombra."
 
 #: routes/reports.py:733 routes/reports.py:858
 msgid "ROM file not found"
@@ -1503,19 +1506,19 @@ msgstr "No se proporcionaron asignaciones"
 
 #: routes/settings.py:700 routes/settings.py:713 routes/settings.py:725
 msgid "Invalid field"
-msgstr ""
+msgstr "Campo no válido"
 
 #: routes/settings.py:715
 msgid "No spellings chosen"
-msgstr ""
+msgstr "No se eligió ninguna grafía"
 
 #: routes/settings.py:738
 msgid "No name to keep"
-msgstr ""
+msgstr "No hay ningún nombre que conservar"
 
 #: routes/settings.py:740
 msgid "No names ticked to merge"
-msgstr ""
+msgstr "No hay nombres marcados para fusionar"
 
 #: routes/steam_achievements.py:112
 msgid "Steam credentials not configured"
@@ -2218,7 +2221,7 @@ msgstr "La AI no encontró campos vacíos que rellenar"
 #: services/js_i18n_strings.py:598 templates/_settings_tabs/account.html:331
 #: templates/archive_scanner.html:726 templates/list_detail.html:47
 #: templates/multi_disc_organizer.html:217 templates/reports.html:372
-#: templates/reports.html:455
+#: templates/reports.html:455 templates/settings.html:4856
 msgid "Actions"
 msgstr "Acciones"
 
@@ -2314,7 +2317,7 @@ msgstr ""
 msgid "Are you sure you want to cancel?"
 msgstr "¿Seguro que quieres cancelar?"
 
-#: services/js_i18n_strings.py:619 templates/settings.html:4926
+#: services/js_i18n_strings.py:619 templates/settings.html:4923
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "¿Seguro que quieres eliminar \"{filename}\"?"
@@ -2443,7 +2446,7 @@ msgstr "Cancelado por el usuario"
 #: services/js_i18n_strings.py:645
 #, python-brace-format
 msgid "Change these names to \"{name}\" on every game?"
-msgstr ""
+msgstr "¿Cambiar estos nombres a \"{name}\" en todos los juegos?"
 
 #: services/js_i18n_strings.py:646
 msgid "Cheat list changed."
@@ -2457,11 +2460,11 @@ msgstr "Trucos guardados."
 msgid "Checking RetroAchievements…"
 msgstr "Comprobando RetroAchievements…"
 
-#: services/js_i18n_strings.py:649
+#: services/js_i18n_strings.py:649 templates/_settings_tabs/system.html:26
 msgid "Clean Missing ROMs"
 msgstr "Limpiar ROMs faltantes"
 
-#: services/js_i18n_strings.py:650
+#: services/js_i18n_strings.py:650 templates/_settings_tabs/system.html:48
 msgid "Clear CLZ Imports"
 msgstr "Borrar importaciones CLZ"
 
@@ -2491,7 +2494,8 @@ msgstr "Datos de RA borrados de {count} juegos en {system}"
 msgid "Cleared RA data for {n} games"
 msgstr "Datos de RA borrados de {n} juegos"
 
-#: services/js_i18n_strings.py:657
+#: services/js_i18n_strings.py:657 templates/settings.html:3806
+#: templates/settings.html:4070
 msgid "Clearing..."
 msgstr "Borrando..."
 
@@ -2607,7 +2611,7 @@ msgstr "No se pudieron aplicar los metadatos."
 
 #: services/js_i18n_strings.py:679
 msgid "Could not cancel it"
-msgstr ""
+msgstr "No se pudo cancelar"
 
 #: services/js_i18n_strings.py:680
 msgid "Could not change the cheat list."
@@ -2623,7 +2627,7 @@ msgstr "No se pudieron contar los juegos."
 
 #: services/js_i18n_strings.py:683
 msgid "Could not download the update."
-msgstr ""
+msgstr "No se pudo descargar la actualización."
 
 #: services/js_i18n_strings.py:684
 #, python-brace-format
@@ -2644,7 +2648,7 @@ msgstr "No se pudieron cargar las sugerencias."
 
 #: services/js_i18n_strings.py:687
 msgid "Could not load the log files"
-msgstr ""
+msgstr "No se pudieron cargar los archivos de registro"
 
 #: services/js_i18n_strings.py:688
 msgid "Could not open this manual. Use \"Open PDF in a new tab\" instead."
@@ -2652,7 +2656,7 @@ msgstr "No se pudo abrir este manual. Usa «Abrir PDF en una pestaña nueva»."
 
 #: services/js_i18n_strings.py:689
 msgid "Could not pause or resume it"
-msgstr ""
+msgstr "No se pudo pausar ni reanudar"
 
 #: services/js_i18n_strings.py:690
 msgid "Could not read the run status."
@@ -2680,7 +2684,7 @@ msgstr "No se pudieron guardar los trucos."
 
 #: services/js_i18n_strings.py:696
 msgid "Could not save the theme; it will reset on the next page."
-msgstr ""
+msgstr "No se pudo guardar el tema; se restablecerá en la página siguiente."
 
 #: services/js_i18n_strings.py:697
 msgid "Could not show this page of the manual."
@@ -2692,7 +2696,7 @@ msgstr "No se pudo iniciar la búsqueda."
 
 #: services/js_i18n_strings.py:699
 msgid "Could not stop the game"
-msgstr ""
+msgstr "No se pudo detener el juego"
 
 #: services/js_i18n_strings.py:700
 msgid "Could not stop the run."
@@ -2724,7 +2728,7 @@ msgstr "Valor actual"
 msgid "Default emulator for {system}"
 msgstr "Emulador predeterminado para {system}"
 
-#: services/js_i18n_strings.py:707 templates/settings.html:4926
+#: services/js_i18n_strings.py:707 templates/settings.html:4923
 msgid "Delete Log File"
 msgstr "Eliminar archivo de registro"
 
@@ -2753,6 +2757,7 @@ msgid "Done."
 msgstr "Hecho."
 
 #: services/js_i18n_strings.py:714 templates/logs.html:740
+#: templates/settings.html:4874
 msgid "Download"
 msgstr "Descargar"
 
@@ -2855,7 +2860,7 @@ msgstr "Emulador"
 #: services/js_i18n_strings.py:737
 #, python-brace-format
 msgid "Enlarge {name}"
-msgstr ""
+msgstr "Ampliar {name}"
 
 #: services/js_i18n_strings.py:738
 msgid "Enter one folder path."
@@ -2887,15 +2892,15 @@ msgstr "Introduce una sola ruta de carpeta."
 #: templates/settings.html:3555 templates/settings.html:3623
 #: templates/settings.html:3627 templates/settings.html:3658
 #: templates/settings.html:3662 templates/settings.html:3688
-#: templates/settings.html:3692 templates/settings.html:4186
-#: templates/settings.html:4190 templates/settings.html:4208
-#: templates/settings.html:4239 templates/settings.html:4299
-#: templates/settings.html:4303 templates/settings.html:4433
-#: templates/settings.html:4437 templates/settings.html:4463
-#: templates/settings.html:4467 templates/settings.html:4914
-#: templates/settings.html:4917 templates/settings.html:4936
-#: templates/settings.html:4939 templates/settings.html:4954
-#: templates/settings.html:4957
+#: templates/settings.html:3692 templates/settings.html:4183
+#: templates/settings.html:4187 templates/settings.html:4205
+#: templates/settings.html:4236 templates/settings.html:4296
+#: templates/settings.html:4300 templates/settings.html:4430
+#: templates/settings.html:4434 templates/settings.html:4460
+#: templates/settings.html:4464 templates/settings.html:4911
+#: templates/settings.html:4914 templates/settings.html:4933
+#: templates/settings.html:4936 templates/settings.html:4951
+#: templates/settings.html:4954
 msgid "Error"
 msgstr "Error"
 
@@ -3358,6 +3363,8 @@ msgstr "Buscando versiones…"
 #: services/js_i18n_strings.py:843
 msgid "Lost contact with RetroDB. Reload the page to see the generation progress."
 msgstr ""
+"Se perdió el contacto con RetroDB. Recarga la página para ver el progreso"
+" de la generación."
 
 #: services/js_i18n_strings.py:844 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
@@ -3412,11 +3419,11 @@ msgstr ""
 
 #: services/js_i18n_strings.py:850
 msgid "Merge"
-msgstr ""
+msgstr "Fusionar"
 
 #: services/js_i18n_strings.py:851
 msgid "Missing box art"
-msgstr ""
+msgstr "Carátula ausente"
 
 #: services/js_i18n_strings.py:852
 #, python-brace-format
@@ -3443,12 +3450,12 @@ msgstr "NO"
 
 #: services/js_i18n_strings.py:857
 msgid "Name to keep"
-msgstr ""
+msgstr "Nombre que conservar"
 
 #: services/js_i18n_strings.py:858
 #, python-brace-format
 msgid "Names merged: {games} games updated"
-msgstr ""
+msgstr "Nombres fusionados: {games} juegos actualizados"
 
 #: services/js_i18n_strings.py:859
 #, python-brace-format
@@ -3460,7 +3467,10 @@ msgid "Navigation"
 msgstr "Navegación"
 
 #: services/js_i18n_strings.py:861 templates/psn_trophy_detail.html:944
-#: templates/psn_trophy_detail.html:964
+#: templates/psn_trophy_detail.html:964 templates/settings.html:3782
+#: templates/settings.html:3840 templates/settings.html:3916
+#: templates/settings.html:3973 templates/settings.html:4049
+#: templates/settings.html:4100 templates/settings.html:4144
 msgid "Network error"
 msgstr "Error de red"
 
@@ -3518,7 +3528,7 @@ msgstr "No se encontraron logros"
 
 #: services/js_i18n_strings.py:874
 msgid "No answer from RetroDB"
-msgstr ""
+msgstr "RetroDB no responde"
 
 #: services/js_i18n_strings.py:875 templates/achievement_game.html:72
 #: templates/steam_achievement_game.html:69
@@ -3821,7 +3831,7 @@ msgstr "¿Eliminar la caja 3D?"
 #: templates/settings.html:3441
 #, python-brace-format
 msgid "Remove {name}"
-msgstr ""
+msgstr "Quitar {name}"
 
 #: services/js_i18n_strings.py:942
 #, python-brace-format
@@ -3853,7 +3863,7 @@ msgstr "Eliminando..."
 
 #: services/js_i18n_strings.py:948
 msgid "Reorder queue"
-msgstr ""
+msgstr "Reordenar la cola"
 
 #: services/js_i18n_strings.py:949 templates/_bulk_edit_modal.html:42
 #: templates/_bulk_edit_modal.html:56 templates/_bulk_edit_modal.html:70
@@ -3989,7 +3999,8 @@ msgstr "Guardado. Se aplica la próxima vez que pulses Jugar."
 msgid "Saving to the database…"
 msgstr "Guardando en la base de datos…"
 
-#: services/js_i18n_strings.py:978 templates/setup.html:483
+#: services/js_i18n_strings.py:978 templates/settings.html:4787
+#: templates/setup.html:483
 msgid "Saving..."
 msgstr "Guardando..."
 
@@ -4013,6 +4024,8 @@ msgid "Scanned {paths} paths · found {found} matches."
 msgstr "{paths} rutas escaneadas · {found} coincidencias encontradas."
 
 #: services/js_i18n_strings.py:983 templates/multi_disc_organizer.html:204
+#: templates/settings.html:1803 templates/settings.html:3861
+#: templates/settings.html:4000 templates/settings.html:4510
 msgid "Scanning..."
 msgstr "Escaneando..."
 
@@ -4193,7 +4206,7 @@ msgstr "Iniciando sesión…"
 #: services/js_i18n_strings.py:1022
 #, python-brace-format
 msgid "Spellings applied: {games} games updated"
-msgstr ""
+msgstr "Grafías aplicadas: {games} juegos actualizados"
 
 #: services/js_i18n_strings.py:1023 templates/_modals/edit_modal.html:50
 #: templates/base.html:1103 templates/game_detail.html:4270
@@ -4521,7 +4534,7 @@ msgstr "Subir"
 msgid "Upload Controller Image"
 msgstr "Subir imagen del mando"
 
-#: services/js_i18n_strings.py:1085 templates/settings.html:5243
+#: services/js_i18n_strings.py:1085 templates/settings.html:5240
 msgid "Upload failed"
 msgstr "La subida falló"
 
@@ -4548,11 +4561,11 @@ msgstr "Usar el ajuste del sistema"
 #: services/js_i18n_strings.py:1091
 #, python-brace-format
 msgid "Use these {n} spellings?"
-msgstr ""
+msgstr "¿Usar estas {n} grafías?"
 
 #: services/js_i18n_strings.py:1092
 msgid "Use this spelling?"
-msgstr ""
+msgstr "¿Usar esta grafía?"
 
 #: services/js_i18n_strings.py:1093
 #, python-brace-format
@@ -5494,6 +5507,8 @@ msgstr ""
 "Descarga los logros que has conseguido en tus juegos de %(system)s. "
 "Ejecútalo después de jugar."
 
+#: templates/_settings_tabs/system.html:430
+#: templates/_settings_tabs/system.html:448
 #: templates/achievements_system.html:162 templates/changelog.html:179
 #: templates/logs.html:737 templates/setup.html:354 templates/setup.html:355
 #: templates/setup.html:419 templates/tags.html:595
@@ -5714,7 +5729,8 @@ msgstr "Filtros"
 msgid "Select"
 msgstr "Seleccionar"
 
-#: templates/all_games.html:94 templates/system_games.html:85
+#: templates/all_games.html:94 templates/settings.html:4853
+#: templates/system_games.html:85
 msgid "Category"
 msgstr "Categoría"
 
@@ -6231,7 +6247,7 @@ msgstr "Juegos más grandes"
 msgid "Game"
 msgstr "Juego"
 
-#: templates/analytics.html:604
+#: templates/analytics.html:604 templates/settings.html:4855
 msgid "Size"
 msgstr "Tamaño"
 
@@ -6293,7 +6309,7 @@ msgstr "Estadísticas copiadas al portapapeles."
 
 #: templates/analytics.html:2772
 msgid "Could not copy to the clipboard."
-msgstr ""
+msgstr "No se pudo copiar al portapapeles."
 
 #: templates/analytics.html:2826
 msgid "CSV data exported."
@@ -6469,7 +6485,7 @@ msgstr "Procesados"
 
 #: templates/archive_scanner.html:782 templates/game_detail.html:4079
 #: templates/reports.html:497 templates/settings.html:3549
-#: templates/settings.html:4297 templates/settings.html:4951
+#: templates/settings.html:4294 templates/settings.html:4948
 msgid "Success"
 msgstr "Éxito"
 
@@ -6490,7 +6506,7 @@ msgstr "Esperando para iniciar..."
 
 #: templates/archive_scanner.html:886 templates/archive_scanner.html:890
 msgid "Could not save your scanner choices."
-msgstr ""
+msgstr "No se pudieron guardar tus opciones de escáner."
 
 #: templates/archive_scanner.html:1127
 msgid "No Types Selected"
@@ -6989,7 +7005,7 @@ msgstr "Cerrar el gestor de cola"
 
 #: templates/base.html:754
 msgid "Could not change the queue"
-msgstr ""
+msgstr "No se pudo cambiar la cola"
 
 #: templates/base.html:811
 #, python-brace-format
@@ -8120,7 +8136,7 @@ msgstr "Error al reanudar la tarea"
 
 #: templates/dashboard.html:1173
 msgid "Could not dismiss the job"
-msgstr ""
+msgstr "No se pudo descartar el trabajo"
 
 #: templates/dashboard.html:1204
 #, python-brace-format
@@ -8134,12 +8150,12 @@ msgstr "Todas las tareas reanudadas"
 #: templates/dashboard.html:1208
 #, python-brace-format
 msgid "{ok} of {total} jobs resumed"
-msgstr ""
+msgstr "{ok} de {total} trabajos reanudados"
 
 #: templates/dashboard.html:1219
 #, python-brace-format
 msgid "Could not dismiss job {id}"
-msgstr ""
+msgstr "No se pudo descartar el trabajo {id}"
 
 #: templates/dashboard.html:1249
 msgid "No games found"
@@ -8151,16 +8167,16 @@ msgstr "Error al elegir un juego al azar"
 
 #: templates/dashboard.html:1273
 msgid "1 configured API is offline"
-msgstr ""
+msgstr "1 API configurada está sin conexión"
 
 #: templates/dashboard.html:1274
 #, python-brace-format
 msgid "{count} configured APIs are offline"
-msgstr ""
+msgstr "{count} API configuradas están sin conexión"
 
 #: templates/dashboard.html:1309
 msgid "Offline"
-msgstr ""
+msgstr "Sin conexión"
 
 #: templates/dashboard.html:1414
 msgid ""
@@ -8326,7 +8342,7 @@ msgstr "Establecer nueva contraseña"
 #: templates/force_change_password.html:61 templates/login.html:304
 #: templates/setup.html:522
 msgid "The server answered with an error."
-msgstr ""
+msgstr "El servidor respondió con un error."
 
 #: templates/_macros/nav_tabs.html:45 templates/game_detail.html:19
 #: templates/reports.html:269 templates/rom_tools_hub.html:261
@@ -8417,7 +8433,7 @@ msgstr "Eliminar"
 #: templates/museum_system.html:194
 #, python-format
 msgid "Enlarge %(name)s"
-msgstr ""
+msgstr "Ampliar %(name)s"
 
 #: templates/game_detail.html:185 templates/game_detail.html:198
 #: templates/game_detail.html:219
@@ -8907,7 +8923,7 @@ msgstr "Título de ordenación generado"
 
 #: templates/game_detail.html:5687 templates/game_detail.html:5757
 msgid "match"
-msgstr ""
+msgstr "coincidencia"
 
 #: templates/game_detail.html:5690
 #, python-brace-format
@@ -8958,11 +8974,11 @@ msgstr "No se pudo eliminar la captura de pantalla: {error}"
 
 #: templates/game_detail.html:6050
 msgid "No similar games found in library"
-msgstr ""
+msgstr "No se encontraron juegos similares en la biblioteca"
 
 #: templates/game_detail.html:6054
 msgid "Could not load similar games."
-msgstr ""
+msgstr "No se pudieron cargar los juegos similares."
 
 #: templates/_settings_tabs/account.html:233 templates/game_imports.html:171
 msgid "Steam"
@@ -9053,6 +9069,10 @@ msgid ""
 "href=\"%(settings_url)s\" style=\"color: var(--primary-cyan);\">Settings "
 "&rarr; My Profile</a>, or enter them below."
 msgstr ""
+"Importa tu biblioteca de juegos de Steam. Los juegos se crean en el "
+"sistema <strong>Microsoft Windows</strong>. Configura tu clave de API de "
+"Steam y tu ID de Steam en <a href=\"%(settings_url)s\" style=\"color: var"
+"(--primary-cyan);\">Ajustes &rarr; Mi perfil</a>, o introdúcelos abajo."
 
 #: templates/game_imports.html:249
 msgid "Steam Credentials"
@@ -9154,6 +9174,12 @@ msgid ""
 "href=\"%(trophies_url)s\" style=\"color: var(--primary-cyan);\">PSN "
 "Trophies</a> page."
 msgstr ""
+"Importa tu biblioteca de juegos de PlayStation. Los juegos salen de tu "
+"lista de trofeos de PSN. Configura tu token NPSSO de PSN en <a "
+"href=\"%(settings_url)s\" style=\"color: var(--primary-cyan);\">Ajustes "
+"&rarr; Mi perfil</a>. Para importar más rápido, sincroniza antes tus "
+"trofeos en la página <a href=\"%(trophies_url)s\" style=\"color: var"
+"(--primary-cyan);\">Trofeos de PSN</a>."
 
 #: templates/game_imports.html:365
 msgid "PSN Account"
@@ -9231,11 +9257,11 @@ msgstr "Mediante tu clave de OpenXBL."
 
 #: templates/game_imports.html:701 templates/game_imports.html:911
 msgid "Could not check the connection"
-msgstr ""
+msgstr "No se pudo comprobar la conexión"
 
 #: templates/game_imports.html:702 templates/game_imports.html:912
 msgid "Reload the page to try again."
-msgstr ""
+msgstr "Recarga la página para volver a intentarlo."
 
 #: templates/game_imports.html:727
 #, python-brace-format
@@ -9262,20 +9288,20 @@ msgstr "Los detalles llegan desde Steam en segundo plano"
 
 #: templates/game_imports.html:897
 msgid "PSN Configured"
-msgstr ""
+msgstr "PSN configurado"
 
 #: templates/game_imports.html:899
 #, python-brace-format
 msgid "Games in your trophy list: {count}"
-msgstr ""
+msgstr "Juegos en tu lista de trofeos: {count}"
 
 #: templates/game_imports.html:900
 msgid "No trophy list saved yet; Fetch will read it from PSN."
-msgstr ""
+msgstr "Aún no hay ninguna lista de trofeos guardada; Obtener la leerá de PSN."
 
 #: templates/game_imports.html:905
 msgid "Add your PSN NPSSO token in Settings > My Profile to import games."
-msgstr ""
+msgstr "Añade tu token NPSSO de PSN en Ajustes > Mi perfil para importar juegos."
 
 #: templates/game_imports.html:946
 #, python-brace-format
@@ -9407,7 +9433,7 @@ msgstr ""
 
 #: templates/hltb_review.html:238
 msgid "No pending matches under this filter."
-msgstr ""
+msgstr "No hay coincidencias pendientes con este filtro."
 
 #: templates/hltb_review.html:295
 msgid "Match approved"
@@ -9548,7 +9574,7 @@ msgstr "Error al quitar el juego."
 
 #: templates/lists.html:315 templates/lists.html:318
 msgid "Could not load your lists."
-msgstr ""
+msgstr "No se pudieron cargar tus listas."
 
 #: templates/lists.html:437
 msgid "Please enter a list name."
@@ -9727,7 +9753,7 @@ msgstr ""
 
 #: templates/local_trophy_detail.html:374
 msgid "Failed to save HLTB data."
-msgstr ""
+msgstr "No se pudieron guardar los datos de HLTB."
 
 #: templates/local_trophy_detail.html:422
 msgid "HLTB Lookup Failed"
@@ -9742,7 +9768,8 @@ msgstr "No se encontró ninguna coincidencia."
 #: templates/settings.html:1942 templates/settings.html:1967
 #: templates/settings.html:1970 templates/settings.html:1990
 #: templates/settings.html:2034 templates/settings.html:2056
-#: templates/settings.html:2153 templates/steam_achievement_game.html:302
+#: templates/settings.html:2153 templates/settings.html:4832
+#: templates/steam_achievement_game.html:302
 #: templates/xbox_achievement_game.html:293
 #, python-brace-format
 msgid "Error: {error}"
@@ -9791,7 +9818,7 @@ msgstr "Nivel"
 
 #: templates/logs.html:759
 msgid "DEBUG"
-msgstr ""
+msgstr "DEBUG"
 
 #: templates/logs.html:760
 msgid "INFO"
@@ -9803,13 +9830,13 @@ msgstr "ADVERTENCIA"
 
 #: templates/logs.html:762
 msgid "Errors and critical errors"
-msgstr ""
+msgstr "Errores y errores críticos"
 
 #: templates/logs.html:762
 msgid "ERROR"
 msgstr "ERROR"
 
-#: templates/logs.html:778
+#: templates/logs.html:778 templates/settings.html:4871
 msgid "View"
 msgstr "Ver"
 
@@ -10452,15 +10479,17 @@ msgstr ""
 
 #: templates/psn_trophies.html:1177
 msgid "Could not load games."
-msgstr ""
+msgstr "No se pudieron cargar los juegos."
 
 #: templates/psn_trophies.html:1181
 msgid "Retry"
-msgstr ""
+msgstr "Reintentar"
 
 #: templates/psn_trophies.html:1648
 msgid "The sync is no longer running. Close this window and start it again."
 msgstr ""
+"La sincronización ya no está en curso. Cierra esta ventana e iníciala de "
+"nuevo."
 
 #: templates/psn_trophies.html:1674
 msgid "Please select at least one game to refresh."
@@ -10711,7 +10740,7 @@ msgstr "Renombrado por lotes completado"
 
 #: templates/reports.html:524
 msgid "These files were not renamed:"
-msgstr ""
+msgstr "Estos archivos no se renombraron:"
 
 #: templates/reports.html:532
 msgid "Start Rename"
@@ -11799,7 +11828,7 @@ msgstr "Error de red al guardar los ajustes"
 
 #: templates/settings.html:1193
 msgid "Could not load the timezone list."
-msgstr ""
+msgstr "No se pudo cargar la lista de zonas horarias."
 
 #: templates/settings.html:1226
 msgid "Timezone saved! Page will reload to apply."
@@ -11839,7 +11868,7 @@ msgstr "Error de red al cambiar la contraseña"
 
 #: templates/settings.html:1342 templates/settings.html:1344
 msgid "Could not load that user."
-msgstr ""
+msgstr "No se pudo cargar ese usuario."
 
 #: templates/settings.html:1379
 msgid "User saved successfully!"
@@ -11892,11 +11921,11 @@ msgstr "¡Ajustes de pantalla guardados!"
 
 #: templates/settings.html:1571
 msgid "Move left"
-msgstr ""
+msgstr "Mover a la izquierda"
 
 #: templates/settings.html:1571
 msgid "Move right"
-msgstr ""
+msgstr "Mover a la derecha"
 
 #: templates/settings.html:1671
 msgid "Region already exists"
@@ -12131,11 +12160,11 @@ msgstr "¿Seguro que quieres eliminar esta opción?"
 msgid "Failed to delete option"
 msgstr "No se pudo eliminar la opción"
 
-#: templates/settings.html:3505 templates/settings.html:4259
+#: templates/settings.html:3505 templates/settings.html:4256
 msgid "Missing Input"
 msgstr "Falta un dato"
 
-#: templates/settings.html:3505 templates/settings.html:4259
+#: templates/settings.html:3505 templates/settings.html:4256
 msgid "Please enter a controller name"
 msgstr "Introduce un nombre para el mando"
 
@@ -12160,40 +12189,106 @@ msgstr "No se pudo añadir el mando predeterminado"
 msgid "Failed to remove default controller"
 msgstr "No se pudo quitar el mando predeterminado"
 
-#: templates/settings.html:3795
+#: templates/settings.html:3763
+msgid "Preview:"
+msgstr "Vista previa:"
+
+#: templates/settings.html:3764
+#, python-brace-format
+msgid "This will clear scraped data from {count} games in {system}."
+msgstr "Esto borrará los datos scrapeados de {count} juegos de {system}."
+
+#: templates/settings.html:3765
+#, python-brace-format
+msgid "This will clear scraped data from {count} games (all systems)."
+msgstr "Esto borrará los datos scrapeados de {count} juegos (todos los sistemas)."
+
+#: templates/settings.html:3766
+msgid ""
+"Fields: description, genre, publisher, developer, players, modes, "
+"ratings, scores, images, etc."
+msgstr ""
+"Campos: descripción, género, distribuidora, desarrolladora, jugadores, "
+"modos, clasificaciones, puntuaciones, imágenes, etc."
+
+#: templates/settings.html:3773
+msgid "Failed to preview"
+msgstr "No se pudo generar la vista previa"
+
+#: templates/settings.html:3796
 msgid "ALL SYSTEMS"
 msgstr "TODOS LOS SISTEMAS"
 
-#: templates/settings.html:3799
+#: templates/_settings_tabs/system.html:84 templates/settings.html:3800
+#: templates/settings.html:3845
 msgid "Clear Scraped Data"
 msgstr "Borrar datos scrapeados"
 
-#: templates/settings.html:3800
+#: templates/settings.html:3801
 #, python-brace-format
 msgid "This will clear all scraped metadata from games in {system}."
 msgstr "Se borrarán todos los metadatos scrapeados de los juegos de {system}."
 
-#: templates/settings.html:3801
+#: templates/settings.html:3802
 msgid "Downloaded images will also be deleted!"
 msgstr "¡Las imágenes descargadas también se eliminarán!"
 
-#: templates/settings.html:3802
+#: templates/settings.html:3803
 msgid "This cannot be undone. Are you sure?"
 msgstr "Esta acción no se puede deshacer. ¿Seguro?"
 
-#: templates/settings.html:3926
+#: templates/settings.html:3824
+#, python-brace-format
+msgid "Cleared scraped data from {count} games."
+msgstr "Datos scrapeados borrados de {count} juegos."
+
+#: templates/settings.html:3824
+#, python-brace-format
+msgid "Deleted {count} image files."
+msgstr "Se eliminaron {count} archivos de imagen."
+
+#: templates/settings.html:3831
+msgid "Failed to clear data"
+msgstr "No se pudieron borrar los datos"
+
+#: templates/settings.html:3877
+msgid "No orphaned media files found. All files are linked to existing games."
+msgstr ""
+"No se encontraron archivos multimedia huérfanos. Todos los archivos están"
+" vinculados a juegos existentes."
+
+#: templates/settings.html:3890 templates/setup.html:404
+#, python-brace-format
+msgid "{count} files"
+msgstr "{count} archivos"
+
+#: templates/settings.html:3895
+#, python-brace-format
+msgid "Found {count} orphaned files ({size} MB)"
+msgstr "Se encontraron {count} archivos huérfanos ({size} MB)"
+
+#: templates/settings.html:3907
+msgid "Failed to scan for orphaned files"
+msgstr "No se pudieron buscar archivos huérfanos"
+
+#: templates/_settings_tabs/system.html:100 templates/settings.html:3921
+msgid "Scan for Orphaned Files"
+msgstr "Buscar archivos huérfanos"
+
+#: templates/settings.html:3927
 msgid "No Files"
 msgstr "Sin archivos"
 
-#: templates/settings.html:3926
+#: templates/settings.html:3927
 msgid "Please scan for orphaned files first."
 msgstr "Primero busca archivos huérfanos."
 
-#: templates/settings.html:3931
+#: templates/_settings_tabs/system.html:104 templates/settings.html:3932
+#: templates/settings.html:3978
 msgid "Delete Orphaned Files"
 msgstr "Eliminar archivos huérfanos"
 
-#: templates/settings.html:3932
+#: templates/settings.html:3933
 #, python-brace-format
 msgid ""
 "Orphaned media files to delete permanently: {count}. This action cannot "
@@ -12202,19 +12297,89 @@ msgstr ""
 "Archivos multimedia huérfanos que se eliminarán de forma permanente: "
 "{count}. Esta acción no se puede deshacer.<br><br>¿Continuar?"
 
-#: templates/settings.html:4060
+#: templates/settings.html:3939
+msgid "Deleting..."
+msgstr "Eliminando..."
+
+#: templates/settings.html:3957
+#, python-brace-format
+msgid "Deleted {count} orphaned files."
+msgstr "Se eliminaron {count} archivos huérfanos."
+
+#: templates/settings.html:3957
+#, python-brace-format
+msgid "Freed {size} MB of disk space."
+msgstr "Se liberaron {size} MB de espacio en disco."
+
+#: templates/settings.html:3957
+#, python-brace-format
+msgid "{count} files could not be deleted."
+msgstr "No se pudieron eliminar {count} archivos."
+
+#: templates/settings.html:3965
+msgid "Failed to delete files"
+msgstr "No se pudieron eliminar los archivos"
+
+#: templates/settings.html:4016
+#, python-brace-format
+msgid "{count} reference(s)"
+msgstr "{count} referencia(s)"
+
+#: templates/settings.html:4020
+msgid ""
+"Some media folders look missing or empty (possibly an unmounted drive or "
+"a bulk deletion). Their references were <strong>kept, not "
+"cleared</strong>, to protect against wiping your whole library by "
+"accident:"
+msgstr ""
+"Algunas carpetas multimedia parecen ausentes o vacías (quizá una unidad "
+"sin montar o un borrado masivo). Sus referencias se <strong>conservaron, "
+"no se borraron</strong>, para evitar vaciar toda tu biblioteca por "
+"accidente:"
+
+#: templates/settings.html:4022
+msgid "Re-mount the media folder (or re-scrape) and scan again."
+msgstr ""
+"Vuelve a montar la carpeta multimedia (o vuelve a scrapear) y escanea de "
+"nuevo."
+
+#: templates/settings.html:4029
+msgid "No clearable missing-media references found."
+msgstr ""
+"No se encontraron referencias a archivos multimedia ausentes que se "
+"puedan borrar."
+
+#: templates/settings.html:4034
+#, python-brace-format
+msgid ""
+"Found {refs} stale reference(s) across {games} game(s) pointing to files "
+"no longer on disk."
+msgstr ""
+"Se encontraron {refs} referencia(s) obsoleta(s) en {games} juego(s) que "
+"apuntan a archivos que ya no están en el disco."
+
+#: templates/settings.html:4042
+msgid "Failed to scan for missing media references"
+msgstr "No se pudieron buscar referencias a archivos multimedia ausentes"
+
+#: templates/_settings_tabs/system.html:119 templates/settings.html:4052
+msgid "Scan for Missing Media"
+msgstr "Buscar archivos multimedia ausentes"
+
+#: templates/settings.html:4058
 msgid "Nothing to Clear"
 msgstr "Nada que borrar"
 
-#: templates/settings.html:4060
+#: templates/settings.html:4058
 msgid "Please scan for missing media references first."
 msgstr "Primero busca referencias a archivos multimedia que faltan."
 
-#: templates/settings.html:4065
+#: templates/_settings_tabs/system.html:123 templates/settings.html:4063
+#: templates/settings.html:4103
 msgid "Clear Missing References"
 msgstr "Borrar referencias que faltan"
 
-#: templates/settings.html:4066
+#: templates/settings.html:4064
 #, python-brace-format
 msgid ""
 "Database references to clear: {count}. They point to media files that no "
@@ -12226,11 +12391,52 @@ msgstr ""
 "pueden volver a descargarlos. Tus juegos no se ven "
 "afectados.<br><br>¿Continuar?"
 
-#: templates/settings.html:4162
+#: templates/settings.html:4083
+#, python-brace-format
+msgid "{count} reference(s) in missing/empty folders were preserved."
+msgstr "Se conservaron {count} referencia(s) en carpetas ausentes o vacías."
+
+#: templates/settings.html:4087
+#, python-brace-format
+msgid "Cleared {refs} stale reference(s) across {games} game(s)."
+msgstr "Se borraron {refs} referencia(s) obsoleta(s) en {games} juego(s)."
+
+#: templates/settings.html:4094
+msgid "Failed to clear references"
+msgstr "No se pudieron borrar las referencias"
+
+#: templates/settings.html:4115
+msgid "Optimizing..."
+msgstr "Optimizando..."
+
+#: templates/settings.html:4127
+#, python-brace-format
+msgid "Database optimized successfully in {seconds}s."
+msgstr "Base de datos optimizada correctamente en {seconds} s."
+
+#: templates/settings.html:4128
+#, python-brace-format
+msgid "Size: {before} MB → {after} MB"
+msgstr "Tamaño: {before} MB → {after} MB"
+
+#: templates/settings.html:4129
+#, python-brace-format
+msgid "(saved {size} MB)"
+msgstr "({size} MB ahorrados)"
+
+#: templates/settings.html:4135
+msgid "Failed to optimize database"
+msgstr "No se pudo optimizar la base de datos"
+
+#: templates/_settings_tabs/system.html:137 templates/settings.html:4149
+msgid "Optimize Database"
+msgstr "Optimizar base de datos"
+
+#: templates/settings.html:4159
 msgid "Delete Controller"
 msgstr "Eliminar mando"
 
-#: templates/settings.html:4163
+#: templates/settings.html:4160
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete {name}?<br><br>This will remove it from "
@@ -12239,166 +12445,219 @@ msgstr ""
 "¿Seguro que quieres eliminar {name}?<br><br>Se quitará de la biblioteca y"
 " de los sistemas que lo usen como predeterminado."
 
-#: templates/settings.html:4184
+#: templates/settings.html:4181
 msgid "Deleted"
 msgstr "Eliminado"
 
-#: templates/settings.html:4184
+#: templates/settings.html:4181
 #, python-brace-format
 msgid "Controller \"{name}\" has been removed."
 msgstr "El mando \"{name}\" se ha quitado."
 
-#: templates/settings.html:4186 templates/settings.html:4190
+#: templates/settings.html:4183 templates/settings.html:4187
 msgid "Failed to delete controller"
 msgstr "No se pudo eliminar el mando"
 
-#: templates/settings.html:4208
+#: templates/settings.html:4205
 msgid "Failed to load controller"
 msgstr "No se pudo cargar el mando"
 
-#: templates/settings.html:4239
+#: templates/settings.html:4236
 msgid "Failed to load controller data"
 msgstr "No se pudieron cargar los datos del mando"
 
-#: templates/settings.html:4297
+#: templates/settings.html:4294
 #, python-brace-format
 msgid "Controller \"{name}\" has been updated."
 msgstr "El mando \"{name}\" se ha actualizado."
 
-#: templates/settings.html:4299 templates/settings.html:4303
+#: templates/settings.html:4296 templates/settings.html:4300
 msgid "Failed to update controller"
 msgstr "No se pudo actualizar el mando"
 
-#: templates/settings.html:4430
+#: templates/settings.html:4427
 msgid "Logos Refreshed"
 msgstr "Logotipos actualizados"
 
-#: templates/settings.html:4431
+#: templates/settings.html:4428
 #, python-brace-format
 msgid "System logos updated: {count}. The table has been refreshed."
 msgstr "Logotipos de sistemas actualizados: {count}. La tabla se ha actualizado."
 
-#: templates/settings.html:4433
+#: templates/settings.html:4430
 msgid "Failed to refresh logos"
 msgstr "No se pudieron actualizar los logotipos"
 
-#: templates/settings.html:4437
+#: templates/settings.html:4434
 msgid "Failed to refresh system logos"
 msgstr "No se pudieron actualizar los logotipos de los sistemas"
 
-#: templates/settings.html:4459
+#: templates/settings.html:4456
 msgid "Names Refreshed"
 msgstr "Nombres actualizados"
 
-#: templates/settings.html:4460
+#: templates/settings.html:4457
 #, python-brace-format
 msgid "System names updated: {count}. Click OK to refresh the page."
 msgstr ""
 "Nombres de sistemas actualizados: {count}. Pulsa Aceptar para recargar la"
 " página."
 
-#: templates/settings.html:4463
+#: templates/settings.html:4460
 msgid "Failed to refresh names"
 msgstr "No se pudieron actualizar los nombres"
 
-#: templates/settings.html:4467
+#: templates/settings.html:4464
 msgid "Failed to refresh system names"
 msgstr "No se pudieron actualizar los nombres de los sistemas"
 
-#: templates/settings.html:4910
+#: templates/settings.html:4563
+msgid "No bulk scrape state found (all clear)"
+msgstr "No se encontró ningún estado de scrapeo masivo (todo limpio)"
+
+#: templates/settings.html:4626
+msgid "Bulk scrape state cleared successfully!"
+msgstr "¡Estado del scrapeo masivo borrado correctamente!"
+
+#: templates/settings.html:4650
+msgid "RA sync state and queue cleared!"
+msgstr "¡Estado y cola de sincronización de RA borrados!"
+
+#: templates/settings.html:4664
+msgid "RA sync queue cleared (server unreachable)"
+msgstr "Cola de sincronización de RA borrada (servidor inaccesible)"
+
+#: templates/settings.html:4683
+msgid "No items in queue, no active sync."
+msgstr "No hay elementos en la cola ni sincronización activa."
+
+#: templates/settings.html:4827
+msgid "Logging settings saved!"
+msgstr "¡Ajustes de registro guardados!"
+
+#: templates/settings.html:4829
+msgid "Failed to save"
+msgstr "No se pudo guardar"
+
+#: templates/_settings_tabs/system.html:382 templates/settings.html:4835
+msgid "Save Logging Settings"
+msgstr "Guardar ajustes de registro"
+
+#: templates/settings.html:4842
+msgid "Loading log files..."
+msgstr "Cargando archivos de registro..."
+
+#: templates/settings.html:4854
+msgid "Date"
+msgstr "Fecha"
+
+#: templates/settings.html:4887
+msgid ""
+"No log files found. Logs will appear here after scraping or ROM "
+"operations."
+msgstr ""
+"No se encontraron archivos de registro. Los registros aparecerán aquí "
+"después de scrapear o de operaciones con ROM."
+
+#: templates/settings.html:4890
+#, python-brace-format
+msgid "Error loading log files: {error}"
+msgstr "Error al cargar los archivos de registro: {error}"
+
+#: templates/settings.html:4907
 #, python-brace-format
 msgid "Log: {filename}"
 msgstr "Registro: {filename}"
 
-#: templates/settings.html:4911
+#: templates/settings.html:4908
 msgid "Log file is empty"
 msgstr "El archivo de registro está vacío"
 
-#: templates/settings.html:4914
+#: templates/settings.html:4911
 msgid "Failed to load log file"
 msgstr "No se pudo cargar el archivo de registro"
 
-#: templates/settings.html:4917
+#: templates/settings.html:4914
 #, python-brace-format
 msgid "Error loading log file: {error}"
 msgstr "Error al cargar el archivo de registro: {error}"
 
-#: templates/settings.html:4936
+#: templates/settings.html:4933
 msgid "Failed to delete log file"
 msgstr "No se pudo eliminar el archivo de registro"
 
-#: templates/settings.html:4939
+#: templates/settings.html:4936
 #, python-brace-format
 msgid "Error deleting log file: {error}"
 msgstr "Error al eliminar el archivo de registro: {error}"
 
-#: templates/settings.html:4945
+#: templates/settings.html:4942
 msgid "Clear Old Logs"
 msgstr "Borrar registros antiguos"
 
-#: templates/settings.html:4945
+#: templates/settings.html:4942
 msgid "This will delete all log files older than 5 days. Continue?"
 msgstr ""
 "Se eliminarán todos los archivos de registro con más de 5 días. "
 "¿Continuar?"
 
-#: templates/settings.html:4951
+#: templates/settings.html:4948
 #, python-brace-format
 msgid "Old log files removed: {count}"
 msgstr "Archivos de registro antiguos eliminados: {count}"
 
-#: templates/settings.html:4954
+#: templates/settings.html:4951
 msgid "Failed to clear old logs"
 msgstr "No se pudieron borrar los registros antiguos"
 
-#: templates/settings.html:4957
+#: templates/settings.html:4954
 #, python-brace-format
 msgid "Error clearing old logs: {error}"
 msgstr "Error al borrar los registros antiguos: {error}"
 
-#: templates/settings.html:5002
+#: templates/settings.html:4999
 msgid "Token extracted from the pasted page"
 msgstr "Token extraído de la página pegada"
 
-#: templates/settings.html:5004
+#: templates/settings.html:5001
 msgid "Token detected"
 msgstr "Token detectado"
 
-#: templates/settings.html:5006
+#: templates/settings.html:5003
 msgid "Could not detect a valid NPSSO token"
 msgstr "No se pudo detectar un token NPSSO válido"
 
-#: templates/settings.html:5018
+#: templates/settings.html:5015
 msgid "Now press Ctrl+V to paste."
 msgstr "Ahora pulsa Ctrl+V para pegar."
 
-#: templates/settings.html:5030
+#: templates/settings.html:5027
 msgid "Enter an NPSSO token first"
 msgstr "Introduce primero un token NPSSO"
 
-#: templates/settings.html:5035
+#: templates/settings.html:5032
 msgid "Testing..."
 msgstr "Probando..."
 
-#: templates/settings.html:5036 templates/settings.html:5125
+#: templates/settings.html:5033 templates/settings.html:5122
 msgid "Saving and connecting..."
 msgstr "Guardando y conectando..."
 
-#: templates/settings.html:5047 templates/settings.html:5134
+#: templates/settings.html:5044 templates/settings.html:5131
 #, python-format
 msgid "Connected as %(name)s"
 msgstr "Conectado como %(name)s"
 
-#: templates/settings.html:5054 templates/settings.html:5138
+#: templates/settings.html:5051 templates/settings.html:5135
 msgid "Connection failed"
 msgstr "Error de conexión"
 
-#: templates/settings.html:5057 templates/settings.html:5141
+#: templates/settings.html:5054 templates/settings.html:5138
 #, python-format
 msgid "Error: %(msg)s"
 msgstr "Error: %(msg)s"
 
-#: templates/settings.html:5076
+#: templates/settings.html:5073
 #, python-format
 msgid ""
 "Sony refused your saved NPSSO token on %(date)s. Get a new one with the "
@@ -12407,7 +12666,7 @@ msgstr ""
 "Sony rechazó tu token NPSSO guardado el %(date)s. Consigue uno nuevo con "
 "los pasos de abajo."
 
-#: templates/settings.html:5079
+#: templates/settings.html:5076
 msgid ""
 "Connected to PSN. RetroDB keeps the sign-in going by itself. You need a "
 "new token only if Sony refuses this one."
@@ -12415,45 +12674,45 @@ msgstr ""
 "Conectado a PSN. RetroDB mantiene la sesión iniciada por sí sola. Solo "
 "necesitas un token nuevo si Sony rechaza este."
 
-#: templates/settings.html:5108
+#: templates/settings.html:5105
 #, python-format
 msgid "Key saved. Connected as %(name)s."
 msgstr "Clave guardada. Conectado como %(name)s."
 
-#: templates/settings.html:5109
+#: templates/settings.html:5106
 msgid "No key saved."
 msgstr "No hay ninguna clave guardada."
 
-#: templates/settings.html:5147
+#: templates/settings.html:5144
 msgid "Remove Xbox key"
 msgstr "Quitar la clave de Xbox"
 
-#: templates/settings.html:5147
+#: templates/settings.html:5144
 msgid "Remove your OpenXBL key? Your imported games and achievements stay."
 msgstr "¿Quitar tu clave de OpenXBL? Tus juegos y logros importados se conservan."
 
-#: templates/settings.html:5152
+#: templates/settings.html:5149
 msgid "Could not remove the Xbox key."
-msgstr ""
+msgstr "No se pudo quitar la clave de Xbox."
 
-#: templates/settings.html:5241 templates/settings.html:5288
+#: templates/settings.html:5238 templates/settings.html:5285
 msgid "Avatar updated!"
 msgstr "¡Avatar actualizado!"
 
-#: templates/settings.html:5246
+#: templates/settings.html:5243
 #, python-brace-format
 msgid "Upload failed: {error}"
 msgstr "Error al subir: {error}"
 
-#: templates/settings.html:5263
+#: templates/settings.html:5260
 msgid "Avatar removed"
 msgstr "Avatar quitado"
 
-#: templates/settings.html:5265 templates/settings.html:5268
+#: templates/settings.html:5262 templates/settings.html:5265
 msgid "Failed to remove avatar"
 msgstr "No se pudo quitar el avatar"
 
-#: templates/settings.html:5290 templates/settings.html:5293
+#: templates/settings.html:5287 templates/settings.html:5290
 msgid "Failed to save avatar"
 msgstr "No se pudo guardar el avatar"
 
@@ -13075,11 +13334,6 @@ msgstr "Sin subcarpetas"
 msgid "1 file"
 msgstr "1 archivo"
 
-#: templates/setup.html:404
-#, python-brace-format
-msgid "{count} files"
-msgstr "{count} archivos"
-
 #: templates/setup.html:405
 msgid "1 folder"
 msgstr "1 carpeta"
@@ -13352,7 +13606,7 @@ msgstr ""
 
 #: templates/tags.html:396 templates/tags.html:399
 msgid "Could not load your tags."
-msgstr ""
+msgstr "No se pudieron cargar tus etiquetas."
 
 #: templates/tags.html:440
 msgid "Edit tag"
@@ -13554,7 +13808,7 @@ msgstr "Sin coincidencia"
 
 #: templates/wishlist.html:543 templates/wishlist.html:546
 msgid "Could not load your wishlist."
-msgstr ""
+msgstr "No se pudo cargar tu lista de deseos."
 
 #: templates/wishlist.html:593
 msgid "No items match this filter."
@@ -14493,7 +14747,7 @@ msgstr "Gestión de usuarios"
 
 #: templates/_settings_tabs/account.html:314
 msgid "Manage users who can access RetroDB."
-msgstr ""
+msgstr "Gestiona los usuarios que pueden acceder a RetroDB."
 
 #: templates/_settings_tabs/account.html:319
 #: templates/_settings_tabs/account.html:393
@@ -14854,6 +15108,8 @@ msgid ""
 "Set the RPCS3 Trophy Path in <a href=\"#esde\">ES-DE Integration</a> on "
 "the Scraping tab"
 msgstr ""
+"Configura la ruta de trofeos de RPCS3 en <a href=\"#esde\">Integración "
+"con ES-DE</a>, en la pestaña Scrapeo"
 
 #: templates/_settings_tabs/data.html:64
 msgid "Scan your RPCS3 trophy folder for unlocked trophies"
@@ -14913,6 +15169,10 @@ msgid ""
 "nothing changes until you press Apply. Later scrapes then use that "
 "spelling."
 msgstr ""
+"Franquicia, Distribuidora y Desarrolladora muestran cada nombre escrito "
+"con distintas mayúsculas, como \"Doom\" y \"DOOM\". Elige una grafía para"
+" cada uno; nada cambia hasta que pulses Aplicar. Los scrapeos posteriores"
+" usarán esa grafía."
 
 #: templates/_settings_tabs/data.html:170
 msgid "Show only values needing changes"
@@ -14948,11 +15208,11 @@ msgstr ""
 
 #: templates/_settings_tabs/data.html:215
 msgid "Every name in this field has one spelling."
-msgstr ""
+msgstr "Todos los nombres de este campo tienen una sola grafía."
 
 #: templates/_settings_tabs/data.html:220
 msgid "Names that may be one company"
-msgstr ""
+msgstr "Nombres que pueden ser una misma empresa"
 
 #: templates/_settings_tabs/data.html:222
 msgid ""
@@ -14962,10 +15222,16 @@ msgid ""
 "company, and press Merge. The merge changes Publisher and Developer on "
 "every game, and later scrapes use the kept name."
 msgstr ""
+"Nombres como \"Eidos\" y \"Eidos Interactive\" pueden ser una misma "
+"empresa, o dos: \"Atari Games\" y \"Atari, Inc.\" son empresas distintas."
+" En cada fila, elige el nombre que conservar, marca los nombres que son "
+"la misma empresa y pulsa Fusionar. La fusión cambia Distribuidora y "
+"Desarrolladora en todos los juegos, y los scrapeos posteriores usarán el "
+"nombre conservado."
 
 #: templates/_settings_tabs/data.html:225
 msgid "No names look like one company."
-msgstr ""
+msgstr "Ningún nombre parece ser de una misma empresa."
 
 #: templates/_settings_tabs/library.html:4
 msgid "Library settings"
@@ -15210,10 +15476,45 @@ msgstr ""
 "más un poco por leer los resultados. Desactívala antes de un scrapeo "
 "masivo grande para mantener bajo el coste."
 
+#: templates/_settings_tabs/system.html:2
+msgid "System settings"
+msgstr "Ajustes del sistema"
+
+#: templates/_settings_tabs/system.html:6
+msgid "Maintenance"
+msgstr "Mantenimiento"
+
 #: templates/_settings_tabs/system.html:7
-#: templates/_settings_tabs/system.html:152
+#: templates/_settings_tabs/system.html:147
 msgid "Updates"
 msgstr "Actualizaciones"
+
+#: templates/_settings_tabs/system.html:8
+msgid "Server"
+msgstr "Servidor"
+
+#: templates/_settings_tabs/system.html:10
+msgid "Logging"
+msgstr "Registro"
+
+#: templates/_settings_tabs/system.html:11
+#: templates/_settings_tabs/system.html:412
+msgid "Troubleshooting"
+msgstr "Solución de problemas"
+
+#: templates/_settings_tabs/system.html:12
+msgid "Support"
+msgstr "Apoyo"
+
+#: templates/_settings_tabs/system.html:19
+msgid "Database Maintenance"
+msgstr "Mantenimiento de la base de datos"
+
+#: templates/_settings_tabs/system.html:29
+msgid "Remove database entries for ROMs that have been deleted from disk"
+msgstr ""
+"Elimina las entradas de la base de datos de ROM que se han borrado del "
+"disco"
 
 #: templates/_settings_tabs/system.html:33
 msgid "Finding and clearing RetroAchievements games is on the"
@@ -15223,12 +15524,95 @@ msgstr "Buscar y borrar los juegos de RetroAchievements está en la"
 msgid "Achievements page"
 msgstr "página de Logros"
 
-#: templates/_settings_tabs/system.html:155
+#: templates/_settings_tabs/system.html:41
+msgid "Clear Data"
+msgstr "Borrar datos"
+
+#: templates/_settings_tabs/system.html:51
+msgid "Remove all games imported via CLZ Games Import"
+msgstr "Elimina todos los juegos importados mediante la importación de CLZ Games"
+
+#: templates/_settings_tabs/system.html:58
+msgid ""
+"Clear scraped metadata from games to start fresh. Useful before a full "
+"re-scrape."
+msgstr ""
+"Borra los metadatos scrapeados de los juegos para empezar de cero. Útil "
+"antes de un re-scrapeo completo."
+
+#: templates/_settings_tabs/system.html:59
+msgid "Note:"
+msgstr "Nota:"
+
+#: templates/_settings_tabs/system.html:59
+msgid ""
+"This does NOT delete your game entries, only the scraped metadata "
+"(description, genre, publisher, ratings, images, etc.)"
+msgstr ""
+"Esto NO elimina tus juegos, solo los metadatos scrapeados (descripción, "
+"género, distribuidora, clasificaciones, imágenes, etc.)"
+
+#: templates/_settings_tabs/system.html:71
+#: templates/_settings_tabs/system.html:74
+msgid "Also delete downloaded images"
+msgstr "Eliminar también las imágenes descargadas"
+
+#: templates/_settings_tabs/system.html:80
+msgid "Preview"
+msgstr "Vista previa"
+
+#: templates/_settings_tabs/system.html:92
+msgid "Orphaned Media Cleanup"
+msgstr "Limpieza de archivos multimedia huérfanos"
+
+#: templates/_settings_tabs/system.html:95
+msgid ""
+"Find and delete media files (boxart, screenshots, videos, etc.) for ROMs "
+"that no longer exist in the database. This cleans up leftover files from "
+"deleted games."
+msgstr ""
+"Busca y elimina archivos multimedia (carátulas, capturas, vídeos, etc.) "
+"de ROM que ya no existen en la base de datos. Así se limpian los archivos"
+" sobrantes de juegos eliminados."
+
+#: templates/_settings_tabs/system.html:111
+msgid "Missing Media References"
+msgstr "Referencias a archivos multimedia ausentes"
+
+#: templates/_settings_tabs/system.html:114
+msgid ""
+"The reverse of orphaned-media cleanup: find games whose boxart, "
+"screenshots, video or manual point to files that are no longer on disk, "
+"and clear those stale references so scrapers can re-download them. If a "
+"whole media folder looks missing or empty (for example an unmounted "
+"drive), its references are kept and flagged rather than wiped."
+msgstr ""
+"Lo contrario de la limpieza de archivos huérfanos: busca juegos cuya "
+"carátula, capturas, vídeo o manual apuntan a archivos que ya no están en "
+"el disco, y borra esas referencias obsoletas para que los scrapers puedan"
+" volver a descargarlos. Si una carpeta multimedia entera parece ausente o"
+" vacía (por ejemplo, una unidad sin montar), sus referencias se conservan"
+" y se señalan en lugar de borrarse."
+
+#: templates/_settings_tabs/system.html:130
+msgid "Database Optimization"
+msgstr "Optimización de la base de datos"
+
+#: templates/_settings_tabs/system.html:133
+msgid ""
+"Optimize the database for better performance. Runs VACUUM to reclaim "
+"unused space and ANALYZE to update query planner statistics."
+msgstr ""
+"Optimiza la base de datos para mejorar el rendimiento. Ejecuta VACUUM "
+"para recuperar el espacio sin usar y ANALYZE para actualizar las "
+"estadísticas del planificador de consultas."
+
+#: templates/_settings_tabs/system.html:150
 #, python-format
 msgid "This is RetroDB %(version)s."
 msgstr "Esto es RetroDB %(version)s."
 
-#: templates/_settings_tabs/system.html:159
+#: templates/_settings_tabs/system.html:154
 msgid ""
 "Version 4.0 is the last web version of RetroDB. New versions will be a "
 "desktop app for Windows, Linux and macOS, and an Android app. They will "
@@ -15241,35 +15625,43 @@ msgstr ""
 " versión 4.0 solo recibirá correcciones de seguridad y de errores que "
 "causen pérdida de datos."
 
-#: templates/_settings_tabs/system.html:162
+#: templates/_settings_tabs/system.html:157
 msgid "Download the desktop app"
 msgstr "Descargar la aplicación de escritorio"
 
-#: templates/_settings_tabs/system.html:169
+#: templates/_settings_tabs/system.html:164
 msgid "Release page"
 msgstr "Página de la versión"
 
-#: templates/_settings_tabs/system.html:176
+#: templates/_settings_tabs/system.html:171
 msgid "Check for updates"
 msgstr "Buscar actualizaciones"
 
-#: templates/_settings_tabs/system.html:177
+#: templates/_settings_tabs/system.html:172
 msgid "Download update"
 msgstr "Descargar actualización"
 
-#: templates/_settings_tabs/system.html:178
+#: templates/_settings_tabs/system.html:173
 msgid "Install and restart"
 msgstr "Instalar y reiniciar"
 
-#: templates/_settings_tabs/system.html:182
+#: templates/_settings_tabs/system.html:177
 msgid "Check for updates once a day"
 msgstr "Buscar actualizaciones una vez al día"
 
-#: templates/_settings_tabs/system.html:199
+#: templates/_settings_tabs/system.html:185
+msgid "Server Controls"
+msgstr "Controles del servidor"
+
+#: templates/_settings_tabs/system.html:190
+msgid "Restart Server"
+msgstr "Reiniciar servidor"
+
+#: templates/_settings_tabs/system.html:194
 msgid "Shut Down Server"
 msgstr "Apagar servidor"
 
-#: templates/_settings_tabs/system.html:202
+#: templates/_settings_tabs/system.html:197
 msgid ""
 "Restart the Flask server (useful after configuration changes), or shut it"
 " down completely"
@@ -15277,11 +15669,197 @@ msgstr ""
 "Reinicia el servidor Flask (útil tras cambios de configuración) o apágalo"
 " por completo"
 
-#: templates/_settings_tabs/system.html:461
+#: templates/_settings_tabs/system.html:206
+msgid "Logging Settings"
+msgstr "Ajustes de registro"
+
+#: templates/_settings_tabs/system.html:210
+#, python-format
+msgid ""
+"Configure which log levels are written to log files. Logs are saved to "
+"the %(folder)s folder with date-based filenames (e.g., %(example)s)."
+msgstr ""
+"Configura qué niveles de registro se escriben en los archivos de "
+"registro. Los registros se guardan en la carpeta %(folder)s con nombres "
+"de archivo basados en la fecha (p. ej., %(example)s)."
+
+#: templates/_settings_tabs/system.html:216
+#: templates/_settings_tabs/system.html:224
+#: templates/_settings_tabs/system.html:231
+#: templates/_settings_tabs/system.html:238
+msgid "Scraping Logs"
+msgstr "Registros de scrapeo"
+
+#: templates/_settings_tabs/system.html:219
+msgid ""
+"Logs from metadata scraping operations (IGDB, TGDB, ScreenScraper, RAWG, "
+"ES-DE)"
+msgstr ""
+"Registros de las operaciones de scrapeo de metadatos (IGDB, TGDB, "
+"ScreenScraper, RAWG, ES-DE)"
+
+#: templates/_settings_tabs/system.html:224
+#: templates/_settings_tabs/system.html:227
+#: templates/_settings_tabs/system.html:257
+#: templates/_settings_tabs/system.html:260
+#: templates/_settings_tabs/system.html:290
+#: templates/_settings_tabs/system.html:293
+#: templates/_settings_tabs/system.html:323
+#: templates/_settings_tabs/system.html:326
+#: templates/_settings_tabs/system.html:356
+#: templates/_settings_tabs/system.html:359
+msgid "Informational"
+msgstr "Informativos"
+
+#: templates/_settings_tabs/system.html:231
+#: templates/_settings_tabs/system.html:234
+#: templates/_settings_tabs/system.html:264
+#: templates/_settings_tabs/system.html:267
+#: templates/_settings_tabs/system.html:297
+#: templates/_settings_tabs/system.html:300
+#: templates/_settings_tabs/system.html:330
+#: templates/_settings_tabs/system.html:333
+#: templates/_settings_tabs/system.html:363
+#: templates/_settings_tabs/system.html:366
+msgid "Warnings"
+msgstr "Advertencias"
+
+#: templates/_settings_tabs/system.html:238
+#: templates/_settings_tabs/system.html:241
+#: templates/_settings_tabs/system.html:271
+#: templates/_settings_tabs/system.html:274
+#: templates/_settings_tabs/system.html:304
+#: templates/_settings_tabs/system.html:307
+#: templates/_settings_tabs/system.html:337
+#: templates/_settings_tabs/system.html:340
+#: templates/_settings_tabs/system.html:370
+#: templates/_settings_tabs/system.html:373
+msgid "Errors"
+msgstr "Errores"
+
+#: templates/_settings_tabs/system.html:249
+#: templates/_settings_tabs/system.html:257
+#: templates/_settings_tabs/system.html:264
+#: templates/_settings_tabs/system.html:271
+msgid "ROM Tools Logs"
+msgstr "Registros de herramientas de ROM"
+
+#: templates/_settings_tabs/system.html:252
+msgid ""
+"Logs from ROM scanning, CHD conversion, archive extraction, and M3U "
+"creation"
+msgstr ""
+"Registros del escaneo de ROM, la conversión a CHD, la extracción de "
+"archivos comprimidos y la creación de M3U"
+
+#: templates/_settings_tabs/system.html:282
+#: templates/_settings_tabs/system.html:290
+#: templates/_settings_tabs/system.html:297
+#: templates/_settings_tabs/system.html:304
+msgid "ROM Reports Logs"
+msgstr "Registros de informes de ROM"
+
+#: templates/_settings_tabs/system.html:285
+msgid ""
+"Logs from ROM naming checks, mismatch detection, and batch rename "
+"operations"
+msgstr ""
+"Registros de las comprobaciones de nombres de ROM, la detección de "
+"discrepancias y los renombrados por lotes"
+
+#: templates/_settings_tabs/system.html:315
+#: templates/_settings_tabs/system.html:323
+#: templates/_settings_tabs/system.html:330
+#: templates/_settings_tabs/system.html:337
+msgid "Image Resize Logs"
+msgstr "Registros de redimensionado de imágenes"
+
+#: templates/_settings_tabs/system.html:318
+msgid "Logs from image standardization (upscale/downscale) operations"
+msgstr ""
+"Registros de las operaciones de estandarización de imágenes "
+"(ampliación/reducción)"
+
+#: templates/_settings_tabs/system.html:348
+#: templates/_settings_tabs/system.html:356
+#: templates/_settings_tabs/system.html:363
+#: templates/_settings_tabs/system.html:370
+msgid "System Logs"
+msgstr "Registros del sistema"
+
+#: templates/_settings_tabs/system.html:351
+msgid ""
+"General system operations including achievements sync, page loads, and "
+"API calls"
+msgstr ""
+"Operaciones generales del sistema, como la sincronización de logros, las "
+"cargas de página y las llamadas a API"
+
+#: templates/_settings_tabs/system.html:390
+msgid "Log Files"
+msgstr "Archivos de registro"
+
+#: templates/_settings_tabs/system.html:395
+msgid "Refresh Log List"
+msgstr "Actualizar lista de registros"
+
+#: templates/_settings_tabs/system.html:399
+msgid "Clear Logs Older Than 5 Days"
+msgstr "Borrar registros de más de 5 días"
+
+#: templates/_settings_tabs/system.html:403
+msgid "Click \"Refresh Log List\" to see available log files."
+msgstr ""
+"Haz clic en \"Actualizar lista de registros\" para ver los archivos de "
+"registro disponibles."
+
+#: templates/_settings_tabs/system.html:416
+msgid "Bulk Scrape Issues"
+msgstr "Problemas con el scrapeo masivo"
+
+#: templates/_settings_tabs/system.html:419
+msgid ""
+"If a bulk scrape gets stuck or won't clear from the toast notification, "
+"use this button to force clear all bulk scrape state from your browser's "
+"local storage."
+msgstr ""
+"Si un scrapeo masivo se queda atascado o no desaparece de la notificación"
+" emergente, usa este botón para forzar el borrado de todo el estado del "
+"scrapeo masivo del almacenamiento local de tu navegador."
+
+#: templates/_settings_tabs/system.html:424
+msgid "Clear Stuck Bulk Scrape"
+msgstr "Borrar scrapeo masivo atascado"
+
+#: templates/_settings_tabs/system.html:429
+msgid "Current Bulk Scrape State:"
+msgstr "Estado actual del scrapeo masivo:"
+
+#: templates/_settings_tabs/system.html:434
+msgid "Achievement Sync Issues"
+msgstr "Problemas con la sincronización de logros"
+
+#: templates/_settings_tabs/system.html:437
+msgid ""
+"If achievement syncs get stuck or the queue won't process, use this "
+"button to clear the sync queue and reset the sync state."
+msgstr ""
+"Si las sincronizaciones de logros se atascan o la cola no avanza, usa "
+"este botón para borrar la cola de sincronización y restablecer su estado."
+
+#: templates/_settings_tabs/system.html:442
+msgid "Clear Stuck RA Sync"
+msgstr "Borrar sincronización de RA atascada"
+
+#: templates/_settings_tabs/system.html:447
+msgid "Current RA Sync Queue:"
+msgstr "Cola actual de sincronización de RA:"
+
+#: templates/_settings_tabs/system.html:456
 msgid "Support Development"
 msgstr "Apoyar el desarrollo"
 
-#: templates/_settings_tabs/system.html:465
+#: templates/_settings_tabs/system.html:460
 msgid ""
 "RetroDB is free and open source. If it saves you time, consider "
 "sponsoring — every bit helps keep solo development sustainable."
@@ -15290,11 +15868,11 @@ msgstr ""
 "patrocinarlo: cada aporte ayuda a que el desarrollo en solitario sea "
 "sostenible."
 
-#: templates/_settings_tabs/system.html:469
+#: templates/_settings_tabs/system.html:464
 msgid "Sponsor on GitHub"
 msgstr "Patrocinar en GitHub"
 
-#: templates/_settings_tabs/system.html:473
+#: templates/_settings_tabs/system.html:468
 msgid "Support on Patreon"
 msgstr "Apoyar en Patreon"
 

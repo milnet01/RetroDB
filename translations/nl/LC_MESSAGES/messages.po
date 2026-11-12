@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-11 22:13+0200\n"
+"POT-Creation-Date: 2026-11-12 14:22+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: nl\n"
@@ -204,8 +204,8 @@ msgstr "Systeem niet gevonden of heeft geen games met prestaties"
 #: routes/achievements.py:177 routes/achievements.py:468
 #: routes/bonus_discs.py:276 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
-#: routes/emulators.py:306 routes/emulators.py:320 routes/games.py:397
-#: routes/games.py:931 routes/games.py:1050 routes/games.py:1131
+#: routes/emulators.py:306 routes/emulators.py:320 routes/games.py:398
+#: routes/games.py:944 routes/games.py:1063 routes/games.py:1144
 #: routes/games_ai.py:41 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
 #: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:706
@@ -581,8 +581,8 @@ msgstr "Bonusschijf en hoofdgame moeten in hetzelfde systeem staan"
 msgid "A bonus disc links to a main game, one level only"
 msgstr "Een bonusdisc is gekoppeld aan één hoofdgame, slechts één niveau diep"
 
-#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1401
-#: routes/games.py:1431 routes/platform_import.py:361
+#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1414
+#: routes/games.py:1444 routes/platform_import.py:361
 #: routes/platform_import.py:666 routes/platform_import.py:1050
 #: routes/scrape_logs.py:89 routes/scrape_logs.py:174 routes/scrape_logs.py:187
 #: routes/scrape_logs.py:225 routes/scraper.py:204 routes/scraper.py:535
@@ -812,22 +812,22 @@ msgstr ""
 msgid "Emulator not found"
 msgstr "Emulator niet gevonden"
 
-#: routes/games.py:270 routes/games.py:304
+#: routes/games.py:271 routes/games.py:305
 msgid "No IDs provided"
 msgstr "Geen ID's opgegeven"
 
-#: routes/games.py:312
+#: routes/games.py:313
 msgid "Provide 1-50 valid IDs"
 msgstr "Geef 1-50 geldige ID's op"
 
-#: routes/games.py:581
+#: routes/games.py:589
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
 "Video niet opgeslagen: het moet een MP4-, WebM- of OGG-bestand van "
 "maximaal %(mb)s MB zijn."
 
-#: routes/games.py:591
+#: routes/games.py:602
 #, python-format
 msgid ""
 "Screenshots not added because they match ones the game already has: "
@@ -836,19 +836,19 @@ msgstr ""
 "Screenshots niet toegevoegd omdat ze overeenkomen met screenshots die de "
 "game al heeft: %(count)s"
 
-#: routes/games.py:736
+#: routes/games.py:749
 msgid "Game not found after update"
 msgstr "Game niet gevonden na update"
 
-#: routes/games.py:1054
+#: routes/games.py:1067
 msgid "No game selected."
 msgstr "Geen game geselecteerd."
 
-#: routes/games.py:1078
+#: routes/games.py:1091
 msgid "This metadata apply is no longer running."
 msgstr "Deze metadatatoepassing is niet meer actief."
 
-#: routes/games.py:1087
+#: routes/games.py:1100
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -857,51 +857,51 @@ msgstr ""
 "Metadata toegepast vanuit %(sources)s! (%(filled)d velden ingevuld, "
 "%(missing)d ontbreken nog)"
 
-#: routes/games.py:1093
+#: routes/games.py:1106
 msgid "Failed to apply metadata."
 msgstr "Toepassen van metadata mislukt."
 
-#: routes/games.py:1167 routes/games.py:1216
+#: routes/games.py:1180 routes/games.py:1229
 msgid "No fields to update"
 msgstr "Geen velden om bij te werken"
 
-#: routes/games.py:1209 routes/platform_import.py:267
+#: routes/games.py:1222 routes/platform_import.py:267
 #: routes/platform_import.py:572 routes/platform_import.py:936
 #: routes/trophies.py:1928 templates/game_imports.html:579
 #: templates/game_imports.html:852
 msgid "No games selected"
 msgstr "Geen games geselecteerd"
 
-#: routes/games.py:1213
+#: routes/games.py:1226
 msgid "Invalid game selection"
 msgstr "Ongeldige gameselectie"
 
-#: routes/games.py:1225
+#: routes/games.py:1238
 msgid "Invalid completion status"
 msgstr "Ongeldige voltooiingsstatus"
 
-#: routes/games.py:1263 services/api_helpers.py:114
+#: routes/games.py:1276 services/api_helpers.py:114
 #, python-format
 msgid "%(field)s must be text"
 msgstr "%(field)s moet tekst zijn"
 
-#: routes/games.py:1275
+#: routes/games.py:1288
 msgid "No valid fields to update"
 msgstr "Geen geldige velden om bij te werken"
 
-#: routes/games.py:1394
+#: routes/games.py:1407
 msgid "Invalid status"
 msgstr "Ongeldige status"
 
-#: routes/games.py:1419
+#: routes/games.py:1432
 msgid "Not authenticated"
 msgstr "Niet geauthenticeerd"
 
-#: routes/games.py:1450
+#: routes/games.py:1463
 msgid "Filter type and value required"
 msgstr "Filtertype en waarde vereist"
 
-#: routes/games.py:1463
+#: routes/games.py:1476
 msgid "Invalid filter type"
 msgstr "Ongeldig filtertype"
 
@@ -1215,7 +1215,7 @@ msgstr ""
 msgid "Could not create Windows system entry"
 msgstr "Kon Windows-systeeminvoer niet aanmaken"
 
-#: routes/platform_import.py:418 templates/settings.html:5121
+#: routes/platform_import.py:418 templates/settings.html:5118
 msgid "Paste your OpenXBL key first."
 msgstr "Plak eerst je OpenXBL-sleutel."
 
@@ -1268,8 +1268,9 @@ msgstr ""
 "de wachtrij: %(num)s."
 
 #: routes/ra_sync.py:75 services/js_i18n_strings.py:602
-#: templates/all_games.html:42 templates/reports.html:329
-#: templates/reports.html:410 templates/reports.html:485
+#: templates/_settings_tabs/system.html:64 templates/all_games.html:42
+#: templates/reports.html:329 templates/reports.html:410
+#: templates/reports.html:485
 msgid "All Systems"
 msgstr "Alle systemen"
 
@@ -1328,6 +1329,8 @@ msgstr "Geen ROM-pad ingesteld"
 #: routes/reports.py:718
 msgid "This file was renamed after the last scan. Scan again, then rename."
 msgstr ""
+"Dit bestand is na de laatste scan hernoemd. Scan opnieuw en hernoem "
+"daarna."
 
 #: routes/reports.py:733 routes/reports.py:858
 msgid "ROM file not found"
@@ -1515,19 +1518,19 @@ msgstr "Geen mappings opgegeven"
 
 #: routes/settings.py:700 routes/settings.py:713 routes/settings.py:725
 msgid "Invalid field"
-msgstr ""
+msgstr "Ongeldig veld"
 
 #: routes/settings.py:715
 msgid "No spellings chosen"
-msgstr ""
+msgstr "Geen spellingen gekozen"
 
 #: routes/settings.py:738
 msgid "No name to keep"
-msgstr ""
+msgstr "Geen naam om te behouden"
 
 #: routes/settings.py:740
 msgid "No names ticked to merge"
-msgstr ""
+msgstr "Geen namen aangevinkt om samen te voegen"
 
 #: routes/steam_achievements.py:112
 msgid "Steam credentials not configured"
@@ -2230,7 +2233,7 @@ msgstr "De AI heeft geen ontbrekende velden gevonden om aan te vullen"
 #: services/js_i18n_strings.py:598 templates/_settings_tabs/account.html:331
 #: templates/archive_scanner.html:726 templates/list_detail.html:47
 #: templates/multi_disc_organizer.html:217 templates/reports.html:372
-#: templates/reports.html:455
+#: templates/reports.html:455 templates/settings.html:4856
 msgid "Actions"
 msgstr "Acties"
 
@@ -2328,7 +2331,7 @@ msgstr ""
 msgid "Are you sure you want to cancel?"
 msgstr "Weet je zeker dat je wilt annuleren?"
 
-#: services/js_i18n_strings.py:619 templates/settings.html:4926
+#: services/js_i18n_strings.py:619 templates/settings.html:4923
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "Weet je zeker dat je \"{filename}\" wilt verwijderen?"
@@ -2457,7 +2460,7 @@ msgstr "Geannuleerd door gebruiker"
 #: services/js_i18n_strings.py:645
 #, python-brace-format
 msgid "Change these names to \"{name}\" on every game?"
-msgstr ""
+msgstr "Deze namen bij elke game wijzigen in \"{name}\"?"
 
 #: services/js_i18n_strings.py:646
 msgid "Cheat list changed."
@@ -2471,11 +2474,11 @@ msgstr "Cheats opgeslagen."
 msgid "Checking RetroAchievements…"
 msgstr "Bezig met controleren van RetroAchievements…"
 
-#: services/js_i18n_strings.py:649
+#: services/js_i18n_strings.py:649 templates/_settings_tabs/system.html:26
 msgid "Clean Missing ROMs"
 msgstr "Ontbrekende ROM's opschonen"
 
-#: services/js_i18n_strings.py:650
+#: services/js_i18n_strings.py:650 templates/_settings_tabs/system.html:48
 msgid "Clear CLZ Imports"
 msgstr "CLZ-imports wissen"
 
@@ -2505,7 +2508,8 @@ msgstr "RA-gegevens gewist voor {count} games in {system}"
 msgid "Cleared RA data for {n} games"
 msgstr "RA-gegevens gewist voor {n} games"
 
-#: services/js_i18n_strings.py:657
+#: services/js_i18n_strings.py:657 templates/settings.html:3806
+#: templates/settings.html:4070
 msgid "Clearing..."
 msgstr "Bezig met wissen..."
 
@@ -2623,7 +2627,7 @@ msgstr "Kon metadata niet toepassen."
 
 #: services/js_i18n_strings.py:679
 msgid "Could not cancel it"
-msgstr ""
+msgstr "Kon dit niet annuleren"
 
 #: services/js_i18n_strings.py:680
 msgid "Could not change the cheat list."
@@ -2639,7 +2643,7 @@ msgstr "Kon de games niet tellen."
 
 #: services/js_i18n_strings.py:683
 msgid "Could not download the update."
-msgstr ""
+msgstr "Kon de update niet downloaden."
 
 #: services/js_i18n_strings.py:684
 #, python-brace-format
@@ -2660,7 +2664,7 @@ msgstr "Kon suggesties niet laden."
 
 #: services/js_i18n_strings.py:687
 msgid "Could not load the log files"
-msgstr ""
+msgstr "Kon de logbestanden niet laden"
 
 #: services/js_i18n_strings.py:688
 msgid "Could not open this manual. Use \"Open PDF in a new tab\" instead."
@@ -2670,7 +2674,7 @@ msgstr ""
 
 #: services/js_i18n_strings.py:689
 msgid "Could not pause or resume it"
-msgstr ""
+msgstr "Kon dit niet pauzeren of hervatten"
 
 #: services/js_i18n_strings.py:690
 msgid "Could not read the run status."
@@ -2698,7 +2702,7 @@ msgstr "Kon de cheats niet opslaan."
 
 #: services/js_i18n_strings.py:696
 msgid "Could not save the theme; it will reset on the next page."
-msgstr ""
+msgstr "Kon het thema niet opslaan; het wordt op de volgende pagina teruggezet."
 
 #: services/js_i18n_strings.py:697
 msgid "Could not show this page of the manual."
@@ -2710,7 +2714,7 @@ msgstr "Kon de ronde niet starten."
 
 #: services/js_i18n_strings.py:699
 msgid "Could not stop the game"
-msgstr ""
+msgstr "Kon de game niet stoppen"
 
 #: services/js_i18n_strings.py:700
 msgid "Could not stop the run."
@@ -2742,7 +2746,7 @@ msgstr "Huidige instelling"
 msgid "Default emulator for {system}"
 msgstr "Standaardemulator voor {system}"
 
-#: services/js_i18n_strings.py:707 templates/settings.html:4926
+#: services/js_i18n_strings.py:707 templates/settings.html:4923
 msgid "Delete Log File"
 msgstr "Logbestand verwijderen"
 
@@ -2771,6 +2775,7 @@ msgid "Done."
 msgstr "Klaar."
 
 #: services/js_i18n_strings.py:714 templates/logs.html:740
+#: templates/settings.html:4874
 msgid "Download"
 msgstr "Downloaden"
 
@@ -2873,7 +2878,7 @@ msgstr "Emulator"
 #: services/js_i18n_strings.py:737
 #, python-brace-format
 msgid "Enlarge {name}"
-msgstr ""
+msgstr "{name} vergroten"
 
 #: services/js_i18n_strings.py:738
 msgid "Enter one folder path."
@@ -2905,15 +2910,15 @@ msgstr "Voer één mappad in."
 #: templates/settings.html:3555 templates/settings.html:3623
 #: templates/settings.html:3627 templates/settings.html:3658
 #: templates/settings.html:3662 templates/settings.html:3688
-#: templates/settings.html:3692 templates/settings.html:4186
-#: templates/settings.html:4190 templates/settings.html:4208
-#: templates/settings.html:4239 templates/settings.html:4299
-#: templates/settings.html:4303 templates/settings.html:4433
-#: templates/settings.html:4437 templates/settings.html:4463
-#: templates/settings.html:4467 templates/settings.html:4914
-#: templates/settings.html:4917 templates/settings.html:4936
-#: templates/settings.html:4939 templates/settings.html:4954
-#: templates/settings.html:4957
+#: templates/settings.html:3692 templates/settings.html:4183
+#: templates/settings.html:4187 templates/settings.html:4205
+#: templates/settings.html:4236 templates/settings.html:4296
+#: templates/settings.html:4300 templates/settings.html:4430
+#: templates/settings.html:4434 templates/settings.html:4460
+#: templates/settings.html:4464 templates/settings.html:4911
+#: templates/settings.html:4914 templates/settings.html:4933
+#: templates/settings.html:4936 templates/settings.html:4951
+#: templates/settings.html:4954
 msgid "Error"
 msgstr "Fout"
 
@@ -3374,6 +3379,8 @@ msgstr "Zoeken naar versies…"
 #: services/js_i18n_strings.py:843
 msgid "Lost contact with RetroDB. Reload the page to see the generation progress."
 msgstr ""
+"Contact met RetroDB verloren. Laad de pagina opnieuw om de voortgang van "
+"het genereren te zien."
 
 #: services/js_i18n_strings.py:844 templates/achievement_game.html:168
 #: templates/achievement_game.html:197 templates/achievement_game.html:207
@@ -3428,11 +3435,11 @@ msgstr ""
 
 #: services/js_i18n_strings.py:850
 msgid "Merge"
-msgstr ""
+msgstr "Samenvoegen"
 
 #: services/js_i18n_strings.py:851
 msgid "Missing box art"
-msgstr ""
+msgstr "Ontbrekende boxart"
 
 #: services/js_i18n_strings.py:852
 #, python-brace-format
@@ -3459,12 +3466,12 @@ msgstr "NIET"
 
 #: services/js_i18n_strings.py:857
 msgid "Name to keep"
-msgstr ""
+msgstr "Naam om te behouden"
 
 #: services/js_i18n_strings.py:858
 #, python-brace-format
 msgid "Names merged: {games} games updated"
-msgstr ""
+msgstr "Namen samengevoegd: {games} games bijgewerkt"
 
 #: services/js_i18n_strings.py:859
 #, python-brace-format
@@ -3476,7 +3483,10 @@ msgid "Navigation"
 msgstr "Navigatie"
 
 #: services/js_i18n_strings.py:861 templates/psn_trophy_detail.html:944
-#: templates/psn_trophy_detail.html:964
+#: templates/psn_trophy_detail.html:964 templates/settings.html:3782
+#: templates/settings.html:3840 templates/settings.html:3916
+#: templates/settings.html:3973 templates/settings.html:4049
+#: templates/settings.html:4100 templates/settings.html:4144
 msgid "Network error"
 msgstr "Netwerkfout"
 
@@ -3534,7 +3544,7 @@ msgstr "Geen prestaties gevonden"
 
 #: services/js_i18n_strings.py:874
 msgid "No answer from RetroDB"
-msgstr ""
+msgstr "Geen antwoord van RetroDB"
 
 #: services/js_i18n_strings.py:875 templates/achievement_game.html:72
 #: templates/steam_achievement_game.html:69
@@ -3837,7 +3847,7 @@ msgstr "De 3D-doos verwijderen?"
 #: templates/settings.html:3441
 #, python-brace-format
 msgid "Remove {name}"
-msgstr ""
+msgstr "{name} verwijderen"
 
 #: services/js_i18n_strings.py:942
 #, python-brace-format
@@ -3869,7 +3879,7 @@ msgstr "Bezig met verwijderen..."
 
 #: services/js_i18n_strings.py:948
 msgid "Reorder queue"
-msgstr ""
+msgstr "Wachtrij herschikken"
 
 #: services/js_i18n_strings.py:949 templates/_bulk_edit_modal.html:42
 #: templates/_bulk_edit_modal.html:56 templates/_bulk_edit_modal.html:70
@@ -4005,7 +4015,8 @@ msgstr "Opgeslagen. Het wordt toegepast de volgende keer dat je op Spelen drukt.
 msgid "Saving to the database…"
 msgstr "Bezig met opslaan in de database…"
 
-#: services/js_i18n_strings.py:978 templates/setup.html:483
+#: services/js_i18n_strings.py:978 templates/settings.html:4787
+#: templates/setup.html:483
 msgid "Saving..."
 msgstr "Bezig met opslaan..."
 
@@ -4029,6 +4040,8 @@ msgid "Scanned {paths} paths · found {found} matches."
 msgstr "{paths} paden gescand · {found} overeenkomsten gevonden."
 
 #: services/js_i18n_strings.py:983 templates/multi_disc_organizer.html:204
+#: templates/settings.html:1803 templates/settings.html:3861
+#: templates/settings.html:4000 templates/settings.html:4510
 msgid "Scanning..."
 msgstr "Bezig met scannen..."
 
@@ -4209,7 +4222,7 @@ msgstr "Bezig met inloggen…"
 #: services/js_i18n_strings.py:1022
 #, python-brace-format
 msgid "Spellings applied: {games} games updated"
-msgstr ""
+msgstr "Spellingen toegepast: {games} games bijgewerkt"
 
 #: services/js_i18n_strings.py:1023 templates/_modals/edit_modal.html:50
 #: templates/base.html:1103 templates/game_detail.html:4270
@@ -4537,7 +4550,7 @@ msgstr "Uploaden"
 msgid "Upload Controller Image"
 msgstr "Controllerafbeelding uploaden"
 
-#: services/js_i18n_strings.py:1085 templates/settings.html:5243
+#: services/js_i18n_strings.py:1085 templates/settings.html:5240
 msgid "Upload failed"
 msgstr "Upload mislukt"
 
@@ -4564,11 +4577,11 @@ msgstr "De systeeminstelling gebruiken"
 #: services/js_i18n_strings.py:1091
 #, python-brace-format
 msgid "Use these {n} spellings?"
-msgstr ""
+msgstr "Deze {n} spellingen gebruiken?"
 
 #: services/js_i18n_strings.py:1092
 msgid "Use this spelling?"
-msgstr ""
+msgstr "Deze spelling gebruiken?"
 
 #: services/js_i18n_strings.py:1093
 #, python-brace-format
@@ -5503,6 +5516,8 @@ msgstr ""
 "Downloadt welke prestaties je hebt behaald in je %(system)s-games. Voer "
 "dit uit na het spelen."
 
+#: templates/_settings_tabs/system.html:430
+#: templates/_settings_tabs/system.html:448
 #: templates/achievements_system.html:162 templates/changelog.html:179
 #: templates/logs.html:737 templates/setup.html:354 templates/setup.html:355
 #: templates/setup.html:419 templates/tags.html:595
@@ -5721,7 +5736,8 @@ msgstr "Filters"
 msgid "Select"
 msgstr "Selecteren"
 
-#: templates/all_games.html:94 templates/system_games.html:85
+#: templates/all_games.html:94 templates/settings.html:4853
+#: templates/system_games.html:85
 msgid "Category"
 msgstr "Categorie"
 
@@ -6240,7 +6256,7 @@ msgstr "Grootste games"
 msgid "Game"
 msgstr "Game"
 
-#: templates/analytics.html:604
+#: templates/analytics.html:604 templates/settings.html:4855
 msgid "Size"
 msgstr "Grootte"
 
@@ -6302,7 +6318,7 @@ msgstr "Statistieken naar klembord gekopieerd."
 
 #: templates/analytics.html:2772
 msgid "Could not copy to the clipboard."
-msgstr ""
+msgstr "Kon niet naar het klembord kopiëren."
 
 #: templates/analytics.html:2826
 msgid "CSV data exported."
@@ -6478,7 +6494,7 @@ msgstr "Verwerkt"
 
 #: templates/archive_scanner.html:782 templates/game_detail.html:4079
 #: templates/reports.html:497 templates/settings.html:3549
-#: templates/settings.html:4297 templates/settings.html:4951
+#: templates/settings.html:4294 templates/settings.html:4948
 msgid "Success"
 msgstr "Gelukt"
 
@@ -6499,7 +6515,7 @@ msgstr "Wachten op start..."
 
 #: templates/archive_scanner.html:886 templates/archive_scanner.html:890
 msgid "Could not save your scanner choices."
-msgstr ""
+msgstr "Kon je scannerkeuzes niet opslaan."
 
 #: templates/archive_scanner.html:1127
 msgid "No Types Selected"
@@ -6994,7 +7010,7 @@ msgstr "Wachtrijbeheer sluiten"
 
 #: templates/base.html:754
 msgid "Could not change the queue"
-msgstr ""
+msgstr "Kon de wachtrij niet wijzigen"
 
 #: templates/base.html:811
 #, python-brace-format
@@ -8124,7 +8140,7 @@ msgstr "Fout bij het hervatten van de taak"
 
 #: templates/dashboard.html:1173
 msgid "Could not dismiss the job"
-msgstr ""
+msgstr "Kon de taak niet verbergen"
 
 #: templates/dashboard.html:1204
 #, python-brace-format
@@ -8138,12 +8154,12 @@ msgstr "Alle taken hervat"
 #: templates/dashboard.html:1208
 #, python-brace-format
 msgid "{ok} of {total} jobs resumed"
-msgstr ""
+msgstr "{ok} van {total} taken hervat"
 
 #: templates/dashboard.html:1219
 #, python-brace-format
 msgid "Could not dismiss job {id}"
-msgstr ""
+msgstr "Kon taak {id} niet verbergen"
 
 #: templates/dashboard.html:1249
 msgid "No games found"
@@ -8155,16 +8171,16 @@ msgstr "Fout bij het kiezen van een willekeurige game"
 
 #: templates/dashboard.html:1273
 msgid "1 configured API is offline"
-msgstr ""
+msgstr "1 geconfigureerde API is offline"
 
 #: templates/dashboard.html:1274
 #, python-brace-format
 msgid "{count} configured APIs are offline"
-msgstr ""
+msgstr "{count} geconfigureerde API's zijn offline"
 
 #: templates/dashboard.html:1309
 msgid "Offline"
-msgstr ""
+msgstr "Offline"
 
 #: templates/dashboard.html:1414
 msgid ""
@@ -8329,7 +8345,7 @@ msgstr "Nieuw wachtwoord instellen"
 #: templates/force_change_password.html:61 templates/login.html:304
 #: templates/setup.html:522
 msgid "The server answered with an error."
-msgstr ""
+msgstr "De server antwoordde met een fout."
 
 #: templates/_macros/nav_tabs.html:45 templates/game_detail.html:19
 #: templates/reports.html:269 templates/rom_tools_hub.html:261
@@ -8420,7 +8436,7 @@ msgstr "Verwijderen"
 #: templates/museum_system.html:194
 #, python-format
 msgid "Enlarge %(name)s"
-msgstr ""
+msgstr "%(name)s vergroten"
 
 #: templates/game_detail.html:185 templates/game_detail.html:198
 #: templates/game_detail.html:219
@@ -8916,7 +8932,7 @@ msgstr "Sorteertitel gegenereerd"
 
 #: templates/game_detail.html:5687 templates/game_detail.html:5757
 msgid "match"
-msgstr ""
+msgstr "overeenkomst"
 
 #: templates/game_detail.html:5690
 #, python-brace-format
@@ -8967,11 +8983,11 @@ msgstr "Screenshot verwijderen mislukt: {error}"
 
 #: templates/game_detail.html:6050
 msgid "No similar games found in library"
-msgstr ""
+msgstr "Geen vergelijkbare games gevonden in de bibliotheek"
 
 #: templates/game_detail.html:6054
 msgid "Could not load similar games."
-msgstr ""
+msgstr "Kon vergelijkbare games niet laden."
 
 #: templates/_settings_tabs/account.html:233 templates/game_imports.html:171
 msgid "Steam"
@@ -9062,6 +9078,11 @@ msgid ""
 "href=\"%(settings_url)s\" style=\"color: var(--primary-cyan);\">Settings "
 "&rarr; My Profile</a>, or enter them below."
 msgstr ""
+"Importeer je Steam-gamebibliotheek. Games worden aangemaakt onder het "
+"systeem <strong>Microsoft Windows</strong>. Stel je Steam-API-sleutel en "
+"Steam-ID in via <a href=\"%(settings_url)s\" style=\"color: var"
+"(--primary-cyan);\">Instellingen &rarr; Mijn profiel</a>, of vul ze "
+"hieronder in."
 
 #: templates/game_imports.html:249
 msgid "Steam Credentials"
@@ -9165,6 +9186,13 @@ msgid ""
 "href=\"%(trophies_url)s\" style=\"color: var(--primary-cyan);\">PSN "
 "Trophies</a> page."
 msgstr ""
+"Importeer je PlayStation-gamebibliotheek. De games komen uit je PSN-"
+"trofeeënlijst. Stel je PSN NPSSO-token in via <a "
+"href=\"%(settings_url)s\" style=\"color: var(--primary-"
+"cyan);\">Instellingen &rarr; Mijn profiel</a>. Synchroniseer voor "
+"snellere imports eerst je trofeeën via de pagina <a "
+"href=\"%(trophies_url)s\" style=\"color: var(--primary-cyan);\">PSN-"
+"trofeeën</a>."
 
 #: templates/game_imports.html:365
 msgid "PSN Account"
@@ -9242,11 +9270,11 @@ msgstr "Via je OpenXBL-sleutel."
 
 #: templates/game_imports.html:701 templates/game_imports.html:911
 msgid "Could not check the connection"
-msgstr ""
+msgstr "Kon de verbinding niet controleren"
 
 #: templates/game_imports.html:702 templates/game_imports.html:912
 msgid "Reload the page to try again."
-msgstr ""
+msgstr "Laad de pagina opnieuw om het nog eens te proberen."
 
 #: templates/game_imports.html:727
 #, python-brace-format
@@ -9273,20 +9301,22 @@ msgstr "Details komen op de achtergrond binnen vanuit Steam"
 
 #: templates/game_imports.html:897
 msgid "PSN Configured"
-msgstr ""
+msgstr "PSN geconfigureerd"
 
 #: templates/game_imports.html:899
 #, python-brace-format
 msgid "Games in your trophy list: {count}"
-msgstr ""
+msgstr "Games in je trofeeënlijst: {count}"
 
 #: templates/game_imports.html:900
 msgid "No trophy list saved yet; Fetch will read it from PSN."
-msgstr ""
+msgstr "Nog geen trofeeënlijst opgeslagen; Ophalen leest deze uit PSN."
 
 #: templates/game_imports.html:905
 msgid "Add your PSN NPSSO token in Settings > My Profile to import games."
 msgstr ""
+"Voeg je PSN NPSSO-token toe in Instellingen > Mijn profiel om games te "
+"importeren."
 
 #: templates/game_imports.html:946
 #, python-brace-format
@@ -9418,7 +9448,7 @@ msgstr ""
 
 #: templates/hltb_review.html:238
 msgid "No pending matches under this filter."
-msgstr ""
+msgstr "Geen openstaande matches met dit filter."
 
 #: templates/hltb_review.html:295
 msgid "Match approved"
@@ -9559,7 +9589,7 @@ msgstr "Fout bij het verwijderen van de game."
 
 #: templates/lists.html:315 templates/lists.html:318
 msgid "Could not load your lists."
-msgstr ""
+msgstr "Kon je lijsten niet laden."
 
 #: templates/lists.html:437
 msgid "Please enter a list name."
@@ -9738,7 +9768,7 @@ msgstr ""
 
 #: templates/local_trophy_detail.html:374
 msgid "Failed to save HLTB data."
-msgstr ""
+msgstr "Opslaan van HLTB-gegevens mislukt."
 
 #: templates/local_trophy_detail.html:422
 msgid "HLTB Lookup Failed"
@@ -9753,7 +9783,8 @@ msgstr "Geen match gevonden."
 #: templates/settings.html:1942 templates/settings.html:1967
 #: templates/settings.html:1970 templates/settings.html:1990
 #: templates/settings.html:2034 templates/settings.html:2056
-#: templates/settings.html:2153 templates/steam_achievement_game.html:302
+#: templates/settings.html:2153 templates/settings.html:4832
+#: templates/steam_achievement_game.html:302
 #: templates/xbox_achievement_game.html:293
 #, python-brace-format
 msgid "Error: {error}"
@@ -9802,7 +9833,7 @@ msgstr "Niveau"
 
 #: templates/logs.html:759
 msgid "DEBUG"
-msgstr ""
+msgstr "DEBUG"
 
 #: templates/logs.html:760
 msgid "INFO"
@@ -9814,13 +9845,13 @@ msgstr "WAARSCHUWING"
 
 #: templates/logs.html:762
 msgid "Errors and critical errors"
-msgstr ""
+msgstr "Fouten en kritieke fouten"
 
 #: templates/logs.html:762
 msgid "ERROR"
 msgstr "FOUT"
 
-#: templates/logs.html:778
+#: templates/logs.html:778 templates/settings.html:4871
 msgid "View"
 msgstr "Weergave"
 
@@ -10463,15 +10494,17 @@ msgstr ""
 
 #: templates/psn_trophies.html:1177
 msgid "Could not load games."
-msgstr ""
+msgstr "Kon games niet laden."
 
 #: templates/psn_trophies.html:1181
 msgid "Retry"
-msgstr ""
+msgstr "Opnieuw proberen"
 
 #: templates/psn_trophies.html:1648
 msgid "The sync is no longer running. Close this window and start it again."
 msgstr ""
+"De synchronisatie loopt niet meer. Sluit dit venster en start deze "
+"opnieuw."
 
 #: templates/psn_trophies.html:1674
 msgid "Please select at least one game to refresh."
@@ -10722,7 +10755,7 @@ msgstr "Batchgewijs hernoemen voltooid"
 
 #: templates/reports.html:524
 msgid "These files were not renamed:"
-msgstr ""
+msgstr "Deze bestanden zijn niet hernoemd:"
 
 #: templates/reports.html:532
 msgid "Start Rename"
@@ -11810,7 +11843,7 @@ msgstr "Netwerkfout bij opslaan van instellingen"
 
 #: templates/settings.html:1193
 msgid "Could not load the timezone list."
-msgstr ""
+msgstr "Kon de tijdzonelijst niet laden."
 
 #: templates/settings.html:1226
 msgid "Timezone saved! Page will reload to apply."
@@ -11850,7 +11883,7 @@ msgstr "Netwerkfout bij wijzigen van wachtwoord"
 
 #: templates/settings.html:1342 templates/settings.html:1344
 msgid "Could not load that user."
-msgstr ""
+msgstr "Kon die gebruiker niet laden."
 
 #: templates/settings.html:1379
 msgid "User saved successfully!"
@@ -11903,11 +11936,11 @@ msgstr "Weergave-instellingen opgeslagen!"
 
 #: templates/settings.html:1571
 msgid "Move left"
-msgstr ""
+msgstr "Naar links verplaatsen"
 
 #: templates/settings.html:1571
 msgid "Move right"
-msgstr ""
+msgstr "Naar rechts verplaatsen"
 
 #: templates/settings.html:1671
 msgid "Region already exists"
@@ -12142,11 +12175,11 @@ msgstr "Weet je zeker dat je deze optie wilt verwijderen?"
 msgid "Failed to delete option"
 msgstr "Optie verwijderen mislukt"
 
-#: templates/settings.html:3505 templates/settings.html:4259
+#: templates/settings.html:3505 templates/settings.html:4256
 msgid "Missing Input"
 msgstr "Ontbrekende invoer"
 
-#: templates/settings.html:3505 templates/settings.html:4259
+#: templates/settings.html:3505 templates/settings.html:4256
 msgid "Please enter a controller name"
 msgstr "Voer een controllernaam in"
 
@@ -12171,40 +12204,108 @@ msgstr "Standaardcontroller toevoegen mislukt"
 msgid "Failed to remove default controller"
 msgstr "Standaardcontroller verwijderen mislukt"
 
-#: templates/settings.html:3795
+#: templates/settings.html:3763
+msgid "Preview:"
+msgstr "Voorbeeld:"
+
+#: templates/settings.html:3764
+#, python-brace-format
+msgid "This will clear scraped data from {count} games in {system}."
+msgstr "Hiermee worden gescrapete gegevens gewist van {count} games in {system}."
+
+#: templates/settings.html:3765
+#, python-brace-format
+msgid "This will clear scraped data from {count} games (all systems)."
+msgstr ""
+"Hiermee worden gescrapete gegevens gewist van {count} games (alle "
+"systemen)."
+
+#: templates/settings.html:3766
+msgid ""
+"Fields: description, genre, publisher, developer, players, modes, "
+"ratings, scores, images, etc."
+msgstr ""
+"Velden: beschrijving, genre, uitgever, ontwikkelaar, spelers, modi, "
+"leeftijdsclassificaties, scores, afbeeldingen, enz."
+
+#: templates/settings.html:3773
+msgid "Failed to preview"
+msgstr "Voorbeeld tonen mislukt"
+
+#: templates/settings.html:3796
 msgid "ALL SYSTEMS"
 msgstr "ALLE SYSTEMEN"
 
-#: templates/settings.html:3799
+#: templates/_settings_tabs/system.html:84 templates/settings.html:3800
+#: templates/settings.html:3845
 msgid "Clear Scraped Data"
 msgstr "Gescrapete gegevens wissen"
 
-#: templates/settings.html:3800
+#: templates/settings.html:3801
 #, python-brace-format
 msgid "This will clear all scraped metadata from games in {system}."
 msgstr "Hiermee worden alle gescrapete metadata van games in {system} gewist."
 
-#: templates/settings.html:3801
+#: templates/settings.html:3802
 msgid "Downloaded images will also be deleted!"
 msgstr "Gedownloade afbeeldingen worden ook verwijderd!"
 
-#: templates/settings.html:3802
+#: templates/settings.html:3803
 msgid "This cannot be undone. Are you sure?"
 msgstr "Dit kan niet ongedaan worden gemaakt. Weet je het zeker?"
 
-#: templates/settings.html:3926
+#: templates/settings.html:3824
+#, python-brace-format
+msgid "Cleared scraped data from {count} games."
+msgstr "Gescrapete gegevens gewist van {count} games."
+
+#: templates/settings.html:3824
+#, python-brace-format
+msgid "Deleted {count} image files."
+msgstr "{count} afbeeldingsbestanden verwijderd."
+
+#: templates/settings.html:3831
+msgid "Failed to clear data"
+msgstr "Wissen van gegevens mislukt"
+
+#: templates/settings.html:3877
+msgid "No orphaned media files found. All files are linked to existing games."
+msgstr ""
+"Geen overgebleven mediabestanden gevonden. Alle bestanden zijn gekoppeld "
+"aan bestaande games."
+
+#: templates/settings.html:3890 templates/setup.html:404
+#, python-brace-format
+msgid "{count} files"
+msgstr "{count} bestanden"
+
+#: templates/settings.html:3895
+#, python-brace-format
+msgid "Found {count} orphaned files ({size} MB)"
+msgstr "{count} overgebleven bestanden gevonden ({size} MB)"
+
+#: templates/settings.html:3907
+msgid "Failed to scan for orphaned files"
+msgstr "Scannen op overgebleven bestanden mislukt"
+
+#: templates/_settings_tabs/system.html:100 templates/settings.html:3921
+msgid "Scan for Orphaned Files"
+msgstr "Scannen op overgebleven bestanden"
+
+#: templates/settings.html:3927
 msgid "No Files"
 msgstr "Geen bestanden"
 
-#: templates/settings.html:3926
+#: templates/settings.html:3927
 msgid "Please scan for orphaned files first."
 msgstr "Scan eerst op overgebleven bestanden."
 
-#: templates/settings.html:3931
+#: templates/_settings_tabs/system.html:104 templates/settings.html:3932
+#: templates/settings.html:3978
 msgid "Delete Orphaned Files"
 msgstr "Overgebleven bestanden verwijderen"
 
-#: templates/settings.html:3932
+#: templates/settings.html:3933
 #, python-brace-format
 msgid ""
 "Orphaned media files to delete permanently: {count}. This action cannot "
@@ -12213,19 +12314,85 @@ msgstr ""
 "Overgebleven mediabestanden die definitief worden verwijderd: {count}. "
 "Dit kan niet ongedaan worden gemaakt.<br><br>Doorgaan?"
 
-#: templates/settings.html:4060
+#: templates/settings.html:3939
+msgid "Deleting..."
+msgstr "Bezig met verwijderen..."
+
+#: templates/settings.html:3957
+#, python-brace-format
+msgid "Deleted {count} orphaned files."
+msgstr "{count} overgebleven bestanden verwijderd."
+
+#: templates/settings.html:3957
+#, python-brace-format
+msgid "Freed {size} MB of disk space."
+msgstr "{size} MB schijfruimte vrijgemaakt."
+
+#: templates/settings.html:3957
+#, python-brace-format
+msgid "{count} files could not be deleted."
+msgstr "{count} bestanden konden niet worden verwijderd."
+
+#: templates/settings.html:3965
+msgid "Failed to delete files"
+msgstr "Verwijderen van bestanden mislukt"
+
+#: templates/settings.html:4016
+#, python-brace-format
+msgid "{count} reference(s)"
+msgstr "{count} verwijzing(en)"
+
+#: templates/settings.html:4020
+msgid ""
+"Some media folders look missing or empty (possibly an unmounted drive or "
+"a bulk deletion). Their references were <strong>kept, not "
+"cleared</strong>, to protect against wiping your whole library by "
+"accident:"
+msgstr ""
+"Sommige mediamappen lijken te ontbreken of leeg te zijn (mogelijk een "
+"niet-gekoppelde schijf of een bulkverwijdering). De verwijzingen zijn "
+"<strong>behouden, niet gewist</strong>, om te voorkomen dat je hele "
+"bibliotheek per ongeluk wordt leeggemaakt:"
+
+#: templates/settings.html:4022
+msgid "Re-mount the media folder (or re-scrape) and scan again."
+msgstr "Koppel de mediamap opnieuw (of scrape opnieuw) en scan nog een keer."
+
+#: templates/settings.html:4029
+msgid "No clearable missing-media references found."
+msgstr "Geen te wissen verwijzingen naar ontbrekende media gevonden."
+
+#: templates/settings.html:4034
+#, python-brace-format
+msgid ""
+"Found {refs} stale reference(s) across {games} game(s) pointing to files "
+"no longer on disk."
+msgstr ""
+"{refs} verouderde verwijzing(en) gevonden bij {games} game(s) naar "
+"bestanden die niet meer op de schijf staan."
+
+#: templates/settings.html:4042
+msgid "Failed to scan for missing media references"
+msgstr "Scannen op verwijzingen naar ontbrekende media mislukt"
+
+#: templates/_settings_tabs/system.html:119 templates/settings.html:4052
+msgid "Scan for Missing Media"
+msgstr "Scannen op ontbrekende media"
+
+#: templates/settings.html:4058
 msgid "Nothing to Clear"
 msgstr "Niets om te wissen"
 
-#: templates/settings.html:4060
+#: templates/settings.html:4058
 msgid "Please scan for missing media references first."
 msgstr "Scan eerst op ontbrekende mediaverwijzingen."
 
-#: templates/settings.html:4065
+#: templates/_settings_tabs/system.html:123 templates/settings.html:4063
+#: templates/settings.html:4103
 msgid "Clear Missing References"
 msgstr "Ontbrekende verwijzingen wissen"
 
-#: templates/settings.html:4066
+#: templates/settings.html:4064
 #, python-brace-format
 msgid ""
 "Database references to clear: {count}. They point to media files that no "
@@ -12237,11 +12404,52 @@ msgstr ""
 "opnieuw kunnen downloaden. Je gamevermeldingen blijven "
 "ongewijzigd.<br><br>Doorgaan?"
 
-#: templates/settings.html:4162
+#: templates/settings.html:4083
+#, python-brace-format
+msgid "{count} reference(s) in missing/empty folders were preserved."
+msgstr "{count} verwijzing(en) in ontbrekende/lege mappen zijn behouden."
+
+#: templates/settings.html:4087
+#, python-brace-format
+msgid "Cleared {refs} stale reference(s) across {games} game(s)."
+msgstr "{refs} verouderde verwijzing(en) gewist bij {games} game(s)."
+
+#: templates/settings.html:4094
+msgid "Failed to clear references"
+msgstr "Wissen van verwijzingen mislukt"
+
+#: templates/settings.html:4115
+msgid "Optimizing..."
+msgstr "Bezig met optimaliseren..."
+
+#: templates/settings.html:4127
+#, python-brace-format
+msgid "Database optimized successfully in {seconds}s."
+msgstr "Database geoptimaliseerd in {seconds}s."
+
+#: templates/settings.html:4128
+#, python-brace-format
+msgid "Size: {before} MB → {after} MB"
+msgstr "Grootte: {before} MB → {after} MB"
+
+#: templates/settings.html:4129
+#, python-brace-format
+msgid "(saved {size} MB)"
+msgstr "({size} MB bespaard)"
+
+#: templates/settings.html:4135
+msgid "Failed to optimize database"
+msgstr "Optimaliseren van database mislukt"
+
+#: templates/_settings_tabs/system.html:137 templates/settings.html:4149
+msgid "Optimize Database"
+msgstr "Database optimaliseren"
+
+#: templates/settings.html:4159
 msgid "Delete Controller"
 msgstr "Controller verwijderen"
 
-#: templates/settings.html:4163
+#: templates/settings.html:4160
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete {name}?<br><br>This will remove it from "
@@ -12251,164 +12459,217 @@ msgstr ""
 "controller uit de bibliotheek verwijderd, en ook bij alle systemen waar "
 "hij als standaard is ingesteld."
 
-#: templates/settings.html:4184
+#: templates/settings.html:4181
 msgid "Deleted"
 msgstr "Verwijderd"
 
-#: templates/settings.html:4184
+#: templates/settings.html:4181
 #, python-brace-format
 msgid "Controller \"{name}\" has been removed."
 msgstr "Controller \"{name}\" is verwijderd."
 
-#: templates/settings.html:4186 templates/settings.html:4190
+#: templates/settings.html:4183 templates/settings.html:4187
 msgid "Failed to delete controller"
 msgstr "Controller verwijderen mislukt"
 
-#: templates/settings.html:4208
+#: templates/settings.html:4205
 msgid "Failed to load controller"
 msgstr "Controller laden mislukt"
 
-#: templates/settings.html:4239
+#: templates/settings.html:4236
 msgid "Failed to load controller data"
 msgstr "Controllergegevens laden mislukt"
 
-#: templates/settings.html:4297
+#: templates/settings.html:4294
 #, python-brace-format
 msgid "Controller \"{name}\" has been updated."
 msgstr "Controller \"{name}\" is bijgewerkt."
 
-#: templates/settings.html:4299 templates/settings.html:4303
+#: templates/settings.html:4296 templates/settings.html:4300
 msgid "Failed to update controller"
 msgstr "Controller bijwerken mislukt"
 
-#: templates/settings.html:4430
+#: templates/settings.html:4427
 msgid "Logos Refreshed"
 msgstr "Logo's vernieuwd"
 
-#: templates/settings.html:4431
+#: templates/settings.html:4428
 #, python-brace-format
 msgid "System logos updated: {count}. The table has been refreshed."
 msgstr "Systeemlogo's bijgewerkt: {count}. De tabel is vernieuwd."
 
-#: templates/settings.html:4433
+#: templates/settings.html:4430
 msgid "Failed to refresh logos"
 msgstr "Logo's vernieuwen mislukt"
 
-#: templates/settings.html:4437
+#: templates/settings.html:4434
 msgid "Failed to refresh system logos"
 msgstr "Systeemlogo's vernieuwen mislukt"
 
-#: templates/settings.html:4459
+#: templates/settings.html:4456
 msgid "Names Refreshed"
 msgstr "Namen vernieuwd"
 
-#: templates/settings.html:4460
+#: templates/settings.html:4457
 #, python-brace-format
 msgid "System names updated: {count}. Click OK to refresh the page."
 msgstr "Systeemnamen bijgewerkt: {count}. Klik op OK om de pagina te vernieuwen."
 
-#: templates/settings.html:4463
+#: templates/settings.html:4460
 msgid "Failed to refresh names"
 msgstr "Namen vernieuwen mislukt"
 
-#: templates/settings.html:4467
+#: templates/settings.html:4464
 msgid "Failed to refresh system names"
 msgstr "Systeemnamen vernieuwen mislukt"
 
-#: templates/settings.html:4910
+#: templates/settings.html:4563
+msgid "No bulk scrape state found (all clear)"
+msgstr "Geen bulkscrape-status gevonden (alles in orde)"
+
+#: templates/settings.html:4626
+msgid "Bulk scrape state cleared successfully!"
+msgstr "Bulkscrape-status gewist!"
+
+#: templates/settings.html:4650
+msgid "RA sync state and queue cleared!"
+msgstr "RA-synchronisatiestatus en wachtrij gewist!"
+
+#: templates/settings.html:4664
+msgid "RA sync queue cleared (server unreachable)"
+msgstr "RA-synchronisatiewachtrij gewist (server onbereikbaar)"
+
+#: templates/settings.html:4683
+msgid "No items in queue, no active sync."
+msgstr "Geen items in de wachtrij, geen actieve synchronisatie."
+
+#: templates/settings.html:4827
+msgid "Logging settings saved!"
+msgstr "Loginstellingen opgeslagen!"
+
+#: templates/settings.html:4829
+msgid "Failed to save"
+msgstr "Opslaan mislukt"
+
+#: templates/_settings_tabs/system.html:382 templates/settings.html:4835
+msgid "Save Logging Settings"
+msgstr "Loginstellingen opslaan"
+
+#: templates/settings.html:4842
+msgid "Loading log files..."
+msgstr "Logbestanden laden..."
+
+#: templates/settings.html:4854
+msgid "Date"
+msgstr "Datum"
+
+#: templates/settings.html:4887
+msgid ""
+"No log files found. Logs will appear here after scraping or ROM "
+"operations."
+msgstr ""
+"Geen logbestanden gevonden. Logs verschijnen hier na het scrapen of na "
+"ROM-bewerkingen."
+
+#: templates/settings.html:4890
+#, python-brace-format
+msgid "Error loading log files: {error}"
+msgstr "Fout bij het laden van logbestanden: {error}"
+
+#: templates/settings.html:4907
 #, python-brace-format
 msgid "Log: {filename}"
 msgstr "Log: {filename}"
 
-#: templates/settings.html:4911
+#: templates/settings.html:4908
 msgid "Log file is empty"
 msgstr "Logbestand is leeg"
 
-#: templates/settings.html:4914
+#: templates/settings.html:4911
 msgid "Failed to load log file"
 msgstr "Logbestand laden mislukt"
 
-#: templates/settings.html:4917
+#: templates/settings.html:4914
 #, python-brace-format
 msgid "Error loading log file: {error}"
 msgstr "Fout bij laden van logbestand: {error}"
 
-#: templates/settings.html:4936
+#: templates/settings.html:4933
 msgid "Failed to delete log file"
 msgstr "Logbestand verwijderen mislukt"
 
-#: templates/settings.html:4939
+#: templates/settings.html:4936
 #, python-brace-format
 msgid "Error deleting log file: {error}"
 msgstr "Fout bij verwijderen van logbestand: {error}"
 
-#: templates/settings.html:4945
+#: templates/settings.html:4942
 msgid "Clear Old Logs"
 msgstr "Oude logs wissen"
 
-#: templates/settings.html:4945
+#: templates/settings.html:4942
 msgid "This will delete all log files older than 5 days. Continue?"
 msgstr ""
 "Hiermee verwijder je alle logbestanden die ouder zijn dan 5 dagen. "
 "Doorgaan?"
 
-#: templates/settings.html:4951
+#: templates/settings.html:4948
 #, python-brace-format
 msgid "Old log files removed: {count}"
 msgstr "Oude logbestanden verwijderd: {count}"
 
-#: templates/settings.html:4954
+#: templates/settings.html:4951
 msgid "Failed to clear old logs"
 msgstr "Oude logs wissen mislukt"
 
-#: templates/settings.html:4957
+#: templates/settings.html:4954
 #, python-brace-format
 msgid "Error clearing old logs: {error}"
 msgstr "Fout bij wissen van oude logs: {error}"
 
-#: templates/settings.html:5002
+#: templates/settings.html:4999
 msgid "Token extracted from the pasted page"
 msgstr "Token gehaald uit de geplakte pagina"
 
-#: templates/settings.html:5004
+#: templates/settings.html:5001
 msgid "Token detected"
 msgstr "Token gevonden"
 
-#: templates/settings.html:5006
+#: templates/settings.html:5003
 msgid "Could not detect a valid NPSSO token"
 msgstr "Kon geen geldig NPSSO-token vinden"
 
-#: templates/settings.html:5018
+#: templates/settings.html:5015
 msgid "Now press Ctrl+V to paste."
 msgstr "Druk nu op Ctrl+V om te plakken."
 
-#: templates/settings.html:5030
+#: templates/settings.html:5027
 msgid "Enter an NPSSO token first"
 msgstr "Voer eerst een NPSSO-token in"
 
-#: templates/settings.html:5035
+#: templates/settings.html:5032
 msgid "Testing..."
 msgstr "Testen..."
 
-#: templates/settings.html:5036 templates/settings.html:5125
+#: templates/settings.html:5033 templates/settings.html:5122
 msgid "Saving and connecting..."
 msgstr "Opslaan en verbinden..."
 
-#: templates/settings.html:5047 templates/settings.html:5134
+#: templates/settings.html:5044 templates/settings.html:5131
 #, python-format
 msgid "Connected as %(name)s"
 msgstr "Verbonden als %(name)s"
 
-#: templates/settings.html:5054 templates/settings.html:5138
+#: templates/settings.html:5051 templates/settings.html:5135
 msgid "Connection failed"
 msgstr "Verbinding mislukt"
 
-#: templates/settings.html:5057 templates/settings.html:5141
+#: templates/settings.html:5054 templates/settings.html:5138
 #, python-format
 msgid "Error: %(msg)s"
 msgstr "Fout: %(msg)s"
 
-#: templates/settings.html:5076
+#: templates/settings.html:5073
 #, python-format
 msgid ""
 "Sony refused your saved NPSSO token on %(date)s. Get a new one with the "
@@ -12417,7 +12678,7 @@ msgstr ""
 "Sony heeft je opgeslagen NPSSO-token op %(date)s geweigerd. Haal een "
 "nieuwe op met de onderstaande stappen."
 
-#: templates/settings.html:5079
+#: templates/settings.html:5076
 msgid ""
 "Connected to PSN. RetroDB keeps the sign-in going by itself. You need a "
 "new token only if Sony refuses this one."
@@ -12425,47 +12686,47 @@ msgstr ""
 "Verbonden met PSN. RetroDB houdt de aanmelding zelf actief. Je hebt "
 "alleen een nieuw token nodig als Sony dit token weigert."
 
-#: templates/settings.html:5108
+#: templates/settings.html:5105
 #, python-format
 msgid "Key saved. Connected as %(name)s."
 msgstr "Sleutel opgeslagen. Verbonden als %(name)s."
 
-#: templates/settings.html:5109
+#: templates/settings.html:5106
 msgid "No key saved."
 msgstr "Geen sleutel opgeslagen."
 
-#: templates/settings.html:5147
+#: templates/settings.html:5144
 msgid "Remove Xbox key"
 msgstr "Xbox-sleutel verwijderen"
 
-#: templates/settings.html:5147
+#: templates/settings.html:5144
 msgid "Remove your OpenXBL key? Your imported games and achievements stay."
 msgstr ""
 "Je OpenXBL-sleutel verwijderen? Je geïmporteerde spellen en prestaties "
 "blijven bewaard."
 
-#: templates/settings.html:5152
+#: templates/settings.html:5149
 msgid "Could not remove the Xbox key."
-msgstr ""
+msgstr "Kon de Xbox-sleutel niet verwijderen."
 
-#: templates/settings.html:5241 templates/settings.html:5288
+#: templates/settings.html:5238 templates/settings.html:5285
 msgid "Avatar updated!"
 msgstr "Avatar bijgewerkt!"
 
-#: templates/settings.html:5246
+#: templates/settings.html:5243
 #, python-brace-format
 msgid "Upload failed: {error}"
 msgstr "Uploaden mislukt: {error}"
 
-#: templates/settings.html:5263
+#: templates/settings.html:5260
 msgid "Avatar removed"
 msgstr "Avatar verwijderd"
 
-#: templates/settings.html:5265 templates/settings.html:5268
+#: templates/settings.html:5262 templates/settings.html:5265
 msgid "Failed to remove avatar"
 msgstr "Avatar verwijderen mislukt"
 
-#: templates/settings.html:5290 templates/settings.html:5293
+#: templates/settings.html:5287 templates/settings.html:5290
 msgid "Failed to save avatar"
 msgstr "Avatar opslaan mislukt"
 
@@ -13079,11 +13340,6 @@ msgstr "Geen submappen"
 msgid "1 file"
 msgstr "1 bestand"
 
-#: templates/setup.html:404
-#, python-brace-format
-msgid "{count} files"
-msgstr "{count} bestanden"
-
 #: templates/setup.html:405
 msgid "1 folder"
 msgstr "1 map"
@@ -13356,7 +13612,7 @@ msgstr ""
 
 #: templates/tags.html:396 templates/tags.html:399
 msgid "Could not load your tags."
-msgstr ""
+msgstr "Kon je tags niet laden."
 
 #: templates/tags.html:440
 msgid "Edit tag"
@@ -13556,7 +13812,7 @@ msgstr "Geen overeenkomst"
 
 #: templates/wishlist.html:543 templates/wishlist.html:546
 msgid "Could not load your wishlist."
-msgstr ""
+msgstr "Kon je verlanglijst niet laden."
 
 #: templates/wishlist.html:593
 msgid "No items match this filter."
@@ -14499,7 +14755,7 @@ msgstr "Gebruikersbeheer"
 
 #: templates/_settings_tabs/account.html:314
 msgid "Manage users who can access RetroDB."
-msgstr ""
+msgstr "Beheer gebruikers die toegang hebben tot RetroDB."
 
 #: templates/_settings_tabs/account.html:319
 #: templates/_settings_tabs/account.html:393
@@ -14857,6 +15113,8 @@ msgid ""
 "Set the RPCS3 Trophy Path in <a href=\"#esde\">ES-DE Integration</a> on "
 "the Scraping tab"
 msgstr ""
+"Stel het RPCS3-trofeeënpad in bij <a href=\"#esde\">ES-DE-integratie</a> "
+"op het tabblad Scrapen"
 
 #: templates/_settings_tabs/data.html:64
 msgid "Scan your RPCS3 trophy folder for unlocked trophies"
@@ -14916,6 +15174,10 @@ msgid ""
 "nothing changes until you press Apply. Later scrapes then use that "
 "spelling."
 msgstr ""
+"Franchise, Uitgever en Ontwikkelaar tonen elke naam die met verschillende"
+" hoofdletters is gespeld, zoals \"Doom\" en \"DOOM\". Kies voor elke naam"
+" één spelling; er verandert niets totdat je op Toepassen drukt. Latere "
+"scrapes gebruiken dan die spelling."
 
 #: templates/_settings_tabs/data.html:170
 msgid "Show only values needing changes"
@@ -14951,11 +15213,11 @@ msgstr ""
 
 #: templates/_settings_tabs/data.html:215
 msgid "Every name in this field has one spelling."
-msgstr ""
+msgstr "Elke naam in dit veld heeft één spelling."
 
 #: templates/_settings_tabs/data.html:220
 msgid "Names that may be one company"
-msgstr ""
+msgstr "Namen die mogelijk één bedrijf zijn"
 
 #: templates/_settings_tabs/data.html:222
 msgid ""
@@ -14965,10 +15227,15 @@ msgid ""
 "company, and press Merge. The merge changes Publisher and Developer on "
 "every game, and later scrapes use the kept name."
 msgstr ""
+"Namen zoals \"Eidos\" en \"Eidos Interactive\" kunnen één bedrijf zijn, "
+"of twee: \"Atari Games\" en \"Atari, Inc.\" zijn verschillende bedrijven."
+" Kies per rij de naam om te behouden, vink de namen aan die hetzelfde "
+"bedrijf zijn en druk op Samenvoegen. Het samenvoegen wijzigt Uitgever en "
+"Ontwikkelaar bij elke game, en latere scrapes gebruiken de behouden naam."
 
 #: templates/_settings_tabs/data.html:225
 msgid "No names look like one company."
-msgstr ""
+msgstr "Geen namen lijken één bedrijf te zijn."
 
 #: templates/_settings_tabs/library.html:4
 msgid "Library settings"
@@ -15216,10 +15483,43 @@ msgstr ""
 "cent, plus een klein bedrag voor het lezen van de resultaten. Zet het uit"
 " vóór een grote bulkscrape om de kosten laag te houden."
 
+#: templates/_settings_tabs/system.html:2
+msgid "System settings"
+msgstr "Systeeminstellingen"
+
+#: templates/_settings_tabs/system.html:6
+msgid "Maintenance"
+msgstr "Onderhoud"
+
 #: templates/_settings_tabs/system.html:7
-#: templates/_settings_tabs/system.html:152
+#: templates/_settings_tabs/system.html:147
 msgid "Updates"
 msgstr "Updates"
+
+#: templates/_settings_tabs/system.html:8
+msgid "Server"
+msgstr "Server"
+
+#: templates/_settings_tabs/system.html:10
+msgid "Logging"
+msgstr "Logboek"
+
+#: templates/_settings_tabs/system.html:11
+#: templates/_settings_tabs/system.html:412
+msgid "Troubleshooting"
+msgstr "Probleemoplossing"
+
+#: templates/_settings_tabs/system.html:12
+msgid "Support"
+msgstr "Steunen"
+
+#: templates/_settings_tabs/system.html:19
+msgid "Database Maintenance"
+msgstr "Database-onderhoud"
+
+#: templates/_settings_tabs/system.html:29
+msgid "Remove database entries for ROMs that have been deleted from disk"
+msgstr "Verwijder database-items voor ROM's die van de schijf zijn verwijderd"
 
 #: templates/_settings_tabs/system.html:33
 msgid "Finding and clearing RetroAchievements games is on the"
@@ -15229,12 +15529,95 @@ msgstr "Games met RetroAchievements zoeken en wissen kan op de"
 msgid "Achievements page"
 msgstr "Prestaties-pagina"
 
-#: templates/_settings_tabs/system.html:155
+#: templates/_settings_tabs/system.html:41
+msgid "Clear Data"
+msgstr "Gegevens wissen"
+
+#: templates/_settings_tabs/system.html:51
+msgid "Remove all games imported via CLZ Games Import"
+msgstr "Verwijder alle games die via CLZ Games Import zijn geïmporteerd"
+
+#: templates/_settings_tabs/system.html:58
+msgid ""
+"Clear scraped metadata from games to start fresh. Useful before a full "
+"re-scrape."
+msgstr ""
+"Wis gescrapete metadata van games om opnieuw te beginnen. Handig vóór een"
+" volledige herscrape."
+
+#: templates/_settings_tabs/system.html:59
+msgid "Note:"
+msgstr "Let op:"
+
+#: templates/_settings_tabs/system.html:59
+msgid ""
+"This does NOT delete your game entries, only the scraped metadata "
+"(description, genre, publisher, ratings, images, etc.)"
+msgstr ""
+"Dit verwijdert NIET je games, alleen de gescrapete metadata "
+"(beschrijving, genre, uitgever, scores, afbeeldingen, enz.)"
+
+#: templates/_settings_tabs/system.html:71
+#: templates/_settings_tabs/system.html:74
+msgid "Also delete downloaded images"
+msgstr "Ook gedownloade afbeeldingen verwijderen"
+
+#: templates/_settings_tabs/system.html:80
+msgid "Preview"
+msgstr "Voorbeeld"
+
+#: templates/_settings_tabs/system.html:92
+msgid "Orphaned Media Cleanup"
+msgstr "Overgebleven media opruimen"
+
+#: templates/_settings_tabs/system.html:95
+msgid ""
+"Find and delete media files (boxart, screenshots, videos, etc.) for ROMs "
+"that no longer exist in the database. This cleans up leftover files from "
+"deleted games."
+msgstr ""
+"Zoek en verwijder mediabestanden (boxart, screenshots, video's, enz.) van"
+" ROM's die niet meer in de database staan. Dit ruimt achtergebleven "
+"bestanden van verwijderde games op."
+
+#: templates/_settings_tabs/system.html:111
+msgid "Missing Media References"
+msgstr "Verwijzingen naar ontbrekende media"
+
+#: templates/_settings_tabs/system.html:114
+msgid ""
+"The reverse of orphaned-media cleanup: find games whose boxart, "
+"screenshots, video or manual point to files that are no longer on disk, "
+"and clear those stale references so scrapers can re-download them. If a "
+"whole media folder looks missing or empty (for example an unmounted "
+"drive), its references are kept and flagged rather than wiped."
+msgstr ""
+"Het omgekeerde van overgebleven media opruimen: zoek games waarvan de "
+"boxart, screenshots, video of handleiding verwijzen naar bestanden die "
+"niet meer op de schijf staan, en wis die verouderde verwijzingen zodat "
+"scrapers ze opnieuw kunnen downloaden. Als een hele mediamap lijkt te "
+"ontbreken of leeg is (bijvoorbeeld een niet-gekoppelde schijf), worden de"
+" verwijzingen behouden en gemarkeerd in plaats van gewist."
+
+#: templates/_settings_tabs/system.html:130
+msgid "Database Optimization"
+msgstr "Database-optimalisatie"
+
+#: templates/_settings_tabs/system.html:133
+msgid ""
+"Optimize the database for better performance. Runs VACUUM to reclaim "
+"unused space and ANALYZE to update query planner statistics."
+msgstr ""
+"Optimaliseer de database voor betere prestaties. Voert VACUUM uit om "
+"ongebruikte ruimte terug te winnen en ANALYZE om de statistieken van de "
+"queryplanner bij te werken."
+
+#: templates/_settings_tabs/system.html:150
 #, python-format
 msgid "This is RetroDB %(version)s."
 msgstr "Dit is RetroDB %(version)s."
 
-#: templates/_settings_tabs/system.html:159
+#: templates/_settings_tabs/system.html:154
 msgid ""
 "Version 4.0 is the last web version of RetroDB. New versions will be a "
 "desktop app for Windows, Linux and macOS, and an Android app. They will "
@@ -15247,35 +15630,43 @@ msgstr ""
 "versie 4.0 alleen beveiligingsupdates en oplossingen voor fouten waarbij "
 "gegevens verloren gaan."
 
-#: templates/_settings_tabs/system.html:162
+#: templates/_settings_tabs/system.html:157
 msgid "Download the desktop app"
 msgstr "Downloaden de desktop-app"
 
-#: templates/_settings_tabs/system.html:169
+#: templates/_settings_tabs/system.html:164
 msgid "Release page"
 msgstr "Releasepagina"
 
-#: templates/_settings_tabs/system.html:176
+#: templates/_settings_tabs/system.html:171
 msgid "Check for updates"
 msgstr "Controleren op updates"
 
-#: templates/_settings_tabs/system.html:177
+#: templates/_settings_tabs/system.html:172
 msgid "Download update"
 msgstr "Update downloaden"
 
-#: templates/_settings_tabs/system.html:178
+#: templates/_settings_tabs/system.html:173
 msgid "Install and restart"
 msgstr "Installeren en herstarten"
 
-#: templates/_settings_tabs/system.html:182
+#: templates/_settings_tabs/system.html:177
 msgid "Check for updates once a day"
 msgstr "Eén keer per dag controleren op updates"
 
-#: templates/_settings_tabs/system.html:199
+#: templates/_settings_tabs/system.html:185
+msgid "Server Controls"
+msgstr "Serverbediening"
+
+#: templates/_settings_tabs/system.html:190
+msgid "Restart Server"
+msgstr "Server opnieuw starten"
+
+#: templates/_settings_tabs/system.html:194
 msgid "Shut Down Server"
 msgstr "Server afsluiten"
 
-#: templates/_settings_tabs/system.html:202
+#: templates/_settings_tabs/system.html:197
 msgid ""
 "Restart the Flask server (useful after configuration changes), or shut it"
 " down completely"
@@ -15283,11 +15674,192 @@ msgstr ""
 "Start de Flask-server opnieuw (handig na configuratiewijzigingen), of "
 "sluit hem volledig af"
 
-#: templates/_settings_tabs/system.html:461
+#: templates/_settings_tabs/system.html:206
+msgid "Logging Settings"
+msgstr "Loginstellingen"
+
+#: templates/_settings_tabs/system.html:210
+#, python-format
+msgid ""
+"Configure which log levels are written to log files. Logs are saved to "
+"the %(folder)s folder with date-based filenames (e.g., %(example)s)."
+msgstr ""
+"Stel in welke logniveaus naar de logbestanden worden geschreven. Logs "
+"worden opgeslagen in de map %(folder)s met bestandsnamen op datum (bijv. "
+"%(example)s)."
+
+#: templates/_settings_tabs/system.html:216
+#: templates/_settings_tabs/system.html:224
+#: templates/_settings_tabs/system.html:231
+#: templates/_settings_tabs/system.html:238
+msgid "Scraping Logs"
+msgstr "Scrapelogs"
+
+#: templates/_settings_tabs/system.html:219
+msgid ""
+"Logs from metadata scraping operations (IGDB, TGDB, ScreenScraper, RAWG, "
+"ES-DE)"
+msgstr "Logs van het scrapen van metadata (IGDB, TGDB, ScreenScraper, RAWG, ES-DE)"
+
+#: templates/_settings_tabs/system.html:224
+#: templates/_settings_tabs/system.html:227
+#: templates/_settings_tabs/system.html:257
+#: templates/_settings_tabs/system.html:260
+#: templates/_settings_tabs/system.html:290
+#: templates/_settings_tabs/system.html:293
+#: templates/_settings_tabs/system.html:323
+#: templates/_settings_tabs/system.html:326
+#: templates/_settings_tabs/system.html:356
+#: templates/_settings_tabs/system.html:359
+msgid "Informational"
+msgstr "Informatief"
+
+#: templates/_settings_tabs/system.html:231
+#: templates/_settings_tabs/system.html:234
+#: templates/_settings_tabs/system.html:264
+#: templates/_settings_tabs/system.html:267
+#: templates/_settings_tabs/system.html:297
+#: templates/_settings_tabs/system.html:300
+#: templates/_settings_tabs/system.html:330
+#: templates/_settings_tabs/system.html:333
+#: templates/_settings_tabs/system.html:363
+#: templates/_settings_tabs/system.html:366
+msgid "Warnings"
+msgstr "Waarschuwingen"
+
+#: templates/_settings_tabs/system.html:238
+#: templates/_settings_tabs/system.html:241
+#: templates/_settings_tabs/system.html:271
+#: templates/_settings_tabs/system.html:274
+#: templates/_settings_tabs/system.html:304
+#: templates/_settings_tabs/system.html:307
+#: templates/_settings_tabs/system.html:337
+#: templates/_settings_tabs/system.html:340
+#: templates/_settings_tabs/system.html:370
+#: templates/_settings_tabs/system.html:373
+msgid "Errors"
+msgstr "Fouten"
+
+#: templates/_settings_tabs/system.html:249
+#: templates/_settings_tabs/system.html:257
+#: templates/_settings_tabs/system.html:264
+#: templates/_settings_tabs/system.html:271
+msgid "ROM Tools Logs"
+msgstr "Logs van ROM-hulpmiddelen"
+
+#: templates/_settings_tabs/system.html:252
+msgid ""
+"Logs from ROM scanning, CHD conversion, archive extraction, and M3U "
+"creation"
+msgstr ""
+"Logs van ROM-scans, CHD-conversie, het uitpakken van archieven en het "
+"maken van M3U-bestanden"
+
+#: templates/_settings_tabs/system.html:282
+#: templates/_settings_tabs/system.html:290
+#: templates/_settings_tabs/system.html:297
+#: templates/_settings_tabs/system.html:304
+msgid "ROM Reports Logs"
+msgstr "Logs van ROM-rapporten"
+
+#: templates/_settings_tabs/system.html:285
+msgid ""
+"Logs from ROM naming checks, mismatch detection, and batch rename "
+"operations"
+msgstr ""
+"Logs van ROM-naamcontroles, detectie van afwijkingen en batchgewijs "
+"hernoemen"
+
+#: templates/_settings_tabs/system.html:315
+#: templates/_settings_tabs/system.html:323
+#: templates/_settings_tabs/system.html:330
+#: templates/_settings_tabs/system.html:337
+msgid "Image Resize Logs"
+msgstr "Logs van afbeeldingen schalen"
+
+#: templates/_settings_tabs/system.html:318
+msgid "Logs from image standardization (upscale/downscale) operations"
+msgstr "Logs van het standaardiseren van afbeeldingen (vergroten/verkleinen)"
+
+#: templates/_settings_tabs/system.html:348
+#: templates/_settings_tabs/system.html:356
+#: templates/_settings_tabs/system.html:363
+#: templates/_settings_tabs/system.html:370
+msgid "System Logs"
+msgstr "Systeemlogs"
+
+#: templates/_settings_tabs/system.html:351
+msgid ""
+"General system operations including achievements sync, page loads, and "
+"API calls"
+msgstr ""
+"Algemene systeembewerkingen, waaronder synchronisatie van prestaties, "
+"paginaladingen en API-aanroepen"
+
+#: templates/_settings_tabs/system.html:390
+msgid "Log Files"
+msgstr "Logbestanden"
+
+#: templates/_settings_tabs/system.html:395
+msgid "Refresh Log List"
+msgstr "Loglijst vernieuwen"
+
+#: templates/_settings_tabs/system.html:399
+msgid "Clear Logs Older Than 5 Days"
+msgstr "Logs ouder dan 5 dagen wissen"
+
+#: templates/_settings_tabs/system.html:403
+msgid "Click \"Refresh Log List\" to see available log files."
+msgstr "Klik op \"Loglijst vernieuwen\" om de beschikbare logbestanden te zien."
+
+#: templates/_settings_tabs/system.html:416
+msgid "Bulk Scrape Issues"
+msgstr "Problemen met bulkscrapen"
+
+#: templates/_settings_tabs/system.html:419
+msgid ""
+"If a bulk scrape gets stuck or won't clear from the toast notification, "
+"use this button to force clear all bulk scrape state from your browser's "
+"local storage."
+msgstr ""
+"Als een bulkscrape vastloopt of niet uit de melding verdwijnt, gebruik "
+"dan deze knop om alle bulkscrape-status geforceerd uit de lokale opslag "
+"van je browser te wissen."
+
+#: templates/_settings_tabs/system.html:424
+msgid "Clear Stuck Bulk Scrape"
+msgstr "Vastgelopen bulkscrape wissen"
+
+#: templates/_settings_tabs/system.html:429
+msgid "Current Bulk Scrape State:"
+msgstr "Huidige bulkscrape-status:"
+
+#: templates/_settings_tabs/system.html:434
+msgid "Achievement Sync Issues"
+msgstr "Problemen met synchronisatie van prestaties"
+
+#: templates/_settings_tabs/system.html:437
+msgid ""
+"If achievement syncs get stuck or the queue won't process, use this "
+"button to clear the sync queue and reset the sync state."
+msgstr ""
+"Als synchronisaties van prestaties vastlopen of de wachtrij niet wordt "
+"verwerkt, gebruik dan deze knop om de synchronisatiewachtrij te wissen en"
+" de synchronisatiestatus te resetten."
+
+#: templates/_settings_tabs/system.html:442
+msgid "Clear Stuck RA Sync"
+msgstr "Vastgelopen RA-synchronisatie wissen"
+
+#: templates/_settings_tabs/system.html:447
+msgid "Current RA Sync Queue:"
+msgstr "Huidige RA-synchronisatiewachtrij:"
+
+#: templates/_settings_tabs/system.html:456
 msgid "Support Development"
 msgstr "Ontwikkeling ondersteunen"
 
-#: templates/_settings_tabs/system.html:465
+#: templates/_settings_tabs/system.html:460
 msgid ""
 "RetroDB is free and open source. If it saves you time, consider "
 "sponsoring — every bit helps keep solo development sustainable."
@@ -15295,11 +15867,11 @@ msgstr ""
 "RetroDB is gratis en open source. Als het je tijd bespaart, overweeg dan "
 "om te sponsoren — elke bijdrage helpt de solo-ontwikkeling vol te houden."
 
-#: templates/_settings_tabs/system.html:469
+#: templates/_settings_tabs/system.html:464
 msgid "Sponsor on GitHub"
 msgstr "Sponsoren op GitHub"
 
-#: templates/_settings_tabs/system.html:473
+#: templates/_settings_tabs/system.html:468
 msgid "Support on Patreon"
 msgstr "Steunen op Patreon"
 
