@@ -1411,12 +1411,6 @@ const UnifiedToastController = {
                     const status = await API.get('/api/bulk-scrape-job/status');
                     endpoint = status.paused ? '/api/bulk-scrape-job/resume' : '/api/bulk-scrape-job/pause';
                     break;
-                case 'ra-sync':
-                    endpoint = '/api/ra-sync/toggle-pause';
-                    break;
-                case 'ra-refresh':
-                    endpoint = '/api/ra-refresh/toggle-pause';
-                    break;
                 case 'psn-refresh':
                     const psnStatus = await API.get('/api/psn/bulk-refresh/status');
                     endpoint = psnStatus.paused ? '/api/psn/bulk-refresh/resume' : '/api/psn/bulk-refresh/pause';

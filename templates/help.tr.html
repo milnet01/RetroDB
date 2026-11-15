@@ -230,7 +230,7 @@
 
         <h4>Yapılandırma</h4>
         <ul>
-            <li><strong>Ayarlar</strong> &mdash; Tüm uygulama yapılandırması (çok sayıda alt bölümlü 6 sekme)</li>
+            <li><strong>Ayarlar</strong> &mdash; Tüm uygulama yapılandırması (alt bölümleri olan sekmeler)</li>
             <li><strong>Günlük Görüntüleyici</strong> &mdash; Tüm kategorilerdeki uygulama günlüklerine göz atın</li>
         </ul>
 
@@ -357,7 +357,7 @@
         <h3>Son Etkinlik Bölümleri</h3>
         <p>Son etkinliğinizi gösteren kaydırılabilir bölümler (her biri yalnızca ilgili oyunlar olduğunda görünür):</p>
         <ul>
-            <li><strong>Şu An Oynanıyor</strong> &mdash; "Devam Ediyor" olarak işaretlenmiş oyunlar</li>
+            <li><strong>Oynamaya Devam Et</strong> &mdash; "Devam Ediyor" olarak işaretlenmiş oyunlar</li>
             <li><strong>Son Eklenenler</strong> &mdash; Kütüphanenize eklenen en son oyunlar</li>
             <li><strong>Son Görüntülenenler</strong> &mdash; Yakın zamanda açtığınız oyunlar</li>
             <li><strong>Son Veri Çekilenler</strong> &mdash; Metadata'sı yakın zamanda alınmış oyunlar</li>
@@ -370,7 +370,7 @@
         </ul>
 
         <h3>API Durumu</h3>
-        <p>Yapılandırılmış tüm veri çekicilerin ve API'lerin bağlantı durumunu gösterir. Çevrimdışı veya yanlış yapılandırılmış API'ler, Ayarlar'a bir bağlantı içeren bir uyarı banner'ı gösterir.</p>
+        <p>Yapılandırılmış tüm veri çekicilerin ve API'lerin bağlantı durumunu gösterir. Yapılandırılmış bir API çevrimdışı olduğunda, Ayarlar'a bir bağlantı içeren bir uyarı banner'ı görünür.</p>
 
         <h3>İş Kurtarma</h3>
         <p>Arka plan işleri çalışırken (toplu veri çekme, RA senkronizasyonu, görsel yeniden boyutlandırma vb.) RetroDB yeniden başlarsa, kesintiye uğrayan işler bir kurtarma banner'ında görünür. Seçenekler:</p>
@@ -508,7 +508,7 @@
 <section id="settings" class="help-section card">
     <h2 class="card-title">Ayarlar</h2>
     <div class="card-body">
-        <p>Ayarlar, her biri birden çok alt bölüme sahip 6 sekmede düzenlenmiştir.</p>
+        <p>Ayarlar, her biri alt bölümler içeren sekmelerde düzenlenmiştir. Yöneticiler ayrıca kendi sayfasını açan bir Emülatörler sekmesi görür.</p>
 
         <h3>Hesap Sekmesi</h3>
         <ul>
@@ -728,7 +728,7 @@
             <li>Tür, açıklama, geliştirici, yayıncı, piyasaya çıkış tarihi</li>
             <li>Oyuncu sayısı, oynanış modları (Tek Oyunculu, Çok Oyunculu, Co-op vb.)</li>
             <li>Kampanya bilgisi ve oyun yapısı</li>
-            <li>Tüm 8 yaş derecelendirme sistemi (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>Tüm yaş derecelendirme sistemleri (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd, CADPA)</li>
             <li>Bölge, marka, benzer oyunlar</li>
             <li>Kontrolcü desteği, kayıt türü</li>
             <li>Perspektif (Birinci Şahıs, Üstten Görünüm, Yandan Kaydırmalı vb.), boyut (2D, 3D)</li>
@@ -869,7 +869,7 @@
             <li><strong>Piyasaya Çıkış Bilgisi</strong> &mdash; Piyasaya çıkış tarihi, bölge (yapılandırılabilir açılır menüden)</li>
             <li><strong>Oynanış</strong> &mdash; Tür (çoklu seçim etiketleri), modlar, oyun yapısı, oyuncu sayısı, geliştirici, yayıncı</li>
             <li><strong>Teknik</strong> &mdash; Kontrolcüler (çoklu seçim), kayıt türü, perspektif (çoklu değer), boyut (çoklu değer)</li>
-            <li><strong>Yaş Derecelendirmeleri</strong> &mdash; Resmi derecelendirme görselleri ve otomatik çapraz eşleme ile tüm 8 derecelendirme sistemi. Bir derecelendirmeyi değiştirmek, diğer sistemlerdeki boş derecelendirmeleri otomatik olarak doldurur.</li>
+            <li><strong>Yaş Derecelendirmeleri</strong> &mdash; Resmi derecelendirme görselleri ve otomatik çapraz eşleme ile tüm derecelendirme sistemleri. Bir derecelendirmeyi değiştirmek, diğer sistemlerdeki boş derecelendirmeleri otomatik olarak doldurur.</li>
             <li><strong>Puanlar</strong> &mdash; Eleştirmen puanı, kullanıcı puanı</li>
             <li><strong>Açıklama</strong> &mdash; Oyun açıklama metni</li>
             <li><strong>Özel Resimler</strong> &mdash; Özel kutu resmi (2D), 3D kutu resmi, kutunun arkası, fanart ve bir logo yükleyin. Yeniden veri çekmeye izin vermek için mevcut görselleri temizleyin.</li>
@@ -897,7 +897,7 @@
         </ul>
 
         <h3>Çoklu Derecelendirme Sistemi</h3>
-        <p>RetroDB, 8 uluslararası yaş derecelendirme sistemini destekler:</p>
+        <p>RetroDB şu uluslararası yaş derecelendirme sistemlerini destekler:</p>
         <table class="data-table">
             <thead>
                 <tr><th>Sistem</th><th>Bölge</th></tr>
@@ -911,6 +911,7 @@
                 <tr><td><strong>FPB</strong></td><td>Güney Afrika</td></tr>
                 <tr><td><strong>GRAC</strong></td><td>Güney Kore</td></tr>
                 <tr><td><strong>ClassInd</strong></td><td>Brezilya</td></tr>
+                <tr><td><strong>CADPA</strong></td><td>Çin</td></tr>
             </tbody>
         </table>
         <p>Tercih ettiğiniz sistemi <strong>Ayarlar &rarr; Kütüphane &rarr; Görünüm</strong> bölümünden ayarlayın. Resmi derecelendirme görselleri, oyun kartlarında, detay pencerelerinde ve detay sayfalarında görüntülenir. Boş derecelendirmeler, veri çekme, AI Doldurma ve manuel düzenleme sırasında olgunluk seviyesi çapraz eşlemesi yoluyla mevcut herhangi bir derecelendirmeden otomatik olarak doldurulur.</p>
@@ -985,7 +986,7 @@
         </ol>
 
         <h3>Karşılaştırılan Alanlar</h3>
-        <p>Sistem, geliştirici, yayıncı, piyasaya çıkış tarihi, tür, marka, bölge, oyuncu sayısı, modlar, perspektif, boyut, tüm 8 yaş derecelendirmesi, kullanıcı puanı, eleştirmen puanı, oynanış süresi tahminleri, kontrolcü desteği, kayıt türü, dosya boyutu, benzer oyunlar, açıklama ve daha fazlası.</p>
+        <p>Sistem, geliştirici, yayıncı, piyasaya çıkış tarihi, tür, marka, bölge, oyuncu sayısı, modlar, perspektif, boyut, tüm yaş derecelendirmeleri, kullanıcı puanı, eleştirmen puanı, oynanış süresi tahminleri, kontrolcü desteği, kayıt türü, dosya boyutu, benzer oyunlar, açıklama ve daha fazlası.</p>
     </div>
 </section>
 
@@ -1374,7 +1375,7 @@
                 <tr><td><strong>Oynanış</strong></td><td>Tür dağılımı, oynanış modu analizi, oyun yapısı dağılımı</td></tr>
                 <tr><td><strong>Oynanış Süresi</strong></td><td>Koleksiyonunuz genelinde HLTB oynanış süresi verisi analizi &mdash; toplam tahmini oynanış süresi, ortalamalar, dağılım</td></tr>
                 <tr><td><strong>İnceleme Puanları</strong></td><td>Eleştirmen ve kullanıcı puan dağılımları ve ortalamaları</td></tr>
-                <tr><td><strong>Yaş Derecelendirmeleri</strong></td><td>Tüm 8 derecelendirme sisteminde yaş derecelendirmesi dağılımı</td></tr>
+                <tr><td><strong>Yaş Derecelendirmeleri</strong></td><td>Tüm derecelendirme sistemlerinde yaş derecelendirmesi dağılımı</td></tr>
                 <tr><td><strong>Başarımlar</strong></td><td>Sisteme göre RetroAchievements kapsamı ve tamamlanması</td></tr>
                 <tr><td><strong>Veri Kalitesi</strong></td><td>Metadata tamlığı radar grafiği (açıklama, kutu resmi, tür, geliştirici, yayıncı, piyasaya çıkış tarihi, ekran görüntüleri, fanart, video, kılavuz, HLTB, derecelendirmeler, modlar, bölge)</td></tr>
                 <tr><td><strong>Büyüme</strong></td><td>Oyunların zaman içinde ne zaman eklendiğini gösteren koleksiyon büyüme zaman çizelgesi</td></tr>
@@ -1815,7 +1816,7 @@
         </ol>
 
         <h4>"Görseller Kaydedilmiyor"</h4>
-        <p>Medya dizinlerindeki yazma izinlerini kontrol edin: <code>chmod -R 755 static/images/</code></p>
+        <p>RetroDB'nin medya klasörüne (taşımadıysanız <code>static/images/</code>) yazabildiğini kontrol edin. Linux veya macOS'ta <code>chmod -R u+rwX static/images/</code>, görselleri program olarak işaretlemeden hesabınıza yazma erişimi verir.</p>
 
         <h4>"Sayfa Yavaş veya Yanıt Vermiyor"</h4>
         <ul>

@@ -230,7 +230,7 @@
 
         <h4>Configuratie</h4>
         <ul>
-            <li><strong>Instellingen</strong> &mdash; Alle app-configuratie (6 tabbladen met veel subsecties)</li>
+            <li><strong>Instellingen</strong> &mdash; Alle app-configuratie, in tabbladen met subsecties</li>
             <li><strong>Logboekviewer</strong> &mdash; Blader door toepassingslogboeken van alle categorieën</li>
         </ul>
 
@@ -357,7 +357,7 @@
         <h3>Recente activiteit</h3>
         <p>Scrollbare secties met uw recente activiteit (elk verschijnt alleen wanneer er relevante spellen zijn):</p>
         <ul>
-            <li><strong>Nu aan het spelen</strong> &mdash; Spellen gemarkeerd als "In uitvoering"</li>
+            <li><strong>Verdergaan met spelen</strong> &mdash; Spellen gemarkeerd als "In uitvoering"</li>
             <li><strong>Recent toegevoegd</strong> &mdash; Nieuwste spellen toegevoegd aan uw bibliotheek</li>
             <li><strong>Recent bekeken</strong> &mdash; Spellen die u onlangs hebt geopend</li>
             <li><strong>Recent gescraped</strong> &mdash; Spellen waarvan recent metadata is opgehaald</li>
@@ -370,7 +370,7 @@
         </ul>
 
         <h3>API-status</h3>
-        <p>Toont de verbindingsstatus van alle geconfigureerde scrapers en API's. Offline of verkeerd geconfigureerde API's tonen een waarschuwingsbanner met een link naar Instellingen.</p>
+        <p>Toont de verbindingsstatus van alle geconfigureerde scrapers en API's. Wanneer een geconfigureerde API offline is, verschijnt een waarschuwingsbanner met een link naar Instellingen.</p>
 
         <h3>Taakherstel</h3>
         <p>Als RetroDB opnieuw opstart terwijl er achtergrondtaken lopen (bulk scrapen, RA-synchronisatie, afbeeldingsformaat aanpassen, enz.), verschijnen onderbroken taken in een herstelbanner. Opties:</p>
@@ -508,7 +508,7 @@
 <section id="settings" class="help-section card">
     <h2 class="card-title">Instellingen</h2>
     <div class="card-body">
-        <p>Instellingen zijn georganiseerd in 6 tabbladen, elk met meerdere subsecties.</p>
+        <p>Instellingen zijn georganiseerd in tabbladen, elk met subsecties. Beheerders zien ook een tabblad Emulators, dat een eigen pagina opent.</p>
 
         <h3>Tabblad Account</h3>
         <ul>
@@ -728,7 +728,7 @@
             <li>Genre, beschrijving, ontwikkelaar, uitgever, releasedatum</li>
             <li>Aantal spelers, spelmodi (Single-Player, Multi-Player, Co-op, enz.)</li>
             <li>Campagne-informatie en spelstructuur</li>
-            <li>Alle 8 leeftijdsclassificatiesystemen (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>Alle leeftijdsclassificatiesystemen (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd, CADPA)</li>
             <li>Regio, franchise, vergelijkbare spellen</li>
             <li>Controllerondersteuning, opslagtype</li>
             <li>Perspectief (First-Person, Top-Down, Side-Scroller, enz.), dimensie (2D, 3D)</li>
@@ -869,7 +869,7 @@
             <li><strong>Release-informatie</strong> &mdash; Releasedatum, regio (uit een instelbare vervolgkeuzelijst)</li>
             <li><strong>Gameplay</strong> &mdash; Genre (tags met meerdere selecties), modi, spelstructuur, aantal spelers, ontwikkelaar, uitgever</li>
             <li><strong>Technisch</strong> &mdash; Controllers (meerdere selecties), opslagtype, perspectief (meerdere waarden), dimensie (meerdere waarden)</li>
-            <li><strong>Leeftijdsclassificaties</strong> &mdash; Alle 8 classificatiesystemen met officiële classificatieafbeeldingen en automatische kruiskoppeling. Het wijzigen van één classificatie vult automatisch lege classificaties in andere systemen in.</li>
+            <li><strong>Leeftijdsclassificaties</strong> &mdash; Alle classificatiesystemen met officiële classificatieafbeeldingen en automatische kruiskoppeling. Het wijzigen van één classificatie vult automatisch lege classificaties in andere systemen in.</li>
             <li><strong>Scores</strong> &mdash; Criticusscore, gebruikersscore</li>
             <li><strong>Beschrijving</strong> &mdash; Speltekstbeschrijving</li>
             <li><strong>Aangepaste afbeeldingen</strong> &mdash; Upload aangepaste boxart (2D), 3D-boxart, de achterkant van de doos, fanart en een logo. Wis bestaande afbeeldingen om opnieuw scrapen mogelijk te maken.</li>
@@ -897,7 +897,7 @@
         </ul>
 
         <h3>Multi-classificatiesysteem</h3>
-        <p>RetroDB ondersteunt 8 internationale leeftijdsclassificatiesystemen:</p>
+        <p>RetroDB ondersteunt deze internationale leeftijdsclassificatiesystemen:</p>
         <table class="data-table">
             <thead>
                 <tr><th>Systeem</th><th>Regio</th></tr>
@@ -911,6 +911,7 @@
                 <tr><td><strong>FPB</strong></td><td>Zuid-Afrika</td></tr>
                 <tr><td><strong>GRAC</strong></td><td>Zuid-Korea</td></tr>
                 <tr><td><strong>ClassInd</strong></td><td>Brazilië</td></tr>
+                <tr><td><strong>CADPA</strong></td><td>China</td></tr>
             </tbody>
         </table>
         <p>Stel uw voorkeurssysteem in bij <strong>Instellingen &rarr; Bibliotheek &rarr; Weergave</strong>. Officiële classificatieafbeeldingen worden getoond op spelkaarten, detailvensters en detailpagina's. Lege classificaties worden tijdens scrapen, AI-invulling en handmatig bewerken automatisch ingevuld vanuit elke beschikbare classificatie via kruiskoppeling op basis van leeftijdscategorieën.</p>
@@ -985,7 +986,7 @@
         </ol>
 
         <h3>Vergeleken velden</h3>
-        <p>Systeem, ontwikkelaar, uitgever, releasedatum, genre, franchise, regio, aantal spelers, modi, perspectief, dimensie, alle 8 leeftijdsclassificaties, gebruikersbeoordeling, criticusscore, speeltijdschattingen, controllerondersteuning, opslagtype, bestandsgrootte, vergelijkbare spellen, beschrijving en meer.</p>
+        <p>Systeem, ontwikkelaar, uitgever, releasedatum, genre, franchise, regio, aantal spelers, modi, perspectief, dimensie, alle leeftijdsclassificaties, gebruikersbeoordeling, criticusscore, speeltijdschattingen, controllerondersteuning, opslagtype, bestandsgrootte, vergelijkbare spellen, beschrijving en meer.</p>
     </div>
 </section>
 
@@ -1374,7 +1375,7 @@
                 <tr><td><strong>Gameplay</strong></td><td>Genreverdeling, analyse van spelmodi, verdeling van spelstructuur</td></tr>
                 <tr><td><strong>Speeltijd</strong></td><td>Analyse van HLTB-speeltijdgegevens voor uw hele collectie &mdash; totale geschatte speeltijd, gemiddelden, verdeling</td></tr>
                 <tr><td><strong>Reviewscores</strong></td><td>Verdelingen en gemiddelden van criticus- en gebruikersscores</td></tr>
-                <tr><td><strong>Leeftijdsclassificaties</strong></td><td>Verdeling van leeftijdsclassificaties over alle 8 classificatiesystemen</td></tr>
+                <tr><td><strong>Leeftijdsclassificaties</strong></td><td>Verdeling van leeftijdsclassificaties over alle classificatiesystemen</td></tr>
                 <tr><td><strong>Prestaties</strong></td><td>Dekking en voltooiing van RetroAchievements per systeem</td></tr>
                 <tr><td><strong>Datakwaliteit</strong></td><td>Radardiagram van metadatavolledigheid (beschrijving, boxart, genre, ontwikkelaar, uitgever, releasedatum, screenshots, fanart, video, handleiding, HLTB, classificaties, modi, regio)</td></tr>
                 <tr><td><strong>Groei</strong></td><td>Tijdlijn van collectiegroei die toont wanneer spellen in de loop van de tijd zijn toegevoegd</td></tr>
@@ -1815,7 +1816,7 @@
         </ol>
 
         <h4>"Images Not Saving"</h4>
-        <p>Controleer de schrijfrechten van de mediamappen: <code>chmod -R 755 static/images/</code></p>
+        <p>Controleer of RetroDB naar zijn mediamap kan schrijven (<code>static/images/</code>, tenzij je die hebt verplaatst). Op Linux of macOS geeft <code>chmod -R u+rwX static/images/</code> je account schrijftoegang zonder de afbeeldingen als programma's te markeren.</p>
 
         <h4>"Page Slow or Unresponsive"</h4>
         <ul>

@@ -230,7 +230,7 @@
 
         <h4>Konfigurasi</h4>
         <ul>
-            <li><strong>Settings</strong> &mdash; Semua konfigurasi aplikasi (6 tab dengan banyak subbagian)</li>
+            <li><strong>Settings</strong> &mdash; Semua konfigurasi aplikasi, dalam tab dengan subbagian</li>
             <li><strong>Log Viewer</strong> &mdash; Jelajahi log aplikasi di semua kategori</li>
         </ul>
 
@@ -357,7 +357,7 @@
         <h3>Bagian Aktivitas Terbaru</h3>
         <p>Bagian yang bisa digulir menampilkan aktivitas terbaru Anda (masing-masing hanya muncul jika ada game yang relevan):</p>
         <ul>
-            <li><strong>Sedang Dimainkan</strong> &mdash; Game yang ditandai sebagai "In Progress"</li>
+            <li><strong>Lanjutkan Bermain</strong> &mdash; Game yang ditandai sebagai "In Progress"</li>
             <li><strong>Baru Ditambahkan</strong> &mdash; Game terbaru yang ditambahkan ke perpustakaan Anda</li>
             <li><strong>Baru Dilihat</strong> &mdash; Game yang baru saja Anda buka</li>
             <li><strong>Baru Diambil Datanya</strong> &mdash; Game dengan metadata yang baru saja diambil</li>
@@ -370,7 +370,7 @@
         </ul>
 
         <h3>Status API</h3>
-        <p>Menampilkan status koneksi semua scraper dan API yang dikonfigurasi. API yang offline atau salah konfigurasi menampilkan spanduk peringatan dengan tautan ke Settings.</p>
+        <p>Menampilkan status koneksi semua scraper dan API yang dikonfigurasi. Jika API yang dikonfigurasi offline, spanduk peringatan muncul dengan tautan ke Settings.</p>
 
         <h3>Pemulihan Job</h3>
         <p>Jika RetroDB dimulai ulang saat job latar belakang sedang berjalan (pengambilan data massal, sinkronisasi RA, pengubahan ukuran gambar, dll.), job yang terganggu akan muncul di spanduk pemulihan. Opsi:</p>
@@ -508,7 +508,7 @@
 <section id="settings" class="help-section card">
     <h2 class="card-title">Pengaturan</h2>
     <div class="card-body">
-        <p>Pengaturan diatur ke dalam 6 tab, masing-masing dengan beberapa subbagian.</p>
+        <p>Pengaturan diatur ke dalam tab, masing-masing dengan subbagian. Admin juga melihat tab Emulator, yang membuka halamannya sendiri.</p>
 
         <h3>Tab Account</h3>
         <ul>
@@ -728,7 +728,7 @@
             <li>Genre, deskripsi, developer, publisher, tanggal rilis</li>
             <li>Jumlah pemain, mode permainan (Single-Player, Multi-Player, Co-op, dll.)</li>
             <li>Info campaign dan struktur game</li>
-            <li>Semua 8 sistem rating usia (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>Semua sistem rating usia (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd, CADPA)</li>
             <li>Region, franchise, game serupa</li>
             <li>Dukungan kontroler, jenis penyimpanan</li>
             <li>Perspektif (First-Person, Top-Down, Side-Scroller, dll.), dimensi (2D, 3D)</li>
@@ -869,7 +869,7 @@
             <li><strong>Release Info</strong> &mdash; Tanggal rilis, region (dari dropdown yang dapat dikonfigurasi)</li>
             <li><strong>Gameplay</strong> &mdash; Genre (tag multi-pilih), mode, struktur game, jumlah pemain, developer, publisher</li>
             <li><strong>Technical</strong> &mdash; Kontroler (multi-pilih), jenis penyimpanan, perspektif (multi-nilai), dimensi (multi-nilai)</li>
-            <li><strong>Age Ratings</strong> &mdash; Semua 8 sistem rating dengan gambar rating resmi dan pemetaan silang otomatis. Mengubah satu rating otomatis mengisi rating kosong di sistem lain.</li>
+            <li><strong>Age Ratings</strong> &mdash; Semua sistem rating dengan gambar rating resmi dan pemetaan silang otomatis. Mengubah satu rating otomatis mengisi rating kosong di sistem lain.</li>
             <li><strong>Scores</strong> &mdash; Skor kritikus, skor pengguna</li>
             <li><strong>Description</strong> &mdash; Teks deskripsi game</li>
             <li><strong>Custom Images</strong> &mdash; Unggah boxart kustom (2D), boxart 3D, sisi belakang boks, fanart, dan logo. Kosongkan gambar yang ada untuk mengizinkan pengambilan data ulang.</li>
@@ -897,7 +897,7 @@
         </ul>
 
         <h3>Sistem Multi-Rating</h3>
-        <p>RetroDB mendukung 8 sistem rating usia internasional:</p>
+        <p>RetroDB mendukung sistem rating usia internasional berikut:</p>
         <table class="data-table">
             <thead>
                 <tr><th>Sistem</th><th>Region</th></tr>
@@ -911,6 +911,7 @@
                 <tr><td><strong>FPB</strong></td><td>Afrika Selatan</td></tr>
                 <tr><td><strong>GRAC</strong></td><td>Korea Selatan</td></tr>
                 <tr><td><strong>ClassInd</strong></td><td>Brasil</td></tr>
+                <tr><td><strong>CADPA</strong></td><td>Tiongkok</td></tr>
             </tbody>
         </table>
         <p>Atur sistem pilihan Anda di <strong>Settings &rarr; Library &rarr; Display</strong>. Gambar rating resmi ditampilkan pada kartu game, modal detail, dan halaman detail. Rating yang kosong otomatis diisi dari rating yang tersedia lewat pemetaan silang tingkat kedewasaan selama pengambilan data, AI Fill, dan pengeditan manual.</p>
@@ -985,7 +986,7 @@
         </ol>
 
         <h3>Kolom yang Dibandingkan</h3>
-        <p>Sistem, developer, publisher, tanggal rilis, genre, franchise, region, jumlah pemain, mode, perspektif, dimensi, semua 8 rating usia, rating pengguna, skor kritikus, estimasi waktu bermain, dukungan kontroler, jenis penyimpanan, ukuran berkas, game serupa, deskripsi, dan lainnya.</p>
+        <p>Sistem, developer, publisher, tanggal rilis, genre, franchise, region, jumlah pemain, mode, perspektif, dimensi, semua rating usia, rating pengguna, skor kritikus, estimasi waktu bermain, dukungan kontroler, jenis penyimpanan, ukuran berkas, game serupa, deskripsi, dan lainnya.</p>
     </div>
 </section>
 
@@ -1374,7 +1375,7 @@
                 <tr><td><strong>Gameplay</strong></td><td>Rincian genre, analisis mode permainan, distribusi struktur game</td></tr>
                 <tr><td><strong>Playtime</strong></td><td>Analisis data waktu bermain HLTB di seluruh koleksi Anda &mdash; total estimasi waktu bermain, rata-rata, distribusi</td></tr>
                 <tr><td><strong>Review Scores</strong></td><td>Distribusi dan rata-rata skor kritikus dan pengguna</td></tr>
-                <tr><td><strong>Age Ratings</strong></td><td>Distribusi rating usia di semua 8 sistem rating</td></tr>
+                <tr><td><strong>Age Ratings</strong></td><td>Distribusi rating usia di semua sistem rating</td></tr>
                 <tr><td><strong>Achievements</strong></td><td>Cakupan dan penyelesaian RetroAchievements berdasarkan sistem</td></tr>
                 <tr><td><strong>Data Quality</strong></td><td>Grafik radar kelengkapan metadata (deskripsi, boxart, genre, developer, publisher, tanggal rilis, screenshot, fanart, video, manual, HLTB, rating, mode, region)</td></tr>
                 <tr><td><strong>Growth</strong></td><td>Garis waktu pertumbuhan koleksi menunjukkan kapan game ditambahkan seiring waktu</td></tr>
@@ -1815,7 +1816,7 @@
         </ol>
 
         <h4>"Images Not Saving"</h4>
-        <p>Periksa hak akses tulis pada direktori media: <code>chmod -R 755 static/images/</code></p>
+        <p>Pastikan RetroDB dapat menulis ke folder medianya (<code>static/images/</code> kecuali Anda memindahkannya). Di Linux atau macOS, <code>chmod -R u+rwX static/images/</code> memberi akun Anda akses tulis tanpa menandai gambar sebagai program.</p>
 
         <h4>"Page Slow or Unresponsive"</h4>
         <ul>

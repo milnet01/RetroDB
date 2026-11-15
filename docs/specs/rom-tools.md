@@ -107,7 +107,7 @@ registry first, then the scanner registry.
 | Cleanup | `_cleanup_completed_tasks` runs when a new task is created. It removes tasks in `completed`, `failed` or `cancelled` whose `end_time` is older than `_TASK_RETENTION_SECONDS`, and stamps `end_time` on a finished task that lacks one. A `running` task is never removed. | `create_task` removes `completed`, `error` or `cancelled` tasks whose `end_time` is older than `_TASK_RETENTION_SECONDS`. |
 
 Neither registry is persisted. A restart loses every task and its log.
-Cancel, pause and resume are admin-only. Cancel acts on a `running` or `paused` task.
+Cancel, pause and resume are for an admin, or the editor who started the task (`_may_control`, PASS-59-249). Cancel acts on a `running` or `paused` task.
 
 ### 4.4 Roles per endpoint
 
@@ -116,8 +116,8 @@ Decorators are from `services/auth.py`.
 | Role | Endpoints |
 |---|---|
 | `login_required` | Every `/tools/*` page; `GET /api/rom-tools/settings`; `/api/rom-tools/status`; `/api/rom-tools/browse-folders`; `GET /api/rom-tools/task/<id>`; `/api/rom-tools/archive-scanner/contents` |
-| `editor_required` | The scan endpoints: archive scanner, CHD converter, CHD verify, duplicate finder, screenshot dedup, screenshot review |
-| `admin_required` | Task cancel, pause and resume; archive `remove-files`, `clean`, `create-m3u`, `batch-create-m3u`; `chd-converter/convert`; `chd-verify/verify`; `duplicate-finder/delete`; `screenshot-dedup/delete` |
+| `editor_required` | Task cancel, pause and resume, with the handler refusing an editor who did not start the task; the scan endpoints: archive scanner, CHD converter, CHD verify, duplicate finder, screenshot dedup, screenshot review |
+| `admin_required` | Archive `remove-files`, `clean`, `create-m3u`, `batch-create-m3u`; `chd-converter/convert`; `chd-verify/verify`; `duplicate-finder/delete`; `screenshot-dedup/delete` |
 | admin, checked in the handler | `POST /api/rom-tools/settings` |
 
 CHD verify writes nothing, yet is admin-only (Pass 41.10.B).

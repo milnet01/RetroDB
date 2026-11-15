@@ -230,7 +230,7 @@
 
         <h4>配置</h4>
         <ul>
-            <li><strong>設定</strong> &mdash; 所有應用配置（6 個標籤頁，含多個子分區）</li>
+            <li><strong>設定</strong> &mdash; 所有應用配置（分為標籤頁，含子分區）</li>
             <li><strong>日誌檢視器</strong> &mdash; 瀏覽所有類別的應用日誌</li>
         </ul>
 
@@ -357,7 +357,7 @@
         <h3>近期活動區域</h3>
         <p>可捲動的區域顯示你的近期活動（僅在有相關遊戲時才出現）：</p>
         <ul>
-            <li><strong>正在遊玩</strong> &mdash; 標記為“進行中”的遊戲</li>
+            <li><strong>繼續遊玩</strong> &mdash; 標記為“進行中”的遊戲</li>
             <li><strong>最近新增</strong> &mdash; 最近新增到遊戲庫的遊戲</li>
             <li><strong>最近檢視</strong> &mdash; 你最近開啟過的遊戲</li>
             <li><strong>最近抓取</strong> &mdash; 最近獲取過中繼資料的遊戲</li>
@@ -370,7 +370,7 @@
         </ul>
 
         <h3>API 狀態</h3>
-        <p>顯示所有已配置的抓取器和 API 的連接狀態。離線或配置有誤的 API 會顯示一個帶有指向設定連結的警告橫幅。</p>
+        <p>顯示所有已配置的抓取器和 API 的連接狀態。當已配置的 API 離線時，會出現一個帶有指向設定連結的警告橫幅。</p>
 
         <h3>任務恢復</h3>
         <p>如果 RetroDB 在後台任務（批量抓取、RA 同步、圖片縮放等）運行期間重啟，被中斷的任務會出現在恢復橫幅中。選項：</p>
@@ -508,7 +508,7 @@
 <section id="settings" class="help-section card">
     <h2 class="card-title">設定</h2>
     <div class="card-body">
-        <p>設定分為 6 個標籤頁，每個標籤頁都有多個子部分。</p>
+        <p>設定分為多個標籤頁，每個標籤頁都有子部分。管理員還會看到「模擬器」標籤頁，它會開啟獨立的頁面。</p>
 
         <h3>帳戶標籤頁</h3>
         <ul>
@@ -728,7 +728,7 @@
             <li>類型、簡介、開發商、發行商、發行日期</li>
             <li>玩家人數、遊玩模式（單人、多人、合作等）</li>
             <li>戰役資訊和遊戲結構</li>
-            <li>全部 8 個分級系統（ESRB、PEGI、CERO、USK、ACB、FPB、GRAC、ClassInd）</li>
+            <li>全部分級系統（ESRB、PEGI、CERO、USK、ACB、FPB、GRAC、ClassInd、CADPA）</li>
             <li>地區、系列、相似遊戲</li>
             <li>手把支援、存檔類型</li>
             <li>視角（第一人稱、俯視、橫版捲軸等）、維度（2D、3D）</li>
@@ -869,7 +869,7 @@
             <li><strong>發行資訊</strong> &mdash; 發行日期、地區（來自可配置的下拉選單）</li>
             <li><strong>玩法</strong> &mdash; 類型（多選標籤）、模式、遊戲結構、玩家人數、開發商、發行商</li>
             <li><strong>技術</strong> &mdash; 手把（多選）、存檔類型、視角（多值）、維度（多值）</li>
-            <li><strong>年齡分級</strong> &mdash; 全部 8 個分級系統，帶官方分級圖片和自動交叉映射。更改一個分級會自動填充其他系統中空的分級。</li>
+            <li><strong>年齡分級</strong> &mdash; 全部分級系統，帶官方分級圖片和自動交叉映射。更改一個分級會自動填充其他系統中空的分級。</li>
             <li><strong>評分</strong> &mdash; 媒體評分、使用者評分</li>
             <li><strong>簡介</strong> &mdash; 遊戲簡介文字</li>
             <li><strong>自訂圖片</strong> &mdash; 上傳自訂封面（2D）、3D 封面、盒子背面、同人圖和標誌。清除現有圖片以允許重新抓取。</li>
@@ -897,7 +897,7 @@
         </ul>
 
         <h3>多分級系統</h3>
-        <p>RetroDB 支援 8 個國際年齡分級系統：</p>
+        <p>RetroDB 支援以下國際年齡分級系統：</p>
         <table class="data-table">
             <thead>
                 <tr><th>系統</th><th>地區</th></tr>
@@ -911,6 +911,7 @@
                 <tr><td><strong>FPB</strong></td><td>南非</td></tr>
                 <tr><td><strong>GRAC</strong></td><td>韓國</td></tr>
                 <tr><td><strong>ClassInd</strong></td><td>巴西</td></tr>
+                <tr><td><strong>CADPA</strong></td><td>中國</td></tr>
             </tbody>
         </table>
         <p>在 <strong>設定 &rarr; 遊戲庫 &rarr; 顯示</strong> 中設定你偏好的系統。官方分級圖片會顯示在遊戲卡片、詳情彈窗和詳情頁上。在抓取、AI 填充和手動編輯期間，空的分級會通過成熟度等級交叉映射從任意可用的分級自動填充。</p>
@@ -985,7 +986,7 @@
         </ol>
 
         <h3>比較的欄位</h3>
-        <p>系統、開發商、發行商、發行日期、類型、系列、地區、玩家人數、模式、視角、維度、全部 8 種年齡分級、使用者評分、媒體評分、遊玩時長估算、手把支援、存檔類型、檔案大小、相似遊戲、簡介等。</p>
+        <p>系統、開發商、發行商、發行日期、類型、系列、地區、玩家人數、模式、視角、維度、全部年齡分級、使用者評分、媒體評分、遊玩時長估算、手把支援、存檔類型、檔案大小、相似遊戲、簡介等。</p>
     </div>
 </section>
 
@@ -1374,7 +1375,7 @@
                 <tr><td><strong>玩法</strong></td><td>類型細分、遊戲模式分析、遊戲結構分布</td></tr>
                 <tr><td><strong>遊玩時長</strong></td><td>整個合集的 HLTB 遊玩時長資料分析 &mdash; 總估算遊玩時長、平均值、分布</td></tr>
                 <tr><td><strong>評測分數</strong></td><td>媒體和使用者評分的分布與平均值</td></tr>
-                <tr><td><strong>年齡分級</strong></td><td>全部 8 種分級系統的年齡分級分布</td></tr>
+                <tr><td><strong>年齡分級</strong></td><td>全部分級系統的年齡分級分布</td></tr>
                 <tr><td><strong>成就</strong></td><td>按系統統計的 RetroAchievements 覆蓋率和完成度</td></tr>
                 <tr><td><strong>資料品質</strong></td><td>中繼資料完整度雷達圖（簡介、封面、類型、開發商、發行商、發行日期、螢幕截圖、同人圖、影片、說明書、HLTB、分級、模式、地區）</td></tr>
                 <tr><td><strong>增長</strong></td><td>合集增長時間軸，顯示遊戲隨時間的加入情況</td></tr>
@@ -1815,7 +1816,7 @@
         </ol>
 
         <h4>“圖片未儲存”</h4>
-        <p>檢查媒體目錄的寫入權限：<code>chmod -R 755 static/images/</code></p>
+        <p>檢查 RetroDB 能否寫入其媒體資料夾（除非你移動過，否則為 <code>static/images/</code>）。在 Linux 或 macOS 上，<code>chmod -R u+rwX static/images/</code> 可為你的帳號授予寫入權限，而不會把圖片標記為程式。</p>
 
         <h4>“頁面緩慢或無響應”</h4>
         <ul>

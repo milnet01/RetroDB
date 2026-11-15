@@ -613,17 +613,17 @@ Sidebar nav items highlight for both parent and child pages using `request.endpo
 ## 8. Theme System
 
 ### Available Themes
-RetroDB supports 7 themes, each with CSS variable overrides and an animated canvas effect:
+RetroDB's themes each have CSS variable overrides; all but Amber have an animated canvas effect. `docs/specs/themes.md` §2 owns the details:
 
 | Theme | `data-theme` | Primary | Secondary | Canvas Effect |
 |-------|-------------|---------|-----------|---------------|
 | Cyberpunk (default) | `cyberpunk` | `#4cc9f0` (cyan) | `#f72585` (magenta) | Volumetric smoke (simplex noise) |
-| Matrix | `matrix` | `#00ff41` (green) | `#003300` | Digital rain (kanji) |
-| Amber | `amber` | `#ffb000` (amber) | `#ff6600` | CRT terminal glow |
-| Ocean | `ocean` | `#06b6d4` (teal) | `#0284c7` (blue) | Moon reflection with waves |
+| Matrix | `matrix` | `#00ff41` (green) | `#008f11` (dark green) | Digital rain (kanji) |
+| Amber | `amber` | `#ffb000` (amber) | `#ff6600` (orange) | None (body gradient only) |
+| Ocean | `ocean` | `#4dabf7` (blue) | `#20c997` (teal) | Moon reflection with waves |
 | Cathedral | `christian` | `#d4a843` (gold) | `#7b4db0` (purple) | Golden dust motes with light rays |
 | Blade Runner | `bladerunner` | `#1a9fff` (electric blue) | `#ff2d7c` (neon pink) | Rain streaks with neon glow pools |
-| Elite 1984 | `elite` | `#00ff00` (vector green) | `#00cc00` | 1984 vector starfield (stars streaming past) |
+| Elite 1984 | `elite` | `#00ff00` (vector green) | `#cccccc` (vector white) | 1984 vector starfield (stars streaming past) |
 
 ### Theme Implementation
 - **CSS**: `[data-theme="name"]` selectors in `static/css/core/themes.css` override CSS variables
@@ -790,7 +790,7 @@ Two related dialog primitives live in `templates/base.html` (so the CSP-nonce sc
 
 ## 14. Bulk Operation Progress UI
 
-Bulk operations (bulk scrape, PSN refresh, RA refresh, image resize, etc.) display progress in two places: a **modal** (foreground) and a **persistent toast** (background). Both follow the same layout convention.
+Bulk operations (bulk scrape, PSN refresh, RA refresh, image resize, etc.) display progress in two places: a **modal** (foreground) and a **persistent toast** (background). The modal follows the layout below. The toast is compact: below its bar it shows one counter, `N / Total (P%)` (`UnifiedToastController` in `static/js/toast-controller.js`).
 
 ### Progress Bar Layout
 
@@ -909,7 +909,7 @@ Pill-shaped tags with `border-radius: var(--radius-full)` and `padding: 4px 12px
 ## 18. Number Formatting
 
 ### Thousand Separators
-All numeric values displayed in the UI must use **thin space** as the thousand separator. Never use commas.
+All numeric values displayed in the UI must use a **space** as the thousand separator. Never use commas.
 
 | Raw Value | Displayed As |
 |-----------|-------------|
@@ -1018,7 +1018,7 @@ datetime_obj.strftime('%Y-%m-%d %H:%M:%S')
 
 ### Overview
 
-RetroDB uses a **modular CSS system**. All styles are split into individual files under `static/css/` and concatenated into `main.min.css` by `build_css.py`. The canonical load order is the `CSS_ORDER` list in `build_css.py`; `static/css/main.css` is a maintained `@import` chain that mirrors that order for local development. The base template (`templates/base.html`) loads only `main.min.css`.
+RetroDB uses a **modular CSS system**. All styles are split into individual files under `static/css/` and concatenated into `main.min.css` by `build_css.py`. The load order is the `CSS_ORDER` list in `build_css.py`. The base template (`templates/base.html`) loads only `main.min.css`.
 
 ### File Structure & Load Order
 
@@ -1062,7 +1062,6 @@ static/css/
 │   ├── backgrounds.css #    Mist/fog, scanlines, gradient backgrounds
 │   └── animations.css  #    Keyframe animations, transitions
 ├── utilities.css       # 7. UTILITIES — last (for override capability)
-├── main.css            # Development entry point (@import chain mirrors build_css.py CSS_ORDER)
 └── main.min.css        # Production bundle (built by build_css.py)
 ```
 
@@ -1087,7 +1086,7 @@ static/css/
    ```bash
    python3 build_css.py
    ```
-5. **If adding a new CSS file**, add it to both `main.css` (in the correct section) and `build_css.py` (`CSS_ORDER` list — the canonical source of truth) at the same position.
+5. **If adding a new CSS file**, add it to `CSS_ORDER` in `build_css.py`, in the right section.
 6. **Load order matters**: Variables → Reset → Typography → Layout → Components → Features → Pages → Effects → Utilities → Responsive. Later files can override earlier ones. Utilities load near-last intentionally.
 
 ### Decision Flowchart

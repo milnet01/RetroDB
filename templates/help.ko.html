@@ -230,7 +230,7 @@
 
         <h4>구성</h4>
         <ul>
-            <li><strong>설정</strong> &mdash; 모든 앱 구성(여러 하위 섹션이 있는 6개 탭)</li>
+            <li><strong>설정</strong> &mdash; 모든 앱 구성(하위 섹션이 있는 탭)</li>
             <li><strong>로그 뷰어</strong> &mdash; 모든 카테고리의 애플리케이션 로그 탐색</li>
         </ul>
 
@@ -357,7 +357,7 @@
         <h3>최근 활동 섹션</h3>
         <p>최근 활동을 보여주는 스크롤 가능한 섹션(각 섹션은 관련 게임이 있을 때만 나타남):</p>
         <ul>
-            <li><strong>현재 플레이 중</strong> &mdash; "진행 중"으로 표시된 게임</li>
+            <li><strong>이어서 플레이</strong> &mdash; "진행 중"으로 표시된 게임</li>
             <li><strong>최근 추가됨</strong> &mdash; 라이브러리에 가장 최근에 추가된 게임</li>
             <li><strong>최근 본 항목</strong> &mdash; 최근에 연 게임</li>
             <li><strong>최근 스크래핑됨</strong> &mdash; 최근에 메타데이터를 가져온 게임</li>
@@ -370,7 +370,7 @@
         </ul>
 
         <h3>API 상태</h3>
-        <p>구성된 모든 스크레이퍼와 API의 연결 상태를 보여줍니다. 오프라인이거나 잘못 구성된 API는 설정으로 연결되는 링크와 함께 경고 배너를 표시합니다.</p>
+        <p>구성된 모든 스크레이퍼와 API의 연결 상태를 보여줍니다. 구성된 API가 오프라인이면 설정으로 연결되는 링크와 함께 경고 배너가 나타납니다.</p>
 
         <h3>작업 복구</h3>
         <p>백그라운드 작업(일괄 스크래핑, RA 동기화, 이미지 크기 조정 등)이 실행되는 동안 RetroDB가 재시작되면, 중단된 작업이 복구 배너에 나타납니다. 옵션:</p>
@@ -508,7 +508,7 @@
 <section id="settings" class="help-section card">
     <h2 class="card-title">설정</h2>
     <div class="card-body">
-        <p>설정은 6개 탭으로 구성되며, 각 탭에는 여러 하위 섹션이 있습니다.</p>
+        <p>설정은 탭으로 구성되며, 각 탭에는 하위 섹션이 있습니다. 관리자에게는 자체 페이지가 열리는 에뮬레이터 탭도 표시됩니다.</p>
 
         <h3>계정 탭</h3>
         <ul>
@@ -727,7 +727,7 @@
             <li>장르, 설명, 개발사, 배급사, 출시일</li>
             <li>플레이어 수, 플레이 모드(싱글 플레이어, 멀티 플레이어, 협동 등)</li>
             <li>캠페인 정보 및 게임 구조</li>
-            <li>8가지 모든 연령 등급 시스템(ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>모든 연령 등급 시스템(ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd, CADPA)</li>
             <li>지역, 프랜차이즈, 유사 게임</li>
             <li>컨트롤러 지원, 저장 방식</li>
             <li>시점(1인칭, 탑다운, 사이드 스크롤러 등), 차원(2D, 3D)</li>
@@ -867,7 +867,7 @@
             <li><strong>출시 정보</strong> &mdash; 출시일, 지역(구성 가능한 드롭다운에서)</li>
             <li><strong>게임플레이</strong> &mdash; 장르(다중 선택 태그), 모드, 게임 구조, 플레이어 수, 개발사, 배급사</li>
             <li><strong>기술</strong> &mdash; 컨트롤러(다중 선택), 저장 방식, 시점(다중 값), 차원(다중 값)</li>
-            <li><strong>연령 등급</strong> &mdash; 공식 등급 이미지와 자동 교차 매핑이 있는 8가지 모든 등급 시스템. 하나의 등급을 변경하면 다른 시스템의 빈 등급이 자동으로 채워집니다.</li>
+            <li><strong>연령 등급</strong> &mdash; 공식 등급 이미지와 자동 교차 매핑이 있는 모든 등급 시스템. 하나의 등급을 변경하면 다른 시스템의 빈 등급이 자동으로 채워집니다.</li>
             <li><strong>점수</strong> &mdash; 평론가 점수, 사용자 점수</li>
             <li><strong>설명</strong> &mdash; 게임 설명 텍스트</li>
             <li><strong>사용자 지정 이미지</strong> &mdash; 사용자 지정 박스아트(2D), 3D 박스아트, 상자 뒷면, 팬아트, 로고 업로드. 기존 이미지를 지우면 다시 스크래핑을 허용합니다.</li>
@@ -895,7 +895,7 @@
         </ul>
 
         <h3>다중 등급 시스템</h3>
-        <p>RetroDB는 8가지 국제 연령 등급 시스템을 지원합니다:</p>
+        <p>RetroDB는 다음 국제 연령 등급 시스템을 지원합니다:</p>
         <table class="data-table">
             <thead>
                 <tr><th>시스템</th><th>지역</th></tr>
@@ -909,6 +909,7 @@
                 <tr><td><strong>FPB</strong></td><td>남아프리카 공화국</td></tr>
                 <tr><td><strong>GRAC</strong></td><td>대한민국</td></tr>
                 <tr><td><strong>ClassInd</strong></td><td>브라질</td></tr>
+                <tr><td><strong>CADPA</strong></td><td>중국</td></tr>
             </tbody>
         </table>
         <p>선호하는 시스템은 <strong>설정 &rarr; 라이브러리 &rarr; 디스플레이</strong>에서 설정하세요. 공식 등급 이미지는 게임 카드, 상세 모달, 상세 페이지에 표시됩니다. 빈 등급은 스크래핑, AI 채우기, 수동 편집 중에 성숙도 등급 교차 매핑을 통해 사용 가능한 등급으로부터 자동으로 채워집니다.</p>
@@ -983,7 +984,7 @@
         </ol>
 
         <h3>비교 필드</h3>
-        <p>시스템, 개발사, 배급사, 출시일, 장르, 프랜차이즈, 지역, 플레이어 수, 모드, 시점, 차원, 8가지 모든 연령 등급, 사용자 평점, 평론가 점수, 플레이 시간 추정치, 컨트롤러 지원, 저장 방식, 파일 크기, 유사 게임, 설명 등.</p>
+        <p>시스템, 개발사, 배급사, 출시일, 장르, 프랜차이즈, 지역, 플레이어 수, 모드, 시점, 차원, 모든 연령 등급, 사용자 평점, 평론가 점수, 플레이 시간 추정치, 컨트롤러 지원, 저장 방식, 파일 크기, 유사 게임, 설명 등.</p>
     </div>
 </section>
 
@@ -1372,7 +1373,7 @@
                 <tr><td><strong>게임플레이</strong></td><td>장르 분포, 플레이 모드 분석, 게임 구조 분포</td></tr>
                 <tr><td><strong>플레이 시간</strong></td><td>컬렉션 전체의 HLTB 플레이 시간 데이터 분석 &mdash; 총 추정 플레이 시간, 평균, 분포</td></tr>
                 <tr><td><strong>리뷰 점수</strong></td><td>평론가 및 사용자 점수 분포와 평균</td></tr>
-                <tr><td><strong>연령 등급</strong></td><td>8가지 모든 등급 시스템에 걸친 연령 등급 분포</td></tr>
+                <tr><td><strong>연령 등급</strong></td><td>모든 등급 시스템에 걸친 연령 등급 분포</td></tr>
                 <tr><td><strong>업적</strong></td><td>시스템별 RetroAchievements 적용률 및 완료</td></tr>
                 <tr><td><strong>데이터 품질</strong></td><td>메타데이터 완성도 레이더 차트(설명, 박스아트, 장르, 개발사, 배급사, 출시일, 스크린샷, 팬아트, 동영상, 설명서, HLTB, 등급, 모드, 지역)</td></tr>
                 <tr><td><strong>성장</strong></td><td>시간 경과에 따라 게임이 추가된 시점을 보여주는 컬렉션 성장 타임라인</td></tr>
@@ -1809,7 +1810,7 @@
         </ol>
 
         <h4>"Images Not Saving"</h4>
-        <p>미디어 디렉터리의 쓰기 권한을 확인하세요: <code>chmod -R 755 static/images/</code></p>
+        <p>RetroDB가 미디어 폴더(옮기지 않았다면 <code>static/images/</code>)에 쓸 수 있는지 확인하세요. Linux나 macOS에서는 <code>chmod -R u+rwX static/images/</code>가 이미지를 프로그램으로 표시하지 않고 내 계정에 쓰기 권한을 줍니다.</p>
 
         <h4>"Page Slow or Unresponsive"</h4>
         <ul>

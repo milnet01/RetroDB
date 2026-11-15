@@ -230,7 +230,7 @@
 
         <h4>Konfiguration</h4>
         <ul>
-            <li><strong>Einstellungen</strong> &mdash; Gesamte App-Konfiguration (6 Registerkarten mit vielen Unterabschnitten)</li>
+            <li><strong>Einstellungen</strong> &mdash; Gesamte App-Konfiguration, in Registerkarten mit Unterabschnitten</li>
             <li><strong>Protokollanzeige</strong> &mdash; Anwendungsprotokolle aller Kategorien durchsuchen</li>
         </ul>
 
@@ -357,7 +357,7 @@
         <h3>Bereiche der jüngsten Aktivität</h3>
         <p>Scrollbare Bereiche, die Ihre jüngsten Aktivitäten zeigen (jeder erscheint nur, wenn es relevante Spiele gibt):</p>
         <ul>
-            <li><strong>Aktuell gespielt</strong> &mdash; Als „In Bearbeitung“ markierte Spiele</li>
+            <li><strong>Weiterspielen</strong> &mdash; Als „In Bearbeitung“ markierte Spiele</li>
             <li><strong>Kürzlich hinzugefügt</strong> &mdash; Zuletzt zu Ihrer Bibliothek hinzugefügte Spiele</li>
             <li><strong>Kürzlich angesehen</strong> &mdash; Spiele, die Sie kürzlich geöffnet haben</li>
             <li><strong>Kürzlich gescrapt</strong> &mdash; Spiele mit kürzlich abgerufenen Metadaten</li>
@@ -370,7 +370,7 @@
         </ul>
 
         <h3>API-Status</h3>
-        <p>Zeigt den Verbindungsstatus aller konfigurierten Scraper und APIs. Offline oder fehlerhaft konfigurierte APIs zeigen ein Warnbanner mit einem Link zu den Einstellungen an.</p>
+        <p>Zeigt den Verbindungsstatus aller konfigurierten Scraper und APIs. Ist eine konfigurierte API offline, erscheint ein Warnbanner mit einem Link zu den Einstellungen.</p>
 
         <h3>Auftragswiederherstellung</h3>
         <p>Wenn RetroDB neu startet, während Hintergrundaufträge laufen (Massen-Scraping, RA-Synchronisierung, Bildgrößenanpassung usw.), erscheinen unterbrochene Aufträge in einem Wiederherstellungsbanner. Optionen:</p>
@@ -508,7 +508,7 @@
 <section id="settings" class="help-section card">
     <h2 class="card-title">Einstellungen</h2>
     <div class="card-body">
-        <p>Die Einstellungen sind in 6 Registerkarten gegliedert, jede mit mehreren Unterabschnitten.</p>
+        <p>Die Einstellungen sind in Registerkarten gegliedert, jede mit Unterabschnitten. Administratoren sehen zusätzlich eine Registerkarte Emulatoren, die eine eigene Seite öffnet.</p>
 
         <h3>Registerkarte „Konto“</h3>
         <ul>
@@ -728,7 +728,7 @@
             <li>Genre, Beschreibung, Entwickler, Publisher, Veröffentlichungsdatum</li>
             <li>Spieleranzahl, Spielmodi (Einzelspieler, Mehrspieler, Koop usw.)</li>
             <li>Kampagneninfo und Spielstruktur</li>
-            <li>Alle 8 Altersfreigabesysteme (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>Alle Altersfreigabesysteme (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd, CADPA)</li>
             <li>Region, Reihe, ähnliche Spiele</li>
             <li>Controller-Unterstützung, Speichertyp</li>
             <li>Perspektive (Ego-Perspektive, Vogelperspektive, Side-Scroller usw.), Dimension (2D, 3D)</li>
@@ -869,7 +869,7 @@
             <li><strong>Veröffentlichungsinfo</strong> &mdash; Veröffentlichungsdatum, Region (aus konfigurierbarem Dropdown)</li>
             <li><strong>Gameplay</strong> &mdash; Genre (Mehrfachauswahl-Tags), Modi, Spielstruktur, Spieleranzahl, Entwickler, Publisher</li>
             <li><strong>Technik</strong> &mdash; Controller (Mehrfachauswahl), Speichertyp, Perspektive (mehrwertig), Dimension (mehrwertig)</li>
-            <li><strong>Altersfreigaben</strong> &mdash; Alle 8 Bewertungssysteme mit offiziellen Bewertungsbildern und automatischer übergreifender Zuordnung. Das Ändern einer Bewertung füllt leere Bewertungen in anderen Systemen automatisch aus.</li>
+            <li><strong>Altersfreigaben</strong> &mdash; Alle Bewertungssysteme mit offiziellen Bewertungsbildern und automatischer übergreifender Zuordnung. Das Ändern einer Bewertung füllt leere Bewertungen in anderen Systemen automatisch aus.</li>
             <li><strong>Bewertungen</strong> &mdash; Kritikerbewertung, Nutzerbewertung</li>
             <li><strong>Beschreibung</strong> &mdash; Beschreibungstext des Spiels</li>
             <li><strong>Eigene Bilder</strong> &mdash; Eigene Boxart (2D), 3D-Boxart, die Rückseite der Box, Fanart und ein Logo hochladen. Löschen Sie vorhandene Bilder, um erneutes Scraping zu ermöglichen.</li>
@@ -897,7 +897,7 @@
         </ul>
 
         <h3>Mehrfach-Bewertungssystem</h3>
-        <p>RetroDB unterstützt 8 internationale Altersfreigabesysteme:</p>
+        <p>RetroDB unterstützt diese internationalen Altersfreigabesysteme:</p>
         <table class="data-table">
             <thead>
                 <tr><th>System</th><th>Region</th></tr>
@@ -911,6 +911,7 @@
                 <tr><td><strong>FPB</strong></td><td>Südafrika</td></tr>
                 <tr><td><strong>GRAC</strong></td><td>Südkorea</td></tr>
                 <tr><td><strong>ClassInd</strong></td><td>Brasilien</td></tr>
+                <tr><td><strong>CADPA</strong></td><td>China</td></tr>
             </tbody>
         </table>
         <p>Legen Sie Ihr bevorzugtes System unter <strong>Einstellungen &rarr; Bibliothek &rarr; Anzeige</strong> fest. Offizielle Bewertungsbilder werden auf Spielkarten, Detaildialogen und Detailseiten angezeigt. Leere Bewertungen werden beim Scraping, KI-Ausfüllen und manuellen Bearbeiten automatisch aus jeder verfügbaren Bewertung über die übergreifende Zuordnung der Reifegrad-Stufen ausgefüllt.</p>
@@ -985,7 +986,7 @@
         </ol>
 
         <h3>Verglichene Felder</h3>
-        <p>System, Entwickler, Publisher, Veröffentlichungsdatum, Genre, Reihe, Region, Spieleranzahl, Modi, Perspektive, Dimension, alle 8 Altersfreigaben, Nutzerbewertung, Kritikerbewertung, Spielzeitschätzungen, Controller-Unterstützung, Speichertyp, Dateigröße, ähnliche Spiele, Beschreibung und mehr.</p>
+        <p>System, Entwickler, Publisher, Veröffentlichungsdatum, Genre, Reihe, Region, Spieleranzahl, Modi, Perspektive, Dimension, alle Altersfreigaben, Nutzerbewertung, Kritikerbewertung, Spielzeitschätzungen, Controller-Unterstützung, Speichertyp, Dateigröße, ähnliche Spiele, Beschreibung und mehr.</p>
     </div>
 </section>
 
@@ -1374,7 +1375,7 @@
                 <tr><td><strong>Gameplay</strong></td><td>Genre-Aufschlüsselung, Analyse der Spielmodi, Verteilung der Spielstruktur</td></tr>
                 <tr><td><strong>Spielzeit</strong></td><td>Analyse der HLTB-Spielzeitdaten über Ihre Sammlung hinweg &mdash; geschätzte Gesamtspielzeit, Durchschnittswerte, Verteilung</td></tr>
                 <tr><td><strong>Bewertungspunkte</strong></td><td>Verteilungen und Durchschnittswerte der Kritiker- und Nutzerbewertungen</td></tr>
-                <tr><td><strong>Altersfreigaben</strong></td><td>Verteilung der Altersfreigaben über alle 8 Bewertungssysteme</td></tr>
+                <tr><td><strong>Altersfreigaben</strong></td><td>Verteilung der Altersfreigaben über alle Bewertungssysteme</td></tr>
                 <tr><td><strong>Achievements</strong></td><td>RetroAchievements-Abdeckung und -Abschluss nach System</td></tr>
                 <tr><td><strong>Datenqualität</strong></td><td>Radardiagramm zur Metadatenvollständigkeit (Beschreibung, Boxart, Genre, Entwickler, Publisher, Veröffentlichungsdatum, Screenshots, Fanart, Video, Handbuch, HLTB, Bewertungen, Modi, Region)</td></tr>
                 <tr><td><strong>Wachstum</strong></td><td>Zeitleiste des Sammlungswachstums, die zeigt, wann Spiele im Laufe der Zeit hinzugefügt wurden</td></tr>
@@ -1815,7 +1816,7 @@
         </ol>
 
         <h4>„Bilder werden nicht gespeichert“</h4>
-        <p>Prüfen Sie die Schreibberechtigungen für die Medienverzeichnisse: <code>chmod -R 755 static/images/</code></p>
+        <p>Prüfen Sie, ob RetroDB in seinen Medienordner schreiben kann (<code>static/images/</code>, sofern Sie ihn nicht verschoben haben). Unter Linux oder macOS gibt <code>chmod -R u+rwX static/images/</code> Ihrem Konto Schreibzugriff, ohne die Bilder als Programme zu markieren.</p>
 
         <h4>„Seite langsam oder reagiert nicht“</h4>
         <ul>

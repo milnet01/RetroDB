@@ -1071,7 +1071,7 @@ function scrollToSection(sectionId) {
         if (activePanel) {
             activePanel.querySelectorAll('.subnav-link').forEach(link => {
                 link.classList.remove('active');
-                if (link.getAttribute('href') === '#' + sectionId || link.getAttribute('onclick')?.includes(sectionId)) {
+                if (link.getAttribute('href') === '#' + sectionId) {
                     link.classList.add('active');
                 }
             });
@@ -1109,8 +1109,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (activePanel) {
                     activePanel.querySelectorAll('.subnav-link').forEach(link => {
                         link.classList.remove('active');
-                        if (link.getAttribute('href') === '#' + sectionId || 
-                            link.getAttribute('onclick')?.includes("'" + sectionId + "'")) {
+                        if (link.getAttribute('href') === '#' + sectionId) {
                             link.classList.add('active');
                         }
                     });

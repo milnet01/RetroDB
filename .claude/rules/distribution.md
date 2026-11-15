@@ -13,7 +13,7 @@ paths:
 ## Distribution (Patreon Releases)
 
 Two shapes:
-- **Source** — small zip; user installs Python + runs `pip install -r requirements.txt`. Cross-platform from one host.
+- **Source** — small zip; user installs Python + runs `install.py`, which installs from the hashed `requirements.lock` and falls back to `requirements.txt` only when the lock is missing (`installer_core.select_pip_args`). Cross-platform from one host.
 - **Standalone** — PyInstaller bundle (Python runtime + deps + assets baked in). User unzips and double-clicks the platform's launcher (`start.sh` / `start.command` / `start.bat`) — the PyInstaller `retrodb` binary sits next to it. PyInstaller has no cross-compile — must build on the target OS. `build_dist.build_standalone` ships those launchers from **`packaging/standalone/`**, never the repo root: the root scripts are the *source*-install launchers and run `python3 app.py`, which a bundle has no `.py` files for (Pass 59.10). A standalone launcher must only `exec ./retrodb` — the binary opens the browser itself (`app.py`'s `sys.frozen` branch), since only the server knows the resolved port. The source-install launchers ask `app.py` to do the same with `RETRODB_OPEN_BROWSER=1`; it opens once the port is bound, and never under LocalWebServerManager (`LWSM_MANAGED=1`). On Linux the zip also carries `packaging/RetroDB.desktop` + `retrodb-256.png` and `install-launcher.sh`, which substitutes the template's `__EXEC__` / `__ICON__` against the extraction path (Pass 59.11); `scripts/install_launcher.py` is the source-install equivalent and needs Python, so it cannot run inside a bundle.
 
 ### App icon assets

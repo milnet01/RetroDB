@@ -271,39 +271,6 @@ const Storage = {
             console.warn(`Error removing localStorage key "${key}":`, e);
         }
     },
-    
-    /**
-     * Clear all RetroDB localStorage items.
-     *
-     * Pass 36.9 — prior prefix list was `retrodb/bulkScrape/sidebar` only,
-     * so Storage.clearAll() lied — it left behind the RetroAchievements
-     * operations queue, toast completion flags, and the legacy
-     * raSyncQueue. Settings → "Clear local storage" is a support
-     * diagnostic; skipping half the keys makes bug reports harder. Keep
-     * this list in sync with every key pattern introduced below.
-     */
-    clearAll() {
-        const PREFIXES = [
-            'retrodb',
-            'bulkScrape',
-            'sidebar',
-            'raOperationsQueue',
-            'raSyncQueue',
-            'toast_completion_',
-        ];
-        const keysToRemove = [];
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (!key) continue;
-            for (const prefix of PREFIXES) {
-                if (key.startsWith(prefix)) {
-                    keysToRemove.push(key);
-                    break;
-                }
-            }
-        }
-        keysToRemove.forEach(key => localStorage.removeItem(key));
-    }
 };
 
 // =============================================================================

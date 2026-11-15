@@ -15,7 +15,7 @@ import re
 import sys
 from pathlib import Path
 
-# CSS files in load order (must match main-new.css @import order)
+# CSS files in load order: later files override earlier ones
 CSS_ORDER = [
     # 1. Core
     'core/variables.css',

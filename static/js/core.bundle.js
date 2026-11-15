@@ -247,39 +247,6 @@ const Storage = {
             console.warn(`Error removing localStorage key "${key}":`, e);
         }
     },
-
-    /**
-     * Clear all RetroDB localStorage items.
-     *
-     * Pass 36.9 — prior prefix list was `retrodb/bulkScrape/sidebar` only,
-     * so Storage.clearAll() lied — it left behind the RetroAchievements
-     * operations queue, toast completion flags, and the legacy
-     * raSyncQueue. Settings → "Clear local storage" is a support
-     * diagnostic; skipping half the keys makes bug reports harder. Keep
-     * this list in sync with every key pattern introduced below.
-     */
-    clearAll() {
-        const PREFIXES = [
-            'retrodb',
-            'bulkScrape',
-            'sidebar',
-            'raOperationsQueue',
-            'raSyncQueue',
-            'toast_completion_',
-        ];
-        const keysToRemove = [];
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (!key) continue;
-            for (const prefix of PREFIXES) {
-                if (key.startsWith(prefix)) {
-                    keysToRemove.push(key);
-                    break;
-                }
-            }
-        }
-        keysToRemove.forEach(key => localStorage.removeItem(key));
-    }
 };
 
 const _API_DEFAULT_TIMEOUT_MS = 30000;
@@ -2410,12 +2377,6 @@ const UnifiedToastController = {
                     const status = await API.get('/api/bulk-scrape-job/status');
                     endpoint = status.paused ? '/api/bulk-scrape-job/resume' : '/api/bulk-scrape-job/pause';
                     break;
-                case 'ra-sync':
-                    endpoint = '/api/ra-sync/toggle-pause';
-                    break;
-                case 'ra-refresh':
-                    endpoint = '/api/ra-refresh/toggle-pause';
-                    break;
                 case 'psn-refresh':
                     const psnStatus = await API.get('/api/psn/bulk-refresh/status');
                     endpoint = psnStatus.paused ? '/api/psn/bulk-refresh/resume' : '/api/psn/bulk-refresh/pause';
@@ -3835,11 +3796,6 @@ styleSheet.textContent = `
         transform: translateX(100%);
         transition: all 0.3s ease;
         min-width: 280px;
-    }
-
-    .notification.active {
-        opacity: 1;
-        transform: translateX(0);
     }
 
     .notification-success {

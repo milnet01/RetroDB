@@ -230,7 +230,7 @@
 
         <h4>Konfigurasie</h4>
         <ul>
-            <li><strong>Instellings</strong> &mdash; Alle toepassingskonfigurasie (6 oortjies met verskeie subafdelings)</li>
+            <li><strong>Instellings</strong> &mdash; Alle toepassingskonfigurasie, in oortjies met subafdelings</li>
             <li><strong>Logboekbekyker</strong> &mdash; Blaai deur toepassingslogboeke oor alle kategorieë</li>
         </ul>
 
@@ -357,7 +357,7 @@
         <h3>Onlangse Aktiwiteit-afdelings</h3>
         <p>Rolbare afdelings wat jou onlangse aktiwiteit wys (elkeen verskyn slegs wanneer daar relevante speletjies is):</p>
         <ul>
-            <li><strong>Tans Besig Om Te Speel</strong> &mdash; Speletjies gemerk as "In Uitvoering"</li>
+            <li><strong>Speel voort</strong> &mdash; Speletjies gemerk as "In Uitvoering"</li>
             <li><strong>Onlangs Bygevoeg</strong> &mdash; Nuutste speletjies by jou biblioteek gevoeg</li>
             <li><strong>Onlangs Bekyk</strong> &mdash; Speletjies wat jy onlangs oopgemaak het</li>
             <li><strong>Onlangs Ontgin</strong> &mdash; Speletjies met onlangs opgehaalde metadata</li>
@@ -370,7 +370,7 @@
         </ul>
 
         <h3>API-status</h3>
-        <p>Wys die verbindingstatus van alle gekonfigureerde ontginners en API's. API's wat vanlyn of verkeerd gekonfigureer is, wys 'n waarskuwingsbanier met 'n skakel na Instellings.</p>
+        <p>Wys die verbindingstatus van alle gekonfigureerde ontginners en API's. Wanneer 'n gekonfigureerde API vanlyn is, verskyn 'n waarskuwingsbanier met 'n skakel na Instellings.</p>
 
         <h3>Taakherstel</h3>
         <p>As RetroDB herbegin terwyl agtergrondtake loop (grootmaat-ontginning, RA-sinkronisasie, beeld-hergrootte, ens.), verskyn onderbroke take in 'n herstelbanier. Opsies:</p>
@@ -508,7 +508,7 @@
 <section id="settings" class="help-section card">
     <h2 class="card-title">Instellings</h2>
     <div class="card-body">
-        <p>Instellings is georganiseer in 6 oortjies, elk met verskeie subafdelings.</p>
+        <p>Instellings is georganiseer in oortjies, elk met subafdelings. Administrateurs sien ook 'n Emulators-oortjie, wat sy eie bladsy oopmaak.</p>
 
         <h3>Rekening-oortjie</h3>
         <ul>
@@ -728,7 +728,7 @@
             <li>Genre, beskrywing, ontwikkelaar, uitgewer, vrystellingsdatum</li>
             <li>Spelers, speelmodusse (Enkelspeler, Multi-speler, Koöp, ens.)</li>
             <li>Veldtogtinligting en speletjiestruktuur</li>
-            <li>Alle 8 ouderdomsgraderingstelsels (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>Alle ouderdomsgraderingstelsels (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd, CADPA)</li>
             <li>Streek, franchise, soortgelyke speletjies</li>
             <li>Beheerder-ondersteuning, storingtipe</li>
             <li>Perspektief (Eerstepersoon, Bo-aansig, Kant-rol, ens.), dimensie (2D, 3D)</li>
@@ -869,7 +869,7 @@
             <li><strong>Vrystellinginligting</strong> &mdash; Vrystellingsdatum, streek (vanaf 'n instelbare aftreklys)</li>
             <li><strong>Speelbaarheid</strong> &mdash; Genre (multi-keuse-etikette), modusse, speletjiestruktuur, spelers, ontwikkelaar, uitgewer</li>
             <li><strong>Tegnies</strong> &mdash; Beheerders (multi-keuse), storingtipe, perspektief (multi-waarde), dimensie (multi-waarde)</li>
-            <li><strong>Ouderdomsgraderings</strong> &mdash; Alle 8 graderingstelsels met amptelike graderingbeelde en outomatiese kruisafbeelding. Om een gradering te verander vul outomaties leë graderings in ander stelsels in.</li>
+            <li><strong>Ouderdomsgraderings</strong> &mdash; Alle graderingstelsels met amptelike graderingbeelde en outomatiese kruisafbeelding. Om een gradering te verander vul outomaties leë graderings in ander stelsels in.</li>
             <li><strong>Tellings</strong> &mdash; Kritikustelling, gebruikertelling</li>
             <li><strong>Beskrywing</strong> &mdash; Speletjiebeskrywingsteks</li>
             <li><strong>Pasgemaakte Beelde</strong> &mdash; Laai pasgemaakte boekskyf (2D), 3D-boekskyf, die agterkant van die boks, agtergrondkuns en 'n logo op. Maak bestaande beelde skoon om her-ontginning toe te laat.</li>
@@ -897,7 +897,7 @@
         </ul>
 
         <h3>Multi-graderingstelsel</h3>
-        <p>RetroDB ondersteun 8 internasionale ouderdomsgraderingstelsels:</p>
+        <p>RetroDB ondersteun hierdie internasionale ouderdomsgraderingstelsels:</p>
         <table class="data-table">
             <thead>
                 <tr><th>Stelsel</th><th>Streek</th></tr>
@@ -911,6 +911,7 @@
                 <tr><td><strong>FPB</strong></td><td>Suid-Afrika</td></tr>
                 <tr><td><strong>GRAC</strong></td><td>Suid-Korea</td></tr>
                 <tr><td><strong>ClassInd</strong></td><td>Brasilië</td></tr>
+                <tr><td><strong>CADPA</strong></td><td>China</td></tr>
             </tbody>
         </table>
         <p>Stel jou voorkeurstelsel by <strong>Instellings &rarr; Biblioteek &rarr; Vertoning</strong>. Amptelike graderingbeelde word op speletjiekaarte, detail-modaalvensters, en detailbladsye vertoon. Leë graderings word outomaties ingevul vanaf enige beskikbare gradering via volwassenheidsvlak-kruisafbeelding tydens ontginning, KI-invul, en handmatige redigering.</p>
@@ -985,7 +986,7 @@
         </ol>
 
         <h3>Vergelykte Velde</h3>
-        <p>Stelsel, ontwikkelaar, uitgewer, vrystellingsdatum, genre, franchise, streek, spelers, modusse, perspektief, dimensie, alle 8 ouderdomsgraderings, gebruikergradering, kritikustelling, speeltyd-beramings, beheerder-ondersteuning, storingtipe, lêergrootte, soortgelyke speletjies, beskrywing, en meer.</p>
+        <p>Stelsel, ontwikkelaar, uitgewer, vrystellingsdatum, genre, franchise, streek, spelers, modusse, perspektief, dimensie, alle ouderdomsgraderings, gebruikergradering, kritikustelling, speeltyd-beramings, beheerder-ondersteuning, storingtipe, lêergrootte, soortgelyke speletjies, beskrywing, en meer.</p>
     </div>
 </section>
 
@@ -1374,7 +1375,7 @@
                 <tr><td><strong>Speelbaarheid</strong></td><td>Genre-uiteensetting, speelmodus-ontleding, speletjiestruktuurverspreiding</td></tr>
                 <tr><td><strong>Speeltyd</strong></td><td>HLTB-speeltyd-data-ontleding oor jou versameling &mdash; totale beraamde speeltyd, gemiddeldes, verspreiding</td></tr>
                 <tr><td><strong>Resensietellings</strong></td><td>Kritikus- en gebruikertelling-verspreidings en gemiddeldes</td></tr>
-                <tr><td><strong>Ouderdomsgraderings</strong></td><td>Ouderdomsgradering-verspreiding oor alle 8 graderingstelsels</td></tr>
+                <tr><td><strong>Ouderdomsgraderings</strong></td><td>Ouderdomsgradering-verspreiding oor alle graderingstelsels</td></tr>
                 <tr><td><strong>Prestasies</strong></td><td>RetroAchievements-dekking en -voltooiing per stelsel</td></tr>
                 <tr><td><strong>Datagehalte</strong></td><td>Metadata-volledigheid-radargrafiek (beskrywing, boekskyf, genre, ontwikkelaar, uitgewer, vrystellingsdatum, skermkiekies, agtergrondkuns, video, handleiding, HLTB, graderings, modusse, streek)</td></tr>
                 <tr><td><strong>Groei</strong></td><td>Versamelinggroei-tydlyn wat wys wanneer speletjies oor tyd bygevoeg is</td></tr>
@@ -1815,7 +1816,7 @@
         </ol>
 
         <h4>"Images Not Saving"</h4>
-        <p>Gaan skryftoestemmings op die media-gidse na: <code>chmod -R 755 static/images/</code></p>
+        <p>Kontroleer dat RetroDB na sy media-gids kan skryf (<code>static/images/</code> tensy jy dit geskuif het). Op Linux of macOS gee <code>chmod -R u+rwX static/images/</code> jou rekening skryftoegang sonder om die beelde as programme te merk.</p>
 
         <h4>"Page Slow or Unresponsive"</h4>
         <ul>

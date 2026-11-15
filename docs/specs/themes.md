@@ -123,8 +123,9 @@ File: `static/js/theme.js`. Single module-style object exported as
 - `ThemeManager._SMOKE_STATE_KEY` — `'retrodb-smoke-state'`. sessionStorage
   key used to carry cyberpunk smoke state across page navigations (so the
   background doesn't visibly reset on every nav).
-- `init()` — reads `localStorage[STORAGE_KEY]`, else the `data-theme` the FOUC
-  block applied from the user's saved theme (§5), else `'cyberpunk'`; calls
+- `init()` — reads the signed-in user's saved theme (`data-user-theme`, set by
+  the FOUC block, §5), else `localStorage[STORAGE_KEY]`, else the
+  `data-theme` the FOUC block applied, else `'cyberpunk'`; calls
   `apply(saved, false)` (the `false` suppresses a redundant server save on
   page load), and wires `visibilitychange` (pause/resume canvas) and
   `beforeunload` (save smoke state) listeners.
@@ -203,7 +204,9 @@ The inline script at the top of `templates/base.html` (lines ~13–18) runs
 ```html
 <script>
 (function(){
-    var t = localStorage.getItem('retrodb-theme') || {{ user_theme|tojson }};
+    var u = {{ user_theme|tojson }};
+    var t = u || localStorage.getItem('retrodb-theme');
+    if (u) document.documentElement.setAttribute('data-user-theme', u);
     if (t && t !== 'cyberpunk') document.documentElement.setAttribute('data-theme', t);
 })();
 </script>
@@ -211,8 +214,8 @@ The inline script at the top of `templates/base.html` (lines ~13–18) runs
 
 `user_theme` is the logged-in user's saved `theme_preference`, or `null`
 (`app.py::_user_theme`, re-validated against `ALLOWED_THEMES` on read). So
-this browser's own choice wins, and a browser with none gets the user's saved
-theme: the theme follows the user across devices (Pass 59.38).
+the user's saved theme wins, and a browser keeps its own choice only when
+no saved theme exists: the theme follows the user across devices (PASS-59-89).
 
 Why this matters:
 

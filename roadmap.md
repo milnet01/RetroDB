@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=305 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=306 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -667,7 +667,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Fixes for empty gaps and hidden headers on phones, and for duplicated page styles.
   Kind: implement.
 
-- 📋 [PASS-59-287] **Docs and comments the review found out of step with the code (doc-fix, S).**
+- ✅ [PASS-59-287] **Docs and comments the review found out of step with the code (doc-fix, S).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
@@ -676,6 +676,10 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - Open questions (answer first): static/js/utils.js:280-284; docs/reviews/2026-11-04-independent-audit.md; roadmap.md; static/js/toast-controller.js…; static/js/toast-controller.js:1397,1400; templates/game_detail.html:5027-5134; templates/help.html:1869,121,1695; templates/help.html:233,511,561; docs/RETRODB_DESIGN_STANDARDS.md §8,§20…; .semgrep.yml
 
   ---
+  Shipped 2026-11-15. All 22 findings closed: 18 fixed, 3 dismissed, 1 queued.
+  - Fixed: help manual in English and all 20 locales (rating counts dropped and CADPA added, Continue Playing, offline banner, chmod advice, Settings tabs). Also themes.md §4/§5, rom-tools.md §4.3/§4.4, design standards §8/§14/§18/§20, distribution.md source install, and scrapers.md's rating count. Dead code removed with its pin tests: escAttr, Storage.clearAll, .notification.active, the onclick subnav matches, and the RA pause cases. Unused static/css/main.css deleted. .semgrep.yml waivers re-anchored by symbol from a fresh unwaived run, and the three excludes that fire nowhere were removed.
+  - Dismissed: the lane-independence note (not a defect); achievements.js (loaded again since PASS-59-277); the default admin password (both help passages are true).
+  - Queued: the dead bulk-scrape conflict code, as PASS-59-306.
   **Layman:** Help pages and code notes that no longer match the app get corrected.
   Kind: implement.
 
@@ -2815,6 +2819,23 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: fix.
   Source: PASS-59-189 work, 2026-11-15.
   Splits-from: PASS-59-278.
+
+- 📋 [PASS-59-306] **Remove the game page's dead bulk-scrape conflict code (refactor, S).**
+  - **Status**: todo
+  - **Why**: `openScrapeModal` in `templates/game_detail.html` reads
+    the localStorage keys `bulkScrapeState` and `bulkScrapeGameIds`.
+    Nothing writes them since bulk scrape became a server job, so the
+    conflict modal, `scrapeNowRemoveFromBulk` and
+    `pauseBulkScrapeForSingle` never run. Settings > System's
+    `bulkScrapeStateDisplay` debug box reads the same dead keys.
+  - **Not done in PASS-59-287**: it is dead code across two pages, not
+    a doc fix. Service limits (PASS-59-215) now keep a single scrape and
+    a bulk scrape from overrunning a service, so nothing needs adding.
+  - **Do**: delete the branch, the modal and its helpers, and the debug
+    box with its clear button; search the tests for the names first.
+  **Layman:** Old leftover code on the game page, which can never run, gets removed.
+  Kind: refactor.
+  Source: PASS-59-251 review 2026-11-09; split from PASS-59-287 2026-11-15.
 
 ## 4.0.x — Security and data-loss fixes for the web version
 

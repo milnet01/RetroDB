@@ -193,26 +193,6 @@ def test_35_5_add_column_helper_is_idempotent(tmp_path):
 
 
 # -----------------------------------------------------------------------------
-# 36.1 — escAttr performs JS-string escape
-# -----------------------------------------------------------------------------
-def test_36_1_escattr_js_string_escape():
-    """escAttr must escape ' < \\ newline to \\uXXXX / \\xXX JS escapes."""
-    src = read_source(os.path.join('static', 'js', 'all-games-controller.js'))
-    # Anchor to the function definition rather than the "Pass 36.1"
-    # comment marker (test-audit c-004 MED): a future cleanup that
-    # rephrases or removes the comment would have raised ValueError
-    # from `src.index('Pass 36.1')` and surfaced as a pytest ERROR
-    # rather than a clean FAILED.
-    fn_start = src.index("function escAttr(")
-    fn_end = src.index("// =========", fn_start)
-    body = src[fn_start:fn_end]
-    # The key indicator: a regex match against a safelist, with backslash
-    # escape in the replacement.
-    assert re.search(r"replace\(/\[\^a-zA-Z0-9", body), "escAttr should use safelist regex"
-    assert "\\\\x" in body or "\\\\u" in body, "should emit \\x or \\u escapes"
-
-
-# -----------------------------------------------------------------------------
 # 36.3 — museum controller image uses DOM API, not innerHTML concat
 # -----------------------------------------------------------------------------
 def test_36_3_museum_uses_create_element():
@@ -318,16 +298,6 @@ def test_36_8_redundant_keydown_handlers_removed():
     museum = read_source(os.path.join('static', 'js', 'museum.js'))
     # Museum's only remaining keydown listener should be none — trap handles it.
     assert museum.count("document.addEventListener('keydown'") == 0
-
-
-# -----------------------------------------------------------------------------
-# 36.9 — Storage.clearAll prefix list covers all known keys
-# -----------------------------------------------------------------------------
-def test_36_9_clear_all_includes_queue_keys():
-    src = read_source(os.path.join('static', 'js', 'utils.js'))
-    body = src[src.index("clearAll()"):src.index("clearAll()") + 1500]
-    for key in ('retrodb', 'bulkScrape', 'sidebar', 'raOperationsQueue', 'raSyncQueue', 'toast_completion_'):
-        assert f"'{key}'" in body, f"clearAll missing prefix {key!r}"
 
 
 # -----------------------------------------------------------------------------

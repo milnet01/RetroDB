@@ -230,7 +230,7 @@
 
         <h4>配置</h4>
         <ul>
-            <li><strong>设置</strong> &mdash; 所有应用配置（6 个标签页，含多个子分区）</li>
+            <li><strong>设置</strong> &mdash; 所有应用配置（分为标签页，含子分区）</li>
             <li><strong>日志查看器</strong> &mdash; 浏览所有类别的应用日志</li>
         </ul>
 
@@ -357,7 +357,7 @@
         <h3>近期活动区域</h3>
         <p>可滚动的区域显示你的近期活动（仅在有相关游戏时才出现）：</p>
         <ul>
-            <li><strong>正在游玩</strong> &mdash; 标记为“进行中”的游戏</li>
+            <li><strong>继续游玩</strong> &mdash; 标记为“进行中”的游戏</li>
             <li><strong>最近添加</strong> &mdash; 最近添加到游戏库的游戏</li>
             <li><strong>最近查看</strong> &mdash; 你最近打开过的游戏</li>
             <li><strong>最近抓取</strong> &mdash; 最近获取过元数据的游戏</li>
@@ -370,7 +370,7 @@
         </ul>
 
         <h3>API 状态</h3>
-        <p>显示所有已配置的抓取器和 API 的连接状态。离线或配置有误的 API 会显示一个带有指向设置链接的警告横幅。</p>
+        <p>显示所有已配置的抓取器和 API 的连接状态。当已配置的 API 离线时，会出现一个带有指向设置链接的警告横幅。</p>
 
         <h3>任务恢复</h3>
         <p>如果 RetroDB 在后台任务（批量抓取、RA 同步、图片缩放等）运行期间重启，被中断的任务会出现在恢复横幅中。选项：</p>
@@ -508,7 +508,7 @@
 <section id="settings" class="help-section card">
     <h2 class="card-title">设置</h2>
     <div class="card-body">
-        <p>设置分为 6 个标签页，每个标签页都有多个子部分。</p>
+        <p>设置分为多个标签页，每个标签页都有子部分。管理员还会看到“模拟器”标签页，它会打开单独的页面。</p>
 
         <h3>账户标签页</h3>
         <ul>
@@ -728,7 +728,7 @@
             <li>类型、简介、开发商、发行商、发行日期</li>
             <li>玩家人数、游玩模式（单人、多人、合作等）</li>
             <li>战役信息和游戏结构</li>
-            <li>全部 8 个分级系统（ESRB、PEGI、CERO、USK、ACB、FPB、GRAC、ClassInd）</li>
+            <li>全部分级系统（ESRB、PEGI、CERO、USK、ACB、FPB、GRAC、ClassInd、CADPA）</li>
             <li>地区、系列、相似游戏</li>
             <li>手柄支持、存档类型</li>
             <li>视角（第一人称、俯视、横版卷轴等）、维度（2D、3D）</li>
@@ -869,7 +869,7 @@
             <li><strong>发行信息</strong> &mdash; 发行日期、地区（来自可配置的下拉菜单）</li>
             <li><strong>玩法</strong> &mdash; 类型（多选标签）、模式、游戏结构、玩家人数、开发商、发行商</li>
             <li><strong>技术</strong> &mdash; 手柄（多选）、存档类型、视角（多值）、维度（多值）</li>
-            <li><strong>年龄分级</strong> &mdash; 全部 8 个分级系统，带官方分级图片和自动交叉映射。更改一个分级会自动填充其他系统中空的分级。</li>
+            <li><strong>年龄分级</strong> &mdash; 全部分级系统，带官方分级图片和自动交叉映射。更改一个分级会自动填充其他系统中空的分级。</li>
             <li><strong>评分</strong> &mdash; 媒体评分、用户评分</li>
             <li><strong>简介</strong> &mdash; 游戏简介文本</li>
             <li><strong>自定义图片</strong> &mdash; 上传自定义封面（2D）、3D 封面、盒子背面、同人图和徽标。清除现有图片以允许重新抓取。</li>
@@ -897,7 +897,7 @@
         </ul>
 
         <h3>多分级系统</h3>
-        <p>RetroDB 支持 8 个国际年龄分级系统：</p>
+        <p>RetroDB 支持以下国际年龄分级系统：</p>
         <table class="data-table">
             <thead>
                 <tr><th>系统</th><th>地区</th></tr>
@@ -911,6 +911,7 @@
                 <tr><td><strong>FPB</strong></td><td>南非</td></tr>
                 <tr><td><strong>GRAC</strong></td><td>韩国</td></tr>
                 <tr><td><strong>ClassInd</strong></td><td>巴西</td></tr>
+                <tr><td><strong>CADPA</strong></td><td>中国</td></tr>
             </tbody>
         </table>
         <p>在 <strong>设置 &rarr; 游戏库 &rarr; 显示</strong> 中设置你偏好的系统。官方分级图片会显示在游戏卡片、详情弹窗和详情页上。在抓取、AI 填充和手动编辑期间，空的分级会通过成熟度等级交叉映射从任意可用的分级自动填充。</p>
@@ -985,7 +986,7 @@
         </ol>
 
         <h3>比较的字段</h3>
-        <p>系统、开发商、发行商、发行日期、类型、系列、地区、玩家人数、模式、视角、维度、全部 8 种年龄分级、用户评分、媒体评分、游玩时长估算、手柄支持、存档类型、文件大小、相似游戏、简介等。</p>
+        <p>系统、开发商、发行商、发行日期、类型、系列、地区、玩家人数、模式、视角、维度、全部年龄分级、用户评分、媒体评分、游玩时长估算、手柄支持、存档类型、文件大小、相似游戏、简介等。</p>
     </div>
 </section>
 
@@ -1374,7 +1375,7 @@
                 <tr><td><strong>玩法</strong></td><td>类型细分、游戏模式分析、游戏结构分布</td></tr>
                 <tr><td><strong>游玩时长</strong></td><td>整个合集的 HLTB 游玩时长数据分析 &mdash; 总估算游玩时长、平均值、分布</td></tr>
                 <tr><td><strong>评测分数</strong></td><td>媒体和用户评分的分布与平均值</td></tr>
-                <tr><td><strong>年龄分级</strong></td><td>全部 8 种分级系统的年龄分级分布</td></tr>
+                <tr><td><strong>年龄分级</strong></td><td>全部分级系统的年龄分级分布</td></tr>
                 <tr><td><strong>成就</strong></td><td>按系统统计的 RetroAchievements 覆盖率和完成度</td></tr>
                 <tr><td><strong>数据质量</strong></td><td>元数据完整度雷达图（简介、封面、类型、开发商、发行商、发行日期、截图、同人图、视频、说明书、HLTB、分级、模式、地区）</td></tr>
                 <tr><td><strong>增长</strong></td><td>合集增长时间轴，显示游戏随时间的添加情况</td></tr>
@@ -1815,7 +1816,7 @@
         </ol>
 
         <h4>“图片未保存”</h4>
-        <p>检查媒体目录的写入权限：<code>chmod -R 755 static/images/</code></p>
+        <p>检查 RetroDB 能否写入其媒体文件夹（除非你移动过，否则为 <code>static/images/</code>）。在 Linux 或 macOS 上，<code>chmod -R u+rwX static/images/</code> 可为你的账户授予写入权限，而不会把图片标记为程序。</p>
 
         <h4>“页面缓慢或无响应”</h4>
         <ul>

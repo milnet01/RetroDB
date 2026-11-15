@@ -1385,11 +1385,6 @@ styleSheet.textContent = `
         min-width: 280px;
     }
     
-    .notification.active {
-        opacity: 1;
-        transform: translateX(0);
-    }
-    
     .notification-success {
         border-color: #00e676;
         background: linear-gradient(90deg, rgba(0, 230, 118, 0.1) 0%, var(--card-bg, #141a23) 100%);

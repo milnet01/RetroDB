@@ -230,7 +230,7 @@
 
         <h4>Konfigurasjon</h4>
         <ul>
-            <li><strong>Innstillinger</strong> &mdash; All appkonfigurasjon (6 faner med mange underseksjoner)</li>
+            <li><strong>Innstillinger</strong> &mdash; All appkonfigurasjon, i faner med underseksjoner</li>
             <li><strong>Loggvisning</strong> &mdash; Bla gjennom applikasjonslogger på tvers av alle kategorier</li>
         </ul>
 
@@ -357,7 +357,7 @@
         <h3>Nylig aktivitet-seksjoner</h3>
         <p>Rullbare seksjoner som viser nylig aktivitet (hver vises kun når det finnes relevante spill):</p>
         <ul>
-            <li><strong>Spilles nå</strong> &mdash; Spill merket som "In Progress"</li>
+            <li><strong>Fortsett å spille</strong> &mdash; Spill merket som "In Progress"</li>
             <li><strong>Nylig lagt til</strong> &mdash; Nyeste spill lagt til i biblioteket ditt</li>
             <li><strong>Nylig sett</strong> &mdash; Spill du nylig har åpnet</li>
             <li><strong>Nylig scrapet</strong> &mdash; Spill med nylig hentet metadata</li>
@@ -370,7 +370,7 @@
         </ul>
 
         <h3>API-status</h3>
-        <p>Viser tilkoblingsstatusen til alle konfigurerte skrapere og API-er. API-er som er frakoblet eller feilkonfigurert, viser et varselbanner med en lenke til Innstillinger.</p>
+        <p>Viser tilkoblingsstatusen til alle konfigurerte skrapere og API-er. Når et konfigurert API er frakoblet, vises et varselbanner med en lenke til Innstillinger.</p>
 
         <h3>Gjenoppretting av jobber</h3>
         <p>Hvis RetroDB starter på nytt mens bakgrunnsjobber kjører (masse-scraping, RA-synkronisering, bildestørrelsesendring, osv.), vises avbrutte jobber i et gjenopprettingsbanner. Alternativer:</p>
@@ -508,7 +508,7 @@
 <section id="settings" class="help-section card">
     <h2 class="card-title">Innstillinger</h2>
     <div class="card-body">
-        <p>Innstillinger er organisert i 6 faner, hver med flere underseksjoner.</p>
+        <p>Innstillinger er organisert i faner, hver med underseksjoner. Administratorer ser også en Emulatorer-fane, som åpner en egen side.</p>
 
         <h3>Konto-fanen</h3>
         <ul>
@@ -727,7 +727,7 @@
             <li>Sjanger, beskrivelse, utvikler, utgiver, utgivelsesdato</li>
             <li>Antall spillere, spillmodus (enkeltspiller, flerspiller, samarbeid, osv.)</li>
             <li>Informasjon om kampanje og spillstruktur</li>
-            <li>Alle 8 aldersgrense-systemer (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>Alle aldersgrense-systemer (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd, CADPA)</li>
             <li>Region, franchise, lignende spill</li>
             <li>Kontrollerstøtte, lagringstype</li>
             <li>Perspektiv (førsteperson, ovenfra-og-ned, sidescroller, osv.), dimensjon (2D, 3D)</li>
@@ -867,7 +867,7 @@
             <li><strong>Utgivelsesinfo</strong> &mdash; Utgivelsesdato, region (fra konfigurerbar nedtrekksmeny)</li>
             <li><strong>Spillbarhet</strong> &mdash; Sjanger (flervalg-tagger), spillmodus, spillstruktur, antall spillere, utvikler, utgiver</li>
             <li><strong>Teknisk</strong> &mdash; Kontrollere (flervalg), lagringstype, perspektiv (flerverdi), dimensjon (flerverdi)</li>
-            <li><strong>Aldersgrenser</strong> &mdash; Alle 8 aldersgrense-systemer med offisielle vurderingsbilder og automatisk kryssmapping. Endring av én aldersgrense fyller automatisk ut tomme aldersgrenser i andre systemer.</li>
+            <li><strong>Aldersgrenser</strong> &mdash; Alle aldersgrense-systemer med offisielle vurderingsbilder og automatisk kryssmapping. Endring av én aldersgrense fyller automatisk ut tomme aldersgrenser i andre systemer.</li>
             <li><strong>Score</strong> &mdash; Kritikerscore, brukerscore</li>
             <li><strong>Beskrivelse</strong> &mdash; Spillbeskrivelsestekst</li>
             <li><strong>Egendefinerte bilder</strong> &mdash; Last opp egendefinert boksbilde (2D), 3D-boksbilde, baksiden av esken, fanart og en logo. Fjern eksisterende bilder for å tillate ny scraping.</li>
@@ -895,7 +895,7 @@
         </ul>
 
         <h3>Fleraldersgrense-system</h3>
-        <p>RetroDB støtter 8 internasjonale aldersgrense-systemer:</p>
+        <p>RetroDB støtter disse internasjonale aldersgrense-systemene:</p>
         <table class="data-table">
             <thead>
                 <tr><th>System</th><th>Region</th></tr>
@@ -909,6 +909,7 @@
                 <tr><td><strong>FPB</strong></td><td>Sør-Afrika</td></tr>
                 <tr><td><strong>GRAC</strong></td><td>Sør-Korea</td></tr>
                 <tr><td><strong>ClassInd</strong></td><td>Brasil</td></tr>
+                <tr><td><strong>CADPA</strong></td><td>Kina</td></tr>
             </tbody>
         </table>
         <p>Angi foretrukket system i <strong>Innstillinger &rarr; Bibliotek &rarr; Visning</strong>. Offisielle vurderingsbilder vises på spillkort, detaljmodaler og detaljsider. Tomme aldersgrenser fylles automatisk ut fra en hvilken som helst tilgjengelig aldersgrense via kryssmapping av modenhetsnivå under scraping, KI-utfylling og manuell redigering.</p>
@@ -983,7 +984,7 @@
         </ol>
 
         <h3>Sammenlignede felt</h3>
-        <p>System, utvikler, utgiver, utgivelsesdato, sjanger, franchise, region, antall spillere, spillmodus, perspektiv, dimensjon, alle 8 aldersgrenser, brukervurdering, kritikerscore, spilletidsestimater, kontrollerstøtte, lagringstype, filstørrelse, lignende spill, beskrivelse og mer.</p>
+        <p>System, utvikler, utgiver, utgivelsesdato, sjanger, franchise, region, antall spillere, spillmodus, perspektiv, dimensjon, alle aldersgrenser, brukervurdering, kritikerscore, spilletidsestimater, kontrollerstøtte, lagringstype, filstørrelse, lignende spill, beskrivelse og mer.</p>
     </div>
 </section>
 
@@ -1372,7 +1373,7 @@
                 <tr><td><strong>Spillbarhet</strong></td><td>Sjangerfordeling, analyse av spillmodus, fordeling av spillstruktur</td></tr>
                 <tr><td><strong>Spilletid</strong></td><td>Analyse av HLTB-spilletidsdata på tvers av samlingen din &mdash; total estimert spilletid, gjennomsnitt, fordeling</td></tr>
                 <tr><td><strong>Vurderingsscore</strong></td><td>Fordeling og gjennomsnitt for kritiker- og brukerscore</td></tr>
-                <tr><td><strong>Aldersgrenser</strong></td><td>Fordeling av aldersgrenser på tvers av alle 8 vurderingssystemer</td></tr>
+                <tr><td><strong>Aldersgrenser</strong></td><td>Fordeling av aldersgrenser på tvers av alle vurderingssystemer</td></tr>
                 <tr><td><strong>Prestasjoner</strong></td><td>RetroAchievements-dekning og -fullføring per system</td></tr>
                 <tr><td><strong>Datakvalitet</strong></td><td>Radardiagram for metadatafullstendighet (beskrivelse, boksbilde, sjanger, utvikler, utgiver, utgivelsesdato, skjermbilder, fanart, video, manual, HLTB, aldersgrenser, spillmodus, region)</td></tr>
                 <tr><td><strong>Vekst</strong></td><td>Tidslinje for samlingsvekst som viser når spill ble lagt til over tid</td></tr>
@@ -1809,7 +1810,7 @@
         </ol>
 
         <h4>"Images Not Saving"</h4>
-        <p>Sjekk skrivetillatelser på mediemappene: <code>chmod -R 755 static/images/</code></p>
+        <p>Sjekk at RetroDB kan skrive til mediemappen sin (<code>static/images/</code>, med mindre du har flyttet den). På Linux eller macOS gir <code>chmod -R u+rwX static/images/</code> kontoen din skrivetilgang uten å merke bildene som programmer.</p>
 
         <h4>"Page Slow or Unresponsive"</h4>
         <ul>

@@ -9,8 +9,9 @@
 #      with a one-line anchor for each explaining WHY the rule fires but does
 #      not indicate a bug here.
 #
-#   2. Define RetroDB-specific custom rules (under `rules:` below) that catch
-#      issues the upstream packs miss.
+#   2. Hold RetroDB-specific custom rules (under `rules:` below) that catch
+#      issues the upstream packs miss. There are none yet; the candidates are
+#      listed above `rules:`.
 #
 #   3. Consolidate the project's audit threat model so future contributors
 #      (and future /audit runs) pick up the same calibration.
@@ -32,7 +33,7 @@
 #     $EXCLUDES \
 #     --json --timeout 120 --metrics=off .
 #
-# Verified 2026-04-21: with all 14 excludes applied, 54 raw findings → 0.
+# Verified 2026-11-15: with every exclude applied, the raw findings drop to 0.
 #
 # The `--exclude-rule` loop is optional; leave them out the first time you
 # audit a feature branch so you see every finding, then add them back once
@@ -103,11 +104,8 @@
 # be a real bug.
 #
 #   python.flask.security.audit.debug-enabled.debug-enabled
-#     Anchor: app.py:1238 is env-gated (config.DEBUG_MODE / RETRODB_DEBUG).
-#
-#   python.flask.security.audit.directly-returned-format-string.directly-returned-format-string
-#     Anchor: routes/games.py:677 is a nested helper (_save_upload), not a
-#     Flask view return.
+#     Anchor: app.py's `__main__` block calls `app.run(debug=True)` only when
+#     config.DEBUG_MODE (RETRODB_DEBUG) is set.
 #
 #   python.flask.security.injection.tainted-sql-string.tainted-sql-string
 #     Anchor: every SQL f-string is guarded by safe_column / column_map /
@@ -115,7 +113,7 @@
 #     above). Semgrep doesn't recognise the allowlist indirection.
 #
 #   python.lang.security.audit.dangerous-os-exec-tainted-env-args.dangerous-os-exec-tainted-env-args
-#     Anchor: routes/maintenance.py:765 is the self-restart path
+#     Anchor: routes/maintenance.py `api_restart()` is the self-restart path
 #     (`os.execv(sys.executable, [sys.executable] + sys.argv)`), behind
 #     @admin_required. sys.argv is process-own, not request data.
 #
@@ -126,15 +124,9 @@
 #     build_dist.py is a maintainer-run packaging script that never serves a
 #     request. Direct sibling of the os-exec rule above.
 #
-#   python.flask.security.open-redirect.open-redirect
-#     Anchor: routes/platform_import.py:429 passes the flagged value as a
-#     url_for query-string parameter, not as a redirect target.
-#
-#   python.lang.security.insecure-hash-algorithms-md5.insecure-hash-algorithm-md5
 #   python.lang.security.insecure-hash-algorithms.insecure-hash-algorithm-sha1
-#     Anchors: scraper/retroachievements.py (RA API contract),
-#     scraper/scrape_screenscraper.py (ScreenScraper API contract),
-#     routes/tools.py (duplicate-finder content hash, non-security).
+#     Anchor: scraper/scrape_screenscraper.py `calculate_checksums()` sends the
+#     ROM's SHA-1 because ScreenScraper's API looks games up by it.
 #
 #   python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected
 #     Anchor: hardcoded vendor hosts (see "Known-safe network calls" above).
@@ -172,9 +164,11 @@
 #   it is reviewed and annotated.
 #
 #   python.lang.security.audit.logging.logger-credential-leak.python-logger-credential-disclosure
-#     Anchor: services/platform_tokens.py:43,50 and
-#     services/migrations/scripts/006_per_user_platform_tokens.py:112,114,116
-#     log the PLATFORM NAME + user_id + OSError/ValueError text. The token
+#     Anchor: services/platform_tokens.py `load_tokens()` and `save_tokens()`,
+#     and migrations 006_per_user_platform_tokens.py and
+#     015_ingest_legacy_platform_tokens.py, log the PLATFORM NAME + user_id +
+#     OSError/ValueError text; app.py `_get_secret_key()` logs the key file's
+#     path and the OSError. The token
 #     bytes themselves are never passed to the logger. Rule fires on any
 #     `logger.*` call inside a function/module that has the word "token" in
 #     scope — it's a lexical match, not a taint trace.

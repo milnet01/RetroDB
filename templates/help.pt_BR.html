@@ -230,7 +230,7 @@
 
         <h4>Configuração</h4>
         <ul>
-            <li><strong>Configurações</strong> &mdash; Toda a configuração do aplicativo (6 abas com muitas subseções)</li>
+            <li><strong>Configurações</strong> &mdash; Toda a configuração do aplicativo, em abas com subseções</li>
             <li><strong>Visualizador de Registros</strong> &mdash; Navegue pelos registros do aplicativo em todas as categorias</li>
         </ul>
 
@@ -357,7 +357,7 @@
         <h3>Seções de Atividade Recente</h3>
         <p>Seções roláveis que mostram sua atividade recente (cada uma aparece apenas quando há jogos relevantes):</p>
         <ul>
-            <li><strong>Jogando Atualmente</strong> &mdash; Jogos marcados como "Em Progresso"</li>
+            <li><strong>Continuar Jogando</strong> &mdash; Jogos marcados como "Em Progresso"</li>
             <li><strong>Adicionados Recentemente</strong> &mdash; Últimos jogos adicionados à sua biblioteca</li>
             <li><strong>Vistos Recentemente</strong> &mdash; Jogos que você abriu recentemente</li>
             <li><strong>Coletados Recentemente</strong> &mdash; Jogos com metadados obtidos recentemente</li>
@@ -370,7 +370,7 @@
         </ul>
 
         <h3>Status das APIs</h3>
-        <p>Mostra o status de conexão de todos os coletores de dados e APIs configurados. APIs offline ou mal configuradas exibem um aviso com um link para as Configurações.</p>
+        <p>Mostra o status de conexão de todos os coletores de dados e APIs configurados. Quando uma API configurada está offline, um aviso aparece com um link para as Configurações.</p>
 
         <h3>Recuperação de Tarefas</h3>
         <p>Se o RetroDB for reiniciado enquanto tarefas em segundo plano estiverem em execução (coleta em lote, sincronização de RA, redimensionamento de imagens, etc.), as tarefas interrompidas aparecem em um aviso de recuperação. Opções:</p>
@@ -508,7 +508,7 @@
 <section id="settings" class="help-section card">
     <h2 class="card-title">Configurações</h2>
     <div class="card-body">
-        <p>As Configurações estão organizadas em 6 abas, cada uma com várias subseções.</p>
+        <p>As Configurações estão organizadas em abas, cada uma com subseções. Administradores também veem uma aba Emuladores, que abre sua própria página.</p>
 
         <h3>Aba Conta</h3>
         <ul>
@@ -728,7 +728,7 @@
             <li>Gênero, descrição, desenvolvedora, distribuidora, data de lançamento</li>
             <li>Jogadores, modos de jogo (Um Jogador, Multijogador, Cooperativo, etc.)</li>
             <li>Informações de campanha e estrutura do jogo</li>
-            <li>Todos os 8 sistemas de classificação etária (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>Todos os sistemas de classificação etária (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd, CADPA)</li>
             <li>Região, franquia, jogos similares</li>
             <li>Suporte a controles, tipo de salvamento</li>
             <li>Perspectiva (Primeira Pessoa, Vista de Cima, Rolagem Lateral, etc.), dimensão (2D, 3D)</li>
@@ -869,7 +869,7 @@
             <li><strong>Informações de Lançamento</strong> &mdash; Data de lançamento, região (a partir de uma lista suspensa configurável)</li>
             <li><strong>Jogabilidade</strong> &mdash; Gênero (etiquetas de seleção múltipla), modos, estrutura do jogo, jogadores, desenvolvedora, distribuidora</li>
             <li><strong>Técnico</strong> &mdash; Controles (seleção múltipla), tipo de salvamento, perspectiva (multivalor), dimensão (multivalor)</li>
-            <li><strong>Classificações Etárias</strong> &mdash; Todos os 8 sistemas de classificação com imagens oficiais de classificação e cruzamento automático. Alterar uma classificação preenche automaticamente as classificações vazias em outros sistemas.</li>
+            <li><strong>Classificações Etárias</strong> &mdash; Todos os sistemas de classificação com imagens oficiais de classificação e cruzamento automático. Alterar uma classificação preenche automaticamente as classificações vazias em outros sistemas.</li>
             <li><strong>Pontuações</strong> &mdash; Pontuação da crítica, pontuação dos usuários</li>
             <li><strong>Descrição</strong> &mdash; Texto de descrição do jogo</li>
             <li><strong>Imagens personalizadas</strong> &mdash; Envie capa personalizada (2D), capa 3D, o verso da caixa, fanart e um logotipo. Limpe as imagens existentes para permitir uma nova coleta.</li>
@@ -897,7 +897,7 @@
         </ul>
 
         <h3>Sistema de Múltiplas Classificações</h3>
-        <p>O RetroDB suporta 8 sistemas internacionais de classificação etária:</p>
+        <p>O RetroDB suporta estes sistemas internacionais de classificação etária:</p>
         <table class="data-table">
             <thead>
                 <tr><th>Sistema</th><th>Região</th></tr>
@@ -911,6 +911,7 @@
                 <tr><td><strong>FPB</strong></td><td>África do Sul</td></tr>
                 <tr><td><strong>GRAC</strong></td><td>Coreia do Sul</td></tr>
                 <tr><td><strong>ClassInd</strong></td><td>Brasil</td></tr>
+                <tr><td><strong>CADPA</strong></td><td>China</td></tr>
             </tbody>
         </table>
         <p>Defina seu sistema preferido em <strong>Configurações &rarr; Biblioteca &rarr; Exibição</strong>. As imagens oficiais de classificação são exibidas nos cartões de jogos, nas janelas de detalhes e nas páginas de detalhes. As classificações vazias são preenchidas automaticamente a partir de qualquer classificação disponível por meio do cruzamento por nível de maturidade durante a coleta, o Preenchimento por IA e a edição manual.</p>
@@ -985,7 +986,7 @@
         </ol>
 
         <h3>Campos Comparados</h3>
-        <p>Sistema, desenvolvedora, distribuidora, data de lançamento, gênero, franquia, região, jogadores, modos, perspectiva, dimensão, todas as 8 classificações etárias, avaliação dos usuários, pontuação da crítica, estimativas de tempo de jogo, suporte a controles, tipo de salvamento, tamanho do arquivo, jogos similares, descrição e muito mais.</p>
+        <p>Sistema, desenvolvedora, distribuidora, data de lançamento, gênero, franquia, região, jogadores, modos, perspectiva, dimensão, todas as classificações etárias, avaliação dos usuários, pontuação da crítica, estimativas de tempo de jogo, suporte a controles, tipo de salvamento, tamanho do arquivo, jogos similares, descrição e muito mais.</p>
     </div>
 </section>
 
@@ -1374,7 +1375,7 @@
                 <tr><td><strong>Jogabilidade</strong></td><td>Detalhamento por gênero, análise de modos de jogo, distribuição da estrutura do jogo</td></tr>
                 <tr><td><strong>Tempo de Jogo</strong></td><td>Análise dos dados de tempo de jogo do HLTB em toda a sua coleção &mdash; tempo de jogo total estimado, médias, distribuição</td></tr>
                 <tr><td><strong>Pontuações de Avaliação</strong></td><td>Distribuições e médias das pontuações da crítica e dos usuários</td></tr>
-                <tr><td><strong>Classificações Etárias</strong></td><td>Distribuição das classificações etárias em todos os 8 sistemas de classificação</td></tr>
+                <tr><td><strong>Classificações Etárias</strong></td><td>Distribuição das classificações etárias em todos os sistemas de classificação</td></tr>
                 <tr><td><strong>Conquistas</strong></td><td>Cobertura e conclusão do RetroAchievements por sistema</td></tr>
                 <tr><td><strong>Qualidade dos Dados</strong></td><td>Gráfico de radar de completude dos metadados (descrição, capa, gênero, desenvolvedora, distribuidora, data de lançamento, capturas de tela, fanart, vídeo, manual, HLTB, classificações, modos, região)</td></tr>
                 <tr><td><strong>Crescimento</strong></td><td>Linha do tempo de crescimento da coleção mostrando quando os jogos foram adicionados ao longo do tempo</td></tr>
@@ -1815,7 +1816,7 @@
         </ol>
 
         <h4>"Imagens Não Salvam"</h4>
-        <p>Verifique as permissões de escrita nos diretórios de mídia: <code>chmod -R 755 static/images/</code></p>
+        <p>Verifique se o RetroDB consegue gravar em sua pasta de mídia (<code>static/images/</code>, a menos que você a tenha movido). No Linux ou macOS, <code>chmod -R u+rwX static/images/</code> dá à sua conta acesso de gravação sem marcar as imagens como programas.</p>
 
         <h4>"Página Lenta ou Sem Resposta"</h4>
         <ul>

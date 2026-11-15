@@ -230,7 +230,7 @@
 
         <h4>Configuration</h4>
         <ul>
-            <li><strong>Settings</strong> &mdash; All app configuration (6 tabs with many subsections)</li>
+            <li><strong>Settings</strong> &mdash; All app configuration, in tabs with subsections</li>
             <li><strong>Log Viewer</strong> &mdash; Browse application logs across all categories</li>
         </ul>
 
@@ -357,7 +357,7 @@
         <h3>Recent Activity Sections</h3>
         <p>Scrollable sections showing your recent activity (each appears only when there are relevant games):</p>
         <ul>
-            <li><strong>Currently Playing</strong> &mdash; Games marked as "In Progress"</li>
+            <li><strong>Continue Playing</strong> &mdash; Games marked as "In Progress"</li>
             <li><strong>Recently Added</strong> &mdash; Latest games added to your library</li>
             <li><strong>Recently Viewed</strong> &mdash; Games you've recently opened</li>
             <li><strong>Recently Scraped</strong> &mdash; Games with recently fetched metadata</li>
@@ -370,7 +370,7 @@
         </ul>
 
         <h3>API Status</h3>
-        <p>Shows the connection status of all configured scrapers and APIs. Offline or misconfigured APIs display a warning banner with a link to Settings.</p>
+        <p>Shows the connection status of all configured scrapers and APIs. When a configured API is offline, a warning banner appears with a link to Settings.</p>
 
         <h3>Job Recovery</h3>
         <p>If RetroDB restarts while background jobs are running (bulk scrape, RA sync, image resize, etc.), interrupted jobs appear in a recovery banner. Options:</p>
@@ -508,7 +508,7 @@
 <section id="settings" class="help-section card">
     <h2 class="card-title">Settings</h2>
     <div class="card-body">
-        <p>Settings are organized into 6 tabs, each with multiple subsections.</p>
+        <p>Settings are organized into tabs, each with subsections. Admins also see an Emulators tab, which opens its own page.</p>
 
         <h3>Account Tab</h3>
         <ul>
@@ -728,7 +728,7 @@
             <li>Genre, description, developer, publisher, release date</li>
             <li>Players, play modes (Single-Player, Multi-Player, Co-op, etc.)</li>
             <li>Campaign info and game structure</li>
-            <li>All 8 age rating systems (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>All age rating systems (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd, CADPA)</li>
             <li>Region, franchise, similar games</li>
             <li>Controller support, save type</li>
             <li>Perspective (First-Person, Top-Down, Side-Scroller, etc.), dimension (2D, 3D)</li>
@@ -869,7 +869,7 @@
             <li><strong>Release Info</strong> &mdash; Release date, region (from configurable dropdown)</li>
             <li><strong>Gameplay</strong> &mdash; Genre (multi-select tags), modes, game structure, players, developer, publisher</li>
             <li><strong>Technical</strong> &mdash; Controllers (multi-select), save type, perspective (multi-value), dimension (multi-value)</li>
-            <li><strong>Age Ratings</strong> &mdash; All 8 rating systems with official rating images and automatic cross-mapping. Changing one rating auto-fills empty ratings in other systems.</li>
+            <li><strong>Age Ratings</strong> &mdash; All rating systems with official rating images and automatic cross-mapping. Changing one rating auto-fills empty ratings in other systems.</li>
             <li><strong>Scores</strong> &mdash; Critic score, user score</li>
             <li><strong>Description</strong> &mdash; Game description text</li>
             <li><strong>Custom Images</strong> &mdash; Upload custom boxart (2D), 3D boxart, the back of the box, fanart and a logo. Clear existing images to allow re-scraping.</li>
@@ -897,7 +897,7 @@
         </ul>
 
         <h3>Multi-Rating System</h3>
-        <p>RetroDB supports 8 international age rating systems:</p>
+        <p>RetroDB supports these international age rating systems:</p>
         <table class="data-table">
             <thead>
                 <tr><th>System</th><th>Region</th></tr>
@@ -911,6 +911,7 @@
                 <tr><td><strong>FPB</strong></td><td>South Africa</td></tr>
                 <tr><td><strong>GRAC</strong></td><td>South Korea</td></tr>
                 <tr><td><strong>ClassInd</strong></td><td>Brazil</td></tr>
+                <tr><td><strong>CADPA</strong></td><td>China</td></tr>
             </tbody>
         </table>
         <p>Set your preferred system in <strong>Settings &rarr; Library &rarr; Display</strong>. Official rating images are displayed on game cards, detail modals, and detail pages. Empty ratings are auto-filled from any available rating via maturity tier cross-mapping during scraping, AI Fill, and manual editing.</p>
@@ -985,7 +986,7 @@
         </ol>
 
         <h3>Compared Fields</h3>
-        <p>System, developer, publisher, release date, genre, franchise, region, players, modes, perspective, dimension, all 8 age ratings, user rating, critic score, playtime estimates, controller support, save type, file size, similar games, description, and more.</p>
+        <p>System, developer, publisher, release date, genre, franchise, region, players, modes, perspective, dimension, all age ratings, user rating, critic score, playtime estimates, controller support, save type, file size, similar games, description, and more.</p>
     </div>
 </section>
 
@@ -1374,7 +1375,7 @@
                 <tr><td><strong>Gameplay</strong></td><td>Genre breakdown, play modes analysis, game structure distribution</td></tr>
                 <tr><td><strong>Playtime</strong></td><td>HLTB playtime data analysis across your collection &mdash; total estimated playtime, averages, distribution</td></tr>
                 <tr><td><strong>Review Scores</strong></td><td>Critic and user score distributions and averages</td></tr>
-                <tr><td><strong>Age Ratings</strong></td><td>Age rating distribution across all 8 rating systems</td></tr>
+                <tr><td><strong>Age Ratings</strong></td><td>Age rating distribution across all rating systems</td></tr>
                 <tr><td><strong>Achievements</strong></td><td>RetroAchievements coverage and completion by system</td></tr>
                 <tr><td><strong>Data Quality</strong></td><td>Metadata completeness radar chart (description, boxart, genre, developer, publisher, release date, screenshots, fanart, video, manual, HLTB, ratings, modes, region)</td></tr>
                 <tr><td><strong>Growth</strong></td><td>Collection growth timeline showing when games were added over time</td></tr>
@@ -1819,7 +1820,7 @@
         </ol>
 
         <h4>"Images Not Saving"</h4>
-        <p>Check write permissions on the media directories: <code>chmod -R 755 static/images/</code></p>
+        <p>Check that RetroDB can write to its media folder (<code>static/images/</code> unless you moved it). On Linux or macOS, <code>chmod -R u+rwX static/images/</code> gives your account write access without marking the images as programs.</p>
 
         <h4>"Page Slow or Unresponsive"</h4>
         <ul>

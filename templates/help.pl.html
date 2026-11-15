@@ -230,7 +230,7 @@
 
         <h4>Konfiguracja</h4>
         <ul>
-            <li><strong>Ustawienia</strong> &mdash; cała konfiguracja aplikacji (6 zakładek z wieloma podsekcjami)</li>
+            <li><strong>Ustawienia</strong> &mdash; cała konfiguracja aplikacji, w zakładkach z podsekcjami</li>
             <li><strong>Przeglądarka dzienników</strong> &mdash; przeglądaj dzienniki aplikacji we wszystkich kategoriach</li>
         </ul>
 
@@ -357,7 +357,7 @@
         <h3>Sekcje ostatniej aktywności</h3>
         <p>Przewijalne sekcje pokazujące Twoją ostatnią aktywność (każda pojawia się tylko wtedy, gdy istnieją odpowiednie gry):</p>
         <ul>
-            <li><strong>Aktualnie grane</strong> &mdash; gry oznaczone jako „W trakcie”</li>
+            <li><strong>Kontynuuj grę</strong> &mdash; gry oznaczone jako „W trakcie”</li>
             <li><strong>Ostatnio dodane</strong> &mdash; najnowsze gry dodane do biblioteki</li>
             <li><strong>Ostatnio przeglądane</strong> &mdash; gry, które ostatnio otwierałeś</li>
             <li><strong>Ostatnio pobrane</strong> &mdash; gry z ostatnio pobranymi metadanymi</li>
@@ -370,7 +370,7 @@
         </ul>
 
         <h3>Status API</h3>
-        <p>Pokazuje status połączenia wszystkich skonfigurowanych scraperów i API. Niedostępne lub błędnie skonfigurowane API wyświetlają baner ostrzegawczy z odnośnikiem do Ustawień.</p>
+        <p>Pokazuje status połączenia wszystkich skonfigurowanych scraperów i API. Gdy skonfigurowane API jest niedostępne, pojawia się baner ostrzegawczy z odnośnikiem do Ustawień.</p>
 
         <h3>Odzyskiwanie zadań</h3>
         <p>Jeśli RetroDB zostanie zrestartowane podczas działania zadań w tle (masowe pobieranie, synchronizacja RA, zmiana rozmiaru obrazów itp.), przerwane zadania pojawiają się w banerze odzyskiwania. Opcje:</p>
@@ -508,7 +508,7 @@
 <section id="settings" class="help-section card">
     <h2 class="card-title">Ustawienia</h2>
     <div class="card-body">
-        <p>Ustawienia są zorganizowane w 6 zakładkach, każda z wieloma podsekcjami.</p>
+        <p>Ustawienia są zorganizowane w zakładkach, każda z podsekcjami. Administratorzy widzą też zakładkę Emulatory, która otwiera własną stronę.</p>
 
         <h3>Zakładka Konto</h3>
         <ul>
@@ -728,7 +728,7 @@
             <li>Gatunek, opis, producenta, wydawcę, datę wydania</li>
             <li>Liczbę graczy, tryby gry (jednoosobowy, wieloosobowy, kooperacja itd.)</li>
             <li>Informacje o kampanii i strukturę gry</li>
-            <li>Wszystkie 8 systemów ocen wiekowych (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd)</li>
+            <li>Wszystkie systemy ocen wiekowych (ESRB, PEGI, CERO, USK, ACB, FPB, GRAC, ClassInd, CADPA)</li>
             <li>Region, serię, podobne gry</li>
             <li>Obsługę kontrolerów, typ zapisu</li>
             <li>Perspektywę (pierwszoosobowa, z góry, przewijana z boku itd.), wymiar (2D, 3D)</li>
@@ -869,7 +869,7 @@
             <li><strong>Informacje o wydaniu</strong> &mdash; data wydania, region (z konfigurowalnej listy rozwijanej)</li>
             <li><strong>Rozgrywka</strong> &mdash; gatunek (tagi wielokrotnego wyboru), tryby, struktura gry, liczba graczy, producent, wydawca</li>
             <li><strong>Techniczne</strong> &mdash; kontrolery (wielokrotny wybór), typ zapisu, perspektywa (wiele wartości), wymiar (wiele wartości)</li>
-            <li><strong>Oceny wiekowe</strong> &mdash; wszystkie 8 systemów ocen z oficjalnymi obrazami ocen i automatycznym mapowaniem krzyżowym. Zmiana jednej oceny automatycznie uzupełnia puste oceny w innych systemach.</li>
+            <li><strong>Oceny wiekowe</strong> &mdash; wszystkie systemy ocen z oficjalnymi obrazami ocen i automatycznym mapowaniem krzyżowym. Zmiana jednej oceny automatycznie uzupełnia puste oceny w innych systemach.</li>
             <li><strong>Oceny</strong> &mdash; ocena krytyków, ocena użytkowników</li>
             <li><strong>Opis</strong> &mdash; tekst opisu gry</li>
             <li><strong>Własne obrazy</strong> &mdash; prześlij niestandardową okładkę (2D), okładkę 3D, tył pudełka, fanart i logo. Wyczyść istniejące obrazy, aby umożliwić ponowne pobieranie.</li>
@@ -897,7 +897,7 @@
         </ul>
 
         <h3>System wielu ocen</h3>
-        <p>RetroDB obsługuje 8 międzynarodowych systemów ocen wiekowych:</p>
+        <p>RetroDB obsługuje te międzynarodowe systemy ocen wiekowych:</p>
         <table class="data-table">
             <thead>
                 <tr><th>System</th><th>Region</th></tr>
@@ -911,6 +911,7 @@
                 <tr><td><strong>FPB</strong></td><td>Republika Południowej Afryki</td></tr>
                 <tr><td><strong>GRAC</strong></td><td>Korea Południowa</td></tr>
                 <tr><td><strong>ClassInd</strong></td><td>Brazylia</td></tr>
+                <tr><td><strong>CADPA</strong></td><td>Chiny</td></tr>
             </tbody>
         </table>
         <p>Ustaw swój preferowany system w <strong>Ustawienia &rarr; Biblioteka &rarr; Wyświetlanie</strong>. Oficjalne obrazy ocen są wyświetlane na kartach gier, w oknach szczegółów i na stronach szczegółów. Puste oceny są automatycznie uzupełniane z dowolnej dostępnej oceny poprzez mapowanie krzyżowe poziomów dojrzałości podczas pobierania, Uzupełniania AI i ręcznej edycji.</p>
@@ -985,7 +986,7 @@
         </ol>
 
         <h3>Porównywane pola</h3>
-        <p>System, producent, wydawca, data wydania, gatunek, seria, region, liczba graczy, tryby, perspektywa, wymiar, wszystkie 8 ocen wiekowych, ocena użytkowników, ocena krytyków, szacowany czas gry, obsługa kontrolerów, typ zapisu, rozmiar pliku, podobne gry, opis i więcej.</p>
+        <p>System, producent, wydawca, data wydania, gatunek, seria, region, liczba graczy, tryby, perspektywa, wymiar, wszystkie oceny wiekowe, ocena użytkowników, ocena krytyków, szacowany czas gry, obsługa kontrolerów, typ zapisu, rozmiar pliku, podobne gry, opis i więcej.</p>
     </div>
 </section>
 
@@ -1374,7 +1375,7 @@
                 <tr><td><strong>Rozgrywka</strong></td><td>Podział według gatunków, analiza trybów gry, rozkład struktury gry</td></tr>
                 <tr><td><strong>Czas gry</strong></td><td>Analiza danych czasu gry HLTB w całej kolekcji &mdash; łączny szacowany czas gry, średnie, rozkład</td></tr>
                 <tr><td><strong>Oceny recenzji</strong></td><td>Rozkłady i średnie ocen krytyków i użytkowników</td></tr>
-                <tr><td><strong>Oceny wiekowe</strong></td><td>Rozkład ocen wiekowych we wszystkich 8 systemach ocen</td></tr>
+                <tr><td><strong>Oceny wiekowe</strong></td><td>Rozkład ocen wiekowych we wszystkich systemach ocen</td></tr>
                 <tr><td><strong>Osiągnięcia</strong></td><td>Pokrycie i ukończenie RetroAchievements według systemu</td></tr>
                 <tr><td><strong>Jakość danych</strong></td><td>Wykres radarowy kompletności metadanych (opis, okładka, gatunek, producent, wydawca, data wydania, zrzuty ekranu, fanart, wideo, instrukcja, HLTB, oceny, tryby, region)</td></tr>
                 <tr><td><strong>Wzrost</strong></td><td>Oś czasu wzrostu kolekcji pokazująca, kiedy gry były dodawane w czasie</td></tr>
@@ -1815,7 +1816,7 @@
         </ol>
 
         <h4>„Obrazy nie zapisują się”</h4>
-        <p>Sprawdź uprawnienia zapisu w katalogach multimediów: <code>chmod -R 755 static/images/</code></p>
+        <p>Sprawdź, czy RetroDB może zapisywać w swoim katalogu multimediów (<code>static/images/</code>, chyba że został przeniesiony). W Linuksie lub macOS polecenie <code>chmod -R u+rwX static/images/</code> daje Twojemu kontu prawo zapisu bez oznaczania obrazów jako programów.</p>
 
         <h4>„Strona wolna lub niereagująca”</h4>
         <ul>

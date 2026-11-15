@@ -340,7 +340,7 @@ Text-only. AI never returns images, screenshots, videos, or manuals — `AI_FILL
 
 **What AI Fill corrects** (PASS-59-242). In `VALIDATE_FIELDS` it replaces a stored value it disagrees with, once both are in stored form (`1-4` players is 4; a list compares as a set). A value credited `manual` is never replaced (user, 2026-11-04). Every edit path credits a person for each changed field of `field_sources.HAND_EDITED_FIELDS` through `routes/games.py::_note_hand_edits`.
 
-**`FIELD_SCHEMAS`** pins canonical values for every dropdown-style field (`genre`, `game_structure`, `perspective`, `dimension`, `modes`, `save_type`, `other_platforms`, the 8 rating systems). The AI prompt presents these allowlists to the model; the response validator enforces them post-call (drops or maps unknown values). The full schema and prompt construction live in `scraper/scrape_ai.py` — do not duplicate the strings here, they drift.
+**`FIELD_SCHEMAS`** pins canonical values for every dropdown-style field (`genre`, `game_structure`, `perspective`, `dimension`, `modes`, `save_type`, `other_platforms`, every rating system). The AI prompt presents these allowlists to the model; the response validator enforces them post-call (drops or maps unknown values). The full schema and prompt construction live in `scraper/scrape_ai.py` — do not duplicate the strings here, they drift.
 
 **`PLATFORM_ALIASES`** maps non-canonical platform names the AI may produce (`ps1` → `PlayStation`, `playstation portable` → `PSP`).
 
