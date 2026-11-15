@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=313 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=314 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -2953,7 +2953,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: feature.
   Source: user-request-2026-11-15.
 
-- 📋 [PASS-59-313] **Arcade cheats: a MAME cheat pack, shown for the emulator each system is set to (feature, M).**
+- ✅ [PASS-59-313] **Arcade cheats: a MAME cheat pack, shown for the emulator each system is set to (feature, M).**
   - **Found**: MAME games (system `mame`) start in standalone MAME
     0.289 (`/usr/bin/mame`, openSUSE package), args
     `-rompath "{rom_dir}" "{rom_name}"`, no `-cheat`. The player has no
@@ -2970,9 +2970,24 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     and `-cheatpath` for MAME; game page lists the game's cheats (on
     and off in MAME's own menu, Tab > Cheat). Check whether MAME can
     start with chosen cheats on before promising switches.
+  Shipped 2026-11-15 (43b6808e). Import only: mamecheat.co.uk answers
+  403 to automated requests, so no Download button (the user's chosen
+  backup). Panel lists names without switches; switches are PASS-59-314.
   **Layman:** Arcade games get cheats too: one button downloads the big MAME cheat collection, and each game page shows the cheats that work in the emulator that game starts with.
   Kind: feature.
   Source: user-request-2026-11-15.
+
+- 📋 [PASS-59-314] **MAME cheats: on/off switches on the game page (enhancement, M).**
+  - **Found**: MAME 0.289's cheat plugin keeps no record of which cheats
+    are on, but exposes `emu.plugin.cheat.list()` / `.get(i):set_enabled()`
+    to Lua (`/usr/share/mame/plugins/cheat/init.lua`). An `-autoboot_script`
+    written per launch could switch on the names chosen on the page.
+  - **Open**: where the choices live (MAME has no per-game file to hold
+    them), and whether a "run" cheat switched on at boot behaves.
+  - Spec: docs/specs/PASS-59-155-cheats.md §4.8.
+  **Layman:** Lets you pick a MAME game's cheats on its page before you press Play, instead of in MAME's own menu.
+  Kind: enhancement.
+  Source: PASS-59-313 build 2026-11-15.
 
 ## 4.0.x — Security and data-loss fixes for the web version
 
