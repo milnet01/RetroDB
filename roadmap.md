@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=314 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=316 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -2976,6 +2976,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Shipped 2026-11-15 (43b6808e). Import only: mamecheat.co.uk answers
   403 to automated requests, so no Download button (the user's chosen
   backup). Panel lists names without switches; switches are PASS-59-314.
+  2026-11-15, before release: the import now keeps cheat.7z packed (its
+  readme asks; 181,842 files) and saves arcade sets' cheat names in
+  own/mame/names.sqlite3 by streaming the archive once (5 s for 0.279).
+  MAME 0.289 loaded Galaga's 11 cheats from the packed file. Spec §4.8
+  and INV-12 updated.
   **Layman:** Arcade games get cheats too: one button downloads the big MAME cheat collection, and each game page shows the cheats that work in the emulator that game starts with.
   Kind: feature.
   Source: user-request-2026-11-15.
@@ -2991,6 +2996,28 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Lets you pick a MAME game's cheats on its page before you press Play, instead of in MAME's own menu.
   Kind: enhancement.
   Source: PASS-59-313 build 2026-11-15.
+
+- ✅ [PASS-59-315] **Light on the computer: moving backgrounds pause when idle, the Cyberpunk mist moves to the graphics card, titles stop pulsing (perf, M).**
+  - Measured (headless Chrome, 3840x2160, signed-in Systems page): the
+    Cyberpunk mist took 99% of one core and ~11% GPU; now 0.4% and ~4%
+    (WebGL shader on a 1/6-size canvas, 10 fps). Every theme drops to
+    ~0% after the idle pause (window not focused, tab hidden, or 60 s
+    with no input).
+  - Settings > Library > Display gains a Moving background switch
+    (per browser, localStorage).
+  - Page titles hold their glow; the glitch titles flicker on hover only.
+  - Spec: docs/specs/themes.md sections 4 and 6.
+  **Layman:** RetroDB stops keeping a processor core busy and the graphics card working while it just sits open.
+  Kind: perf.
+  Source: user-request-2026-11-15.
+
+- 📋 [PASS-59-316] **Settings page probes ~330 hardware pictures on every load (perf, S).**
+  - Noted by the 2026-11-15 session (handoff); not yet measured or
+    located. Check what requests the admin Settings page makes on load
+    and whether they can wait until the section that needs them opens.
+  **Layman:** Makes the admin Settings page lighter to open.
+  Kind: perf.
+  Source: user-request-2026-11-15.
 
 ## 4.0.x — Security and data-loss fixes for the web version
 
