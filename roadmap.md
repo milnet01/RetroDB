@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=304 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=305 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -1063,7 +1063,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Pop-ups stop appearing under the sidebar or the phone's top bar.
   Kind: implement.
 
-- 📋 [PASS-59-189] **Tell the user when the AI service refuses a scrape's request (UX, S).**
+- ✅ [PASS-59-189] **Tell the user when the AI service refuses a scrape's request (UX, S).**
   - **Problem**: since 2026-10-23 Gemini has answered every scrape's AI
     gap-fill with HTTP 402 (logs/scraping_*.log: "Gemini API error:
     402"). `scraper/hybrid_scraper.py::_run_ai_fallback` logs "AI
@@ -1079,6 +1079,15 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - **Source**: user, 2026-10-29.
 
   ---
+  Shipped 2026-11-15. scrape_ai._post_to_ai records a 401/403 (key
+  refused), 402 (payment needed) or 429 as a service_limits stop per
+  provider (gemini/openai/claude) and skips calls while stopped;
+  services/service_stop_text.py words each. The words reach bulk scrape
+  and bulk AI Fill status (service_stops toast, once per stop), the
+  single AI Fill error and the single scrape's flash. Tests:
+  tests/test_pass59_189_ai_refusals.py. Not done: the circuit breaker
+  never trips on a refusal (the call returns None, no exception), so no
+  separate breaker notice was needed.
   **Layman:** RetroDB tells you when the AI service refuses a scrape, instead of failing silently.
   Kind: implement.
 
@@ -2781,6 +2790,20 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Back covers saved small by a scrape are now enlarged in the background, as front covers already are.
   Kind: fix.
   Source: user-request-2026-11-11.
+
+- 📋 [PASS-59-305] **Settings sub-tab labels are wrapped for translation (LOW, S).**
+  - **Problem**: every `subnav_link(href, label)` call in templates passes
+    a bare string ('🔑 API Keys', '📁 Paths' ...), so the links under
+    each Settings tab stay English in every locale. Some section
+    headings they point at (`<h2 class="card-title">🔑 API Keys</h2>` in
+    `_settings_tabs/scraping.html`) are bare too. Found while writing
+    PASS-59-189's message, which could not name "API Keys" truthfully.
+  - **Target**: wrap each label in `_()`, translate the new msgids in
+    all 20 locales, and check with the eo pseudolocale that no sub-tab
+    link or its heading is left unwrapped.
+  **Layman:** The small section links at the top of each Settings tab (such as "API Keys") show in your chosen language, not always English.
+  Kind: fix.
+  Source: PASS-59-189 work, 2026-11-15.
 
 ## 4.0.x — Security and data-loss fixes for the web version
 

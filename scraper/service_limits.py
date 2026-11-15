@@ -23,6 +23,9 @@ RAWG = 'rawg'
 IGDB = 'igdb'
 HOWLONGTOBEAT = 'hltb'
 STEAM_STORE = 'steam_store'
+GEMINI = 'gemini'
+OPENAI = 'openai'
+CLAUDE = 'claude'
 
 NAMES = {
     SCREENSCRAPER: 'ScreenScraper',
@@ -31,14 +34,21 @@ NAMES = {
     IGDB: 'IGDB',
     HOWLONGTOBEAT: 'HowLongToBeat',
     STEAM_STORE: 'Steam',
+    GEMINI: 'Gemini',
+    OPENAI: 'OpenAI',
+    CLAUDE: 'Claude',
 }
 
 # The services a game scrape searches.
 SCRAPE_SOURCES = (SCREENSCRAPER, THEGAMESDB, RAWG, IGDB)
+# The AI providers, named as scraper_settings.json's ai_provider names them.
+AI_SOURCES = (GEMINI, OPENAI, CLAUDE)
 
 # Why a service stopped. Words for each are in services/service_stop_text.py.
 LIMIT_REACHED = 'limit_reached'
 KEY_REFUSED = 'key_refused'
+KEY_REJECTED = 'key_rejected'
+PAYMENT_NEEDED = 'payment_needed'
 
 # Seconds between calls. IGDB's limit is 4 a second. ScreenScraper's replies
 # state the account's own rate, which replaces this figure. RAWG and

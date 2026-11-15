@@ -6,6 +6,8 @@
 
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, g, make_response, abort
 from flask_babel import get_locale, gettext as _
+from scraper.service_limits import AI_SOURCES
+from services.service_stop_text import stop_sentences
 import hashlib
 import os
 import json
@@ -1102,6 +1104,9 @@ def api_apply_metadata_progress(task_id):
                         sources=', '.join(result.get('sources_used', [])),
                         filled=len(result.get('filled_fields', [])),
                         missing=len(result.get('missing_fields', []))), 'success')
+                # Why the AI filled nothing, when it refused (PASS-59-189).
+                for said in stop_sentences(AI_SOURCES):
+                    flash(said, 'warning')
         else:
             snap['error'] = _('Failed to apply metadata.')
     return jsonify({'success': True, **snap})

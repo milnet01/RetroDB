@@ -9,9 +9,11 @@
 from flask import Blueprint, render_template, request
 from flask_babel import gettext as _
 
+from scraper.service_limits import AI_SOURCES
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import editor_required
 from services.database import query
+from services.service_stop_text import stop_sentences
 
 bp = Blueprint('ai_fill_bulk', __name__)
 
@@ -128,7 +130,7 @@ def api_ai_fill_bulk_run():
 def api_ai_fill_bulk_status():
     from services.jobs import ai_fill_bulk_job
     # Flat, like the other jobs' status replies: the toast reads it as is.
-    return success(**ai_fill_bulk_job.get_status())
+    return success(service_stops=stop_sentences(AI_SOURCES), **ai_fill_bulk_job.get_status())
 
 
 @bp.route('/api/ai-fill-bulk/cancel', methods=['POST'])

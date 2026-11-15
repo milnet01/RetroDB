@@ -17,6 +17,7 @@ import os
 import time
 
 import config
+from scraper import service_limits
 from scraper.base_scraper import http_post, rate_limit, safe_json
 
 logger = logging.getLogger(__name__)
@@ -782,6 +783,27 @@ Rules:
 # PROVIDER API CALLS
 # =============================================================================
 
+# A refusal no retry will change (PASS-59-189): the reason and how long to stop.
+# Saving the API keys clears a stop, so a fixed key or new credit is tried at once.
+_REFUSALS = {
+    401: (service_limits.KEY_REJECTED, 3600),
+    403: (service_limits.KEY_REJECTED, 3600),
+    402: (service_limits.PAYMENT_NEEDED, 3600),
+    429: (service_limits.LIMIT_REACHED, 900),
+}
+
+
+def _post_to_ai(provider, url, **kwargs):
+    """http_post to an AI provider; None while it is stopped. A refusal stops it."""
+    if not service_limits.wait_for_turn(provider):
+        return None
+    response = http_post(url, **kwargs)
+    refusal = _REFUSALS.get(response.status_code) if response is not None else None
+    if refusal:
+        service_limits.stop(provider, refusal[1], refusal[0])
+    return response
+
+
 def _call_gemini(prompt, api_key, model, project_id=''):
     """Call Google Gemini API with retry on empty response.
 
@@ -812,7 +834,8 @@ def _call_gemini(prompt, api_key, model, project_id=''):
     max_bytes = getattr(config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
     max_attempts = 2
     for attempt in range(1, max_attempts + 1):
-        response = http_post(url, json_data=payload, headers=headers, timeout=60, retries=1, max_bytes=max_bytes)
+        response = _post_to_ai(service_limits.GEMINI, url, json_data=payload, headers=headers,
+                                timeout=60, retries=1, max_bytes=max_bytes)
         if response is None or response.status_code != 200:
             status = response.status_code if response is not None else 'No response'
             logger.error(f"Gemini API error: {status}")
@@ -882,7 +905,8 @@ def _call_openai(prompt, api_key, model, **_kwargs):
 
     # Pass 32.14: cap OpenAI response size.
     max_bytes = getattr(config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
-    response = http_post(url, json_data=payload, headers=headers, timeout=90, retries=1, max_bytes=max_bytes)
+    response = _post_to_ai(service_limits.OPENAI, url, json_data=payload, headers=headers,
+                            timeout=90, retries=1, max_bytes=max_bytes)
     if response is None or response.status_code != 200:
         status = response.status_code if response is not None else 'No response'
         logger.error(f"OpenAI API error: {status}")
@@ -976,9 +1000,9 @@ def _call_claude(prompt, api_key, model, web_search=False, **_kwargs):
     content = []
     cache_read = 0
     for _turn in range(1 + _CLAUDE_MAX_CONTINUATIONS):
-        response = http_post(url, json_data=payload, headers=headers,
-                             timeout=120 if web_search else 60, retries=1,
-                             max_bytes=max_bytes)
+        response = _post_to_ai(service_limits.CLAUDE, url, json_data=payload, headers=headers,
+                               timeout=120 if web_search else 60, retries=1,
+                               max_bytes=max_bytes)
         if response is None or response.status_code != 200:
             status = response.status_code if response is not None else 'No response'
             logger.error(f"Claude API error: {status}")

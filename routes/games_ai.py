@@ -10,8 +10,10 @@ import logging
 from flask import Blueprint
 from flask_babel import gettext as _
 
+from scraper.service_limits import AI_SOURCES
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import editor_required
+from services.service_stop_text import stop_sentences
 
 logger = logging.getLogger(__name__)
 
@@ -43,8 +45,10 @@ def api_game_ai_fill(game_id):
         from services.ai_fill import fill_game
         filled_fields = fill_game(game)
         if filled_fields is None:
+            # A refusal says what to check (PASS-59-189); otherwise the general hint.
+            said = stop_sentences(AI_SOURCES)
             return error(
-                _('AI returned no data. Check your API key and provider settings.'),
+                ' '.join(said) or _('AI returned no data. Check your API key and provider settings.'),
                 code=502,
             )
 

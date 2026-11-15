@@ -294,6 +294,7 @@ Hand-off points:
 | HowLongToBeat | 1 s, token requests included | A 429 after `http_post`'s retries | 15 minutes |
 | Steam store | 1.5 s: its limit is undocumented, about 200 calls in five minutes as usually reported | A 403 or 429 | Five minutes; the sync carries on, and the next one asks about games it missed |
 | OpenXBL (Xbox), per key | None. A free key allows 150 calls an hour, and every call counts, so none is retried | A 429 | One hour; the bulk Xbox sync stops, and its next run starts with the games not synced yet |
+| Gemini, OpenAI, Claude (PASS-59-189), per provider | None | A 401 or 403 (key refused), a 402 (payment needed) or a 429 after `http_post`'s retries | One hour, or 15 minutes for a 429. A bulk scrape carries on without the AI; a bulk AI Fill ends; a single AI Fill or scrape says why |
 
 A bulk scrape carries on with its other sources and leaves a game found nowhere unstamped, so a later run asks again. HowLongToBeat's and Fix Box and Manual Regions' jobs end. Each status reply has `service_stops`, sentences from `services/service_stop_text.py`. Media downloads are not paced or stopped.
 
