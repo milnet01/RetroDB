@@ -416,6 +416,12 @@
                 </select>
             </div>
             
+            <div class="form-group mb-md" id="newUserPasswordGroup">
+                <label class="form-label" for="userFirstPassword">{{ _('Password *') }}</label>
+                <input type="password" class="form-input" id="userFirstPassword" autocomplete="new-password" minlength="12" aria-describedby="userFirstPasswordHint">
+                <small class="form-hint" id="userFirstPasswordHint">{{ _('12 characters or more. Give it to them; they choose their own the first time they sign in.') }}</small>
+            </div>
+
             <div class="form-group mb-md" id="resetPasswordGroup" style="display: none;">
                 <label class="form-label" for="userNewPassword">{{ _('Reset Password') }}</label>
                 <input type="password" class="form-input" id="userNewPassword" placeholder="{{ _('Leave blank to keep current') }}">

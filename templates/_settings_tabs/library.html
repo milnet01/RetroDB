@@ -3,14 +3,16 @@
 {% from "_macros/legal_disclaimer.html" import legal_disclaimer %}
 <div class="settings-tab-panel" id="tab-library" role="tabpanel" aria-label="{{ _('Library settings') }}">
     {% call tab_subnav('library') %}
-        {{ subnav_link('library', '📁 ' ~ _('Paths'), active=True) }}
-        {{ subnav_link('display', '🖼️ ' ~ _('Display')) }}
-        {{ subnav_link('rom-naming', '📝 ' ~ _('ROM Naming')) }}
-        {{ subnav_link('bonus-discs', '🎁 ' ~ _('Bonus Discs')) }}
-        {{ subnav_link('backup', '💾 ' ~ _('Backup')) }}
+        {% set _is_admin = has_perm('manage_settings') %}
+        {% if _is_admin %}{{ subnav_link('library', '📁 ' ~ _('Paths'), active=True) }}{% endif %}
+        {{ subnav_link('display', '🖼️ ' ~ _('Display'), active=not _is_admin) }}
+        {% if _is_admin %}{{ subnav_link('rom-naming', '📝 ' ~ _('ROM Naming')) }}{% endif %}
+        {% if has_perm('edit') %}{{ subnav_link('bonus-discs', '🎁 ' ~ _('Bonus Discs')) }}{% endif %}
+        {% if _is_admin %}{{ subnav_link('backup', '💾 ' ~ _('Backup')) }}{% endif %}
     {% endcall %}
 
     <!-- Library Settings -->
+{% if has_perm('manage_settings') %}
     <section class="card mb-xl" id="library">
     <div class="card-header">
         <h2 class="card-title">{{ _('Library Settings') }}</h2>
@@ -53,6 +55,7 @@
         {{ legal_disclaimer('text-muted text-sm mt-lg') }}
     </div>
 </section>
+{% endif %}
 
 <!-- Display Preferences -->
 <section class="card mb-xl" id="display">
@@ -143,6 +146,7 @@
         </div>
 
         <div class="form-group mb-lg">
+{% if has_perm('manage_settings') %}
             <label class="form-label" for="preferredBoxartSelect">{{ _('Preferred Boxart Style') }}</label>
             <select id="preferredBoxartSelect" class="form-select" style="max-width: 300px;">
                 <option value="2d">{{ _('2D Boxart (Standard)') }}</option>
@@ -173,10 +177,12 @@
                 {{ _('Save Display Settings') }}
             </button>
         </div>
+{% endif %}
     </div>
 </section>
 
 <!-- ROM Naming Conventions -->
+{% if has_perm('manage_settings') %}
 <section class="card mb-xl" id="rom-naming">
     <div class="card-header">
         <h2 class="card-title">📝 {{ _('ROM Naming Conventions') }}</h2>
@@ -238,8 +244,10 @@
         </div>
     </div>
 </section>
+{% endif %}
 
 <!-- Bonus Disc Management -->
+{% if has_perm('edit') %}
 <section class="card mb-xl" id="bonus-discs">
     <div class="card-header">
         <h2 class="card-title">🎁 Bonus Disc Management</h2>
@@ -285,8 +293,10 @@
         </div>
     </div>
 </section>
+{% endif %}
 
 <!-- Database Backup & Restore -->
+{% if has_perm('manage_settings') %}
 <section class="card mb-xl" id="backup">
     <div class="card-header">
         <h2 class="card-title">Database Backup & Restore</h2>
@@ -312,4 +322,5 @@
         </div>
     </div>
 </section>
+{% endif %}
 </div><!-- End tab-library -->

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 10:24+0200\n"
+"POT-Creation-Date: 2026-11-15 15:40+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: xh\n"
@@ -175,9 +175,9 @@ msgstr "Akukho datha inikeziweyo"
 msgid "You must accept the license and terms before completing setup"
 msgstr "Kufuneka wamkele ilayisensi nemigaqo ngaphambi kokugqiba ukuseta"
 
-#: app.py:1734 routes/auth.py:218 routes/auth.py:278 routes/auth.py:494
-#: routes/auth.py:540 templates/force_change_password.html:49
-#: templates/setup.html:469
+#: app.py:1734 routes/auth.py:215 routes/auth.py:273 routes/auth.py:489
+#: routes/auth.py:535 templates/force_change_password.html:49
+#: templates/settings.html:1372 templates/setup.html:469
 msgid "Password must be at least 12 characters"
 msgstr "Iphasiwedi kufuneka ibe nabalinganiso abangama-12 ubuncinane"
 
@@ -273,7 +273,7 @@ msgstr "Inkcazo Yomdlalo"
 
 #: routes/ai_fill_bulk.py:39 services/js_i18n_strings.py:799
 #: templates/_bulk_edit_modal.html:36 templates/_modals/edit_modal.html:115
-#: templates/_settings_tabs/data.html:83 templates/_settings_tabs/data.html:159
+#: templates/_settings_tabs/data.html:86 templates/_settings_tabs/data.html:163
 #: templates/achievement_game.html:241 templates/all_games.html:72
 #: templates/analytics.html:481 templates/analytics.html:2432
 #: templates/base.html:944 templates/base.html:1157
@@ -287,7 +287,7 @@ msgstr "Uhlobo"
 
 #: routes/ai_fill_bulk.py:40 services/js_i18n_strings.py:713
 #: templates/_bulk_edit_modal.html:67 templates/_modals/edit_modal.html:99
-#: templates/_settings_tabs/data.html:163 templates/achievement_game.html:87
+#: templates/_settings_tabs/data.html:167 templates/achievement_game.html:87
 #: templates/all_games.html:81 templates/analytics.html:482
 #: templates/analytics.html:2432 templates/base.html:942
 #: templates/base.html:1143 templates/compare_games.html:70
@@ -300,7 +300,7 @@ msgstr "Umphuhlisi"
 
 #: routes/ai_fill_bulk.py:41 services/js_i18n_strings.py:931
 #: templates/_bulk_edit_modal.html:53 templates/_modals/edit_modal.html:94
-#: templates/_settings_tabs/data.html:162 templates/achievement_game.html:81
+#: templates/_settings_tabs/data.html:166 templates/achievement_game.html:81
 #: templates/all_games.html:78 templates/analytics.html:483
 #: templates/analytics.html:2432 templates/base.html:943
 #: templates/base.html:1139 templates/compare_games.html:71
@@ -337,7 +337,7 @@ msgid "Players"
 msgstr "Abadlali"
 
 #: routes/ai_fill_bulk.py:46 templates/_modals/edit_modal.html:126
-#: templates/_settings_tabs/data.html:123 templates/base.html:1165
+#: templates/_settings_tabs/data.html:126 templates/base.html:1165
 msgid "Play Modes"
 msgstr "Iimowudi Zokudlala"
 
@@ -371,19 +371,19 @@ msgid "Controller Support"
 msgstr "Inkxaso Yekhontrola"
 
 #: routes/ai_fill_bulk.py:52 templates/_modals/edit_modal.html:211
-#: templates/_settings_tabs/data.html:133 templates/base.html:1229
+#: templates/_settings_tabs/data.html:136 templates/base.html:1229
 #: templates/compare_games.html:92
 msgid "Save Type"
 msgstr "Uhlobo Lokugcina"
 
 #: routes/ai_fill_bulk.py:53 templates/_bulk_edit_modal.html:118
-#: templates/_modals/edit_modal.html:154 templates/_settings_tabs/data.html:93
+#: templates/_modals/edit_modal.html:154 templates/_settings_tabs/data.html:96
 #: templates/base.html:1177
 msgid "Game Structure"
 msgstr "Isakhiwo Somdlalo"
 
 #: routes/ai_fill_bulk.py:54 templates/_bulk_edit_modal.html:135
-#: templates/_modals/edit_modal.html:167 templates/_settings_tabs/data.html:103
+#: templates/_modals/edit_modal.html:167 templates/_settings_tabs/data.html:106
 #: templates/all_games.html:87 templates/analytics.html:199
 #: templates/base.html:1185 templates/compare_games.html:78
 #: templates/system_games.html:78
@@ -391,7 +391,7 @@ msgid "Perspective"
 msgstr "i-Perspective"
 
 #: routes/ai_fill_bulk.py:55 templates/_bulk_edit_modal.html:151
-#: templates/_modals/edit_modal.html:178 templates/_settings_tabs/data.html:113
+#: templates/_modals/edit_modal.html:178 templates/_settings_tabs/data.html:116
 #: templates/all_games.html:90 templates/analytics.html:207
 #: templates/base.html:1193 templates/compare_games.html:79
 #: templates/system_games.html:81
@@ -454,7 +454,7 @@ msgstr "Akukho msebenzisi ukhethiweyo"
 msgid "Too many login attempts. Please try again later."
 msgstr "Iinzame ezininzi zokungena. Nceda uzame kwakhona kamva."
 
-#: routes/auth.py:85 routes/auth.py:244 routes/auth.py:308
+#: routes/auth.py:85 routes/auth.py:239 routes/auth.py:303
 msgid "User not found"
 msgstr "Umsebenzisi akafunyanwanga"
 
@@ -486,72 +486,77 @@ msgstr "Indima engasebenziyo"
 msgid "Username already exists"
 msgstr "Igama lomsebenzisi sele likhona"
 
-#: routes/auth.py:255
+#: routes/auth.py:228
+#, fuzzy, python-format
+msgid "User \"%(name)s\" created successfully"
+msgstr "Umsebenzisi ucinyiwe ngempumelelo"
+
+#: routes/auth.py:250
 msgid "The last admin must stay an active admin"
 msgstr "Umlawuli wokugqibela kufuneka ahlale engumlawuli osebenzayo"
 
-#: routes/auth.py:312
+#: routes/auth.py:307
 msgid "Cannot delete your own account"
 msgstr "Awukwazi ukucima i-akhawunti yakho"
 
-#: routes/auth.py:317
+#: routes/auth.py:312
 msgid "Cannot delete the last admin user"
 msgstr "Awukwazi ukucima umlawuli wokugqibela"
 
-#: routes/auth.py:379 routes/auth.py:470 routes/auth.py:527
+#: routes/auth.py:374 routes/auth.py:465 routes/auth.py:522
 msgid "Not logged in"
 msgstr "Awungenanga"
 
-#: routes/auth.py:414
+#: routes/auth.py:409
 msgid "Steam ID must be the number, not a profile name."
 msgstr "I-Steam ID kufuneka ibe linani, hayi igama leprofayile."
 
-#: routes/auth.py:423
+#: routes/auth.py:418
 msgid "Invalid locale"
 msgstr "I-locale engasebenziyo"
 
-#: routes/auth.py:428
+#: routes/auth.py:423
 msgid "Invalid theme"
 msgstr "Umxholo ongasebenziyo"
 
-#: routes/auth.py:434
+#: routes/auth.py:429
 #, python-format
 msgid "Invalid RPCS3 trophy folder: %(reason)s"
 msgstr "Ifolda yeendebe ze-RPCS3 engasebenziyo: %(reason)s"
 
-#: routes/auth.py:482
+#: routes/auth.py:477
 msgid "Too many attempts. Please try again later."
 msgstr "Iinzame ezininzi. Nceda uzame kwakhona kamva."
 
-#: routes/auth.py:489 routes/auth.py:536
+#: routes/auth.py:484 routes/auth.py:531
 msgid "New password is required"
 msgstr "Kufuneka iphasiwedi entsha"
 
-#: routes/auth.py:500
+#: routes/auth.py:495
 msgid "Current password is incorrect"
 msgstr "Iphasiwedi yangoku ayichanekanga"
 
-#: routes/auth.py:530
+#: routes/auth.py:525
 msgid "Password change not required"
 msgstr "Utshintsho lwephasiwedi alufuneki"
 
-#: routes/auth.py:584
+#: routes/auth.py:579
 msgid "No file provided"
 msgstr "Akukho fayile inikeziweyo"
 
-#: routes/auth.py:588 routes/museum.py:665
+#: routes/auth.py:583 routes/museum.py:665
 msgid "No file selected"
 msgstr "Akukho fayile ikhethiweyo"
 
-#: routes/auth.py:593
+#: routes/auth.py:588
 msgid "Invalid file type. Allowed: jpg, png, gif, webp"
 msgstr "Uhlobo lwefayile olungasebenziyo. Kuvunyelwe: jpg, png, gif, webp"
 
-#: routes/auth.py:598
+#: routes/auth.py:593
 msgid "File too large. Maximum size is 2MB"
 msgstr "Ifayile inkulu kakhulu. Ubungakanani obuphezulu bu-2MB"
 
-#: routes/auth.py:613
+#: routes/auth.py:608
 msgid ""
 "Avatar uploads require Pillow; please ask the operator to install the "
 "project requirements."
@@ -559,7 +564,7 @@ msgstr ""
 "Ukulayishwa kwe-avatar kufuna iPillow; nceda ucele umqhubi ukuba afakele "
 "iimfuno zeprojekthi."
 
-#: routes/auth.py:629 routes/museum.py:697
+#: routes/auth.py:624 routes/museum.py:697
 msgid "Invalid image file"
 msgstr "Ifayile yomfanekiso engasebenziyo"
 
@@ -1213,7 +1218,7 @@ msgstr ""
 msgid "Could not create Windows system entry"
 msgstr "Ayikwazanga ukwenza ungeniso lwesistim yeWindows"
 
-#: routes/platform_import.py:418 templates/settings.html:5031
+#: routes/platform_import.py:418 templates/settings.html:5042
 msgid "Paste your OpenXBL key first."
 msgstr "Qala ngokuncamathisela isitshixo sakho se-OpenXBL."
 
@@ -1475,7 +1480,7 @@ msgstr "%(field)s engasebenziyo: %(result)s"
 
 #: routes/settings.py:514 routes/settings.py:588 routes/settings.py:637
 #: routes/tools.py:301 services/js_i18n_strings.py:767
-#: templates/settings.html:1149 templates/settings.html:2747
+#: templates/settings.html:1149 templates/settings.html:2758
 msgid "Failed to save settings"
 msgstr "Kwehlulekile ukugcina iisethingi"
 
@@ -2223,7 +2228,7 @@ msgstr "I-AI ayifumananga ndawo zilahlekileyo zokuzalisa"
 #: services/js_i18n_strings.py:600 templates/_settings_tabs/account.html:331
 #: templates/archive_scanner.html:726 templates/list_detail.html:47
 #: templates/multi_disc_organizer.html:217 templates/reports.html:372
-#: templates/reports.html:455 templates/settings.html:4769
+#: templates/reports.html:455 templates/settings.html:4780
 msgid "Actions"
 msgstr "Izenzo"
 
@@ -2319,7 +2324,7 @@ msgstr ""
 msgid "Are you sure you want to cancel?"
 msgstr "Uqinisekile ukuba ufuna ukurhoxisa?"
 
-#: services/js_i18n_strings.py:621 templates/settings.html:4836
+#: services/js_i18n_strings.py:621 templates/settings.html:4847
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "Uqinisekile ukuba ufuna ukucima \"{filename}\"?"
@@ -2404,8 +2409,8 @@ msgstr "Isikrini se-CRT"
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:73
-#: templates/_settings_tabs/account.html:425
-#: templates/_settings_tabs/customization.html:264
+#: templates/_settings_tabs/account.html:431
+#: templates/_settings_tabs/customization.html:267
 #: templates/achievement_game.html:178 templates/archive_scanner.html:661
 #: templates/archive_scanner.html:798 templates/base.html:340
 #: templates/base.html:358 templates/base.html:849 templates/base.html:1060
@@ -2496,8 +2501,8 @@ msgstr "Kusulwe idatha yeRA yemidlalo engu-{count} kwi-{system}"
 msgid "Cleared RA data for {n} games"
 msgstr "Kusulwe idatha yeRA yemidlalo engu-{n}"
 
-#: services/js_i18n_strings.py:659 templates/settings.html:3805
-#: templates/settings.html:4069
+#: services/js_i18n_strings.py:659 templates/settings.html:3816
+#: templates/settings.html:4080
 msgid "Clearing..."
 msgstr "Iyasula..."
 
@@ -2514,7 +2519,7 @@ msgstr "Cofa ukuze uhluze, Shift+cofa ukuze ukhuphe"
 #: templates/_modals/boxart_zoom_modal.html:5
 #: templates/_modals/manual_reader_modal.html:11
 #: templates/_settings_tabs/account.html:45
-#: templates/_settings_tabs/customization.html:224
+#: templates/_settings_tabs/customization.html:227
 #: templates/archive_scanner.html:749 templates/archive_scanner.html:757
 #: templates/base.html:251 templates/base.html:334 templates/base.html:351
 #: templates/base.html:737 templates/base.html:976 templates/base.html:1374
@@ -2736,7 +2741,7 @@ msgstr "Esisetiweyo ngoku"
 msgid "Default emulator for {system}"
 msgstr "I-emulator ezenzekelayo ye-{system}"
 
-#: services/js_i18n_strings.py:709 templates/settings.html:4836
+#: services/js_i18n_strings.py:709 templates/settings.html:4847
 msgid "Delete Log File"
 msgstr "Cima Ifayile yeLog"
 
@@ -2765,7 +2770,7 @@ msgid "Done."
 msgstr "Kugqityiwe."
 
 #: services/js_i18n_strings.py:716 templates/logs.html:740
-#: templates/settings.html:4787
+#: templates/settings.html:4798
 msgid "Download"
 msgstr "Khuphela"
 
@@ -2894,22 +2899,22 @@ msgstr "Faka indlela enye yefolda."
 #: templates/multi_disc_organizer.html:371 templates/reports.html:1144
 #: templates/reports.html:1147 templates/reports.html:1213
 #: templates/reports.html:1216 templates/rom_tools_settings.html:579
-#: templates/rom_tools_settings.html:582 templates/settings.html:2366
-#: templates/settings.html:2484 templates/settings.html:2925
-#: templates/settings.html:2929 templates/settings.html:2948
-#: templates/settings.html:2952 templates/settings.html:3550
-#: templates/settings.html:3554 templates/settings.html:3622
-#: templates/settings.html:3626 templates/settings.html:3657
-#: templates/settings.html:3661 templates/settings.html:3687
-#: templates/settings.html:3691 templates/settings.html:4182
-#: templates/settings.html:4186 templates/settings.html:4204
-#: templates/settings.html:4235 templates/settings.html:4295
-#: templates/settings.html:4299 templates/settings.html:4429
-#: templates/settings.html:4433 templates/settings.html:4459
-#: templates/settings.html:4463 templates/settings.html:4824
-#: templates/settings.html:4827 templates/settings.html:4846
-#: templates/settings.html:4849 templates/settings.html:4864
-#: templates/settings.html:4867
+#: templates/rom_tools_settings.html:582 templates/settings.html:2377
+#: templates/settings.html:2495 templates/settings.html:2936
+#: templates/settings.html:2940 templates/settings.html:2959
+#: templates/settings.html:2963 templates/settings.html:3561
+#: templates/settings.html:3565 templates/settings.html:3633
+#: templates/settings.html:3637 templates/settings.html:3668
+#: templates/settings.html:3672 templates/settings.html:3698
+#: templates/settings.html:3702 templates/settings.html:4193
+#: templates/settings.html:4197 templates/settings.html:4215
+#: templates/settings.html:4246 templates/settings.html:4306
+#: templates/settings.html:4310 templates/settings.html:4440
+#: templates/settings.html:4444 templates/settings.html:4470
+#: templates/settings.html:4474 templates/settings.html:4835
+#: templates/settings.html:4838 templates/settings.html:4857
+#: templates/settings.html:4860 templates/settings.html:4875
+#: templates/settings.html:4878
 msgid "Error"
 msgstr "Impazamo"
 
@@ -3022,9 +3027,9 @@ msgstr "Kwehlulekile ukulayisha idatha yokulungelelanisa"
 msgid "Failed to save HLTB: {error}"
 msgstr "Ukugcina i-HLTB kusilele: {error}"
 
-#: services/js_i18n_strings.py:768 templates/settings.html:1470
-#: templates/settings.html:1514 templates/settings.html:1721
-#: templates/settings.html:1769
+#: services/js_i18n_strings.py:768 templates/settings.html:1479
+#: templates/settings.html:1523 templates/settings.html:1730
+#: templates/settings.html:1778
 #, python-brace-format
 msgid "Failed to save: {error}"
 msgstr "Ukugcina kusilele: {error}"
@@ -3047,8 +3052,8 @@ msgstr "Ukuhlaziya imeko yokugqitywa kusilele: {error}"
 msgid "Failed to update status: {error}"
 msgstr "Kwehlulekile ukuhlaziya isimo: {error}"
 
-#: services/js_i18n_strings.py:773 templates/settings.html:1938
-#: templates/settings.html:1986 templates/settings.html:2050
+#: services/js_i18n_strings.py:773 templates/settings.html:1947
+#: templates/settings.html:1995 templates/settings.html:2059
 #, python-brace-format
 msgid "Failed: {error}"
 msgstr "Akuphumelelanga: {error}"
@@ -3124,7 +3129,7 @@ msgstr "Iphepha Lomdlalo"
 msgid "Game details updated successfully."
 msgstr "Iinkcukacha zomdlalo zihlaziywe ngempumelelo."
 
-#: services/js_i18n_strings.py:789 templates/_settings_tabs/data.html:192
+#: services/js_i18n_strings.py:789 templates/_settings_tabs/data.html:196
 #: templates/achievements_system.html:103 templates/analytics.html:571
 #: templates/analytics.html:1588 templates/analytics.html:1629
 #: templates/analytics.html:1951 templates/analytics.html:2126
@@ -3358,7 +3363,7 @@ msgstr "Iyalayisha ifayile yelog..."
 msgid "Loading the manual…"
 msgstr "Ilayisha incwadi yesikhokelo…"
 
-#: services/js_i18n_strings.py:842 templates/_settings_tabs/library.html:284
+#: services/js_i18n_strings.py:842 templates/_settings_tabs/library.html:292
 #: templates/settings_emulators.html:201 templates/settings_emulators.html:219
 msgid "Loading…"
 msgstr "Iyalayisha…"
@@ -3478,10 +3483,10 @@ msgid "Navigation"
 msgstr "Unavigethi"
 
 #: services/js_i18n_strings.py:863 templates/psn_trophy_detail.html:944
-#: templates/psn_trophy_detail.html:964 templates/settings.html:3781
-#: templates/settings.html:3839 templates/settings.html:3915
-#: templates/settings.html:3972 templates/settings.html:4048
-#: templates/settings.html:4099 templates/settings.html:4143
+#: templates/psn_trophy_detail.html:964 templates/settings.html:3792
+#: templates/settings.html:3850 templates/settings.html:3926
+#: templates/settings.html:3983 templates/settings.html:4059
+#: templates/settings.html:4110 templates/settings.html:4154
 msgid "Network error"
 msgstr "Impazamo yenethiwekhi"
 
@@ -3822,7 +3827,7 @@ msgstr "Amagama angqinelanayo ommandla"
 #: templates/_settings_tabs/account.html:228 templates/compare_games.html:24
 #: templates/compare_games.html:40 templates/rom_tools_settings.html:462
 #: templates/rom_tools_settings.html:501 templates/screenshot_review.html:187
-#: templates/settings.html:1570
+#: templates/settings.html:1579
 msgid "Remove"
 msgstr "Susa"
 
@@ -3843,8 +3848,8 @@ msgstr "Susa ibhokisi ye-3D?"
 #: templates/game_detail.html:4648 templates/game_detail.html:4732
 #: templates/game_detail.html:4816 templates/game_detail.html:4944
 #: templates/rom_tools_settings.html:462 templates/rom_tools_settings.html:501
-#: templates/settings.html:1570 templates/settings.html:3044
-#: templates/settings.html:3440
+#: templates/settings.html:1579 templates/settings.html:3055
+#: templates/settings.html:3451
 #, python-brace-format
 msgid "Remove {name}"
 msgstr "Susa {name}"
@@ -4015,8 +4020,8 @@ msgstr "Igciniwe. Iya kusebenza ngexesha elilandelayo xa ucofa u-Dlala."
 msgid "Saving to the database…"
 msgstr "Kugcinwa kwidatabase…"
 
-#: services/js_i18n_strings.py:981 templates/settings.html:2725
-#: templates/settings.html:2763 templates/settings.html:4700
+#: services/js_i18n_strings.py:981 templates/settings.html:2736
+#: templates/settings.html:2774 templates/settings.html:4711
 #: templates/setup.html:483
 msgid "Saving..."
 msgstr "Iyagcina..."
@@ -4043,8 +4048,8 @@ msgstr ""
 "eziyi-{found}."
 
 #: services/js_i18n_strings.py:986 templates/multi_disc_organizer.html:204
-#: templates/settings.html:1802 templates/settings.html:3860
-#: templates/settings.html:3999 templates/settings.html:4509
+#: templates/settings.html:1811 templates/settings.html:3871
+#: templates/settings.html:4010 templates/settings.html:4520
 msgid "Scanning..."
 msgstr "Iyaskena..."
 
@@ -4312,8 +4317,8 @@ msgstr "Iyalungelelanisa..."
 msgid "Syncing: {processed} / {total}"
 msgstr "Iyalungelelanisa: {processed} / {total}"
 
-#: services/js_i18n_strings.py:1044 templates/_settings_tabs/_tab_bar.html:11
-#: templates/_settings_tabs/customization.html:299
+#: services/js_i18n_strings.py:1044 templates/_settings_tabs/_tab_bar.html:12
+#: templates/_settings_tabs/customization.html:303
 #: templates/achievement_game.html:228 templates/ai_fill_bulk.html:91
 #: templates/analytics.html:569 templates/analytics.html:603
 #: templates/compare_games.html:69 templates/dashboard.html:330
@@ -4328,9 +4333,9 @@ msgid "System"
 msgstr "Isistim"
 
 #: services/js_i18n_strings.py:1045
-#: templates/_settings_tabs/customization.html:153
-#: templates/_settings_tabs/customization.html:234
-#: templates/_settings_tabs/data.html:19 templates/achievements_system.html:50
+#: templates/_settings_tabs/customization.html:156
+#: templates/_settings_tabs/customization.html:237
+#: templates/_settings_tabs/data.html:21 templates/achievements_system.html:50
 #: templates/base.html:130 templates/dashboard.html:16
 #: templates/game_detail.html:24 templates/system_games.html:15
 msgid "Systems"
@@ -4510,7 +4515,7 @@ msgid "Unhandled rejection: {error}"
 msgstr "Ukwaliwa okungaphathwanga: {error}"
 
 #: services/js_i18n_strings.py:1080 templates/rom_tools_settings.html:579
-#: templates/settings.html:1966 templates/setup.html:372
+#: templates/settings.html:1975 templates/setup.html:372
 #: templates/setup.html:432
 msgid "Unknown error"
 msgstr "Impazamo engaziwayo"
@@ -4558,7 +4563,7 @@ msgstr "Layisha"
 msgid "Upload Controller Image"
 msgstr "Layisha Umfanekiso Wekhontrola"
 
-#: services/js_i18n_strings.py:1089 templates/settings.html:5153
+#: services/js_i18n_strings.py:1089 templates/settings.html:5164
 msgid "Upload failed"
 msgstr "Ukulayisha kuhlulekile"
 
@@ -5255,7 +5260,7 @@ msgstr "PEGI 16"
 msgid "PEGI 18"
 msgstr "PEGI 18"
 
-#: templates/_bulk_edit_modal.html:177 templates/_settings_tabs/data.html:161
+#: templates/_bulk_edit_modal.html:177 templates/_settings_tabs/data.html:165
 #: templates/base.html:945 templates/compare_games.html:74
 #: templates/local_trophy_detail.html:105 templates/psn_trophy_detail.html:102
 msgid "Franchise"
@@ -5403,7 +5408,7 @@ msgstr "Ayikaze"
 msgid "Last Achievement"
 msgstr "Impumelelo Yokugqibela"
 
-#: templates/_settings_tabs/data.html:160 templates/achievement_game.html:247
+#: templates/_settings_tabs/data.html:164 templates/achievement_game.html:247
 #: templates/analytics.html:491 templates/analytics.html:2432
 #: templates/compare_games.html:77 templates/local_trophy_detail.html:219
 #: templates/psn_trophy_detail.html:270
@@ -5516,7 +5521,7 @@ msgstr ""
 msgid "Profile Settings"
 msgstr "Iisethingi zeProfayile"
 
-#: templates/_settings_tabs/data.html:23 templates/achievements_system.html:43
+#: templates/_settings_tabs/data.html:25 templates/achievements_system.html:43
 #: templates/analytics.html:71 templates/analytics.html:2539
 #: templates/dashboard.html:164 templates/steam_achievements.html:42
 #: templates/xbox_achievements.html:42
@@ -5544,7 +5549,7 @@ msgstr ""
 "Ikhuphela iimpumelelo ozizuzileyo kwimidlalo yakho ye-%(system)s. "
 "Yisebenzise emva kokudlala."
 
-#: templates/_settings_tabs/system.html:430
+#: templates/_settings_tabs/system.html:432
 #: templates/achievements_system.html:162 templates/changelog.html:179
 #: templates/logs.html:737 templates/setup.html:354 templates/setup.html:355
 #: templates/setup.html:419 templates/tags.html:595
@@ -5582,7 +5587,7 @@ msgstr "Yonke Imidlalo"
 msgid "Completed (100%)"
 msgstr "Gqityiwe (100%)"
 
-#: templates/_settings_tabs/customization.html:126
+#: templates/_settings_tabs/customization.html:129
 #: templates/achievements_system.html:205 templates/all_games.html:120
 #: templates/local_trophies.html:100 templates/psn_trophies.html:179
 #: templates/steam_achievements.html:91 templates/system_games.html:111
@@ -5765,7 +5770,7 @@ msgstr "Izihluzi"
 msgid "Select"
 msgstr "Khetha"
 
-#: templates/all_games.html:94 templates/settings.html:4766
+#: templates/all_games.html:94 templates/settings.html:4777
 #: templates/system_games.html:85
 msgid "Category"
 msgstr "Uhlobo"
@@ -5788,7 +5793,7 @@ msgstr "Bonisa kuphela imidlalo engekakhutshwa"
 msgid "Show/hide bonus discs (hidden by default)"
 msgstr "Bonisa/fihla iidiski zebhonasi (zifihliwe ngokwesiqhelo)"
 
-#: templates/_settings_tabs/library.html:9 templates/all_games.html:110
+#: templates/_settings_tabs/library.html:10 templates/all_games.html:110
 #: templates/analytics.html:514 templates/system_games.html:101
 msgid "Bonus Discs"
 msgstr "Iidiski Zebhonasi"
@@ -5863,7 +5868,7 @@ msgstr "Ithala lakho alinanto"
 msgid "Scan your ROM folder to add your games."
 msgstr "Skena ifolda yakho yeROM ukuze wongeze imidlalo yakho."
 
-#: templates/_settings_tabs/library.html:47 templates/all_games.html:182
+#: templates/_settings_tabs/library.html:49 templates/all_games.html:182
 #: templates/dashboard.html:83 templates/dashboard.html:99
 #: templates/systems.html:111
 msgid "Scan Library"
@@ -6009,7 +6014,7 @@ msgstr "Ukhupho lweCSV"
 msgid "Data for spreadsheets"
 msgstr "Idatha yeespredshithi"
 
-#: templates/_settings_tabs/data.html:173 templates/analytics.html:62
+#: templates/_settings_tabs/data.html:177 templates/analytics.html:62
 #: templates/local_trophy_detail.html:182 templates/psn_trophy_detail.html:29
 #: templates/steam_achievement_game.html:31
 #: templates/xbox_achievement_game.html:31
@@ -6204,8 +6209,8 @@ msgid "Field Completeness"
 msgstr "Ukupheleleyo Kweendawo"
 
 #: templates/_modals/edit_modal.html:346
-#: templates/_settings_tabs/customization.html:193
-#: templates/_settings_tabs/customization.html:259 templates/analytics.html:479
+#: templates/_settings_tabs/customization.html:196
+#: templates/_settings_tabs/customization.html:262 templates/analytics.html:479
 #: templates/analytics.html:2432 templates/base.html:268
 #: templates/base.html:1361 templates/compare_games.html:97
 #: templates/settings_emulators.html:258
@@ -6265,8 +6270,8 @@ msgstr "Iisistim Eziphambili Ngenani Lemidlalo"
 msgid "Rank"
 msgstr "Inqanaba"
 
-#: templates/_settings_tabs/customization.html:164
-#: templates/_settings_tabs/customization.html:245 templates/analytics.html:570
+#: templates/_settings_tabs/customization.html:167
+#: templates/_settings_tabs/customization.html:248 templates/analytics.html:570
 #: templates/museum_system.html:99
 msgid "Manufacturer"
 msgstr "Umvelisi"
@@ -6285,7 +6290,7 @@ msgstr "Imidlalo Emikhulu"
 msgid "Game"
 msgstr "Umdlalo"
 
-#: templates/analytics.html:604 templates/settings.html:4768
+#: templates/analytics.html:604 templates/settings.html:4779
 msgid "Size"
 msgstr "Ubungakanani"
 
@@ -6385,11 +6390,11 @@ msgstr "(iifolda ekufuneka zitsityelwe)"
 msgid "Enter folder name to exclude"
 msgstr "Faka igama lefolda ekufuneka likhutshwe"
 
-#: templates/_settings_tabs/data.html:87 templates/_settings_tabs/data.html:97
-#: templates/_settings_tabs/data.html:107
-#: templates/_settings_tabs/data.html:117
-#: templates/_settings_tabs/data.html:127
-#: templates/_settings_tabs/data.html:137 templates/archive_scanner.html:591
+#: templates/_settings_tabs/data.html:90 templates/_settings_tabs/data.html:100
+#: templates/_settings_tabs/data.html:110
+#: templates/_settings_tabs/data.html:120
+#: templates/_settings_tabs/data.html:130
+#: templates/_settings_tabs/data.html:140 templates/archive_scanner.html:591
 #: templates/list_detail.html:419 templates/rom_tools_settings.html:346
 #: templates/rom_tools_settings.html:365
 msgid "Add"
@@ -6486,7 +6491,7 @@ msgstr "Kufunyenwe imicimbi engu-0"
 msgid "Date & Time"
 msgstr "Umhla & Ixesha"
 
-#: templates/_settings_tabs/customization.html:300
+#: templates/_settings_tabs/customization.html:304
 #: templates/archive_scanner.html:723 templates/settings_emulators.html:195
 msgid "Type"
 msgstr "Uhlobo"
@@ -6522,8 +6527,8 @@ msgid "Processed"
 msgstr "Kuqhutyiwe"
 
 #: templates/archive_scanner.html:782 templates/game_detail.html:4079
-#: templates/reports.html:497 templates/settings.html:3548
-#: templates/settings.html:4293 templates/settings.html:4861
+#: templates/reports.html:497 templates/settings.html:3559
+#: templates/settings.html:4304 templates/settings.html:4872
 msgid "Success"
 msgstr "Impumelelo"
 
@@ -6889,8 +6894,8 @@ msgstr "Ngena"
 msgid "Dashboard"
 msgstr "i-Dashboard"
 
-#: templates/_settings_tabs/_tab_bar.html:7
-#: templates/_settings_tabs/customization.html:8 templates/base.html:129
+#: templates/_settings_tabs/_tab_bar.html:8
+#: templates/_settings_tabs/customization.html:9 templates/base.html:129
 #: templates/game_detail.html:17 templates/setup.html:19
 msgid "Library"
 msgstr "Ithala"
@@ -7357,7 +7362,7 @@ msgid "Xbox 360, PC, Switch"
 msgstr "Xbox 360, PC, Switch"
 
 #: templates/_modals/edit_modal.html:241
-#: templates/_settings_tabs/library.html:157 templates/base.html:1256
+#: templates/_settings_tabs/library.html:161 templates/base.html:1256
 msgid "ESRB (North America)"
 msgstr "ESRB (North America)"
 
@@ -7385,12 +7390,12 @@ msgid "RP - Rating Pending"
 msgstr "RP - Isilinganiso Silindile"
 
 #: templates/_modals/edit_modal.html:254
-#: templates/_settings_tabs/library.html:158 templates/base.html:1269
+#: templates/_settings_tabs/library.html:162 templates/base.html:1269
 msgid "PEGI (Europe)"
 msgstr "PEGI (Europe)"
 
 #: templates/_modals/edit_modal.html:265
-#: templates/_settings_tabs/library.html:159 templates/base.html:1280
+#: templates/_settings_tabs/library.html:163 templates/base.html:1280
 msgid "CERO (Japan)"
 msgstr "CERO (Japan)"
 
@@ -7416,12 +7421,12 @@ msgid "Z - Ages 18+"
 msgstr "Z - Iminyaka 18+"
 
 #: templates/_modals/edit_modal.html:276
-#: templates/_settings_tabs/library.html:160 templates/base.html:1291
+#: templates/_settings_tabs/library.html:164 templates/base.html:1291
 msgid "USK (Germany)"
 msgstr "USK (Germany)"
 
 #: templates/_modals/edit_modal.html:287
-#: templates/_settings_tabs/library.html:161 templates/base.html:1302
+#: templates/_settings_tabs/library.html:165 templates/base.html:1302
 msgid "ACB (Australia)"
 msgstr "ACB (Australia)"
 
@@ -7443,12 +7448,12 @@ msgid "R18+ - Restricted"
 msgstr "R18+ - Ithintelwe"
 
 #: templates/_modals/edit_modal.html:298
-#: templates/_settings_tabs/library.html:162 templates/base.html:1313
+#: templates/_settings_tabs/library.html:166 templates/base.html:1313
 msgid "FPB (South Africa)"
 msgstr "FPB (South Africa)"
 
 #: templates/_modals/edit_modal.html:312
-#: templates/_settings_tabs/library.html:163 templates/base.html:1327
+#: templates/_settings_tabs/library.html:167 templates/base.html:1327
 msgid "GRAC (South Korea)"
 msgstr "GRAC (South Korea)"
 
@@ -7457,7 +7462,7 @@ msgid "ALL - All Ages"
 msgstr "ALL - Yonke Iminyaka"
 
 #: templates/_modals/edit_modal.html:322
-#: templates/_settings_tabs/library.html:164 templates/base.html:1337
+#: templates/_settings_tabs/library.html:168 templates/base.html:1337
 msgid "ClassInd (Brazil)"
 msgstr "ClassInd (Brazil)"
 
@@ -7466,7 +7471,7 @@ msgid "L - General"
 msgstr "L - Jikelele"
 
 #: templates/_modals/edit_modal.html:334
-#: templates/_settings_tabs/library.html:165 templates/base.html:1349
+#: templates/_settings_tabs/library.html:169 templates/base.html:1349
 msgid "CADPA (China)"
 msgstr "CADPA (China)"
 
@@ -7491,7 +7496,7 @@ msgid "Images/Video"
 msgstr "Imifanekiso/Ividiyo"
 
 #: templates/_modals/edit_modal.html:15
-#: templates/_settings_tabs/customization.html:267 templates/base.html:1376
+#: templates/_settings_tabs/customization.html:270 templates/base.html:1376
 #: templates/tags.html:475 templates/wishlist.html:715
 msgid "Save Changes"
 msgstr "Gcina Utshintsho"
@@ -8015,7 +8020,7 @@ msgstr "Iiplatfom zemidlalo"
 msgid "ROMs in library"
 msgstr "Ii-ROM ezikwiithala"
 
-#: templates/_settings_tabs/data.html:31 templates/dashboard.html:173
+#: templates/_settings_tabs/data.html:33 templates/dashboard.html:173
 msgid "Missing Metadata"
 msgstr "Imetadata Elahlekileyo"
 
@@ -8121,7 +8126,7 @@ msgid "Database Service"
 msgstr "Inkonzo ye-Database"
 
 #: templates/dashboard.html:585 templates/dashboard.html:1308
-#: templates/settings.html:2356
+#: templates/settings.html:2367
 msgid "Online"
 msgstr "Kwi-inthanethi"
 
@@ -8142,7 +8147,7 @@ msgstr "Iyafumaneka"
 #: templates/_settings_tabs/scraping.html:178 templates/dashboard.html:602
 #: templates/dashboard.html:612 templates/dashboard.html:632
 #: templates/dashboard.html:642 templates/game_imports.html:368
-#: templates/settings.html:2329 templates/settings.html:2443
+#: templates/settings.html:2340 templates/settings.html:2454
 msgid "Checking..."
 msgstr "Iyakhangela..."
 
@@ -8214,7 +8219,7 @@ msgstr "I-API e-1 emiselweyo ayikho kwi-intanethi"
 msgid "{count} configured APIs are offline"
 msgstr "Ii-API ezingu-{count} ezimiselweyo azikho kwi-intanethi"
 
-#: templates/dashboard.html:1309 templates/settings.html:2359
+#: templates/dashboard.html:1309 templates/settings.html:2370
 msgid "Offline"
 msgstr "Ayikho kwi-intanethi"
 
@@ -8531,7 +8536,7 @@ msgid "From the AI, not checked against a review site."
 msgstr "Isuka kwi-AI, ayihlolwanga kwisiza semiphandle."
 
 #: templates/game_detail.html:274 templates/game_detail.html:279
-#: templates/game_detail.html:284 templates/settings.html:2690
+#: templates/game_detail.html:284 templates/settings.html:2701
 msgid "AI"
 msgstr "AI"
 
@@ -9703,7 +9708,7 @@ msgstr "Iindebe zePlayStation 3"
 msgid "RPCS3 Trophy Collection"
 msgstr "Ingqokelela Yeendebe zeRPCS3"
 
-#: templates/_settings_tabs/data.html:61 templates/local_trophies.html:22
+#: templates/_settings_tabs/data.html:63 templates/local_trophies.html:22
 #: templates/local_trophies.html:55
 msgid "Scan Trophies"
 msgstr "Skena Iindebe"
@@ -9832,13 +9837,13 @@ msgstr "Ukukhangela kwe-HLTB Akuphumelelanga"
 msgid "No match found."
 msgstr "Akukho kufanisa kufunyenweyo."
 
-#: templates/local_trophy_detail.html:429 templates/settings.html:1851
-#: templates/settings.html:1888 templates/settings.html:1922
-#: templates/settings.html:1941 templates/settings.html:1966
-#: templates/settings.html:1969 templates/settings.html:1989
-#: templates/settings.html:2033 templates/settings.html:2055
-#: templates/settings.html:2152 templates/settings.html:2750
-#: templates/settings.html:2812 templates/settings.html:4745
+#: templates/local_trophy_detail.html:429 templates/settings.html:1860
+#: templates/settings.html:1897 templates/settings.html:1931
+#: templates/settings.html:1950 templates/settings.html:1975
+#: templates/settings.html:1978 templates/settings.html:1998
+#: templates/settings.html:2042 templates/settings.html:2064
+#: templates/settings.html:2161 templates/settings.html:2761
+#: templates/settings.html:2823 templates/settings.html:4756
 #: templates/steam_achievement_game.html:302
 #: templates/xbox_achievement_game.html:293
 #, python-brace-format
@@ -9906,7 +9911,7 @@ msgstr "Iimpazamo neempazamo ezinkulu"
 msgid "ERROR"
 msgstr "ERROR"
 
-#: templates/logs.html:778 templates/settings.html:4784
+#: templates/logs.html:778 templates/settings.html:4795
 msgid "View"
 msgstr "Bona"
 
@@ -10253,7 +10258,7 @@ msgstr "Iispecs"
 msgid "Top 10 Games"
 msgstr "Imidlalo Ephambili engu-10"
 
-#: templates/_settings_tabs/customization.html:5
+#: templates/_settings_tabs/customization.html:6
 #: templates/museum_system.html:63 templates/museum_system.html:172
 msgid "Controllers"
 msgstr "Iikhontrola"
@@ -10348,8 +10353,8 @@ msgstr "Khangela umfanekiso omtsha"
 msgid "Upload your own image"
 msgstr "Layisha owakho umfanekiso"
 
-#: templates/_settings_tabs/customization.html:189
-#: templates/_settings_tabs/customization.html:255
+#: templates/_settings_tabs/customization.html:192
+#: templates/_settings_tabs/customization.html:258
 #: templates/museum_system.html:226
 msgid "Button Layout"
 msgstr "Ubume Beqhosha"
@@ -11712,9 +11717,9 @@ msgstr "Bandakanya ii-archive (.zip, .7z, .rar) kuskeno lweduplicate"
 msgid "Detection method can be selected directly on the Duplicate Finder page."
 msgstr "Indlela yokufumana inokukhethwa ngqo kwiphepha leMfumani yeDuplicate."
 
-#: templates/_settings_tabs/customization.html:83
+#: templates/_settings_tabs/customization.html:85
 #: templates/_settings_tabs/scraping.html:255
-#: templates/rom_tools_settings.html:433 templates/settings.html:2754
+#: templates/rom_tools_settings.html:433 templates/settings.html:2765
 msgid "Save Settings"
 msgstr "Gcina Iisethingi"
 
@@ -11722,7 +11727,7 @@ msgstr "Gcina Iisethingi"
 msgid "Reset to Defaults"
 msgstr "Buyisela Kokungagqibekanga"
 
-#: templates/rom_tools_settings.html:439 templates/settings.html:2743
+#: templates/rom_tools_settings.html:439 templates/settings.html:2754
 msgid "Settings saved successfully!"
 msgstr "Iisethingi zigcinwe ngempumelelo!"
 
@@ -11735,8 +11740,8 @@ msgid "No paths excluded"
 msgstr "Akukho ndlela ikhutshiweyo"
 
 #: templates/rom_tools_settings.html:579 templates/rom_tools_settings.html:582
-#: templates/settings.html:1473 templates/settings.html:1517
-#: templates/settings.html:1727 templates/settings.html:1775
+#: templates/settings.html:1482 templates/settings.html:1526
+#: templates/settings.html:1736 templates/settings.html:1784
 #, python-brace-format
 msgid "Error saving settings: {error}"
 msgstr "Impazamo ekugcineni iisethingi: {error}"
@@ -11934,27 +11939,37 @@ msgstr "Koyekile ukutshintsha iphasiwedi"
 msgid "Network error changing password"
 msgstr "Impazamo kunxibelelwano ekutshintsheni iphasiwedi"
 
-#: templates/settings.html:1341 templates/settings.html:1343
+#: templates/_settings_tabs/account.html:319
+#: templates/_settings_tabs/account.html:393 templates/settings.html:1308
+msgid "Add User"
+msgstr "Yongeza Umsebenzisi"
+
+#: templates/settings.html:1328
+#, fuzzy
+msgid "Edit User"
+msgstr "Yongeza Umsebenzisi"
+
+#: templates/settings.html:1344 templates/settings.html:1346
 msgid "Could not load that user."
 msgstr "Ayikwazanga ukulayisha loo msebenzisi."
 
-#: templates/settings.html:1378
+#: templates/settings.html:1387
 msgid "User saved successfully!"
 msgstr "Umsebenzisi ugciniwe ngempumelelo!"
 
-#: templates/settings.html:1383
+#: templates/settings.html:1392
 msgid "Failed to save user"
 msgstr "Koyekile ukugcina umsebenzisi"
 
-#: templates/settings.html:1387
+#: templates/settings.html:1396
 msgid "Network error saving user"
 msgstr "Impazamo kunxibelelwano ekugcineni umsebenzisi"
 
-#: templates/settings.html:1393
+#: templates/settings.html:1402
 msgid "Delete User"
 msgstr "Cima umsebenzisi"
 
-#: templates/settings.html:1394
+#: templates/settings.html:1403
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete user \"{username}\"? This action cannot "
@@ -11963,134 +11978,134 @@ msgstr ""
 "Uqinisekile ukuba ufuna ukucima umsebenzisi \"{username}\"? Esi senzo "
 "asinakuphindwa."
 
-#: templates/settings.html:1402
+#: templates/settings.html:1411
 msgid "User deleted successfully"
 msgstr "Umsebenzisi ucinyiwe ngempumelelo"
 
-#: templates/settings.html:1407
+#: templates/settings.html:1416
 msgid "Failed to delete user"
 msgstr "Koyekile ukucima umsebenzisi"
 
-#: templates/settings.html:1411
+#: templates/settings.html:1420
 msgid "Network error deleting user"
 msgstr "Impazamo yenethiwekhi ekususeni umsebenzisi"
 
-#: templates/settings.html:1437 templates/settings.html:1439
-#: templates/settings.html:1441 templates/settings.html:1443
+#: templates/settings.html:1446 templates/settings.html:1448
+#: templates/settings.html:1450 templates/settings.html:1452
 #, python-brace-format
 msgid "Current: {path}"
 msgstr "Okwangoku: {path}"
 
-#: templates/settings.html:1465
+#: templates/settings.html:1474
 msgid "Path settings saved!"
 msgstr "Iisethingi zendlela zigciniwe!"
 
-#: templates/settings.html:1467
+#: templates/settings.html:1476
 msgid "Restart required for changes to take full effect"
 msgstr "Kufuneka uqalise kwakhona ukuze utshintsho lusebenze ngokupheleleyo"
 
-#: templates/settings.html:1512
+#: templates/settings.html:1521
 msgid "Display settings saved!"
 msgstr "Iisethingi zokubonisa zigciniwe!"
 
-#: templates/settings.html:1570
+#: templates/settings.html:1579
 msgid "Move left"
 msgstr "Shenxisa ekhohlo"
 
-#: templates/settings.html:1570
+#: templates/settings.html:1579
 msgid "Move right"
 msgstr "Shenxisa ekunene"
 
-#: templates/settings.html:1670
+#: templates/settings.html:1679
 msgid "Region already exists"
 msgstr "Ummandla seleukho"
 
-#: templates/settings.html:1719
+#: templates/settings.html:1728
 msgid "ROM naming settings saved!"
 msgstr "Iisethingi zokuthiya ii-ROM zigciniwe!"
 
-#: templates/settings.html:1767
+#: templates/settings.html:1776
 msgid "Notification settings saved!"
 msgstr "Iisethingi zezaziso zigciniwe!"
 
-#: templates/settings.html:1787
+#: templates/settings.html:1796
 #, python-brace-format
 msgid "Success - disappears in {seconds}s"
 msgstr "Impumelelo - iyanyamalala kwi-{seconds}s"
 
-#: templates/settings.html:1788
+#: templates/settings.html:1797
 #, python-brace-format
 msgid "Info - disappears in {seconds}s"
 msgstr "Inkcazelo - iyanyamalala kwi-{seconds}s"
 
-#: templates/settings.html:1789
+#: templates/settings.html:1798
 #, python-brace-format
 msgid "Warning - disappears in {seconds}s"
 msgstr "Isilumkiso - siyanyamalala kwi-{seconds}s"
 
-#: templates/settings.html:1790
+#: templates/settings.html:1799
 #, python-brace-format
 msgid "Error - disappears in {seconds}s"
 msgstr "Impazamo - iyanyamalala kwi-{seconds}s"
 
-#: templates/settings.html:1846
+#: templates/settings.html:1855
 #, python-brace-format
 msgid "Bonus discs detected: {count}"
 msgstr "Iidiski zebhonasi ezifunyenweyo: {count}"
 
-#: templates/settings.html:1848
+#: templates/settings.html:1857
 #, python-brace-format
 msgid "Detection failed: {error}"
 msgstr "Ukufumana akuphumelelanga: {error}"
 
-#: templates/settings.html:1880
+#: templates/settings.html:1889
 #, python-brace-format
 msgid "Bonus discs linked to parent games: {count}"
 msgstr "Iidiski zeBhonasi ezidityaniswe kwimidlalo yomzali: {count}"
 
-#: templates/settings.html:1885
+#: templates/settings.html:1894
 #, python-brace-format
 msgid "Auto-link failed: {error}"
 msgstr "Ukudibanisa ngokuzenzekelayo akuphumelelanga: {error}"
 
-#: templates/settings.html:1907
+#: templates/settings.html:1916
 msgid "Bonus Disc Statistics"
 msgstr "Amanani eeDiski zeBhonasi"
 
-#: templates/settings.html:1910
+#: templates/settings.html:1919
 msgid "Total Bonus Discs:"
 msgstr "Zonke iiDiski zeBhonasi:"
 
-#: templates/settings.html:1911
+#: templates/settings.html:1920
 msgid "Linked to Parent:"
 msgstr "Ezidityaniswe kuMzali:"
 
-#: templates/settings.html:1912
+#: templates/settings.html:1921
 msgid "Unlinked:"
 msgstr "Ezingadityaniswanga:"
 
-#: templates/settings.html:1913
+#: templates/settings.html:1922
 msgid "Games with Bonus Content:"
 msgstr "Imidlalo Enomxholo weBhonasi:"
 
-#: templates/settings.html:1919
+#: templates/settings.html:1928
 #, python-brace-format
 msgid "Failed to load stats: {error}"
 msgstr "Ukulayisha amanani akuphumelelanga: {error}"
 
-#: templates/settings.html:1934
+#: templates/settings.html:1943
 msgid "Game marked as bonus disc"
 msgstr "Umdlalo uphawulwe njengediski yebhonasi"
 
-#: templates/settings.html:1956
+#: templates/settings.html:1965
 msgid "Select Parent Game"
 msgstr "Khetha Umdlalo woMzali"
 
-#: templates/settings.html:1957
+#: templates/settings.html:1966
 msgid "Choose the parent game for this bonus disc:"
 msgstr "Khetha umdlalo woMzali wale diski yeBhonasi:"
 
-#: templates/settings.html:1964
+#: templates/settings.html:1973
 msgid ""
 "No potential parent games found. Try using \"Mark\" instead to just hide "
 "this from listings."
@@ -12098,52 +12113,52 @@ msgstr ""
 "Akukho midlalo enokwenzeka njengomzali ifunyenweyo. Zama ukusebenzisa "
 "\"Phawula\" endaweni yoko ukuyifihla kuluhlu."
 
-#: templates/settings.html:2001
+#: templates/settings.html:2010
 #, python-brace-format
 msgid "Failed to load: {error}"
 msgstr "Ayikwazanga ukulayisha: {error}"
 
-#: templates/settings.html:2005
+#: templates/settings.html:2014
 msgid "No games are marked as bonus discs."
 msgstr "Akukho midlalo iphawulwe njengeedisiki zebhonasi."
 
-#: templates/settings.html:2008
+#: templates/settings.html:2017
 msgid "Not linked to a game"
 msgstr "Ayidityaniswanga nomdlalo"
 
-#: templates/settings.html:2012
+#: templates/settings.html:2021
 #, python-brace-format
 msgid "Bonus disc of {title}"
 msgstr "Idiski yebhonasi ka-{title}"
 
-#: templates/settings.html:2016
+#: templates/settings.html:2025
 msgid "Not a bonus disc"
 msgstr "Ayiyondiski yebhonasi"
 
-#: templates/settings.html:2046
+#: templates/settings.html:2055
 msgid "Back in your game lists. Auto-Link will leave it alone."
 msgstr "Ibuyele kuluhlu lwakho lwemidlalo. I-Auto-Link izakuyiyeka."
 
-#: templates/settings.html:2074
+#: templates/settings.html:2083
 #, python-brace-format
 msgid "Backup created: {filename} ({size})"
 msgstr "Ugcino lwenziwe: {filename} ({size})"
 
-#: templates/settings.html:2077
+#: templates/settings.html:2086
 #, python-brace-format
 msgid "Backup failed: {error}"
 msgstr "Ugcino aluphumelelanga: {error}"
 
-#: templates/settings.html:2080
+#: templates/settings.html:2089
 #, python-brace-format
 msgid "Backup error: {error}"
 msgstr "Impazamo yogcino: {error}"
 
-#: templates/settings.html:2121
+#: templates/settings.html:2130
 msgid "Restore Backup"
 msgstr "Buyisela Ugcino"
 
-#: templates/settings.html:2122
+#: templates/settings.html:2131
 #, python-brace-format
 msgid ""
 "Are you sure you want to restore from \"{filename}\"?\n"
@@ -12156,320 +12171,320 @@ msgstr ""
 "Oku kuza kutshintsha isiseko sedatha yakho yangoku. Ugcino lwangaphambi "
 "kokubuyisela luza kwenziwa ngokuzenzekelayo."
 
-#: templates/settings.html:2128
+#: templates/settings.html:2137
 msgid "Database restored! Reloading page..."
 msgstr "Ingqokelela yedatha ibuyisiwe! Iphepha liyalayishwa kwakhona..."
 
-#: templates/settings.html:2132
+#: templates/settings.html:2141
 #, python-brace-format
 msgid "Restore failed: {error}"
 msgstr "Ukubuyisela akuphumelelanga: {error}"
 
-#: templates/settings.html:2135
+#: templates/settings.html:2144
 #, python-brace-format
 msgid "Restore error: {error}"
 msgstr "Impazamo yokubuyisela: {error}"
 
-#: templates/settings.html:2142
+#: templates/settings.html:2151
 msgid "Calculating file sizes..."
 msgstr "Kubalwa ubungakanani beefayile..."
 
-#: templates/settings.html:2149
+#: templates/settings.html:2158
 #, python-brace-format
 msgid "Calculation failed: {error}"
 msgstr "Ukubala akuphumelelanga: {error}"
 
-#: templates/settings.html:2299
+#: templates/settings.html:2310
 msgid "Failed to save scraper setting"
 msgstr "Ukugcina isethingi yekhupha akuphumelelanga"
 
-#: templates/_settings_tabs/scraping.html:173 templates/settings.html:2311
+#: templates/_settings_tabs/scraping.html:173 templates/settings.html:2322
 msgid "AI Metadata"
 msgstr "Metadata ye-AI"
 
-#: templates/settings.html:2312
+#: templates/settings.html:2323
 #, python-brace-format
 msgid "{name} enabled"
 msgstr "{name} ivuliwe"
 
-#: templates/settings.html:2312
+#: templates/settings.html:2323
 #, python-brace-format
 msgid "{name} disabled"
 msgstr "{name} ivaliwe"
 
-#: templates/settings.html:2382
+#: templates/settings.html:2393
 #, python-brace-format
 msgid "Resets in {time}"
 msgstr "Iseta kwakhona kwi-{time}"
 
-#: templates/settings.html:2382
+#: templates/settings.html:2393
 msgid "Resets soon"
 msgstr "Iseta kwakhona kungekudala"
 
-#: templates/settings.html:2388 templates/settings.html:2390
-#: templates/settings.html:2475 templates/settings.html:2499
-#: templates/settings.html:2596 templates/settings.html:2646
-#: templates/settings.html:2648
+#: templates/settings.html:2399 templates/settings.html:2401
+#: templates/settings.html:2486 templates/settings.html:2510
+#: templates/settings.html:2607 templates/settings.html:2657
+#: templates/settings.html:2659
 #, python-brace-format
 msgid "Resets: {when}"
 msgstr "Iseta kwakhona: {when}"
 
-#: templates/settings.html:2421
+#: templates/settings.html:2432
 msgid "Testing…"
 msgstr "Iyavavanya…"
 
-#: templates/settings.html:2426
+#: templates/settings.html:2437
 #, python-format
 msgid "The key works: %(provider)s answered, using %(model)s."
 msgstr "Isitshixo siyasebenza: %(provider)s iphendule isebenzisa %(model)s."
 
-#: templates/settings.html:2431
+#: templates/settings.html:2442
 msgid "The key test failed."
 msgstr "Uvavanyo lwesitshixo aluphumelelanga."
 
-#: templates/settings.html:2444
+#: templates/settings.html:2455
 msgid "Checking rate limits..."
 msgstr "Iyakhangela imida yezicelo..."
 
-#: templates/settings.html:2473 templates/settings.html:2495
+#: templates/settings.html:2484 templates/settings.html:2506
 msgid "remaining (monthly)"
 msgstr "eseleyo (inyanga nganye)"
 
-#: templates/settings.html:2474 templates/settings.html:2480
-#: templates/settings.html:2482 templates/settings.html:2484
-#: templates/settings.html:2487
+#: templates/settings.html:2485 templates/settings.html:2491
+#: templates/settings.html:2493 templates/settings.html:2495
+#: templates/settings.html:2498
 #, python-brace-format
 msgid "Public key: {status}"
 msgstr "Isitshixo sikawonke-wonke: {status}"
 
-#: templates/settings.html:2476 templates/settings.html:2500
+#: templates/settings.html:2487 templates/settings.html:2511
 #, python-brace-format
 msgid "Extra: {n}"
 msgstr "Ezongezelelweyo: {n}"
 
-#: templates/settings.html:2480
+#: templates/settings.html:2491
 msgid "Active"
 msgstr "Iyasebenza"
 
-#: templates/settings.html:2482
+#: templates/settings.html:2493
 msgid "Allowance exhausted"
 msgstr "Imvume iphelile"
 
-#: templates/settings.html:2487 templates/settings.html:2505
-#: templates/settings.html:2566 templates/settings.html:2572
-#: templates/settings.html:2606 templates/settings.html:2696
-#: templates/settings.html:2702
+#: templates/settings.html:2498 templates/settings.html:2516
+#: templates/settings.html:2577 templates/settings.html:2583
+#: templates/settings.html:2617 templates/settings.html:2707
+#: templates/settings.html:2713
 msgid "Not configured"
 msgstr "Ayilungiselelwanga"
 
-#: templates/settings.html:2496 templates/settings.html:2505
+#: templates/settings.html:2507 templates/settings.html:2516
 #, python-brace-format
 msgid "Private key: {status}"
 msgstr "Isitshixo sangasese: {status}"
 
-#: templates/settings.html:2532
+#: templates/settings.html:2543
 msgid "Error checking"
 msgstr "Impazamo ekukhangeleni"
 
-#: templates/settings.html:2538 templates/settings.html:2612
+#: templates/settings.html:2549 templates/settings.html:2623
 msgid "Connection error"
 msgstr "Impazamo yoqhagamshelo"
 
-#: templates/settings.html:2553
+#: templates/settings.html:2564
 msgid "requests remaining today"
 msgstr "izicelo ezisele namhlanje"
 
-#: templates/settings.html:2556
+#: templates/settings.html:2567
 #, python-brace-format
 msgid "Per-minute limit: {n}"
 msgstr "Umda womzuzu: {n}"
 
-#: templates/settings.html:2557
+#: templates/settings.html:2568
 #, python-brace-format
 msgid "Level: {level}"
 msgstr "Inqanaba: {level}"
 
-#: templates/settings.html:2558
+#: templates/settings.html:2569
 #, python-brace-format
 msgid "Threads: {n}"
 msgstr "Imisonto: {n}"
 
-#: templates/settings.html:2559
+#: templates/settings.html:2570
 #, python-brace-format
 msgid "Speed: {n} KB/s"
 msgstr "Isantya: {n} KB/s"
 
-#: templates/settings.html:2560
+#: templates/settings.html:2571
 msgid "Resets daily at midnight (UTC)"
 msgstr "Iseta kwakhona yonke imihla ngezinga lobusuku (UTC)"
 
-#: templates/settings.html:2581
+#: templates/settings.html:2592
 #, python-brace-format
 msgid "{n} requests/second (OAuth token-based)"
 msgstr "{n} izicelo ngesekhondi (ngetoken ye-OAuth)"
 
-#: templates/settings.html:2582
+#: templates/settings.html:2593
 msgid "Token-based authentication — no daily quota"
 msgstr "Ungqinisiso ngetoken — akukho mda wemihla ngemihla"
 
-#: templates/settings.html:2593
+#: templates/settings.html:2604
 msgid "requests remaining"
 msgstr "izicelo ezisele"
 
-#: templates/settings.html:2594
+#: templates/settings.html:2605
 #, python-brace-format
 msgid "{n} requests/month (free tier)"
 msgstr "{n} izicelo ngenyanga (inqanaba lasimahla)"
 
-#: templates/settings.html:2597
+#: templates/settings.html:2608
 msgid "No live usage tracking from API"
 msgstr "Akukho ngqinelwano lokusetyenziswa lwangoku kwi-API"
 
-#: templates/settings.html:2621
+#: templates/settings.html:2632
 msgid "No published rate limits"
 msgstr "Akukho mida epapashiweyo"
 
-#: templates/settings.html:2640
+#: templates/settings.html:2651
 #, python-brace-format
 msgid "Requests: {used} remaining ({pct})"
 msgstr "Izicelo: zisele {used} ({pct})"
 
-#: templates/settings.html:2659
+#: templates/settings.html:2670
 #, python-brace-format
 msgid "Tokens: {used} remaining ({pct})"
 msgstr "Iitoken: zisele {used} ({pct})"
 
-#: templates/settings.html:2668
+#: templates/settings.html:2679
 #, python-brace-format
 msgid "Input tokens: {used} remaining ({pct})"
 msgstr "Iitoken zokufaka: zisele {used} ({pct})"
 
-#: templates/settings.html:2673
+#: templates/settings.html:2684
 #, python-brace-format
 msgid "Rate: {rpm} requests/min"
 msgstr "Izinga: {rpm} izicelo/umzuzu"
 
-#: templates/settings.html:2673
+#: templates/settings.html:2684
 #, python-brace-format
 msgid "{rpd} requests/day (free tier)"
 msgstr "{rpd} izicelo ngosuku (inqanaba lasimahla)"
 
-#: templates/settings.html:2678
+#: templates/settings.html:2689
 msgid "API online — no rate limit data returned"
 msgstr "I-API iku-intanethi — akukho datha yemida ibuyisiweyo"
 
-#: templates/settings.html:2691
+#: templates/settings.html:2702
 #, python-brace-format
 msgid "Model: {model}"
 msgstr "Imodeli: {model}"
 
-#: templates/settings.html:2695 templates/settings.html:2701
+#: templates/settings.html:2706 templates/settings.html:2712
 msgid "AI Provider"
 msgstr "Umboneleli we-AI"
 
-#: templates/settings.html:2708
+#: templates/settings.html:2719
 #, python-brace-format
 msgid "Last checked: {time}"
 msgstr "Ukukhangela kokugqibela: {time}"
 
-#: templates/settings.html:2712
+#: templates/settings.html:2723
 msgid "No rate limit information available"
 msgstr "Akukho ngcaciso yemida yezicelo"
 
-#: templates/_settings_tabs/scraping.html:263 templates/settings.html:2716
+#: templates/_settings_tabs/scraping.html:263 templates/settings.html:2727
 msgid "Check Rate Limits"
 msgstr "Khangela Imida Yezicelo"
 
-#: templates/settings.html:2738
+#: templates/settings.html:2749
 msgid "Settings saved! Checking scraper status..."
 msgstr "Iisethingi zigciniwe! Iyakhangela imeko ye-scraper..."
 
-#: templates/settings.html:2800
+#: templates/settings.html:2811
 msgid "API keys saved! Checking scraper status..."
 msgstr "Izitshixo ze-API zigciniwe! Iyakhangela imeko ye-scraper..."
 
-#: templates/settings.html:2805
+#: templates/settings.html:2816
 msgid "API keys saved successfully!"
 msgstr "Izitshixo ze-API zigciniwe ngempumelelo!"
 
-#: templates/settings.html:2809
+#: templates/settings.html:2820
 msgid "Failed to save API keys"
 msgstr "Koyekile ukugcina izitshixo ze-API"
 
-#: templates/_settings_tabs/scraping.html:535 templates/settings.html:2816
+#: templates/_settings_tabs/scraping.html:535 templates/settings.html:2827
 msgid "Save API Keys"
 msgstr "Gcina Izitshixo ze-API"
 
-#: templates/settings.html:2908
+#: templates/settings.html:2919
 msgid "Invalid Input"
 msgstr "Igalelo Elingasebenzi"
 
-#: templates/settings.html:2908
+#: templates/settings.html:2919
 msgid "Please enter a value"
 msgstr "Nceda ufake ixabiso"
 
-#: templates/settings.html:2925 templates/settings.html:2929
+#: templates/settings.html:2936 templates/settings.html:2940
 msgid "Failed to add option"
 msgstr "Koyisekile ukongeza ukhetho"
 
-#: templates/settings.html:2935
+#: templates/settings.html:2946
 msgid "Delete Option"
 msgstr "Cima Ukhetho"
 
-#: templates/settings.html:2936
+#: templates/settings.html:2947
 msgid "Are you sure you want to delete this option?"
 msgstr "Uqinisekile ukuba ufuna ukucima olu khetho?"
 
-#: templates/settings.html:2948 templates/settings.html:2952
+#: templates/settings.html:2959 templates/settings.html:2963
 msgid "Failed to delete option"
 msgstr "Koyisekile ukucima ukhetho"
 
-#: templates/settings.html:3504 templates/settings.html:4255
+#: templates/settings.html:3515 templates/settings.html:4266
 msgid "Missing Input"
 msgstr "Akukafakwa Nto"
 
-#: templates/settings.html:3504 templates/settings.html:4255
+#: templates/settings.html:3515 templates/settings.html:4266
 msgid "Please enter a controller name"
 msgstr "Nceda ufake igama lekhontrola"
 
-#: templates/settings.html:3548
+#: templates/settings.html:3559
 #, python-brace-format
 msgid "Controller \"{name}\" has been added to the library."
 msgstr "Ikhontrola \"{name}\" yongezwe kwithala."
 
-#: templates/settings.html:3550 templates/settings.html:3554
+#: templates/settings.html:3561 templates/settings.html:3565
 msgid "Failed to add controller"
 msgstr "Koyisekile ukongeza ikhontrola"
 
-#: templates/settings.html:3622 templates/settings.html:3626
+#: templates/settings.html:3633 templates/settings.html:3637
 msgid "Failed to set default controller"
 msgstr "Koyisekile ukumisela ikhontrola engagqibekanga"
 
-#: templates/settings.html:3657 templates/settings.html:3661
+#: templates/settings.html:3668 templates/settings.html:3672
 msgid "Failed to add default controller"
 msgstr "Koyisekile ukongeza ikhontrola engagqibekanga"
 
-#: templates/settings.html:3687 templates/settings.html:3691
+#: templates/settings.html:3698 templates/settings.html:3702
 msgid "Failed to remove default controller"
 msgstr "Koyisekile ukukhupha ikhontrola engagqibekanga"
 
-#: templates/settings.html:3762
+#: templates/settings.html:3773
 msgid "Preview:"
 msgstr "Umboniso wangaphambili:"
 
-#: templates/settings.html:3763
+#: templates/settings.html:3774
 #, python-brace-format
 msgid "This will clear scraped data from {count} games in {system}."
 msgstr "Oku kuza kusula idatha ekhutshiweyo kwimidlalo engu-{count} kwi-{system}."
 
-#: templates/settings.html:3764
+#: templates/settings.html:3775
 #, python-brace-format
 msgid "This will clear scraped data from {count} games (all systems)."
 msgstr ""
 "Oku kuza kusula idatha ekhutshiweyo kwimidlalo engu-{count} (zonke "
 "iisistim)."
 
-#: templates/settings.html:3765
+#: templates/settings.html:3776
 msgid ""
 "Fields: description, genre, publisher, developer, players, modes, "
 "ratings, scores, images, etc."
@@ -12477,84 +12492,84 @@ msgstr ""
 "Iifildi: inkcazelo, uhlobo, umpapashi, umphuhlisi, abadlali, iindlela, "
 "imilinganiselo, amanqaku, imifanekiso, njl."
 
-#: templates/settings.html:3772
+#: templates/settings.html:3783
 msgid "Failed to preview"
 msgstr "Kwehlulekile ukubonisa umboniso wangaphambili"
 
-#: templates/settings.html:3795
+#: templates/settings.html:3806
 msgid "ALL SYSTEMS"
 msgstr "ZONKE IISISTIM"
 
-#: templates/_settings_tabs/system.html:84 templates/settings.html:3799
-#: templates/settings.html:3844
+#: templates/_settings_tabs/system.html:84 templates/settings.html:3810
+#: templates/settings.html:3855
 msgid "Clear Scraped Data"
 msgstr "Cima Idatha Ekhuphiweyo"
 
-#: templates/settings.html:3800
+#: templates/settings.html:3811
 #, python-brace-format
 msgid "This will clear all scraped metadata from games in {system}."
 msgstr "Oku kuza kucima yonke imetadatha ekhuphiweyo kwimidlalo e-{system}."
 
-#: templates/settings.html:3801
+#: templates/settings.html:3812
 msgid "Downloaded images will also be deleted!"
 msgstr "Imifanekiso ekhutshelweyo iya kucinywa nayo!"
 
-#: templates/settings.html:3802
+#: templates/settings.html:3813
 msgid "This cannot be undone. Are you sure?"
 msgstr "Oku akunakuphindwa. Uqinisekile?"
 
-#: templates/settings.html:3823
+#: templates/settings.html:3834
 #, python-brace-format
 msgid "Cleared scraped data from {count} games."
 msgstr "Kusulwe idatha ekhutshiweyo kwimidlalo engu-{count}."
 
-#: templates/settings.html:3823
+#: templates/settings.html:3834
 #, python-brace-format
 msgid "Deleted {count} image files."
 msgstr "Kucinywe iifayile zemifanekiso ezingu-{count}."
 
-#: templates/settings.html:3830
+#: templates/settings.html:3841
 msgid "Failed to clear data"
 msgstr "Kwehlulekile ukusula idatha"
 
-#: templates/settings.html:3876
+#: templates/settings.html:3887
 msgid "No orphaned media files found. All files are linked to existing games."
 msgstr ""
 "Akukho fayile zemidiya zingenabanini zifunyenweyo. Zonke iifayile "
 "zidityaniswe nemidlalo ekhoyo."
 
-#: templates/settings.html:3889 templates/setup.html:404
+#: templates/settings.html:3900 templates/setup.html:404
 #, python-brace-format
 msgid "{count} files"
 msgstr "Iifayile ezi-{count}"
 
-#: templates/settings.html:3894
+#: templates/settings.html:3905
 #, python-brace-format
 msgid "Found {count} orphaned files ({size} MB)"
 msgstr "Kufunyenwe iifayile ezingenabanini ezingu-{count} ({size} MB)"
 
-#: templates/settings.html:3906
+#: templates/settings.html:3917
 msgid "Failed to scan for orphaned files"
 msgstr "Kwehlulekile ukuskena iifayile ezingenabanini"
 
-#: templates/_settings_tabs/system.html:100 templates/settings.html:3920
+#: templates/_settings_tabs/system.html:100 templates/settings.html:3931
 msgid "Scan for Orphaned Files"
 msgstr "Skena Iifayile Ezingenabanini"
 
-#: templates/settings.html:3926
+#: templates/settings.html:3937
 msgid "No Files"
 msgstr "Akukho Zifayile"
 
-#: templates/settings.html:3926
+#: templates/settings.html:3937
 msgid "Please scan for orphaned files first."
 msgstr "Nceda uqale ukhangele iifayile ezingenabanini."
 
-#: templates/_settings_tabs/system.html:104 templates/settings.html:3931
-#: templates/settings.html:3977
+#: templates/_settings_tabs/system.html:104 templates/settings.html:3942
+#: templates/settings.html:3988
 msgid "Delete Orphaned Files"
 msgstr "Cima Iifayile Ezingenabanini"
 
-#: templates/settings.html:3932
+#: templates/settings.html:3943
 #, python-brace-format
 msgid ""
 "Orphaned media files to delete permanently: {count}. This action cannot "
@@ -12563,35 +12578,35 @@ msgstr ""
 "Iifayile zemidiya ezingenabanini ezizakucinywa ngokusisigxina: {count}. "
 "Esi senzo asinakuphindwa.<br><br>Qhubeka?"
 
-#: templates/settings.html:3938
+#: templates/settings.html:3949
 msgid "Deleting..."
 msgstr "Iyacima..."
 
-#: templates/settings.html:3956
+#: templates/settings.html:3967
 #, python-brace-format
 msgid "Deleted {count} orphaned files."
 msgstr "Kucinywe iifayile ezingenabanini ezingu-{count}."
 
-#: templates/settings.html:3956
+#: templates/settings.html:3967
 #, python-brace-format
 msgid "Freed {size} MB of disk space."
 msgstr "Kukhululwe i-{size} MB yesithuba sediski."
 
-#: templates/settings.html:3956
+#: templates/settings.html:3967
 #, python-brace-format
 msgid "{count} files could not be deleted."
 msgstr "Iifayile ezingu-{count} azikwazanga ukucinywa."
 
-#: templates/settings.html:3964
+#: templates/settings.html:3975
 msgid "Failed to delete files"
 msgstr "Kwehlulekile ukucima iifayile"
 
-#: templates/settings.html:4015
+#: templates/settings.html:4026
 #, python-brace-format
 msgid "{count} reference(s)"
 msgstr "Iimbekiselo ezingu-{count}"
 
-#: templates/settings.html:4019
+#: templates/settings.html:4030
 msgid ""
 "Some media folders look missing or empty (possibly an unmounted drive or "
 "a bulk deletion). Their references were <strong>kept, not "
@@ -12603,17 +12618,17 @@ msgstr ""
 "zazo <strong>zigciniwe, azisulwanga</strong>, ukukhusela ithala lakho "
 "lonke ekusulweni ngempazamo:"
 
-#: templates/settings.html:4021
+#: templates/settings.html:4032
 msgid "Re-mount the media folder (or re-scrape) and scan again."
 msgstr ""
 "Xhuma kwakhona ifolda yemidiya (okanye ukhuphe kwakhona) uze uskene "
 "kwakhona."
 
-#: templates/settings.html:4028
+#: templates/settings.html:4039
 msgid "No clearable missing-media references found."
 msgstr "Akukho mbekiselo zemidiya engekhoyo zinokusulwa zifunyenweyo."
 
-#: templates/settings.html:4033
+#: templates/settings.html:4044
 #, python-brace-format
 msgid ""
 "Found {refs} stale reference(s) across {games} game(s) pointing to files "
@@ -12622,28 +12637,28 @@ msgstr ""
 "Kufunyenwe iimbekiselo eziphelelwe ezingu-{refs} kwimidlalo engu-{games} "
 "ezikhomba kwiifayile ezingasekhoyo kwidiski."
 
-#: templates/settings.html:4041
+#: templates/settings.html:4052
 msgid "Failed to scan for missing media references"
 msgstr "Kwehlulekile ukuskena iimbekiselo zemidiya engekhoyo"
 
-#: templates/_settings_tabs/system.html:119 templates/settings.html:4051
+#: templates/_settings_tabs/system.html:119 templates/settings.html:4062
 msgid "Scan for Missing Media"
 msgstr "Skena Imidiya Engekhoyo"
 
-#: templates/settings.html:4057
+#: templates/settings.html:4068
 msgid "Nothing to Clear"
 msgstr "Akukho Nto Yokucima"
 
-#: templates/settings.html:4057
+#: templates/settings.html:4068
 msgid "Please scan for missing media references first."
 msgstr "Nceda uqale ukhangele iimbekiselo zemidiya ezingekhoyo."
 
-#: templates/_settings_tabs/system.html:123 templates/settings.html:4062
-#: templates/settings.html:4102
+#: templates/_settings_tabs/system.html:123 templates/settings.html:4073
+#: templates/settings.html:4113
 msgid "Clear Missing References"
 msgstr "Cima Iimbekiselo Ezingekhoyo"
 
-#: templates/settings.html:4063
+#: templates/settings.html:4074
 #, python-brace-format
 msgid ""
 "Database references to clear: {count}. They point to media files that no "
@@ -12654,52 +12669,52 @@ msgstr ""
 "zemidiya ezingasasekho kwidiski, ngoko abakhupha banokuzikhuphela "
 "kwakhona. Iingxelo zakho zemidlalo azichaphazeleki.<br><br>Qhubeka?"
 
-#: templates/settings.html:4082
+#: templates/settings.html:4093
 #, python-brace-format
 msgid "{count} reference(s) in missing/empty folders were preserved."
 msgstr "Iimbekiselo ezingu-{count} kwiifolda ezingekhoyo/ezingenanto zigciniwe."
 
-#: templates/settings.html:4086
+#: templates/settings.html:4097
 #, python-brace-format
 msgid "Cleared {refs} stale reference(s) across {games} game(s)."
 msgstr "Kusulwe iimbekiselo eziphelelwe ezingu-{refs} kwimidlalo engu-{games}."
 
-#: templates/settings.html:4093
+#: templates/settings.html:4104
 msgid "Failed to clear references"
 msgstr "Kwehlulekile ukusula iimbekiselo"
 
-#: templates/settings.html:4114
+#: templates/settings.html:4125
 msgid "Optimizing..."
 msgstr "Iyaphucula..."
 
-#: templates/settings.html:4126
+#: templates/settings.html:4137
 #, python-brace-format
 msgid "Database optimized successfully in {seconds}s."
 msgstr "I-database iphuculwe ngempumelelo ngemizuzwana engu-{seconds}."
 
-#: templates/settings.html:4127
+#: templates/settings.html:4138
 #, python-brace-format
 msgid "Size: {before} MB → {after} MB"
 msgstr "Ubungakanani: {before} MB → {after} MB"
 
-#: templates/settings.html:4128
+#: templates/settings.html:4139
 #, python-brace-format
 msgid "(saved {size} MB)"
 msgstr "(kongiwe {size} MB)"
 
-#: templates/settings.html:4134
+#: templates/settings.html:4145
 msgid "Failed to optimize database"
 msgstr "Kwehlulekile ukuphucula i-database"
 
-#: templates/_settings_tabs/system.html:137 templates/settings.html:4148
+#: templates/_settings_tabs/system.html:137 templates/settings.html:4159
 msgid "Optimize Database"
 msgstr "Phucula i-Database"
 
-#: templates/settings.html:4158
+#: templates/settings.html:4169
 msgid "Delete Controller"
 msgstr "Cima Ikhontrola"
 
-#: templates/settings.html:4159
+#: templates/settings.html:4170
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete {name}?<br><br>This will remove it from "
@@ -12708,125 +12723,125 @@ msgstr ""
 "Uqinisekile ukuba ufuna ukucima {name}?<br><br>Oku kuza kuyisusa kwithala"
 " kunye nawesistim ezisebenzisa njengokungagqibekanga."
 
-#: templates/settings.html:4180
+#: templates/settings.html:4191
 msgid "Deleted"
 msgstr "Kucinyiwe"
 
-#: templates/settings.html:4180
+#: templates/settings.html:4191
 #, python-brace-format
 msgid "Controller \"{name}\" has been removed."
 msgstr "Ikhontrola \"{name}\" ikhutshiwe."
 
-#: templates/settings.html:4182 templates/settings.html:4186
+#: templates/settings.html:4193 templates/settings.html:4197
 msgid "Failed to delete controller"
 msgstr "Koyisekile ukucima ikhontrola"
 
-#: templates/settings.html:4204
+#: templates/settings.html:4215
 msgid "Failed to load controller"
 msgstr "Koyisekile ukulayisha ikhontrola"
 
-#: templates/settings.html:4235
+#: templates/settings.html:4246
 msgid "Failed to load controller data"
 msgstr "Koyisekile ukulayisha idatha yekhontrola"
 
-#: templates/settings.html:4293
+#: templates/settings.html:4304
 #, python-brace-format
 msgid "Controller \"{name}\" has been updated."
 msgstr "Ikhontrola \"{name}\" ihlaziyiwe."
 
-#: templates/settings.html:4295 templates/settings.html:4299
+#: templates/settings.html:4306 templates/settings.html:4310
 msgid "Failed to update controller"
 msgstr "Koyisekile ukuhlaziya ikhontrola"
 
-#: templates/settings.html:4426
+#: templates/settings.html:4437
 msgid "Logos Refreshed"
 msgstr "Iilogo Zihlaziyiwe"
 
-#: templates/settings.html:4427
+#: templates/settings.html:4438
 #, python-brace-format
 msgid "System logos updated: {count}. The table has been refreshed."
 msgstr "Iilogo zeesistim ezihlaziyiweyo: {count}. Itheyibhile ihlaziyiwe."
 
-#: templates/settings.html:4429
+#: templates/settings.html:4440
 msgid "Failed to refresh logos"
 msgstr "Koyisekile ukuhlaziya iilogo"
 
-#: templates/settings.html:4433
+#: templates/settings.html:4444
 msgid "Failed to refresh system logos"
 msgstr "Koyisekile ukuhlaziya iilogo zeesistim"
 
-#: templates/settings.html:4455
+#: templates/settings.html:4466
 msgid "Names Refreshed"
 msgstr "Amagama Ahlaziyiwe"
 
-#: templates/settings.html:4456
+#: templates/settings.html:4467
 #, python-brace-format
 msgid "System names updated: {count}. Click OK to refresh the page."
 msgstr "Amagama eesistim ahlaziyiweyo: {count}. Cofa u-OK ukuhlaziya iphepha."
 
-#: templates/settings.html:4459
+#: templates/settings.html:4470
 msgid "Failed to refresh names"
 msgstr " Koyekile ukuhlaziya amagama"
 
-#: templates/settings.html:4463
+#: templates/settings.html:4474
 msgid "Failed to refresh system names"
 msgstr "Koyekile ukuhlaziya amagama eesistim"
 
-#: templates/settings.html:4479
+#: templates/settings.html:4490
 msgid "Importing..."
 msgstr "Iyangenisa..."
 
-#: templates/settings.html:4489
+#: templates/settings.html:4500
 msgid "Run \"Scan Library\" to update the database with the new logos."
 msgstr "Qhuba u-\"Scan Library\" ukuhlaziya i-database ngee-logo ezintsha."
 
-#: templates/settings.html:4494 templates/setup.html:375
+#: templates/settings.html:4505 templates/setup.html:375
 #: templates/setup.html:435
 msgid "An error occurred"
 msgstr "Kwenzeke impazamo"
 
-#: templates/settings.html:4497
+#: templates/settings.html:4508
 #, python-brace-format
 msgid "Failed to import logos: {error}"
 msgstr "Koyekile ukungenisa ii-logo: {error}"
 
-#: templates/_settings_tabs/scraping.html:58 templates/settings.html:4500
+#: templates/_settings_tabs/scraping.html:58 templates/settings.html:4511
 msgid "Import System Logos"
 msgstr "Ngenisa Ii-logo Zesistim"
 
-#: templates/settings.html:4564
+#: templates/settings.html:4575
 msgid "RA sync state and queue cleared!"
 msgstr "Imeko nomgca wokulungelelanisa iRA zisuliwe!"
 
-#: templates/settings.html:4578
+#: templates/settings.html:4589
 msgid "RA sync queue cleared (server unreachable)"
 msgstr "Umgca wokulungelelanisa iRA usuliwe (iseva ayifikeleleki)"
 
-#: templates/settings.html:4597
+#: templates/settings.html:4608
 msgid "No items in queue, no active sync."
 msgstr "Akukho zinto emgceni, akukho kulungelelanisa kuqhubayo."
 
-#: templates/settings.html:4740
+#: templates/settings.html:4751
 msgid "Logging settings saved!"
 msgstr "Iisethingi zokurekhoda zigciniwe!"
 
-#: templates/settings.html:4742
+#: templates/settings.html:4753
 msgid "Failed to save"
 msgstr "Kwehlulekile ukugcina"
 
-#: templates/_settings_tabs/system.html:382 templates/settings.html:4748
+#: templates/_settings_tabs/system.html:383 templates/settings.html:4759
 msgid "Save Logging Settings"
 msgstr "Gcina Iisethingi Zokurekhoda"
 
-#: templates/settings.html:4755
+#: templates/settings.html:4766
 msgid "Loading log files..."
 msgstr "Kulayishwa iifayile zelog..."
 
-#: templates/settings.html:4767
+#: templates/settings.html:4778
 msgid "Date"
 msgstr "Umhla"
 
-#: templates/settings.html:4800
+#: templates/settings.html:4811
 msgid ""
 "No log files found. Logs will appear here after scraping or ROM "
 "operations."
@@ -12834,105 +12849,105 @@ msgstr ""
 "Akukho fayile zelog zifunyenweyo. Iilogi ziza kuvela apha emva kokukhupha"
 " okanye imisebenzi yeROM."
 
-#: templates/settings.html:4803
+#: templates/settings.html:4814
 #, python-brace-format
 msgid "Error loading log files: {error}"
 msgstr "Impazamo ekulayisheni iifayile zelog: {error}"
 
-#: templates/settings.html:4820
+#: templates/settings.html:4831
 #, python-brace-format
 msgid "Log: {filename}"
 msgstr "Ilogi: {filename}"
 
-#: templates/settings.html:4821
+#: templates/settings.html:4832
 msgid "Log file is empty"
 msgstr "Ifayile yelogi ayinanto"
 
-#: templates/settings.html:4824
+#: templates/settings.html:4835
 msgid "Failed to load log file"
 msgstr "Koyekile ukulayisha ifayile yelogi"
 
-#: templates/settings.html:4827
+#: templates/settings.html:4838
 #, python-brace-format
 msgid "Error loading log file: {error}"
 msgstr "Impazamo ekulayisheni ifayile yelogi: {error}"
 
-#: templates/settings.html:4846
+#: templates/settings.html:4857
 msgid "Failed to delete log file"
 msgstr "Koyekile ukucima ifayile yelogi"
 
-#: templates/settings.html:4849
+#: templates/settings.html:4860
 #, python-brace-format
 msgid "Error deleting log file: {error}"
 msgstr "Impazamo ekucimeni ifayile yelogi: {error}"
 
-#: templates/settings.html:4855
+#: templates/settings.html:4866
 msgid "Clear Old Logs"
 msgstr "Cima Iilogi Ezindala"
 
-#: templates/settings.html:4855
+#: templates/settings.html:4866
 msgid "This will delete all log files older than 5 days. Continue?"
 msgstr ""
 "Oku kuza kucima zonke iifayile zelogi ezindala ngaphezu kweentsuku ezi-5."
 " Qhubeka?"
 
-#: templates/settings.html:4861
+#: templates/settings.html:4872
 #, python-brace-format
 msgid "Old log files removed: {count}"
 msgstr "Iifayile zelogi ezindala ezisusiweyo: {count}"
 
-#: templates/settings.html:4864
+#: templates/settings.html:4875
 msgid "Failed to clear old logs"
 msgstr "Koyekile ukucima iilogi ezindala"
 
-#: templates/settings.html:4867
+#: templates/settings.html:4878
 #, python-brace-format
 msgid "Error clearing old logs: {error}"
 msgstr "Impazamo ekucimeni iilogi ezindala: {error}"
 
-#: templates/settings.html:4912
+#: templates/settings.html:4923
 msgid "Token extracted from the pasted page"
 msgstr "I-token ikhutshwe kwiphepha elinamathelisiweyo"
 
-#: templates/settings.html:4914
+#: templates/settings.html:4925
 msgid "Token detected"
 msgstr "I-token ifunyenwe"
 
-#: templates/settings.html:4916
+#: templates/settings.html:4927
 msgid "Could not detect a valid NPSSO token"
 msgstr "Ayikwazanga ukufumana i-NPSSO token esebenzayo"
 
-#: templates/settings.html:4928
+#: templates/settings.html:4939
 msgid "Now press Ctrl+V to paste."
 msgstr "Ngoku cinezela Ctrl+V ukunamathelisa."
 
-#: templates/settings.html:4940
+#: templates/settings.html:4951
 msgid "Enter an NPSSO token first"
 msgstr "Qala ngokufaka i-NPSSO token"
 
-#: templates/settings.html:4945
+#: templates/settings.html:4956
 msgid "Testing..."
 msgstr "Iyavavanywa..."
 
-#: templates/settings.html:4946 templates/settings.html:5035
+#: templates/settings.html:4957 templates/settings.html:5046
 msgid "Saving and connecting..."
 msgstr "Kugcinwa kwaye kuxhunyaniswa..."
 
-#: templates/settings.html:4957 templates/settings.html:5044
+#: templates/settings.html:4968 templates/settings.html:5055
 #, python-format
 msgid "Connected as %(name)s"
 msgstr "Unxibelelene njengo-%(name)s"
 
-#: templates/settings.html:4964 templates/settings.html:5048
+#: templates/settings.html:4975 templates/settings.html:5059
 msgid "Connection failed"
 msgstr "Ukunxibelelana kuphumelele kakubi"
 
-#: templates/settings.html:4967 templates/settings.html:5051
+#: templates/settings.html:4978 templates/settings.html:5062
 #, python-format
 msgid "Error: %(msg)s"
 msgstr "Impazamo: %(msg)s"
 
-#: templates/settings.html:4986
+#: templates/settings.html:4997
 #, python-format
 msgid ""
 "Sony refused your saved NPSSO token on %(date)s. Get a new one with the "
@@ -12941,7 +12956,7 @@ msgstr ""
 "Sony yalile i-NPSSO token yakho egciniweyo ngo %(date)s. Fumana entsha "
 "ngenyathelo elingezantsi."
 
-#: templates/settings.html:4989
+#: templates/settings.html:5000
 msgid ""
 "Connected to PSN. RetroDB keeps the sign-in going by itself. You need a "
 "new token only if Sony refuses this one."
@@ -12949,52 +12964,52 @@ msgstr ""
 "Unxibelelene ne-PSN. RetroDB igcina ukungena kuqhubeka ngokwayo. Udinga "
 "i-token entsha kuphela ukuba Sony iyala le."
 
-#: templates/settings.html:5018
+#: templates/settings.html:5029
 #, python-format
 msgid "Key saved. Connected as %(name)s."
 msgstr "Isitshixo sigciniwe. Unxibelelene njengo-%(name)s."
 
-#: templates/settings.html:5019
+#: templates/settings.html:5030
 msgid "No key saved."
 msgstr "Akukho sitshixo sigciniweyo."
 
-#: templates/settings.html:5057
+#: templates/settings.html:5068
 msgid "Remove Xbox key"
 msgstr "Susa isitshixo seXbox"
 
-#: templates/settings.html:5057
+#: templates/settings.html:5068
 msgid "Remove your OpenXBL key? Your imported games and achievements stay."
 msgstr ""
 "Susa isitshixo sakho se-OpenXBL? Imidlalo neempumelelo ozingenisileyo "
 "ziya kuhlala."
 
-#: templates/settings.html:5062
+#: templates/settings.html:5073
 msgid "Could not remove the Xbox key."
 msgstr "Ayikwazanga ukususa isitshixo se-Xbox."
 
-#: templates/settings.html:5151 templates/settings.html:5198
+#: templates/settings.html:5162 templates/settings.html:5209
 msgid "Avatar updated!"
 msgstr "I-avatar ihlaziyiwe!"
 
-#: templates/settings.html:5156
+#: templates/settings.html:5167
 #, python-brace-format
 msgid "Upload failed: {error}"
 msgstr "Ukulayisha akuphumelelanga: {error}"
 
-#: templates/settings.html:5173
+#: templates/settings.html:5184
 msgid "Avatar removed"
 msgstr "I-avatar isusiwe"
 
-#: templates/settings.html:5175 templates/settings.html:5178
+#: templates/settings.html:5186 templates/settings.html:5189
 msgid "Failed to remove avatar"
 msgstr "Koyekile ukususa i-avatar"
 
-#: templates/settings.html:5200 templates/settings.html:5203
+#: templates/settings.html:5211 templates/settings.html:5214
 msgid "Failed to save avatar"
 msgstr "Koyekile ukugcina i-avatar"
 
-#: templates/_settings_tabs/_tab_bar.html:23
-#: templates/_settings_tabs/_tab_bar.html:38
+#: templates/_settings_tabs/_tab_bar.html:24
+#: templates/_settings_tabs/_tab_bar.html:39
 #: templates/settings_emulators.html:4 templates/settings_emulators.html:9
 #: templates/settings_emulators.html:24
 msgid "Emulators"
@@ -13408,7 +13423,7 @@ msgstr "Ibhrawuza ebhaqiweyo:"
 msgid "Use detected"
 msgstr "Sebenzisa ebhaqiweyo"
 
-#: templates/_settings_tabs/library.html:24 templates/setup.html:141
+#: templates/_settings_tabs/library.html:26 templates/setup.html:141
 #: templates/setup.html:144
 msgid "ROM Library Path"
 msgstr "Indlela Yethala leROM"
@@ -13431,7 +13446,7 @@ msgstr "Khangela iifolda"
 msgid "Current: %(path)s"
 msgstr "Okwangoku: %(path)s"
 
-#: templates/_settings_tabs/data.html:55 templates/setup.html:151
+#: templates/_settings_tabs/data.html:57 templates/setup.html:151
 msgid "Example:"
 msgstr "Umzekelo:"
 
@@ -14632,25 +14647,25 @@ msgstr "Phawula naliphi na inani; umdlalo uyafihlwa ukuba unanye kuzo."
 msgid "Apply"
 msgstr "Faka"
 
-#: templates/_settings_tabs/_tab_bar.html:6
+#: templates/_settings_tabs/_tab_bar.html:7
 msgid "Account"
 msgstr "I-akhawunti"
 
-#: templates/_settings_tabs/_tab_bar.html:8
+#: templates/_settings_tabs/_tab_bar.html:9
 msgctxt "settings tab"
 msgid "Scraping"
 msgstr "Ukukhupha"
 
-#: templates/_settings_tabs/_tab_bar.html:9
+#: templates/_settings_tabs/_tab_bar.html:10
 msgid "Data"
 msgstr "Idatha"
 
-#: templates/_settings_tabs/_tab_bar.html:10
+#: templates/_settings_tabs/_tab_bar.html:11
 msgid "Customization"
 msgstr "Ukwenza Ngokwezicelo"
 
-#: templates/_settings_tabs/_tab_bar.html:14
-#: templates/_settings_tabs/_tab_bar.html:27
+#: templates/_settings_tabs/_tab_bar.html:15
+#: templates/_settings_tabs/_tab_bar.html:28
 msgid "Settings sections"
 msgstr "Amacandelo eesethingi"
 
@@ -15012,11 +15027,6 @@ msgstr "Ulawulo Lwabasebenzisi"
 msgid "Manage users who can access RetroDB."
 msgstr "Lawula abasebenzisi abanokufikelela kwiRetroDB."
 
-#: templates/_settings_tabs/account.html:319
-#: templates/_settings_tabs/account.html:393
-msgid "Add User"
-msgstr "Yongeza Umsebenzisi"
-
 #: templates/_settings_tabs/account.html:327
 msgid "Role"
 msgstr "Indima"
@@ -15076,14 +15086,25 @@ msgid "Admin - Full access"
 msgstr "Umlawuli - Ukufikelela okupheleleyo"
 
 #: templates/_settings_tabs/account.html:420
+#, fuzzy
+msgid "Password *"
+msgstr "Iphasiwedi"
+
+#: templates/_settings_tabs/account.html:422
+msgid ""
+"12 characters or more. Give it to them; they choose their own the first "
+"time they sign in."
+msgstr ""
+
+#: templates/_settings_tabs/account.html:426
 msgid "Reset Password"
 msgstr "Setha Kwakhona Iphasiwedi"
 
-#: templates/_settings_tabs/account.html:421
+#: templates/_settings_tabs/account.html:427
 msgid "Leave blank to keep current"
 msgstr "Yishiye ingenanto ukuze ugcine yangoku"
 
-#: templates/_settings_tabs/account.html:426
+#: templates/_settings_tabs/account.html:432
 msgid "Save User"
 msgstr "Gcina Umsebenzisi"
 
@@ -15091,28 +15112,28 @@ msgstr "Gcina Umsebenzisi"
 msgid "Customization settings"
 msgstr "Iisethingi zokwenza ngokwezicelo"
 
-#: templates/_settings_tabs/customization.html:4
+#: templates/_settings_tabs/customization.html:5
 msgid "Notifications"
 msgstr "Izaziso"
 
-#: templates/_settings_tabs/customization.html:6
+#: templates/_settings_tabs/customization.html:7
 msgid "System Defaults"
 msgstr "Okumiselweyo Kwesistim"
 
-#: templates/_settings_tabs/customization.html:7
-#: templates/_settings_tabs/customization.html:199
+#: templates/_settings_tabs/customization.html:8
+#: templates/_settings_tabs/customization.html:202
 msgid "Add Controller"
 msgstr "Yongeza Ikhontrola"
 
-#: templates/_settings_tabs/customization.html:9
+#: templates/_settings_tabs/customization.html:10
 msgid "Logos"
 msgstr "Ii-logo"
 
-#: templates/_settings_tabs/customization.html:15
+#: templates/_settings_tabs/customization.html:17
 msgid "Notification Settings"
 msgstr "Iisethingi Zezaziso"
 
-#: templates/_settings_tabs/customization.html:19
+#: templates/_settings_tabs/customization.html:21
 msgid ""
 "Configure how long toast notifications stay visible before automatically "
 "dismissing. Set to 0 for notifications that only close when clicked."
@@ -15120,54 +15141,54 @@ msgstr ""
 "Misela ixesha izaziso ze-toast ezihlala zibonakala phambi kokuchithwa "
 "ngokuzenzekelayo. Setha ku-0 kwizaziso ezivala kuphela xa zicofiwe."
 
-#: templates/_settings_tabs/customization.html:26
+#: templates/_settings_tabs/customization.html:28
 msgid "Success Notifications"
 msgstr "Izaziso Zempumelelo"
 
-#: templates/_settings_tabs/customization.html:32
-#: templates/_settings_tabs/customization.html:46
-#: templates/_settings_tabs/customization.html:60
-#: templates/_settings_tabs/customization.html:74
+#: templates/_settings_tabs/customization.html:34
+#: templates/_settings_tabs/customization.html:48
+#: templates/_settings_tabs/customization.html:62
+#: templates/_settings_tabs/customization.html:76
 msgid "seconds"
 msgstr "imizuzwana"
 
-#: templates/_settings_tabs/customization.html:34
+#: templates/_settings_tabs/customization.html:36
 msgid "Shown after successful operations"
 msgstr "Ziboniswa emva kwemisebenzi ephumeleleyo"
 
-#: templates/_settings_tabs/customization.html:40
+#: templates/_settings_tabs/customization.html:42
 msgid "Info Notifications"
 msgstr "Izaziso Zolwazi"
 
-#: templates/_settings_tabs/customization.html:48
+#: templates/_settings_tabs/customization.html:50
 msgid "General information messages"
 msgstr "Imiyalezo yolwazi jikelele"
 
-#: templates/_settings_tabs/customization.html:54
+#: templates/_settings_tabs/customization.html:56
 msgid "Warning Notifications"
 msgstr "Izaziso Zezilumkiso"
 
-#: templates/_settings_tabs/customization.html:62
+#: templates/_settings_tabs/customization.html:64
 msgid "Warnings that need attention"
 msgstr "Izilumkiso ezifuna ingqwalasela"
 
-#: templates/_settings_tabs/customization.html:68
+#: templates/_settings_tabs/customization.html:70
 msgid "Error Notifications"
 msgstr "Izaziso Zeempazamo"
 
-#: templates/_settings_tabs/customization.html:76
+#: templates/_settings_tabs/customization.html:78
 msgid "Errors stay longer for readability"
 msgstr "Iimpazamo zihlala ixesha elide ukuze zifundeke"
 
-#: templates/_settings_tabs/customization.html:87
+#: templates/_settings_tabs/customization.html:89
 msgid "Test Notifications"
 msgstr "Vavanya Izaziso"
 
-#: templates/_settings_tabs/customization.html:96
+#: templates/_settings_tabs/customization.html:99
 msgid "Controller Management"
 msgstr "Ulawulo Lweekhontrola"
 
-#: templates/_settings_tabs/customization.html:100
+#: templates/_settings_tabs/customization.html:103
 msgid ""
 "Manage controllers and assign default controllers to each system. The "
 "default controller will automatically appear for all games in that "
@@ -15177,11 +15198,11 @@ msgstr ""
 "Ikhontrola emiselweyo iya kuvela ngokuzenzekelayo kuyo yonke imidlalo "
 "kuloo sistim."
 
-#: templates/_settings_tabs/customization.html:106
+#: templates/_settings_tabs/customization.html:109
 msgid "System Default Controllers"
 msgstr "Iikhontrola Ezimiselweyo Zesistim"
 
-#: templates/_settings_tabs/customization.html:109
+#: templates/_settings_tabs/customization.html:112
 msgid ""
 "Assign a default controller to each system. Games will inherit this "
 "controller unless manually changed."
@@ -15189,11 +15210,11 @@ msgstr ""
 "Yabela ikhontrola emiselweyo kwisistim nganye. Imidlalo iya kuyithatha le"
 " khontrola ngaphandle kokuba itshintshwe ngesandla."
 
-#: templates/_settings_tabs/customization.html:114
+#: templates/_settings_tabs/customization.html:117
 msgid "Auto-Assign Defaults"
 msgstr "Yabela Okumiselweyo Ngokuzenzekelayo"
 
-#: templates/_settings_tabs/customization.html:117
+#: templates/_settings_tabs/customization.html:120
 msgid ""
 "Automatically assigns appropriate controllers to all systems based on "
 "hardware type"
@@ -15201,11 +15222,11 @@ msgstr ""
 "Yabela ngokuzenzekelayo iikhontrola ezifanelekileyo kuzo zonke iisistim "
 "ngokusekelwe kuhlobo lwehardware"
 
-#: templates/_settings_tabs/customization.html:141
+#: templates/_settings_tabs/customization.html:144
 msgid "Add New Controller"
 msgstr "Yongeza Ikhontrola Entsha"
 
-#: templates/_settings_tabs/customization.html:144
+#: templates/_settings_tabs/customization.html:147
 msgid ""
 "Add a custom controller to the library. Select one or more systems, or "
 "leave empty for \"Universal\" controllers."
@@ -15213,22 +15234,22 @@ msgstr ""
 "Yongeza ikhontrola eyenziwe ngokwezicelo kwithala. Khetha isistim enye "
 "okanye ngaphezulu, okanye ushiye ingenanto kwiikhontrola \"Universal\"."
 
-#: templates/_settings_tabs/customization.html:149
-#: templates/_settings_tabs/customization.html:230
+#: templates/_settings_tabs/customization.html:152
+#: templates/_settings_tabs/customization.html:233
 msgid "Controller Name"
 msgstr "Igama Lekhontrola"
 
-#: templates/_settings_tabs/customization.html:150
-#: templates/_settings_tabs/customization.html:231
+#: templates/_settings_tabs/customization.html:153
+#: templates/_settings_tabs/customization.html:234
 msgid "e.g., SNES Mouse"
 msgstr "umzekelo, SNES Mouse"
 
-#: templates/_settings_tabs/customization.html:158
-#: templates/_settings_tabs/customization.html:239
+#: templates/_settings_tabs/customization.html:161
+#: templates/_settings_tabs/customization.html:242
 msgid "+ Add system..."
 msgstr "+ Yongeza isistim..."
 
-#: templates/_settings_tabs/customization.html:161
+#: templates/_settings_tabs/customization.html:164
 msgid ""
 "Leave empty for Universal controllers. Select multiple systems for shared"
 " controllers."
@@ -15236,36 +15257,36 @@ msgstr ""
 "Yishiye ingenanto kwiikhontrola Universal. Khetha iisistim ezininzi "
 "kwiikhontrola ezabelwana ngazo."
 
-#: templates/_settings_tabs/customization.html:166
-#: templates/_settings_tabs/customization.html:247
+#: templates/_settings_tabs/customization.html:169
+#: templates/_settings_tabs/customization.html:250
 msgid "e.g., Nintendo, Sony, or custom..."
 msgstr "umzekelo, Nintendo, Sony, okanye eyakho..."
 
-#: templates/_settings_tabs/customization.html:184
-#: templates/_settings_tabs/customization.html:250
+#: templates/_settings_tabs/customization.html:187
+#: templates/_settings_tabs/customization.html:253
 msgid "Release Year"
 msgstr "Unyaka Wokukhutshwa"
 
-#: templates/_settings_tabs/customization.html:185
-#: templates/_settings_tabs/customization.html:251
+#: templates/_settings_tabs/customization.html:188
+#: templates/_settings_tabs/customization.html:254
 msgid "e.g., 1992"
 msgstr "umzekelo, 1992"
 
-#: templates/_settings_tabs/customization.html:190
-#: templates/_settings_tabs/customization.html:256
+#: templates/_settings_tabs/customization.html:193
+#: templates/_settings_tabs/customization.html:259
 msgid "e.g., D-Pad, A, B, Start, Select"
 msgstr "umzekelo, D-Pad, A, B, Start, Select"
 
-#: templates/_settings_tabs/customization.html:194
-#: templates/_settings_tabs/customization.html:260
+#: templates/_settings_tabs/customization.html:197
+#: templates/_settings_tabs/customization.html:263
 msgid "Brief description of the controller..."
 msgstr "Inkcazo emfutshane yekhontrola..."
 
-#: templates/_settings_tabs/customization.html:207
+#: templates/_settings_tabs/customization.html:210
 msgid "Controller Library"
 msgstr "Ithala Leekhontrola"
 
-#: templates/_settings_tabs/customization.html:210
+#: templates/_settings_tabs/customization.html:213
 msgid ""
 "All controllers in the database, sorted alphabetically by manufacturer. "
 "Click to expand details. You can delete custom controllers."
@@ -15274,19 +15295,19 @@ msgstr ""
 "ngomvelisi. Cofa ukuze wandise iinkcukacha. Ungacima iikhontrola ezenziwe"
 " ngokwezicelo."
 
-#: templates/_settings_tabs/customization.html:223
+#: templates/_settings_tabs/customization.html:226
 msgid "Edit Controller"
 msgstr "Hlela Ikhontrola"
 
-#: templates/_settings_tabs/customization.html:242
+#: templates/_settings_tabs/customization.html:245
 msgid "Leave empty for Universal controllers."
 msgstr "Yishiye ingenanto kwiikhontrola Universal."
 
-#: templates/_settings_tabs/customization.html:276
+#: templates/_settings_tabs/customization.html:280
 msgid "System Logo Reference"
 msgstr "Isalathiso se-Logo Yesistim"
 
-#: templates/_settings_tabs/customization.html:280
+#: templates/_settings_tabs/customization.html:284
 msgid ""
 "System logos should be placed in <code>static/images/systems/</code> and "
 "named to match the system folder name with a supported extension "
@@ -15298,31 +15319,31 @@ msgstr ""
 "esixhaswayo (<code>.png</code>, <code>.webp</code>, <code>.jpg</code>, "
 "okanye <code>.svg</code>)."
 
-#: templates/_settings_tabs/customization.html:285
+#: templates/_settings_tabs/customization.html:289
 msgid "Refresh System Logos"
 msgstr "Hlaziya Ii-logo Zesistim"
 
-#: templates/_settings_tabs/customization.html:288
+#: templates/_settings_tabs/customization.html:292
 msgid "Refresh System Names"
 msgstr "Hlaziya Amagama Esistim"
 
-#: templates/_settings_tabs/customization.html:291
+#: templates/_settings_tabs/customization.html:295
 msgid "Updates database with detected logos and correct system names"
 msgstr "Ihlaziya i-database ngee-logo ezibhaqiweyo namagama esistim achanekileyo"
 
-#: templates/_settings_tabs/customization.html:301
+#: templates/_settings_tabs/customization.html:305
 msgid "Folder Name"
 msgstr "Igama Lefolda"
 
-#: templates/_settings_tabs/customization.html:302
+#: templates/_settings_tabs/customization.html:306
 msgid "Required Logo Filename"
 msgstr "Igama Lefayile ye-Logo Elifunekayo"
 
-#: templates/_settings_tabs/customization.html:303
+#: templates/_settings_tabs/customization.html:307
 msgid "Logo Status"
 msgstr "Isimo se-Logo"
 
-#: templates/_settings_tabs/customization.html:304
+#: templates/_settings_tabs/customization.html:308
 msgid "Hardware Image"
 msgstr "Umfanekiso weHardware"
 
@@ -15334,36 +15355,36 @@ msgstr "Iisethingi zedatha"
 msgid "Stats"
 msgstr "Iistats"
 
-#: templates/_settings_tabs/data.html:6
+#: templates/_settings_tabs/data.html:7
 msgid "Dropdowns"
 msgstr "Ii-dropdown"
 
-#: templates/_settings_tabs/data.html:7
+#: templates/_settings_tabs/data.html:8
 msgid "Normalization"
 msgstr "Ukulungelelanisa"
 
-#: templates/_settings_tabs/data.html:13
+#: templates/_settings_tabs/data.html:15
 msgid "Library Statistics"
 msgstr "Iistats Zethala"
 
-#: templates/_settings_tabs/data.html:27
+#: templates/_settings_tabs/data.html:29
 msgid "With Metadata"
 msgstr "Enemetadata"
 
-#: templates/_settings_tabs/data.html:40
+#: templates/_settings_tabs/data.html:42
 msgid "RPCS3 Trophy Settings"
 msgstr "Iisethingi Zeendebe zeRPCS3"
 
-#: templates/_settings_tabs/data.html:44
+#: templates/_settings_tabs/data.html:46
 #: templates/_settings_tabs/scraping.html:41
 msgid "RPCS3 Trophy Path"
 msgstr "Indlela Yeendebe zeRPCS3"
 
-#: templates/_settings_tabs/data.html:49
+#: templates/_settings_tabs/data.html:51
 msgid "(Not configured)"
 msgstr "(Ayimiselwanga)"
 
-#: templates/_settings_tabs/data.html:54
+#: templates/_settings_tabs/data.html:56
 msgid ""
 "Set the RPCS3 Trophy Path in <a href=\"#esde\">ES-DE Integration</a> on "
 "the Scraping tab"
@@ -15371,47 +15392,47 @@ msgstr ""
 "Misela Indlela Yeendebe zeRPCS3 kwi-<a href=\"#esde\">Ukudityaniswa kwe-"
 "ES-DE</a> kwithebhu ethi Ukukhupha"
 
-#: templates/_settings_tabs/data.html:64
+#: templates/_settings_tabs/data.html:66
 msgid "Scan your RPCS3 trophy folder for unlocked trophies"
 msgstr "Skena ifolda yakho yeendebe zeRPCS3 ukuze ufumane iindebe ezivuliweyo"
 
-#: templates/_settings_tabs/data.html:74
+#: templates/_settings_tabs/data.html:77
 msgid "Dropdown Options"
 msgstr "Iikhetho ze-Dropdown"
 
-#: templates/_settings_tabs/data.html:78
+#: templates/_settings_tabs/data.html:81
 msgid "Manage the options available in dropdown menus when editing games."
 msgstr "Lawula ukhetho olufumanekayo kwiimenyu ze-dropdown xa uhlela imidlalo."
 
-#: templates/_settings_tabs/data.html:86
+#: templates/_settings_tabs/data.html:89
 msgid "New genre..."
 msgstr "Uhlobo olutsha..."
 
-#: templates/_settings_tabs/data.html:96
+#: templates/_settings_tabs/data.html:99
 msgid "New game structure..."
 msgstr "Isakhiwo somdlalo esitsha..."
 
-#: templates/_settings_tabs/data.html:106
+#: templates/_settings_tabs/data.html:109
 msgid "New perspective..."
 msgstr "i-Perspective entsha..."
 
-#: templates/_settings_tabs/data.html:116
+#: templates/_settings_tabs/data.html:119
 msgid "New dimension..."
 msgstr "i-Dimension entsha..."
 
-#: templates/_settings_tabs/data.html:126
+#: templates/_settings_tabs/data.html:129
 msgid "New play mode..."
 msgstr "Imowudi yokudlala entsha..."
 
-#: templates/_settings_tabs/data.html:136
+#: templates/_settings_tabs/data.html:139
 msgid "New save type..."
 msgstr "Uhlobo lokugcina olutsha..."
 
-#: templates/_settings_tabs/data.html:147
+#: templates/_settings_tabs/data.html:151
 msgid "Data Normalization"
 msgstr "Ukulungelelaniswa Kwedatha"
 
-#: templates/_settings_tabs/data.html:151
+#: templates/_settings_tabs/data.html:155
 msgid ""
 "Fix inconsistent genre and mode values across your library. Custom rules "
 "are saved and automatically apply to future scrapes."
@@ -15420,7 +15441,7 @@ msgstr ""
 "lakho. Imigaqo eyenziwe ngokwezicelo iyagcinwa kwaye isebenza "
 "ngokuzenzekelayo kokukhutshwa okuzayo."
 
-#: templates/_settings_tabs/data.html:154
+#: templates/_settings_tabs/data.html:158
 msgid ""
 "Franchise, Publisher and Developer list each name spelled with different "
 "capitals, such as \"Doom\" and \"DOOM\". Pick one spelling for each; "
@@ -15432,31 +15453,31 @@ msgstr ""
 "upelo olunye kwigama ngalinye; akukho nto itshintshayo de ucofe u-Faka. "
 "Ukukhupha kwamva kuya kusebenzisa olo pelo."
 
-#: templates/_settings_tabs/data.html:170
+#: templates/_settings_tabs/data.html:174
 msgid "Show only values needing changes"
 msgstr "Bonisa kuphela amaxabiso afuna utshintsho"
 
-#: templates/_settings_tabs/data.html:181
+#: templates/_settings_tabs/data.html:185
 msgid "Loading values..."
 msgstr "Iyalayisha amaxabiso..."
 
-#: templates/_settings_tabs/data.html:190
+#: templates/_settings_tabs/data.html:194
 msgid "Select/deselect all"
 msgstr "Khetha/susa ukukhetha konke"
 
-#: templates/_settings_tabs/data.html:191
+#: templates/_settings_tabs/data.html:195
 msgid "Current Value"
 msgstr "Ixabiso Langoku"
 
-#: templates/_settings_tabs/data.html:193
+#: templates/_settings_tabs/data.html:197
 msgid "Normalize To"
 msgstr "Lungelelanisa Ku"
 
-#: templates/_settings_tabs/data.html:203
+#: templates/_settings_tabs/data.html:207
 msgid "Select All Changed"
 msgstr "Khetha Konke Okutshintshiweyo"
 
-#: templates/_settings_tabs/data.html:212
+#: templates/_settings_tabs/data.html:216
 msgid ""
 "No values found for this field. Make sure your library has games with "
 "metadata."
@@ -15464,15 +15485,15 @@ msgstr ""
 "Akukho maxabiso afunyenwe kule ndawo. Qinisekisa ukuba ithala lakho "
 "linemidlalo enemetadata."
 
-#: templates/_settings_tabs/data.html:215
+#: templates/_settings_tabs/data.html:219
 msgid "Every name in this field has one spelling."
 msgstr "Igama ngalinye kule fildi linopelo olunye."
 
-#: templates/_settings_tabs/data.html:220
+#: templates/_settings_tabs/data.html:224
 msgid "Names that may be one company"
 msgstr "Amagama anokuba yinkampani enye"
 
-#: templates/_settings_tabs/data.html:222
+#: templates/_settings_tabs/data.html:226
 msgid ""
 "Names such as \"Eidos\" and \"Eidos Interactive\" may be one company, or "
 "two: \"Atari Games\" and \"Atari, Inc.\" are different companies. For "
@@ -15487,7 +15508,7 @@ msgstr ""
 " noMphuhlisi kuyo yonke imidlalo, kwaye ukukhupha kwamva kusebenzisa "
 "igama eligciniweyo."
 
-#: templates/_settings_tabs/data.html:225
+#: templates/_settings_tabs/data.html:229
 msgid "No names look like one company."
 msgstr "Akukho magama akhangeleka njengenkampani enye."
 
@@ -15495,27 +15516,27 @@ msgstr "Akukho magama akhangeleka njengenkampani enye."
 msgid "Library settings"
 msgstr "Iisethingi zethala"
 
-#: templates/_settings_tabs/library.html:6
+#: templates/_settings_tabs/library.html:7
 msgid "Paths"
 msgstr "Iindlela"
 
-#: templates/_settings_tabs/library.html:7
+#: templates/_settings_tabs/library.html:8
 msgid "Display"
 msgstr "Umboniso"
 
-#: templates/_settings_tabs/library.html:8
+#: templates/_settings_tabs/library.html:9
 msgid "ROM Naming"
 msgstr "Ukubiza Amagama eeROM"
 
-#: templates/_settings_tabs/library.html:10
+#: templates/_settings_tabs/library.html:11
 msgid "Backup"
 msgstr "Ugcino"
 
-#: templates/_settings_tabs/library.html:16
+#: templates/_settings_tabs/library.html:18
 msgid "Library Settings"
 msgstr "Iisethingi Zethala"
 
-#: templates/_settings_tabs/library.html:20
+#: templates/_settings_tabs/library.html:22
 msgid ""
 "Configure the paths to your ROM library, ES-DE data, and other "
 "integrations."
@@ -15523,100 +15544,100 @@ msgstr ""
 "Misela iindlela eziya kwithala lakho leROM, idatha yeES-DE, nezinye "
 "izinto ezidibanisiweyo."
 
-#: templates/_settings_tabs/library.html:27
+#: templates/_settings_tabs/library.html:29
 msgid "e.g. /home/user/ROMS"
 msgstr "umzekelo /home/user/ROMS"
 
-#: templates/_settings_tabs/library.html:35
+#: templates/_settings_tabs/library.html:37
 msgid "Database Location"
 msgstr "Indawo ye-Database"
 
-#: templates/_settings_tabs/library.html:37
+#: templates/_settings_tabs/library.html:39
 msgid "Database path cannot be changed via UI"
 msgstr "Indlela ye-database ayinako ukutshintshwa nge-UI"
 
-#: templates/_settings_tabs/library.html:43
+#: templates/_settings_tabs/library.html:45
 #: templates/_settings_tabs/scraping.html:54
 msgid "Save Path Settings"
 msgstr "Gcina Iisethingi Zendlela"
 
-#: templates/_settings_tabs/library.html:51
+#: templates/_settings_tabs/library.html:53
 msgid "Changes to ROM path require a restart to take full effect"
 msgstr ""
 "Utshintsho kwindlela yeROM lufuna ukuqaliswa kwakhona ukuze lusebenze "
 "ngokupheleleyo"
 
-#: templates/_settings_tabs/library.html:60
+#: templates/_settings_tabs/library.html:63
 msgid "Display Preferences"
 msgstr "Okukhethwayo Komboniso"
 
-#: templates/_settings_tabs/library.html:64
+#: templates/_settings_tabs/library.html:67
 msgid "Theme"
 msgstr "Umxholo"
 
-#: templates/_settings_tabs/library.html:72
+#: templates/_settings_tabs/library.html:75
 msgid "Cyberpunk"
 msgstr "Cyberpunk"
 
-#: templates/_settings_tabs/library.html:80
+#: templates/_settings_tabs/library.html:83
 msgid "Matrix"
 msgstr "Matrix"
 
-#: templates/_settings_tabs/library.html:88
+#: templates/_settings_tabs/library.html:91
 msgid "Retro Amber"
 msgstr "Retro Amber"
 
-#: templates/_settings_tabs/library.html:96
+#: templates/_settings_tabs/library.html:99
 msgid "Midnight Ocean"
 msgstr "Midnight Ocean"
 
-#: templates/_settings_tabs/library.html:104
+#: templates/_settings_tabs/library.html:107
 msgid "Cathedral"
 msgstr "Cathedral"
 
-#: templates/_settings_tabs/library.html:112
+#: templates/_settings_tabs/library.html:115
 msgid "Blade Runner"
 msgstr "Blade Runner"
 
-#: templates/_settings_tabs/library.html:120
+#: templates/_settings_tabs/library.html:123
 msgid "Elite"
 msgstr "Elite"
 
-#: templates/_settings_tabs/library.html:123
+#: templates/_settings_tabs/library.html:126
 msgid "Theme applies instantly. Changes are saved automatically."
 msgstr "Umxholo usebenza ngoko nangoko. Utshintsho lugcinwa ngokuzenzekelayo."
 
-#: templates/_settings_tabs/library.html:131
+#: templates/_settings_tabs/library.html:134
 msgid "Language"
 msgstr "Ulwimi"
 
-#: templates/_settings_tabs/library.html:142
+#: templates/_settings_tabs/library.html:145
 msgid "Changes the interface language. The page reloads when you switch."
 msgstr "Itshintsha ulwimi lomboniso. Iphepha liyaphinda lilayishe xa utshintsha."
 
-#: templates/_settings_tabs/library.html:146
+#: templates/_settings_tabs/library.html:150
 msgid "Preferred Boxart Style"
 msgstr "Isimbo se-Boxart Esikhethwayo"
 
-#: templates/_settings_tabs/library.html:148
+#: templates/_settings_tabs/library.html:152
 msgid "2D Boxart (Standard)"
 msgstr "i-Boxart ye-2D (Eqhelekileyo)"
 
-#: templates/_settings_tabs/library.html:149
+#: templates/_settings_tabs/library.html:153
 msgid "3D Boxart (with 2D fallback)"
 msgstr "i-Boxart ye-3D (enokusekela kwe-2D)"
 
-#: templates/_settings_tabs/library.html:151
+#: templates/_settings_tabs/library.html:155
 msgid "When 3D is selected, 2D boxart will be shown if no 3D version exists"
 msgstr ""
 "Xa i-3D ikhethiwe, i-boxart ye-2D iya kuboniswa ukuba akukho nguqulelo "
 "ye-3D"
 
-#: templates/_settings_tabs/library.html:155
+#: templates/_settings_tabs/library.html:159
 msgid "Preferred Age Rating System"
 msgstr "Isistim Ekhethwayo Yesilinganiso Seminyaka"
 
-#: templates/_settings_tabs/library.html:167
+#: templates/_settings_tabs/library.html:171
 msgid ""
 "Ratings from other systems are cross-mapped when the preferred system's "
 "rating is unavailable"
@@ -15624,15 +15645,15 @@ msgstr ""
 "Izilinganiso ezivela kwezinye iisistim zidityaniswa ngokunqamlezayo xa "
 "isilinganiso sesistim ekhethwayo singafumaneki"
 
-#: templates/_settings_tabs/library.html:173
+#: templates/_settings_tabs/library.html:177
 msgid "Save Display Settings"
 msgstr "Gcina Iisethingi Zomboniso"
 
-#: templates/_settings_tabs/library.html:182
+#: templates/_settings_tabs/library.html:188
 msgid "ROM Naming Conventions"
 msgstr "Izithethe Zokubiza Amagama eeROM"
 
-#: templates/_settings_tabs/library.html:186
+#: templates/_settings_tabs/library.html:192
 msgid ""
 "Configure the filename pattern for each system type. Title is always "
 "first.\n"
@@ -15644,11 +15665,11 @@ msgstr ""
 "            Yongeza iithegi ngokulandelelana ekufuneka zivele ngayo "
 "kumagama eefayile (umzekelo, <code>Title (Region).zip</code>)."
 
-#: templates/_settings_tabs/library.html:191
+#: templates/_settings_tabs/library.html:197
 msgid "Article Placement"
 msgstr "Ukubekwa Kwesihloko"
 
-#: templates/_settings_tabs/library.html:193
+#: templates/_settings_tabs/library.html:199
 msgid ""
 "Controls where articles (A, An, The) appear in game titles and ROM "
 "filenames."
@@ -15656,15 +15677,15 @@ msgstr ""
 "Ilawula apho amagama esihloko (A, An, The) avela khona kwizihloko "
 "zemidlalo namagama eefayile zeROM."
 
-#: templates/_settings_tabs/library.html:196
+#: templates/_settings_tabs/library.html:202
 msgid "Beginning (natural) — \"The Legend of Zelda\""
 msgstr "Ekuqaleni (okwendalo) — \"The Legend of Zelda\""
 
-#: templates/_settings_tabs/library.html:197
+#: templates/_settings_tabs/library.html:203
 msgid "End (sort-friendly) — \"Legend of Zelda, The\""
 msgstr "Ekugqibeleni (okulungele ukuhlela) — \"Legend of Zelda, The\""
 
-#: templates/_settings_tabs/library.html:199
+#: templates/_settings_tabs/library.html:205
 msgid ""
 "Applies to new scrapes and rename suggestions. Existing titles are not "
 "changed automatically."
@@ -15672,11 +15693,11 @@ msgstr ""
 "Isebenza kokukhutshwa okutsha neengcebiso zokunika igama elitsha. "
 "Izihloko ezikhoyo azitshintshwa ngokuzenzekelayo."
 
-#: templates/_settings_tabs/library.html:203
+#: templates/_settings_tabs/library.html:209
 msgid "Region Options"
 msgstr "Ukhetho Lommandla"
 
-#: templates/_settings_tabs/library.html:205
+#: templates/_settings_tabs/library.html:211
 msgid ""
 "Configure the available region values and default. The default region is "
 "used when scraping if no region is detected."
@@ -15684,15 +15705,15 @@ msgstr ""
 "Misela amaxabiso ommandla afumanekayo nomiselweyo. Ummandla omiselweyo "
 "usetyenziswa xa ukhupha ukuba akukho mmandla ubhaqiweyo."
 
-#: templates/_settings_tabs/library.html:220
+#: templates/_settings_tabs/library.html:226
 msgid "Default Region"
 msgstr "Ummandla Ozenzekelayo"
 
-#: templates/_settings_tabs/library.html:278
+#: templates/_settings_tabs/library.html:286
 msgid "Current Bonus Discs"
 msgstr "Iidiski Zebhonasi Zangoku"
 
-#: templates/_settings_tabs/library.html:281
+#: templates/_settings_tabs/library.html:289
 msgid ""
 "A disc marked by mistake can go back in your game lists. Auto-Link then "
 "leaves it alone."
@@ -16167,7 +16188,7 @@ msgid "Logging"
 msgstr "Ukurekhoda"
 
 #: templates/_settings_tabs/system.html:11
-#: templates/_settings_tabs/system.html:412
+#: templates/_settings_tabs/system.html:414
 msgid "Troubleshooting"
 msgstr "Ukusombulula iingxaki"
 
@@ -16336,11 +16357,11 @@ msgstr ""
 "Qalisa kwakhona iseva ye-Flask (luncedo emva kotshintsho loqwalaselo), "
 "okanye uyicime ngokupheleleyo"
 
-#: templates/_settings_tabs/system.html:206
+#: templates/_settings_tabs/system.html:207
 msgid "Logging Settings"
 msgstr "Iisethingi Zokurekhoda"
 
-#: templates/_settings_tabs/system.html:210
+#: templates/_settings_tabs/system.html:211
 #, python-format
 msgid ""
 "Configure which log levels are written to log files. Logs are saved to "
@@ -16350,14 +16371,14 @@ msgstr ""
 "zigcinwa kwifolda ethi %(folder)s ngamagama eefayile asekelwe kumhla "
 "(umz., %(example)s)."
 
-#: templates/_settings_tabs/system.html:216
-#: templates/_settings_tabs/system.html:224
-#: templates/_settings_tabs/system.html:231
-#: templates/_settings_tabs/system.html:238
+#: templates/_settings_tabs/system.html:217
+#: templates/_settings_tabs/system.html:225
+#: templates/_settings_tabs/system.html:232
+#: templates/_settings_tabs/system.html:239
 msgid "Scraping Logs"
 msgstr "Iilogi Zokukhupha"
 
-#: templates/_settings_tabs/system.html:219
+#: templates/_settings_tabs/system.html:220
 msgid ""
 "Logs from metadata scraping operations (IGDB, TGDB, ScreenScraper, RAWG, "
 "ES-DE)"
@@ -16365,53 +16386,53 @@ msgstr ""
 "Iilogi zemisebenzi yokukhupha imetadata (IGDB, TGDB, ScreenScraper, RAWG,"
 " ES-DE)"
 
-#: templates/_settings_tabs/system.html:224
-#: templates/_settings_tabs/system.html:227
-#: templates/_settings_tabs/system.html:257
-#: templates/_settings_tabs/system.html:260
-#: templates/_settings_tabs/system.html:290
-#: templates/_settings_tabs/system.html:293
-#: templates/_settings_tabs/system.html:323
-#: templates/_settings_tabs/system.html:326
-#: templates/_settings_tabs/system.html:356
-#: templates/_settings_tabs/system.html:359
+#: templates/_settings_tabs/system.html:225
+#: templates/_settings_tabs/system.html:228
+#: templates/_settings_tabs/system.html:258
+#: templates/_settings_tabs/system.html:261
+#: templates/_settings_tabs/system.html:291
+#: templates/_settings_tabs/system.html:294
+#: templates/_settings_tabs/system.html:324
+#: templates/_settings_tabs/system.html:327
+#: templates/_settings_tabs/system.html:357
+#: templates/_settings_tabs/system.html:360
 msgid "Informational"
 msgstr "Ulwazi"
 
-#: templates/_settings_tabs/system.html:231
-#: templates/_settings_tabs/system.html:234
-#: templates/_settings_tabs/system.html:264
-#: templates/_settings_tabs/system.html:267
-#: templates/_settings_tabs/system.html:297
-#: templates/_settings_tabs/system.html:300
-#: templates/_settings_tabs/system.html:330
-#: templates/_settings_tabs/system.html:333
-#: templates/_settings_tabs/system.html:363
-#: templates/_settings_tabs/system.html:366
+#: templates/_settings_tabs/system.html:232
+#: templates/_settings_tabs/system.html:235
+#: templates/_settings_tabs/system.html:265
+#: templates/_settings_tabs/system.html:268
+#: templates/_settings_tabs/system.html:298
+#: templates/_settings_tabs/system.html:301
+#: templates/_settings_tabs/system.html:331
+#: templates/_settings_tabs/system.html:334
+#: templates/_settings_tabs/system.html:364
+#: templates/_settings_tabs/system.html:367
 msgid "Warnings"
 msgstr "Izilumkiso"
 
-#: templates/_settings_tabs/system.html:238
-#: templates/_settings_tabs/system.html:241
-#: templates/_settings_tabs/system.html:271
-#: templates/_settings_tabs/system.html:274
-#: templates/_settings_tabs/system.html:304
-#: templates/_settings_tabs/system.html:307
-#: templates/_settings_tabs/system.html:337
-#: templates/_settings_tabs/system.html:340
-#: templates/_settings_tabs/system.html:370
-#: templates/_settings_tabs/system.html:373
+#: templates/_settings_tabs/system.html:239
+#: templates/_settings_tabs/system.html:242
+#: templates/_settings_tabs/system.html:272
+#: templates/_settings_tabs/system.html:275
+#: templates/_settings_tabs/system.html:305
+#: templates/_settings_tabs/system.html:308
+#: templates/_settings_tabs/system.html:338
+#: templates/_settings_tabs/system.html:341
+#: templates/_settings_tabs/system.html:371
+#: templates/_settings_tabs/system.html:374
 msgid "Errors"
 msgstr "Iimpazamo"
 
-#: templates/_settings_tabs/system.html:249
-#: templates/_settings_tabs/system.html:257
-#: templates/_settings_tabs/system.html:264
-#: templates/_settings_tabs/system.html:271
+#: templates/_settings_tabs/system.html:250
+#: templates/_settings_tabs/system.html:258
+#: templates/_settings_tabs/system.html:265
+#: templates/_settings_tabs/system.html:272
 msgid "ROM Tools Logs"
 msgstr "Iilogi Zezixhobo zeROM"
 
-#: templates/_settings_tabs/system.html:252
+#: templates/_settings_tabs/system.html:253
 msgid ""
 "Logs from ROM scanning, CHD conversion, archive extraction, and M3U "
 "creation"
@@ -16419,14 +16440,14 @@ msgstr ""
 "Iilogi zokuskena iiROM, ukuguqulela kwi-CHD, ukukhupha ii-archive, "
 "nokwenza i-M3U"
 
-#: templates/_settings_tabs/system.html:282
-#: templates/_settings_tabs/system.html:290
-#: templates/_settings_tabs/system.html:297
-#: templates/_settings_tabs/system.html:304
+#: templates/_settings_tabs/system.html:283
+#: templates/_settings_tabs/system.html:291
+#: templates/_settings_tabs/system.html:298
+#: templates/_settings_tabs/system.html:305
 msgid "ROM Reports Logs"
 msgstr "Iilogi Zeengxelo zeROM"
 
-#: templates/_settings_tabs/system.html:285
+#: templates/_settings_tabs/system.html:286
 msgid ""
 "Logs from ROM naming checks, mismatch detection, and batch rename "
 "operations"
@@ -16434,25 +16455,25 @@ msgstr ""
 "Iilogi zokujonga amagama eeROM, ukufumanisa ukungahambelani, nemisebenzi "
 "yokunika amagama amatsha ngobuninzi"
 
-#: templates/_settings_tabs/system.html:315
-#: templates/_settings_tabs/system.html:323
-#: templates/_settings_tabs/system.html:330
-#: templates/_settings_tabs/system.html:337
+#: templates/_settings_tabs/system.html:316
+#: templates/_settings_tabs/system.html:324
+#: templates/_settings_tabs/system.html:331
+#: templates/_settings_tabs/system.html:338
 msgid "Image Resize Logs"
 msgstr "Iilogi Zokutshintsha Ubungakanani Bemifanekiso"
 
-#: templates/_settings_tabs/system.html:318
+#: templates/_settings_tabs/system.html:319
 msgid "Logs from image standardization (upscale/downscale) operations"
 msgstr "Iilogi zemisebenzi yokulungelelanisa imifanekiso (ukwandisa/ukunciphisa)"
 
-#: templates/_settings_tabs/system.html:348
-#: templates/_settings_tabs/system.html:356
-#: templates/_settings_tabs/system.html:363
-#: templates/_settings_tabs/system.html:370
+#: templates/_settings_tabs/system.html:349
+#: templates/_settings_tabs/system.html:357
+#: templates/_settings_tabs/system.html:364
+#: templates/_settings_tabs/system.html:371
 msgid "System Logs"
 msgstr "Iilogi Zesistim"
 
-#: templates/_settings_tabs/system.html:351
+#: templates/_settings_tabs/system.html:352
 msgid ""
 "General system operations including achievements sync, page loads, and "
 "API calls"
@@ -16460,27 +16481,27 @@ msgstr ""
 "Imisebenzi yesistim jikelele equka ukulungelelanisa iimpumelelo, "
 "ukulayisha amaphepha, neminxeba ye-API"
 
-#: templates/_settings_tabs/system.html:390
+#: templates/_settings_tabs/system.html:391
 msgid "Log Files"
 msgstr "Iifayile Zelog"
 
-#: templates/_settings_tabs/system.html:395
+#: templates/_settings_tabs/system.html:396
 msgid "Refresh Log List"
 msgstr "Hlaziya Uluhlu Lweelogi"
 
-#: templates/_settings_tabs/system.html:399
+#: templates/_settings_tabs/system.html:400
 msgid "Clear Logs Older Than 5 Days"
 msgstr "Sula Iilogi Ezindala Kuneentsuku Ezi-5"
 
-#: templates/_settings_tabs/system.html:403
+#: templates/_settings_tabs/system.html:404
 msgid "Click \"Refresh Log List\" to see available log files."
 msgstr "Cofa \"Hlaziya Uluhlu Lweelogi\" ukuze ubone iifayile zelog ezikhoyo."
 
-#: templates/_settings_tabs/system.html:416
+#: templates/_settings_tabs/system.html:418
 msgid "Achievement Sync Issues"
 msgstr "Iingxaki Zokulungelelanisa Iimpumelelo"
 
-#: templates/_settings_tabs/system.html:419
+#: templates/_settings_tabs/system.html:421
 msgid ""
 "If achievement syncs get stuck or the queue won't process, use this "
 "button to clear the sync queue and reset the sync state."
@@ -16489,19 +16510,19 @@ msgstr ""
 "sebenzisa eli qhosha ukusula umgca wokulungelelanisa nokumisela kwakhona "
 "imeko yokulungelelanisa."
 
-#: templates/_settings_tabs/system.html:424
+#: templates/_settings_tabs/system.html:426
 msgid "Clear Stuck RA Sync"
 msgstr "Sula Ukulungelelanisa iRA Okubambekileyo"
 
-#: templates/_settings_tabs/system.html:429
+#: templates/_settings_tabs/system.html:431
 msgid "Current RA Sync Queue:"
 msgstr "Umgca Wangoku Wokulungelelanisa iRA:"
 
-#: templates/_settings_tabs/system.html:438
+#: templates/_settings_tabs/system.html:440
 msgid "Support Development"
 msgstr "Xhasa Uphuhliso"
 
-#: templates/_settings_tabs/system.html:442
+#: templates/_settings_tabs/system.html:444
 msgid ""
 "RetroDB is free and open source. If it saves you time, consider "
 "sponsoring — every bit helps keep solo development sustainable."
@@ -16510,11 +16531,11 @@ msgstr ""
 "ngokuxhasa — yonke into encinci inceda ukugcina uphuhliso lomntu omnye "
 "lusimela."
 
-#: templates/_settings_tabs/system.html:446
+#: templates/_settings_tabs/system.html:448
 msgid "Sponsor on GitHub"
 msgstr "Xhasa kwiGitHub"
 
-#: templates/_settings_tabs/system.html:450
+#: templates/_settings_tabs/system.html:452
 msgid "Support on Patreon"
 msgstr "Xhasa kwiPatreon"
 

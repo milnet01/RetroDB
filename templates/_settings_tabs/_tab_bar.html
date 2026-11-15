@@ -2,17 +2,18 @@
    On the settings page the tabs switch panels in place. With
    `settings_tab_links` set (the Emulators page) every tab is a link back
    to /settings#<tab>, so the other tabs stay one click away. #}
+{# A tab shows only to a role that can change something in it (PASS-59-311). #}
 {% set _tabs = [
-    ('account', '👤', _('Account')),
-    ('library', '📁', _('Library')),
-    ('scraping', '🔍', pgettext('settings tab', 'Scraping')),
-    ('data', '📊', _('Data')),
-    ('customization', '🎨', _('Customization')),
-    ('system', '⚙️', _('System')),
-] %}
+    ('account', '👤', _('Account'), True),
+    ('library', '📁', _('Library'), True),
+    ('scraping', '🔍', pgettext('settings tab', 'Scraping'), has_perm('manage_settings')),
+    ('data', '📊', _('Data'), True),
+    ('customization', '🎨', _('Customization'), has_perm('edit')),
+    ('system', '⚙️', _('System'), True),
+] | selectattr(3) | list %}
 {% if settings_tab_links %}
 <nav class="settings-tabs" id="settingsTabs" aria-label="{{ _('Settings sections') }}" data-sticky-nav>
-    {% for tab_id, icon, label in _tabs %}
+    {% for tab_id, icon, label, _shown in _tabs %}
     <a class="settings-tab" href="{{ url_for('settings.settings') }}#{{ tab_id }}">
         <span class="tab-icon">{{ icon }}</span>
         <span class="tab-text">{{ label }}</span>
@@ -25,7 +26,7 @@
 </nav>
 {% else %}
 <div class="settings-tabs" id="settingsTabs" role="tablist" aria-label="{{ _('Settings sections') }}" data-sticky-nav>
-    {% for tab_id, icon, label in _tabs %}
+    {% for tab_id, icon, label, _shown in _tabs %}
     <button type="button" class="settings-tab{% if loop.first %} active{% endif %}" data-tab="{{ tab_id }}" data-on-click="switchSettingsTab" data-args='["{{ tab_id }}"]' role="tab" aria-selected="{{ 'true' if loop.first else 'false' }}" aria-controls="tab-{{ tab_id }}">
         <span class="tab-icon">{{ icon }}</span>
         <span class="tab-text">{{ label }}</span>

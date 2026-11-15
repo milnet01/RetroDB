@@ -3,8 +3,10 @@
     {% call tab_subnav('data') %}
         {{ subnav_link('stats', '📊 ' ~ _('Stats'), active=True) }}
         {{ subnav_link('trophies', '🏆 ' ~ _('Trophies')) }}
+        {% if has_perm('manage_settings') %}
         {{ subnav_link('dropdowns', '📋 ' ~ _('Dropdowns')) }}
         {{ subnav_link('normalization', '🔄 ' ~ _('Normalization')) }}
+        {% endif %}
     {% endcall %}
 
     <!-- Statistics -->
@@ -69,6 +71,7 @@
 </section>
 
 <!-- Dropdown Options Management -->
+{% if has_perm('manage_settings') %}
 <section class="card mb-xl" id="dropdowns">
     <div class="card-header">
         <h2 class="card-title">📋 {{ _('Dropdown Options') }}</h2>
@@ -139,8 +142,9 @@
         </div>
     </div>
 </section>
+{% endif %}
 
-{% if g.user and g.user.role == 'admin' %}
+{% if has_perm('manage_settings') %}
 <!-- Data Normalization -->
 <section class="card mb-xl" id="normalization">
     <div class="card-header">

@@ -207,20 +207,14 @@ def api_create_user():
     if existing:
         return error(_('Username already exists'), code=409)
 
-    # Pass 24.1 — every role now requires a password, so every new account
-    # seeds the same `changeme` + force_password_change=1 onboarding flow
-    # that admin accounts already used. The new user's first login lands
-    # on the force-change-password page via the app.py before_request hook.
-    # An admin can override this during creation by passing `password`.
+    # The admin types the first password; the user replaces it at first
+    # sign-in (the force-change flow, as after an admin reset). There is
+    # no default password: a fixed one let anyone sign in to a new account.
     raw_password = text_field(data, 'password').strip()
-    if raw_password:
-        if len(raw_password) < 12:
-            return error(_('Password must be at least 12 characters'), code=422, field='password')
-        password_hash = hash_password(raw_password)
-        must_change = 0
-    else:
-        password_hash = hash_password('changeme')
-        must_change = 1
+    if len(raw_password) < 12:
+        return error(_('Password must be at least 12 characters'), code=422, field='password')
+    password_hash = hash_password(raw_password)
+    must_change = 1
 
     user_id = execute("""
         INSERT INTO users (username, display_name, password_hash, role, force_password_change)
@@ -230,7 +224,8 @@ def api_create_user():
     # Create user settings record
     execute("INSERT INTO user_settings (user_id) VALUES (?)", (user_id,))
 
-    return success(user_id=user_id, message=f'User "{username}" created successfully')
+    return success(user_id=user_id,
+                   message=_('User "%(name)s" created successfully', name=username))
 
 
 @bp.route('/api/users/<int:user_id>/update', methods=['POST'])

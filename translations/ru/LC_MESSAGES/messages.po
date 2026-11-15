@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 10:24+0200\n"
+"POT-Creation-Date: 2026-11-15 15:40+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -174,9 +174,9 @@ msgstr "Данные не предоставлены"
 msgid "You must accept the license and terms before completing setup"
 msgstr "Чтобы завершить настройку, нужно принять лицензию и условия"
 
-#: app.py:1734 routes/auth.py:218 routes/auth.py:278 routes/auth.py:494
-#: routes/auth.py:540 templates/force_change_password.html:49
-#: templates/setup.html:469
+#: app.py:1734 routes/auth.py:215 routes/auth.py:273 routes/auth.py:489
+#: routes/auth.py:535 templates/force_change_password.html:49
+#: templates/settings.html:1372 templates/setup.html:469
 msgid "Password must be at least 12 characters"
 msgstr "Пароль должен содержать не менее 12 символов"
 
@@ -272,7 +272,7 @@ msgstr "Описание игры"
 
 #: routes/ai_fill_bulk.py:39 services/js_i18n_strings.py:799
 #: templates/_bulk_edit_modal.html:36 templates/_modals/edit_modal.html:115
-#: templates/_settings_tabs/data.html:83 templates/_settings_tabs/data.html:159
+#: templates/_settings_tabs/data.html:86 templates/_settings_tabs/data.html:163
 #: templates/achievement_game.html:241 templates/all_games.html:72
 #: templates/analytics.html:481 templates/analytics.html:2432
 #: templates/base.html:944 templates/base.html:1157
@@ -286,7 +286,7 @@ msgstr "Жанр"
 
 #: routes/ai_fill_bulk.py:40 services/js_i18n_strings.py:713
 #: templates/_bulk_edit_modal.html:67 templates/_modals/edit_modal.html:99
-#: templates/_settings_tabs/data.html:163 templates/achievement_game.html:87
+#: templates/_settings_tabs/data.html:167 templates/achievement_game.html:87
 #: templates/all_games.html:81 templates/analytics.html:482
 #: templates/analytics.html:2432 templates/base.html:942
 #: templates/base.html:1143 templates/compare_games.html:70
@@ -299,7 +299,7 @@ msgstr "Разработчик"
 
 #: routes/ai_fill_bulk.py:41 services/js_i18n_strings.py:931
 #: templates/_bulk_edit_modal.html:53 templates/_modals/edit_modal.html:94
-#: templates/_settings_tabs/data.html:162 templates/achievement_game.html:81
+#: templates/_settings_tabs/data.html:166 templates/achievement_game.html:81
 #: templates/all_games.html:78 templates/analytics.html:483
 #: templates/analytics.html:2432 templates/base.html:943
 #: templates/base.html:1139 templates/compare_games.html:71
@@ -336,7 +336,7 @@ msgid "Players"
 msgstr "Игроки"
 
 #: routes/ai_fill_bulk.py:46 templates/_modals/edit_modal.html:126
-#: templates/_settings_tabs/data.html:123 templates/base.html:1165
+#: templates/_settings_tabs/data.html:126 templates/base.html:1165
 msgid "Play Modes"
 msgstr "Режимы игры"
 
@@ -370,19 +370,19 @@ msgid "Controller Support"
 msgstr "Поддержка контроллеров"
 
 #: routes/ai_fill_bulk.py:52 templates/_modals/edit_modal.html:211
-#: templates/_settings_tabs/data.html:133 templates/base.html:1229
+#: templates/_settings_tabs/data.html:136 templates/base.html:1229
 #: templates/compare_games.html:92
 msgid "Save Type"
 msgstr "Тип сохранения"
 
 #: routes/ai_fill_bulk.py:53 templates/_bulk_edit_modal.html:118
-#: templates/_modals/edit_modal.html:154 templates/_settings_tabs/data.html:93
+#: templates/_modals/edit_modal.html:154 templates/_settings_tabs/data.html:96
 #: templates/base.html:1177
 msgid "Game Structure"
 msgstr "Структура игры"
 
 #: routes/ai_fill_bulk.py:54 templates/_bulk_edit_modal.html:135
-#: templates/_modals/edit_modal.html:167 templates/_settings_tabs/data.html:103
+#: templates/_modals/edit_modal.html:167 templates/_settings_tabs/data.html:106
 #: templates/all_games.html:87 templates/analytics.html:199
 #: templates/base.html:1185 templates/compare_games.html:78
 #: templates/system_games.html:78
@@ -390,7 +390,7 @@ msgid "Perspective"
 msgstr "Перспектива"
 
 #: routes/ai_fill_bulk.py:55 templates/_bulk_edit_modal.html:151
-#: templates/_modals/edit_modal.html:178 templates/_settings_tabs/data.html:113
+#: templates/_modals/edit_modal.html:178 templates/_settings_tabs/data.html:116
 #: templates/all_games.html:90 templates/analytics.html:207
 #: templates/base.html:1193 templates/compare_games.html:79
 #: templates/system_games.html:81
@@ -453,7 +453,7 @@ msgstr "Пользователь не выбран"
 msgid "Too many login attempts. Please try again later."
 msgstr "Слишком много попыток входа. Повторите попытку позже."
 
-#: routes/auth.py:85 routes/auth.py:244 routes/auth.py:308
+#: routes/auth.py:85 routes/auth.py:239 routes/auth.py:303
 msgid "User not found"
 msgstr "Пользователь не найден"
 
@@ -487,72 +487,77 @@ msgstr "Недопустимая роль"
 msgid "Username already exists"
 msgstr "Такое имя пользователя уже существует"
 
-#: routes/auth.py:255
+#: routes/auth.py:228
+#, fuzzy, python-format
+msgid "User \"%(name)s\" created successfully"
+msgstr "Пользователь успешно удалён"
+
+#: routes/auth.py:250
 msgid "The last admin must stay an active admin"
 msgstr "Последний администратор должен оставаться активным администратором"
 
-#: routes/auth.py:312
+#: routes/auth.py:307
 msgid "Cannot delete your own account"
 msgstr "Нельзя удалить собственную учётную запись"
 
-#: routes/auth.py:317
+#: routes/auth.py:312
 msgid "Cannot delete the last admin user"
 msgstr "Нельзя удалить последнего администратора"
 
-#: routes/auth.py:379 routes/auth.py:470 routes/auth.py:527
+#: routes/auth.py:374 routes/auth.py:465 routes/auth.py:522
 msgid "Not logged in"
 msgstr "Вы не вошли в систему"
 
-#: routes/auth.py:414
+#: routes/auth.py:409
 msgid "Steam ID must be the number, not a profile name."
 msgstr "Steam ID должен быть числом, а не именем профиля."
 
-#: routes/auth.py:423
+#: routes/auth.py:418
 msgid "Invalid locale"
 msgstr "Недопустимая локаль"
 
-#: routes/auth.py:428
+#: routes/auth.py:423
 msgid "Invalid theme"
 msgstr "Недопустимая тема"
 
-#: routes/auth.py:434
+#: routes/auth.py:429
 #, python-format
 msgid "Invalid RPCS3 trophy folder: %(reason)s"
 msgstr "Недопустимая папка трофеев RPCS3: %(reason)s"
 
-#: routes/auth.py:482
+#: routes/auth.py:477
 msgid "Too many attempts. Please try again later."
 msgstr "Слишком много попыток. Повторите попытку позже."
 
-#: routes/auth.py:489 routes/auth.py:536
+#: routes/auth.py:484 routes/auth.py:531
 msgid "New password is required"
 msgstr "Требуется новый пароль"
 
-#: routes/auth.py:500
+#: routes/auth.py:495
 msgid "Current password is incorrect"
 msgstr "Текущий пароль неверен"
 
-#: routes/auth.py:530
+#: routes/auth.py:525
 msgid "Password change not required"
 msgstr "Смена пароля не требуется"
 
-#: routes/auth.py:584
+#: routes/auth.py:579
 msgid "No file provided"
 msgstr "Файл не предоставлен"
 
-#: routes/auth.py:588 routes/museum.py:665
+#: routes/auth.py:583 routes/museum.py:665
 msgid "No file selected"
 msgstr "Файл не выбран"
 
-#: routes/auth.py:593
+#: routes/auth.py:588
 msgid "Invalid file type. Allowed: jpg, png, gif, webp"
 msgstr "Недопустимый тип файла. Разрешены: jpg, png, gif, webp"
 
-#: routes/auth.py:598
+#: routes/auth.py:593
 msgid "File too large. Maximum size is 2MB"
 msgstr "Файл слишком большой. Максимальный размер — 2 МБ"
 
-#: routes/auth.py:613
+#: routes/auth.py:608
 msgid ""
 "Avatar uploads require Pillow; please ask the operator to install the "
 "project requirements."
@@ -560,7 +565,7 @@ msgstr ""
 "Для загрузки аватаров требуется Pillow; попросите оператора установить "
 "зависимости проекта."
 
-#: routes/auth.py:629 routes/museum.py:697
+#: routes/auth.py:624 routes/museum.py:697
 msgid "Invalid image file"
 msgstr "Недопустимый файл изображения"
 
@@ -1201,7 +1206,7 @@ msgstr ""
 msgid "Could not create Windows system entry"
 msgstr "Не удалось создать запись системы Windows"
 
-#: routes/platform_import.py:418 templates/settings.html:5031
+#: routes/platform_import.py:418 templates/settings.html:5042
 msgid "Paste your OpenXBL key first."
 msgstr "Сначала вставьте ключ OpenXBL."
 
@@ -1455,7 +1460,7 @@ msgstr "Недопустимое значение поля %(field)s: %(result)s
 
 #: routes/settings.py:514 routes/settings.py:588 routes/settings.py:637
 #: routes/tools.py:301 services/js_i18n_strings.py:767
-#: templates/settings.html:1149 templates/settings.html:2747
+#: templates/settings.html:1149 templates/settings.html:2758
 msgid "Failed to save settings"
 msgstr "Не удалось сохранить настройки"
 
@@ -2201,7 +2206,7 @@ msgstr "ИИ не нашёл пустых полей для заполнения
 #: services/js_i18n_strings.py:600 templates/_settings_tabs/account.html:331
 #: templates/archive_scanner.html:726 templates/list_detail.html:47
 #: templates/multi_disc_organizer.html:217 templates/reports.html:372
-#: templates/reports.html:455 templates/settings.html:4769
+#: templates/reports.html:455 templates/settings.html:4780
 msgid "Actions"
 msgstr "Действия"
 
@@ -2297,7 +2302,7 @@ msgstr ""
 msgid "Are you sure you want to cancel?"
 msgstr "Вы уверены, что хотите отменить?"
 
-#: services/js_i18n_strings.py:621 templates/settings.html:4836
+#: services/js_i18n_strings.py:621 templates/settings.html:4847
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "Вы уверены, что хотите удалить «{filename}»?"
@@ -2382,8 +2387,8 @@ msgstr "ЭЛТ-экран"
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:73
-#: templates/_settings_tabs/account.html:425
-#: templates/_settings_tabs/customization.html:264
+#: templates/_settings_tabs/account.html:431
+#: templates/_settings_tabs/customization.html:267
 #: templates/achievement_game.html:178 templates/archive_scanner.html:661
 #: templates/archive_scanner.html:798 templates/base.html:340
 #: templates/base.html:358 templates/base.html:849 templates/base.html:1060
@@ -2474,8 +2479,8 @@ msgstr "Данные RA очищены для {count} игр в системе {
 msgid "Cleared RA data for {n} games"
 msgstr "Данные RA очищены для {n} игр"
 
-#: services/js_i18n_strings.py:659 templates/settings.html:3805
-#: templates/settings.html:4069
+#: services/js_i18n_strings.py:659 templates/settings.html:3816
+#: templates/settings.html:4080
 msgid "Clearing..."
 msgstr "Очистка…"
 
@@ -2492,7 +2497,7 @@ msgstr "Нажмите, чтобы отфильтровать; Shift+клик, �
 #: templates/_modals/boxart_zoom_modal.html:5
 #: templates/_modals/manual_reader_modal.html:11
 #: templates/_settings_tabs/account.html:45
-#: templates/_settings_tabs/customization.html:224
+#: templates/_settings_tabs/customization.html:227
 #: templates/archive_scanner.html:749 templates/archive_scanner.html:757
 #: templates/base.html:251 templates/base.html:334 templates/base.html:351
 #: templates/base.html:737 templates/base.html:976 templates/base.html:1374
@@ -2712,7 +2717,7 @@ msgstr "Текущее значение"
 msgid "Default emulator for {system}"
 msgstr "Эмулятор по умолчанию для {system}"
 
-#: services/js_i18n_strings.py:709 templates/settings.html:4836
+#: services/js_i18n_strings.py:709 templates/settings.html:4847
 msgid "Delete Log File"
 msgstr "Удалить файл журнала"
 
@@ -2741,7 +2746,7 @@ msgid "Done."
 msgstr "Готово."
 
 #: services/js_i18n_strings.py:716 templates/logs.html:740
-#: templates/settings.html:4787
+#: templates/settings.html:4798
 msgid "Download"
 msgstr "Скачать"
 
@@ -2870,22 +2875,22 @@ msgstr "Введите один путь к папке."
 #: templates/multi_disc_organizer.html:371 templates/reports.html:1144
 #: templates/reports.html:1147 templates/reports.html:1213
 #: templates/reports.html:1216 templates/rom_tools_settings.html:579
-#: templates/rom_tools_settings.html:582 templates/settings.html:2366
-#: templates/settings.html:2484 templates/settings.html:2925
-#: templates/settings.html:2929 templates/settings.html:2948
-#: templates/settings.html:2952 templates/settings.html:3550
-#: templates/settings.html:3554 templates/settings.html:3622
-#: templates/settings.html:3626 templates/settings.html:3657
-#: templates/settings.html:3661 templates/settings.html:3687
-#: templates/settings.html:3691 templates/settings.html:4182
-#: templates/settings.html:4186 templates/settings.html:4204
-#: templates/settings.html:4235 templates/settings.html:4295
-#: templates/settings.html:4299 templates/settings.html:4429
-#: templates/settings.html:4433 templates/settings.html:4459
-#: templates/settings.html:4463 templates/settings.html:4824
-#: templates/settings.html:4827 templates/settings.html:4846
-#: templates/settings.html:4849 templates/settings.html:4864
-#: templates/settings.html:4867
+#: templates/rom_tools_settings.html:582 templates/settings.html:2377
+#: templates/settings.html:2495 templates/settings.html:2936
+#: templates/settings.html:2940 templates/settings.html:2959
+#: templates/settings.html:2963 templates/settings.html:3561
+#: templates/settings.html:3565 templates/settings.html:3633
+#: templates/settings.html:3637 templates/settings.html:3668
+#: templates/settings.html:3672 templates/settings.html:3698
+#: templates/settings.html:3702 templates/settings.html:4193
+#: templates/settings.html:4197 templates/settings.html:4215
+#: templates/settings.html:4246 templates/settings.html:4306
+#: templates/settings.html:4310 templates/settings.html:4440
+#: templates/settings.html:4444 templates/settings.html:4470
+#: templates/settings.html:4474 templates/settings.html:4835
+#: templates/settings.html:4838 templates/settings.html:4857
+#: templates/settings.html:4860 templates/settings.html:4875
+#: templates/settings.html:4878
 msgid "Error"
 msgstr "Ошибка"
 
@@ -2996,9 +3001,9 @@ msgstr "Не удалось загрузить данные нормализац
 msgid "Failed to save HLTB: {error}"
 msgstr "Не удалось сохранить HLTB: {error}"
 
-#: services/js_i18n_strings.py:768 templates/settings.html:1470
-#: templates/settings.html:1514 templates/settings.html:1721
-#: templates/settings.html:1769
+#: services/js_i18n_strings.py:768 templates/settings.html:1479
+#: templates/settings.html:1523 templates/settings.html:1730
+#: templates/settings.html:1778
 #, python-brace-format
 msgid "Failed to save: {error}"
 msgstr "Не удалось сохранить: {error}"
@@ -3021,8 +3026,8 @@ msgstr "Не удалось обновить статус прохождения
 msgid "Failed to update status: {error}"
 msgstr "Не удалось обновить статус: {error}"
 
-#: services/js_i18n_strings.py:773 templates/settings.html:1938
-#: templates/settings.html:1986 templates/settings.html:2050
+#: services/js_i18n_strings.py:773 templates/settings.html:1947
+#: templates/settings.html:1995 templates/settings.html:2059
 #, python-brace-format
 msgid "Failed: {error}"
 msgstr "Ошибка: {error}"
@@ -3096,7 +3101,7 @@ msgstr "Страница игры"
 msgid "Game details updated successfully."
 msgstr "Данные игры успешно обновлены."
 
-#: services/js_i18n_strings.py:789 templates/_settings_tabs/data.html:192
+#: services/js_i18n_strings.py:789 templates/_settings_tabs/data.html:196
 #: templates/achievements_system.html:103 templates/analytics.html:571
 #: templates/analytics.html:1588 templates/analytics.html:1629
 #: templates/analytics.html:1951 templates/analytics.html:2126
@@ -3330,7 +3335,7 @@ msgstr "Загрузка файла журнала…"
 msgid "Loading the manual…"
 msgstr "Загрузка руководства…"
 
-#: services/js_i18n_strings.py:842 templates/_settings_tabs/library.html:284
+#: services/js_i18n_strings.py:842 templates/_settings_tabs/library.html:292
 #: templates/settings_emulators.html:201 templates/settings_emulators.html:219
 msgid "Loading…"
 msgstr "Загрузка…"
@@ -3450,10 +3455,10 @@ msgid "Navigation"
 msgstr "Навигация"
 
 #: services/js_i18n_strings.py:863 templates/psn_trophy_detail.html:944
-#: templates/psn_trophy_detail.html:964 templates/settings.html:3781
-#: templates/settings.html:3839 templates/settings.html:3915
-#: templates/settings.html:3972 templates/settings.html:4048
-#: templates/settings.html:4099 templates/settings.html:4143
+#: templates/psn_trophy_detail.html:964 templates/settings.html:3792
+#: templates/settings.html:3850 templates/settings.html:3926
+#: templates/settings.html:3983 templates/settings.html:4059
+#: templates/settings.html:4110 templates/settings.html:4154
 msgid "Network error"
 msgstr "Ошибка сети"
 
@@ -3794,7 +3799,7 @@ msgstr "Совпадения региональных названий"
 #: templates/_settings_tabs/account.html:228 templates/compare_games.html:24
 #: templates/compare_games.html:40 templates/rom_tools_settings.html:462
 #: templates/rom_tools_settings.html:501 templates/screenshot_review.html:187
-#: templates/settings.html:1570
+#: templates/settings.html:1579
 msgid "Remove"
 msgstr "Удалить"
 
@@ -3815,8 +3820,8 @@ msgstr "Удалить 3D-коробку?"
 #: templates/game_detail.html:4648 templates/game_detail.html:4732
 #: templates/game_detail.html:4816 templates/game_detail.html:4944
 #: templates/rom_tools_settings.html:462 templates/rom_tools_settings.html:501
-#: templates/settings.html:1570 templates/settings.html:3044
-#: templates/settings.html:3440
+#: templates/settings.html:1579 templates/settings.html:3055
+#: templates/settings.html:3451
 #, python-brace-format
 msgid "Remove {name}"
 msgstr "Удалить {name}"
@@ -3986,8 +3991,8 @@ msgstr "Сохранено. Применится при следующем на�
 msgid "Saving to the database…"
 msgstr "Сохранение в базу данных…"
 
-#: services/js_i18n_strings.py:981 templates/settings.html:2725
-#: templates/settings.html:2763 templates/settings.html:4700
+#: services/js_i18n_strings.py:981 templates/settings.html:2736
+#: templates/settings.html:2774 templates/settings.html:4711
 #: templates/setup.html:483
 msgid "Saving..."
 msgstr "Сохранение…"
@@ -4012,8 +4017,8 @@ msgid "Scanned {paths} paths · found {found} matches."
 msgstr "Просканировано путей: {paths} · найдено совпадений: {found}."
 
 #: services/js_i18n_strings.py:986 templates/multi_disc_organizer.html:204
-#: templates/settings.html:1802 templates/settings.html:3860
-#: templates/settings.html:3999 templates/settings.html:4509
+#: templates/settings.html:1811 templates/settings.html:3871
+#: templates/settings.html:4010 templates/settings.html:4520
 msgid "Scanning..."
 msgstr "Сканирование…"
 
@@ -4279,8 +4284,8 @@ msgstr "Синхронизация…"
 msgid "Syncing: {processed} / {total}"
 msgstr "Синхронизация: {processed} / {total}"
 
-#: services/js_i18n_strings.py:1044 templates/_settings_tabs/_tab_bar.html:11
-#: templates/_settings_tabs/customization.html:299
+#: services/js_i18n_strings.py:1044 templates/_settings_tabs/_tab_bar.html:12
+#: templates/_settings_tabs/customization.html:303
 #: templates/achievement_game.html:228 templates/ai_fill_bulk.html:91
 #: templates/analytics.html:569 templates/analytics.html:603
 #: templates/compare_games.html:69 templates/dashboard.html:330
@@ -4295,9 +4300,9 @@ msgid "System"
 msgstr "Система"
 
 #: services/js_i18n_strings.py:1045
-#: templates/_settings_tabs/customization.html:153
-#: templates/_settings_tabs/customization.html:234
-#: templates/_settings_tabs/data.html:19 templates/achievements_system.html:50
+#: templates/_settings_tabs/customization.html:156
+#: templates/_settings_tabs/customization.html:237
+#: templates/_settings_tabs/data.html:21 templates/achievements_system.html:50
 #: templates/base.html:130 templates/dashboard.html:16
 #: templates/game_detail.html:24 templates/system_games.html:15
 msgid "Systems"
@@ -4475,7 +4480,7 @@ msgid "Unhandled rejection: {error}"
 msgstr "Необработанное отклонение: {error}"
 
 #: services/js_i18n_strings.py:1080 templates/rom_tools_settings.html:579
-#: templates/settings.html:1966 templates/setup.html:372
+#: templates/settings.html:1975 templates/setup.html:372
 #: templates/setup.html:432
 msgid "Unknown error"
 msgstr "Неизвестная ошибка"
@@ -4523,7 +4528,7 @@ msgstr "Загрузить"
 msgid "Upload Controller Image"
 msgstr "Загрузить изображение контроллера"
 
-#: services/js_i18n_strings.py:1089 templates/settings.html:5153
+#: services/js_i18n_strings.py:1089 templates/settings.html:5164
 msgid "Upload failed"
 msgstr "Загрузка не удалась"
 
@@ -5220,7 +5225,7 @@ msgstr "PEGI 16"
 msgid "PEGI 18"
 msgstr "PEGI 18"
 
-#: templates/_bulk_edit_modal.html:177 templates/_settings_tabs/data.html:161
+#: templates/_bulk_edit_modal.html:177 templates/_settings_tabs/data.html:165
 #: templates/base.html:945 templates/compare_games.html:74
 #: templates/local_trophy_detail.html:105 templates/psn_trophy_detail.html:102
 msgid "Franchise"
@@ -5368,7 +5373,7 @@ msgstr "Никогда"
 msgid "Last Achievement"
 msgstr "Последнее достижение"
 
-#: templates/_settings_tabs/data.html:160 templates/achievement_game.html:247
+#: templates/_settings_tabs/data.html:164 templates/achievement_game.html:247
 #: templates/analytics.html:491 templates/analytics.html:2432
 #: templates/compare_games.html:77 templates/local_trophy_detail.html:219
 #: templates/psn_trophy_detail.html:270
@@ -5481,7 +5486,7 @@ msgstr ""
 msgid "Profile Settings"
 msgstr "Настройках профиля"
 
-#: templates/_settings_tabs/data.html:23 templates/achievements_system.html:43
+#: templates/_settings_tabs/data.html:25 templates/achievements_system.html:43
 #: templates/analytics.html:71 templates/analytics.html:2539
 #: templates/dashboard.html:164 templates/steam_achievements.html:42
 #: templates/xbox_achievements.html:42
@@ -5509,7 +5514,7 @@ msgstr ""
 "Скачивает данные о том, какие достижения вы получили в играх системы "
 "%(system)s. Запускайте после игры."
 
-#: templates/_settings_tabs/system.html:430
+#: templates/_settings_tabs/system.html:432
 #: templates/achievements_system.html:162 templates/changelog.html:179
 #: templates/logs.html:737 templates/setup.html:354 templates/setup.html:355
 #: templates/setup.html:419 templates/tags.html:595
@@ -5547,7 +5552,7 @@ msgstr "Все игры"
 msgid "Completed (100%)"
 msgstr "Завершено (100%)"
 
-#: templates/_settings_tabs/customization.html:126
+#: templates/_settings_tabs/customization.html:129
 #: templates/achievements_system.html:205 templates/all_games.html:120
 #: templates/local_trophies.html:100 templates/psn_trophies.html:179
 #: templates/steam_achievements.html:91 templates/system_games.html:111
@@ -5729,7 +5734,7 @@ msgstr "Фильтры"
 msgid "Select"
 msgstr "Выбрать"
 
-#: templates/all_games.html:94 templates/settings.html:4766
+#: templates/all_games.html:94 templates/settings.html:4777
 #: templates/system_games.html:85
 msgid "Category"
 msgstr "Категория"
@@ -5752,7 +5757,7 @@ msgstr "Показывать только игры, которые ещё не �
 msgid "Show/hide bonus discs (hidden by default)"
 msgstr "Показать/скрыть бонусные диски (по умолчанию скрыты)"
 
-#: templates/_settings_tabs/library.html:9 templates/all_games.html:110
+#: templates/_settings_tabs/library.html:10 templates/all_games.html:110
 #: templates/analytics.html:514 templates/system_games.html:101
 msgid "Bonus Discs"
 msgstr "Бонусные диски"
@@ -5827,7 +5832,7 @@ msgstr "Ваша библиотека пуста"
 msgid "Scan your ROM folder to add your games."
 msgstr "Просканируйте папку с ROM, чтобы добавить свои игры."
 
-#: templates/_settings_tabs/library.html:47 templates/all_games.html:182
+#: templates/_settings_tabs/library.html:49 templates/all_games.html:182
 #: templates/dashboard.html:83 templates/dashboard.html:99
 #: templates/systems.html:111
 msgid "Scan Library"
@@ -5973,7 +5978,7 @@ msgstr "Экспорт CSV"
 msgid "Data for spreadsheets"
 msgstr "Данные для электронных таблиц"
 
-#: templates/_settings_tabs/data.html:173 templates/analytics.html:62
+#: templates/_settings_tabs/data.html:177 templates/analytics.html:62
 #: templates/local_trophy_detail.html:182 templates/psn_trophy_detail.html:29
 #: templates/steam_achievement_game.html:31
 #: templates/xbox_achievement_game.html:31
@@ -6168,8 +6173,8 @@ msgid "Field Completeness"
 msgstr "Заполненность полей"
 
 #: templates/_modals/edit_modal.html:346
-#: templates/_settings_tabs/customization.html:193
-#: templates/_settings_tabs/customization.html:259 templates/analytics.html:479
+#: templates/_settings_tabs/customization.html:196
+#: templates/_settings_tabs/customization.html:262 templates/analytics.html:479
 #: templates/analytics.html:2432 templates/base.html:268
 #: templates/base.html:1361 templates/compare_games.html:97
 #: templates/settings_emulators.html:258
@@ -6229,8 +6234,8 @@ msgstr "Топ систем по количеству игр"
 msgid "Rank"
 msgstr "Место"
 
-#: templates/_settings_tabs/customization.html:164
-#: templates/_settings_tabs/customization.html:245 templates/analytics.html:570
+#: templates/_settings_tabs/customization.html:167
+#: templates/_settings_tabs/customization.html:248 templates/analytics.html:570
 #: templates/museum_system.html:99
 msgid "Manufacturer"
 msgstr "Производитель"
@@ -6249,7 +6254,7 @@ msgstr "Самые большие игры"
 msgid "Game"
 msgstr "Игра"
 
-#: templates/analytics.html:604 templates/settings.html:4768
+#: templates/analytics.html:604 templates/settings.html:4779
 msgid "Size"
 msgstr "Размер"
 
@@ -6349,11 +6354,11 @@ msgstr "(папки для пропуска)"
 msgid "Enter folder name to exclude"
 msgstr "Введите название папки для исключения"
 
-#: templates/_settings_tabs/data.html:87 templates/_settings_tabs/data.html:97
-#: templates/_settings_tabs/data.html:107
-#: templates/_settings_tabs/data.html:117
-#: templates/_settings_tabs/data.html:127
-#: templates/_settings_tabs/data.html:137 templates/archive_scanner.html:591
+#: templates/_settings_tabs/data.html:90 templates/_settings_tabs/data.html:100
+#: templates/_settings_tabs/data.html:110
+#: templates/_settings_tabs/data.html:120
+#: templates/_settings_tabs/data.html:130
+#: templates/_settings_tabs/data.html:140 templates/archive_scanner.html:591
 #: templates/list_detail.html:419 templates/rom_tools_settings.html:346
 #: templates/rom_tools_settings.html:365
 msgid "Add"
@@ -6450,7 +6455,7 @@ msgstr "Найдено проблем: 0"
 msgid "Date & Time"
 msgstr "Дата и время"
 
-#: templates/_settings_tabs/customization.html:300
+#: templates/_settings_tabs/customization.html:304
 #: templates/archive_scanner.html:723 templates/settings_emulators.html:195
 msgid "Type"
 msgstr "Тип"
@@ -6486,8 +6491,8 @@ msgid "Processed"
 msgstr "Обработано"
 
 #: templates/archive_scanner.html:782 templates/game_detail.html:4079
-#: templates/reports.html:497 templates/settings.html:3548
-#: templates/settings.html:4293 templates/settings.html:4861
+#: templates/reports.html:497 templates/settings.html:3559
+#: templates/settings.html:4304 templates/settings.html:4872
 msgid "Success"
 msgstr "Успех"
 
@@ -6853,8 +6858,8 @@ msgstr "Вход"
 msgid "Dashboard"
 msgstr "Панель управления"
 
-#: templates/_settings_tabs/_tab_bar.html:7
-#: templates/_settings_tabs/customization.html:8 templates/base.html:129
+#: templates/_settings_tabs/_tab_bar.html:8
+#: templates/_settings_tabs/customization.html:9 templates/base.html:129
 #: templates/game_detail.html:17 templates/setup.html:19
 msgid "Library"
 msgstr "Библиотека"
@@ -7319,7 +7324,7 @@ msgid "Xbox 360, PC, Switch"
 msgstr "Xbox 360, PC, Switch"
 
 #: templates/_modals/edit_modal.html:241
-#: templates/_settings_tabs/library.html:157 templates/base.html:1256
+#: templates/_settings_tabs/library.html:161 templates/base.html:1256
 msgid "ESRB (North America)"
 msgstr "ESRB (Северная Америка)"
 
@@ -7347,12 +7352,12 @@ msgid "RP - Rating Pending"
 msgstr "RP — рейтинг ожидается"
 
 #: templates/_modals/edit_modal.html:254
-#: templates/_settings_tabs/library.html:158 templates/base.html:1269
+#: templates/_settings_tabs/library.html:162 templates/base.html:1269
 msgid "PEGI (Europe)"
 msgstr "PEGI (Европа)"
 
 #: templates/_modals/edit_modal.html:265
-#: templates/_settings_tabs/library.html:159 templates/base.html:1280
+#: templates/_settings_tabs/library.html:163 templates/base.html:1280
 msgid "CERO (Japan)"
 msgstr "CERO (Япония)"
 
@@ -7378,12 +7383,12 @@ msgid "Z - Ages 18+"
 msgstr "Z — от 18 лет"
 
 #: templates/_modals/edit_modal.html:276
-#: templates/_settings_tabs/library.html:160 templates/base.html:1291
+#: templates/_settings_tabs/library.html:164 templates/base.html:1291
 msgid "USK (Germany)"
 msgstr "USK (Германия)"
 
 #: templates/_modals/edit_modal.html:287
-#: templates/_settings_tabs/library.html:161 templates/base.html:1302
+#: templates/_settings_tabs/library.html:165 templates/base.html:1302
 msgid "ACB (Australia)"
 msgstr "ACB (Австралия)"
 
@@ -7405,12 +7410,12 @@ msgid "R18+ - Restricted"
 msgstr "R18+ — ограничено"
 
 #: templates/_modals/edit_modal.html:298
-#: templates/_settings_tabs/library.html:162 templates/base.html:1313
+#: templates/_settings_tabs/library.html:166 templates/base.html:1313
 msgid "FPB (South Africa)"
 msgstr "FPB (Южная Африка)"
 
 #: templates/_modals/edit_modal.html:312
-#: templates/_settings_tabs/library.html:163 templates/base.html:1327
+#: templates/_settings_tabs/library.html:167 templates/base.html:1327
 msgid "GRAC (South Korea)"
 msgstr "GRAC (Южная Корея)"
 
@@ -7419,7 +7424,7 @@ msgid "ALL - All Ages"
 msgstr "ALL — для всех возрастов"
 
 #: templates/_modals/edit_modal.html:322
-#: templates/_settings_tabs/library.html:164 templates/base.html:1337
+#: templates/_settings_tabs/library.html:168 templates/base.html:1337
 msgid "ClassInd (Brazil)"
 msgstr "ClassInd (Бразилия)"
 
@@ -7428,7 +7433,7 @@ msgid "L - General"
 msgstr "L — для всех"
 
 #: templates/_modals/edit_modal.html:334
-#: templates/_settings_tabs/library.html:165 templates/base.html:1349
+#: templates/_settings_tabs/library.html:169 templates/base.html:1349
 msgid "CADPA (China)"
 msgstr "CADPA (Китай)"
 
@@ -7453,7 +7458,7 @@ msgid "Images/Video"
 msgstr "Изображения/видео"
 
 #: templates/_modals/edit_modal.html:15
-#: templates/_settings_tabs/customization.html:267 templates/base.html:1376
+#: templates/_settings_tabs/customization.html:270 templates/base.html:1376
 #: templates/tags.html:475 templates/wishlist.html:715
 msgid "Save Changes"
 msgstr "Сохранить изменения"
@@ -7975,7 +7980,7 @@ msgstr "Игровые платформы"
 msgid "ROMs in library"
 msgstr "ROM в библиотеке"
 
-#: templates/_settings_tabs/data.html:31 templates/dashboard.html:173
+#: templates/_settings_tabs/data.html:33 templates/dashboard.html:173
 msgid "Missing Metadata"
 msgstr "Отсутствующие метаданные"
 
@@ -8082,7 +8087,7 @@ msgid "Database Service"
 msgstr "Служба базы данных"
 
 #: templates/dashboard.html:585 templates/dashboard.html:1308
-#: templates/settings.html:2356
+#: templates/settings.html:2367
 msgid "Online"
 msgstr "В сети"
 
@@ -8103,7 +8108,7 @@ msgstr "Доступно"
 #: templates/_settings_tabs/scraping.html:178 templates/dashboard.html:602
 #: templates/dashboard.html:612 templates/dashboard.html:632
 #: templates/dashboard.html:642 templates/game_imports.html:368
-#: templates/settings.html:2329 templates/settings.html:2443
+#: templates/settings.html:2340 templates/settings.html:2454
 msgid "Checking..."
 msgstr "Проверка…"
 
@@ -8175,7 +8180,7 @@ msgstr "1 настроенный API недоступен"
 msgid "{count} configured APIs are offline"
 msgstr "Недоступно настроенных API: {count}"
 
-#: templates/dashboard.html:1309 templates/settings.html:2359
+#: templates/dashboard.html:1309 templates/settings.html:2370
 msgid "Offline"
 msgstr "Не в сети"
 
@@ -8489,7 +8494,7 @@ msgid "From the AI, not checked against a review site."
 msgstr "Данные от ИИ, не сверены с сайтом обзоров."
 
 #: templates/game_detail.html:274 templates/game_detail.html:279
-#: templates/game_detail.html:284 templates/settings.html:2690
+#: templates/game_detail.html:284 templates/settings.html:2701
 msgid "AI"
 msgstr "ИИ"
 
@@ -9659,7 +9664,7 @@ msgstr "Трофеи PlayStation 3"
 msgid "RPCS3 Trophy Collection"
 msgstr "Коллекция трофеев RPCS3"
 
-#: templates/_settings_tabs/data.html:61 templates/local_trophies.html:22
+#: templates/_settings_tabs/data.html:63 templates/local_trophies.html:22
 #: templates/local_trophies.html:55
 msgid "Scan Trophies"
 msgstr "Сканировать трофеи"
@@ -9788,13 +9793,13 @@ msgstr "Поиск HLTB не удался"
 msgid "No match found."
 msgstr "Совпадений не найдено."
 
-#: templates/local_trophy_detail.html:429 templates/settings.html:1851
-#: templates/settings.html:1888 templates/settings.html:1922
-#: templates/settings.html:1941 templates/settings.html:1966
-#: templates/settings.html:1969 templates/settings.html:1989
-#: templates/settings.html:2033 templates/settings.html:2055
-#: templates/settings.html:2152 templates/settings.html:2750
-#: templates/settings.html:2812 templates/settings.html:4745
+#: templates/local_trophy_detail.html:429 templates/settings.html:1860
+#: templates/settings.html:1897 templates/settings.html:1931
+#: templates/settings.html:1950 templates/settings.html:1975
+#: templates/settings.html:1978 templates/settings.html:1998
+#: templates/settings.html:2042 templates/settings.html:2064
+#: templates/settings.html:2161 templates/settings.html:2761
+#: templates/settings.html:2823 templates/settings.html:4756
 #: templates/steam_achievement_game.html:302
 #: templates/xbox_achievement_game.html:293
 #, python-brace-format
@@ -9862,7 +9867,7 @@ msgstr "Ошибки и критические ошибки"
 msgid "ERROR"
 msgstr "ERROR"
 
-#: templates/logs.html:778 templates/settings.html:4784
+#: templates/logs.html:778 templates/settings.html:4795
 msgid "View"
 msgstr "Вид"
 
@@ -10210,7 +10215,7 @@ msgstr "Характеристики"
 msgid "Top 10 Games"
 msgstr "Топ-10 игр"
 
-#: templates/_settings_tabs/customization.html:5
+#: templates/_settings_tabs/customization.html:6
 #: templates/museum_system.html:63 templates/museum_system.html:172
 msgid "Controllers"
 msgstr "Контроллеры"
@@ -10304,8 +10309,8 @@ msgstr "Найти новое изображение"
 msgid "Upload your own image"
 msgstr "Загрузить своё изображение"
 
-#: templates/_settings_tabs/customization.html:189
-#: templates/_settings_tabs/customization.html:255
+#: templates/_settings_tabs/customization.html:192
+#: templates/_settings_tabs/customization.html:258
 #: templates/museum_system.html:226
 msgid "Button Layout"
 msgstr "Раскладка кнопок"
@@ -11656,9 +11661,9 @@ msgstr "Включать архивы (.zip, .7z, .rar) в поиск дубли
 msgid "Detection method can be selected directly on the Duplicate Finder page."
 msgstr "Метод поиска можно выбрать прямо на странице поиска дубликатов."
 
-#: templates/_settings_tabs/customization.html:83
+#: templates/_settings_tabs/customization.html:85
 #: templates/_settings_tabs/scraping.html:255
-#: templates/rom_tools_settings.html:433 templates/settings.html:2754
+#: templates/rom_tools_settings.html:433 templates/settings.html:2765
 msgid "Save Settings"
 msgstr "Сохранить настройки"
 
@@ -11666,7 +11671,7 @@ msgstr "Сохранить настройки"
 msgid "Reset to Defaults"
 msgstr "Сбросить к значениям по умолчанию"
 
-#: templates/rom_tools_settings.html:439 templates/settings.html:2743
+#: templates/rom_tools_settings.html:439 templates/settings.html:2754
 msgid "Settings saved successfully!"
 msgstr "Настройки успешно сохранены!"
 
@@ -11679,8 +11684,8 @@ msgid "No paths excluded"
 msgstr "Нет исключённых путей"
 
 #: templates/rom_tools_settings.html:579 templates/rom_tools_settings.html:582
-#: templates/settings.html:1473 templates/settings.html:1517
-#: templates/settings.html:1727 templates/settings.html:1775
+#: templates/settings.html:1482 templates/settings.html:1526
+#: templates/settings.html:1736 templates/settings.html:1784
 #, python-brace-format
 msgid "Error saving settings: {error}"
 msgstr "Ошибка сохранения настроек: {error}"
@@ -11879,161 +11884,171 @@ msgstr "Не удалось изменить пароль"
 msgid "Network error changing password"
 msgstr "Ошибка сети при смене пароля"
 
-#: templates/settings.html:1341 templates/settings.html:1343
+#: templates/_settings_tabs/account.html:319
+#: templates/_settings_tabs/account.html:393 templates/settings.html:1308
+msgid "Add User"
+msgstr "Добавить пользователя"
+
+#: templates/settings.html:1328
+#, fuzzy
+msgid "Edit User"
+msgstr "Добавить пользователя"
+
+#: templates/settings.html:1344 templates/settings.html:1346
 msgid "Could not load that user."
 msgstr "Не удалось загрузить этого пользователя."
 
-#: templates/settings.html:1378
+#: templates/settings.html:1387
 msgid "User saved successfully!"
 msgstr "Пользователь успешно сохранён!"
 
-#: templates/settings.html:1383
+#: templates/settings.html:1392
 msgid "Failed to save user"
 msgstr "Не удалось сохранить пользователя"
 
-#: templates/settings.html:1387
+#: templates/settings.html:1396
 msgid "Network error saving user"
 msgstr "Ошибка сети при сохранении пользователя"
 
-#: templates/settings.html:1393
+#: templates/settings.html:1402
 msgid "Delete User"
 msgstr "Удалить пользователя"
 
-#: templates/settings.html:1394
+#: templates/settings.html:1403
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete user \"{username}\"? This action cannot "
 "be undone."
 msgstr "Точно удалить пользователя \"{username}\"? Это действие нельзя отменить."
 
-#: templates/settings.html:1402
+#: templates/settings.html:1411
 msgid "User deleted successfully"
 msgstr "Пользователь успешно удалён"
 
-#: templates/settings.html:1407
+#: templates/settings.html:1416
 msgid "Failed to delete user"
 msgstr "Не удалось удалить пользователя"
 
-#: templates/settings.html:1411
+#: templates/settings.html:1420
 msgid "Network error deleting user"
 msgstr "Ошибка сети при удалении пользователя"
 
-#: templates/settings.html:1437 templates/settings.html:1439
-#: templates/settings.html:1441 templates/settings.html:1443
+#: templates/settings.html:1446 templates/settings.html:1448
+#: templates/settings.html:1450 templates/settings.html:1452
 #, python-brace-format
 msgid "Current: {path}"
 msgstr "Сейчас: {path}"
 
-#: templates/settings.html:1465
+#: templates/settings.html:1474
 msgid "Path settings saved!"
 msgstr "Настройки путей сохранены!"
 
-#: templates/settings.html:1467
+#: templates/settings.html:1476
 msgid "Restart required for changes to take full effect"
 msgstr "Для полного применения изменений требуется перезапуск"
 
-#: templates/settings.html:1512
+#: templates/settings.html:1521
 msgid "Display settings saved!"
 msgstr "Настройки отображения сохранены!"
 
-#: templates/settings.html:1570
+#: templates/settings.html:1579
 msgid "Move left"
 msgstr "Сдвинуть влево"
 
-#: templates/settings.html:1570
+#: templates/settings.html:1579
 msgid "Move right"
 msgstr "Сдвинуть вправо"
 
-#: templates/settings.html:1670
+#: templates/settings.html:1679
 msgid "Region already exists"
 msgstr "Такой регион уже существует"
 
-#: templates/settings.html:1719
+#: templates/settings.html:1728
 msgid "ROM naming settings saved!"
 msgstr "Настройки именования ROM сохранены!"
 
-#: templates/settings.html:1767
+#: templates/settings.html:1776
 msgid "Notification settings saved!"
 msgstr "Настройки уведомлений сохранены!"
 
-#: templates/settings.html:1787
+#: templates/settings.html:1796
 #, python-brace-format
 msgid "Success - disappears in {seconds}s"
 msgstr "Успех — исчезнет через {seconds} с"
 
-#: templates/settings.html:1788
+#: templates/settings.html:1797
 #, python-brace-format
 msgid "Info - disappears in {seconds}s"
 msgstr "Информация — исчезнет через {seconds} с"
 
-#: templates/settings.html:1789
+#: templates/settings.html:1798
 #, python-brace-format
 msgid "Warning - disappears in {seconds}s"
 msgstr "Предупреждение — исчезнет через {seconds} с"
 
-#: templates/settings.html:1790
+#: templates/settings.html:1799
 #, python-brace-format
 msgid "Error - disappears in {seconds}s"
 msgstr "Ошибка — исчезнет через {seconds} с"
 
-#: templates/settings.html:1846
+#: templates/settings.html:1855
 #, python-brace-format
 msgid "Bonus discs detected: {count}"
 msgstr "Найдено бонусных дисков: {count}"
 
-#: templates/settings.html:1848
+#: templates/settings.html:1857
 #, python-brace-format
 msgid "Detection failed: {error}"
 msgstr "Не удалось выполнить поиск: {error}"
 
-#: templates/settings.html:1880
+#: templates/settings.html:1889
 #, python-brace-format
 msgid "Bonus discs linked to parent games: {count}"
 msgstr "Бонусных дисков привязано к родительским играм: {count}"
 
-#: templates/settings.html:1885
+#: templates/settings.html:1894
 #, python-brace-format
 msgid "Auto-link failed: {error}"
 msgstr "Не удалось выполнить автопривязку: {error}"
 
-#: templates/settings.html:1907
+#: templates/settings.html:1916
 msgid "Bonus Disc Statistics"
 msgstr "Статистика бонусных дисков"
 
-#: templates/settings.html:1910
+#: templates/settings.html:1919
 msgid "Total Bonus Discs:"
 msgstr "Всего бонусных дисков:"
 
-#: templates/settings.html:1911
+#: templates/settings.html:1920
 msgid "Linked to Parent:"
 msgstr "Привязано к родителю:"
 
-#: templates/settings.html:1912
+#: templates/settings.html:1921
 msgid "Unlinked:"
 msgstr "Не привязано:"
 
-#: templates/settings.html:1913
+#: templates/settings.html:1922
 msgid "Games with Bonus Content:"
 msgstr "Игры с бонусным контентом:"
 
-#: templates/settings.html:1919
+#: templates/settings.html:1928
 #, python-brace-format
 msgid "Failed to load stats: {error}"
 msgstr "Не удалось загрузить статистику: {error}"
 
-#: templates/settings.html:1934
+#: templates/settings.html:1943
 msgid "Game marked as bonus disc"
 msgstr "Игра отмечена как бонусный диск"
 
-#: templates/settings.html:1956
+#: templates/settings.html:1965
 msgid "Select Parent Game"
 msgstr "Выберите родительскую игру"
 
-#: templates/settings.html:1957
+#: templates/settings.html:1966
 msgid "Choose the parent game for this bonus disc:"
 msgstr "Выберите родительскую игру для этого бонусного диска:"
 
-#: templates/settings.html:1964
+#: templates/settings.html:1973
 msgid ""
 "No potential parent games found. Try using \"Mark\" instead to just hide "
 "this from listings."
@@ -12041,52 +12056,52 @@ msgstr ""
 "Подходящие родительские игры не найдены. Попробуйте вместо этого "
 "использовать «Отметить», чтобы просто скрыть её из списков."
 
-#: templates/settings.html:2001
+#: templates/settings.html:2010
 #, python-brace-format
 msgid "Failed to load: {error}"
 msgstr "Не удалось загрузить: {error}"
 
-#: templates/settings.html:2005
+#: templates/settings.html:2014
 msgid "No games are marked as bonus discs."
 msgstr "Ни одна игра не отмечена как бонусный диск."
 
-#: templates/settings.html:2008
+#: templates/settings.html:2017
 msgid "Not linked to a game"
 msgstr "Не привязан к игре"
 
-#: templates/settings.html:2012
+#: templates/settings.html:2021
 #, python-brace-format
 msgid "Bonus disc of {title}"
 msgstr "Бонусный диск к {title}"
 
-#: templates/settings.html:2016
+#: templates/settings.html:2025
 msgid "Not a bonus disc"
 msgstr "Не бонусный диск"
 
-#: templates/settings.html:2046
+#: templates/settings.html:2055
 msgid "Back in your game lists. Auto-Link will leave it alone."
 msgstr "Снова в списках игр. Auto-Link его не тронет."
 
-#: templates/settings.html:2074
+#: templates/settings.html:2083
 #, python-brace-format
 msgid "Backup created: {filename} ({size})"
 msgstr "Резервная копия создана: {filename} ({size})"
 
-#: templates/settings.html:2077
+#: templates/settings.html:2086
 #, python-brace-format
 msgid "Backup failed: {error}"
 msgstr "Сбой резервного копирования: {error}"
 
-#: templates/settings.html:2080
+#: templates/settings.html:2089
 #, python-brace-format
 msgid "Backup error: {error}"
 msgstr "Ошибка резервного копирования: {error}"
 
-#: templates/settings.html:2121
+#: templates/settings.html:2130
 msgid "Restore Backup"
 msgstr "Восстановить из резервной копии"
 
-#: templates/settings.html:2122
+#: templates/settings.html:2131
 #, python-brace-format
 msgid ""
 "Are you sure you want to restore from \"{filename}\"?\n"
@@ -12099,318 +12114,318 @@ msgstr ""
 "Текущая база данных будет заменена. Перед восстановлением автоматически "
 "создастся резервная копия."
 
-#: templates/settings.html:2128
+#: templates/settings.html:2137
 msgid "Database restored! Reloading page..."
 msgstr "База данных восстановлена! Перезагрузка страницы..."
 
-#: templates/settings.html:2132
+#: templates/settings.html:2141
 #, python-brace-format
 msgid "Restore failed: {error}"
 msgstr "Не удалось восстановить: {error}"
 
-#: templates/settings.html:2135
+#: templates/settings.html:2144
 #, python-brace-format
 msgid "Restore error: {error}"
 msgstr "Ошибка восстановления: {error}"
 
-#: templates/settings.html:2142
+#: templates/settings.html:2151
 msgid "Calculating file sizes..."
 msgstr "Подсчёт размеров файлов..."
 
-#: templates/settings.html:2149
+#: templates/settings.html:2158
 #, python-brace-format
 msgid "Calculation failed: {error}"
 msgstr "Не удалось подсчитать: {error}"
 
-#: templates/settings.html:2299
+#: templates/settings.html:2310
 msgid "Failed to save scraper setting"
 msgstr "Не удалось сохранить настройку скрапера"
 
-#: templates/_settings_tabs/scraping.html:173 templates/settings.html:2311
+#: templates/_settings_tabs/scraping.html:173 templates/settings.html:2322
 msgid "AI Metadata"
 msgstr "ИИ-метаданные"
 
-#: templates/settings.html:2312
+#: templates/settings.html:2323
 #, python-brace-format
 msgid "{name} enabled"
 msgstr "{name}: включено"
 
-#: templates/settings.html:2312
+#: templates/settings.html:2323
 #, python-brace-format
 msgid "{name} disabled"
 msgstr "{name}: выключено"
 
-#: templates/settings.html:2382
+#: templates/settings.html:2393
 #, python-brace-format
 msgid "Resets in {time}"
 msgstr "Сброс через {time}"
 
-#: templates/settings.html:2382
+#: templates/settings.html:2393
 msgid "Resets soon"
 msgstr "Скоро сброс"
 
-#: templates/settings.html:2388 templates/settings.html:2390
-#: templates/settings.html:2475 templates/settings.html:2499
-#: templates/settings.html:2596 templates/settings.html:2646
-#: templates/settings.html:2648
+#: templates/settings.html:2399 templates/settings.html:2401
+#: templates/settings.html:2486 templates/settings.html:2510
+#: templates/settings.html:2607 templates/settings.html:2657
+#: templates/settings.html:2659
 #, python-brace-format
 msgid "Resets: {when}"
 msgstr "Сброс: {when}"
 
-#: templates/settings.html:2421
+#: templates/settings.html:2432
 msgid "Testing…"
 msgstr "Проверка…"
 
-#: templates/settings.html:2426
+#: templates/settings.html:2437
 #, python-format
 msgid "The key works: %(provider)s answered, using %(model)s."
 msgstr "Ключ работает: %(provider)s ответил с моделью %(model)s."
 
-#: templates/settings.html:2431
+#: templates/settings.html:2442
 msgid "The key test failed."
 msgstr "Проверка ключа не удалась."
 
-#: templates/settings.html:2444
+#: templates/settings.html:2455
 msgid "Checking rate limits..."
 msgstr "Проверка лимитов…"
 
-#: templates/settings.html:2473 templates/settings.html:2495
+#: templates/settings.html:2484 templates/settings.html:2506
 msgid "remaining (monthly)"
 msgstr "осталось (в месяц)"
 
-#: templates/settings.html:2474 templates/settings.html:2480
-#: templates/settings.html:2482 templates/settings.html:2484
-#: templates/settings.html:2487
+#: templates/settings.html:2485 templates/settings.html:2491
+#: templates/settings.html:2493 templates/settings.html:2495
+#: templates/settings.html:2498
 #, python-brace-format
 msgid "Public key: {status}"
 msgstr "Публичный ключ: {status}"
 
-#: templates/settings.html:2476 templates/settings.html:2500
+#: templates/settings.html:2487 templates/settings.html:2511
 #, python-brace-format
 msgid "Extra: {n}"
 msgstr "Дополнительно: {n}"
 
-#: templates/settings.html:2480
+#: templates/settings.html:2491
 msgid "Active"
 msgstr "Активен"
 
-#: templates/settings.html:2482
+#: templates/settings.html:2493
 msgid "Allowance exhausted"
 msgstr "Лимит исчерпан"
 
-#: templates/settings.html:2487 templates/settings.html:2505
-#: templates/settings.html:2566 templates/settings.html:2572
-#: templates/settings.html:2606 templates/settings.html:2696
-#: templates/settings.html:2702
+#: templates/settings.html:2498 templates/settings.html:2516
+#: templates/settings.html:2577 templates/settings.html:2583
+#: templates/settings.html:2617 templates/settings.html:2707
+#: templates/settings.html:2713
 msgid "Not configured"
 msgstr "Не настроено"
 
-#: templates/settings.html:2496 templates/settings.html:2505
+#: templates/settings.html:2507 templates/settings.html:2516
 #, python-brace-format
 msgid "Private key: {status}"
 msgstr "Приватный ключ: {status}"
 
-#: templates/settings.html:2532
+#: templates/settings.html:2543
 msgid "Error checking"
 msgstr "Ошибка проверки"
 
-#: templates/settings.html:2538 templates/settings.html:2612
+#: templates/settings.html:2549 templates/settings.html:2623
 msgid "Connection error"
 msgstr "Ошибка соединения"
 
-#: templates/settings.html:2553
+#: templates/settings.html:2564
 msgid "requests remaining today"
 msgstr "запросов осталось на сегодня"
 
-#: templates/settings.html:2556
+#: templates/settings.html:2567
 #, python-brace-format
 msgid "Per-minute limit: {n}"
 msgstr "Лимит в минуту: {n}"
 
-#: templates/settings.html:2557
+#: templates/settings.html:2568
 #, python-brace-format
 msgid "Level: {level}"
 msgstr "Уровень: {level}"
 
-#: templates/settings.html:2558
+#: templates/settings.html:2569
 #, python-brace-format
 msgid "Threads: {n}"
 msgstr "Потоки: {n}"
 
-#: templates/settings.html:2559
+#: templates/settings.html:2570
 #, python-brace-format
 msgid "Speed: {n} KB/s"
 msgstr "Скорость: {n} КБ/с"
 
-#: templates/settings.html:2560
+#: templates/settings.html:2571
 msgid "Resets daily at midnight (UTC)"
 msgstr "Сбрасывается каждый день в полночь (UTC)"
 
-#: templates/settings.html:2581
+#: templates/settings.html:2592
 #, python-brace-format
 msgid "{n} requests/second (OAuth token-based)"
 msgstr "{n} запросов в секунду (по токену OAuth)"
 
-#: templates/settings.html:2582
+#: templates/settings.html:2593
 msgid "Token-based authentication — no daily quota"
 msgstr "Вход по токену: дневного лимита нет"
 
-#: templates/settings.html:2593
+#: templates/settings.html:2604
 msgid "requests remaining"
 msgstr "запросов осталось"
 
-#: templates/settings.html:2594
+#: templates/settings.html:2605
 #, python-brace-format
 msgid "{n} requests/month (free tier)"
 msgstr "{n} запросов в месяц (бесплатный тариф)"
 
-#: templates/settings.html:2597
+#: templates/settings.html:2608
 msgid "No live usage tracking from API"
 msgstr "API не показывает текущее использование"
 
-#: templates/settings.html:2621
+#: templates/settings.html:2632
 msgid "No published rate limits"
 msgstr "Лимиты не опубликованы"
 
-#: templates/settings.html:2640
+#: templates/settings.html:2651
 #, python-brace-format
 msgid "Requests: {used} remaining ({pct})"
 msgstr "Запросы: осталось {used} ({pct})"
 
-#: templates/settings.html:2659
+#: templates/settings.html:2670
 #, python-brace-format
 msgid "Tokens: {used} remaining ({pct})"
 msgstr "Токены: осталось {used} ({pct})"
 
-#: templates/settings.html:2668
+#: templates/settings.html:2679
 #, python-brace-format
 msgid "Input tokens: {used} remaining ({pct})"
 msgstr "Входные токены: осталось {used} ({pct})"
 
-#: templates/settings.html:2673
+#: templates/settings.html:2684
 #, python-brace-format
 msgid "Rate: {rpm} requests/min"
 msgstr "Скорость: {rpm} запросов в минуту"
 
-#: templates/settings.html:2673
+#: templates/settings.html:2684
 #, python-brace-format
 msgid "{rpd} requests/day (free tier)"
 msgstr "{rpd} запросов в день (бесплатный тариф)"
 
-#: templates/settings.html:2678
+#: templates/settings.html:2689
 msgid "API online — no rate limit data returned"
 msgstr "API работает, данных о лимитах нет"
 
-#: templates/settings.html:2691
+#: templates/settings.html:2702
 #, python-brace-format
 msgid "Model: {model}"
 msgstr "Модель: {model}"
 
-#: templates/settings.html:2695 templates/settings.html:2701
+#: templates/settings.html:2706 templates/settings.html:2712
 msgid "AI Provider"
 msgstr "Поставщик ИИ"
 
-#: templates/settings.html:2708
+#: templates/settings.html:2719
 #, python-brace-format
 msgid "Last checked: {time}"
 msgstr "Последняя проверка: {time}"
 
-#: templates/settings.html:2712
+#: templates/settings.html:2723
 msgid "No rate limit information available"
 msgstr "Сведений о лимитах нет"
 
-#: templates/_settings_tabs/scraping.html:263 templates/settings.html:2716
+#: templates/_settings_tabs/scraping.html:263 templates/settings.html:2727
 msgid "Check Rate Limits"
 msgstr "Проверить лимиты"
 
-#: templates/settings.html:2738
+#: templates/settings.html:2749
 msgid "Settings saved! Checking scraper status..."
 msgstr "Настройки сохранены! Проверяем состояние скраперов…"
 
-#: templates/settings.html:2800
+#: templates/settings.html:2811
 msgid "API keys saved! Checking scraper status..."
 msgstr "Ключи API сохранены! Проверяем состояние скраперов…"
 
-#: templates/settings.html:2805
+#: templates/settings.html:2816
 msgid "API keys saved successfully!"
 msgstr "Ключи API сохранены!"
 
-#: templates/settings.html:2809
+#: templates/settings.html:2820
 msgid "Failed to save API keys"
 msgstr "Не удалось сохранить ключи API"
 
-#: templates/_settings_tabs/scraping.html:535 templates/settings.html:2816
+#: templates/_settings_tabs/scraping.html:535 templates/settings.html:2827
 msgid "Save API Keys"
 msgstr "Сохранить ключи API"
 
-#: templates/settings.html:2908
+#: templates/settings.html:2919
 msgid "Invalid Input"
 msgstr "Неверный ввод"
 
-#: templates/settings.html:2908
+#: templates/settings.html:2919
 msgid "Please enter a value"
 msgstr "Введите значение"
 
-#: templates/settings.html:2925 templates/settings.html:2929
+#: templates/settings.html:2936 templates/settings.html:2940
 msgid "Failed to add option"
 msgstr "Не удалось добавить вариант"
 
-#: templates/settings.html:2935
+#: templates/settings.html:2946
 msgid "Delete Option"
 msgstr "Удалить вариант"
 
-#: templates/settings.html:2936
+#: templates/settings.html:2947
 msgid "Are you sure you want to delete this option?"
 msgstr "Вы уверены, что хотите удалить этот вариант?"
 
-#: templates/settings.html:2948 templates/settings.html:2952
+#: templates/settings.html:2959 templates/settings.html:2963
 msgid "Failed to delete option"
 msgstr "Не удалось удалить вариант"
 
-#: templates/settings.html:3504 templates/settings.html:4255
+#: templates/settings.html:3515 templates/settings.html:4266
 msgid "Missing Input"
 msgstr "Нет данных"
 
-#: templates/settings.html:3504 templates/settings.html:4255
+#: templates/settings.html:3515 templates/settings.html:4266
 msgid "Please enter a controller name"
 msgstr "Введите название контроллера"
 
-#: templates/settings.html:3548
+#: templates/settings.html:3559
 #, python-brace-format
 msgid "Controller \"{name}\" has been added to the library."
 msgstr "Контроллер «{name}» добавлен в библиотеку."
 
-#: templates/settings.html:3550 templates/settings.html:3554
+#: templates/settings.html:3561 templates/settings.html:3565
 msgid "Failed to add controller"
 msgstr "Не удалось добавить контроллер"
 
-#: templates/settings.html:3622 templates/settings.html:3626
+#: templates/settings.html:3633 templates/settings.html:3637
 msgid "Failed to set default controller"
 msgstr "Не удалось задать контроллер по умолчанию"
 
-#: templates/settings.html:3657 templates/settings.html:3661
+#: templates/settings.html:3668 templates/settings.html:3672
 msgid "Failed to add default controller"
 msgstr "Не удалось добавить контроллер по умолчанию"
 
-#: templates/settings.html:3687 templates/settings.html:3691
+#: templates/settings.html:3698 templates/settings.html:3702
 msgid "Failed to remove default controller"
 msgstr "Не удалось убрать контроллер по умолчанию"
 
-#: templates/settings.html:3762
+#: templates/settings.html:3773
 msgid "Preview:"
 msgstr "Предпросмотр:"
 
-#: templates/settings.html:3763
+#: templates/settings.html:3774
 #, python-brace-format
 msgid "This will clear scraped data from {count} games in {system}."
 msgstr "Будут очищены данные скрапинга у {count} игр в системе {system}."
 
-#: templates/settings.html:3764
+#: templates/settings.html:3775
 #, python-brace-format
 msgid "This will clear scraped data from {count} games (all systems)."
 msgstr "Будут очищены данные скрапинга у {count} игр (все системы)."
 
-#: templates/settings.html:3765
+#: templates/settings.html:3776
 msgid ""
 "Fields: description, genre, publisher, developer, players, modes, "
 "ratings, scores, images, etc."
@@ -12418,86 +12433,86 @@ msgstr ""
 "Поля: описание, жанр, издатель, разработчик, игроки, режимы, рейтинги, "
 "оценки, изображения и т. д."
 
-#: templates/settings.html:3772
+#: templates/settings.html:3783
 msgid "Failed to preview"
 msgstr "Не удалось выполнить предпросмотр"
 
-#: templates/settings.html:3795
+#: templates/settings.html:3806
 msgid "ALL SYSTEMS"
 msgstr "ВСЕ СИСТЕМЫ"
 
-#: templates/_settings_tabs/system.html:84 templates/settings.html:3799
-#: templates/settings.html:3844
+#: templates/_settings_tabs/system.html:84 templates/settings.html:3810
+#: templates/settings.html:3855
 msgid "Clear Scraped Data"
 msgstr "Очистить данные скрапинга"
 
-#: templates/settings.html:3800
+#: templates/settings.html:3811
 #, python-brace-format
 msgid "This will clear all scraped metadata from games in {system}."
 msgstr ""
 "Все метаданные, полученные скрапингом, будут удалены из игр в системе "
 "{system}."
 
-#: templates/settings.html:3801
+#: templates/settings.html:3812
 msgid "Downloaded images will also be deleted!"
 msgstr "Скачанные изображения тоже будут удалены!"
 
-#: templates/settings.html:3802
+#: templates/settings.html:3813
 msgid "This cannot be undone. Are you sure?"
 msgstr "Это нельзя отменить. Продолжить?"
 
-#: templates/settings.html:3823
+#: templates/settings.html:3834
 #, python-brace-format
 msgid "Cleared scraped data from {count} games."
 msgstr "Данные скрапинга очищены у {count} игр."
 
-#: templates/settings.html:3823
+#: templates/settings.html:3834
 #, python-brace-format
 msgid "Deleted {count} image files."
 msgstr "Удалено файлов изображений: {count}."
 
-#: templates/settings.html:3830
+#: templates/settings.html:3841
 msgid "Failed to clear data"
 msgstr "Не удалось очистить данные"
 
-#: templates/settings.html:3876
+#: templates/settings.html:3887
 msgid "No orphaned media files found. All files are linked to existing games."
 msgstr ""
 "Потерянных медиафайлов не найдено. Все файлы связаны с существующими "
 "играми."
 
-#: templates/settings.html:3889 templates/setup.html:404
+#: templates/settings.html:3900 templates/setup.html:404
 #, python-brace-format
 msgid "{count} files"
 msgstr "Файлов: {count}"
 
-#: templates/settings.html:3894
+#: templates/settings.html:3905
 #, python-brace-format
 msgid "Found {count} orphaned files ({size} MB)"
 msgstr "Найдено потерянных файлов: {count} ({size} MB)"
 
-#: templates/settings.html:3906
+#: templates/settings.html:3917
 msgid "Failed to scan for orphaned files"
 msgstr "Не удалось выполнить поиск потерянных файлов"
 
-#: templates/_settings_tabs/system.html:100 templates/settings.html:3920
+#: templates/_settings_tabs/system.html:100 templates/settings.html:3931
 msgid "Scan for Orphaned Files"
 msgstr "Искать потерянные файлы"
 
-#: templates/settings.html:3926
+#: templates/settings.html:3937
 msgid "No Files"
 msgstr "Нет файлов"
 
-#: templates/settings.html:3926
+#: templates/settings.html:3937
 msgid "Please scan for orphaned files first."
 msgstr "Сначала выполните поиск потерянных файлов."
 
-#: templates/_settings_tabs/system.html:104 templates/settings.html:3931
-#: templates/settings.html:3977
+#: templates/_settings_tabs/system.html:104 templates/settings.html:3942
+#: templates/settings.html:3988
 msgid "Delete Orphaned Files"
 msgstr "Удалить потерянные файлы"
 
-#: templates/settings.html:3932
+#: templates/settings.html:3943
 #, python-brace-format
 msgid ""
 "Orphaned media files to delete permanently: {count}. This action cannot "
@@ -12506,35 +12521,35 @@ msgstr ""
 "Потерянных медиафайлов для безвозвратного удаления: {count}. Это действие"
 " нельзя отменить.<br><br>Продолжить?"
 
-#: templates/settings.html:3938
+#: templates/settings.html:3949
 msgid "Deleting..."
 msgstr "Удаление..."
 
-#: templates/settings.html:3956
+#: templates/settings.html:3967
 #, python-brace-format
 msgid "Deleted {count} orphaned files."
 msgstr "Удалено потерянных файлов: {count}."
 
-#: templates/settings.html:3956
+#: templates/settings.html:3967
 #, python-brace-format
 msgid "Freed {size} MB of disk space."
 msgstr "Освобождено {size} MB на диске."
 
-#: templates/settings.html:3956
+#: templates/settings.html:3967
 #, python-brace-format
 msgid "{count} files could not be deleted."
 msgstr "Не удалось удалить файлов: {count}."
 
-#: templates/settings.html:3964
+#: templates/settings.html:3975
 msgid "Failed to delete files"
 msgstr "Не удалось удалить файлы"
 
-#: templates/settings.html:4015
+#: templates/settings.html:4026
 #, python-brace-format
 msgid "{count} reference(s)"
 msgstr "Ссылок: {count}"
 
-#: templates/settings.html:4019
+#: templates/settings.html:4030
 msgid ""
 "Some media folders look missing or empty (possibly an unmounted drive or "
 "a bulk deletion). Their references were <strong>kept, not "
@@ -12546,17 +12561,17 @@ msgstr ""
 "<strong>сохранены, а не очищены</strong>, чтобы случайно не стереть всю "
 "библиотеку:"
 
-#: templates/settings.html:4021
+#: templates/settings.html:4032
 msgid "Re-mount the media folder (or re-scrape) and scan again."
 msgstr ""
 "Подключите папку с медиа снова (или повторите скрапинг) и просканируйте "
 "ещё раз."
 
-#: templates/settings.html:4028
+#: templates/settings.html:4039
 msgid "No clearable missing-media references found."
 msgstr "Ссылок на отсутствующие медиа, которые можно очистить, не найдено."
 
-#: templates/settings.html:4033
+#: templates/settings.html:4044
 #, python-brace-format
 msgid ""
 "Found {refs} stale reference(s) across {games} game(s) pointing to files "
@@ -12565,28 +12580,28 @@ msgstr ""
 "Найдено устаревших ссылок: {refs} (игр: {games}); они указывают на файлы,"
 " которых больше нет на диске."
 
-#: templates/settings.html:4041
+#: templates/settings.html:4052
 msgid "Failed to scan for missing media references"
 msgstr "Не удалось выполнить поиск ссылок на отсутствующие медиа"
 
-#: templates/_settings_tabs/system.html:119 templates/settings.html:4051
+#: templates/_settings_tabs/system.html:119 templates/settings.html:4062
 msgid "Scan for Missing Media"
 msgstr "Искать отсутствующие медиа"
 
-#: templates/settings.html:4057
+#: templates/settings.html:4068
 msgid "Nothing to Clear"
 msgstr "Нечего очищать"
 
-#: templates/settings.html:4057
+#: templates/settings.html:4068
 msgid "Please scan for missing media references first."
 msgstr "Сначала выполните поиск отсутствующих ссылок на медиа."
 
-#: templates/_settings_tabs/system.html:123 templates/settings.html:4062
-#: templates/settings.html:4102
+#: templates/_settings_tabs/system.html:123 templates/settings.html:4073
+#: templates/settings.html:4113
 msgid "Clear Missing References"
 msgstr "Очистить отсутствующие ссылки"
 
-#: templates/settings.html:4063
+#: templates/settings.html:4074
 #, python-brace-format
 msgid ""
 "Database references to clear: {count}. They point to media files that no "
@@ -12597,52 +12612,52 @@ msgstr ""
 "которых больше нет на диске, поэтому скрапер сможет скачать их снова. "
 "Ваши записи игр не затрагиваются.<br><br>Продолжить?"
 
-#: templates/settings.html:4082
+#: templates/settings.html:4093
 #, python-brace-format
 msgid "{count} reference(s) in missing/empty folders were preserved."
 msgstr "Сохранено ссылок в отсутствующих или пустых папках: {count}."
 
-#: templates/settings.html:4086
+#: templates/settings.html:4097
 #, python-brace-format
 msgid "Cleared {refs} stale reference(s) across {games} game(s)."
 msgstr "Очищено устаревших ссылок: {refs} (игр: {games})."
 
-#: templates/settings.html:4093
+#: templates/settings.html:4104
 msgid "Failed to clear references"
 msgstr "Не удалось очистить ссылки"
 
-#: templates/settings.html:4114
+#: templates/settings.html:4125
 msgid "Optimizing..."
 msgstr "Оптимизация..."
 
-#: templates/settings.html:4126
+#: templates/settings.html:4137
 #, python-brace-format
 msgid "Database optimized successfully in {seconds}s."
 msgstr "База данных успешно оптимизирована за {seconds} с."
 
-#: templates/settings.html:4127
+#: templates/settings.html:4138
 #, python-brace-format
 msgid "Size: {before} MB → {after} MB"
 msgstr "Размер: {before} MB → {after} MB"
 
-#: templates/settings.html:4128
+#: templates/settings.html:4139
 #, python-brace-format
 msgid "(saved {size} MB)"
 msgstr "(сэкономлено {size} MB)"
 
-#: templates/settings.html:4134
+#: templates/settings.html:4145
 msgid "Failed to optimize database"
 msgstr "Не удалось оптимизировать базу данных"
 
-#: templates/_settings_tabs/system.html:137 templates/settings.html:4148
+#: templates/_settings_tabs/system.html:137 templates/settings.html:4159
 msgid "Optimize Database"
 msgstr "Оптимизировать базу данных"
 
-#: templates/settings.html:4158
+#: templates/settings.html:4169
 msgid "Delete Controller"
 msgstr "Удалить контроллер"
 
-#: templates/settings.html:4159
+#: templates/settings.html:4170
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete {name}?<br><br>This will remove it from "
@@ -12651,127 +12666,127 @@ msgstr ""
 "Вы уверены, что хотите удалить {name}?<br><br>Он будет удалён из "
 "библиотеки и из всех систем, где используется по умолчанию."
 
-#: templates/settings.html:4180
+#: templates/settings.html:4191
 msgid "Deleted"
 msgstr "Удалено"
 
-#: templates/settings.html:4180
+#: templates/settings.html:4191
 #, python-brace-format
 msgid "Controller \"{name}\" has been removed."
 msgstr "Контроллер «{name}» удалён."
 
-#: templates/settings.html:4182 templates/settings.html:4186
+#: templates/settings.html:4193 templates/settings.html:4197
 msgid "Failed to delete controller"
 msgstr "Не удалось удалить контроллер"
 
-#: templates/settings.html:4204
+#: templates/settings.html:4215
 msgid "Failed to load controller"
 msgstr "Не удалось загрузить контроллер"
 
-#: templates/settings.html:4235
+#: templates/settings.html:4246
 msgid "Failed to load controller data"
 msgstr "Не удалось загрузить данные контроллера"
 
-#: templates/settings.html:4293
+#: templates/settings.html:4304
 #, python-brace-format
 msgid "Controller \"{name}\" has been updated."
 msgstr "Контроллер «{name}» обновлён."
 
-#: templates/settings.html:4295 templates/settings.html:4299
+#: templates/settings.html:4306 templates/settings.html:4310
 msgid "Failed to update controller"
 msgstr "Не удалось обновить контроллер"
 
-#: templates/settings.html:4426
+#: templates/settings.html:4437
 msgid "Logos Refreshed"
 msgstr "Логотипы обновлены"
 
-#: templates/settings.html:4427
+#: templates/settings.html:4438
 #, python-brace-format
 msgid "System logos updated: {count}. The table has been refreshed."
 msgstr "Обновлено логотипов систем: {count}. Таблица обновлена."
 
-#: templates/settings.html:4429
+#: templates/settings.html:4440
 msgid "Failed to refresh logos"
 msgstr "Не удалось обновить логотипы"
 
-#: templates/settings.html:4433
+#: templates/settings.html:4444
 msgid "Failed to refresh system logos"
 msgstr "Не удалось обновить логотипы систем"
 
-#: templates/settings.html:4455
+#: templates/settings.html:4466
 msgid "Names Refreshed"
 msgstr "Названия обновлены"
 
-#: templates/settings.html:4456
+#: templates/settings.html:4467
 #, python-brace-format
 msgid "System names updated: {count}. Click OK to refresh the page."
 msgstr "Обновлено названий систем: {count}. Нажмите OK, чтобы обновить страницу."
 
-#: templates/settings.html:4459
+#: templates/settings.html:4470
 msgid "Failed to refresh names"
 msgstr "Не удалось обновить названия"
 
-#: templates/settings.html:4463
+#: templates/settings.html:4474
 msgid "Failed to refresh system names"
 msgstr "Не удалось обновить названия систем"
 
-#: templates/settings.html:4479
+#: templates/settings.html:4490
 msgid "Importing..."
 msgstr "Импорт…"
 
-#: templates/settings.html:4489
+#: templates/settings.html:4500
 msgid "Run \"Scan Library\" to update the database with the new logos."
 msgstr ""
 "Нажмите «Сканировать библиотеку», чтобы обновить базу данных новыми "
 "логотипами."
 
-#: templates/settings.html:4494 templates/setup.html:375
+#: templates/settings.html:4505 templates/setup.html:375
 #: templates/setup.html:435
 msgid "An error occurred"
 msgstr "Произошла ошибка"
 
-#: templates/settings.html:4497
+#: templates/settings.html:4508
 #, python-brace-format
 msgid "Failed to import logos: {error}"
 msgstr "Не удалось импортировать логотипы: {error}"
 
-#: templates/_settings_tabs/scraping.html:58 templates/settings.html:4500
+#: templates/_settings_tabs/scraping.html:58 templates/settings.html:4511
 msgid "Import System Logos"
 msgstr "Импортировать логотипы систем"
 
-#: templates/settings.html:4564
+#: templates/settings.html:4575
 msgid "RA sync state and queue cleared!"
 msgstr "Состояние и очередь синхронизации RA очищены!"
 
-#: templates/settings.html:4578
+#: templates/settings.html:4589
 msgid "RA sync queue cleared (server unreachable)"
 msgstr "Очередь синхронизации RA очищена (сервер недоступен)"
 
-#: templates/settings.html:4597
+#: templates/settings.html:4608
 msgid "No items in queue, no active sync."
 msgstr "В очереди ничего нет, активной синхронизации нет."
 
-#: templates/settings.html:4740
+#: templates/settings.html:4751
 msgid "Logging settings saved!"
 msgstr "Настройки журналирования сохранены!"
 
-#: templates/settings.html:4742
+#: templates/settings.html:4753
 msgid "Failed to save"
 msgstr "Не удалось сохранить"
 
-#: templates/_settings_tabs/system.html:382 templates/settings.html:4748
+#: templates/_settings_tabs/system.html:383 templates/settings.html:4759
 msgid "Save Logging Settings"
 msgstr "Сохранить настройки журналирования"
 
-#: templates/settings.html:4755
+#: templates/settings.html:4766
 msgid "Loading log files..."
 msgstr "Загрузка файлов журналов..."
 
-#: templates/settings.html:4767
+#: templates/settings.html:4778
 msgid "Date"
 msgstr "Дата"
 
-#: templates/settings.html:4800
+#: templates/settings.html:4811
 msgid ""
 "No log files found. Logs will appear here after scraping or ROM "
 "operations."
@@ -12779,103 +12794,103 @@ msgstr ""
 "Файлы журналов не найдены. Журналы появятся здесь после скрапинга или "
 "операций с ROM."
 
-#: templates/settings.html:4803
+#: templates/settings.html:4814
 #, python-brace-format
 msgid "Error loading log files: {error}"
 msgstr "Ошибка загрузки файлов журналов: {error}"
 
-#: templates/settings.html:4820
+#: templates/settings.html:4831
 #, python-brace-format
 msgid "Log: {filename}"
 msgstr "Журнал: {filename}"
 
-#: templates/settings.html:4821
+#: templates/settings.html:4832
 msgid "Log file is empty"
 msgstr "Файл журнала пуст"
 
-#: templates/settings.html:4824
+#: templates/settings.html:4835
 msgid "Failed to load log file"
 msgstr "Не удалось загрузить файл журнала"
 
-#: templates/settings.html:4827
+#: templates/settings.html:4838
 #, python-brace-format
 msgid "Error loading log file: {error}"
 msgstr "Ошибка загрузки файла журнала: {error}"
 
-#: templates/settings.html:4846
+#: templates/settings.html:4857
 msgid "Failed to delete log file"
 msgstr "Не удалось удалить файл журнала"
 
-#: templates/settings.html:4849
+#: templates/settings.html:4860
 #, python-brace-format
 msgid "Error deleting log file: {error}"
 msgstr "Ошибка удаления файла журнала: {error}"
 
-#: templates/settings.html:4855
+#: templates/settings.html:4866
 msgid "Clear Old Logs"
 msgstr "Удалить старые журналы"
 
-#: templates/settings.html:4855
+#: templates/settings.html:4866
 msgid "This will delete all log files older than 5 days. Continue?"
 msgstr "Все файлы журналов старше 5 дней будут удалены. Продолжить?"
 
-#: templates/settings.html:4861
+#: templates/settings.html:4872
 #, python-brace-format
 msgid "Old log files removed: {count}"
 msgstr "Удалено старых файлов журналов: {count}"
 
-#: templates/settings.html:4864
+#: templates/settings.html:4875
 msgid "Failed to clear old logs"
 msgstr "Не удалось удалить старые журналы"
 
-#: templates/settings.html:4867
+#: templates/settings.html:4878
 #, python-brace-format
 msgid "Error clearing old logs: {error}"
 msgstr "Ошибка удаления старых журналов: {error}"
 
-#: templates/settings.html:4912
+#: templates/settings.html:4923
 msgid "Token extracted from the pasted page"
 msgstr "Токен извлечён из вставленной страницы"
 
-#: templates/settings.html:4914
+#: templates/settings.html:4925
 msgid "Token detected"
 msgstr "Токен обнаружен"
 
-#: templates/settings.html:4916
+#: templates/settings.html:4927
 msgid "Could not detect a valid NPSSO token"
 msgstr "Не удалось найти действительный токен NPSSO"
 
-#: templates/settings.html:4928
+#: templates/settings.html:4939
 msgid "Now press Ctrl+V to paste."
 msgstr "Теперь нажмите Ctrl+V, чтобы вставить."
 
-#: templates/settings.html:4940
+#: templates/settings.html:4951
 msgid "Enter an NPSSO token first"
 msgstr "Сначала введите токен NPSSO"
 
-#: templates/settings.html:4945
+#: templates/settings.html:4956
 msgid "Testing..."
 msgstr "Проверка..."
 
-#: templates/settings.html:4946 templates/settings.html:5035
+#: templates/settings.html:4957 templates/settings.html:5046
 msgid "Saving and connecting..."
 msgstr "Сохранение и подключение..."
 
-#: templates/settings.html:4957 templates/settings.html:5044
+#: templates/settings.html:4968 templates/settings.html:5055
 #, python-format
 msgid "Connected as %(name)s"
 msgstr "Подключено как %(name)s"
 
-#: templates/settings.html:4964 templates/settings.html:5048
+#: templates/settings.html:4975 templates/settings.html:5059
 msgid "Connection failed"
 msgstr "Не удалось подключиться"
 
-#: templates/settings.html:4967 templates/settings.html:5051
+#: templates/settings.html:4978 templates/settings.html:5062
 #, python-format
 msgid "Error: %(msg)s"
 msgstr "Ошибка: %(msg)s"
 
-#: templates/settings.html:4986
+#: templates/settings.html:4997
 #, python-format
 msgid ""
 "Sony refused your saved NPSSO token on %(date)s. Get a new one with the "
@@ -12884,7 +12899,7 @@ msgstr ""
 "Sony отклонила ваш сохранённый токен NPSSO %(date)s. Получите новый, "
 "выполнив шаги ниже."
 
-#: templates/settings.html:4989
+#: templates/settings.html:5000
 msgid ""
 "Connected to PSN. RetroDB keeps the sign-in going by itself. You need a "
 "new token only if Sony refuses this one."
@@ -12892,50 +12907,50 @@ msgstr ""
 "Подключено к PSN. RetroDB сам поддерживает вход. Новый токен нужен, "
 "только если Sony отклонит этот."
 
-#: templates/settings.html:5018
+#: templates/settings.html:5029
 #, python-format
 msgid "Key saved. Connected as %(name)s."
 msgstr "Ключ сохранён. Подключено как %(name)s."
 
-#: templates/settings.html:5019
+#: templates/settings.html:5030
 msgid "No key saved."
 msgstr "Ключ не сохранён."
 
-#: templates/settings.html:5057
+#: templates/settings.html:5068
 msgid "Remove Xbox key"
 msgstr "Удалить ключ Xbox"
 
-#: templates/settings.html:5057
+#: templates/settings.html:5068
 msgid "Remove your OpenXBL key? Your imported games and achievements stay."
 msgstr "Удалить ваш ключ OpenXBL? Импортированные игры и достижения останутся."
 
-#: templates/settings.html:5062
+#: templates/settings.html:5073
 msgid "Could not remove the Xbox key."
 msgstr "Не удалось удалить ключ Xbox."
 
-#: templates/settings.html:5151 templates/settings.html:5198
+#: templates/settings.html:5162 templates/settings.html:5209
 msgid "Avatar updated!"
 msgstr "Аватар обновлён!"
 
-#: templates/settings.html:5156
+#: templates/settings.html:5167
 #, python-brace-format
 msgid "Upload failed: {error}"
 msgstr "Не удалось загрузить: {error}"
 
-#: templates/settings.html:5173
+#: templates/settings.html:5184
 msgid "Avatar removed"
 msgstr "Аватар удалён"
 
-#: templates/settings.html:5175 templates/settings.html:5178
+#: templates/settings.html:5186 templates/settings.html:5189
 msgid "Failed to remove avatar"
 msgstr "Не удалось удалить аватар"
 
-#: templates/settings.html:5200 templates/settings.html:5203
+#: templates/settings.html:5211 templates/settings.html:5214
 msgid "Failed to save avatar"
 msgstr "Не удалось сохранить аватар"
 
-#: templates/_settings_tabs/_tab_bar.html:23
-#: templates/_settings_tabs/_tab_bar.html:38
+#: templates/_settings_tabs/_tab_bar.html:24
+#: templates/_settings_tabs/_tab_bar.html:39
 #: templates/settings_emulators.html:4 templates/settings_emulators.html:9
 #: templates/settings_emulators.html:24
 msgid "Emulators"
@@ -13346,7 +13361,7 @@ msgstr "Определено браузером:"
 msgid "Use detected"
 msgstr "Использовать определённое"
 
-#: templates/_settings_tabs/library.html:24 templates/setup.html:141
+#: templates/_settings_tabs/library.html:26 templates/setup.html:141
 #: templates/setup.html:144
 msgid "ROM Library Path"
 msgstr "Путь к библиотеке ROM"
@@ -13369,7 +13384,7 @@ msgstr "Обзор папок"
 msgid "Current: %(path)s"
 msgstr "Текущая: %(path)s"
 
-#: templates/_settings_tabs/data.html:55 templates/setup.html:151
+#: templates/_settings_tabs/data.html:57 templates/setup.html:151
 msgid "Example:"
 msgstr "Пример:"
 
@@ -14580,25 +14595,25 @@ msgstr ""
 msgid "Apply"
 msgstr "Применить"
 
-#: templates/_settings_tabs/_tab_bar.html:6
+#: templates/_settings_tabs/_tab_bar.html:7
 msgid "Account"
 msgstr "Учётная запись"
 
-#: templates/_settings_tabs/_tab_bar.html:8
+#: templates/_settings_tabs/_tab_bar.html:9
 msgctxt "settings tab"
 msgid "Scraping"
 msgstr "Скрапинг"
 
-#: templates/_settings_tabs/_tab_bar.html:9
+#: templates/_settings_tabs/_tab_bar.html:10
 msgid "Data"
 msgstr "Данные"
 
-#: templates/_settings_tabs/_tab_bar.html:10
+#: templates/_settings_tabs/_tab_bar.html:11
 msgid "Customization"
 msgstr "Настройка внешнего вида"
 
-#: templates/_settings_tabs/_tab_bar.html:14
-#: templates/_settings_tabs/_tab_bar.html:27
+#: templates/_settings_tabs/_tab_bar.html:15
+#: templates/_settings_tabs/_tab_bar.html:28
 msgid "Settings sections"
 msgstr "Разделы настроек"
 
@@ -14956,11 +14971,6 @@ msgstr "Управление пользователями"
 msgid "Manage users who can access RetroDB."
 msgstr "Управляйте пользователями, у которых есть доступ к RetroDB."
 
-#: templates/_settings_tabs/account.html:319
-#: templates/_settings_tabs/account.html:393
-msgid "Add User"
-msgstr "Добавить пользователя"
-
 #: templates/_settings_tabs/account.html:327
 msgid "Role"
 msgstr "Роль"
@@ -15020,14 +15030,25 @@ msgid "Admin - Full access"
 msgstr "Администратор — полный доступ"
 
 #: templates/_settings_tabs/account.html:420
+#, fuzzy
+msgid "Password *"
+msgstr "Пароль"
+
+#: templates/_settings_tabs/account.html:422
+msgid ""
+"12 characters or more. Give it to them; they choose their own the first "
+"time they sign in."
+msgstr ""
+
+#: templates/_settings_tabs/account.html:426
 msgid "Reset Password"
 msgstr "Сбросить пароль"
 
-#: templates/_settings_tabs/account.html:421
+#: templates/_settings_tabs/account.html:427
 msgid "Leave blank to keep current"
 msgstr "Оставьте пустым, чтобы сохранить текущий"
 
-#: templates/_settings_tabs/account.html:426
+#: templates/_settings_tabs/account.html:432
 msgid "Save User"
 msgstr "Сохранить пользователя"
 
@@ -15035,28 +15056,28 @@ msgstr "Сохранить пользователя"
 msgid "Customization settings"
 msgstr "Настройки внешнего вида"
 
-#: templates/_settings_tabs/customization.html:4
+#: templates/_settings_tabs/customization.html:5
 msgid "Notifications"
 msgstr "Уведомления"
 
-#: templates/_settings_tabs/customization.html:6
+#: templates/_settings_tabs/customization.html:7
 msgid "System Defaults"
 msgstr "Настройки систем по умолчанию"
 
-#: templates/_settings_tabs/customization.html:7
-#: templates/_settings_tabs/customization.html:199
+#: templates/_settings_tabs/customization.html:8
+#: templates/_settings_tabs/customization.html:202
 msgid "Add Controller"
 msgstr "Добавить контроллер"
 
-#: templates/_settings_tabs/customization.html:9
+#: templates/_settings_tabs/customization.html:10
 msgid "Logos"
 msgstr "Логотипы"
 
-#: templates/_settings_tabs/customization.html:15
+#: templates/_settings_tabs/customization.html:17
 msgid "Notification Settings"
 msgstr "Настройки уведомлений"
 
-#: templates/_settings_tabs/customization.html:19
+#: templates/_settings_tabs/customization.html:21
 msgid ""
 "Configure how long toast notifications stay visible before automatically "
 "dismissing. Set to 0 for notifications that only close when clicked."
@@ -15065,54 +15086,54 @@ msgstr ""
 "автоматическим скрытием. Установите 0, чтобы уведомления закрывались "
 "только по клику."
 
-#: templates/_settings_tabs/customization.html:26
+#: templates/_settings_tabs/customization.html:28
 msgid "Success Notifications"
 msgstr "Уведомления об успехе"
 
-#: templates/_settings_tabs/customization.html:32
-#: templates/_settings_tabs/customization.html:46
-#: templates/_settings_tabs/customization.html:60
-#: templates/_settings_tabs/customization.html:74
+#: templates/_settings_tabs/customization.html:34
+#: templates/_settings_tabs/customization.html:48
+#: templates/_settings_tabs/customization.html:62
+#: templates/_settings_tabs/customization.html:76
 msgid "seconds"
 msgstr "секунд"
 
-#: templates/_settings_tabs/customization.html:34
+#: templates/_settings_tabs/customization.html:36
 msgid "Shown after successful operations"
 msgstr "Отображаются после успешных операций"
 
-#: templates/_settings_tabs/customization.html:40
+#: templates/_settings_tabs/customization.html:42
 msgid "Info Notifications"
 msgstr "Информационные уведомления"
 
-#: templates/_settings_tabs/customization.html:48
+#: templates/_settings_tabs/customization.html:50
 msgid "General information messages"
 msgstr "Общие информационные сообщения"
 
-#: templates/_settings_tabs/customization.html:54
+#: templates/_settings_tabs/customization.html:56
 msgid "Warning Notifications"
 msgstr "Предупреждающие уведомления"
 
-#: templates/_settings_tabs/customization.html:62
+#: templates/_settings_tabs/customization.html:64
 msgid "Warnings that need attention"
 msgstr "Предупреждения, требующие внимания"
 
-#: templates/_settings_tabs/customization.html:68
+#: templates/_settings_tabs/customization.html:70
 msgid "Error Notifications"
 msgstr "Уведомления об ошибках"
 
-#: templates/_settings_tabs/customization.html:76
+#: templates/_settings_tabs/customization.html:78
 msgid "Errors stay longer for readability"
 msgstr "Ошибки остаются дольше для удобства чтения"
 
-#: templates/_settings_tabs/customization.html:87
+#: templates/_settings_tabs/customization.html:89
 msgid "Test Notifications"
 msgstr "Проверить уведомления"
 
-#: templates/_settings_tabs/customization.html:96
+#: templates/_settings_tabs/customization.html:99
 msgid "Controller Management"
 msgstr "Управление контроллерами"
 
-#: templates/_settings_tabs/customization.html:100
+#: templates/_settings_tabs/customization.html:103
 msgid ""
 "Manage controllers and assign default controllers to each system. The "
 "default controller will automatically appear for all games in that "
@@ -15122,11 +15143,11 @@ msgstr ""
 "системе. Контроллер по умолчанию будет автоматически отображаться для "
 "всех игр этой системы."
 
-#: templates/_settings_tabs/customization.html:106
+#: templates/_settings_tabs/customization.html:109
 msgid "System Default Controllers"
 msgstr "Контроллеры по умолчанию для систем"
 
-#: templates/_settings_tabs/customization.html:109
+#: templates/_settings_tabs/customization.html:112
 msgid ""
 "Assign a default controller to each system. Games will inherit this "
 "controller unless manually changed."
@@ -15134,11 +15155,11 @@ msgstr ""
 "Назначьте контроллер по умолчанию каждой системе. Игры унаследуют этот "
 "контроллер, если не изменить его вручную."
 
-#: templates/_settings_tabs/customization.html:114
+#: templates/_settings_tabs/customization.html:117
 msgid "Auto-Assign Defaults"
 msgstr "Автоматически назначить по умолчанию"
 
-#: templates/_settings_tabs/customization.html:117
+#: templates/_settings_tabs/customization.html:120
 msgid ""
 "Automatically assigns appropriate controllers to all systems based on "
 "hardware type"
@@ -15146,11 +15167,11 @@ msgstr ""
 "Автоматически назначает подходящие контроллеры всем системам в "
 "зависимости от типа оборудования"
 
-#: templates/_settings_tabs/customization.html:141
+#: templates/_settings_tabs/customization.html:144
 msgid "Add New Controller"
 msgstr "Добавить новый контроллер"
 
-#: templates/_settings_tabs/customization.html:144
+#: templates/_settings_tabs/customization.html:147
 msgid ""
 "Add a custom controller to the library. Select one or more systems, or "
 "leave empty for \"Universal\" controllers."
@@ -15158,22 +15179,22 @@ msgstr ""
 "Добавьте собственный контроллер в библиотеку. Выберите одну или несколько"
 " систем либо оставьте пустым для «универсальных» контроллеров."
 
-#: templates/_settings_tabs/customization.html:149
-#: templates/_settings_tabs/customization.html:230
+#: templates/_settings_tabs/customization.html:152
+#: templates/_settings_tabs/customization.html:233
 msgid "Controller Name"
 msgstr "Название контроллера"
 
-#: templates/_settings_tabs/customization.html:150
-#: templates/_settings_tabs/customization.html:231
+#: templates/_settings_tabs/customization.html:153
+#: templates/_settings_tabs/customization.html:234
 msgid "e.g., SNES Mouse"
 msgstr "например, SNES Mouse"
 
-#: templates/_settings_tabs/customization.html:158
-#: templates/_settings_tabs/customization.html:239
+#: templates/_settings_tabs/customization.html:161
+#: templates/_settings_tabs/customization.html:242
 msgid "+ Add system..."
 msgstr "+ Добавить систему…"
 
-#: templates/_settings_tabs/customization.html:161
+#: templates/_settings_tabs/customization.html:164
 msgid ""
 "Leave empty for Universal controllers. Select multiple systems for shared"
 " controllers."
@@ -15181,36 +15202,36 @@ msgstr ""
 "Оставьте пустым для универсальных контроллеров. Выберите несколько систем"
 " для общих контроллеров."
 
-#: templates/_settings_tabs/customization.html:166
-#: templates/_settings_tabs/customization.html:247
+#: templates/_settings_tabs/customization.html:169
+#: templates/_settings_tabs/customization.html:250
 msgid "e.g., Nintendo, Sony, or custom..."
 msgstr "например, Nintendo, Sony или свой вариант…"
 
-#: templates/_settings_tabs/customization.html:184
-#: templates/_settings_tabs/customization.html:250
+#: templates/_settings_tabs/customization.html:187
+#: templates/_settings_tabs/customization.html:253
 msgid "Release Year"
 msgstr "Год выпуска"
 
-#: templates/_settings_tabs/customization.html:185
-#: templates/_settings_tabs/customization.html:251
+#: templates/_settings_tabs/customization.html:188
+#: templates/_settings_tabs/customization.html:254
 msgid "e.g., 1992"
 msgstr "например, 1992"
 
-#: templates/_settings_tabs/customization.html:190
-#: templates/_settings_tabs/customization.html:256
+#: templates/_settings_tabs/customization.html:193
+#: templates/_settings_tabs/customization.html:259
 msgid "e.g., D-Pad, A, B, Start, Select"
 msgstr "например, D-Pad, A, B, Start, Select"
 
-#: templates/_settings_tabs/customization.html:194
-#: templates/_settings_tabs/customization.html:260
+#: templates/_settings_tabs/customization.html:197
+#: templates/_settings_tabs/customization.html:263
 msgid "Brief description of the controller..."
 msgstr "Краткое описание контроллера…"
 
-#: templates/_settings_tabs/customization.html:207
+#: templates/_settings_tabs/customization.html:210
 msgid "Controller Library"
 msgstr "Библиотека контроллеров"
 
-#: templates/_settings_tabs/customization.html:210
+#: templates/_settings_tabs/customization.html:213
 msgid ""
 "All controllers in the database, sorted alphabetically by manufacturer. "
 "Click to expand details. You can delete custom controllers."
@@ -15219,19 +15240,19 @@ msgstr ""
 "производителю. Нажмите, чтобы развернуть подробности. Собственные "
 "контроллеры можно удалить."
 
-#: templates/_settings_tabs/customization.html:223
+#: templates/_settings_tabs/customization.html:226
 msgid "Edit Controller"
 msgstr "Редактировать контроллер"
 
-#: templates/_settings_tabs/customization.html:242
+#: templates/_settings_tabs/customization.html:245
 msgid "Leave empty for Universal controllers."
 msgstr "Оставьте пустым для универсальных контроллеров."
 
-#: templates/_settings_tabs/customization.html:276
+#: templates/_settings_tabs/customization.html:280
 msgid "System Logo Reference"
 msgstr "Справка по логотипам систем"
 
-#: templates/_settings_tabs/customization.html:280
+#: templates/_settings_tabs/customization.html:284
 msgid ""
 "System logos should be placed in <code>static/images/systems/</code> and "
 "named to match the system folder name with a supported extension "
@@ -15243,33 +15264,33 @@ msgstr ""
 "расширением (<code>.png</code>, <code>.webp</code>, <code>.jpg</code> или"
 " <code>.svg</code>)."
 
-#: templates/_settings_tabs/customization.html:285
+#: templates/_settings_tabs/customization.html:289
 msgid "Refresh System Logos"
 msgstr "Обновить логотипы систем"
 
-#: templates/_settings_tabs/customization.html:288
+#: templates/_settings_tabs/customization.html:292
 msgid "Refresh System Names"
 msgstr "Обновить названия систем"
 
-#: templates/_settings_tabs/customization.html:291
+#: templates/_settings_tabs/customization.html:295
 msgid "Updates database with detected logos and correct system names"
 msgstr ""
 "Обновляет базу данных обнаруженными логотипами и правильными названиями "
 "систем"
 
-#: templates/_settings_tabs/customization.html:301
+#: templates/_settings_tabs/customization.html:305
 msgid "Folder Name"
 msgstr "Имя папки"
 
-#: templates/_settings_tabs/customization.html:302
+#: templates/_settings_tabs/customization.html:306
 msgid "Required Logo Filename"
 msgstr "Требуемое имя файла логотипа"
 
-#: templates/_settings_tabs/customization.html:303
+#: templates/_settings_tabs/customization.html:307
 msgid "Logo Status"
 msgstr "Статус логотипа"
 
-#: templates/_settings_tabs/customization.html:304
+#: templates/_settings_tabs/customization.html:308
 msgid "Hardware Image"
 msgstr "Изображение оборудования"
 
@@ -15281,36 +15302,36 @@ msgstr "Настройки данных"
 msgid "Stats"
 msgstr "Статистика"
 
-#: templates/_settings_tabs/data.html:6
+#: templates/_settings_tabs/data.html:7
 msgid "Dropdowns"
 msgstr "Выпадающие списки"
 
-#: templates/_settings_tabs/data.html:7
+#: templates/_settings_tabs/data.html:8
 msgid "Normalization"
 msgstr "Нормализация"
 
-#: templates/_settings_tabs/data.html:13
+#: templates/_settings_tabs/data.html:15
 msgid "Library Statistics"
 msgstr "Статистика библиотеки"
 
-#: templates/_settings_tabs/data.html:27
+#: templates/_settings_tabs/data.html:29
 msgid "With Metadata"
 msgstr "С метаданными"
 
-#: templates/_settings_tabs/data.html:40
+#: templates/_settings_tabs/data.html:42
 msgid "RPCS3 Trophy Settings"
 msgstr "Настройки трофеев RPCS3"
 
-#: templates/_settings_tabs/data.html:44
+#: templates/_settings_tabs/data.html:46
 #: templates/_settings_tabs/scraping.html:41
 msgid "RPCS3 Trophy Path"
 msgstr "Путь к трофеям RPCS3"
 
-#: templates/_settings_tabs/data.html:49
+#: templates/_settings_tabs/data.html:51
 msgid "(Not configured)"
 msgstr "(Не настроено)"
 
-#: templates/_settings_tabs/data.html:54
+#: templates/_settings_tabs/data.html:56
 msgid ""
 "Set the RPCS3 Trophy Path in <a href=\"#esde\">ES-DE Integration</a> on "
 "the Scraping tab"
@@ -15318,49 +15339,49 @@ msgstr ""
 "Укажите путь к трофеям RPCS3 в разделе <a href=\"#esde\">Интеграция с ES-"
 "DE</a> на вкладке «Скрапинг»"
 
-#: templates/_settings_tabs/data.html:64
+#: templates/_settings_tabs/data.html:66
 msgid "Scan your RPCS3 trophy folder for unlocked trophies"
 msgstr "Просканировать папку трофеев RPCS3 на наличие полученных трофеев"
 
-#: templates/_settings_tabs/data.html:74
+#: templates/_settings_tabs/data.html:77
 msgid "Dropdown Options"
 msgstr "Параметры выпадающих списков"
 
-#: templates/_settings_tabs/data.html:78
+#: templates/_settings_tabs/data.html:81
 msgid "Manage the options available in dropdown menus when editing games."
 msgstr ""
 "Управляйте вариантами, доступными в выпадающих списках при редактировании"
 " игр."
 
-#: templates/_settings_tabs/data.html:86
+#: templates/_settings_tabs/data.html:89
 msgid "New genre..."
 msgstr "Новый жанр…"
 
-#: templates/_settings_tabs/data.html:96
+#: templates/_settings_tabs/data.html:99
 msgid "New game structure..."
 msgstr "Новая структура игры…"
 
-#: templates/_settings_tabs/data.html:106
+#: templates/_settings_tabs/data.html:109
 msgid "New perspective..."
 msgstr "Новая перспектива…"
 
-#: templates/_settings_tabs/data.html:116
+#: templates/_settings_tabs/data.html:119
 msgid "New dimension..."
 msgstr "Новое измерение…"
 
-#: templates/_settings_tabs/data.html:126
+#: templates/_settings_tabs/data.html:129
 msgid "New play mode..."
 msgstr "Новый режим игры…"
 
-#: templates/_settings_tabs/data.html:136
+#: templates/_settings_tabs/data.html:139
 msgid "New save type..."
 msgstr "Новый тип сохранения…"
 
-#: templates/_settings_tabs/data.html:147
+#: templates/_settings_tabs/data.html:151
 msgid "Data Normalization"
 msgstr "Нормализация данных"
 
-#: templates/_settings_tabs/data.html:151
+#: templates/_settings_tabs/data.html:155
 msgid ""
 "Fix inconsistent genre and mode values across your library. Custom rules "
 "are saved and automatically apply to future scrapes."
@@ -15369,7 +15390,7 @@ msgstr ""
 "Пользовательские правила сохраняются и автоматически применяются к "
 "будущим скрапингам."
 
-#: templates/_settings_tabs/data.html:154
+#: templates/_settings_tabs/data.html:158
 msgid ""
 "Franchise, Publisher and Developer list each name spelled with different "
 "capitals, such as \"Doom\" and \"DOOM\". Pick one spelling for each; "
@@ -15381,31 +15402,31 @@ msgstr ""
 "одно написание для каждого; ничего не изменится, пока вы не нажмёте "
 "«Применить». После этого скрапинг будет использовать это написание."
 
-#: templates/_settings_tabs/data.html:170
+#: templates/_settings_tabs/data.html:174
 msgid "Show only values needing changes"
 msgstr "Показывать только значения, требующие изменений"
 
-#: templates/_settings_tabs/data.html:181
+#: templates/_settings_tabs/data.html:185
 msgid "Loading values..."
 msgstr "Загрузка значений…"
 
-#: templates/_settings_tabs/data.html:190
+#: templates/_settings_tabs/data.html:194
 msgid "Select/deselect all"
 msgstr "Выбрать/снять выбор со всех"
 
-#: templates/_settings_tabs/data.html:191
+#: templates/_settings_tabs/data.html:195
 msgid "Current Value"
 msgstr "Текущее значение"
 
-#: templates/_settings_tabs/data.html:193
+#: templates/_settings_tabs/data.html:197
 msgid "Normalize To"
 msgstr "Нормализовать в"
 
-#: templates/_settings_tabs/data.html:203
+#: templates/_settings_tabs/data.html:207
 msgid "Select All Changed"
 msgstr "Выбрать все изменённые"
 
-#: templates/_settings_tabs/data.html:212
+#: templates/_settings_tabs/data.html:216
 msgid ""
 "No values found for this field. Make sure your library has games with "
 "metadata."
@@ -15413,15 +15434,15 @@ msgstr ""
 "Для этого поля не найдено значений. Убедитесь, что в библиотеке есть игры"
 " с метаданными."
 
-#: templates/_settings_tabs/data.html:215
+#: templates/_settings_tabs/data.html:219
 msgid "Every name in this field has one spelling."
 msgstr "У каждого названия в этом поле одно написание."
 
-#: templates/_settings_tabs/data.html:220
+#: templates/_settings_tabs/data.html:224
 msgid "Names that may be one company"
 msgstr "Названия, которые могут быть одной компанией"
 
-#: templates/_settings_tabs/data.html:222
+#: templates/_settings_tabs/data.html:226
 msgid ""
 "Names such as \"Eidos\" and \"Eidos Interactive\" may be one company, or "
 "two: \"Atari Games\" and \"Atari, Inc.\" are different companies. For "
@@ -15436,7 +15457,7 @@ msgstr ""
 "«Издатель» и «Разработчик» во всех играх, а последующий скрапинг "
 "использует оставленное название."
 
-#: templates/_settings_tabs/data.html:225
+#: templates/_settings_tabs/data.html:229
 msgid "No names look like one company."
 msgstr "Нет названий, похожих на одну компанию."
 
@@ -15444,122 +15465,122 @@ msgstr "Нет названий, похожих на одну компанию."
 msgid "Library settings"
 msgstr "Настройки библиотеки"
 
-#: templates/_settings_tabs/library.html:6
+#: templates/_settings_tabs/library.html:7
 msgid "Paths"
 msgstr "Пути"
 
-#: templates/_settings_tabs/library.html:7
+#: templates/_settings_tabs/library.html:8
 msgid "Display"
 msgstr "Отображение"
 
-#: templates/_settings_tabs/library.html:8
+#: templates/_settings_tabs/library.html:9
 msgid "ROM Naming"
 msgstr "Именование ROM"
 
-#: templates/_settings_tabs/library.html:10
+#: templates/_settings_tabs/library.html:11
 msgid "Backup"
 msgstr "Резервное копирование"
 
-#: templates/_settings_tabs/library.html:16
+#: templates/_settings_tabs/library.html:18
 msgid "Library Settings"
 msgstr "Настройки библиотеки"
 
-#: templates/_settings_tabs/library.html:20
+#: templates/_settings_tabs/library.html:22
 msgid ""
 "Configure the paths to your ROM library, ES-DE data, and other "
 "integrations."
 msgstr "Настройте пути к библиотеке ROM, данным ES-DE и другим интеграциям."
 
-#: templates/_settings_tabs/library.html:27
+#: templates/_settings_tabs/library.html:29
 msgid "e.g. /home/user/ROMS"
 msgstr "например, /home/user/ROMS"
 
-#: templates/_settings_tabs/library.html:35
+#: templates/_settings_tabs/library.html:37
 msgid "Database Location"
 msgstr "Расположение базы данных"
 
-#: templates/_settings_tabs/library.html:37
+#: templates/_settings_tabs/library.html:39
 msgid "Database path cannot be changed via UI"
 msgstr "Путь к базе данных нельзя изменить через интерфейс"
 
-#: templates/_settings_tabs/library.html:43
+#: templates/_settings_tabs/library.html:45
 #: templates/_settings_tabs/scraping.html:54
 msgid "Save Path Settings"
 msgstr "Сохранить настройки путей"
 
-#: templates/_settings_tabs/library.html:51
+#: templates/_settings_tabs/library.html:53
 msgid "Changes to ROM path require a restart to take full effect"
 msgstr "Для полного применения изменений пути к ROM требуется перезапуск"
 
-#: templates/_settings_tabs/library.html:60
+#: templates/_settings_tabs/library.html:63
 msgid "Display Preferences"
 msgstr "Настройки отображения"
 
-#: templates/_settings_tabs/library.html:64
+#: templates/_settings_tabs/library.html:67
 msgid "Theme"
 msgstr "Тема"
 
-#: templates/_settings_tabs/library.html:72
+#: templates/_settings_tabs/library.html:75
 msgid "Cyberpunk"
 msgstr "Cyberpunk"
 
-#: templates/_settings_tabs/library.html:80
+#: templates/_settings_tabs/library.html:83
 msgid "Matrix"
 msgstr "Matrix"
 
-#: templates/_settings_tabs/library.html:88
+#: templates/_settings_tabs/library.html:91
 msgid "Retro Amber"
 msgstr "Retro Amber"
 
-#: templates/_settings_tabs/library.html:96
+#: templates/_settings_tabs/library.html:99
 msgid "Midnight Ocean"
 msgstr "Midnight Ocean"
 
-#: templates/_settings_tabs/library.html:104
+#: templates/_settings_tabs/library.html:107
 msgid "Cathedral"
 msgstr "Cathedral"
 
-#: templates/_settings_tabs/library.html:112
+#: templates/_settings_tabs/library.html:115
 msgid "Blade Runner"
 msgstr "Blade Runner"
 
-#: templates/_settings_tabs/library.html:120
+#: templates/_settings_tabs/library.html:123
 msgid "Elite"
 msgstr "Elite"
 
-#: templates/_settings_tabs/library.html:123
+#: templates/_settings_tabs/library.html:126
 msgid "Theme applies instantly. Changes are saved automatically."
 msgstr "Тема применяется мгновенно. Изменения сохраняются автоматически."
 
-#: templates/_settings_tabs/library.html:131
+#: templates/_settings_tabs/library.html:134
 msgid "Language"
 msgstr "Язык"
 
-#: templates/_settings_tabs/library.html:142
+#: templates/_settings_tabs/library.html:145
 msgid "Changes the interface language. The page reloads when you switch."
 msgstr "Изменяет язык интерфейса. При переключении страница перезагружается."
 
-#: templates/_settings_tabs/library.html:146
+#: templates/_settings_tabs/library.html:150
 msgid "Preferred Boxart Style"
 msgstr "Предпочитаемый стиль обложки"
 
-#: templates/_settings_tabs/library.html:148
+#: templates/_settings_tabs/library.html:152
 msgid "2D Boxart (Standard)"
 msgstr "2D-обложка (стандартная)"
 
-#: templates/_settings_tabs/library.html:149
+#: templates/_settings_tabs/library.html:153
 msgid "3D Boxart (with 2D fallback)"
 msgstr "3D-обложка (с резервной 2D)"
 
-#: templates/_settings_tabs/library.html:151
+#: templates/_settings_tabs/library.html:155
 msgid "When 3D is selected, 2D boxart will be shown if no 3D version exists"
 msgstr "Если выбрано 3D, при отсутствии 3D-версии будет показана 2D-обложка"
 
-#: templates/_settings_tabs/library.html:155
+#: templates/_settings_tabs/library.html:159
 msgid "Preferred Age Rating System"
 msgstr "Предпочитаемая система возрастных рейтингов"
 
-#: templates/_settings_tabs/library.html:167
+#: templates/_settings_tabs/library.html:171
 msgid ""
 "Ratings from other systems are cross-mapped when the preferred system's "
 "rating is unavailable"
@@ -15567,15 +15588,15 @@ msgstr ""
 "Рейтинги из других систем сопоставляются, когда рейтинг предпочитаемой "
 "системы недоступен"
 
-#: templates/_settings_tabs/library.html:173
+#: templates/_settings_tabs/library.html:177
 msgid "Save Display Settings"
 msgstr "Сохранить настройки отображения"
 
-#: templates/_settings_tabs/library.html:182
+#: templates/_settings_tabs/library.html:188
 msgid "ROM Naming Conventions"
 msgstr "Правила именования ROM"
 
-#: templates/_settings_tabs/library.html:186
+#: templates/_settings_tabs/library.html:192
 msgid ""
 "Configure the filename pattern for each system type. Title is always "
 "first.\n"
@@ -15587,11 +15608,11 @@ msgstr ""
 "            Добавляйте теги в том порядке, в котором они должны "
 "появляться в именах файлов (например, <code>Title (Region).zip</code>)."
 
-#: templates/_settings_tabs/library.html:191
+#: templates/_settings_tabs/library.html:197
 msgid "Article Placement"
 msgstr "Расположение артикля"
 
-#: templates/_settings_tabs/library.html:193
+#: templates/_settings_tabs/library.html:199
 msgid ""
 "Controls where articles (A, An, The) appear in game titles and ROM "
 "filenames."
@@ -15599,15 +15620,15 @@ msgstr ""
 "Определяет, где артикли (A, An, The) располагаются в названиях игр и "
 "именах файлов ROM."
 
-#: templates/_settings_tabs/library.html:196
+#: templates/_settings_tabs/library.html:202
 msgid "Beginning (natural) — \"The Legend of Zelda\""
 msgstr "В начале (естественно) — «The Legend of Zelda»"
 
-#: templates/_settings_tabs/library.html:197
+#: templates/_settings_tabs/library.html:203
 msgid "End (sort-friendly) — \"Legend of Zelda, The\""
 msgstr "В конце (удобно для сортировки) — «Legend of Zelda, The»"
 
-#: templates/_settings_tabs/library.html:199
+#: templates/_settings_tabs/library.html:205
 msgid ""
 "Applies to new scrapes and rename suggestions. Existing titles are not "
 "changed automatically."
@@ -15615,11 +15636,11 @@ msgstr ""
 "Применяется к новым скрапингам и предложениям переименования. "
 "Существующие названия автоматически не изменяются."
 
-#: templates/_settings_tabs/library.html:203
+#: templates/_settings_tabs/library.html:209
 msgid "Region Options"
 msgstr "Параметры регионов"
 
-#: templates/_settings_tabs/library.html:205
+#: templates/_settings_tabs/library.html:211
 msgid ""
 "Configure the available region values and default. The default region is "
 "used when scraping if no region is detected."
@@ -15627,15 +15648,15 @@ msgstr ""
 "Настройте доступные значения регионов и значение по умолчанию. Регион по "
 "умолчанию используется при скрапинге, если регион не определён."
 
-#: templates/_settings_tabs/library.html:220
+#: templates/_settings_tabs/library.html:226
 msgid "Default Region"
 msgstr "Регион по умолчанию"
 
-#: templates/_settings_tabs/library.html:278
+#: templates/_settings_tabs/library.html:286
 msgid "Current Bonus Discs"
 msgstr "Текущие бонусные диски"
 
-#: templates/_settings_tabs/library.html:281
+#: templates/_settings_tabs/library.html:289
 msgid ""
 "A disc marked by mistake can go back in your game lists. Auto-Link then "
 "leaves it alone."
@@ -16109,7 +16130,7 @@ msgid "Logging"
 msgstr "Журналирование"
 
 #: templates/_settings_tabs/system.html:11
-#: templates/_settings_tabs/system.html:412
+#: templates/_settings_tabs/system.html:414
 msgid "Troubleshooting"
 msgstr "Устранение неполадок"
 
@@ -16277,11 +16298,11 @@ msgstr ""
 "Перезапустить сервер Flask (полезно после изменения настроек) или "
 "полностью выключить его"
 
-#: templates/_settings_tabs/system.html:206
+#: templates/_settings_tabs/system.html:207
 msgid "Logging Settings"
 msgstr "Настройки журналирования"
 
-#: templates/_settings_tabs/system.html:210
+#: templates/_settings_tabs/system.html:211
 #, python-format
 msgid ""
 "Configure which log levels are written to log files. Logs are saved to "
@@ -16291,14 +16312,14 @@ msgstr ""
 " в папку %(folder)s, в именах файлов указана дата (например, "
 "%(example)s)."
 
-#: templates/_settings_tabs/system.html:216
-#: templates/_settings_tabs/system.html:224
-#: templates/_settings_tabs/system.html:231
-#: templates/_settings_tabs/system.html:238
+#: templates/_settings_tabs/system.html:217
+#: templates/_settings_tabs/system.html:225
+#: templates/_settings_tabs/system.html:232
+#: templates/_settings_tabs/system.html:239
 msgid "Scraping Logs"
 msgstr "Журналы скрапинга"
 
-#: templates/_settings_tabs/system.html:219
+#: templates/_settings_tabs/system.html:220
 msgid ""
 "Logs from metadata scraping operations (IGDB, TGDB, ScreenScraper, RAWG, "
 "ES-DE)"
@@ -16306,53 +16327,53 @@ msgstr ""
 "Журналы операций скрапинга метаданных (IGDB, TGDB, ScreenScraper, RAWG, "
 "ES-DE)"
 
-#: templates/_settings_tabs/system.html:224
-#: templates/_settings_tabs/system.html:227
-#: templates/_settings_tabs/system.html:257
-#: templates/_settings_tabs/system.html:260
-#: templates/_settings_tabs/system.html:290
-#: templates/_settings_tabs/system.html:293
-#: templates/_settings_tabs/system.html:323
-#: templates/_settings_tabs/system.html:326
-#: templates/_settings_tabs/system.html:356
-#: templates/_settings_tabs/system.html:359
+#: templates/_settings_tabs/system.html:225
+#: templates/_settings_tabs/system.html:228
+#: templates/_settings_tabs/system.html:258
+#: templates/_settings_tabs/system.html:261
+#: templates/_settings_tabs/system.html:291
+#: templates/_settings_tabs/system.html:294
+#: templates/_settings_tabs/system.html:324
+#: templates/_settings_tabs/system.html:327
+#: templates/_settings_tabs/system.html:357
+#: templates/_settings_tabs/system.html:360
 msgid "Informational"
 msgstr "Информационные"
 
-#: templates/_settings_tabs/system.html:231
-#: templates/_settings_tabs/system.html:234
-#: templates/_settings_tabs/system.html:264
-#: templates/_settings_tabs/system.html:267
-#: templates/_settings_tabs/system.html:297
-#: templates/_settings_tabs/system.html:300
-#: templates/_settings_tabs/system.html:330
-#: templates/_settings_tabs/system.html:333
-#: templates/_settings_tabs/system.html:363
-#: templates/_settings_tabs/system.html:366
+#: templates/_settings_tabs/system.html:232
+#: templates/_settings_tabs/system.html:235
+#: templates/_settings_tabs/system.html:265
+#: templates/_settings_tabs/system.html:268
+#: templates/_settings_tabs/system.html:298
+#: templates/_settings_tabs/system.html:301
+#: templates/_settings_tabs/system.html:331
+#: templates/_settings_tabs/system.html:334
+#: templates/_settings_tabs/system.html:364
+#: templates/_settings_tabs/system.html:367
 msgid "Warnings"
 msgstr "Предупреждения"
 
-#: templates/_settings_tabs/system.html:238
-#: templates/_settings_tabs/system.html:241
-#: templates/_settings_tabs/system.html:271
-#: templates/_settings_tabs/system.html:274
-#: templates/_settings_tabs/system.html:304
-#: templates/_settings_tabs/system.html:307
-#: templates/_settings_tabs/system.html:337
-#: templates/_settings_tabs/system.html:340
-#: templates/_settings_tabs/system.html:370
-#: templates/_settings_tabs/system.html:373
+#: templates/_settings_tabs/system.html:239
+#: templates/_settings_tabs/system.html:242
+#: templates/_settings_tabs/system.html:272
+#: templates/_settings_tabs/system.html:275
+#: templates/_settings_tabs/system.html:305
+#: templates/_settings_tabs/system.html:308
+#: templates/_settings_tabs/system.html:338
+#: templates/_settings_tabs/system.html:341
+#: templates/_settings_tabs/system.html:371
+#: templates/_settings_tabs/system.html:374
 msgid "Errors"
 msgstr "Ошибки"
 
-#: templates/_settings_tabs/system.html:249
-#: templates/_settings_tabs/system.html:257
-#: templates/_settings_tabs/system.html:264
-#: templates/_settings_tabs/system.html:271
+#: templates/_settings_tabs/system.html:250
+#: templates/_settings_tabs/system.html:258
+#: templates/_settings_tabs/system.html:265
+#: templates/_settings_tabs/system.html:272
 msgid "ROM Tools Logs"
 msgstr "Журналы инструментов ROM"
 
-#: templates/_settings_tabs/system.html:252
+#: templates/_settings_tabs/system.html:253
 msgid ""
 "Logs from ROM scanning, CHD conversion, archive extraction, and M3U "
 "creation"
@@ -16360,14 +16381,14 @@ msgstr ""
 "Журналы сканирования ROM, конвертации в CHD, распаковки архивов и "
 "создания M3U"
 
-#: templates/_settings_tabs/system.html:282
-#: templates/_settings_tabs/system.html:290
-#: templates/_settings_tabs/system.html:297
-#: templates/_settings_tabs/system.html:304
+#: templates/_settings_tabs/system.html:283
+#: templates/_settings_tabs/system.html:291
+#: templates/_settings_tabs/system.html:298
+#: templates/_settings_tabs/system.html:305
 msgid "ROM Reports Logs"
 msgstr "Журналы отчётов по ROM"
 
-#: templates/_settings_tabs/system.html:285
+#: templates/_settings_tabs/system.html:286
 msgid ""
 "Logs from ROM naming checks, mismatch detection, and batch rename "
 "operations"
@@ -16375,25 +16396,25 @@ msgstr ""
 "Журналы проверок названий ROM, поиска несоответствий и пакетного "
 "переименования"
 
-#: templates/_settings_tabs/system.html:315
-#: templates/_settings_tabs/system.html:323
-#: templates/_settings_tabs/system.html:330
-#: templates/_settings_tabs/system.html:337
+#: templates/_settings_tabs/system.html:316
+#: templates/_settings_tabs/system.html:324
+#: templates/_settings_tabs/system.html:331
+#: templates/_settings_tabs/system.html:338
 msgid "Image Resize Logs"
 msgstr "Журналы изменения размера изображений"
 
-#: templates/_settings_tabs/system.html:318
+#: templates/_settings_tabs/system.html:319
 msgid "Logs from image standardization (upscale/downscale) operations"
 msgstr "Журналы операций стандартизации изображений (увеличение/уменьшение)"
 
-#: templates/_settings_tabs/system.html:348
-#: templates/_settings_tabs/system.html:356
-#: templates/_settings_tabs/system.html:363
-#: templates/_settings_tabs/system.html:370
+#: templates/_settings_tabs/system.html:349
+#: templates/_settings_tabs/system.html:357
+#: templates/_settings_tabs/system.html:364
+#: templates/_settings_tabs/system.html:371
 msgid "System Logs"
 msgstr "Системные журналы"
 
-#: templates/_settings_tabs/system.html:351
+#: templates/_settings_tabs/system.html:352
 msgid ""
 "General system operations including achievements sync, page loads, and "
 "API calls"
@@ -16401,29 +16422,29 @@ msgstr ""
 "Общие системные операции, включая синхронизацию достижений, загрузку "
 "страниц и вызовы API"
 
-#: templates/_settings_tabs/system.html:390
+#: templates/_settings_tabs/system.html:391
 msgid "Log Files"
 msgstr "Файлы журналов"
 
-#: templates/_settings_tabs/system.html:395
+#: templates/_settings_tabs/system.html:396
 msgid "Refresh Log List"
 msgstr "Обновить список журналов"
 
-#: templates/_settings_tabs/system.html:399
+#: templates/_settings_tabs/system.html:400
 msgid "Clear Logs Older Than 5 Days"
 msgstr "Очистить журналы старше 5 дней"
 
-#: templates/_settings_tabs/system.html:403
+#: templates/_settings_tabs/system.html:404
 msgid "Click \"Refresh Log List\" to see available log files."
 msgstr ""
 "Нажмите «Обновить список журналов», чтобы увидеть доступные файлы "
 "журналов."
 
-#: templates/_settings_tabs/system.html:416
+#: templates/_settings_tabs/system.html:418
 msgid "Achievement Sync Issues"
 msgstr "Проблемы с синхронизацией достижений"
 
-#: templates/_settings_tabs/system.html:419
+#: templates/_settings_tabs/system.html:421
 msgid ""
 "If achievement syncs get stuck or the queue won't process, use this "
 "button to clear the sync queue and reset the sync state."
@@ -16431,19 +16452,19 @@ msgstr ""
 "Если синхронизация достижений зависла или очередь не обрабатывается, этой"
 " кнопкой можно очистить очередь синхронизации и сбросить её состояние."
 
-#: templates/_settings_tabs/system.html:424
+#: templates/_settings_tabs/system.html:426
 msgid "Clear Stuck RA Sync"
 msgstr "Очистить зависшую синхронизацию RA"
 
-#: templates/_settings_tabs/system.html:429
+#: templates/_settings_tabs/system.html:431
 msgid "Current RA Sync Queue:"
 msgstr "Текущая очередь синхронизации RA:"
 
-#: templates/_settings_tabs/system.html:438
+#: templates/_settings_tabs/system.html:440
 msgid "Support Development"
 msgstr "Поддержать разработку"
 
-#: templates/_settings_tabs/system.html:442
+#: templates/_settings_tabs/system.html:444
 msgid ""
 "RetroDB is free and open source. If it saves you time, consider "
 "sponsoring — every bit helps keep solo development sustainable."
@@ -16452,11 +16473,11 @@ msgstr ""
 "экономит ваше время, рассмотрите возможность поддержки — любая помощь "
 "помогает поддерживать разработку одним разработчиком."
 
-#: templates/_settings_tabs/system.html:446
+#: templates/_settings_tabs/system.html:448
 msgid "Sponsor on GitHub"
 msgstr "Поддержать на GitHub"
 
-#: templates/_settings_tabs/system.html:450
+#: templates/_settings_tabs/system.html:452
 msgid "Support on Patreon"
 msgstr "Поддержать на Patreon"
 

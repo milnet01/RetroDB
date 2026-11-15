@@ -1,15 +1,17 @@
 {% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
 <div class="settings-tab-panel" id="tab-customization" role="tabpanel" aria-label="{{ _('Customization settings') }}">
     {% call tab_subnav('customization') %}
-        {{ subnav_link('notifications', '🔔 ' ~ _('Notifications'), active=True) }}
-        {{ subnav_link('controllers', '🎮 ' ~ _('Controllers')) }}
+        {% set _is_admin = has_perm('manage_settings') %}
+        {% if _is_admin %}{{ subnav_link('notifications', '🔔 ' ~ _('Notifications'), active=True) }}{% endif %}
+        {{ subnav_link('controllers', '🎮 ' ~ _('Controllers'), active=not _is_admin) }}
         {{ subnav_link('controllers-defaults', '⚙️ ' ~ _('System Defaults')) }}
         {{ subnav_link('controllers-add', '➕ ' ~ _('Add Controller')) }}
         {{ subnav_link('controllers-library', '📚 ' ~ _('Library')) }}
-        {{ subnav_link('logos', '🖼️ ' ~ _('Logos')) }}
+        {% if _is_admin %}{{ subnav_link('logos', '🖼️ ' ~ _('Logos')) }}{% endif %}
     {% endcall %}
 
     <!-- Notification Settings -->
+{% if has_perm('manage_settings') %}
     <section class="card mb-xl" id="notifications">
         <div class="card-header">
             <h2 class="card-title">🔔 {{ _('Notification Settings') }}</h2>
@@ -89,6 +91,7 @@
             </div>
         </div>
     </section>
+{% endif %}
 
     <!-- Controller Management -->
     <section class="card mb-xl" id="controllers">
@@ -271,6 +274,7 @@
 </div>
 
 <!-- System Logo Reference -->
+{% if has_perm('manage_settings') %}
 <section class="card mb-xl" id="logos">
     <div class="card-header">
         <h2 class="card-title">🖼️ {{ _('System Logo Reference') }}</h2>
@@ -311,4 +315,5 @@
         </div>
     </div>
 </section>
+{% endif %}
 </div><!-- End tab-customization -->

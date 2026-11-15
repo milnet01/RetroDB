@@ -7,8 +7,8 @@
         {{ subnav_link('updates', '⬆️ ' ~ _('Updates')) }}
         {{ subnav_link('server', '⚙️ ' ~ _('Server')) }}
         {% endif %}
-        {{ subnav_link('logging', '📋 ' ~ _('Logging'), active=not _is_admin) }}
-        {{ subnav_link('troubleshooting', '🔧 ' ~ _('Troubleshooting')) }}
+        {% if _is_admin %}{{ subnav_link('logging', '📋 ' ~ _('Logging')) }}{% endif %}
+        {{ subnav_link('troubleshooting', '🔧 ' ~ _('Troubleshooting'), active=not _is_admin) }}
         {{ subnav_link('support', '💝 ' ~ _('Support')) }}
     {% endcall %}
 
@@ -201,6 +201,7 @@
 {% endif %}
 
 <!-- Logging Settings -->
+{% if has_perm('manage_settings') %}
 <section class="card mt-xl" id="logging">
     <div class="card-header">
         <h2 class="card-title">📋 {{ _('Logging Settings') }}</h2>
@@ -405,6 +406,7 @@
         </div>
     </div>
 </section>
+{% endif %}
 
 <!-- Troubleshooting -->
 <section class="card mt-xl" id="troubleshooting">

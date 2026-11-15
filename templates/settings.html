@@ -24,13 +24,13 @@
 {% include "_settings_tabs/library.html" %}
 
 <!-- ==================== TAB: SCRAPING ==================== -->
-{% include "_settings_tabs/scraping.html" %}
+{% if has_perm('manage_settings') %}{% include "_settings_tabs/scraping.html" %}{% endif %}
 
 <!-- ==================== TAB: DATA ==================== -->
 {% include "_settings_tabs/data.html" %}
 
 <!-- ==================== TAB: CUSTOMIZATION ==================== -->
-{% include "_settings_tabs/customization.html" %}
+{% if has_perm('edit') %}{% include "_settings_tabs/customization.html" %}{% endif %}
 
 <!-- ==================== TAB: SYSTEM ==================== -->
 {% include "_settings_tabs/system.html" %}
@@ -1305,13 +1305,15 @@ function _activateUserModal() {
 
 function showAddUserModal() {
     _userModalTrigger = document.activeElement;
-    document.getElementById('userModalTitle').textContent = 'Add User';
+    document.getElementById('userModalTitle').textContent = {{ _('Add User')|tojson }};
     document.getElementById('editUserId').value = '';
     document.getElementById('userUsername').value = '';
     document.getElementById('userUsername').disabled = false;
     document.getElementById('userDisplayName').value = '';
     document.getElementById('userRole').value = 'viewer';
     document.getElementById('resetPasswordGroup').style.display = 'none';
+    document.getElementById('newUserPasswordGroup').style.display = 'block';
+    document.getElementById('userFirstPassword').value = '';
     _activateUserModal();
 }
 
@@ -1323,7 +1325,7 @@ function editUser(userId) {
             if (data.success) {
                 const user = data.users.find(u => u.id === userId);
                 if (user) {
-                    document.getElementById('userModalTitle').textContent = 'Edit User';
+                    document.getElementById('userModalTitle').textContent = {{ _('Edit User')|tojson }};
                     document.getElementById('editUserId').value = userId;
                     document.getElementById('userUsername').value = user.username;
                     document.getElementById('userUsername').disabled = true;
@@ -1332,6 +1334,7 @@ function editUser(userId) {
 
                     // Every role has a password an admin may reset (auth.md).
                     document.getElementById('resetPasswordGroup').style.display = 'block';
+                    document.getElementById('newUserPasswordGroup').style.display = 'none';
                     document.getElementById('userNewPassword').value = '';
 
                     _activateUserModal();
@@ -1362,6 +1365,12 @@ function saveUser() {
         const newPassword = document.getElementById('userNewPassword').value;
         if (newPassword) {
             data.new_password = newPassword;
+        }
+    } else {
+        data.password = document.getElementById('userFirstPassword').value;
+        if (data.password.trim().length < 12) {
+            showNotification({{ _('Password must be at least 12 characters')|tojson }}, 'error');
+            return;
         }
     }
     
@@ -2187,6 +2196,8 @@ let savedScraperSettings = JSON.parse(JSON.stringify(scraperSettings));
 
 // Load saved priority from server on page load
 document.addEventListener('DOMContentLoaded', function() {
+    // The Scraping tab is admin-only (PASS-59-311); nothing to set up without it.
+    if (!document.getElementById('scraperPriorityList')) return;
     reorderScraperList();
     checkScraperStatus();
     initDragAndDrop();
@@ -4314,7 +4325,7 @@ async function loadLogoReference(systems) {
     
     // Debug and validation
     if (!tbody) {
-        console.error('Logo reference tbody not found');
+        // The Logos card is admin-only (PASS-59-311).
         return;
     }
     

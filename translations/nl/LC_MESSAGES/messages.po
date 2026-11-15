@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 10:24+0200\n"
+"POT-Creation-Date: 2026-11-15 15:40+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: nl\n"
@@ -175,9 +175,9 @@ msgstr ""
 "Je moet de licentie en voorwaarden accepteren voordat je de installatie "
 "voltooit"
 
-#: app.py:1734 routes/auth.py:218 routes/auth.py:278 routes/auth.py:494
-#: routes/auth.py:540 templates/force_change_password.html:49
-#: templates/setup.html:469
+#: app.py:1734 routes/auth.py:215 routes/auth.py:273 routes/auth.py:489
+#: routes/auth.py:535 templates/force_change_password.html:49
+#: templates/settings.html:1372 templates/setup.html:469
 msgid "Password must be at least 12 characters"
 msgstr "Wachtwoord moet minimaal 12 tekens bevatten"
 
@@ -273,7 +273,7 @@ msgstr "Gamebeschrijving"
 
 #: routes/ai_fill_bulk.py:39 services/js_i18n_strings.py:799
 #: templates/_bulk_edit_modal.html:36 templates/_modals/edit_modal.html:115
-#: templates/_settings_tabs/data.html:83 templates/_settings_tabs/data.html:159
+#: templates/_settings_tabs/data.html:86 templates/_settings_tabs/data.html:163
 #: templates/achievement_game.html:241 templates/all_games.html:72
 #: templates/analytics.html:481 templates/analytics.html:2432
 #: templates/base.html:944 templates/base.html:1157
@@ -287,7 +287,7 @@ msgstr "Genre"
 
 #: routes/ai_fill_bulk.py:40 services/js_i18n_strings.py:713
 #: templates/_bulk_edit_modal.html:67 templates/_modals/edit_modal.html:99
-#: templates/_settings_tabs/data.html:163 templates/achievement_game.html:87
+#: templates/_settings_tabs/data.html:167 templates/achievement_game.html:87
 #: templates/all_games.html:81 templates/analytics.html:482
 #: templates/analytics.html:2432 templates/base.html:942
 #: templates/base.html:1143 templates/compare_games.html:70
@@ -300,7 +300,7 @@ msgstr "Ontwikkelaar"
 
 #: routes/ai_fill_bulk.py:41 services/js_i18n_strings.py:931
 #: templates/_bulk_edit_modal.html:53 templates/_modals/edit_modal.html:94
-#: templates/_settings_tabs/data.html:162 templates/achievement_game.html:81
+#: templates/_settings_tabs/data.html:166 templates/achievement_game.html:81
 #: templates/all_games.html:78 templates/analytics.html:483
 #: templates/analytics.html:2432 templates/base.html:943
 #: templates/base.html:1139 templates/compare_games.html:71
@@ -337,7 +337,7 @@ msgid "Players"
 msgstr "Spelers"
 
 #: routes/ai_fill_bulk.py:46 templates/_modals/edit_modal.html:126
-#: templates/_settings_tabs/data.html:123 templates/base.html:1165
+#: templates/_settings_tabs/data.html:126 templates/base.html:1165
 msgid "Play Modes"
 msgstr "Spelmodi"
 
@@ -371,19 +371,19 @@ msgid "Controller Support"
 msgstr "Controllerondersteuning"
 
 #: routes/ai_fill_bulk.py:52 templates/_modals/edit_modal.html:211
-#: templates/_settings_tabs/data.html:133 templates/base.html:1229
+#: templates/_settings_tabs/data.html:136 templates/base.html:1229
 #: templates/compare_games.html:92
 msgid "Save Type"
 msgstr "Save-type"
 
 #: routes/ai_fill_bulk.py:53 templates/_bulk_edit_modal.html:118
-#: templates/_modals/edit_modal.html:154 templates/_settings_tabs/data.html:93
+#: templates/_modals/edit_modal.html:154 templates/_settings_tabs/data.html:96
 #: templates/base.html:1177
 msgid "Game Structure"
 msgstr "Gamestructuur"
 
 #: routes/ai_fill_bulk.py:54 templates/_bulk_edit_modal.html:135
-#: templates/_modals/edit_modal.html:167 templates/_settings_tabs/data.html:103
+#: templates/_modals/edit_modal.html:167 templates/_settings_tabs/data.html:106
 #: templates/all_games.html:87 templates/analytics.html:199
 #: templates/base.html:1185 templates/compare_games.html:78
 #: templates/system_games.html:78
@@ -391,7 +391,7 @@ msgid "Perspective"
 msgstr "Perspectief"
 
 #: routes/ai_fill_bulk.py:55 templates/_bulk_edit_modal.html:151
-#: templates/_modals/edit_modal.html:178 templates/_settings_tabs/data.html:113
+#: templates/_modals/edit_modal.html:178 templates/_settings_tabs/data.html:116
 #: templates/all_games.html:90 templates/analytics.html:207
 #: templates/base.html:1193 templates/compare_games.html:79
 #: templates/system_games.html:81
@@ -454,7 +454,7 @@ msgstr "Geen gebruiker geselecteerd"
 msgid "Too many login attempts. Please try again later."
 msgstr "Te veel inlogpogingen. Probeer het later opnieuw."
 
-#: routes/auth.py:85 routes/auth.py:244 routes/auth.py:308
+#: routes/auth.py:85 routes/auth.py:239 routes/auth.py:303
 msgid "User not found"
 msgstr "Gebruiker niet gevonden"
 
@@ -488,72 +488,77 @@ msgstr "Ongeldige rol"
 msgid "Username already exists"
 msgstr "Gebruikersnaam bestaat al"
 
-#: routes/auth.py:255
+#: routes/auth.py:228
+#, fuzzy, python-format
+msgid "User \"%(name)s\" created successfully"
+msgstr "Gebruiker succesvol verwijderd"
+
+#: routes/auth.py:250
 msgid "The last admin must stay an active admin"
 msgstr "De laatste beheerder moet een actieve beheerder blijven"
 
-#: routes/auth.py:312
+#: routes/auth.py:307
 msgid "Cannot delete your own account"
 msgstr "Je kunt je eigen account niet verwijderen"
 
-#: routes/auth.py:317
+#: routes/auth.py:312
 msgid "Cannot delete the last admin user"
 msgstr "Kan de laatste beheerder niet verwijderen"
 
-#: routes/auth.py:379 routes/auth.py:470 routes/auth.py:527
+#: routes/auth.py:374 routes/auth.py:465 routes/auth.py:522
 msgid "Not logged in"
 msgstr "Niet ingelogd"
 
-#: routes/auth.py:414
+#: routes/auth.py:409
 msgid "Steam ID must be the number, not a profile name."
 msgstr "De Steam-ID moet het nummer zijn, geen profielnaam."
 
-#: routes/auth.py:423
+#: routes/auth.py:418
 msgid "Invalid locale"
 msgstr "Ongeldige taalinstelling"
 
-#: routes/auth.py:428
+#: routes/auth.py:423
 msgid "Invalid theme"
 msgstr "Ongeldig thema"
 
-#: routes/auth.py:434
+#: routes/auth.py:429
 #, python-format
 msgid "Invalid RPCS3 trophy folder: %(reason)s"
 msgstr "Ongeldige RPCS3-trofeeënmap: %(reason)s"
 
-#: routes/auth.py:482
+#: routes/auth.py:477
 msgid "Too many attempts. Please try again later."
 msgstr "Te veel pogingen. Probeer het later opnieuw."
 
-#: routes/auth.py:489 routes/auth.py:536
+#: routes/auth.py:484 routes/auth.py:531
 msgid "New password is required"
 msgstr "Nieuw wachtwoord is vereist"
 
-#: routes/auth.py:500
+#: routes/auth.py:495
 msgid "Current password is incorrect"
 msgstr "Huidig wachtwoord is onjuist"
 
-#: routes/auth.py:530
+#: routes/auth.py:525
 msgid "Password change not required"
 msgstr "Wachtwoordwijziging niet vereist"
 
-#: routes/auth.py:584
+#: routes/auth.py:579
 msgid "No file provided"
 msgstr "Geen bestand opgegeven"
 
-#: routes/auth.py:588 routes/museum.py:665
+#: routes/auth.py:583 routes/museum.py:665
 msgid "No file selected"
 msgstr "Geen bestand geselecteerd"
 
-#: routes/auth.py:593
+#: routes/auth.py:588
 msgid "Invalid file type. Allowed: jpg, png, gif, webp"
 msgstr "Ongeldig bestandstype. Toegestaan: jpg, png, gif, webp"
 
-#: routes/auth.py:598
+#: routes/auth.py:593
 msgid "File too large. Maximum size is 2MB"
 msgstr "Bestand te groot. Maximale grootte is 2 MB"
 
-#: routes/auth.py:613
+#: routes/auth.py:608
 msgid ""
 "Avatar uploads require Pillow; please ask the operator to install the "
 "project requirements."
@@ -561,7 +566,7 @@ msgstr ""
 "Avatar-uploads vereisen Pillow; vraag de beheerder om de projectvereisten"
 " te installeren."
 
-#: routes/auth.py:629 routes/museum.py:697
+#: routes/auth.py:624 routes/museum.py:697
 msgid "Invalid image file"
 msgstr "Ongeldig afbeeldingsbestand"
 
@@ -1215,7 +1220,7 @@ msgstr ""
 msgid "Could not create Windows system entry"
 msgstr "Kon Windows-systeeminvoer niet aanmaken"
 
-#: routes/platform_import.py:418 templates/settings.html:5031
+#: routes/platform_import.py:418 templates/settings.html:5042
 msgid "Paste your OpenXBL key first."
 msgstr "Plak eerst je OpenXBL-sleutel."
 
@@ -1485,7 +1490,7 @@ msgstr "Ongeldig(e) %(field)s: %(result)s"
 
 #: routes/settings.py:514 routes/settings.py:588 routes/settings.py:637
 #: routes/tools.py:301 services/js_i18n_strings.py:767
-#: templates/settings.html:1149 templates/settings.html:2747
+#: templates/settings.html:1149 templates/settings.html:2758
 msgid "Failed to save settings"
 msgstr "Opslaan van instellingen mislukt"
 
@@ -2233,7 +2238,7 @@ msgstr "De AI heeft geen ontbrekende velden gevonden om aan te vullen"
 #: services/js_i18n_strings.py:600 templates/_settings_tabs/account.html:331
 #: templates/archive_scanner.html:726 templates/list_detail.html:47
 #: templates/multi_disc_organizer.html:217 templates/reports.html:372
-#: templates/reports.html:455 templates/settings.html:4769
+#: templates/reports.html:455 templates/settings.html:4780
 msgid "Actions"
 msgstr "Acties"
 
@@ -2331,7 +2336,7 @@ msgstr ""
 msgid "Are you sure you want to cancel?"
 msgstr "Weet je zeker dat je wilt annuleren?"
 
-#: services/js_i18n_strings.py:621 templates/settings.html:4836
+#: services/js_i18n_strings.py:621 templates/settings.html:4847
 #, python-brace-format
 msgid "Are you sure you want to delete \"{filename}\"?"
 msgstr "Weet je zeker dat je \"{filename}\" wilt verwijderen?"
@@ -2416,8 +2421,8 @@ msgstr "CRT-scherm"
 #: templates/_bulk_scrape_modal.html:49 templates/_modals/edit_modal.html:12
 #: templates/_modals/rename_modal.html:19
 #: templates/_settings_tabs/account.html:73
-#: templates/_settings_tabs/account.html:425
-#: templates/_settings_tabs/customization.html:264
+#: templates/_settings_tabs/account.html:431
+#: templates/_settings_tabs/customization.html:267
 #: templates/achievement_game.html:178 templates/archive_scanner.html:661
 #: templates/archive_scanner.html:798 templates/base.html:340
 #: templates/base.html:358 templates/base.html:849 templates/base.html:1060
@@ -2508,8 +2513,8 @@ msgstr "RA-gegevens gewist voor {count} games in {system}"
 msgid "Cleared RA data for {n} games"
 msgstr "RA-gegevens gewist voor {n} games"
 
-#: services/js_i18n_strings.py:659 templates/settings.html:3805
-#: templates/settings.html:4069
+#: services/js_i18n_strings.py:659 templates/settings.html:3816
+#: templates/settings.html:4080
 msgid "Clearing..."
 msgstr "Bezig met wissen..."
 
@@ -2526,7 +2531,7 @@ msgstr "Klik om te filteren, Shift+klik om uit te sluiten"
 #: templates/_modals/boxart_zoom_modal.html:5
 #: templates/_modals/manual_reader_modal.html:11
 #: templates/_settings_tabs/account.html:45
-#: templates/_settings_tabs/customization.html:224
+#: templates/_settings_tabs/customization.html:227
 #: templates/archive_scanner.html:749 templates/archive_scanner.html:757
 #: templates/base.html:251 templates/base.html:334 templates/base.html:351
 #: templates/base.html:737 templates/base.html:976 templates/base.html:1374
@@ -2746,7 +2751,7 @@ msgstr "Huidige instelling"
 msgid "Default emulator for {system}"
 msgstr "Standaardemulator voor {system}"
 
-#: services/js_i18n_strings.py:709 templates/settings.html:4836
+#: services/js_i18n_strings.py:709 templates/settings.html:4847
 msgid "Delete Log File"
 msgstr "Logbestand verwijderen"
 
@@ -2775,7 +2780,7 @@ msgid "Done."
 msgstr "Klaar."
 
 #: services/js_i18n_strings.py:716 templates/logs.html:740
-#: templates/settings.html:4787
+#: templates/settings.html:4798
 msgid "Download"
 msgstr "Downloaden"
 
@@ -2904,22 +2909,22 @@ msgstr "Voer één mappad in."
 #: templates/multi_disc_organizer.html:371 templates/reports.html:1144
 #: templates/reports.html:1147 templates/reports.html:1213
 #: templates/reports.html:1216 templates/rom_tools_settings.html:579
-#: templates/rom_tools_settings.html:582 templates/settings.html:2366
-#: templates/settings.html:2484 templates/settings.html:2925
-#: templates/settings.html:2929 templates/settings.html:2948
-#: templates/settings.html:2952 templates/settings.html:3550
-#: templates/settings.html:3554 templates/settings.html:3622
-#: templates/settings.html:3626 templates/settings.html:3657
-#: templates/settings.html:3661 templates/settings.html:3687
-#: templates/settings.html:3691 templates/settings.html:4182
-#: templates/settings.html:4186 templates/settings.html:4204
-#: templates/settings.html:4235 templates/settings.html:4295
-#: templates/settings.html:4299 templates/settings.html:4429
-#: templates/settings.html:4433 templates/settings.html:4459
-#: templates/settings.html:4463 templates/settings.html:4824
-#: templates/settings.html:4827 templates/settings.html:4846
-#: templates/settings.html:4849 templates/settings.html:4864
-#: templates/settings.html:4867
+#: templates/rom_tools_settings.html:582 templates/settings.html:2377
+#: templates/settings.html:2495 templates/settings.html:2936
+#: templates/settings.html:2940 templates/settings.html:2959
+#: templates/settings.html:2963 templates/settings.html:3561
+#: templates/settings.html:3565 templates/settings.html:3633
+#: templates/settings.html:3637 templates/settings.html:3668
+#: templates/settings.html:3672 templates/settings.html:3698
+#: templates/settings.html:3702 templates/settings.html:4193
+#: templates/settings.html:4197 templates/settings.html:4215
+#: templates/settings.html:4246 templates/settings.html:4306
+#: templates/settings.html:4310 templates/settings.html:4440
+#: templates/settings.html:4444 templates/settings.html:4470
+#: templates/settings.html:4474 templates/settings.html:4835
+#: templates/settings.html:4838 templates/settings.html:4857
+#: templates/settings.html:4860 templates/settings.html:4875
+#: templates/settings.html:4878
 msgid "Error"
 msgstr "Fout"
 
@@ -3030,9 +3035,9 @@ msgstr "Laden van normalisatiegegevens mislukt"
 msgid "Failed to save HLTB: {error}"
 msgstr "HLTB opslaan is mislukt: {error}"
 
-#: services/js_i18n_strings.py:768 templates/settings.html:1470
-#: templates/settings.html:1514 templates/settings.html:1721
-#: templates/settings.html:1769
+#: services/js_i18n_strings.py:768 templates/settings.html:1479
+#: templates/settings.html:1523 templates/settings.html:1730
+#: templates/settings.html:1778
 #, python-brace-format
 msgid "Failed to save: {error}"
 msgstr "Opslaan is mislukt: {error}"
@@ -3055,8 +3060,8 @@ msgstr "Bijwerken van voltooiingsstatus is mislukt: {error}"
 msgid "Failed to update status: {error}"
 msgstr "Bijwerken van status mislukt: {error}"
 
-#: services/js_i18n_strings.py:773 templates/settings.html:1938
-#: templates/settings.html:1986 templates/settings.html:2050
+#: services/js_i18n_strings.py:773 templates/settings.html:1947
+#: templates/settings.html:1995 templates/settings.html:2059
 #, python-brace-format
 msgid "Failed: {error}"
 msgstr "Mislukt: {error}"
@@ -3130,7 +3135,7 @@ msgstr "Gamepagina"
 msgid "Game details updated successfully."
 msgstr "Gamedetails succesvol bijgewerkt."
 
-#: services/js_i18n_strings.py:789 templates/_settings_tabs/data.html:192
+#: services/js_i18n_strings.py:789 templates/_settings_tabs/data.html:196
 #: templates/achievements_system.html:103 templates/analytics.html:571
 #: templates/analytics.html:1588 templates/analytics.html:1629
 #: templates/analytics.html:1951 templates/analytics.html:2126
@@ -3364,7 +3369,7 @@ msgstr "Logbestand laden..."
 msgid "Loading the manual…"
 msgstr "Handleiding laden…"
 
-#: services/js_i18n_strings.py:842 templates/_settings_tabs/library.html:284
+#: services/js_i18n_strings.py:842 templates/_settings_tabs/library.html:292
 #: templates/settings_emulators.html:201 templates/settings_emulators.html:219
 msgid "Loading…"
 msgstr "Laden…"
@@ -3484,10 +3489,10 @@ msgid "Navigation"
 msgstr "Navigatie"
 
 #: services/js_i18n_strings.py:863 templates/psn_trophy_detail.html:944
-#: templates/psn_trophy_detail.html:964 templates/settings.html:3781
-#: templates/settings.html:3839 templates/settings.html:3915
-#: templates/settings.html:3972 templates/settings.html:4048
-#: templates/settings.html:4099 templates/settings.html:4143
+#: templates/psn_trophy_detail.html:964 templates/settings.html:3792
+#: templates/settings.html:3850 templates/settings.html:3926
+#: templates/settings.html:3983 templates/settings.html:4059
+#: templates/settings.html:4110 templates/settings.html:4154
 msgid "Network error"
 msgstr "Netwerkfout"
 
@@ -3828,7 +3833,7 @@ msgstr "Regionale naamovereenkomsten"
 #: templates/_settings_tabs/account.html:228 templates/compare_games.html:24
 #: templates/compare_games.html:40 templates/rom_tools_settings.html:462
 #: templates/rom_tools_settings.html:501 templates/screenshot_review.html:187
-#: templates/settings.html:1570
+#: templates/settings.html:1579
 msgid "Remove"
 msgstr "Verwijderen"
 
@@ -3849,8 +3854,8 @@ msgstr "De 3D-doos verwijderen?"
 #: templates/game_detail.html:4648 templates/game_detail.html:4732
 #: templates/game_detail.html:4816 templates/game_detail.html:4944
 #: templates/rom_tools_settings.html:462 templates/rom_tools_settings.html:501
-#: templates/settings.html:1570 templates/settings.html:3044
-#: templates/settings.html:3440
+#: templates/settings.html:1579 templates/settings.html:3055
+#: templates/settings.html:3451
 #, python-brace-format
 msgid "Remove {name}"
 msgstr "{name} verwijderen"
@@ -4021,8 +4026,8 @@ msgstr "Opgeslagen. Het wordt toegepast de volgende keer dat je op Spelen drukt.
 msgid "Saving to the database…"
 msgstr "Bezig met opslaan in de database…"
 
-#: services/js_i18n_strings.py:981 templates/settings.html:2725
-#: templates/settings.html:2763 templates/settings.html:4700
+#: services/js_i18n_strings.py:981 templates/settings.html:2736
+#: templates/settings.html:2774 templates/settings.html:4711
 #: templates/setup.html:483
 msgid "Saving..."
 msgstr "Bezig met opslaan..."
@@ -4047,8 +4052,8 @@ msgid "Scanned {paths} paths · found {found} matches."
 msgstr "{paths} paden gescand · {found} overeenkomsten gevonden."
 
 #: services/js_i18n_strings.py:986 templates/multi_disc_organizer.html:204
-#: templates/settings.html:1802 templates/settings.html:3860
-#: templates/settings.html:3999 templates/settings.html:4509
+#: templates/settings.html:1811 templates/settings.html:3871
+#: templates/settings.html:4010 templates/settings.html:4520
 msgid "Scanning..."
 msgstr "Bezig met scannen..."
 
@@ -4314,8 +4319,8 @@ msgstr "Bezig met synchroniseren..."
 msgid "Syncing: {processed} / {total}"
 msgstr "Synchroniseren: {processed} / {total}"
 
-#: services/js_i18n_strings.py:1044 templates/_settings_tabs/_tab_bar.html:11
-#: templates/_settings_tabs/customization.html:299
+#: services/js_i18n_strings.py:1044 templates/_settings_tabs/_tab_bar.html:12
+#: templates/_settings_tabs/customization.html:303
 #: templates/achievement_game.html:228 templates/ai_fill_bulk.html:91
 #: templates/analytics.html:569 templates/analytics.html:603
 #: templates/compare_games.html:69 templates/dashboard.html:330
@@ -4330,9 +4335,9 @@ msgid "System"
 msgstr "Systeem"
 
 #: services/js_i18n_strings.py:1045
-#: templates/_settings_tabs/customization.html:153
-#: templates/_settings_tabs/customization.html:234
-#: templates/_settings_tabs/data.html:19 templates/achievements_system.html:50
+#: templates/_settings_tabs/customization.html:156
+#: templates/_settings_tabs/customization.html:237
+#: templates/_settings_tabs/data.html:21 templates/achievements_system.html:50
 #: templates/base.html:130 templates/dashboard.html:16
 #: templates/game_detail.html:24 templates/system_games.html:15
 msgid "Systems"
@@ -4514,7 +4519,7 @@ msgid "Unhandled rejection: {error}"
 msgstr "Onafgehandelde afwijzing: {error}"
 
 #: services/js_i18n_strings.py:1080 templates/rom_tools_settings.html:579
-#: templates/settings.html:1966 templates/setup.html:372
+#: templates/settings.html:1975 templates/setup.html:372
 #: templates/setup.html:432
 msgid "Unknown error"
 msgstr "Onbekende fout"
@@ -4562,7 +4567,7 @@ msgstr "Uploaden"
 msgid "Upload Controller Image"
 msgstr "Controllerafbeelding uploaden"
 
-#: services/js_i18n_strings.py:1089 templates/settings.html:5153
+#: services/js_i18n_strings.py:1089 templates/settings.html:5164
 msgid "Upload failed"
 msgstr "Upload mislukt"
 
@@ -5261,7 +5266,7 @@ msgstr "PEGI 16"
 msgid "PEGI 18"
 msgstr "PEGI 18"
 
-#: templates/_bulk_edit_modal.html:177 templates/_settings_tabs/data.html:161
+#: templates/_bulk_edit_modal.html:177 templates/_settings_tabs/data.html:165
 #: templates/base.html:945 templates/compare_games.html:74
 #: templates/local_trophy_detail.html:105 templates/psn_trophy_detail.html:102
 msgid "Franchise"
@@ -5409,7 +5414,7 @@ msgstr "Nooit"
 msgid "Last Achievement"
 msgstr "Laatste prestatie"
 
-#: templates/_settings_tabs/data.html:160 templates/achievement_game.html:247
+#: templates/_settings_tabs/data.html:164 templates/achievement_game.html:247
 #: templates/analytics.html:491 templates/analytics.html:2432
 #: templates/compare_games.html:77 templates/local_trophy_detail.html:219
 #: templates/psn_trophy_detail.html:270
@@ -5522,7 +5527,7 @@ msgstr ""
 msgid "Profile Settings"
 msgstr "Profielinstellingen"
 
-#: templates/_settings_tabs/data.html:23 templates/achievements_system.html:43
+#: templates/_settings_tabs/data.html:25 templates/achievements_system.html:43
 #: templates/analytics.html:71 templates/analytics.html:2539
 #: templates/dashboard.html:164 templates/steam_achievements.html:42
 #: templates/xbox_achievements.html:42
@@ -5550,7 +5555,7 @@ msgstr ""
 "Downloadt welke prestaties je hebt behaald in je %(system)s-games. Voer "
 "dit uit na het spelen."
 
-#: templates/_settings_tabs/system.html:430
+#: templates/_settings_tabs/system.html:432
 #: templates/achievements_system.html:162 templates/changelog.html:179
 #: templates/logs.html:737 templates/setup.html:354 templates/setup.html:355
 #: templates/setup.html:419 templates/tags.html:595
@@ -5588,7 +5593,7 @@ msgstr "Alle games"
 msgid "Completed (100%)"
 msgstr "Voltooid (100%)"
 
-#: templates/_settings_tabs/customization.html:126
+#: templates/_settings_tabs/customization.html:129
 #: templates/achievements_system.html:205 templates/all_games.html:120
 #: templates/local_trophies.html:100 templates/psn_trophies.html:179
 #: templates/steam_achievements.html:91 templates/system_games.html:111
@@ -5769,7 +5774,7 @@ msgstr "Filters"
 msgid "Select"
 msgstr "Selecteren"
 
-#: templates/all_games.html:94 templates/settings.html:4766
+#: templates/all_games.html:94 templates/settings.html:4777
 #: templates/system_games.html:85
 msgid "Category"
 msgstr "Categorie"
@@ -5792,7 +5797,7 @@ msgstr "Toon alleen games die nog niet zijn gescraped"
 msgid "Show/hide bonus discs (hidden by default)"
 msgstr "Bonusschijven tonen/verbergen (standaard verborgen)"
 
-#: templates/_settings_tabs/library.html:9 templates/all_games.html:110
+#: templates/_settings_tabs/library.html:10 templates/all_games.html:110
 #: templates/analytics.html:514 templates/system_games.html:101
 msgid "Bonus Discs"
 msgstr "Bonusschijven"
@@ -5867,7 +5872,7 @@ msgstr "Je bibliotheek is leeg"
 msgid "Scan your ROM folder to add your games."
 msgstr "Scan je ROM-map om je games toe te voegen."
 
-#: templates/_settings_tabs/library.html:47 templates/all_games.html:182
+#: templates/_settings_tabs/library.html:49 templates/all_games.html:182
 #: templates/dashboard.html:83 templates/dashboard.html:99
 #: templates/systems.html:111
 msgid "Scan Library"
@@ -6013,7 +6018,7 @@ msgstr "CSV-export"
 msgid "Data for spreadsheets"
 msgstr "Gegevens voor spreadsheets"
 
-#: templates/_settings_tabs/data.html:173 templates/analytics.html:62
+#: templates/_settings_tabs/data.html:177 templates/analytics.html:62
 #: templates/local_trophy_detail.html:182 templates/psn_trophy_detail.html:29
 #: templates/steam_achievement_game.html:31
 #: templates/xbox_achievement_game.html:31
@@ -6208,8 +6213,8 @@ msgid "Field Completeness"
 msgstr "Veldvolledigheid"
 
 #: templates/_modals/edit_modal.html:346
-#: templates/_settings_tabs/customization.html:193
-#: templates/_settings_tabs/customization.html:259 templates/analytics.html:479
+#: templates/_settings_tabs/customization.html:196
+#: templates/_settings_tabs/customization.html:262 templates/analytics.html:479
 #: templates/analytics.html:2432 templates/base.html:268
 #: templates/base.html:1361 templates/compare_games.html:97
 #: templates/settings_emulators.html:258
@@ -6269,8 +6274,8 @@ msgstr "Topsystemen op aantal games"
 msgid "Rank"
 msgstr "Rang"
 
-#: templates/_settings_tabs/customization.html:164
-#: templates/_settings_tabs/customization.html:245 templates/analytics.html:570
+#: templates/_settings_tabs/customization.html:167
+#: templates/_settings_tabs/customization.html:248 templates/analytics.html:570
 #: templates/museum_system.html:99
 msgid "Manufacturer"
 msgstr "Fabrikant"
@@ -6289,7 +6294,7 @@ msgstr "Grootste games"
 msgid "Game"
 msgstr "Game"
 
-#: templates/analytics.html:604 templates/settings.html:4768
+#: templates/analytics.html:604 templates/settings.html:4779
 msgid "Size"
 msgstr "Grootte"
 
@@ -6389,11 +6394,11 @@ msgstr "(over te slaan mappen)"
 msgid "Enter folder name to exclude"
 msgstr "Voer mapnaam in om uit te sluiten"
 
-#: templates/_settings_tabs/data.html:87 templates/_settings_tabs/data.html:97
-#: templates/_settings_tabs/data.html:107
-#: templates/_settings_tabs/data.html:117
-#: templates/_settings_tabs/data.html:127
-#: templates/_settings_tabs/data.html:137 templates/archive_scanner.html:591
+#: templates/_settings_tabs/data.html:90 templates/_settings_tabs/data.html:100
+#: templates/_settings_tabs/data.html:110
+#: templates/_settings_tabs/data.html:120
+#: templates/_settings_tabs/data.html:130
+#: templates/_settings_tabs/data.html:140 templates/archive_scanner.html:591
 #: templates/list_detail.html:419 templates/rom_tools_settings.html:346
 #: templates/rom_tools_settings.html:365
 msgid "Add"
@@ -6490,7 +6495,7 @@ msgstr "0 problemen gevonden"
 msgid "Date & Time"
 msgstr "Datum & tijd"
 
-#: templates/_settings_tabs/customization.html:300
+#: templates/_settings_tabs/customization.html:304
 #: templates/archive_scanner.html:723 templates/settings_emulators.html:195
 msgid "Type"
 msgstr "Type"
@@ -6526,8 +6531,8 @@ msgid "Processed"
 msgstr "Verwerkt"
 
 #: templates/archive_scanner.html:782 templates/game_detail.html:4079
-#: templates/reports.html:497 templates/settings.html:3548
-#: templates/settings.html:4293 templates/settings.html:4861
+#: templates/reports.html:497 templates/settings.html:3559
+#: templates/settings.html:4304 templates/settings.html:4872
 msgid "Success"
 msgstr "Gelukt"
 
@@ -6893,8 +6898,8 @@ msgstr "Inloggen"
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: templates/_settings_tabs/_tab_bar.html:7
-#: templates/_settings_tabs/customization.html:8 templates/base.html:129
+#: templates/_settings_tabs/_tab_bar.html:8
+#: templates/_settings_tabs/customization.html:9 templates/base.html:129
 #: templates/game_detail.html:17 templates/setup.html:19
 msgid "Library"
 msgstr "Bibliotheek"
@@ -7363,7 +7368,7 @@ msgid "Xbox 360, PC, Switch"
 msgstr "Xbox 360, PC, Switch"
 
 #: templates/_modals/edit_modal.html:241
-#: templates/_settings_tabs/library.html:157 templates/base.html:1256
+#: templates/_settings_tabs/library.html:161 templates/base.html:1256
 msgid "ESRB (North America)"
 msgstr "ESRB (Noord-Amerika)"
 
@@ -7391,12 +7396,12 @@ msgid "RP - Rating Pending"
 msgstr "RP - Classificatie in behandeling"
 
 #: templates/_modals/edit_modal.html:254
-#: templates/_settings_tabs/library.html:158 templates/base.html:1269
+#: templates/_settings_tabs/library.html:162 templates/base.html:1269
 msgid "PEGI (Europe)"
 msgstr "PEGI (Europa)"
 
 #: templates/_modals/edit_modal.html:265
-#: templates/_settings_tabs/library.html:159 templates/base.html:1280
+#: templates/_settings_tabs/library.html:163 templates/base.html:1280
 msgid "CERO (Japan)"
 msgstr "CERO (Japan)"
 
@@ -7422,12 +7427,12 @@ msgid "Z - Ages 18+"
 msgstr "Z - 18+"
 
 #: templates/_modals/edit_modal.html:276
-#: templates/_settings_tabs/library.html:160 templates/base.html:1291
+#: templates/_settings_tabs/library.html:164 templates/base.html:1291
 msgid "USK (Germany)"
 msgstr "USK (Duitsland)"
 
 #: templates/_modals/edit_modal.html:287
-#: templates/_settings_tabs/library.html:161 templates/base.html:1302
+#: templates/_settings_tabs/library.html:165 templates/base.html:1302
 msgid "ACB (Australia)"
 msgstr "ACB (Australië)"
 
@@ -7449,12 +7454,12 @@ msgid "R18+ - Restricted"
 msgstr "R18+ - Beperkt"
 
 #: templates/_modals/edit_modal.html:298
-#: templates/_settings_tabs/library.html:162 templates/base.html:1313
+#: templates/_settings_tabs/library.html:166 templates/base.html:1313
 msgid "FPB (South Africa)"
 msgstr "FPB (Zuid-Afrika)"
 
 #: templates/_modals/edit_modal.html:312
-#: templates/_settings_tabs/library.html:163 templates/base.html:1327
+#: templates/_settings_tabs/library.html:167 templates/base.html:1327
 msgid "GRAC (South Korea)"
 msgstr "GRAC (Zuid-Korea)"
 
@@ -7463,7 +7468,7 @@ msgid "ALL - All Ages"
 msgstr "ALL - Alle leeftijden"
 
 #: templates/_modals/edit_modal.html:322
-#: templates/_settings_tabs/library.html:164 templates/base.html:1337
+#: templates/_settings_tabs/library.html:168 templates/base.html:1337
 msgid "ClassInd (Brazil)"
 msgstr "ClassInd (Brazilië)"
 
@@ -7472,7 +7477,7 @@ msgid "L - General"
 msgstr "L - Algemeen"
 
 #: templates/_modals/edit_modal.html:334
-#: templates/_settings_tabs/library.html:165 templates/base.html:1349
+#: templates/_settings_tabs/library.html:169 templates/base.html:1349
 msgid "CADPA (China)"
 msgstr "CADPA (China)"
 
@@ -7497,7 +7502,7 @@ msgid "Images/Video"
 msgstr "Afbeeldingen/video"
 
 #: templates/_modals/edit_modal.html:15
-#: templates/_settings_tabs/customization.html:267 templates/base.html:1376
+#: templates/_settings_tabs/customization.html:270 templates/base.html:1376
 #: templates/tags.html:475 templates/wishlist.html:715
 msgid "Save Changes"
 msgstr "Wijzigingen opslaan"
@@ -8018,7 +8023,7 @@ msgstr "Gameplatforms"
 msgid "ROMs in library"
 msgstr "ROM's in bibliotheek"
 
-#: templates/_settings_tabs/data.html:31 templates/dashboard.html:173
+#: templates/_settings_tabs/data.html:33 templates/dashboard.html:173
 msgid "Missing Metadata"
 msgstr "Ontbrekende metadata"
 
@@ -8124,7 +8129,7 @@ msgid "Database Service"
 msgstr "Databaseservice"
 
 #: templates/dashboard.html:585 templates/dashboard.html:1308
-#: templates/settings.html:2356
+#: templates/settings.html:2367
 msgid "Online"
 msgstr "Online"
 
@@ -8145,7 +8150,7 @@ msgstr "Beschikbaar"
 #: templates/_settings_tabs/scraping.html:178 templates/dashboard.html:602
 #: templates/dashboard.html:612 templates/dashboard.html:632
 #: templates/dashboard.html:642 templates/game_imports.html:368
-#: templates/settings.html:2329 templates/settings.html:2443
+#: templates/settings.html:2340 templates/settings.html:2454
 msgid "Checking..."
 msgstr "Bezig met controleren..."
 
@@ -8217,7 +8222,7 @@ msgstr "1 geconfigureerde API is offline"
 msgid "{count} configured APIs are offline"
 msgstr "{count} geconfigureerde API's zijn offline"
 
-#: templates/dashboard.html:1309 templates/settings.html:2359
+#: templates/dashboard.html:1309 templates/settings.html:2370
 msgid "Offline"
 msgstr "Offline"
 
@@ -8534,7 +8539,7 @@ msgid "From the AI, not checked against a review site."
 msgstr "Van de AI, niet gecontroleerd met een reviewsite."
 
 #: templates/game_detail.html:274 templates/game_detail.html:279
-#: templates/game_detail.html:284 templates/settings.html:2690
+#: templates/game_detail.html:284 templates/settings.html:2701
 msgid "AI"
 msgstr "AI"
 
@@ -9712,7 +9717,7 @@ msgstr "PlayStation 3-trofeeën"
 msgid "RPCS3 Trophy Collection"
 msgstr "RPCS3-trofeeëncollectie"
 
-#: templates/_settings_tabs/data.html:61 templates/local_trophies.html:22
+#: templates/_settings_tabs/data.html:63 templates/local_trophies.html:22
 #: templates/local_trophies.html:55
 msgid "Scan Trophies"
 msgstr "Trofeeën scannen"
@@ -9841,13 +9846,13 @@ msgstr "HLTB-opzoeking mislukt"
 msgid "No match found."
 msgstr "Geen match gevonden."
 
-#: templates/local_trophy_detail.html:429 templates/settings.html:1851
-#: templates/settings.html:1888 templates/settings.html:1922
-#: templates/settings.html:1941 templates/settings.html:1966
-#: templates/settings.html:1969 templates/settings.html:1989
-#: templates/settings.html:2033 templates/settings.html:2055
-#: templates/settings.html:2152 templates/settings.html:2750
-#: templates/settings.html:2812 templates/settings.html:4745
+#: templates/local_trophy_detail.html:429 templates/settings.html:1860
+#: templates/settings.html:1897 templates/settings.html:1931
+#: templates/settings.html:1950 templates/settings.html:1975
+#: templates/settings.html:1978 templates/settings.html:1998
+#: templates/settings.html:2042 templates/settings.html:2064
+#: templates/settings.html:2161 templates/settings.html:2761
+#: templates/settings.html:2823 templates/settings.html:4756
 #: templates/steam_achievement_game.html:302
 #: templates/xbox_achievement_game.html:293
 #, python-brace-format
@@ -9915,7 +9920,7 @@ msgstr "Fouten en kritieke fouten"
 msgid "ERROR"
 msgstr "FOUT"
 
-#: templates/logs.html:778 templates/settings.html:4784
+#: templates/logs.html:778 templates/settings.html:4795
 msgid "View"
 msgstr "Weergave"
 
@@ -10263,7 +10268,7 @@ msgstr "Specificaties"
 msgid "Top 10 Games"
 msgstr "Top 10 games"
 
-#: templates/_settings_tabs/customization.html:5
+#: templates/_settings_tabs/customization.html:6
 #: templates/museum_system.html:63 templates/museum_system.html:172
 msgid "Controllers"
 msgstr "Controllers"
@@ -10358,8 +10363,8 @@ msgstr "Zoeken naar een nieuwe afbeelding"
 msgid "Upload your own image"
 msgstr "Je eigen afbeelding uploaden"
 
-#: templates/_settings_tabs/customization.html:189
-#: templates/_settings_tabs/customization.html:255
+#: templates/_settings_tabs/customization.html:192
+#: templates/_settings_tabs/customization.html:258
 #: templates/museum_system.html:226
 msgid "Button Layout"
 msgstr "Knoppenindeling"
@@ -11722,9 +11727,9 @@ msgstr ""
 "De detectiemethode kun je rechtstreeks op de pagina Duplicatenzoeker "
 "kiezen."
 
-#: templates/_settings_tabs/customization.html:83
+#: templates/_settings_tabs/customization.html:85
 #: templates/_settings_tabs/scraping.html:255
-#: templates/rom_tools_settings.html:433 templates/settings.html:2754
+#: templates/rom_tools_settings.html:433 templates/settings.html:2765
 msgid "Save Settings"
 msgstr "Instellingen opslaan"
 
@@ -11732,7 +11737,7 @@ msgstr "Instellingen opslaan"
 msgid "Reset to Defaults"
 msgstr "Standaardwaarden herstellen"
 
-#: templates/rom_tools_settings.html:439 templates/settings.html:2743
+#: templates/rom_tools_settings.html:439 templates/settings.html:2754
 msgid "Settings saved successfully!"
 msgstr "Instellingen succesvol opgeslagen!"
 
@@ -11745,8 +11750,8 @@ msgid "No paths excluded"
 msgstr "Geen paden uitgesloten"
 
 #: templates/rom_tools_settings.html:579 templates/rom_tools_settings.html:582
-#: templates/settings.html:1473 templates/settings.html:1517
-#: templates/settings.html:1727 templates/settings.html:1775
+#: templates/settings.html:1482 templates/settings.html:1526
+#: templates/settings.html:1736 templates/settings.html:1784
 #, python-brace-format
 msgid "Error saving settings: {error}"
 msgstr "Fout bij opslaan van instellingen: {error}"
@@ -11946,27 +11951,37 @@ msgstr "Wachtwoord wijzigen mislukt"
 msgid "Network error changing password"
 msgstr "Netwerkfout bij wijzigen van wachtwoord"
 
-#: templates/settings.html:1341 templates/settings.html:1343
+#: templates/_settings_tabs/account.html:319
+#: templates/_settings_tabs/account.html:393 templates/settings.html:1308
+msgid "Add User"
+msgstr "Gebruiker toevoegen"
+
+#: templates/settings.html:1328
+#, fuzzy
+msgid "Edit User"
+msgstr "Gebruiker toevoegen"
+
+#: templates/settings.html:1344 templates/settings.html:1346
 msgid "Could not load that user."
 msgstr "Kon die gebruiker niet laden."
 
-#: templates/settings.html:1378
+#: templates/settings.html:1387
 msgid "User saved successfully!"
 msgstr "Gebruiker succesvol opgeslagen!"
 
-#: templates/settings.html:1383
+#: templates/settings.html:1392
 msgid "Failed to save user"
 msgstr "Gebruiker opslaan mislukt"
 
-#: templates/settings.html:1387
+#: templates/settings.html:1396
 msgid "Network error saving user"
 msgstr "Netwerkfout bij opslaan van gebruiker"
 
-#: templates/settings.html:1393
+#: templates/settings.html:1402
 msgid "Delete User"
 msgstr "Gebruiker verwijderen"
 
-#: templates/settings.html:1394
+#: templates/settings.html:1403
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete user \"{username}\"? This action cannot "
@@ -11975,134 +11990,134 @@ msgstr ""
 "Weet je zeker dat je gebruiker \"{username}\" wilt verwijderen? Dit kan "
 "niet ongedaan worden gemaakt."
 
-#: templates/settings.html:1402
+#: templates/settings.html:1411
 msgid "User deleted successfully"
 msgstr "Gebruiker succesvol verwijderd"
 
-#: templates/settings.html:1407
+#: templates/settings.html:1416
 msgid "Failed to delete user"
 msgstr "Gebruiker verwijderen mislukt"
 
-#: templates/settings.html:1411
+#: templates/settings.html:1420
 msgid "Network error deleting user"
 msgstr "Netwerkfout bij verwijderen van gebruiker"
 
-#: templates/settings.html:1437 templates/settings.html:1439
-#: templates/settings.html:1441 templates/settings.html:1443
+#: templates/settings.html:1446 templates/settings.html:1448
+#: templates/settings.html:1450 templates/settings.html:1452
 #, python-brace-format
 msgid "Current: {path}"
 msgstr "Huidig: {path}"
 
-#: templates/settings.html:1465
+#: templates/settings.html:1474
 msgid "Path settings saved!"
 msgstr "Padinstellingen opgeslagen!"
 
-#: templates/settings.html:1467
+#: templates/settings.html:1476
 msgid "Restart required for changes to take full effect"
 msgstr "Opnieuw opstarten vereist om de wijzigingen volledig door te voeren"
 
-#: templates/settings.html:1512
+#: templates/settings.html:1521
 msgid "Display settings saved!"
 msgstr "Weergave-instellingen opgeslagen!"
 
-#: templates/settings.html:1570
+#: templates/settings.html:1579
 msgid "Move left"
 msgstr "Naar links verplaatsen"
 
-#: templates/settings.html:1570
+#: templates/settings.html:1579
 msgid "Move right"
 msgstr "Naar rechts verplaatsen"
 
-#: templates/settings.html:1670
+#: templates/settings.html:1679
 msgid "Region already exists"
 msgstr "Regio bestaat al"
 
-#: templates/settings.html:1719
+#: templates/settings.html:1728
 msgid "ROM naming settings saved!"
 msgstr "Instellingen voor ROM-naamgeving opgeslagen!"
 
-#: templates/settings.html:1767
+#: templates/settings.html:1776
 msgid "Notification settings saved!"
 msgstr "Meldingsinstellingen opgeslagen!"
 
-#: templates/settings.html:1787
+#: templates/settings.html:1796
 #, python-brace-format
 msgid "Success - disappears in {seconds}s"
 msgstr "Gelukt - verdwijnt over {seconds}s"
 
-#: templates/settings.html:1788
+#: templates/settings.html:1797
 #, python-brace-format
 msgid "Info - disappears in {seconds}s"
 msgstr "Info - verdwijnt over {seconds}s"
 
-#: templates/settings.html:1789
+#: templates/settings.html:1798
 #, python-brace-format
 msgid "Warning - disappears in {seconds}s"
 msgstr "Waarschuwing - verdwijnt over {seconds}s"
 
-#: templates/settings.html:1790
+#: templates/settings.html:1799
 #, python-brace-format
 msgid "Error - disappears in {seconds}s"
 msgstr "Fout - verdwijnt over {seconds}s"
 
-#: templates/settings.html:1846
+#: templates/settings.html:1855
 #, python-brace-format
 msgid "Bonus discs detected: {count}"
 msgstr "Bonusdiscs gevonden: {count}"
 
-#: templates/settings.html:1848
+#: templates/settings.html:1857
 #, python-brace-format
 msgid "Detection failed: {error}"
 msgstr "Detectie mislukt: {error}"
 
-#: templates/settings.html:1880
+#: templates/settings.html:1889
 #, python-brace-format
 msgid "Bonus discs linked to parent games: {count}"
 msgstr "Bonusdiscs gekoppeld aan hoofdgames: {count}"
 
-#: templates/settings.html:1885
+#: templates/settings.html:1894
 #, python-brace-format
 msgid "Auto-link failed: {error}"
 msgstr "Automatisch koppelen mislukt: {error}"
 
-#: templates/settings.html:1907
+#: templates/settings.html:1916
 msgid "Bonus Disc Statistics"
 msgstr "Statistieken bonusdiscs"
 
-#: templates/settings.html:1910
+#: templates/settings.html:1919
 msgid "Total Bonus Discs:"
 msgstr "Totaal aantal bonusdiscs:"
 
-#: templates/settings.html:1911
+#: templates/settings.html:1920
 msgid "Linked to Parent:"
 msgstr "Gekoppeld aan hoofdgame:"
 
-#: templates/settings.html:1912
+#: templates/settings.html:1921
 msgid "Unlinked:"
 msgstr "Niet gekoppeld:"
 
-#: templates/settings.html:1913
+#: templates/settings.html:1922
 msgid "Games with Bonus Content:"
 msgstr "Games met bonusinhoud:"
 
-#: templates/settings.html:1919
+#: templates/settings.html:1928
 #, python-brace-format
 msgid "Failed to load stats: {error}"
 msgstr "Statistieken laden mislukt: {error}"
 
-#: templates/settings.html:1934
+#: templates/settings.html:1943
 msgid "Game marked as bonus disc"
 msgstr "Game gemarkeerd als bonusdisc"
 
-#: templates/settings.html:1956
+#: templates/settings.html:1965
 msgid "Select Parent Game"
 msgstr "Kies hoofdgame"
 
-#: templates/settings.html:1957
+#: templates/settings.html:1966
 msgid "Choose the parent game for this bonus disc:"
 msgstr "Kies de hoofdgame voor deze bonusdisc:"
 
-#: templates/settings.html:1964
+#: templates/settings.html:1973
 msgid ""
 "No potential parent games found. Try using \"Mark\" instead to just hide "
 "this from listings."
@@ -12110,52 +12125,52 @@ msgstr ""
 "Geen mogelijke hoofdgames gevonden. Gebruik in plaats daarvan "
 "\"Markeren\" om dit alleen uit de lijsten te verbergen."
 
-#: templates/settings.html:2001
+#: templates/settings.html:2010
 #, python-brace-format
 msgid "Failed to load: {error}"
 msgstr "Laden mislukt: {error}"
 
-#: templates/settings.html:2005
+#: templates/settings.html:2014
 msgid "No games are marked as bonus discs."
 msgstr "Er zijn geen spellen als bonusschijf gemarkeerd."
 
-#: templates/settings.html:2008
+#: templates/settings.html:2017
 msgid "Not linked to a game"
 msgstr "Niet aan een spel gekoppeld"
 
-#: templates/settings.html:2012
+#: templates/settings.html:2021
 #, python-brace-format
 msgid "Bonus disc of {title}"
 msgstr "Bonusschijf van {title}"
 
-#: templates/settings.html:2016
+#: templates/settings.html:2025
 msgid "Not a bonus disc"
 msgstr "Geen bonusschijf"
 
-#: templates/settings.html:2046
+#: templates/settings.html:2055
 msgid "Back in your game lists. Auto-Link will leave it alone."
 msgstr "Terug in je spellijsten. Auto-Link laat hem met rust."
 
-#: templates/settings.html:2074
+#: templates/settings.html:2083
 #, python-brace-format
 msgid "Backup created: {filename} ({size})"
 msgstr "Back-up gemaakt: {filename} ({size})"
 
-#: templates/settings.html:2077
+#: templates/settings.html:2086
 #, python-brace-format
 msgid "Backup failed: {error}"
 msgstr "Back-up mislukt: {error}"
 
-#: templates/settings.html:2080
+#: templates/settings.html:2089
 #, python-brace-format
 msgid "Backup error: {error}"
 msgstr "Back-upfout: {error}"
 
-#: templates/settings.html:2121
+#: templates/settings.html:2130
 msgid "Restore Backup"
 msgstr "Back-up terugzetten"
 
-#: templates/settings.html:2122
+#: templates/settings.html:2131
 #, python-brace-format
 msgid ""
 "Are you sure you want to restore from \"{filename}\"?\n"
@@ -12168,320 +12183,320 @@ msgstr ""
 "Hiermee wordt je huidige database vervangen. Er wordt automatisch een "
 "back-up van vóór het terugzetten gemaakt."
 
-#: templates/settings.html:2128
+#: templates/settings.html:2137
 msgid "Database restored! Reloading page..."
 msgstr "Database teruggezet! Pagina wordt opnieuw geladen..."
 
-#: templates/settings.html:2132
+#: templates/settings.html:2141
 #, python-brace-format
 msgid "Restore failed: {error}"
 msgstr "Terugzetten mislukt: {error}"
 
-#: templates/settings.html:2135
+#: templates/settings.html:2144
 #, python-brace-format
 msgid "Restore error: {error}"
 msgstr "Fout bij terugzetten: {error}"
 
-#: templates/settings.html:2142
+#: templates/settings.html:2151
 msgid "Calculating file sizes..."
 msgstr "Bestandsgroottes berekenen..."
 
-#: templates/settings.html:2149
+#: templates/settings.html:2158
 #, python-brace-format
 msgid "Calculation failed: {error}"
 msgstr "Berekening mislukt: {error}"
 
-#: templates/settings.html:2299
+#: templates/settings.html:2310
 msgid "Failed to save scraper setting"
 msgstr "Scraper-instelling opslaan mislukt"
 
-#: templates/_settings_tabs/scraping.html:173 templates/settings.html:2311
+#: templates/_settings_tabs/scraping.html:173 templates/settings.html:2322
 msgid "AI Metadata"
 msgstr "AI-metadata"
 
-#: templates/settings.html:2312
+#: templates/settings.html:2323
 #, python-brace-format
 msgid "{name} enabled"
 msgstr "{name} ingeschakeld"
 
-#: templates/settings.html:2312
+#: templates/settings.html:2323
 #, python-brace-format
 msgid "{name} disabled"
 msgstr "{name} uitgeschakeld"
 
-#: templates/settings.html:2382
+#: templates/settings.html:2393
 #, python-brace-format
 msgid "Resets in {time}"
 msgstr "Reset over {time}"
 
-#: templates/settings.html:2382
+#: templates/settings.html:2393
 msgid "Resets soon"
 msgstr "Reset binnenkort"
 
-#: templates/settings.html:2388 templates/settings.html:2390
-#: templates/settings.html:2475 templates/settings.html:2499
-#: templates/settings.html:2596 templates/settings.html:2646
-#: templates/settings.html:2648
+#: templates/settings.html:2399 templates/settings.html:2401
+#: templates/settings.html:2486 templates/settings.html:2510
+#: templates/settings.html:2607 templates/settings.html:2657
+#: templates/settings.html:2659
 #, python-brace-format
 msgid "Resets: {when}"
 msgstr "Reset: {when}"
 
-#: templates/settings.html:2421
+#: templates/settings.html:2432
 msgid "Testing…"
 msgstr "Bezig met testen…"
 
-#: templates/settings.html:2426
+#: templates/settings.html:2437
 #, python-format
 msgid "The key works: %(provider)s answered, using %(model)s."
 msgstr "De sleutel werkt: %(provider)s antwoordde met %(model)s."
 
-#: templates/settings.html:2431
+#: templates/settings.html:2442
 msgid "The key test failed."
 msgstr "De sleuteltest is mislukt."
 
-#: templates/settings.html:2444
+#: templates/settings.html:2455
 msgid "Checking rate limits..."
 msgstr "Limieten controleren..."
 
-#: templates/settings.html:2473 templates/settings.html:2495
+#: templates/settings.html:2484 templates/settings.html:2506
 msgid "remaining (monthly)"
 msgstr "resterend (maandelijks)"
 
-#: templates/settings.html:2474 templates/settings.html:2480
-#: templates/settings.html:2482 templates/settings.html:2484
-#: templates/settings.html:2487
+#: templates/settings.html:2485 templates/settings.html:2491
+#: templates/settings.html:2493 templates/settings.html:2495
+#: templates/settings.html:2498
 #, python-brace-format
 msgid "Public key: {status}"
 msgstr "Publieke sleutel: {status}"
 
-#: templates/settings.html:2476 templates/settings.html:2500
+#: templates/settings.html:2487 templates/settings.html:2511
 #, python-brace-format
 msgid "Extra: {n}"
 msgstr "Extra: {n}"
 
-#: templates/settings.html:2480
+#: templates/settings.html:2491
 msgid "Active"
 msgstr "Actief"
 
-#: templates/settings.html:2482
+#: templates/settings.html:2493
 msgid "Allowance exhausted"
 msgstr "Limiet bereikt"
 
-#: templates/settings.html:2487 templates/settings.html:2505
-#: templates/settings.html:2566 templates/settings.html:2572
-#: templates/settings.html:2606 templates/settings.html:2696
-#: templates/settings.html:2702
+#: templates/settings.html:2498 templates/settings.html:2516
+#: templates/settings.html:2577 templates/settings.html:2583
+#: templates/settings.html:2617 templates/settings.html:2707
+#: templates/settings.html:2713
 msgid "Not configured"
 msgstr "Niet ingesteld"
 
-#: templates/settings.html:2496 templates/settings.html:2505
+#: templates/settings.html:2507 templates/settings.html:2516
 #, python-brace-format
 msgid "Private key: {status}"
 msgstr "Privésleutel: {status}"
 
-#: templates/settings.html:2532
+#: templates/settings.html:2543
 msgid "Error checking"
 msgstr "Fout bij controleren"
 
-#: templates/settings.html:2538 templates/settings.html:2612
+#: templates/settings.html:2549 templates/settings.html:2623
 msgid "Connection error"
 msgstr "Verbindingsfout"
 
-#: templates/settings.html:2553
+#: templates/settings.html:2564
 msgid "requests remaining today"
 msgstr "verzoeken resterend vandaag"
 
-#: templates/settings.html:2556
+#: templates/settings.html:2567
 #, python-brace-format
 msgid "Per-minute limit: {n}"
 msgstr "Limiet per minuut: {n}"
 
-#: templates/settings.html:2557
+#: templates/settings.html:2568
 #, python-brace-format
 msgid "Level: {level}"
 msgstr "Niveau: {level}"
 
-#: templates/settings.html:2558
+#: templates/settings.html:2569
 #, python-brace-format
 msgid "Threads: {n}"
 msgstr "Threads: {n}"
 
-#: templates/settings.html:2559
+#: templates/settings.html:2570
 #, python-brace-format
 msgid "Speed: {n} KB/s"
 msgstr "Snelheid: {n} KB/s"
 
-#: templates/settings.html:2560
+#: templates/settings.html:2571
 msgid "Resets daily at midnight (UTC)"
 msgstr "Wordt dagelijks om middernacht (UTC) gereset"
 
-#: templates/settings.html:2581
+#: templates/settings.html:2592
 #, python-brace-format
 msgid "{n} requests/second (OAuth token-based)"
 msgstr "{n} verzoeken/seconde (op basis van OAuth-token)"
 
-#: templates/settings.html:2582
+#: templates/settings.html:2593
 msgid "Token-based authentication — no daily quota"
 msgstr "Authenticatie met token: geen dagelijks quotum"
 
-#: templates/settings.html:2593
+#: templates/settings.html:2604
 msgid "requests remaining"
 msgstr "verzoeken resterend"
 
-#: templates/settings.html:2594
+#: templates/settings.html:2605
 #, python-brace-format
 msgid "{n} requests/month (free tier)"
 msgstr "{n} verzoeken/maand (gratis niveau)"
 
-#: templates/settings.html:2597
+#: templates/settings.html:2608
 msgid "No live usage tracking from API"
 msgstr "Geen live gebruiksinformatie van de API"
 
-#: templates/settings.html:2621
+#: templates/settings.html:2632
 msgid "No published rate limits"
 msgstr "Geen gepubliceerde limieten"
 
-#: templates/settings.html:2640
+#: templates/settings.html:2651
 #, python-brace-format
 msgid "Requests: {used} remaining ({pct})"
 msgstr "Verzoeken: nog {used} over ({pct})"
 
-#: templates/settings.html:2659
+#: templates/settings.html:2670
 #, python-brace-format
 msgid "Tokens: {used} remaining ({pct})"
 msgstr "Tokens: nog {used} over ({pct})"
 
-#: templates/settings.html:2668
+#: templates/settings.html:2679
 #, python-brace-format
 msgid "Input tokens: {used} remaining ({pct})"
 msgstr "Invoertokens: nog {used} over ({pct})"
 
-#: templates/settings.html:2673
+#: templates/settings.html:2684
 #, python-brace-format
 msgid "Rate: {rpm} requests/min"
 msgstr "Snelheid: {rpm} verzoeken/min"
 
-#: templates/settings.html:2673
+#: templates/settings.html:2684
 #, python-brace-format
 msgid "{rpd} requests/day (free tier)"
 msgstr "{rpd} verzoeken/dag (gratis niveau)"
 
-#: templates/settings.html:2678
+#: templates/settings.html:2689
 msgid "API online — no rate limit data returned"
 msgstr "API online: geen limietgegevens ontvangen"
 
-#: templates/settings.html:2691
+#: templates/settings.html:2702
 #, python-brace-format
 msgid "Model: {model}"
 msgstr "Model: {model}"
 
-#: templates/settings.html:2695 templates/settings.html:2701
+#: templates/settings.html:2706 templates/settings.html:2712
 msgid "AI Provider"
 msgstr "AI-aanbieder"
 
-#: templates/settings.html:2708
+#: templates/settings.html:2719
 #, python-brace-format
 msgid "Last checked: {time}"
 msgstr "Laatst gecontroleerd: {time}"
 
-#: templates/settings.html:2712
+#: templates/settings.html:2723
 msgid "No rate limit information available"
 msgstr "Geen informatie over limieten beschikbaar"
 
-#: templates/_settings_tabs/scraping.html:263 templates/settings.html:2716
+#: templates/_settings_tabs/scraping.html:263 templates/settings.html:2727
 msgid "Check Rate Limits"
 msgstr "Limieten controleren"
 
-#: templates/settings.html:2738
+#: templates/settings.html:2749
 msgid "Settings saved! Checking scraper status..."
 msgstr "Instellingen opgeslagen! Scraperstatus wordt gecontroleerd..."
 
-#: templates/settings.html:2800
+#: templates/settings.html:2811
 msgid "API keys saved! Checking scraper status..."
 msgstr "API-sleutels opgeslagen! Scraperstatus wordt gecontroleerd..."
 
-#: templates/settings.html:2805
+#: templates/settings.html:2816
 msgid "API keys saved successfully!"
 msgstr "API-sleutels opgeslagen!"
 
-#: templates/settings.html:2809
+#: templates/settings.html:2820
 msgid "Failed to save API keys"
 msgstr "API-sleutels opslaan mislukt"
 
-#: templates/_settings_tabs/scraping.html:535 templates/settings.html:2816
+#: templates/_settings_tabs/scraping.html:535 templates/settings.html:2827
 msgid "Save API Keys"
 msgstr "API-sleutels opslaan"
 
-#: templates/settings.html:2908
+#: templates/settings.html:2919
 msgid "Invalid Input"
 msgstr "Ongeldige invoer"
 
-#: templates/settings.html:2908
+#: templates/settings.html:2919
 msgid "Please enter a value"
 msgstr "Voer een waarde in"
 
-#: templates/settings.html:2925 templates/settings.html:2929
+#: templates/settings.html:2936 templates/settings.html:2940
 msgid "Failed to add option"
 msgstr "Optie toevoegen mislukt"
 
-#: templates/settings.html:2935
+#: templates/settings.html:2946
 msgid "Delete Option"
 msgstr "Optie verwijderen"
 
-#: templates/settings.html:2936
+#: templates/settings.html:2947
 msgid "Are you sure you want to delete this option?"
 msgstr "Weet je zeker dat je deze optie wilt verwijderen?"
 
-#: templates/settings.html:2948 templates/settings.html:2952
+#: templates/settings.html:2959 templates/settings.html:2963
 msgid "Failed to delete option"
 msgstr "Optie verwijderen mislukt"
 
-#: templates/settings.html:3504 templates/settings.html:4255
+#: templates/settings.html:3515 templates/settings.html:4266
 msgid "Missing Input"
 msgstr "Ontbrekende invoer"
 
-#: templates/settings.html:3504 templates/settings.html:4255
+#: templates/settings.html:3515 templates/settings.html:4266
 msgid "Please enter a controller name"
 msgstr "Voer een controllernaam in"
 
-#: templates/settings.html:3548
+#: templates/settings.html:3559
 #, python-brace-format
 msgid "Controller \"{name}\" has been added to the library."
 msgstr "Controller \"{name}\" is aan de bibliotheek toegevoegd."
 
-#: templates/settings.html:3550 templates/settings.html:3554
+#: templates/settings.html:3561 templates/settings.html:3565
 msgid "Failed to add controller"
 msgstr "Controller toevoegen mislukt"
 
-#: templates/settings.html:3622 templates/settings.html:3626
+#: templates/settings.html:3633 templates/settings.html:3637
 msgid "Failed to set default controller"
 msgstr "Standaardcontroller instellen mislukt"
 
-#: templates/settings.html:3657 templates/settings.html:3661
+#: templates/settings.html:3668 templates/settings.html:3672
 msgid "Failed to add default controller"
 msgstr "Standaardcontroller toevoegen mislukt"
 
-#: templates/settings.html:3687 templates/settings.html:3691
+#: templates/settings.html:3698 templates/settings.html:3702
 msgid "Failed to remove default controller"
 msgstr "Standaardcontroller verwijderen mislukt"
 
-#: templates/settings.html:3762
+#: templates/settings.html:3773
 msgid "Preview:"
 msgstr "Voorbeeld:"
 
-#: templates/settings.html:3763
+#: templates/settings.html:3774
 #, python-brace-format
 msgid "This will clear scraped data from {count} games in {system}."
 msgstr "Hiermee worden gescrapete gegevens gewist van {count} games in {system}."
 
-#: templates/settings.html:3764
+#: templates/settings.html:3775
 #, python-brace-format
 msgid "This will clear scraped data from {count} games (all systems)."
 msgstr ""
 "Hiermee worden gescrapete gegevens gewist van {count} games (alle "
 "systemen)."
 
-#: templates/settings.html:3765
+#: templates/settings.html:3776
 msgid ""
 "Fields: description, genre, publisher, developer, players, modes, "
 "ratings, scores, images, etc."
@@ -12489,84 +12504,84 @@ msgstr ""
 "Velden: beschrijving, genre, uitgever, ontwikkelaar, spelers, modi, "
 "leeftijdsclassificaties, scores, afbeeldingen, enz."
 
-#: templates/settings.html:3772
+#: templates/settings.html:3783
 msgid "Failed to preview"
 msgstr "Voorbeeld tonen mislukt"
 
-#: templates/settings.html:3795
+#: templates/settings.html:3806
 msgid "ALL SYSTEMS"
 msgstr "ALLE SYSTEMEN"
 
-#: templates/_settings_tabs/system.html:84 templates/settings.html:3799
-#: templates/settings.html:3844
+#: templates/_settings_tabs/system.html:84 templates/settings.html:3810
+#: templates/settings.html:3855
 msgid "Clear Scraped Data"
 msgstr "Gescrapete gegevens wissen"
 
-#: templates/settings.html:3800
+#: templates/settings.html:3811
 #, python-brace-format
 msgid "This will clear all scraped metadata from games in {system}."
 msgstr "Hiermee worden alle gescrapete metadata van games in {system} gewist."
 
-#: templates/settings.html:3801
+#: templates/settings.html:3812
 msgid "Downloaded images will also be deleted!"
 msgstr "Gedownloade afbeeldingen worden ook verwijderd!"
 
-#: templates/settings.html:3802
+#: templates/settings.html:3813
 msgid "This cannot be undone. Are you sure?"
 msgstr "Dit kan niet ongedaan worden gemaakt. Weet je het zeker?"
 
-#: templates/settings.html:3823
+#: templates/settings.html:3834
 #, python-brace-format
 msgid "Cleared scraped data from {count} games."
 msgstr "Gescrapete gegevens gewist van {count} games."
 
-#: templates/settings.html:3823
+#: templates/settings.html:3834
 #, python-brace-format
 msgid "Deleted {count} image files."
 msgstr "{count} afbeeldingsbestanden verwijderd."
 
-#: templates/settings.html:3830
+#: templates/settings.html:3841
 msgid "Failed to clear data"
 msgstr "Wissen van gegevens mislukt"
 
-#: templates/settings.html:3876
+#: templates/settings.html:3887
 msgid "No orphaned media files found. All files are linked to existing games."
 msgstr ""
 "Geen overgebleven mediabestanden gevonden. Alle bestanden zijn gekoppeld "
 "aan bestaande games."
 
-#: templates/settings.html:3889 templates/setup.html:404
+#: templates/settings.html:3900 templates/setup.html:404
 #, python-brace-format
 msgid "{count} files"
 msgstr "{count} bestanden"
 
-#: templates/settings.html:3894
+#: templates/settings.html:3905
 #, python-brace-format
 msgid "Found {count} orphaned files ({size} MB)"
 msgstr "{count} overgebleven bestanden gevonden ({size} MB)"
 
-#: templates/settings.html:3906
+#: templates/settings.html:3917
 msgid "Failed to scan for orphaned files"
 msgstr "Scannen op overgebleven bestanden mislukt"
 
-#: templates/_settings_tabs/system.html:100 templates/settings.html:3920
+#: templates/_settings_tabs/system.html:100 templates/settings.html:3931
 msgid "Scan for Orphaned Files"
 msgstr "Scannen op overgebleven bestanden"
 
-#: templates/settings.html:3926
+#: templates/settings.html:3937
 msgid "No Files"
 msgstr "Geen bestanden"
 
-#: templates/settings.html:3926
+#: templates/settings.html:3937
 msgid "Please scan for orphaned files first."
 msgstr "Scan eerst op overgebleven bestanden."
 
-#: templates/_settings_tabs/system.html:104 templates/settings.html:3931
-#: templates/settings.html:3977
+#: templates/_settings_tabs/system.html:104 templates/settings.html:3942
+#: templates/settings.html:3988
 msgid "Delete Orphaned Files"
 msgstr "Overgebleven bestanden verwijderen"
 
-#: templates/settings.html:3932
+#: templates/settings.html:3943
 #, python-brace-format
 msgid ""
 "Orphaned media files to delete permanently: {count}. This action cannot "
@@ -12575,35 +12590,35 @@ msgstr ""
 "Overgebleven mediabestanden die definitief worden verwijderd: {count}. "
 "Dit kan niet ongedaan worden gemaakt.<br><br>Doorgaan?"
 
-#: templates/settings.html:3938
+#: templates/settings.html:3949
 msgid "Deleting..."
 msgstr "Bezig met verwijderen..."
 
-#: templates/settings.html:3956
+#: templates/settings.html:3967
 #, python-brace-format
 msgid "Deleted {count} orphaned files."
 msgstr "{count} overgebleven bestanden verwijderd."
 
-#: templates/settings.html:3956
+#: templates/settings.html:3967
 #, python-brace-format
 msgid "Freed {size} MB of disk space."
 msgstr "{size} MB schijfruimte vrijgemaakt."
 
-#: templates/settings.html:3956
+#: templates/settings.html:3967
 #, python-brace-format
 msgid "{count} files could not be deleted."
 msgstr "{count} bestanden konden niet worden verwijderd."
 
-#: templates/settings.html:3964
+#: templates/settings.html:3975
 msgid "Failed to delete files"
 msgstr "Verwijderen van bestanden mislukt"
 
-#: templates/settings.html:4015
+#: templates/settings.html:4026
 #, python-brace-format
 msgid "{count} reference(s)"
 msgstr "{count} verwijzing(en)"
 
-#: templates/settings.html:4019
+#: templates/settings.html:4030
 msgid ""
 "Some media folders look missing or empty (possibly an unmounted drive or "
 "a bulk deletion). Their references were <strong>kept, not "
@@ -12615,15 +12630,15 @@ msgstr ""
 "<strong>behouden, niet gewist</strong>, om te voorkomen dat je hele "
 "bibliotheek per ongeluk wordt leeggemaakt:"
 
-#: templates/settings.html:4021
+#: templates/settings.html:4032
 msgid "Re-mount the media folder (or re-scrape) and scan again."
 msgstr "Koppel de mediamap opnieuw (of scrape opnieuw) en scan nog een keer."
 
-#: templates/settings.html:4028
+#: templates/settings.html:4039
 msgid "No clearable missing-media references found."
 msgstr "Geen te wissen verwijzingen naar ontbrekende media gevonden."
 
-#: templates/settings.html:4033
+#: templates/settings.html:4044
 #, python-brace-format
 msgid ""
 "Found {refs} stale reference(s) across {games} game(s) pointing to files "
@@ -12632,28 +12647,28 @@ msgstr ""
 "{refs} verouderde verwijzing(en) gevonden bij {games} game(s) naar "
 "bestanden die niet meer op de schijf staan."
 
-#: templates/settings.html:4041
+#: templates/settings.html:4052
 msgid "Failed to scan for missing media references"
 msgstr "Scannen op verwijzingen naar ontbrekende media mislukt"
 
-#: templates/_settings_tabs/system.html:119 templates/settings.html:4051
+#: templates/_settings_tabs/system.html:119 templates/settings.html:4062
 msgid "Scan for Missing Media"
 msgstr "Scannen op ontbrekende media"
 
-#: templates/settings.html:4057
+#: templates/settings.html:4068
 msgid "Nothing to Clear"
 msgstr "Niets om te wissen"
 
-#: templates/settings.html:4057
+#: templates/settings.html:4068
 msgid "Please scan for missing media references first."
 msgstr "Scan eerst op ontbrekende mediaverwijzingen."
 
-#: templates/_settings_tabs/system.html:123 templates/settings.html:4062
-#: templates/settings.html:4102
+#: templates/_settings_tabs/system.html:123 templates/settings.html:4073
+#: templates/settings.html:4113
 msgid "Clear Missing References"
 msgstr "Ontbrekende verwijzingen wissen"
 
-#: templates/settings.html:4063
+#: templates/settings.html:4074
 #, python-brace-format
 msgid ""
 "Database references to clear: {count}. They point to media files that no "
@@ -12665,52 +12680,52 @@ msgstr ""
 "opnieuw kunnen downloaden. Je gamevermeldingen blijven "
 "ongewijzigd.<br><br>Doorgaan?"
 
-#: templates/settings.html:4082
+#: templates/settings.html:4093
 #, python-brace-format
 msgid "{count} reference(s) in missing/empty folders were preserved."
 msgstr "{count} verwijzing(en) in ontbrekende/lege mappen zijn behouden."
 
-#: templates/settings.html:4086
+#: templates/settings.html:4097
 #, python-brace-format
 msgid "Cleared {refs} stale reference(s) across {games} game(s)."
 msgstr "{refs} verouderde verwijzing(en) gewist bij {games} game(s)."
 
-#: templates/settings.html:4093
+#: templates/settings.html:4104
 msgid "Failed to clear references"
 msgstr "Wissen van verwijzingen mislukt"
 
-#: templates/settings.html:4114
+#: templates/settings.html:4125
 msgid "Optimizing..."
 msgstr "Bezig met optimaliseren..."
 
-#: templates/settings.html:4126
+#: templates/settings.html:4137
 #, python-brace-format
 msgid "Database optimized successfully in {seconds}s."
 msgstr "Database geoptimaliseerd in {seconds}s."
 
-#: templates/settings.html:4127
+#: templates/settings.html:4138
 #, python-brace-format
 msgid "Size: {before} MB → {after} MB"
 msgstr "Grootte: {before} MB → {after} MB"
 
-#: templates/settings.html:4128
+#: templates/settings.html:4139
 #, python-brace-format
 msgid "(saved {size} MB)"
 msgstr "({size} MB bespaard)"
 
-#: templates/settings.html:4134
+#: templates/settings.html:4145
 msgid "Failed to optimize database"
 msgstr "Optimaliseren van database mislukt"
 
-#: templates/_settings_tabs/system.html:137 templates/settings.html:4148
+#: templates/_settings_tabs/system.html:137 templates/settings.html:4159
 msgid "Optimize Database"
 msgstr "Database optimaliseren"
 
-#: templates/settings.html:4158
+#: templates/settings.html:4169
 msgid "Delete Controller"
 msgstr "Controller verwijderen"
 
-#: templates/settings.html:4159
+#: templates/settings.html:4170
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete {name}?<br><br>This will remove it from "
@@ -12720,127 +12735,127 @@ msgstr ""
 "controller uit de bibliotheek verwijderd, en ook bij alle systemen waar "
 "hij als standaard is ingesteld."
 
-#: templates/settings.html:4180
+#: templates/settings.html:4191
 msgid "Deleted"
 msgstr "Verwijderd"
 
-#: templates/settings.html:4180
+#: templates/settings.html:4191
 #, python-brace-format
 msgid "Controller \"{name}\" has been removed."
 msgstr "Controller \"{name}\" is verwijderd."
 
-#: templates/settings.html:4182 templates/settings.html:4186
+#: templates/settings.html:4193 templates/settings.html:4197
 msgid "Failed to delete controller"
 msgstr "Controller verwijderen mislukt"
 
-#: templates/settings.html:4204
+#: templates/settings.html:4215
 msgid "Failed to load controller"
 msgstr "Controller laden mislukt"
 
-#: templates/settings.html:4235
+#: templates/settings.html:4246
 msgid "Failed to load controller data"
 msgstr "Controllergegevens laden mislukt"
 
-#: templates/settings.html:4293
+#: templates/settings.html:4304
 #, python-brace-format
 msgid "Controller \"{name}\" has been updated."
 msgstr "Controller \"{name}\" is bijgewerkt."
 
-#: templates/settings.html:4295 templates/settings.html:4299
+#: templates/settings.html:4306 templates/settings.html:4310
 msgid "Failed to update controller"
 msgstr "Controller bijwerken mislukt"
 
-#: templates/settings.html:4426
+#: templates/settings.html:4437
 msgid "Logos Refreshed"
 msgstr "Logo's vernieuwd"
 
-#: templates/settings.html:4427
+#: templates/settings.html:4438
 #, python-brace-format
 msgid "System logos updated: {count}. The table has been refreshed."
 msgstr "Systeemlogo's bijgewerkt: {count}. De tabel is vernieuwd."
 
-#: templates/settings.html:4429
+#: templates/settings.html:4440
 msgid "Failed to refresh logos"
 msgstr "Logo's vernieuwen mislukt"
 
-#: templates/settings.html:4433
+#: templates/settings.html:4444
 msgid "Failed to refresh system logos"
 msgstr "Systeemlogo's vernieuwen mislukt"
 
-#: templates/settings.html:4455
+#: templates/settings.html:4466
 msgid "Names Refreshed"
 msgstr "Namen vernieuwd"
 
-#: templates/settings.html:4456
+#: templates/settings.html:4467
 #, python-brace-format
 msgid "System names updated: {count}. Click OK to refresh the page."
 msgstr "Systeemnamen bijgewerkt: {count}. Klik op OK om de pagina te vernieuwen."
 
-#: templates/settings.html:4459
+#: templates/settings.html:4470
 msgid "Failed to refresh names"
 msgstr "Namen vernieuwen mislukt"
 
-#: templates/settings.html:4463
+#: templates/settings.html:4474
 msgid "Failed to refresh system names"
 msgstr "Systeemnamen vernieuwen mislukt"
 
-#: templates/settings.html:4479
+#: templates/settings.html:4490
 msgid "Importing..."
 msgstr "Importeren..."
 
-#: templates/settings.html:4489
+#: templates/settings.html:4500
 msgid "Run \"Scan Library\" to update the database with the new logos."
 msgstr ""
 "Voer \"Bibliotheek scannen\" uit om de database met de nieuwe logo's bij "
 "te werken."
 
-#: templates/settings.html:4494 templates/setup.html:375
+#: templates/settings.html:4505 templates/setup.html:375
 #: templates/setup.html:435
 msgid "An error occurred"
 msgstr "Er is een fout opgetreden"
 
-#: templates/settings.html:4497
+#: templates/settings.html:4508
 #, python-brace-format
 msgid "Failed to import logos: {error}"
 msgstr "Logo's importeren mislukt: {error}"
 
-#: templates/_settings_tabs/scraping.html:58 templates/settings.html:4500
+#: templates/_settings_tabs/scraping.html:58 templates/settings.html:4511
 msgid "Import System Logos"
 msgstr "Systeemlogo's importeren"
 
-#: templates/settings.html:4564
+#: templates/settings.html:4575
 msgid "RA sync state and queue cleared!"
 msgstr "RA-synchronisatiestatus en wachtrij gewist!"
 
-#: templates/settings.html:4578
+#: templates/settings.html:4589
 msgid "RA sync queue cleared (server unreachable)"
 msgstr "RA-synchronisatiewachtrij gewist (server onbereikbaar)"
 
-#: templates/settings.html:4597
+#: templates/settings.html:4608
 msgid "No items in queue, no active sync."
 msgstr "Geen items in de wachtrij, geen actieve synchronisatie."
 
-#: templates/settings.html:4740
+#: templates/settings.html:4751
 msgid "Logging settings saved!"
 msgstr "Loginstellingen opgeslagen!"
 
-#: templates/settings.html:4742
+#: templates/settings.html:4753
 msgid "Failed to save"
 msgstr "Opslaan mislukt"
 
-#: templates/_settings_tabs/system.html:382 templates/settings.html:4748
+#: templates/_settings_tabs/system.html:383 templates/settings.html:4759
 msgid "Save Logging Settings"
 msgstr "Loginstellingen opslaan"
 
-#: templates/settings.html:4755
+#: templates/settings.html:4766
 msgid "Loading log files..."
 msgstr "Logbestanden laden..."
 
-#: templates/settings.html:4767
+#: templates/settings.html:4778
 msgid "Date"
 msgstr "Datum"
 
-#: templates/settings.html:4800
+#: templates/settings.html:4811
 msgid ""
 "No log files found. Logs will appear here after scraping or ROM "
 "operations."
@@ -12848,105 +12863,105 @@ msgstr ""
 "Geen logbestanden gevonden. Logs verschijnen hier na het scrapen of na "
 "ROM-bewerkingen."
 
-#: templates/settings.html:4803
+#: templates/settings.html:4814
 #, python-brace-format
 msgid "Error loading log files: {error}"
 msgstr "Fout bij het laden van logbestanden: {error}"
 
-#: templates/settings.html:4820
+#: templates/settings.html:4831
 #, python-brace-format
 msgid "Log: {filename}"
 msgstr "Log: {filename}"
 
-#: templates/settings.html:4821
+#: templates/settings.html:4832
 msgid "Log file is empty"
 msgstr "Logbestand is leeg"
 
-#: templates/settings.html:4824
+#: templates/settings.html:4835
 msgid "Failed to load log file"
 msgstr "Logbestand laden mislukt"
 
-#: templates/settings.html:4827
+#: templates/settings.html:4838
 #, python-brace-format
 msgid "Error loading log file: {error}"
 msgstr "Fout bij laden van logbestand: {error}"
 
-#: templates/settings.html:4846
+#: templates/settings.html:4857
 msgid "Failed to delete log file"
 msgstr "Logbestand verwijderen mislukt"
 
-#: templates/settings.html:4849
+#: templates/settings.html:4860
 #, python-brace-format
 msgid "Error deleting log file: {error}"
 msgstr "Fout bij verwijderen van logbestand: {error}"
 
-#: templates/settings.html:4855
+#: templates/settings.html:4866
 msgid "Clear Old Logs"
 msgstr "Oude logs wissen"
 
-#: templates/settings.html:4855
+#: templates/settings.html:4866
 msgid "This will delete all log files older than 5 days. Continue?"
 msgstr ""
 "Hiermee verwijder je alle logbestanden die ouder zijn dan 5 dagen. "
 "Doorgaan?"
 
-#: templates/settings.html:4861
+#: templates/settings.html:4872
 #, python-brace-format
 msgid "Old log files removed: {count}"
 msgstr "Oude logbestanden verwijderd: {count}"
 
-#: templates/settings.html:4864
+#: templates/settings.html:4875
 msgid "Failed to clear old logs"
 msgstr "Oude logs wissen mislukt"
 
-#: templates/settings.html:4867
+#: templates/settings.html:4878
 #, python-brace-format
 msgid "Error clearing old logs: {error}"
 msgstr "Fout bij wissen van oude logs: {error}"
 
-#: templates/settings.html:4912
+#: templates/settings.html:4923
 msgid "Token extracted from the pasted page"
 msgstr "Token gehaald uit de geplakte pagina"
 
-#: templates/settings.html:4914
+#: templates/settings.html:4925
 msgid "Token detected"
 msgstr "Token gevonden"
 
-#: templates/settings.html:4916
+#: templates/settings.html:4927
 msgid "Could not detect a valid NPSSO token"
 msgstr "Kon geen geldig NPSSO-token vinden"
 
-#: templates/settings.html:4928
+#: templates/settings.html:4939
 msgid "Now press Ctrl+V to paste."
 msgstr "Druk nu op Ctrl+V om te plakken."
 
-#: templates/settings.html:4940
+#: templates/settings.html:4951
 msgid "Enter an NPSSO token first"
 msgstr "Voer eerst een NPSSO-token in"
 
-#: templates/settings.html:4945
+#: templates/settings.html:4956
 msgid "Testing..."
 msgstr "Testen..."
 
-#: templates/settings.html:4946 templates/settings.html:5035
+#: templates/settings.html:4957 templates/settings.html:5046
 msgid "Saving and connecting..."
 msgstr "Opslaan en verbinden..."
 
-#: templates/settings.html:4957 templates/settings.html:5044
+#: templates/settings.html:4968 templates/settings.html:5055
 #, python-format
 msgid "Connected as %(name)s"
 msgstr "Verbonden als %(name)s"
 
-#: templates/settings.html:4964 templates/settings.html:5048
+#: templates/settings.html:4975 templates/settings.html:5059
 msgid "Connection failed"
 msgstr "Verbinding mislukt"
 
-#: templates/settings.html:4967 templates/settings.html:5051
+#: templates/settings.html:4978 templates/settings.html:5062
 #, python-format
 msgid "Error: %(msg)s"
 msgstr "Fout: %(msg)s"
 
-#: templates/settings.html:4986
+#: templates/settings.html:4997
 #, python-format
 msgid ""
 "Sony refused your saved NPSSO token on %(date)s. Get a new one with the "
@@ -12955,7 +12970,7 @@ msgstr ""
 "Sony heeft je opgeslagen NPSSO-token op %(date)s geweigerd. Haal een "
 "nieuwe op met de onderstaande stappen."
 
-#: templates/settings.html:4989
+#: templates/settings.html:5000
 msgid ""
 "Connected to PSN. RetroDB keeps the sign-in going by itself. You need a "
 "new token only if Sony refuses this one."
@@ -12963,52 +12978,52 @@ msgstr ""
 "Verbonden met PSN. RetroDB houdt de aanmelding zelf actief. Je hebt "
 "alleen een nieuw token nodig als Sony dit token weigert."
 
-#: templates/settings.html:5018
+#: templates/settings.html:5029
 #, python-format
 msgid "Key saved. Connected as %(name)s."
 msgstr "Sleutel opgeslagen. Verbonden als %(name)s."
 
-#: templates/settings.html:5019
+#: templates/settings.html:5030
 msgid "No key saved."
 msgstr "Geen sleutel opgeslagen."
 
-#: templates/settings.html:5057
+#: templates/settings.html:5068
 msgid "Remove Xbox key"
 msgstr "Xbox-sleutel verwijderen"
 
-#: templates/settings.html:5057
+#: templates/settings.html:5068
 msgid "Remove your OpenXBL key? Your imported games and achievements stay."
 msgstr ""
 "Je OpenXBL-sleutel verwijderen? Je geïmporteerde spellen en prestaties "
 "blijven bewaard."
 
-#: templates/settings.html:5062
+#: templates/settings.html:5073
 msgid "Could not remove the Xbox key."
 msgstr "Kon de Xbox-sleutel niet verwijderen."
 
-#: templates/settings.html:5151 templates/settings.html:5198
+#: templates/settings.html:5162 templates/settings.html:5209
 msgid "Avatar updated!"
 msgstr "Avatar bijgewerkt!"
 
-#: templates/settings.html:5156
+#: templates/settings.html:5167
 #, python-brace-format
 msgid "Upload failed: {error}"
 msgstr "Uploaden mislukt: {error}"
 
-#: templates/settings.html:5173
+#: templates/settings.html:5184
 msgid "Avatar removed"
 msgstr "Avatar verwijderd"
 
-#: templates/settings.html:5175 templates/settings.html:5178
+#: templates/settings.html:5186 templates/settings.html:5189
 msgid "Failed to remove avatar"
 msgstr "Avatar verwijderen mislukt"
 
-#: templates/settings.html:5200 templates/settings.html:5203
+#: templates/settings.html:5211 templates/settings.html:5214
 msgid "Failed to save avatar"
 msgstr "Avatar opslaan mislukt"
 
-#: templates/_settings_tabs/_tab_bar.html:23
-#: templates/_settings_tabs/_tab_bar.html:38
+#: templates/_settings_tabs/_tab_bar.html:24
+#: templates/_settings_tabs/_tab_bar.html:39
 #: templates/settings_emulators.html:4 templates/settings_emulators.html:9
 #: templates/settings_emulators.html:24
 msgid "Emulators"
@@ -13420,7 +13435,7 @@ msgstr "Browser gedetecteerd:"
 msgid "Use detected"
 msgstr "Gedetecteerde gebruiken"
 
-#: templates/_settings_tabs/library.html:24 templates/setup.html:141
+#: templates/_settings_tabs/library.html:26 templates/setup.html:141
 #: templates/setup.html:144
 msgid "ROM Library Path"
 msgstr "Pad ROM-bibliotheek"
@@ -13443,7 +13458,7 @@ msgstr "Mappen doorzoeken"
 msgid "Current: %(path)s"
 msgstr "Huidig: %(path)s"
 
-#: templates/_settings_tabs/data.html:55 templates/setup.html:151
+#: templates/_settings_tabs/data.html:57 templates/setup.html:151
 msgid "Example:"
 msgstr "Voorbeeld:"
 
@@ -14654,25 +14669,25 @@ msgstr ""
 msgid "Apply"
 msgstr "Toepassen"
 
-#: templates/_settings_tabs/_tab_bar.html:6
+#: templates/_settings_tabs/_tab_bar.html:7
 msgid "Account"
 msgstr "Account"
 
-#: templates/_settings_tabs/_tab_bar.html:8
+#: templates/_settings_tabs/_tab_bar.html:9
 msgctxt "settings tab"
 msgid "Scraping"
 msgstr "Scrapen"
 
-#: templates/_settings_tabs/_tab_bar.html:9
+#: templates/_settings_tabs/_tab_bar.html:10
 msgid "Data"
 msgstr "Gegevens"
 
-#: templates/_settings_tabs/_tab_bar.html:10
+#: templates/_settings_tabs/_tab_bar.html:11
 msgid "Customization"
 msgstr "Aanpassing"
 
-#: templates/_settings_tabs/_tab_bar.html:14
-#: templates/_settings_tabs/_tab_bar.html:27
+#: templates/_settings_tabs/_tab_bar.html:15
+#: templates/_settings_tabs/_tab_bar.html:28
 msgid "Settings sections"
 msgstr "Instellingensecties"
 
@@ -15032,11 +15047,6 @@ msgstr "Gebruikersbeheer"
 msgid "Manage users who can access RetroDB."
 msgstr "Beheer gebruikers die toegang hebben tot RetroDB."
 
-#: templates/_settings_tabs/account.html:319
-#: templates/_settings_tabs/account.html:393
-msgid "Add User"
-msgstr "Gebruiker toevoegen"
-
 #: templates/_settings_tabs/account.html:327
 msgid "Role"
 msgstr "Rol"
@@ -15096,14 +15106,25 @@ msgid "Admin - Full access"
 msgstr "Beheerder - volledige toegang"
 
 #: templates/_settings_tabs/account.html:420
+#, fuzzy
+msgid "Password *"
+msgstr "Wachtwoord"
+
+#: templates/_settings_tabs/account.html:422
+msgid ""
+"12 characters or more. Give it to them; they choose their own the first "
+"time they sign in."
+msgstr ""
+
+#: templates/_settings_tabs/account.html:426
 msgid "Reset Password"
 msgstr "Wachtwoord resetten"
 
-#: templates/_settings_tabs/account.html:421
+#: templates/_settings_tabs/account.html:427
 msgid "Leave blank to keep current"
 msgstr "Laat leeg om huidig wachtwoord te behouden"
 
-#: templates/_settings_tabs/account.html:426
+#: templates/_settings_tabs/account.html:432
 msgid "Save User"
 msgstr "Gebruiker opslaan"
 
@@ -15111,28 +15132,28 @@ msgstr "Gebruiker opslaan"
 msgid "Customization settings"
 msgstr "Aanpassingsinstellingen"
 
-#: templates/_settings_tabs/customization.html:4
+#: templates/_settings_tabs/customization.html:5
 msgid "Notifications"
 msgstr "Meldingen"
 
-#: templates/_settings_tabs/customization.html:6
+#: templates/_settings_tabs/customization.html:7
 msgid "System Defaults"
 msgstr "Systeemstandaarden"
 
-#: templates/_settings_tabs/customization.html:7
-#: templates/_settings_tabs/customization.html:199
+#: templates/_settings_tabs/customization.html:8
+#: templates/_settings_tabs/customization.html:202
 msgid "Add Controller"
 msgstr "Controller toevoegen"
 
-#: templates/_settings_tabs/customization.html:9
+#: templates/_settings_tabs/customization.html:10
 msgid "Logos"
 msgstr "Logo's"
 
-#: templates/_settings_tabs/customization.html:15
+#: templates/_settings_tabs/customization.html:17
 msgid "Notification Settings"
 msgstr "Meldingsinstellingen"
 
-#: templates/_settings_tabs/customization.html:19
+#: templates/_settings_tabs/customization.html:21
 msgid ""
 "Configure how long toast notifications stay visible before automatically "
 "dismissing. Set to 0 for notifications that only close when clicked."
@@ -15141,54 +15162,54 @@ msgstr ""
 "worden gesloten. Stel in op 0 voor meldingen die alleen sluiten na een "
 "klik."
 
-#: templates/_settings_tabs/customization.html:26
+#: templates/_settings_tabs/customization.html:28
 msgid "Success Notifications"
 msgstr "Succesmeldingen"
 
-#: templates/_settings_tabs/customization.html:32
-#: templates/_settings_tabs/customization.html:46
-#: templates/_settings_tabs/customization.html:60
-#: templates/_settings_tabs/customization.html:74
+#: templates/_settings_tabs/customization.html:34
+#: templates/_settings_tabs/customization.html:48
+#: templates/_settings_tabs/customization.html:62
+#: templates/_settings_tabs/customization.html:76
 msgid "seconds"
 msgstr "seconden"
 
-#: templates/_settings_tabs/customization.html:34
+#: templates/_settings_tabs/customization.html:36
 msgid "Shown after successful operations"
 msgstr "Getoond na succesvolle bewerkingen"
 
-#: templates/_settings_tabs/customization.html:40
+#: templates/_settings_tabs/customization.html:42
 msgid "Info Notifications"
 msgstr "Infomeldingen"
 
-#: templates/_settings_tabs/customization.html:48
+#: templates/_settings_tabs/customization.html:50
 msgid "General information messages"
 msgstr "Algemene informatieberichten"
 
-#: templates/_settings_tabs/customization.html:54
+#: templates/_settings_tabs/customization.html:56
 msgid "Warning Notifications"
 msgstr "Waarschuwingsmeldingen"
 
-#: templates/_settings_tabs/customization.html:62
+#: templates/_settings_tabs/customization.html:64
 msgid "Warnings that need attention"
 msgstr "Waarschuwingen die aandacht vereisen"
 
-#: templates/_settings_tabs/customization.html:68
+#: templates/_settings_tabs/customization.html:70
 msgid "Error Notifications"
 msgstr "Foutmeldingen"
 
-#: templates/_settings_tabs/customization.html:76
+#: templates/_settings_tabs/customization.html:78
 msgid "Errors stay longer for readability"
 msgstr "Fouten blijven langer zichtbaar voor de leesbaarheid"
 
-#: templates/_settings_tabs/customization.html:87
+#: templates/_settings_tabs/customization.html:89
 msgid "Test Notifications"
 msgstr "Meldingen testen"
 
-#: templates/_settings_tabs/customization.html:96
+#: templates/_settings_tabs/customization.html:99
 msgid "Controller Management"
 msgstr "Controllerbeheer"
 
-#: templates/_settings_tabs/customization.html:100
+#: templates/_settings_tabs/customization.html:103
 msgid ""
 "Manage controllers and assign default controllers to each system. The "
 "default controller will automatically appear for all games in that "
@@ -15198,11 +15219,11 @@ msgstr ""
 "standaardcontroller verschijnt automatisch bij alle games van dat "
 "systeem."
 
-#: templates/_settings_tabs/customization.html:106
+#: templates/_settings_tabs/customization.html:109
 msgid "System Default Controllers"
 msgstr "Standaardcontrollers per systeem"
 
-#: templates/_settings_tabs/customization.html:109
+#: templates/_settings_tabs/customization.html:112
 msgid ""
 "Assign a default controller to each system. Games will inherit this "
 "controller unless manually changed."
@@ -15210,11 +15231,11 @@ msgstr ""
 "Wijs een standaardcontroller toe aan elk systeem. Games nemen deze "
 "controller over, tenzij handmatig gewijzigd."
 
-#: templates/_settings_tabs/customization.html:114
+#: templates/_settings_tabs/customization.html:117
 msgid "Auto-Assign Defaults"
 msgstr "Standaarden automatisch toewijzen"
 
-#: templates/_settings_tabs/customization.html:117
+#: templates/_settings_tabs/customization.html:120
 msgid ""
 "Automatically assigns appropriate controllers to all systems based on "
 "hardware type"
@@ -15222,11 +15243,11 @@ msgstr ""
 "Wijst automatisch passende controllers toe aan alle systemen op basis van"
 " hardwaretype"
 
-#: templates/_settings_tabs/customization.html:141
+#: templates/_settings_tabs/customization.html:144
 msgid "Add New Controller"
 msgstr "Nieuwe controller toevoegen"
 
-#: templates/_settings_tabs/customization.html:144
+#: templates/_settings_tabs/customization.html:147
 msgid ""
 "Add a custom controller to the library. Select one or more systems, or "
 "leave empty for \"Universal\" controllers."
@@ -15234,22 +15255,22 @@ msgstr ""
 "Voeg een aangepaste controller toe aan de bibliotheek. Selecteer een of "
 "meer systemen, of laat leeg voor \"Universele\" controllers."
 
-#: templates/_settings_tabs/customization.html:149
-#: templates/_settings_tabs/customization.html:230
+#: templates/_settings_tabs/customization.html:152
+#: templates/_settings_tabs/customization.html:233
 msgid "Controller Name"
 msgstr "Controllernaam"
 
-#: templates/_settings_tabs/customization.html:150
-#: templates/_settings_tabs/customization.html:231
+#: templates/_settings_tabs/customization.html:153
+#: templates/_settings_tabs/customization.html:234
 msgid "e.g., SNES Mouse"
 msgstr "bijv. SNES Mouse"
 
-#: templates/_settings_tabs/customization.html:158
-#: templates/_settings_tabs/customization.html:239
+#: templates/_settings_tabs/customization.html:161
+#: templates/_settings_tabs/customization.html:242
 msgid "+ Add system..."
 msgstr "+ Systeem toevoegen..."
 
-#: templates/_settings_tabs/customization.html:161
+#: templates/_settings_tabs/customization.html:164
 msgid ""
 "Leave empty for Universal controllers. Select multiple systems for shared"
 " controllers."
@@ -15257,36 +15278,36 @@ msgstr ""
 "Laat leeg voor universele controllers. Selecteer meerdere systemen voor "
 "gedeelde controllers."
 
-#: templates/_settings_tabs/customization.html:166
-#: templates/_settings_tabs/customization.html:247
+#: templates/_settings_tabs/customization.html:169
+#: templates/_settings_tabs/customization.html:250
 msgid "e.g., Nintendo, Sony, or custom..."
 msgstr "bijv. Nintendo, Sony, of aangepast..."
 
-#: templates/_settings_tabs/customization.html:184
-#: templates/_settings_tabs/customization.html:250
+#: templates/_settings_tabs/customization.html:187
+#: templates/_settings_tabs/customization.html:253
 msgid "Release Year"
 msgstr "Releasejaar"
 
-#: templates/_settings_tabs/customization.html:185
-#: templates/_settings_tabs/customization.html:251
+#: templates/_settings_tabs/customization.html:188
+#: templates/_settings_tabs/customization.html:254
 msgid "e.g., 1992"
 msgstr "bijv. 1992"
 
-#: templates/_settings_tabs/customization.html:190
-#: templates/_settings_tabs/customization.html:256
+#: templates/_settings_tabs/customization.html:193
+#: templates/_settings_tabs/customization.html:259
 msgid "e.g., D-Pad, A, B, Start, Select"
 msgstr "bijv. D-Pad, A, B, Start, Select"
 
-#: templates/_settings_tabs/customization.html:194
-#: templates/_settings_tabs/customization.html:260
+#: templates/_settings_tabs/customization.html:197
+#: templates/_settings_tabs/customization.html:263
 msgid "Brief description of the controller..."
 msgstr "Korte beschrijving van de controller..."
 
-#: templates/_settings_tabs/customization.html:207
+#: templates/_settings_tabs/customization.html:210
 msgid "Controller Library"
 msgstr "Controllerbibliotheek"
 
-#: templates/_settings_tabs/customization.html:210
+#: templates/_settings_tabs/customization.html:213
 msgid ""
 "All controllers in the database, sorted alphabetically by manufacturer. "
 "Click to expand details. You can delete custom controllers."
@@ -15295,19 +15316,19 @@ msgstr ""
 "Klik om details uit te klappen. Je kunt aangepaste controllers "
 "verwijderen."
 
-#: templates/_settings_tabs/customization.html:223
+#: templates/_settings_tabs/customization.html:226
 msgid "Edit Controller"
 msgstr "Controller bewerken"
 
-#: templates/_settings_tabs/customization.html:242
+#: templates/_settings_tabs/customization.html:245
 msgid "Leave empty for Universal controllers."
 msgstr "Laat leeg voor universele controllers."
 
-#: templates/_settings_tabs/customization.html:276
+#: templates/_settings_tabs/customization.html:280
 msgid "System Logo Reference"
 msgstr "Systeemlogoreferentie"
 
-#: templates/_settings_tabs/customization.html:280
+#: templates/_settings_tabs/customization.html:284
 msgid ""
 "System logos should be placed in <code>static/images/systems/</code> and "
 "named to match the system folder name with a supported extension "
@@ -15319,31 +15340,31 @@ msgstr ""
 "met een ondersteunde extensie (<code>.png</code>, <code>.webp</code>, "
 "<code>.jpg</code> of <code>.svg</code>)."
 
-#: templates/_settings_tabs/customization.html:285
+#: templates/_settings_tabs/customization.html:289
 msgid "Refresh System Logos"
 msgstr "Systeemlogo's vernieuwen"
 
-#: templates/_settings_tabs/customization.html:288
+#: templates/_settings_tabs/customization.html:292
 msgid "Refresh System Names"
 msgstr "Systeemnamen vernieuwen"
 
-#: templates/_settings_tabs/customization.html:291
+#: templates/_settings_tabs/customization.html:295
 msgid "Updates database with detected logos and correct system names"
 msgstr "Werkt de database bij met gedetecteerde logo's en correcte systeemnamen"
 
-#: templates/_settings_tabs/customization.html:301
+#: templates/_settings_tabs/customization.html:305
 msgid "Folder Name"
 msgstr "Mapnaam"
 
-#: templates/_settings_tabs/customization.html:302
+#: templates/_settings_tabs/customization.html:306
 msgid "Required Logo Filename"
 msgstr "Vereiste logobestandsnaam"
 
-#: templates/_settings_tabs/customization.html:303
+#: templates/_settings_tabs/customization.html:307
 msgid "Logo Status"
 msgstr "Logostatus"
 
-#: templates/_settings_tabs/customization.html:304
+#: templates/_settings_tabs/customization.html:308
 msgid "Hardware Image"
 msgstr "Hardwareafbeelding"
 
@@ -15355,36 +15376,36 @@ msgstr "Gegevensinstellingen"
 msgid "Stats"
 msgstr "Statistieken"
 
-#: templates/_settings_tabs/data.html:6
+#: templates/_settings_tabs/data.html:7
 msgid "Dropdowns"
 msgstr "Vervolgkeuzelijsten"
 
-#: templates/_settings_tabs/data.html:7
+#: templates/_settings_tabs/data.html:8
 msgid "Normalization"
 msgstr "Normalisatie"
 
-#: templates/_settings_tabs/data.html:13
+#: templates/_settings_tabs/data.html:15
 msgid "Library Statistics"
 msgstr "Bibliotheekstatistieken"
 
-#: templates/_settings_tabs/data.html:27
+#: templates/_settings_tabs/data.html:29
 msgid "With Metadata"
 msgstr "Met metadata"
 
-#: templates/_settings_tabs/data.html:40
+#: templates/_settings_tabs/data.html:42
 msgid "RPCS3 Trophy Settings"
 msgstr "RPCS3-trofee-instellingen"
 
-#: templates/_settings_tabs/data.html:44
+#: templates/_settings_tabs/data.html:46
 #: templates/_settings_tabs/scraping.html:41
 msgid "RPCS3 Trophy Path"
 msgstr "RPCS3-trofeeënpad"
 
-#: templates/_settings_tabs/data.html:49
+#: templates/_settings_tabs/data.html:51
 msgid "(Not configured)"
 msgstr "(Niet geconfigureerd)"
 
-#: templates/_settings_tabs/data.html:54
+#: templates/_settings_tabs/data.html:56
 msgid ""
 "Set the RPCS3 Trophy Path in <a href=\"#esde\">ES-DE Integration</a> on "
 "the Scraping tab"
@@ -15392,49 +15413,49 @@ msgstr ""
 "Stel het RPCS3-trofeeënpad in bij <a href=\"#esde\">ES-DE-integratie</a> "
 "op het tabblad Scrapen"
 
-#: templates/_settings_tabs/data.html:64
+#: templates/_settings_tabs/data.html:66
 msgid "Scan your RPCS3 trophy folder for unlocked trophies"
 msgstr "Scan je RPCS3-trofeeënmap op ontgrendelde trofeeën"
 
-#: templates/_settings_tabs/data.html:74
+#: templates/_settings_tabs/data.html:77
 msgid "Dropdown Options"
 msgstr "Vervolgkeuzelijstopties"
 
-#: templates/_settings_tabs/data.html:78
+#: templates/_settings_tabs/data.html:81
 msgid "Manage the options available in dropdown menus when editing games."
 msgstr ""
 "Beheer de opties die beschikbaar zijn in vervolgkeuzemenu's bij het "
 "bewerken van games."
 
-#: templates/_settings_tabs/data.html:86
+#: templates/_settings_tabs/data.html:89
 msgid "New genre..."
 msgstr "Nieuw genre..."
 
-#: templates/_settings_tabs/data.html:96
+#: templates/_settings_tabs/data.html:99
 msgid "New game structure..."
 msgstr "Nieuwe gamestructuur..."
 
-#: templates/_settings_tabs/data.html:106
+#: templates/_settings_tabs/data.html:109
 msgid "New perspective..."
 msgstr "Nieuw perspectief..."
 
-#: templates/_settings_tabs/data.html:116
+#: templates/_settings_tabs/data.html:119
 msgid "New dimension..."
 msgstr "Nieuwe dimensie..."
 
-#: templates/_settings_tabs/data.html:126
+#: templates/_settings_tabs/data.html:129
 msgid "New play mode..."
 msgstr "Nieuwe spelmodus..."
 
-#: templates/_settings_tabs/data.html:136
+#: templates/_settings_tabs/data.html:139
 msgid "New save type..."
 msgstr "Nieuw save-type..."
 
-#: templates/_settings_tabs/data.html:147
+#: templates/_settings_tabs/data.html:151
 msgid "Data Normalization"
 msgstr "Gegevensnormalisatie"
 
-#: templates/_settings_tabs/data.html:151
+#: templates/_settings_tabs/data.html:155
 msgid ""
 "Fix inconsistent genre and mode values across your library. Custom rules "
 "are saved and automatically apply to future scrapes."
@@ -15443,7 +15464,7 @@ msgstr ""
 "Aangepaste regels worden opgeslagen en automatisch toegepast op "
 "toekomstige scrapes."
 
-#: templates/_settings_tabs/data.html:154
+#: templates/_settings_tabs/data.html:158
 msgid ""
 "Franchise, Publisher and Developer list each name spelled with different "
 "capitals, such as \"Doom\" and \"DOOM\". Pick one spelling for each; "
@@ -15455,31 +15476,31 @@ msgstr ""
 " één spelling; er verandert niets totdat je op Toepassen drukt. Latere "
 "scrapes gebruiken dan die spelling."
 
-#: templates/_settings_tabs/data.html:170
+#: templates/_settings_tabs/data.html:174
 msgid "Show only values needing changes"
 msgstr "Alleen waarden tonen die aanpassing nodig hebben"
 
-#: templates/_settings_tabs/data.html:181
+#: templates/_settings_tabs/data.html:185
 msgid "Loading values..."
 msgstr "Waarden laden..."
 
-#: templates/_settings_tabs/data.html:190
+#: templates/_settings_tabs/data.html:194
 msgid "Select/deselect all"
 msgstr "Alles selecteren/deselecteren"
 
-#: templates/_settings_tabs/data.html:191
+#: templates/_settings_tabs/data.html:195
 msgid "Current Value"
 msgstr "Huidige waarde"
 
-#: templates/_settings_tabs/data.html:193
+#: templates/_settings_tabs/data.html:197
 msgid "Normalize To"
 msgstr "Normaliseren naar"
 
-#: templates/_settings_tabs/data.html:203
+#: templates/_settings_tabs/data.html:207
 msgid "Select All Changed"
 msgstr "Alle gewijzigde selecteren"
 
-#: templates/_settings_tabs/data.html:212
+#: templates/_settings_tabs/data.html:216
 msgid ""
 "No values found for this field. Make sure your library has games with "
 "metadata."
@@ -15487,15 +15508,15 @@ msgstr ""
 "Geen waarden gevonden voor dit veld. Zorg dat je bibliotheek games met "
 "metadata bevat."
 
-#: templates/_settings_tabs/data.html:215
+#: templates/_settings_tabs/data.html:219
 msgid "Every name in this field has one spelling."
 msgstr "Elke naam in dit veld heeft één spelling."
 
-#: templates/_settings_tabs/data.html:220
+#: templates/_settings_tabs/data.html:224
 msgid "Names that may be one company"
 msgstr "Namen die mogelijk één bedrijf zijn"
 
-#: templates/_settings_tabs/data.html:222
+#: templates/_settings_tabs/data.html:226
 msgid ""
 "Names such as \"Eidos\" and \"Eidos Interactive\" may be one company, or "
 "two: \"Atari Games\" and \"Atari, Inc.\" are different companies. For "
@@ -15509,7 +15530,7 @@ msgstr ""
 "bedrijf zijn en druk op Samenvoegen. Het samenvoegen wijzigt Uitgever en "
 "Ontwikkelaar bij elke game, en latere scrapes gebruiken de behouden naam."
 
-#: templates/_settings_tabs/data.html:225
+#: templates/_settings_tabs/data.html:229
 msgid "No names look like one company."
 msgstr "Geen namen lijken één bedrijf te zijn."
 
@@ -15517,27 +15538,27 @@ msgstr "Geen namen lijken één bedrijf te zijn."
 msgid "Library settings"
 msgstr "Bibliotheekinstellingen"
 
-#: templates/_settings_tabs/library.html:6
+#: templates/_settings_tabs/library.html:7
 msgid "Paths"
 msgstr "Paden"
 
-#: templates/_settings_tabs/library.html:7
+#: templates/_settings_tabs/library.html:8
 msgid "Display"
 msgstr "Weergave"
 
-#: templates/_settings_tabs/library.html:8
+#: templates/_settings_tabs/library.html:9
 msgid "ROM Naming"
 msgstr "ROM-naamgeving"
 
-#: templates/_settings_tabs/library.html:10
+#: templates/_settings_tabs/library.html:11
 msgid "Backup"
 msgstr "Back-up"
 
-#: templates/_settings_tabs/library.html:16
+#: templates/_settings_tabs/library.html:18
 msgid "Library Settings"
 msgstr "Bibliotheekinstellingen"
 
-#: templates/_settings_tabs/library.html:20
+#: templates/_settings_tabs/library.html:22
 msgid ""
 "Configure the paths to your ROM library, ES-DE data, and other "
 "integrations."
@@ -15545,102 +15566,102 @@ msgstr ""
 "Configureer de paden naar je ROM-bibliotheek, ES-DE-gegevens en andere "
 "integraties."
 
-#: templates/_settings_tabs/library.html:27
+#: templates/_settings_tabs/library.html:29
 msgid "e.g. /home/user/ROMS"
 msgstr "bijv. /home/user/ROMS"
 
-#: templates/_settings_tabs/library.html:35
+#: templates/_settings_tabs/library.html:37
 msgid "Database Location"
 msgstr "Databaselocatie"
 
-#: templates/_settings_tabs/library.html:37
+#: templates/_settings_tabs/library.html:39
 msgid "Database path cannot be changed via UI"
 msgstr "Databasepad kan niet via de interface worden gewijzigd"
 
-#: templates/_settings_tabs/library.html:43
+#: templates/_settings_tabs/library.html:45
 #: templates/_settings_tabs/scraping.html:54
 msgid "Save Path Settings"
 msgstr "Padinstellingen opslaan"
 
-#: templates/_settings_tabs/library.html:51
+#: templates/_settings_tabs/library.html:53
 msgid "Changes to ROM path require a restart to take full effect"
 msgstr ""
 "Wijzigingen aan het ROM-pad vereisen een herstart om volledig van kracht "
 "te worden"
 
-#: templates/_settings_tabs/library.html:60
+#: templates/_settings_tabs/library.html:63
 msgid "Display Preferences"
 msgstr "Weergavevoorkeuren"
 
-#: templates/_settings_tabs/library.html:64
+#: templates/_settings_tabs/library.html:67
 msgid "Theme"
 msgstr "Thema"
 
-#: templates/_settings_tabs/library.html:72
+#: templates/_settings_tabs/library.html:75
 msgid "Cyberpunk"
 msgstr "Cyberpunk"
 
-#: templates/_settings_tabs/library.html:80
+#: templates/_settings_tabs/library.html:83
 msgid "Matrix"
 msgstr "Matrix"
 
-#: templates/_settings_tabs/library.html:88
+#: templates/_settings_tabs/library.html:91
 msgid "Retro Amber"
 msgstr "Retro Amber"
 
-#: templates/_settings_tabs/library.html:96
+#: templates/_settings_tabs/library.html:99
 msgid "Midnight Ocean"
 msgstr "Midnight Ocean"
 
-#: templates/_settings_tabs/library.html:104
+#: templates/_settings_tabs/library.html:107
 msgid "Cathedral"
 msgstr "Cathedral"
 
-#: templates/_settings_tabs/library.html:112
+#: templates/_settings_tabs/library.html:115
 msgid "Blade Runner"
 msgstr "Blade Runner"
 
-#: templates/_settings_tabs/library.html:120
+#: templates/_settings_tabs/library.html:123
 msgid "Elite"
 msgstr "Elite"
 
-#: templates/_settings_tabs/library.html:123
+#: templates/_settings_tabs/library.html:126
 msgid "Theme applies instantly. Changes are saved automatically."
 msgstr "Thema wordt direct toegepast. Wijzigingen worden automatisch opgeslagen."
 
-#: templates/_settings_tabs/library.html:131
+#: templates/_settings_tabs/library.html:134
 msgid "Language"
 msgstr "Taal"
 
-#: templates/_settings_tabs/library.html:142
+#: templates/_settings_tabs/library.html:145
 msgid "Changes the interface language. The page reloads when you switch."
 msgstr ""
 "Wijzigt de taal van de interface. De pagina wordt opnieuw geladen bij het"
 " wisselen."
 
-#: templates/_settings_tabs/library.html:146
+#: templates/_settings_tabs/library.html:150
 msgid "Preferred Boxart Style"
 msgstr "Voorkeursstijl boxart"
 
-#: templates/_settings_tabs/library.html:148
+#: templates/_settings_tabs/library.html:152
 msgid "2D Boxart (Standard)"
 msgstr "2D-boxart (standaard)"
 
-#: templates/_settings_tabs/library.html:149
+#: templates/_settings_tabs/library.html:153
 msgid "3D Boxart (with 2D fallback)"
 msgstr "3D-boxart (met 2D-terugval)"
 
-#: templates/_settings_tabs/library.html:151
+#: templates/_settings_tabs/library.html:155
 msgid "When 3D is selected, 2D boxart will be shown if no 3D version exists"
 msgstr ""
 "Als 3D is geselecteerd, wordt 2D-boxart getoond als er geen 3D-versie "
 "bestaat"
 
-#: templates/_settings_tabs/library.html:155
+#: templates/_settings_tabs/library.html:159
 msgid "Preferred Age Rating System"
 msgstr "Voorkeurssysteem voor leeftijdsclassificatie"
 
-#: templates/_settings_tabs/library.html:167
+#: templates/_settings_tabs/library.html:171
 msgid ""
 "Ratings from other systems are cross-mapped when the preferred system's "
 "rating is unavailable"
@@ -15648,15 +15669,15 @@ msgstr ""
 "Classificaties van andere systemen worden kruislings toegepast als de "
 "classificatie van het voorkeurssysteem niet beschikbaar is"
 
-#: templates/_settings_tabs/library.html:173
+#: templates/_settings_tabs/library.html:177
 msgid "Save Display Settings"
 msgstr "Weergave-instellingen opslaan"
 
-#: templates/_settings_tabs/library.html:182
+#: templates/_settings_tabs/library.html:188
 msgid "ROM Naming Conventions"
 msgstr "ROM-naamgevingsconventies"
 
-#: templates/_settings_tabs/library.html:186
+#: templates/_settings_tabs/library.html:192
 msgid ""
 "Configure the filename pattern for each system type. Title is always "
 "first.\n"
@@ -15668,11 +15689,11 @@ msgstr ""
 "            Voeg tags toe in de volgorde waarin ze in bestandsnamen "
 "moeten verschijnen (bijv. <code>Title (Region).zip</code>)."
 
-#: templates/_settings_tabs/library.html:191
+#: templates/_settings_tabs/library.html:197
 msgid "Article Placement"
 msgstr "Plaatsing lidwoord"
 
-#: templates/_settings_tabs/library.html:193
+#: templates/_settings_tabs/library.html:199
 msgid ""
 "Controls where articles (A, An, The) appear in game titles and ROM "
 "filenames."
@@ -15680,15 +15701,15 @@ msgstr ""
 "Bepaalt waar lidwoorden (A, An, The) verschijnen in gametitels en ROM-"
 "bestandsnamen."
 
-#: templates/_settings_tabs/library.html:196
+#: templates/_settings_tabs/library.html:202
 msgid "Beginning (natural) — \"The Legend of Zelda\""
 msgstr "Begin (natuurlijk) — \"The Legend of Zelda\""
 
-#: templates/_settings_tabs/library.html:197
+#: templates/_settings_tabs/library.html:203
 msgid "End (sort-friendly) — \"Legend of Zelda, The\""
 msgstr "Einde (sorteervriendelijk) — \"Legend of Zelda, The\""
 
-#: templates/_settings_tabs/library.html:199
+#: templates/_settings_tabs/library.html:205
 msgid ""
 "Applies to new scrapes and rename suggestions. Existing titles are not "
 "changed automatically."
@@ -15696,11 +15717,11 @@ msgstr ""
 "Geldt voor nieuwe scrapes en hernoemsuggesties. Bestaande titels worden "
 "niet automatisch gewijzigd."
 
-#: templates/_settings_tabs/library.html:203
+#: templates/_settings_tabs/library.html:209
 msgid "Region Options"
 msgstr "Regio-opties"
 
-#: templates/_settings_tabs/library.html:205
+#: templates/_settings_tabs/library.html:211
 msgid ""
 "Configure the available region values and default. The default region is "
 "used when scraping if no region is detected."
@@ -15709,15 +15730,15 @@ msgstr ""
 "standaardregio wordt gebruikt bij het scrapen als er geen regio wordt "
 "gedetecteerd."
 
-#: templates/_settings_tabs/library.html:220
+#: templates/_settings_tabs/library.html:226
 msgid "Default Region"
 msgstr "Standaardregio"
 
-#: templates/_settings_tabs/library.html:278
+#: templates/_settings_tabs/library.html:286
 msgid "Current Bonus Discs"
 msgstr "Huidige bonusschijven"
 
-#: templates/_settings_tabs/library.html:281
+#: templates/_settings_tabs/library.html:289
 msgid ""
 "A disc marked by mistake can go back in your game lists. Auto-Link then "
 "leaves it alone."
@@ -16190,7 +16211,7 @@ msgid "Logging"
 msgstr "Logboek"
 
 #: templates/_settings_tabs/system.html:11
-#: templates/_settings_tabs/system.html:412
+#: templates/_settings_tabs/system.html:414
 msgid "Troubleshooting"
 msgstr "Probleemoplossing"
 
@@ -16359,11 +16380,11 @@ msgstr ""
 "Start de Flask-server opnieuw (handig na configuratiewijzigingen), of "
 "sluit hem volledig af"
 
-#: templates/_settings_tabs/system.html:206
+#: templates/_settings_tabs/system.html:207
 msgid "Logging Settings"
 msgstr "Loginstellingen"
 
-#: templates/_settings_tabs/system.html:210
+#: templates/_settings_tabs/system.html:211
 #, python-format
 msgid ""
 "Configure which log levels are written to log files. Logs are saved to "
@@ -16373,66 +16394,66 @@ msgstr ""
 "worden opgeslagen in de map %(folder)s met bestandsnamen op datum (bijv. "
 "%(example)s)."
 
-#: templates/_settings_tabs/system.html:216
-#: templates/_settings_tabs/system.html:224
-#: templates/_settings_tabs/system.html:231
-#: templates/_settings_tabs/system.html:238
+#: templates/_settings_tabs/system.html:217
+#: templates/_settings_tabs/system.html:225
+#: templates/_settings_tabs/system.html:232
+#: templates/_settings_tabs/system.html:239
 msgid "Scraping Logs"
 msgstr "Scrapelogs"
 
-#: templates/_settings_tabs/system.html:219
+#: templates/_settings_tabs/system.html:220
 msgid ""
 "Logs from metadata scraping operations (IGDB, TGDB, ScreenScraper, RAWG, "
 "ES-DE)"
 msgstr "Logs van het scrapen van metadata (IGDB, TGDB, ScreenScraper, RAWG, ES-DE)"
 
-#: templates/_settings_tabs/system.html:224
-#: templates/_settings_tabs/system.html:227
-#: templates/_settings_tabs/system.html:257
-#: templates/_settings_tabs/system.html:260
-#: templates/_settings_tabs/system.html:290
-#: templates/_settings_tabs/system.html:293
-#: templates/_settings_tabs/system.html:323
-#: templates/_settings_tabs/system.html:326
-#: templates/_settings_tabs/system.html:356
-#: templates/_settings_tabs/system.html:359
+#: templates/_settings_tabs/system.html:225
+#: templates/_settings_tabs/system.html:228
+#: templates/_settings_tabs/system.html:258
+#: templates/_settings_tabs/system.html:261
+#: templates/_settings_tabs/system.html:291
+#: templates/_settings_tabs/system.html:294
+#: templates/_settings_tabs/system.html:324
+#: templates/_settings_tabs/system.html:327
+#: templates/_settings_tabs/system.html:357
+#: templates/_settings_tabs/system.html:360
 msgid "Informational"
 msgstr "Informatief"
 
-#: templates/_settings_tabs/system.html:231
-#: templates/_settings_tabs/system.html:234
-#: templates/_settings_tabs/system.html:264
-#: templates/_settings_tabs/system.html:267
-#: templates/_settings_tabs/system.html:297
-#: templates/_settings_tabs/system.html:300
-#: templates/_settings_tabs/system.html:330
-#: templates/_settings_tabs/system.html:333
-#: templates/_settings_tabs/system.html:363
-#: templates/_settings_tabs/system.html:366
+#: templates/_settings_tabs/system.html:232
+#: templates/_settings_tabs/system.html:235
+#: templates/_settings_tabs/system.html:265
+#: templates/_settings_tabs/system.html:268
+#: templates/_settings_tabs/system.html:298
+#: templates/_settings_tabs/system.html:301
+#: templates/_settings_tabs/system.html:331
+#: templates/_settings_tabs/system.html:334
+#: templates/_settings_tabs/system.html:364
+#: templates/_settings_tabs/system.html:367
 msgid "Warnings"
 msgstr "Waarschuwingen"
 
-#: templates/_settings_tabs/system.html:238
-#: templates/_settings_tabs/system.html:241
-#: templates/_settings_tabs/system.html:271
-#: templates/_settings_tabs/system.html:274
-#: templates/_settings_tabs/system.html:304
-#: templates/_settings_tabs/system.html:307
-#: templates/_settings_tabs/system.html:337
-#: templates/_settings_tabs/system.html:340
-#: templates/_settings_tabs/system.html:370
-#: templates/_settings_tabs/system.html:373
+#: templates/_settings_tabs/system.html:239
+#: templates/_settings_tabs/system.html:242
+#: templates/_settings_tabs/system.html:272
+#: templates/_settings_tabs/system.html:275
+#: templates/_settings_tabs/system.html:305
+#: templates/_settings_tabs/system.html:308
+#: templates/_settings_tabs/system.html:338
+#: templates/_settings_tabs/system.html:341
+#: templates/_settings_tabs/system.html:371
+#: templates/_settings_tabs/system.html:374
 msgid "Errors"
 msgstr "Fouten"
 
-#: templates/_settings_tabs/system.html:249
-#: templates/_settings_tabs/system.html:257
-#: templates/_settings_tabs/system.html:264
-#: templates/_settings_tabs/system.html:271
+#: templates/_settings_tabs/system.html:250
+#: templates/_settings_tabs/system.html:258
+#: templates/_settings_tabs/system.html:265
+#: templates/_settings_tabs/system.html:272
 msgid "ROM Tools Logs"
 msgstr "Logs van ROM-hulpmiddelen"
 
-#: templates/_settings_tabs/system.html:252
+#: templates/_settings_tabs/system.html:253
 msgid ""
 "Logs from ROM scanning, CHD conversion, archive extraction, and M3U "
 "creation"
@@ -16440,14 +16461,14 @@ msgstr ""
 "Logs van ROM-scans, CHD-conversie, het uitpakken van archieven en het "
 "maken van M3U-bestanden"
 
-#: templates/_settings_tabs/system.html:282
-#: templates/_settings_tabs/system.html:290
-#: templates/_settings_tabs/system.html:297
-#: templates/_settings_tabs/system.html:304
+#: templates/_settings_tabs/system.html:283
+#: templates/_settings_tabs/system.html:291
+#: templates/_settings_tabs/system.html:298
+#: templates/_settings_tabs/system.html:305
 msgid "ROM Reports Logs"
 msgstr "Logs van ROM-rapporten"
 
-#: templates/_settings_tabs/system.html:285
+#: templates/_settings_tabs/system.html:286
 msgid ""
 "Logs from ROM naming checks, mismatch detection, and batch rename "
 "operations"
@@ -16455,25 +16476,25 @@ msgstr ""
 "Logs van ROM-naamcontroles, detectie van afwijkingen en batchgewijs "
 "hernoemen"
 
-#: templates/_settings_tabs/system.html:315
-#: templates/_settings_tabs/system.html:323
-#: templates/_settings_tabs/system.html:330
-#: templates/_settings_tabs/system.html:337
+#: templates/_settings_tabs/system.html:316
+#: templates/_settings_tabs/system.html:324
+#: templates/_settings_tabs/system.html:331
+#: templates/_settings_tabs/system.html:338
 msgid "Image Resize Logs"
 msgstr "Logs van afbeeldingen schalen"
 
-#: templates/_settings_tabs/system.html:318
+#: templates/_settings_tabs/system.html:319
 msgid "Logs from image standardization (upscale/downscale) operations"
 msgstr "Logs van het standaardiseren van afbeeldingen (vergroten/verkleinen)"
 
-#: templates/_settings_tabs/system.html:348
-#: templates/_settings_tabs/system.html:356
-#: templates/_settings_tabs/system.html:363
-#: templates/_settings_tabs/system.html:370
+#: templates/_settings_tabs/system.html:349
+#: templates/_settings_tabs/system.html:357
+#: templates/_settings_tabs/system.html:364
+#: templates/_settings_tabs/system.html:371
 msgid "System Logs"
 msgstr "Systeemlogs"
 
-#: templates/_settings_tabs/system.html:351
+#: templates/_settings_tabs/system.html:352
 msgid ""
 "General system operations including achievements sync, page loads, and "
 "API calls"
@@ -16481,27 +16502,27 @@ msgstr ""
 "Algemene systeembewerkingen, waaronder synchronisatie van prestaties, "
 "paginaladingen en API-aanroepen"
 
-#: templates/_settings_tabs/system.html:390
+#: templates/_settings_tabs/system.html:391
 msgid "Log Files"
 msgstr "Logbestanden"
 
-#: templates/_settings_tabs/system.html:395
+#: templates/_settings_tabs/system.html:396
 msgid "Refresh Log List"
 msgstr "Loglijst vernieuwen"
 
-#: templates/_settings_tabs/system.html:399
+#: templates/_settings_tabs/system.html:400
 msgid "Clear Logs Older Than 5 Days"
 msgstr "Logs ouder dan 5 dagen wissen"
 
-#: templates/_settings_tabs/system.html:403
+#: templates/_settings_tabs/system.html:404
 msgid "Click \"Refresh Log List\" to see available log files."
 msgstr "Klik op \"Loglijst vernieuwen\" om de beschikbare logbestanden te zien."
 
-#: templates/_settings_tabs/system.html:416
+#: templates/_settings_tabs/system.html:418
 msgid "Achievement Sync Issues"
 msgstr "Problemen met synchronisatie van prestaties"
 
-#: templates/_settings_tabs/system.html:419
+#: templates/_settings_tabs/system.html:421
 msgid ""
 "If achievement syncs get stuck or the queue won't process, use this "
 "button to clear the sync queue and reset the sync state."
@@ -16510,19 +16531,19 @@ msgstr ""
 "verwerkt, gebruik dan deze knop om de synchronisatiewachtrij te wissen en"
 " de synchronisatiestatus te resetten."
 
-#: templates/_settings_tabs/system.html:424
+#: templates/_settings_tabs/system.html:426
 msgid "Clear Stuck RA Sync"
 msgstr "Vastgelopen RA-synchronisatie wissen"
 
-#: templates/_settings_tabs/system.html:429
+#: templates/_settings_tabs/system.html:431
 msgid "Current RA Sync Queue:"
 msgstr "Huidige RA-synchronisatiewachtrij:"
 
-#: templates/_settings_tabs/system.html:438
+#: templates/_settings_tabs/system.html:440
 msgid "Support Development"
 msgstr "Ontwikkeling ondersteunen"
 
-#: templates/_settings_tabs/system.html:442
+#: templates/_settings_tabs/system.html:444
 msgid ""
 "RetroDB is free and open source. If it saves you time, consider "
 "sponsoring — every bit helps keep solo development sustainable."
@@ -16530,11 +16551,11 @@ msgstr ""
 "RetroDB is gratis en open source. Als het je tijd bespaart, overweeg dan "
 "om te sponsoren — elke bijdrage helpt de solo-ontwikkeling vol te houden."
 
-#: templates/_settings_tabs/system.html:446
+#: templates/_settings_tabs/system.html:448
 msgid "Sponsor on GitHub"
 msgstr "Sponsoren op GitHub"
 
-#: templates/_settings_tabs/system.html:450
+#: templates/_settings_tabs/system.html:452
 msgid "Support on Patreon"
 msgstr "Steunen op Patreon"
 

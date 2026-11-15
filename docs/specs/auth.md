@@ -297,7 +297,7 @@ Pass 33.5 equivalents:
 2. **`api_change_password`** (Pass 33.5) — invalidates hijacked cookies
    and concurrent sessions of the same account (through the stamp below).
 3. **`api_force_change_password`** (Pass 33.5) — first authenticated
-   touch after a `changeme` / admin-reset login; bootstrap cookie cannot
+   touch after a first / admin-reset login; bootstrap cookie cannot
    be replayed after.
 
 `logout` also calls `session.clear()` (Pass 33.6) so the CSRF token,
@@ -361,8 +361,9 @@ Pinned by `TestPasswordPolicyAndRateLimit::test_min_length_raised_to_12`.
   Bootstrap password is documented in the README, NOT logged
   (Pass 41.3.B — the redactor only catches `password=X` field triggers,
   not plaintext in free text).
-- New users without an explicit password get `changeme` +
-  `force_password_change = 1`.
+- `api_create_user` requires the admin to type a first password (no
+  default; PASS-59-311) and sets `force_password_change = 1`, so the
+  user picks their own at first sign-in.
 - Admin reset (`api_update_user` with `new_password`) sets the flag
   unless `skip_force_change: true` is passed (Pass 33.4).
 - `app.py::check_force_password_change` `@before_request` hook
