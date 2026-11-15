@@ -2791,7 +2791,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: fix.
   Source: user-request-2026-11-11.
 
-- 📋 [PASS-59-305] **Settings > Scraping is wrapped for translation (LOW, M).**
+- ✅ [PASS-59-305] **Settings > Scraping is wrapped for translation (LOW, M).**
   - **Problem**: `templates/_settings_tabs/scraping.html` is almost all
     bare English: its sub-tab links ('🔍 Scraper', '🔑 API Keys'), its
     card headings, labels, hints and scraper descriptions. The other
@@ -2803,9 +2803,18 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     the eo pseudolocale that nothing on the tab is left unwrapped, as
     PASS-59-179 did for Settings > System.
   - **Source**: PASS-59-189 work, 2026-11-15.
+  Shipped 2026-11-15. templates/_settings_tabs/scraping.html and the
+  Scraping parts of templates/settings.html's script are wrapped (137
+  new msgids), translated in all 20 locales. eo walk of #tab-scraping:
+  only product and model names and HTML comments are left bare. Known
+  rough edges: a few rate-limit sentences are split around a coloured
+  number span; eo's generator scrambles the <a> tag inside the Steam and
+  Xbox {% trans %} hints (eo only). zh_Hant was converted from zh_Hans
+  by the helper; a native read-through is still worth doing.
   **Layman:** The Scraping page in Settings shows in your chosen language, not always English.
   Kind: fix.
   Source: PASS-59-189 work, 2026-11-15.
+  Splits-from: PASS-59-278.
 
 ## 4.0.x — Security and data-loss fixes for the web version
 

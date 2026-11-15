@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 07:39+0200\n"
+"POT-Creation-Date: 2026-11-15 08:01+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: pl\n"
@@ -2892,7 +2892,8 @@ msgstr "Wpisz jedną ścieżkę folderu."
 #: templates/multi_disc_organizer.html:371 templates/reports.html:1144
 #: templates/reports.html:1147 templates/reports.html:1213
 #: templates/reports.html:1216 templates/rom_tools_settings.html:579
-#: templates/rom_tools_settings.html:582 templates/settings.html:2926
+#: templates/rom_tools_settings.html:582 templates/settings.html:2367
+#: templates/settings.html:2485 templates/settings.html:2926
 #: templates/settings.html:2930 templates/settings.html:2949
 #: templates/settings.html:2953 templates/settings.html:3551
 #: templates/settings.html:3555 templates/settings.html:3623
@@ -4007,7 +4008,8 @@ msgstr "Zapisano. Zostanie zastosowane przy następnym naciśnięciu Graj."
 msgid "Saving to the database…"
 msgstr "Zapisywanie w bazie danych…"
 
-#: services/js_i18n_strings.py:978 templates/settings.html:4787
+#: services/js_i18n_strings.py:978 templates/settings.html:2726
+#: templates/settings.html:2764 templates/settings.html:4787
 #: templates/setup.html:483
 msgid "Saving..."
 msgstr "Zapisywanie..."
@@ -8108,6 +8110,7 @@ msgid "Database Service"
 msgstr "Usługa bazy danych"
 
 #: templates/dashboard.html:585 templates/dashboard.html:1308
+#: templates/settings.html:2357
 msgid "Online"
 msgstr "Online"
 
@@ -8121,9 +8124,14 @@ msgstr "Lokalny scraper ES-DE"
 msgid "Available"
 msgstr "Dostępne"
 
-#: templates/dashboard.html:602 templates/dashboard.html:612
-#: templates/dashboard.html:632 templates/dashboard.html:642
-#: templates/game_imports.html:368
+#: templates/_settings_tabs/scraping.html:107
+#: templates/_settings_tabs/scraping.html:125
+#: templates/_settings_tabs/scraping.html:143
+#: templates/_settings_tabs/scraping.html:161
+#: templates/_settings_tabs/scraping.html:178 templates/dashboard.html:602
+#: templates/dashboard.html:612 templates/dashboard.html:632
+#: templates/dashboard.html:642 templates/game_imports.html:368
+#: templates/settings.html:2330 templates/settings.html:2444
 msgid "Checking..."
 msgstr "Sprawdzanie..."
 
@@ -8195,7 +8203,7 @@ msgstr "1 skonfigurowane API jest offline"
 msgid "{count} configured APIs are offline"
 msgstr "Skonfigurowane API offline: {count}"
 
-#: templates/dashboard.html:1309
+#: templates/dashboard.html:1309 templates/settings.html:2360
 msgid "Offline"
 msgstr "Offline"
 
@@ -8509,7 +8517,7 @@ msgid "From the AI, not checked against a review site."
 msgstr "Od AI, niesprawdzone w serwisie z recenzjami."
 
 #: templates/game_detail.html:274 templates/game_detail.html:279
-#: templates/game_detail.html:284
+#: templates/game_detail.html:284 templates/settings.html:2691
 msgid "AI"
 msgstr "AI"
 
@@ -9099,11 +9107,12 @@ msgstr ""
 msgid "Steam Credentials"
 msgstr "Dane uwierzytelniające Steam"
 
-#: templates/game_imports.html:251
+#: templates/_settings_tabs/scraping.html:399 templates/game_imports.html:251
 msgid "Steam Web API Key"
 msgstr "Klucz Steam Web API"
 
-#: templates/_settings_tabs/account.html:239 templates/game_imports.html:251
+#: templates/_settings_tabs/account.html:239
+#: templates/_settings_tabs/scraping.html:404 templates/game_imports.html:251
 msgid "Your Steam Web API Key"
 msgstr "Twój klucz Steam Web API"
 
@@ -9787,7 +9796,8 @@ msgstr "Nie znaleziono dopasowania."
 #: templates/settings.html:1942 templates/settings.html:1967
 #: templates/settings.html:1970 templates/settings.html:1990
 #: templates/settings.html:2034 templates/settings.html:2056
-#: templates/settings.html:2153 templates/settings.html:4832
+#: templates/settings.html:2153 templates/settings.html:2751
+#: templates/settings.html:2813 templates/settings.html:4832
 #: templates/steam_achievement_game.html:302
 #: templates/xbox_achievement_game.html:293
 #, python-brace-format
@@ -11652,7 +11662,8 @@ msgstr ""
 "duplikatów."
 
 #: templates/_settings_tabs/customization.html:83
-#: templates/rom_tools_settings.html:433
+#: templates/_settings_tabs/scraping.html:255
+#: templates/rom_tools_settings.html:433 templates/settings.html:2755
 msgid "Save Settings"
 msgstr "Zapisz ustawienia"
 
@@ -11660,7 +11671,7 @@ msgstr "Zapisz ustawienia"
 msgid "Reset to Defaults"
 msgstr "Przywróć domyślne"
 
-#: templates/rom_tools_settings.html:439
+#: templates/rom_tools_settings.html:439 templates/settings.html:2744
 msgid "Settings saved successfully!"
 msgstr "Ustawienia zostały zapisane!"
 
@@ -11915,6 +11926,12 @@ msgstr "Nie udało się usunąć użytkownika"
 msgid "Network error deleting user"
 msgstr "Błąd sieci podczas usuwania użytkownika"
 
+#: templates/settings.html:1438 templates/settings.html:1440
+#: templates/settings.html:1442 templates/settings.html:1444
+#, python-brace-format
+msgid "Current: {path}"
+msgstr "Obecnie: {path}"
+
 #: templates/settings.html:1466
 msgid "Path settings saved!"
 msgstr "Ustawienia ścieżek zostały zapisane!"
@@ -12117,7 +12134,7 @@ msgstr "Obliczanie nie powiodło się: {error}"
 msgid "Failed to save scraper setting"
 msgstr "Nie udało się zapisać ustawienia pobierania danych"
 
-#: templates/settings.html:2312
+#: templates/_settings_tabs/scraping.html:173 templates/settings.html:2312
 msgid "AI Metadata"
 msgstr "Metadane AI"
 
@@ -12131,6 +12148,23 @@ msgstr "Włączono: {name}"
 msgid "{name} disabled"
 msgstr "Wyłączono: {name}"
 
+#: templates/settings.html:2383
+#, python-brace-format
+msgid "Resets in {time}"
+msgstr "Reset za {time}"
+
+#: templates/settings.html:2383
+msgid "Resets soon"
+msgstr "Reset wkrótce"
+
+#: templates/settings.html:2389 templates/settings.html:2391
+#: templates/settings.html:2476 templates/settings.html:2500
+#: templates/settings.html:2597 templates/settings.html:2647
+#: templates/settings.html:2649
+#, python-brace-format
+msgid "Resets: {when}"
+msgstr "Reset: {when}"
+
 #: templates/settings.html:2422
 msgid "Testing…"
 msgstr "Testowanie…"
@@ -12143,6 +12177,179 @@ msgstr "Klucz działa: %(provider)s odpowiedział, używając %(model)s."
 #: templates/settings.html:2432
 msgid "The key test failed."
 msgstr "Test klucza nie powiódł się."
+
+#: templates/settings.html:2445
+msgid "Checking rate limits..."
+msgstr "Sprawdzanie limitów..."
+
+#: templates/settings.html:2474 templates/settings.html:2496
+msgid "remaining (monthly)"
+msgstr "pozostało (miesięcznie)"
+
+#: templates/settings.html:2475 templates/settings.html:2481
+#: templates/settings.html:2483 templates/settings.html:2485
+#: templates/settings.html:2488
+#, python-brace-format
+msgid "Public key: {status}"
+msgstr "Klucz publiczny: {status}"
+
+#: templates/settings.html:2477 templates/settings.html:2501
+#, python-brace-format
+msgid "Extra: {n}"
+msgstr "Dodatkowo: {n}"
+
+#: templates/settings.html:2481
+msgid "Active"
+msgstr "Aktywny"
+
+#: templates/settings.html:2483
+msgid "Allowance exhausted"
+msgstr "Limit wyczerpany"
+
+#: templates/settings.html:2488 templates/settings.html:2506
+#: templates/settings.html:2567 templates/settings.html:2573
+#: templates/settings.html:2607 templates/settings.html:2697
+#: templates/settings.html:2703
+msgid "Not configured"
+msgstr "Nie skonfigurowano"
+
+#: templates/settings.html:2497 templates/settings.html:2506
+#, python-brace-format
+msgid "Private key: {status}"
+msgstr "Klucz prywatny: {status}"
+
+#: templates/settings.html:2533
+msgid "Error checking"
+msgstr "Błąd sprawdzania"
+
+#: templates/settings.html:2539 templates/settings.html:2613
+msgid "Connection error"
+msgstr "Błąd połączenia"
+
+#: templates/settings.html:2554
+msgid "requests remaining today"
+msgstr "pozostałych zapytań na dziś"
+
+#: templates/settings.html:2557
+#, python-brace-format
+msgid "Per-minute limit: {n}"
+msgstr "Limit na minutę: {n}"
+
+#: templates/settings.html:2558
+#, python-brace-format
+msgid "Level: {level}"
+msgstr "Poziom: {level}"
+
+#: templates/settings.html:2559
+#, python-brace-format
+msgid "Threads: {n}"
+msgstr "Wątki: {n}"
+
+#: templates/settings.html:2560
+#, python-brace-format
+msgid "Speed: {n} KB/s"
+msgstr "Prędkość: {n} KB/s"
+
+#: templates/settings.html:2561
+msgid "Resets daily at midnight (UTC)"
+msgstr "Reset codziennie o północy (UTC)"
+
+#: templates/settings.html:2582
+#, python-brace-format
+msgid "{n} requests/second (OAuth token-based)"
+msgstr "{n} zapytań/sekundę (na podstawie tokenu OAuth)"
+
+#: templates/settings.html:2583
+msgid "Token-based authentication — no daily quota"
+msgstr "Uwierzytelnianie tokenem: brak dziennego limitu"
+
+#: templates/settings.html:2594
+msgid "requests remaining"
+msgstr "pozostałych zapytań"
+
+#: templates/settings.html:2595
+#, python-brace-format
+msgid "{n} requests/month (free tier)"
+msgstr "{n} zapytań/miesiąc (plan bezpłatny)"
+
+#: templates/settings.html:2598
+msgid "No live usage tracking from API"
+msgstr "Brak danych o wykorzystaniu na żywo z API"
+
+#: templates/settings.html:2622
+msgid "No published rate limits"
+msgstr "Brak opublikowanych limitów"
+
+#: templates/settings.html:2641
+#, python-brace-format
+msgid "Requests: {used} remaining ({pct})"
+msgstr "Zapytania: pozostało {used} ({pct})"
+
+#: templates/settings.html:2660
+#, python-brace-format
+msgid "Tokens: {used} remaining ({pct})"
+msgstr "Tokeny: pozostało {used} ({pct})"
+
+#: templates/settings.html:2669
+#, python-brace-format
+msgid "Input tokens: {used} remaining ({pct})"
+msgstr "Tokeny wejściowe: pozostało {used} ({pct})"
+
+#: templates/settings.html:2674
+#, python-brace-format
+msgid "Rate: {rpm} requests/min"
+msgstr "Tempo: {rpm} zapytań/min"
+
+#: templates/settings.html:2674
+#, python-brace-format
+msgid "{rpd} requests/day (free tier)"
+msgstr "{rpd} zapytań/dzień (plan bezpłatny)"
+
+#: templates/settings.html:2679
+msgid "API online — no rate limit data returned"
+msgstr "API działa: brak danych o limitach"
+
+#: templates/settings.html:2692
+#, python-brace-format
+msgid "Model: {model}"
+msgstr "Model: {model}"
+
+#: templates/settings.html:2696 templates/settings.html:2702
+msgid "AI Provider"
+msgstr "Dostawca AI"
+
+#: templates/settings.html:2709
+#, python-brace-format
+msgid "Last checked: {time}"
+msgstr "Ostatnio sprawdzono: {time}"
+
+#: templates/settings.html:2713
+msgid "No rate limit information available"
+msgstr "Brak informacji o limitach"
+
+#: templates/_settings_tabs/scraping.html:263 templates/settings.html:2717
+msgid "Check Rate Limits"
+msgstr "Sprawdź limity"
+
+#: templates/settings.html:2739
+msgid "Settings saved! Checking scraper status..."
+msgstr "Ustawienia zapisane! Sprawdzanie stanu scraperów..."
+
+#: templates/settings.html:2801
+msgid "API keys saved! Checking scraper status..."
+msgstr "Klucze API zapisane! Sprawdzanie stanu scraperów..."
+
+#: templates/settings.html:2806
+msgid "API keys saved successfully!"
+msgstr "Klucze API zostały zapisane!"
+
+#: templates/settings.html:2810
+msgid "Failed to save API keys"
+msgstr "Nie udało się zapisać kluczy API"
+
+#: templates/_settings_tabs/scraping.html:535 templates/settings.html:2817
+msgid "Save API Keys"
+msgstr "Zapisz klucze API"
 
 #: templates/settings.html:2909
 msgid "Invalid Input"
@@ -12521,6 +12728,28 @@ msgstr "Nie udało się odświeżyć nazw"
 #: templates/settings.html:4464
 msgid "Failed to refresh system names"
 msgstr "Nie udało się odświeżyć nazw systemów"
+
+#: templates/settings.html:4480
+msgid "Importing..."
+msgstr "Importowanie..."
+
+#: templates/settings.html:4490
+msgid "Run \"Scan Library\" to update the database with the new logos."
+msgstr "Uruchom „Skanuj bibliotekę”, aby zaktualizować bazę o nowe logo."
+
+#: templates/settings.html:4495 templates/setup.html:375
+#: templates/setup.html:435
+msgid "An error occurred"
+msgstr "Wystąpił błąd"
+
+#: templates/settings.html:4498
+#, python-brace-format
+msgid "Failed to import logos: {error}"
+msgstr "Nie udało się zaimportować logo: {error}"
+
+#: templates/_settings_tabs/scraping.html:58 templates/settings.html:4501
+msgid "Import System Logos"
+msgstr "Importuj logo systemów"
 
 #: templates/settings.html:4563
 msgid "No bulk scrape state found (all clear)"
@@ -12993,7 +13222,9 @@ msgstr "Administrator"
 msgid "ES-DE"
 msgstr "ES-DE"
 
-#: templates/setup.html:20 templates/setup.html:212
+#: templates/_settings_tabs/scraping.html:8
+#: templates/_settings_tabs/scraping.html:275 templates/setup.html:20
+#: templates/setup.html:212
 msgid "API Keys"
 msgstr "Klucze API"
 
@@ -13163,7 +13394,7 @@ msgstr "Obecnie: %(path)s"
 msgid "Example:"
 msgstr "Przykład:"
 
-#: templates/setup.html:166
+#: templates/_settings_tabs/scraping.html:15 templates/setup.html:166
 msgid "ES-DE Integration"
 msgstr "Integracja z ES-DE"
 
@@ -13179,11 +13410,11 @@ msgstr ""
 msgid "I don't use ES-DE"
 msgstr "Nie używam ES-DE"
 
-#: templates/setup.html:182
+#: templates/_settings_tabs/scraping.html:19 templates/setup.html:182
 msgid "ES-DE Gamelists Path"
 msgstr "Ścieżka do gamelist ES-DE"
 
-#: templates/setup.html:189
+#: templates/_settings_tabs/scraping.html:30 templates/setup.html:189
 msgid "ES-DE Downloaded Media Path"
 msgstr "Ścieżka do pobranych multimediów ES-DE"
 
@@ -13275,7 +13506,7 @@ msgstr "Nazwa użytkownika dewelopera z panelu dewelopera"
 msgid "Developer Password"
 msgstr "Hasło dewelopera"
 
-#: templates/setup.html:263
+#: templates/_settings_tabs/scraping.html:372 templates/setup.html:263
 msgid "Password from developer area (NOT debug password)"
 msgstr "Hasło z panelu dewelopera (NIE hasło debugowania)"
 
@@ -13314,10 +13545,6 @@ msgstr "Zakończ konfigurację"
 #: templates/setup.html:435
 msgid "Error:"
 msgstr "Błąd:"
-
-#: templates/setup.html:375 templates/setup.html:435
-msgid "An error occurred"
-msgstr "Wystąpił błąd"
 
 #: templates/setup.html:392
 msgid "Parent folder"
@@ -15076,6 +15303,7 @@ msgid "RPCS3 Trophy Settings"
 msgstr "Ustawienia trofeów RPCS3"
 
 #: templates/_settings_tabs/data.html:44
+#: templates/_settings_tabs/scraping.html:41
 msgid "RPCS3 Trophy Path"
 msgstr "Ścieżka trofeów RPCS3"
 
@@ -15255,6 +15483,7 @@ msgid "Database path cannot be changed via UI"
 msgstr "Ścieżki bazy danych nie można zmienić przez interfejs użytkownika"
 
 #: templates/_settings_tabs/library.html:43
+#: templates/_settings_tabs/scraping.html:54
 msgid "Save Path Settings"
 msgstr "Zapisz ustawienia ścieżek"
 
@@ -15416,6 +15645,333 @@ msgstr ""
 "Płyta oznaczona przez pomyłkę może wrócić na listy gier. Auto-Link potem "
 "jej nie rusza."
 
+#: templates/_settings_tabs/scraping.html:3
+msgid "Scraping settings"
+msgstr "Ustawienia pobierania danych"
+
+#: templates/_settings_tabs/scraping.html:6
+msgid "Scraper"
+msgstr "Scraper"
+
+#: templates/_settings_tabs/scraping.html:22
+msgid "e.g. /home/user/.es-de/gamelists"
+msgstr "np. /home/user/.es-de/gamelists"
+
+#: templates/_settings_tabs/scraping.html:33
+msgid "Leave blank to auto-detect from gamelists path"
+msgstr "Zostaw puste, aby wykryć automatycznie na podstawie ścieżki gamelist"
+
+#: templates/_settings_tabs/scraping.html:37
+msgid "Default: Loading..."
+msgstr "Domyślnie: ładowanie..."
+
+#: templates/_settings_tabs/scraping.html:44
+msgid "e.g. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+msgstr "np. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+
+#: templates/_settings_tabs/scraping.html:62
+msgid "Import system logos from your ES-DE installation"
+msgstr "Importuj logo systemów z instalacji ES-DE"
+
+#: templates/_settings_tabs/scraping.html:71
+msgid "Scraper Configuration"
+msgstr "Konfiguracja scraperów"
+
+#: templates/_settings_tabs/scraping.html:75
+msgid ""
+"Enable/disable scrapers and drag to set priority order. The scraper at "
+"the top will be tried first during bulk scraping."
+msgstr ""
+"Włączaj i wyłączaj scrapery oraz przeciągaj je, aby ustawić kolejność. "
+"Scraper na górze jest próbowany jako pierwszy przy pobieraniu zbiorczym."
+
+#: templates/_settings_tabs/scraping.html:84
+#: templates/_settings_tabs/scraping.html:89
+msgid "Local"
+msgstr "Lokalny"
+
+#: templates/_settings_tabs/scraping.html:85
+msgid "Import from your local gamelist.xml files"
+msgstr "Importuj z lokalnych plików gamelist.xml"
+
+#: templates/_settings_tabs/scraping.html:92
+msgid "Enable ES-DE local scraper"
+msgstr "Włącz lokalny scraper ES-DE"
+
+#: templates/_settings_tabs/scraping.html:103
+msgid "Primary online scraper for game metadata"
+msgstr "Główny scraper online dla danych o grach"
+
+#: templates/_settings_tabs/scraping.html:110
+msgid "Enable TheGamesDB scraper"
+msgstr "Włącz scraper TheGamesDB"
+
+#: templates/_settings_tabs/scraping.html:121
+msgid "Comprehensive game database by Twitch"
+msgstr "Obszerna baza gier od Twitcha"
+
+#: templates/_settings_tabs/scraping.html:128
+msgid "Enable IGDB scraper"
+msgstr "Włącz scraper IGDB"
+
+#: templates/_settings_tabs/scraping.html:139
+msgid "Large game database with ESRB ratings and Metacritic scores"
+msgstr "Duża baza gier z ocenami wiekowymi ESRB i wynikami Metacritic"
+
+#: templates/_settings_tabs/scraping.html:146
+msgid "Enable RAWG.io scraper"
+msgstr "Włącz scraper RAWG.io"
+
+#: templates/_settings_tabs/scraping.html:157
+msgid "Comprehensive retro gaming database with media (requires account)"
+msgstr "Obszerna baza gier retro z multimediami (wymaga konta)"
+
+#: templates/_settings_tabs/scraping.html:164
+msgid "Enable ScreenScraper scraper"
+msgstr "Włącz scraper ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:174
+msgid "AI-powered gap-filler (Gemini, OpenAI, or Claude) — fills text fields only"
+msgstr ""
+"Uzupełnianie luk przez AI (Gemini, OpenAI lub Claude): wypełnia tylko "
+"pola tekstowe"
+
+#: templates/_settings_tabs/scraping.html:181
+msgid "Enable AI metadata scraper"
+msgstr "Włącz scraper metadanych AI"
+
+#: templates/_settings_tabs/scraping.html:189
+msgid "Bulk Scrape Match Filtering"
+msgstr "Filtrowanie dopasowań przy pobieraniu zbiorczym"
+
+#: templates/_settings_tabs/scraping.html:191
+msgid ""
+"Controls which search results are accepted during bulk scraping. Results "
+"that don't pass the filter are skipped."
+msgstr ""
+"Określa, które wyniki wyszukiwania są akceptowane przy pobieraniu "
+"zbiorczym. Wyniki, które nie przejdą filtra, są pomijane."
+
+#: templates/_settings_tabs/scraping.html:196
+msgid "Use advanced criteria mode"
+msgstr "Użyj trybu zaawansowanych kryteriów"
+
+#: templates/_settings_tabs/scraping.html:199
+msgid "Use advanced criteria instead of score threshold"
+msgstr "Użyj zaawansowanych kryteriów zamiast progu punktowego"
+
+#: templates/_settings_tabs/scraping.html:205
+msgid "Minimum Match Score"
+msgstr "Minimalny wynik dopasowania"
+
+#: templates/_settings_tabs/scraping.html:213
+msgid "Score Range"
+msgstr "Zakres wyniku"
+
+#: templates/_settings_tabs/scraping.html:213
+msgid "What It Means"
+msgstr "Co to znaczy"
+
+#: templates/_settings_tabs/scraping.html:216
+msgid "Exact title + platform + date + priority boost"
+msgstr "Dokładny tytuł + platforma + data + premia za priorytet"
+
+#: templates/_settings_tabs/scraping.html:217
+msgid "Exact title + some bonuses"
+msgstr "Dokładny tytuł + kilka premii"
+
+#: templates/_settings_tabs/scraping.html:218
+msgid "Close title match + platform confirmed"
+msgstr "Zbliżony tytuł + potwierdzona platforma"
+
+#: templates/_settings_tabs/scraping.html:219
+msgid "Partial match or missing platform"
+msgstr "Częściowe dopasowanie lub brak platformy"
+
+#: templates/_settings_tabs/scraping.html:220
+msgid "Weak match — likely wrong game"
+msgstr "Słabe dopasowanie: prawdopodobnie inna gra"
+
+#: templates/_settings_tabs/scraping.html:230
+msgid "Minimum Title Quality"
+msgstr "Minimalna jakość tytułu"
+
+#: templates/_settings_tabs/scraping.html:232
+#, python-format
+msgid "Exact (score ≥ %(n)s)"
+msgstr "Dokładny (wynik ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:233
+#, python-format
+msgid "Close (score ≥ %(n)s)"
+msgstr "Zbliżony (wynik ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:234
+#, python-format
+msgid "Partial (score ≥ %(n)s)"
+msgstr "Częściowy (wynik ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:235
+msgid "Any (no minimum)"
+msgstr "Dowolny (bez minimum)"
+
+#: templates/_settings_tabs/scraping.html:239
+msgid "Platform Match Required"
+msgstr "Wymagaj zgodnej platformy"
+
+#: templates/_settings_tabs/scraping.html:245
+msgid "Only accept results matching the game's system"
+msgstr "Akceptuj tylko wyniki pasujące do systemu gry"
+
+#: templates/_settings_tabs/scraping.html:259
+msgid "Reset to Default"
+msgstr "Przywróć domyślne"
+
+#: templates/_settings_tabs/scraping.html:279
+msgid ""
+"Configure API keys for online scrapers. Keys are stored locally and never"
+" shared."
+msgstr ""
+"Skonfiguruj klucze API dla scraperów online. Klucze są przechowywane "
+"lokalnie i nigdy nie są udostępniane."
+
+#: templates/_settings_tabs/scraping.html:286
+msgid "TheGamesDB — Public API Key"
+msgstr "TheGamesDB: publiczny klucz API"
+
+#: templates/_settings_tabs/scraping.html:287
+msgid "Get API Keys →"
+msgstr "Pobierz klucze API →"
+
+#: templates/_settings_tabs/scraping.html:291
+msgid "Per-IP rate limit — used as primary for scraping"
+msgstr "Limit na adres IP: używany jako główny przy pobieraniu danych"
+
+#: templates/_settings_tabs/scraping.html:292
+msgid "Primary key. Per-IP rate limit, best for regular use."
+msgstr "Klucz główny. Limit na adres IP, najlepszy do zwykłego użytku."
+
+#: templates/_settings_tabs/scraping.html:297
+msgid "TheGamesDB — Private API Key"
+msgstr "TheGamesDB: prywatny klucz API"
+
+#: templates/_settings_tabs/scraping.html:301
+msgid "Shared monthly pool — used as fallback"
+msgstr "Wspólna pula miesięczna: używana jako zapasowa"
+
+#: templates/_settings_tabs/scraping.html:302
+msgid "Fallback key. Shared monthly pool (~6,000 req/month)."
+msgstr "Klucz zapasowy. Wspólna pula miesięczna (ok. 6000 zapytań/miesiąc)."
+
+#: templates/_settings_tabs/scraping.html:308
+msgid "IGDB / Twitch Client ID"
+msgstr "IGDB / Twitch: Client ID"
+
+#: templates/_settings_tabs/scraping.html:309
+msgid "Get Credentials →"
+msgstr "Pobierz dane dostępu →"
+
+#: templates/_settings_tabs/scraping.html:313
+msgid "Enter Twitch Client ID"
+msgstr "Wpisz Twitch Client ID"
+
+#: templates/_settings_tabs/scraping.html:318
+msgid "IGDB / Twitch Client Secret"
+msgstr "IGDB / Twitch: Client Secret"
+
+#: templates/_settings_tabs/scraping.html:322
+msgid "Enter Twitch Client Secret"
+msgstr "Wpisz Twitch Client Secret"
+
+#: templates/_settings_tabs/scraping.html:328
+msgid "RAWG.io API Key"
+msgstr "Klucz API RAWG.io"
+
+#: templates/_settings_tabs/scraping.html:329
+#: templates/_settings_tabs/scraping.html:389
+#: templates/_settings_tabs/scraping.html:400
+#: templates/_settings_tabs/scraping.html:448
+#: templates/_settings_tabs/scraping.html:481
+#: templates/_settings_tabs/scraping.html:503
+msgid "Get API Key →"
+msgstr "Pobierz klucz API →"
+
+#: templates/_settings_tabs/scraping.html:333
+msgid "Enter RAWG.io API key"
+msgstr "Wpisz klucz API RAWG.io"
+
+#: templates/_settings_tabs/scraping.html:339
+msgid "ScreenScraper Username"
+msgstr "Nazwa użytkownika ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:340
+#: templates/_settings_tabs/scraping.html:379
+msgid "Register →"
+msgstr "Zarejestruj się →"
+
+#: templates/_settings_tabs/scraping.html:344
+msgid "Your member account username"
+msgstr "Nazwa użytkownika Twojego konta członkowskiego"
+
+#: templates/_settings_tabs/scraping.html:349
+msgid "ScreenScraper Password"
+msgstr "Hasło ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:353
+msgid "Your member account login password"
+msgstr "Hasło logowania do Twojego konta członkowskiego"
+
+#: templates/_settings_tabs/scraping.html:358
+msgid "ScreenScraper Developer ID"
+msgstr "ID dewelopera ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:359
+msgid "Request Dev Access →"
+msgstr "Poproś o dostęp dewelopera →"
+
+#: templates/_settings_tabs/scraping.html:363
+msgid "Dev Username from developer area"
+msgstr "Nazwa użytkownika dewelopera z sekcji dla deweloperów"
+
+#: templates/_settings_tabs/scraping.html:368
+msgid "ScreenScraper Developer Password"
+msgstr "Hasło dewelopera ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:378
+msgid "RetroAchievements Username"
+msgstr "Nazwa użytkownika RetroAchievements"
+
+#: templates/_settings_tabs/scraping.html:383
+msgid "Your RetroAchievements username"
+msgstr "Twoja nazwa użytkownika RetroAchievements"
+
+#: templates/_settings_tabs/scraping.html:388
+msgid "RetroAchievements API Key"
+msgstr "Klucz API RetroAchievements"
+
+#: templates/_settings_tabs/scraping.html:393
+msgid "Web API Key from Settings > Keys"
+msgstr "Klucz Web API z Ustawienia > Keys"
+
+#: templates/_settings_tabs/scraping.html:408
+msgid "Steam ID"
+msgstr "Steam ID"
+
+#: templates/_settings_tabs/scraping.html:412
+msgid "17-digit Steam ID or custom URL name"
+msgstr "17-cyfrowy Steam ID lub własna nazwa w adresie URL"
+
+#: templates/_settings_tabs/scraping.html:413
+msgid ""
+"Your 17-digit Steam ID (e.g. 76561198012345678) or custom URL name. Find "
+"it at <a href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener "
+"noreferrer\" style=\"color: var(--primary-cyan);\">steamid.io</a>"
+msgstr ""
+"Twój 17-cyfrowy Steam ID (np. 76561198012345678) lub własna nazwa w "
+"adresie URL. Znajdziesz go na <a href=\"https://steamid.io\" "
+"target=\"_blank\" rel=\"noopener noreferrer\" style=\"color: var"
+"(--primary-cyan);\">steamid.io</a>"
+
 #: templates/_settings_tabs/scraping.html:421
 #, python-format
 msgid ""
@@ -15427,9 +15983,92 @@ msgstr ""
 "href=\"%(profile_url)s\" style=\"color: var(--primary-cyan);\">Ustawienia"
 " &gt; Mój profil</a>. Tutaj nic nie trzeba ustawiać."
 
+#: templates/_settings_tabs/scraping.html:427
+msgid "AI Metadata Provider"
+msgstr "Dostawca metadanych AI"
+
+#: templates/_settings_tabs/scraping.html:430
+msgid "-- Select Provider --"
+msgstr "-- Wybierz dostawcę --"
+
+#: templates/_settings_tabs/scraping.html:435
+msgid ""
+"AI fills text-only fields (genre, structure, perspective, etc.). API "
+"usage costs apply."
+msgstr ""
+"AI uzupełnia tylko pola tekstowe (gatunek, struktura, perspektywa itp.). "
+"Użycie API jest płatne."
+
 #: templates/_settings_tabs/scraping.html:438
 msgid "Test saved AI key"
 msgstr "Testuj zapisany klucz AI"
+
+#: templates/_settings_tabs/scraping.html:447
+msgid "Gemini API Key"
+msgstr "Klucz API Gemini"
+
+#: templates/_settings_tabs/scraping.html:452
+msgid "Enter Google Gemini API key"
+msgstr "Wpisz klucz API Google Gemini"
+
+#: templates/_settings_tabs/scraping.html:456
+msgid "Gemini Model"
+msgstr "Model Gemini"
+
+#: templates/_settings_tabs/scraping.html:459
+#: templates/_settings_tabs/scraping.html:460
+#: templates/_settings_tabs/scraping.html:461
+#: templates/_settings_tabs/scraping.html:462
+#: templates/_settings_tabs/scraping.html:492
+#: templates/_settings_tabs/scraping.html:493
+#: templates/_settings_tabs/scraping.html:514
+#: templates/_settings_tabs/scraping.html:515
+#: templates/_settings_tabs/scraping.html:516
+#, python-format
+msgid "$%(inp)s in / $%(out)s out per 1M tokens"
+msgstr "$%(inp)s wejście / $%(out)s wyjście za 1 mln tokenów"
+
+#: templates/_settings_tabs/scraping.html:459
+#: templates/_settings_tabs/scraping.html:492
+#: templates/_settings_tabs/scraping.html:514
+msgid "Recommended"
+msgstr "Zalecane"
+
+#: templates/_settings_tabs/scraping.html:467
+msgid "GCP Project ID"
+msgstr "ID projektu GCP"
+
+#: templates/_settings_tabs/scraping.html:468
+msgid "Optional — required for Google Cloud billing credits"
+msgstr "Opcjonalne: wymagane dla środków rozliczeniowych Google Cloud"
+
+#: templates/_settings_tabs/scraping.html:472
+msgid "e.g. my-project-123456"
+msgstr "np. my-project-123456"
+
+#: templates/_settings_tabs/scraping.html:480
+msgid "OpenAI API Key"
+msgstr "Klucz API OpenAI"
+
+#: templates/_settings_tabs/scraping.html:485
+msgid "Enter OpenAI API key"
+msgstr "Wpisz klucz API OpenAI"
+
+#: templates/_settings_tabs/scraping.html:489
+msgid "OpenAI Model"
+msgstr "Model OpenAI"
+
+#: templates/_settings_tabs/scraping.html:502
+msgid "Anthropic API Key"
+msgstr "Klucz API Anthropic"
+
+#: templates/_settings_tabs/scraping.html:507
+msgid "Enter Anthropic API key"
+msgstr "Wpisz klucz API Anthropic"
+
+#: templates/_settings_tabs/scraping.html:511
+msgid "Claude Model"
+msgstr "Model Claude"
 
 #: templates/_settings_tabs/scraping.html:521
 msgid "Let Claude search the web"

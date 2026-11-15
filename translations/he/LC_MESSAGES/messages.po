@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 07:39+0200\n"
+"POT-Creation-Date: 2026-11-15 08:01+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: he\n"
@@ -2835,7 +2835,8 @@ msgstr "הזינו נתיב תיקייה אחד."
 #: templates/multi_disc_organizer.html:371 templates/reports.html:1144
 #: templates/reports.html:1147 templates/reports.html:1213
 #: templates/reports.html:1216 templates/rom_tools_settings.html:579
-#: templates/rom_tools_settings.html:582 templates/settings.html:2926
+#: templates/rom_tools_settings.html:582 templates/settings.html:2367
+#: templates/settings.html:2485 templates/settings.html:2926
 #: templates/settings.html:2930 templates/settings.html:2949
 #: templates/settings.html:2953 templates/settings.html:3551
 #: templates/settings.html:3555 templates/settings.html:3623
@@ -3929,7 +3930,8 @@ msgstr "נשמר. יוחל בפעם הבאה שתלחץ על שחק."
 msgid "Saving to the database…"
 msgstr "שומר במסד הנתונים…"
 
-#: services/js_i18n_strings.py:978 templates/settings.html:4787
+#: services/js_i18n_strings.py:978 templates/settings.html:2726
+#: templates/settings.html:2764 templates/settings.html:4787
 #: templates/setup.html:483
 msgid "Saving..."
 msgstr "שומר..."
@@ -7975,6 +7977,7 @@ msgid "Database Service"
 msgstr "שירות מסד הנתונים"
 
 #: templates/dashboard.html:585 templates/dashboard.html:1308
+#: templates/settings.html:2357
 msgid "Online"
 msgstr "מקוון"
 
@@ -7988,9 +7991,14 @@ msgstr "מגרד מקומי של ES-DE"
 msgid "Available"
 msgstr "זמין"
 
-#: templates/dashboard.html:602 templates/dashboard.html:612
-#: templates/dashboard.html:632 templates/dashboard.html:642
-#: templates/game_imports.html:368
+#: templates/_settings_tabs/scraping.html:107
+#: templates/_settings_tabs/scraping.html:125
+#: templates/_settings_tabs/scraping.html:143
+#: templates/_settings_tabs/scraping.html:161
+#: templates/_settings_tabs/scraping.html:178 templates/dashboard.html:602
+#: templates/dashboard.html:612 templates/dashboard.html:632
+#: templates/dashboard.html:642 templates/game_imports.html:368
+#: templates/settings.html:2330 templates/settings.html:2444
 msgid "Checking..."
 msgstr "בודק..."
 
@@ -8062,7 +8070,7 @@ msgstr "ממשק API מוגדר אחד אינו מקוון"
 msgid "{count} configured APIs are offline"
 msgstr "{count} ממשקי API מוגדרים אינם מקוונים"
 
-#: templates/dashboard.html:1309
+#: templates/dashboard.html:1309 templates/settings.html:2360
 msgid "Offline"
 msgstr "לא מקוון"
 
@@ -8376,7 +8384,7 @@ msgid "From the AI, not checked against a review site."
 msgstr "מהבינה המלאכותית, ללא בדיקה מול אתר ביקורות."
 
 #: templates/game_detail.html:274 templates/game_detail.html:279
-#: templates/game_detail.html:284
+#: templates/game_detail.html:284 templates/settings.html:2691
 msgid "AI"
 msgstr "בינה מלאכותית"
 
@@ -8956,11 +8964,12 @@ msgstr ""
 msgid "Steam Credentials"
 msgstr "פרטי הזדהות של Steam"
 
-#: templates/game_imports.html:251
+#: templates/_settings_tabs/scraping.html:399 templates/game_imports.html:251
 msgid "Steam Web API Key"
 msgstr "מפתח Steam Web API"
 
-#: templates/_settings_tabs/account.html:239 templates/game_imports.html:251
+#: templates/_settings_tabs/account.html:239
+#: templates/_settings_tabs/scraping.html:404 templates/game_imports.html:251
 msgid "Your Steam Web API Key"
 msgstr "מפתח ה-Steam Web API שלך"
 
@@ -9636,7 +9645,8 @@ msgstr "לא נמצאה התאמה."
 #: templates/settings.html:1942 templates/settings.html:1967
 #: templates/settings.html:1970 templates/settings.html:1990
 #: templates/settings.html:2034 templates/settings.html:2056
-#: templates/settings.html:2153 templates/settings.html:4832
+#: templates/settings.html:2153 templates/settings.html:2751
+#: templates/settings.html:2813 templates/settings.html:4832
 #: templates/steam_achievement_game.html:302
 #: templates/xbox_achievement_game.html:293
 #, python-brace-format
@@ -11450,7 +11460,8 @@ msgid "Detection method can be selected directly on the Duplicate Finder page."
 msgstr "ניתן לבחור את שיטת הזיהוי ישירות בדף מאתר הכפילויות."
 
 #: templates/_settings_tabs/customization.html:83
-#: templates/rom_tools_settings.html:433
+#: templates/_settings_tabs/scraping.html:255
+#: templates/rom_tools_settings.html:433 templates/settings.html:2755
 msgid "Save Settings"
 msgstr "שמור הגדרות"
 
@@ -11458,7 +11469,7 @@ msgstr "שמור הגדרות"
 msgid "Reset to Defaults"
 msgstr "אפס לברירות מחדל"
 
-#: templates/rom_tools_settings.html:439
+#: templates/rom_tools_settings.html:439 templates/settings.html:2744
 msgid "Settings saved successfully!"
 msgstr "ההגדרות נשמרו בהצלחה!"
 
@@ -11703,6 +11714,12 @@ msgstr "מחיקת המשתמש נכשלה"
 msgid "Network error deleting user"
 msgstr "שגיאת רשת במחיקת המשתמש"
 
+#: templates/settings.html:1438 templates/settings.html:1440
+#: templates/settings.html:1442 templates/settings.html:1444
+#, python-brace-format
+msgid "Current: {path}"
+msgstr "נוכחי: {path}"
+
 #: templates/settings.html:1466
 msgid "Path settings saved!"
 msgstr "הגדרות הנתיבים נשמרו!"
@@ -11905,7 +11922,7 @@ msgstr "החישוב נכשל: {error}"
 msgid "Failed to save scraper setting"
 msgstr "שמירת הגדרת הגרדן נכשלה"
 
-#: templates/settings.html:2312
+#: templates/_settings_tabs/scraping.html:173 templates/settings.html:2312
 msgid "AI Metadata"
 msgstr "מטא-נתוני AI"
 
@@ -11919,6 +11936,23 @@ msgstr "{name} הופעל"
 msgid "{name} disabled"
 msgstr "{name} כובה"
 
+#: templates/settings.html:2383
+#, python-brace-format
+msgid "Resets in {time}"
+msgstr "יתאפס בעוד {time}"
+
+#: templates/settings.html:2383
+msgid "Resets soon"
+msgstr "יתאפס בקרוב"
+
+#: templates/settings.html:2389 templates/settings.html:2391
+#: templates/settings.html:2476 templates/settings.html:2500
+#: templates/settings.html:2597 templates/settings.html:2647
+#: templates/settings.html:2649
+#, python-brace-format
+msgid "Resets: {when}"
+msgstr "איפוס: {when}"
+
 #: templates/settings.html:2422
 msgid "Testing…"
 msgstr "בודק…"
@@ -11931,6 +11965,179 @@ msgstr "המפתח עובד: %(provider)s השיב באמצעות %(model)s."
 #: templates/settings.html:2432
 msgid "The key test failed."
 msgstr "בדיקת המפתח נכשלה."
+
+#: templates/settings.html:2445
+msgid "Checking rate limits..."
+msgstr "בודק מגבלות קצב..."
+
+#: templates/settings.html:2474 templates/settings.html:2496
+msgid "remaining (monthly)"
+msgstr "נותרו (חודשי)"
+
+#: templates/settings.html:2475 templates/settings.html:2481
+#: templates/settings.html:2483 templates/settings.html:2485
+#: templates/settings.html:2488
+#, python-brace-format
+msgid "Public key: {status}"
+msgstr "מפתח ציבורי: {status}"
+
+#: templates/settings.html:2477 templates/settings.html:2501
+#, python-brace-format
+msgid "Extra: {n}"
+msgstr "נוסף: {n}"
+
+#: templates/settings.html:2481
+msgid "Active"
+msgstr "פעיל"
+
+#: templates/settings.html:2483
+msgid "Allowance exhausted"
+msgstr "המכסה נוצלה"
+
+#: templates/settings.html:2488 templates/settings.html:2506
+#: templates/settings.html:2567 templates/settings.html:2573
+#: templates/settings.html:2607 templates/settings.html:2697
+#: templates/settings.html:2703
+msgid "Not configured"
+msgstr "לא הוגדר"
+
+#: templates/settings.html:2497 templates/settings.html:2506
+#, python-brace-format
+msgid "Private key: {status}"
+msgstr "מפתח פרטי: {status}"
+
+#: templates/settings.html:2533
+msgid "Error checking"
+msgstr "שגיאה בבדיקה"
+
+#: templates/settings.html:2539 templates/settings.html:2613
+msgid "Connection error"
+msgstr "שגיאת חיבור"
+
+#: templates/settings.html:2554
+msgid "requests remaining today"
+msgstr "בקשות נותרו היום"
+
+#: templates/settings.html:2557
+#, python-brace-format
+msgid "Per-minute limit: {n}"
+msgstr "מגבלה לדקה: {n}"
+
+#: templates/settings.html:2558
+#, python-brace-format
+msgid "Level: {level}"
+msgstr "רמה: {level}"
+
+#: templates/settings.html:2559
+#, python-brace-format
+msgid "Threads: {n}"
+msgstr "תהליכונים: {n}"
+
+#: templates/settings.html:2560
+#, python-brace-format
+msgid "Speed: {n} KB/s"
+msgstr "מהירות: {n} KB/s"
+
+#: templates/settings.html:2561
+msgid "Resets daily at midnight (UTC)"
+msgstr "מתאפס מדי יום בחצות (UTC)"
+
+#: templates/settings.html:2582
+#, python-brace-format
+msgid "{n} requests/second (OAuth token-based)"
+msgstr "{n} בקשות בשנייה (מבוסס אסימון OAuth)"
+
+#: templates/settings.html:2583
+msgid "Token-based authentication — no daily quota"
+msgstr "אימות מבוסס אסימון — ללא מכסה יומית"
+
+#: templates/settings.html:2594
+msgid "requests remaining"
+msgstr "בקשות נותרו"
+
+#: templates/settings.html:2595
+#, python-brace-format
+msgid "{n} requests/month (free tier)"
+msgstr "{n} בקשות בחודש (תוכנית חינמית)"
+
+#: templates/settings.html:2598
+msgid "No live usage tracking from API"
+msgstr "אין מעקב שימוש חי מה-API"
+
+#: templates/settings.html:2622
+msgid "No published rate limits"
+msgstr "אין מגבלות קצב שפורסמו"
+
+#: templates/settings.html:2641
+#, python-brace-format
+msgid "Requests: {used} remaining ({pct})"
+msgstr "בקשות: נותרו {used} ({pct})"
+
+#: templates/settings.html:2660
+#, python-brace-format
+msgid "Tokens: {used} remaining ({pct})"
+msgstr "אסימונים: נותרו {used} ({pct})"
+
+#: templates/settings.html:2669
+#, python-brace-format
+msgid "Input tokens: {used} remaining ({pct})"
+msgstr "אסימוני קלט: נותרו {used} ({pct})"
+
+#: templates/settings.html:2674
+#, python-brace-format
+msgid "Rate: {rpm} requests/min"
+msgstr "קצב: {rpm} בקשות בדקה"
+
+#: templates/settings.html:2674
+#, python-brace-format
+msgid "{rpd} requests/day (free tier)"
+msgstr "{rpd} בקשות ליום (תוכנית חינמית)"
+
+#: templates/settings.html:2679
+msgid "API online — no rate limit data returned"
+msgstr "ה-API מחובר — לא הוחזרו נתוני מגבלות קצב"
+
+#: templates/settings.html:2692
+#, python-brace-format
+msgid "Model: {model}"
+msgstr "מודל: {model}"
+
+#: templates/settings.html:2696 templates/settings.html:2702
+msgid "AI Provider"
+msgstr "ספק בינה מלאכותית"
+
+#: templates/settings.html:2709
+#, python-brace-format
+msgid "Last checked: {time}"
+msgstr "נבדק לאחרונה: {time}"
+
+#: templates/settings.html:2713
+msgid "No rate limit information available"
+msgstr "אין מידע על מגבלות קצב"
+
+#: templates/_settings_tabs/scraping.html:263 templates/settings.html:2717
+msgid "Check Rate Limits"
+msgstr "בדוק מגבלות קצב"
+
+#: templates/settings.html:2739
+msgid "Settings saved! Checking scraper status..."
+msgstr "ההגדרות נשמרו! בודק את מצב הסקרייפרים..."
+
+#: templates/settings.html:2801
+msgid "API keys saved! Checking scraper status..."
+msgstr "מפתחות ה-API נשמרו! בודק את מצב הסקרייפרים..."
+
+#: templates/settings.html:2806
+msgid "API keys saved successfully!"
+msgstr "מפתחות ה-API נשמרו בהצלחה!"
+
+#: templates/settings.html:2810
+msgid "Failed to save API keys"
+msgstr "שמירת מפתחות ה-API נכשלה"
+
+#: templates/_settings_tabs/scraping.html:535 templates/settings.html:2817
+msgid "Save API Keys"
+msgstr "שמור מפתחות API"
 
 #: templates/settings.html:2909
 msgid "Invalid Input"
@@ -12296,6 +12503,28 @@ msgstr "רענון השמות נכשל"
 #: templates/settings.html:4464
 msgid "Failed to refresh system names"
 msgstr "רענון שמות המערכות נכשל"
+
+#: templates/settings.html:4480
+msgid "Importing..."
+msgstr "מייבא..."
+
+#: templates/settings.html:4490
+msgid "Run \"Scan Library\" to update the database with the new logos."
+msgstr "הפעל \"סרוק ספרייה\" כדי לעדכן את מסד הנתונים עם הלוגואים החדשים."
+
+#: templates/settings.html:4495 templates/setup.html:375
+#: templates/setup.html:435
+msgid "An error occurred"
+msgstr "אירעה שגיאה"
+
+#: templates/settings.html:4498
+#, python-brace-format
+msgid "Failed to import logos: {error}"
+msgstr "ייבוא הלוגואים נכשל: {error}"
+
+#: templates/_settings_tabs/scraping.html:58 templates/settings.html:4501
+msgid "Import System Logos"
+msgstr "ייבא לוגואים של מערכות"
 
 #: templates/settings.html:4563
 msgid "No bulk scrape state found (all clear)"
@@ -12760,7 +12989,9 @@ msgstr "מנהל"
 msgid "ES-DE"
 msgstr "ES-DE"
 
-#: templates/setup.html:20 templates/setup.html:212
+#: templates/_settings_tabs/scraping.html:8
+#: templates/_settings_tabs/scraping.html:275 templates/setup.html:20
+#: templates/setup.html:212
 msgid "API Keys"
 msgstr "מפתחות API"
 
@@ -12924,7 +13155,7 @@ msgstr "נוכחי: %(path)s"
 msgid "Example:"
 msgstr "דוגמה:"
 
-#: templates/setup.html:166
+#: templates/_settings_tabs/scraping.html:15 templates/setup.html:166
 msgid "ES-DE Integration"
 msgstr "שילוב עם ES-DE"
 
@@ -12940,11 +13171,11 @@ msgstr ""
 msgid "I don't use ES-DE"
 msgstr "אני לא משתמש ב-ES-DE"
 
-#: templates/setup.html:182
+#: templates/_settings_tabs/scraping.html:19 templates/setup.html:182
 msgid "ES-DE Gamelists Path"
 msgstr "נתיב Gamelists של ES-DE"
 
-#: templates/setup.html:189
+#: templates/_settings_tabs/scraping.html:30 templates/setup.html:189
 msgid "ES-DE Downloaded Media Path"
 msgstr "נתיב המדיה שהורדה של ES-DE"
 
@@ -13036,7 +13267,7 @@ msgstr "שם משתמש מפתח מאזור המפתחים"
 msgid "Developer Password"
 msgstr "סיסמת מפתח"
 
-#: templates/setup.html:263
+#: templates/_settings_tabs/scraping.html:372 templates/setup.html:263
 msgid "Password from developer area (NOT debug password)"
 msgstr "הסיסמה מאזור המפתחים (לא סיסמת ניפוי באגים)"
 
@@ -13073,10 +13304,6 @@ msgstr "סיום ההתקנה"
 #: templates/setup.html:435
 msgid "Error:"
 msgstr "שגיאה:"
-
-#: templates/setup.html:375 templates/setup.html:435
-msgid "An error occurred"
-msgstr "אירעה שגיאה"
 
 #: templates/setup.html:392
 msgid "Parent folder"
@@ -14797,6 +15024,7 @@ msgid "RPCS3 Trophy Settings"
 msgstr "הגדרות גביעי RPCS3"
 
 #: templates/_settings_tabs/data.html:44
+#: templates/_settings_tabs/scraping.html:41
 msgid "RPCS3 Trophy Path"
 msgstr "נתיב גביעי RPCS3"
 
@@ -14970,6 +15198,7 @@ msgid "Database path cannot be changed via UI"
 msgstr "לא ניתן לשנות את נתיב מסד הנתונים דרך הממשק"
 
 #: templates/_settings_tabs/library.html:43
+#: templates/_settings_tabs/scraping.html:54
 msgid "Save Path Settings"
 msgstr "שמור הגדרות נתיב"
 
@@ -15124,6 +15353,333 @@ msgstr ""
 "דיסק שסומן בטעות יכול לחזור לרשימות המשחקים שלך. אחר כך Auto-Link לא ייגע"
 " בו."
 
+#: templates/_settings_tabs/scraping.html:3
+msgid "Scraping settings"
+msgstr "הגדרות גירוד"
+
+#: templates/_settings_tabs/scraping.html:6
+msgid "Scraper"
+msgstr "סקרייפר"
+
+#: templates/_settings_tabs/scraping.html:22
+msgid "e.g. /home/user/.es-de/gamelists"
+msgstr "לדוגמה: /home/user/.es-de/gamelists"
+
+#: templates/_settings_tabs/scraping.html:33
+msgid "Leave blank to auto-detect from gamelists path"
+msgstr "השאר ריק לזיהוי אוטומטי מנתיב gamelists"
+
+#: templates/_settings_tabs/scraping.html:37
+msgid "Default: Loading..."
+msgstr "ברירת מחדל: טוען..."
+
+#: templates/_settings_tabs/scraping.html:44
+msgid "e.g. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+msgstr "לדוגמה: /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+
+#: templates/_settings_tabs/scraping.html:62
+msgid "Import system logos from your ES-DE installation"
+msgstr "ייבא לוגואים של מערכות מהתקנת ES-DE שלך"
+
+#: templates/_settings_tabs/scraping.html:71
+msgid "Scraper Configuration"
+msgstr "הגדרות סקרייפרים"
+
+#: templates/_settings_tabs/scraping.html:75
+msgid ""
+"Enable/disable scrapers and drag to set priority order. The scraper at "
+"the top will be tried first during bulk scraping."
+msgstr ""
+"הפעל או כבה סקרייפרים וגרור כדי לקבוע סדר עדיפות. הסקרייפר העליון ינוסה "
+"ראשון בגירוד המוני."
+
+#: templates/_settings_tabs/scraping.html:84
+#: templates/_settings_tabs/scraping.html:89
+msgid "Local"
+msgstr "מקומי"
+
+#: templates/_settings_tabs/scraping.html:85
+msgid "Import from your local gamelist.xml files"
+msgstr "ייבא מקובצי gamelist.xml המקומיים שלך"
+
+#: templates/_settings_tabs/scraping.html:92
+msgid "Enable ES-DE local scraper"
+msgstr "הפעל סקרייפר ES-DE מקומי"
+
+#: templates/_settings_tabs/scraping.html:103
+msgid "Primary online scraper for game metadata"
+msgstr "סקרייפר מקוון ראשי למידע על משחקים"
+
+#: templates/_settings_tabs/scraping.html:110
+msgid "Enable TheGamesDB scraper"
+msgstr "הפעל סקרייפר TheGamesDB"
+
+#: templates/_settings_tabs/scraping.html:121
+msgid "Comprehensive game database by Twitch"
+msgstr "מסד נתונים מקיף של משחקים מבית Twitch"
+
+#: templates/_settings_tabs/scraping.html:128
+msgid "Enable IGDB scraper"
+msgstr "הפעל סקרייפר IGDB"
+
+#: templates/_settings_tabs/scraping.html:139
+msgid "Large game database with ESRB ratings and Metacritic scores"
+msgstr "מסד נתונים גדול של משחקים עם דירוגי ESRB וציוני Metacritic"
+
+#: templates/_settings_tabs/scraping.html:146
+msgid "Enable RAWG.io scraper"
+msgstr "הפעל סקרייפר RAWG.io"
+
+#: templates/_settings_tabs/scraping.html:157
+msgid "Comprehensive retro gaming database with media (requires account)"
+msgstr "מסד נתונים מקיף למשחקי רטרו עם מדיה (נדרש חשבון)"
+
+#: templates/_settings_tabs/scraping.html:164
+msgid "Enable ScreenScraper scraper"
+msgstr "הפעל סקרייפר ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:174
+msgid "AI-powered gap-filler (Gemini, OpenAI, or Claude) — fills text fields only"
+msgstr ""
+"משלים פערים מבוסס בינה מלאכותית (Gemini, OpenAI או Claude) — ממלא שדות "
+"טקסט בלבד"
+
+#: templates/_settings_tabs/scraping.html:181
+msgid "Enable AI metadata scraper"
+msgstr "הפעל סקרייפר מידע מבוסס בינה מלאכותית"
+
+#: templates/_settings_tabs/scraping.html:189
+msgid "Bulk Scrape Match Filtering"
+msgstr "סינון התאמות בגירוד המוני"
+
+#: templates/_settings_tabs/scraping.html:191
+msgid ""
+"Controls which search results are accepted during bulk scraping. Results "
+"that don't pass the filter are skipped."
+msgstr ""
+"קובע אילו תוצאות חיפוש מתקבלות בגירוד המוני. תוצאות שאינן עוברות את המסנן"
+" מדולגות."
+
+#: templates/_settings_tabs/scraping.html:196
+msgid "Use advanced criteria mode"
+msgstr "השתמש במצב קריטריונים מתקדם"
+
+#: templates/_settings_tabs/scraping.html:199
+msgid "Use advanced criteria instead of score threshold"
+msgstr "השתמש בקריטריונים מתקדמים במקום סף ציון"
+
+#: templates/_settings_tabs/scraping.html:205
+msgid "Minimum Match Score"
+msgstr "ציון התאמה מינימלי"
+
+#: templates/_settings_tabs/scraping.html:213
+msgid "Score Range"
+msgstr "טווח ציונים"
+
+#: templates/_settings_tabs/scraping.html:213
+msgid "What It Means"
+msgstr "מה זה אומר"
+
+#: templates/_settings_tabs/scraping.html:216
+msgid "Exact title + platform + date + priority boost"
+msgstr "שם מדויק + פלטפורמה + תאריך + בונוס עדיפות"
+
+#: templates/_settings_tabs/scraping.html:217
+msgid "Exact title + some bonuses"
+msgstr "שם מדויק + כמה בונוסים"
+
+#: templates/_settings_tabs/scraping.html:218
+msgid "Close title match + platform confirmed"
+msgstr "שם קרוב + פלטפורמה אושרה"
+
+#: templates/_settings_tabs/scraping.html:219
+msgid "Partial match or missing platform"
+msgstr "התאמה חלקית או פלטפורמה חסרה"
+
+#: templates/_settings_tabs/scraping.html:220
+msgid "Weak match — likely wrong game"
+msgstr "התאמה חלשה — כנראה משחק שגוי"
+
+#: templates/_settings_tabs/scraping.html:230
+msgid "Minimum Title Quality"
+msgstr "איכות שם מינימלית"
+
+#: templates/_settings_tabs/scraping.html:232
+#, python-format
+msgid "Exact (score ≥ %(n)s)"
+msgstr "מדויק (ציון ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:233
+#, python-format
+msgid "Close (score ≥ %(n)s)"
+msgstr "קרוב (ציון ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:234
+#, python-format
+msgid "Partial (score ≥ %(n)s)"
+msgstr "חלקי (ציון ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:235
+msgid "Any (no minimum)"
+msgstr "כל התאמה (ללא מינימום)"
+
+#: templates/_settings_tabs/scraping.html:239
+msgid "Platform Match Required"
+msgstr "נדרשת התאמת פלטפורמה"
+
+#: templates/_settings_tabs/scraping.html:245
+msgid "Only accept results matching the game's system"
+msgstr "קבל רק תוצאות שמתאימות למערכת של המשחק"
+
+#: templates/_settings_tabs/scraping.html:259
+msgid "Reset to Default"
+msgstr "אפס לברירת מחדל"
+
+#: templates/_settings_tabs/scraping.html:279
+msgid ""
+"Configure API keys for online scrapers. Keys are stored locally and never"
+" shared."
+msgstr ""
+"הגדר מפתחות API לסקרייפרים מקוונים. המפתחות נשמרים מקומית ולעולם לא "
+"משותפים."
+
+#: templates/_settings_tabs/scraping.html:286
+msgid "TheGamesDB — Public API Key"
+msgstr "TheGamesDB — מפתח API ציבורי"
+
+#: templates/_settings_tabs/scraping.html:287
+msgid "Get API Keys →"
+msgstr "קבל מפתחות API →"
+
+#: templates/_settings_tabs/scraping.html:291
+msgid "Per-IP rate limit — used as primary for scraping"
+msgstr "מגבלה לכל IP — משמש כראשי לגירוד"
+
+#: templates/_settings_tabs/scraping.html:292
+msgid "Primary key. Per-IP rate limit, best for regular use."
+msgstr "מפתח ראשי. מגבלה לכל IP, הטוב ביותר לשימוש רגיל."
+
+#: templates/_settings_tabs/scraping.html:297
+msgid "TheGamesDB — Private API Key"
+msgstr "TheGamesDB — מפתח API פרטי"
+
+#: templates/_settings_tabs/scraping.html:301
+msgid "Shared monthly pool — used as fallback"
+msgstr "מאגר חודשי משותף — משמש כגיבוי"
+
+#: templates/_settings_tabs/scraping.html:302
+msgid "Fallback key. Shared monthly pool (~6,000 req/month)."
+msgstr "מפתח גיבוי. מאגר חודשי משותף (כ-6,000 בקשות בחודש)."
+
+#: templates/_settings_tabs/scraping.html:308
+msgid "IGDB / Twitch Client ID"
+msgstr "מזהה לקוח של IGDB / Twitch"
+
+#: templates/_settings_tabs/scraping.html:309
+msgid "Get Credentials →"
+msgstr "קבל פרטי גישה →"
+
+#: templates/_settings_tabs/scraping.html:313
+msgid "Enter Twitch Client ID"
+msgstr "הזן מזהה לקוח של Twitch"
+
+#: templates/_settings_tabs/scraping.html:318
+msgid "IGDB / Twitch Client Secret"
+msgstr "סוד לקוח של IGDB / Twitch"
+
+#: templates/_settings_tabs/scraping.html:322
+msgid "Enter Twitch Client Secret"
+msgstr "הזן סוד לקוח של Twitch"
+
+#: templates/_settings_tabs/scraping.html:328
+msgid "RAWG.io API Key"
+msgstr "מפתח API של RAWG.io"
+
+#: templates/_settings_tabs/scraping.html:329
+#: templates/_settings_tabs/scraping.html:389
+#: templates/_settings_tabs/scraping.html:400
+#: templates/_settings_tabs/scraping.html:448
+#: templates/_settings_tabs/scraping.html:481
+#: templates/_settings_tabs/scraping.html:503
+msgid "Get API Key →"
+msgstr "קבל מפתח API →"
+
+#: templates/_settings_tabs/scraping.html:333
+msgid "Enter RAWG.io API key"
+msgstr "הזן מפתח API של RAWG.io"
+
+#: templates/_settings_tabs/scraping.html:339
+msgid "ScreenScraper Username"
+msgstr "שם משתמש ב-ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:340
+#: templates/_settings_tabs/scraping.html:379
+msgid "Register →"
+msgstr "הרשמה →"
+
+#: templates/_settings_tabs/scraping.html:344
+msgid "Your member account username"
+msgstr "שם המשתמש של חשבון החבר שלך"
+
+#: templates/_settings_tabs/scraping.html:349
+msgid "ScreenScraper Password"
+msgstr "סיסמה ב-ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:353
+msgid "Your member account login password"
+msgstr "סיסמת ההתחברות של חשבון החבר שלך"
+
+#: templates/_settings_tabs/scraping.html:358
+msgid "ScreenScraper Developer ID"
+msgstr "מזהה מפתח ב-ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:359
+msgid "Request Dev Access →"
+msgstr "בקש גישת מפתחים →"
+
+#: templates/_settings_tabs/scraping.html:363
+msgid "Dev Username from developer area"
+msgstr "שם משתמש מפתח מאזור המפתחים"
+
+#: templates/_settings_tabs/scraping.html:368
+msgid "ScreenScraper Developer Password"
+msgstr "סיסמת מפתח ב-ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:378
+msgid "RetroAchievements Username"
+msgstr "שם משתמש ב-RetroAchievements"
+
+#: templates/_settings_tabs/scraping.html:383
+msgid "Your RetroAchievements username"
+msgstr "שם המשתמש שלך ב-RetroAchievements"
+
+#: templates/_settings_tabs/scraping.html:388
+msgid "RetroAchievements API Key"
+msgstr "מפתח API של RetroAchievements"
+
+#: templates/_settings_tabs/scraping.html:393
+msgid "Web API Key from Settings > Keys"
+msgstr "מפתח Web API מ-הגדרות > Keys"
+
+#: templates/_settings_tabs/scraping.html:408
+msgid "Steam ID"
+msgstr "מזהה Steam"
+
+#: templates/_settings_tabs/scraping.html:412
+msgid "17-digit Steam ID or custom URL name"
+msgstr "מזהה Steam בן 17 ספרות או שם כתובת מותאם"
+
+#: templates/_settings_tabs/scraping.html:413
+msgid ""
+"Your 17-digit Steam ID (e.g. 76561198012345678) or custom URL name. Find "
+"it at <a href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener "
+"noreferrer\" style=\"color: var(--primary-cyan);\">steamid.io</a>"
+msgstr ""
+"מזהה Steam בן 17 ספרות (לדוגמה 76561198012345678) או שם כתובת מותאם. אפשר"
+" למצוא אותו ב-<a href=\"https://steamid.io\" target=\"_blank\" "
+"rel=\"noopener noreferrer\" style=\"color: var(--primary-"
+"cyan);\">steamid.io</a>"
+
 #: templates/_settings_tabs/scraping.html:421
 #, python-format
 msgid ""
@@ -15135,9 +15691,92 @@ msgstr ""
 "style=\"color: var(--primary-cyan);\">הגדרות &gt; הפרופיל שלי</a>. אין "
 "צורך בשום דבר כאן."
 
+#: templates/_settings_tabs/scraping.html:427
+msgid "AI Metadata Provider"
+msgstr "ספק מידע מבוסס בינה מלאכותית"
+
+#: templates/_settings_tabs/scraping.html:430
+msgid "-- Select Provider --"
+msgstr "-- בחר ספק --"
+
+#: templates/_settings_tabs/scraping.html:435
+msgid ""
+"AI fills text-only fields (genre, structure, perspective, etc.). API "
+"usage costs apply."
+msgstr ""
+"הבינה המלאכותית ממלאת שדות טקסט בלבד (ז'אנר, מבנה, פרספקטיבה ועוד). "
+"השימוש ב-API כרוך בעלות."
+
 #: templates/_settings_tabs/scraping.html:438
 msgid "Test saved AI key"
 msgstr "בדיקת מפתח ה-AI השמור"
+
+#: templates/_settings_tabs/scraping.html:447
+msgid "Gemini API Key"
+msgstr "מפתח API של Gemini"
+
+#: templates/_settings_tabs/scraping.html:452
+msgid "Enter Google Gemini API key"
+msgstr "הזן מפתח API של Google Gemini"
+
+#: templates/_settings_tabs/scraping.html:456
+msgid "Gemini Model"
+msgstr "מודל Gemini"
+
+#: templates/_settings_tabs/scraping.html:459
+#: templates/_settings_tabs/scraping.html:460
+#: templates/_settings_tabs/scraping.html:461
+#: templates/_settings_tabs/scraping.html:462
+#: templates/_settings_tabs/scraping.html:492
+#: templates/_settings_tabs/scraping.html:493
+#: templates/_settings_tabs/scraping.html:514
+#: templates/_settings_tabs/scraping.html:515
+#: templates/_settings_tabs/scraping.html:516
+#, python-format
+msgid "$%(inp)s in / $%(out)s out per 1M tokens"
+msgstr "$%(inp)s קלט / $%(out)s פלט לכל מיליון אסימונים"
+
+#: templates/_settings_tabs/scraping.html:459
+#: templates/_settings_tabs/scraping.html:492
+#: templates/_settings_tabs/scraping.html:514
+msgid "Recommended"
+msgstr "מומלץ"
+
+#: templates/_settings_tabs/scraping.html:467
+msgid "GCP Project ID"
+msgstr "מזהה פרויקט GCP"
+
+#: templates/_settings_tabs/scraping.html:468
+msgid "Optional — required for Google Cloud billing credits"
+msgstr "אופציונלי — נדרש לזיכויי חיוב של Google Cloud"
+
+#: templates/_settings_tabs/scraping.html:472
+msgid "e.g. my-project-123456"
+msgstr "לדוגמה: my-project-123456"
+
+#: templates/_settings_tabs/scraping.html:480
+msgid "OpenAI API Key"
+msgstr "מפתח API של OpenAI"
+
+#: templates/_settings_tabs/scraping.html:485
+msgid "Enter OpenAI API key"
+msgstr "הזן מפתח API של OpenAI"
+
+#: templates/_settings_tabs/scraping.html:489
+msgid "OpenAI Model"
+msgstr "מודל OpenAI"
+
+#: templates/_settings_tabs/scraping.html:502
+msgid "Anthropic API Key"
+msgstr "מפתח API של Anthropic"
+
+#: templates/_settings_tabs/scraping.html:507
+msgid "Enter Anthropic API key"
+msgstr "הזן מפתח API של Anthropic"
+
+#: templates/_settings_tabs/scraping.html:511
+msgid "Claude Model"
+msgstr "מודל Claude"
 
 #: templates/_settings_tabs/scraping.html:521
 msgid "Let Claude search the web"

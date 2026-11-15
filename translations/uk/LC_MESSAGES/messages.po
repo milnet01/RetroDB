@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 07:39+0200\n"
+"POT-Creation-Date: 2026-11-15 08:01+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: uk\n"
@@ -2877,7 +2877,8 @@ msgstr "Введіть один шлях до теки."
 #: templates/multi_disc_organizer.html:371 templates/reports.html:1144
 #: templates/reports.html:1147 templates/reports.html:1213
 #: templates/reports.html:1216 templates/rom_tools_settings.html:579
-#: templates/rom_tools_settings.html:582 templates/settings.html:2926
+#: templates/rom_tools_settings.html:582 templates/settings.html:2367
+#: templates/settings.html:2485 templates/settings.html:2926
 #: templates/settings.html:2930 templates/settings.html:2949
 #: templates/settings.html:2953 templates/settings.html:3551
 #: templates/settings.html:3555 templates/settings.html:3623
@@ -3988,7 +3989,8 @@ msgstr "Збережено. Застосується, коли ви наступ
 msgid "Saving to the database…"
 msgstr "Збереження в базу даних…"
 
-#: services/js_i18n_strings.py:978 templates/settings.html:4787
+#: services/js_i18n_strings.py:978 templates/settings.html:2726
+#: templates/settings.html:2764 templates/settings.html:4787
 #: templates/setup.html:483
 msgid "Saving..."
 msgstr "Збереження..."
@@ -8071,6 +8073,7 @@ msgid "Database Service"
 msgstr "Служба бази даних"
 
 #: templates/dashboard.html:585 templates/dashboard.html:1308
+#: templates/settings.html:2357
 msgid "Online"
 msgstr "Онлайн"
 
@@ -8084,9 +8087,14 @@ msgstr "Локальний скрапер ES-DE"
 msgid "Available"
 msgstr "Доступно"
 
-#: templates/dashboard.html:602 templates/dashboard.html:612
-#: templates/dashboard.html:632 templates/dashboard.html:642
-#: templates/game_imports.html:368
+#: templates/_settings_tabs/scraping.html:107
+#: templates/_settings_tabs/scraping.html:125
+#: templates/_settings_tabs/scraping.html:143
+#: templates/_settings_tabs/scraping.html:161
+#: templates/_settings_tabs/scraping.html:178 templates/dashboard.html:602
+#: templates/dashboard.html:612 templates/dashboard.html:632
+#: templates/dashboard.html:642 templates/game_imports.html:368
+#: templates/settings.html:2330 templates/settings.html:2444
 msgid "Checking..."
 msgstr "Перевірка..."
 
@@ -8158,7 +8166,7 @@ msgstr "1 налаштований API офлайн"
 msgid "{count} configured APIs are offline"
 msgstr "Налаштованих API офлайн: {count}"
 
-#: templates/dashboard.html:1309
+#: templates/dashboard.html:1309 templates/settings.html:2360
 msgid "Offline"
 msgstr "Офлайн"
 
@@ -8472,7 +8480,7 @@ msgid "From the AI, not checked against a review site."
 msgstr "Від ШІ, не перевірено на сайті оглядів."
 
 #: templates/game_detail.html:274 templates/game_detail.html:279
-#: templates/game_detail.html:284
+#: templates/game_detail.html:284 templates/settings.html:2691
 msgid "AI"
 msgstr "ШІ"
 
@@ -9058,11 +9066,12 @@ msgstr ""
 msgid "Steam Credentials"
 msgstr "Облікові дані Steam"
 
-#: templates/game_imports.html:251
+#: templates/_settings_tabs/scraping.html:399 templates/game_imports.html:251
 msgid "Steam Web API Key"
 msgstr "Ключ Steam Web API"
 
-#: templates/_settings_tabs/account.html:239 templates/game_imports.html:251
+#: templates/_settings_tabs/account.html:239
+#: templates/_settings_tabs/scraping.html:404 templates/game_imports.html:251
 msgid "Your Steam Web API Key"
 msgstr "Ваш ключ Steam Web API"
 
@@ -9750,7 +9759,8 @@ msgstr "Збігів не знайдено."
 #: templates/settings.html:1942 templates/settings.html:1967
 #: templates/settings.html:1970 templates/settings.html:1990
 #: templates/settings.html:2034 templates/settings.html:2056
-#: templates/settings.html:2153 templates/settings.html:4832
+#: templates/settings.html:2153 templates/settings.html:2751
+#: templates/settings.html:2813 templates/settings.html:4832
 #: templates/steam_achievement_game.html:302
 #: templates/xbox_achievement_game.html:293
 #, python-brace-format
@@ -11604,7 +11614,8 @@ msgid "Detection method can be selected directly on the Duplicate Finder page."
 msgstr "Метод виявлення можна вибрати безпосередньо на сторінці пошуку дублікатів."
 
 #: templates/_settings_tabs/customization.html:83
-#: templates/rom_tools_settings.html:433
+#: templates/_settings_tabs/scraping.html:255
+#: templates/rom_tools_settings.html:433 templates/settings.html:2755
 msgid "Save Settings"
 msgstr "Зберегти налаштування"
 
@@ -11612,7 +11623,7 @@ msgstr "Зберегти налаштування"
 msgid "Reset to Defaults"
 msgstr "Скинути до типових"
 
-#: templates/rom_tools_settings.html:439
+#: templates/rom_tools_settings.html:439 templates/settings.html:2744
 msgid "Settings saved successfully!"
 msgstr "Налаштування успішно збережено!"
 
@@ -11867,6 +11878,12 @@ msgstr "Не вдалося видалити користувача"
 msgid "Network error deleting user"
 msgstr "Помилка мережі під час видалення користувача"
 
+#: templates/settings.html:1438 templates/settings.html:1440
+#: templates/settings.html:1442 templates/settings.html:1444
+#, python-brace-format
+msgid "Current: {path}"
+msgstr "Поточний: {path}"
+
 #: templates/settings.html:1466
 msgid "Path settings saved!"
 msgstr "Налаштування шляхів збережено!"
@@ -12069,7 +12086,7 @@ msgstr "Не вдалося обчислити: {error}"
 msgid "Failed to save scraper setting"
 msgstr "Не вдалося зберегти налаштування скрапера"
 
-#: templates/settings.html:2312
+#: templates/_settings_tabs/scraping.html:173 templates/settings.html:2312
 msgid "AI Metadata"
 msgstr "Метадані ШІ"
 
@@ -12083,6 +12100,23 @@ msgstr "{name} увімкнено"
 msgid "{name} disabled"
 msgstr "{name} вимкнено"
 
+#: templates/settings.html:2383
+#, python-brace-format
+msgid "Resets in {time}"
+msgstr "Скидання через {time}"
+
+#: templates/settings.html:2383
+msgid "Resets soon"
+msgstr "Скоро скинеться"
+
+#: templates/settings.html:2389 templates/settings.html:2391
+#: templates/settings.html:2476 templates/settings.html:2500
+#: templates/settings.html:2597 templates/settings.html:2647
+#: templates/settings.html:2649
+#, python-brace-format
+msgid "Resets: {when}"
+msgstr "Скидання: {when}"
+
 #: templates/settings.html:2422
 msgid "Testing…"
 msgstr "Перевірка…"
@@ -12095,6 +12129,179 @@ msgstr "Ключ працює: %(provider)s відповів, використо
 #: templates/settings.html:2432
 msgid "The key test failed."
 msgstr "Перевірка ключа не вдалася."
+
+#: templates/settings.html:2445
+msgid "Checking rate limits..."
+msgstr "Перевірка лімітів запитів..."
+
+#: templates/settings.html:2474 templates/settings.html:2496
+msgid "remaining (monthly)"
+msgstr "залишилось (на місяць)"
+
+#: templates/settings.html:2475 templates/settings.html:2481
+#: templates/settings.html:2483 templates/settings.html:2485
+#: templates/settings.html:2488
+#, python-brace-format
+msgid "Public key: {status}"
+msgstr "Публічний ключ: {status}"
+
+#: templates/settings.html:2477 templates/settings.html:2501
+#, python-brace-format
+msgid "Extra: {n}"
+msgstr "Додатково: {n}"
+
+#: templates/settings.html:2481
+msgid "Active"
+msgstr "Активний"
+
+#: templates/settings.html:2483
+msgid "Allowance exhausted"
+msgstr "Ліміт вичерпано"
+
+#: templates/settings.html:2488 templates/settings.html:2506
+#: templates/settings.html:2567 templates/settings.html:2573
+#: templates/settings.html:2607 templates/settings.html:2697
+#: templates/settings.html:2703
+msgid "Not configured"
+msgstr "Не налаштовано"
+
+#: templates/settings.html:2497 templates/settings.html:2506
+#, python-brace-format
+msgid "Private key: {status}"
+msgstr "Приватний ключ: {status}"
+
+#: templates/settings.html:2533
+msgid "Error checking"
+msgstr "Помилка перевірки"
+
+#: templates/settings.html:2539 templates/settings.html:2613
+msgid "Connection error"
+msgstr "Помилка з'єднання"
+
+#: templates/settings.html:2554
+msgid "requests remaining today"
+msgstr "запитів залишилось на сьогодні"
+
+#: templates/settings.html:2557
+#, python-brace-format
+msgid "Per-minute limit: {n}"
+msgstr "Ліміт за хвилину: {n}"
+
+#: templates/settings.html:2558
+#, python-brace-format
+msgid "Level: {level}"
+msgstr "Рівень: {level}"
+
+#: templates/settings.html:2559
+#, python-brace-format
+msgid "Threads: {n}"
+msgstr "Потоків: {n}"
+
+#: templates/settings.html:2560
+#, python-brace-format
+msgid "Speed: {n} KB/s"
+msgstr "Швидкість: {n} КБ/с"
+
+#: templates/settings.html:2561
+msgid "Resets daily at midnight (UTC)"
+msgstr "Скидається щодня опівночі (UTC)"
+
+#: templates/settings.html:2582
+#, python-brace-format
+msgid "{n} requests/second (OAuth token-based)"
+msgstr "{n} запитів на секунду (за токеном OAuth)"
+
+#: templates/settings.html:2583
+msgid "Token-based authentication — no daily quota"
+msgstr "Автентифікація за токеном — без денної квоти"
+
+#: templates/settings.html:2594
+msgid "requests remaining"
+msgstr "запитів залишилось"
+
+#: templates/settings.html:2595
+#, python-brace-format
+msgid "{n} requests/month (free tier)"
+msgstr "{n} запитів на місяць (безкоштовний рівень)"
+
+#: templates/settings.html:2598
+msgid "No live usage tracking from API"
+msgstr "API не показує живу статистику використання"
+
+#: templates/settings.html:2622
+msgid "No published rate limits"
+msgstr "Ліміти не опубліковано"
+
+#: templates/settings.html:2641
+#, python-brace-format
+msgid "Requests: {used} remaining ({pct})"
+msgstr "Запитів: залишилось {used} ({pct})"
+
+#: templates/settings.html:2660
+#, python-brace-format
+msgid "Tokens: {used} remaining ({pct})"
+msgstr "Токенів: залишилось {used} ({pct})"
+
+#: templates/settings.html:2669
+#, python-brace-format
+msgid "Input tokens: {used} remaining ({pct})"
+msgstr "Вхідних токенів: залишилось {used} ({pct})"
+
+#: templates/settings.html:2674
+#, python-brace-format
+msgid "Rate: {rpm} requests/min"
+msgstr "Швидкість: {rpm} запитів/хв"
+
+#: templates/settings.html:2674
+#, python-brace-format
+msgid "{rpd} requests/day (free tier)"
+msgstr "{rpd} запитів на день (безкоштовний рівень)"
+
+#: templates/settings.html:2679
+msgid "API online — no rate limit data returned"
+msgstr "API працює — дані про ліміти не повернуто"
+
+#: templates/settings.html:2692
+#, python-brace-format
+msgid "Model: {model}"
+msgstr "Модель: {model}"
+
+#: templates/settings.html:2696 templates/settings.html:2702
+msgid "AI Provider"
+msgstr "Постачальник ШІ"
+
+#: templates/settings.html:2709
+#, python-brace-format
+msgid "Last checked: {time}"
+msgstr "Остання перевірка: {time}"
+
+#: templates/settings.html:2713
+msgid "No rate limit information available"
+msgstr "Немає даних про ліміти запитів"
+
+#: templates/_settings_tabs/scraping.html:263 templates/settings.html:2717
+msgid "Check Rate Limits"
+msgstr "Перевірити ліміти запитів"
+
+#: templates/settings.html:2739
+msgid "Settings saved! Checking scraper status..."
+msgstr "Налаштування збережено! Перевіряємо стан скраперів..."
+
+#: templates/settings.html:2801
+msgid "API keys saved! Checking scraper status..."
+msgstr "Ключі API збережено! Перевіряємо стан скраперів..."
+
+#: templates/settings.html:2806
+msgid "API keys saved successfully!"
+msgstr "Ключі API успішно збережено!"
+
+#: templates/settings.html:2810
+msgid "Failed to save API keys"
+msgstr "Не вдалося зберегти ключі API"
+
+#: templates/_settings_tabs/scraping.html:535 templates/settings.html:2817
+msgid "Save API Keys"
+msgstr "Зберегти ключі API"
 
 #: templates/settings.html:2909
 msgid "Invalid Input"
@@ -12463,6 +12670,30 @@ msgstr "Не вдалося оновити назви"
 #: templates/settings.html:4464
 msgid "Failed to refresh system names"
 msgstr "Не вдалося оновити назви систем"
+
+#: templates/settings.html:4480
+msgid "Importing..."
+msgstr "Імпорт..."
+
+#: templates/settings.html:4490
+msgid "Run \"Scan Library\" to update the database with the new logos."
+msgstr ""
+"Запустіть «Сканувати бібліотеку», щоб оновити базу даних новими "
+"логотипами."
+
+#: templates/settings.html:4495 templates/setup.html:375
+#: templates/setup.html:435
+msgid "An error occurred"
+msgstr "Сталася помилка"
+
+#: templates/settings.html:4498
+#, python-brace-format
+msgid "Failed to import logos: {error}"
+msgstr "Не вдалося імпортувати логотипи: {error}"
+
+#: templates/_settings_tabs/scraping.html:58 templates/settings.html:4501
+msgid "Import System Logos"
+msgstr "Імпортувати логотипи систем"
 
 #: templates/settings.html:4563
 msgid "No bulk scrape state found (all clear)"
@@ -12935,7 +13166,9 @@ msgstr "Адміністратор"
 msgid "ES-DE"
 msgstr "ES-DE"
 
-#: templates/setup.html:20 templates/setup.html:212
+#: templates/_settings_tabs/scraping.html:8
+#: templates/_settings_tabs/scraping.html:275 templates/setup.html:20
+#: templates/setup.html:212
 msgid "API Keys"
 msgstr "Ключі API"
 
@@ -13104,7 +13337,7 @@ msgstr "Поточний: %(path)s"
 msgid "Example:"
 msgstr "Приклад:"
 
-#: templates/setup.html:166
+#: templates/_settings_tabs/scraping.html:15 templates/setup.html:166
 msgid "ES-DE Integration"
 msgstr "Інтеграція з ES-DE"
 
@@ -13120,11 +13353,11 @@ msgstr ""
 msgid "I don't use ES-DE"
 msgstr "Я не користуюся ES-DE"
 
-#: templates/setup.html:182
+#: templates/_settings_tabs/scraping.html:19 templates/setup.html:182
 msgid "ES-DE Gamelists Path"
 msgstr "Шлях до gamelists ES-DE"
 
-#: templates/setup.html:189
+#: templates/_settings_tabs/scraping.html:30 templates/setup.html:189
 msgid "ES-DE Downloaded Media Path"
 msgstr "Шлях до завантаженого медіа ES-DE"
 
@@ -13218,7 +13451,7 @@ msgstr "Ім'я користувача розробника із кабінет�
 msgid "Developer Password"
 msgstr "Пароль розробника"
 
-#: templates/setup.html:263
+#: templates/_settings_tabs/scraping.html:372 templates/setup.html:263
 msgid "Password from developer area (NOT debug password)"
 msgstr "Пароль із кабінету розробника (НЕ пароль налагодження)"
 
@@ -13259,10 +13492,6 @@ msgstr "Завершити налаштування"
 #: templates/setup.html:435
 msgid "Error:"
 msgstr "Помилка:"
-
-#: templates/setup.html:375 templates/setup.html:435
-msgid "An error occurred"
-msgstr "Сталася помилка"
 
 #: templates/setup.html:392
 msgid "Parent folder"
@@ -15032,6 +15261,7 @@ msgid "RPCS3 Trophy Settings"
 msgstr "Налаштування трофеїв RPCS3"
 
 #: templates/_settings_tabs/data.html:44
+#: templates/_settings_tabs/scraping.html:41
 msgid "RPCS3 Trophy Path"
 msgstr "Шлях до трофеїв RPCS3"
 
@@ -15210,6 +15440,7 @@ msgid "Database path cannot be changed via UI"
 msgstr "Шлях до бази даних не можна змінити через інтерфейс"
 
 #: templates/_settings_tabs/library.html:43
+#: templates/_settings_tabs/scraping.html:54
 msgid "Save Path Settings"
 msgstr "Зберегти налаштування шляхів"
 
@@ -15370,6 +15601,333 @@ msgstr ""
 "Диск, позначений помилково, можна повернути до списків ігор. Після цього "
 "Auto-Link його не чіпає."
 
+#: templates/_settings_tabs/scraping.html:3
+msgid "Scraping settings"
+msgstr "Налаштування скрапінгу"
+
+#: templates/_settings_tabs/scraping.html:6
+msgid "Scraper"
+msgstr "Скрапер"
+
+#: templates/_settings_tabs/scraping.html:22
+msgid "e.g. /home/user/.es-de/gamelists"
+msgstr "напр. /home/user/.es-de/gamelists"
+
+#: templates/_settings_tabs/scraping.html:33
+msgid "Leave blank to auto-detect from gamelists path"
+msgstr "Залиште порожнім для автовизначення зі шляху до gamelists"
+
+#: templates/_settings_tabs/scraping.html:37
+msgid "Default: Loading..."
+msgstr "Типово: Завантаження..."
+
+#: templates/_settings_tabs/scraping.html:44
+msgid "e.g. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+msgstr "напр. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+
+#: templates/_settings_tabs/scraping.html:62
+msgid "Import system logos from your ES-DE installation"
+msgstr "Імпортувати логотипи систем із вашої установки ES-DE"
+
+#: templates/_settings_tabs/scraping.html:71
+msgid "Scraper Configuration"
+msgstr "Налаштування скраперів"
+
+#: templates/_settings_tabs/scraping.html:75
+msgid ""
+"Enable/disable scrapers and drag to set priority order. The scraper at "
+"the top will be tried first during bulk scraping."
+msgstr ""
+"Вмикайте й вимикайте скрапери та перетягуйте їх, щоб задати порядок. "
+"Скрапер угорі буде пробуватися першим під час масового скрапінгу."
+
+#: templates/_settings_tabs/scraping.html:84
+#: templates/_settings_tabs/scraping.html:89
+msgid "Local"
+msgstr "Локальний"
+
+#: templates/_settings_tabs/scraping.html:85
+msgid "Import from your local gamelist.xml files"
+msgstr "Імпорт з ваших локальних файлів gamelist.xml"
+
+#: templates/_settings_tabs/scraping.html:92
+msgid "Enable ES-DE local scraper"
+msgstr "Увімкнути локальний скрапер ES-DE"
+
+#: templates/_settings_tabs/scraping.html:103
+msgid "Primary online scraper for game metadata"
+msgstr "Основний онлайн-скрапер метаданих ігор"
+
+#: templates/_settings_tabs/scraping.html:110
+msgid "Enable TheGamesDB scraper"
+msgstr "Увімкнути скрапер TheGamesDB"
+
+#: templates/_settings_tabs/scraping.html:121
+msgid "Comprehensive game database by Twitch"
+msgstr "Велика база даних ігор від Twitch"
+
+#: templates/_settings_tabs/scraping.html:128
+msgid "Enable IGDB scraper"
+msgstr "Увімкнути скрапер IGDB"
+
+#: templates/_settings_tabs/scraping.html:139
+msgid "Large game database with ESRB ratings and Metacritic scores"
+msgstr "Велика база ігор із віковими рейтингами ESRB та оцінками Metacritic"
+
+#: templates/_settings_tabs/scraping.html:146
+msgid "Enable RAWG.io scraper"
+msgstr "Увімкнути скрапер RAWG.io"
+
+#: templates/_settings_tabs/scraping.html:157
+msgid "Comprehensive retro gaming database with media (requires account)"
+msgstr "Велика база ретро-ігор із медіа (потрібен обліковий запис)"
+
+#: templates/_settings_tabs/scraping.html:164
+msgid "Enable ScreenScraper scraper"
+msgstr "Увімкнути скрапер ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:174
+msgid "AI-powered gap-filler (Gemini, OpenAI, or Claude) — fills text fields only"
+msgstr ""
+"Помічник на основі ШІ (Gemini, OpenAI або Claude) — заповнює лише "
+"текстові поля"
+
+#: templates/_settings_tabs/scraping.html:181
+msgid "Enable AI metadata scraper"
+msgstr "Увімкнути скрапер метаданих на основі ШІ"
+
+#: templates/_settings_tabs/scraping.html:189
+msgid "Bulk Scrape Match Filtering"
+msgstr "Фільтр збігів для масового скрапінгу"
+
+#: templates/_settings_tabs/scraping.html:191
+msgid ""
+"Controls which search results are accepted during bulk scraping. Results "
+"that don't pass the filter are skipped."
+msgstr ""
+"Визначає, які результати пошуку приймаються під час масового скрапінгу. "
+"Результати, що не пройшли фільтр, пропускаються."
+
+#: templates/_settings_tabs/scraping.html:196
+msgid "Use advanced criteria mode"
+msgstr "Використовувати розширені критерії"
+
+#: templates/_settings_tabs/scraping.html:199
+msgid "Use advanced criteria instead of score threshold"
+msgstr "Використовувати розширені критерії замість порогу оцінки"
+
+#: templates/_settings_tabs/scraping.html:205
+msgid "Minimum Match Score"
+msgstr "Мінімальна оцінка збігу"
+
+#: templates/_settings_tabs/scraping.html:213
+msgid "Score Range"
+msgstr "Діапазон оцінки"
+
+#: templates/_settings_tabs/scraping.html:213
+msgid "What It Means"
+msgstr "Що це означає"
+
+#: templates/_settings_tabs/scraping.html:216
+msgid "Exact title + platform + date + priority boost"
+msgstr "Точна назва + платформа + дата + підвищений пріоритет"
+
+#: templates/_settings_tabs/scraping.html:217
+msgid "Exact title + some bonuses"
+msgstr "Точна назва + деякі бонуси"
+
+#: templates/_settings_tabs/scraping.html:218
+msgid "Close title match + platform confirmed"
+msgstr "Близька назва + платформу підтверджено"
+
+#: templates/_settings_tabs/scraping.html:219
+msgid "Partial match or missing platform"
+msgstr "Часткове співпадіння або немає платформи"
+
+#: templates/_settings_tabs/scraping.html:220
+msgid "Weak match — likely wrong game"
+msgstr "Слабкий збіг — ймовірно, не та гра"
+
+#: templates/_settings_tabs/scraping.html:230
+msgid "Minimum Title Quality"
+msgstr "Мінімальна якість назви"
+
+#: templates/_settings_tabs/scraping.html:232
+#, python-format
+msgid "Exact (score ≥ %(n)s)"
+msgstr "Точна (оцінка ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:233
+#, python-format
+msgid "Close (score ≥ %(n)s)"
+msgstr "Близька (оцінка ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:234
+#, python-format
+msgid "Partial (score ≥ %(n)s)"
+msgstr "Часткова (оцінка ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:235
+msgid "Any (no minimum)"
+msgstr "Будь-яка (без мінімуму)"
+
+#: templates/_settings_tabs/scraping.html:239
+msgid "Platform Match Required"
+msgstr "Потрібен збіг платформи"
+
+#: templates/_settings_tabs/scraping.html:245
+msgid "Only accept results matching the game's system"
+msgstr "Приймати лише результати для системи цієї гри"
+
+#: templates/_settings_tabs/scraping.html:259
+msgid "Reset to Default"
+msgstr "Скинути до типових"
+
+#: templates/_settings_tabs/scraping.html:279
+msgid ""
+"Configure API keys for online scrapers. Keys are stored locally and never"
+" shared."
+msgstr ""
+"Налаштуйте ключі API для онлайн-скраперів. Ключі зберігаються локально і "
+"ніколи не передаються."
+
+#: templates/_settings_tabs/scraping.html:286
+msgid "TheGamesDB — Public API Key"
+msgstr "TheGamesDB — публічний ключ API"
+
+#: templates/_settings_tabs/scraping.html:287
+msgid "Get API Keys →"
+msgstr "Отримати ключі API →"
+
+#: templates/_settings_tabs/scraping.html:291
+msgid "Per-IP rate limit — used as primary for scraping"
+msgstr "Ліміт на IP — використовується як основний для скрапінгу"
+
+#: templates/_settings_tabs/scraping.html:292
+msgid "Primary key. Per-IP rate limit, best for regular use."
+msgstr "Основний ключ. Ліміт на IP, найкращий для звичайного використання."
+
+#: templates/_settings_tabs/scraping.html:297
+msgid "TheGamesDB — Private API Key"
+msgstr "TheGamesDB — приватний ключ API"
+
+#: templates/_settings_tabs/scraping.html:301
+msgid "Shared monthly pool — used as fallback"
+msgstr "Спільний місячний пул — використовується як запасний"
+
+#: templates/_settings_tabs/scraping.html:302
+msgid "Fallback key. Shared monthly pool (~6,000 req/month)."
+msgstr "Запасний ключ. Спільний місячний пул (~6 000 запитів на місяць)."
+
+#: templates/_settings_tabs/scraping.html:308
+msgid "IGDB / Twitch Client ID"
+msgstr "IGDB / Twitch Client ID"
+
+#: templates/_settings_tabs/scraping.html:309
+msgid "Get Credentials →"
+msgstr "Отримати облікові дані →"
+
+#: templates/_settings_tabs/scraping.html:313
+msgid "Enter Twitch Client ID"
+msgstr "Введіть Twitch Client ID"
+
+#: templates/_settings_tabs/scraping.html:318
+msgid "IGDB / Twitch Client Secret"
+msgstr "IGDB / Twitch Client Secret"
+
+#: templates/_settings_tabs/scraping.html:322
+msgid "Enter Twitch Client Secret"
+msgstr "Введіть Twitch Client Secret"
+
+#: templates/_settings_tabs/scraping.html:328
+msgid "RAWG.io API Key"
+msgstr "Ключ API RAWG.io"
+
+#: templates/_settings_tabs/scraping.html:329
+#: templates/_settings_tabs/scraping.html:389
+#: templates/_settings_tabs/scraping.html:400
+#: templates/_settings_tabs/scraping.html:448
+#: templates/_settings_tabs/scraping.html:481
+#: templates/_settings_tabs/scraping.html:503
+msgid "Get API Key →"
+msgstr "Отримати ключ API →"
+
+#: templates/_settings_tabs/scraping.html:333
+msgid "Enter RAWG.io API key"
+msgstr "Введіть ключ API RAWG.io"
+
+#: templates/_settings_tabs/scraping.html:339
+msgid "ScreenScraper Username"
+msgstr "Ім'я користувача ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:340
+#: templates/_settings_tabs/scraping.html:379
+msgid "Register →"
+msgstr "Реєстрація →"
+
+#: templates/_settings_tabs/scraping.html:344
+msgid "Your member account username"
+msgstr "Ім'я користувача вашого облікового запису"
+
+#: templates/_settings_tabs/scraping.html:349
+msgid "ScreenScraper Password"
+msgstr "Пароль ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:353
+msgid "Your member account login password"
+msgstr "Пароль для входу у ваш обліковий запис"
+
+#: templates/_settings_tabs/scraping.html:358
+msgid "ScreenScraper Developer ID"
+msgstr "ID розробника ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:359
+msgid "Request Dev Access →"
+msgstr "Запросити доступ розробника →"
+
+#: templates/_settings_tabs/scraping.html:363
+msgid "Dev Username from developer area"
+msgstr "Ім'я розробника з розділу для розробників"
+
+#: templates/_settings_tabs/scraping.html:368
+msgid "ScreenScraper Developer Password"
+msgstr "Пароль розробника ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:378
+msgid "RetroAchievements Username"
+msgstr "Ім'я користувача RetroAchievements"
+
+#: templates/_settings_tabs/scraping.html:383
+msgid "Your RetroAchievements username"
+msgstr "Ваше ім'я користувача RetroAchievements"
+
+#: templates/_settings_tabs/scraping.html:388
+msgid "RetroAchievements API Key"
+msgstr "Ключ API RetroAchievements"
+
+#: templates/_settings_tabs/scraping.html:393
+msgid "Web API Key from Settings > Keys"
+msgstr "Web API Key із Settings > Keys"
+
+#: templates/_settings_tabs/scraping.html:408
+msgid "Steam ID"
+msgstr "Steam ID"
+
+#: templates/_settings_tabs/scraping.html:412
+msgid "17-digit Steam ID or custom URL name"
+msgstr "17-значний Steam ID або власна назва в URL"
+
+#: templates/_settings_tabs/scraping.html:413
+msgid ""
+"Your 17-digit Steam ID (e.g. 76561198012345678) or custom URL name. Find "
+"it at <a href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener "
+"noreferrer\" style=\"color: var(--primary-cyan);\">steamid.io</a>"
+msgstr ""
+"Ваш 17-значний Steam ID (напр. 76561198012345678) або власна назва в URL."
+" Знайдіть його на <a href=\"https://steamid.io\" target=\"_blank\" "
+"rel=\"noopener noreferrer\" style=\"color: var(--primary-"
+"cyan);\">steamid.io</a>"
+
 #: templates/_settings_tabs/scraping.html:421
 #, python-format
 msgid ""
@@ -15382,9 +15940,92 @@ msgstr ""
 "cyan);\">Налаштування &gt; Мій профіль</a>. Тут нічого робити не "
 "потрібно."
 
+#: templates/_settings_tabs/scraping.html:427
+msgid "AI Metadata Provider"
+msgstr "Постачальник метаданих ШІ"
+
+#: templates/_settings_tabs/scraping.html:430
+msgid "-- Select Provider --"
+msgstr "-- Оберіть постачальника --"
+
+#: templates/_settings_tabs/scraping.html:435
+msgid ""
+"AI fills text-only fields (genre, structure, perspective, etc.). API "
+"usage costs apply."
+msgstr ""
+"ШІ заповнює лише текстові поля (жанр, структура, перспектива тощо). "
+"Використання API платне."
+
 #: templates/_settings_tabs/scraping.html:438
 msgid "Test saved AI key"
 msgstr "Перевірити збережений ключ ШІ"
+
+#: templates/_settings_tabs/scraping.html:447
+msgid "Gemini API Key"
+msgstr "Ключ API Gemini"
+
+#: templates/_settings_tabs/scraping.html:452
+msgid "Enter Google Gemini API key"
+msgstr "Введіть ключ API Google Gemini"
+
+#: templates/_settings_tabs/scraping.html:456
+msgid "Gemini Model"
+msgstr "Модель Gemini"
+
+#: templates/_settings_tabs/scraping.html:459
+#: templates/_settings_tabs/scraping.html:460
+#: templates/_settings_tabs/scraping.html:461
+#: templates/_settings_tabs/scraping.html:462
+#: templates/_settings_tabs/scraping.html:492
+#: templates/_settings_tabs/scraping.html:493
+#: templates/_settings_tabs/scraping.html:514
+#: templates/_settings_tabs/scraping.html:515
+#: templates/_settings_tabs/scraping.html:516
+#, python-format
+msgid "$%(inp)s in / $%(out)s out per 1M tokens"
+msgstr "$%(inp)s вхід / $%(out)s вихід за 1 млн токенів"
+
+#: templates/_settings_tabs/scraping.html:459
+#: templates/_settings_tabs/scraping.html:492
+#: templates/_settings_tabs/scraping.html:514
+msgid "Recommended"
+msgstr "Рекомендовано"
+
+#: templates/_settings_tabs/scraping.html:467
+msgid "GCP Project ID"
+msgstr "ID проєкту GCP"
+
+#: templates/_settings_tabs/scraping.html:468
+msgid "Optional — required for Google Cloud billing credits"
+msgstr "Необов'язково — потрібно для кредитів оплати Google Cloud"
+
+#: templates/_settings_tabs/scraping.html:472
+msgid "e.g. my-project-123456"
+msgstr "напр. my-project-123456"
+
+#: templates/_settings_tabs/scraping.html:480
+msgid "OpenAI API Key"
+msgstr "Ключ API OpenAI"
+
+#: templates/_settings_tabs/scraping.html:485
+msgid "Enter OpenAI API key"
+msgstr "Введіть ключ API OpenAI"
+
+#: templates/_settings_tabs/scraping.html:489
+msgid "OpenAI Model"
+msgstr "Модель OpenAI"
+
+#: templates/_settings_tabs/scraping.html:502
+msgid "Anthropic API Key"
+msgstr "Ключ API Anthropic"
+
+#: templates/_settings_tabs/scraping.html:507
+msgid "Enter Anthropic API key"
+msgstr "Введіть ключ API Anthropic"
+
+#: templates/_settings_tabs/scraping.html:511
+msgid "Claude Model"
+msgstr "Модель Claude"
 
 #: templates/_settings_tabs/scraping.html:521
 msgid "Let Claude search the web"

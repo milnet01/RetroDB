@@ -1,25 +1,25 @@
 {% from "_macros/browse_button.html" import browse_button with context %}
 {% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
-<div class="settings-tab-panel" id="tab-scraping" role="tabpanel" aria-label="Scraping settings">
+<div class="settings-tab-panel" id="tab-scraping" role="tabpanel" aria-label="{{ _('Scraping settings') }}">
     {% call tab_subnav('scraping') %}
         {{ subnav_link('esde', '🎮 ES-DE', active=True) }}
-        {{ subnav_link('scraper', '🔍 Scraper') }}
+        {{ subnav_link('scraper', '🔍 ' ~ _('Scraper')) }}
         {% if current_user and current_user.role == 'admin' %}
-        {{ subnav_link('apikeys', '🔑 API Keys') }}
+        {{ subnav_link('apikeys', '🔑 ' ~ _('API Keys')) }}
         {% endif %}
     {% endcall %}
 
     <!-- ES-DE Integration -->
     <section class="card mb-xl" id="esde">
     <div class="card-header">
-        <h2 class="card-title">ES-DE Integration</h2>
+        <h2 class="card-title">{{ _('ES-DE Integration') }}</h2>
     </div>
     <div class="card-body">
         <div class="form-group mb-lg">
-            <label class="form-label" for="esdeGamelistsInput">ES-DE Gamelists Path</label>
+            <label class="form-label" for="esdeGamelistsInput">{{ _('ES-DE Gamelists Path') }}</label>
             <div class="path-input-row">
                 <input type="text" id="esdeGamelistsInput" class="form-input"
-                   placeholder="e.g. /home/user/.es-de/gamelists"
+                   placeholder="{{ _('e.g. /home/user/.es-de/gamelists') }}"
                    style="font-family: var(--font-mono);">
                 {{ browse_button('esdeGamelistsInput', 'folder') }}
             </div>
@@ -27,21 +27,21 @@
         </div>
         
         <div class="form-group mb-lg">
-            <label class="form-label" for="esdeMediaInput">ES-DE Downloaded Media Path</label>
+            <label class="form-label" for="esdeMediaInput">{{ _('ES-DE Downloaded Media Path') }}</label>
             <div class="path-input-row">
                 <input type="text" id="esdeMediaInput" class="form-input"
-                   placeholder="Leave blank to auto-detect from gamelists path"
+                   placeholder="{{ _('Leave blank to auto-detect from gamelists path') }}"
                    style="font-family: var(--font-mono);">
                 {{ browse_button('esdeMediaInput', 'folder') }}
             </div>
-            <span class="form-hint" id="esdeMediaDefault">Default: Loading...</span>
+            <span class="form-hint" id="esdeMediaDefault">{{ _('Default: Loading...') }}</span>
         </div>
         
         <div class="form-group mb-lg">
-            <label class="form-label" for="rpcs3TrophyInput">RPCS3 Trophy Path</label>
+            <label class="form-label" for="rpcs3TrophyInput">{{ _('RPCS3 Trophy Path') }}</label>
             <div class="path-input-row">
                 <input type="text" id="rpcs3TrophyInput" class="form-input"
-                   placeholder="e.g. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+                   placeholder="{{ _('e.g. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy') }}"
                    style="font-family: var(--font-mono);">
                 {{ browse_button('rpcs3TrophyInput', 'folder') }}
             </div>
@@ -51,15 +51,15 @@
         <div style="margin-top: var(--spacing-xl); display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
             <button type="button" data-on-click="savePathSettings" class="btn btn-primary">
                 <span class="btn-icon">💾</span>
-                Save Path Settings
+                {{ _('Save Path Settings') }}
             </button>
             <button type="button" data-on-click="importSystemLogos" class="btn btn-secondary" id="importLogosBtn">
                 <span class="btn-icon">🖼️</span>
-                Import System Logos
+                {{ _('Import System Logos') }}
             </button>
         </div>
         <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
-            Import system logos from your ES-DE installation
+            {{ _('Import system logos from your ES-DE installation') }}
         </p>
         <div id="logoImportResult" style="margin-top: var(--spacing-md);"></div>
     </div>
@@ -68,11 +68,11 @@
 <!-- Scraper Configuration -->
 <section class="card mb-xl" id="scraper">
     <div class="card-header">
-        <h2 class="card-title">Scraper Configuration</h2>
+        <h2 class="card-title">{{ _('Scraper Configuration') }}</h2>
     </div>
     <div class="card-body">
         <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
-            Enable/disable scrapers and drag to set priority order. The scraper at the top will be tried first during bulk scraping.
+            {{ _('Enable/disable scrapers and drag to set priority order. The scraper at the top will be tried first during bulk scraping.') }}
         </p>
         
         <div class="scraper-priority-list" id="scraperPriorityList">
@@ -81,15 +81,15 @@
                 <div class="scraper-drag-handle">⋮⋮</div>
                 <div class="scraper-priority-rank">1</div>
                 <div class="scraper-info">
-                    <span class="scraper-name">📁 ES-DE (Local)</span>
-                    <p class="text-muted">Import from your local gamelist.xml files</p>
+                    <span class="scraper-name">📁 ES-DE ({{ _('Local') }})</span>
+                    <p class="text-muted">{{ _('Import from your local gamelist.xml files') }}</p>
                 </div>
                 <div class="scraper-online-status">
                     <span class="status-dot local"></span>
-                    <span class="status-text">Local</span>
+                    <span class="status-text">{{ _('Local') }}</span>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-esde" aria-label="Enable ES-DE local scraper" {{ 'checked' if scraper_settings.enabled.esde else '' }} data-on-change="toggleScraper" data-args='["esde", "$this.checked", "$this"]'>
+                    <input type="checkbox" id="toggle-esde" aria-label="{{ _('Enable ES-DE local scraper') }}" {{ 'checked' if scraper_settings.enabled.esde else '' }} data-on-change="toggleScraper" data-args='["esde", "$this.checked", "$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -100,14 +100,14 @@
                 <div class="scraper-priority-rank">2</div>
                 <div class="scraper-info">
                     <span class="scraper-name">🎮 TheGamesDB</span>
-                    <p class="text-muted">Primary online scraper for game metadata</p>
+                    <p class="text-muted">{{ _('Primary online scraper for game metadata') }}</p>
                 </div>
                 <div class="scraper-online-status" id="status-tgdb">
                     <span class="status-dot checking"></span>
-                    <span class="status-text">Checking...</span>
+                    <span class="status-text">{{ _('Checking...') }}</span>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-tgdb" aria-label="Enable TheGamesDB scraper" {{ 'checked' if scraper_settings.enabled.tgdb else '' }} data-on-change="toggleScraper" data-args='["tgdb", "$this.checked", "$this"]'>
+                    <input type="checkbox" id="toggle-tgdb" aria-label="{{ _('Enable TheGamesDB scraper') }}" {{ 'checked' if scraper_settings.enabled.tgdb else '' }} data-on-change="toggleScraper" data-args='["tgdb", "$this.checked", "$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -118,14 +118,14 @@
                 <div class="scraper-priority-rank">3</div>
                 <div class="scraper-info">
                     <span class="scraper-name">🌐 IGDB</span>
-                    <p class="text-muted">Comprehensive game database by Twitch</p>
+                    <p class="text-muted">{{ _('Comprehensive game database by Twitch') }}</p>
                 </div>
                 <div class="scraper-online-status" id="status-igdb">
                     <span class="status-dot checking"></span>
-                    <span class="status-text">Checking...</span>
+                    <span class="status-text">{{ _('Checking...') }}</span>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-igdb" aria-label="Enable IGDB scraper" {{ 'checked' if scraper_settings.enabled.igdb else '' }} data-on-change="toggleScraper" data-args='["igdb", "$this.checked", "$this"]'>
+                    <input type="checkbox" id="toggle-igdb" aria-label="{{ _('Enable IGDB scraper') }}" {{ 'checked' if scraper_settings.enabled.igdb else '' }} data-on-change="toggleScraper" data-args='["igdb", "$this.checked", "$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -136,14 +136,14 @@
                 <div class="scraper-priority-rank">4</div>
                 <div class="scraper-info">
                     <span class="scraper-name">🎮 RAWG.io</span>
-                    <p class="text-muted">Large game database with ESRB ratings and Metacritic scores</p>
+                    <p class="text-muted">{{ _('Large game database with ESRB ratings and Metacritic scores') }}</p>
                 </div>
                 <div class="scraper-online-status" id="status-rawg">
                     <span class="status-dot checking"></span>
-                    <span class="status-text">Checking...</span>
+                    <span class="status-text">{{ _('Checking...') }}</span>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-rawg" aria-label="Enable RAWG.io scraper" {{ 'checked' if scraper_settings.enabled.rawg else '' }} data-on-change="toggleScraper" data-args='["rawg", "$this.checked", "$this"]'>
+                    <input type="checkbox" id="toggle-rawg" aria-label="{{ _('Enable RAWG.io scraper') }}" {{ 'checked' if scraper_settings.enabled.rawg else '' }} data-on-change="toggleScraper" data-args='["rawg", "$this.checked", "$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -154,14 +154,14 @@
                 <div class="scraper-priority-rank">5</div>
                 <div class="scraper-info">
                     <span class="scraper-name">🖥️ ScreenScraper</span>
-                    <p class="text-muted">Comprehensive retro gaming database with media (requires account)</p>
+                    <p class="text-muted">{{ _('Comprehensive retro gaming database with media (requires account)') }}</p>
                 </div>
                 <div class="scraper-online-status" id="status-screenscraper">
                     <span class="status-dot checking"></span>
-                    <span class="status-text">Checking...</span>
+                    <span class="status-text">{{ _('Checking...') }}</span>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-screenscraper" aria-label="Enable ScreenScraper scraper" {{ 'checked' if scraper_settings.enabled.screenscraper else '' }} data-on-change="toggleScraper" data-args='["screenscraper", "$this.checked", "$this"]'>
+                    <input type="checkbox" id="toggle-screenscraper" aria-label="{{ _('Enable ScreenScraper scraper') }}" {{ 'checked' if scraper_settings.enabled.screenscraper else '' }} data-on-change="toggleScraper" data-args='["screenscraper", "$this.checked", "$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -170,15 +170,15 @@
                 <div class="scraper-drag-handle">⋮⋮</div>
                 <div class="scraper-priority-rank">6</div>
                 <div class="scraper-info">
-                    <span class="scraper-name">🤖 AI Metadata</span>
-                    <p class="text-muted">AI-powered gap-filler (Gemini, OpenAI, or Claude) &mdash; fills text fields only</p>
+                    <span class="scraper-name">🤖 {{ _('AI Metadata') }}</span>
+                    <p class="text-muted">{{ _('AI-powered gap-filler (Gemini, OpenAI, or Claude) — fills text fields only') }}</p>
                 </div>
                 <div class="scraper-online-status" id="status-ai">
                     <span class="status-dot checking"></span>
-                    <span class="status-text">Checking...</span>
+                    <span class="status-text">{{ _('Checking...') }}</span>
                 </div>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggle-ai" aria-label="Enable AI metadata scraper" {{ 'checked' if scraper_settings.enabled.ai else '' }} data-on-change="toggleScraper" data-args='["ai", "$this.checked", "$this"]'>
+                    <input type="checkbox" id="toggle-ai" aria-label="{{ _('Enable AI metadata scraper') }}" {{ 'checked' if scraper_settings.enabled.ai else '' }} data-on-change="toggleScraper" data-args='["ai", "$this.checked", "$this"]'>
                     <span class="toggle-slider"></span>
                 </label>
             </div>
@@ -186,23 +186,23 @@
         
         <!-- Bulk Scrape Match Filtering -->
         <div class="match-filter-section">
-            <h3 class="match-filter-title">Bulk Scrape Match Filtering</h3>
+            <h3 class="match-filter-title">{{ _('Bulk Scrape Match Filtering') }}</h3>
             <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-                Controls which search results are accepted during bulk scraping. Results that don't pass the filter are skipped.
+                {{ _('Controls which search results are accepted during bulk scraping. Results that don\'t pass the filter are skipped.') }}
             </p>
 
             <div class="match-filter-mode">
                 <label class="toggle-switch" style="margin-right: var(--spacing-sm);">
-                    <input type="checkbox" id="matchModeToggle" data-on-change="toggleMatchMode" data-args='["$this.checked"]' aria-label="Use advanced criteria mode">
+                    <input type="checkbox" id="matchModeToggle" data-on-change="toggleMatchMode" data-args='["$this.checked"]' aria-label="{{ _('Use advanced criteria mode') }}">
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="text-secondary">Use advanced criteria instead of score threshold</span>
+                <span class="text-secondary">{{ _('Use advanced criteria instead of score threshold') }}</span>
             </div>
 
             <!-- Score Mode (default) -->
             <div class="match-filter-panel" id="matchScorePanel">
                 <div class="match-score-input-row">
-                    <label for="matchMinScore" class="form-label">Minimum Match Score</label>
+                    <label for="matchMinScore" class="form-label">{{ _('Minimum Match Score') }}</label>
                     <input type="number" id="matchMinScore" class="form-input" style="width: 100px;"
                            min="0" max="600" step="10" value="200"
                            data-on-change="setMinimumMatchScore" data-args='["$this"]'>
@@ -210,14 +210,14 @@
                 <div class="match-score-guide">
                     <table class="match-score-table">
                         <thead>
-                            <tr><th>Score Range</th><th>What It Means</th></tr>
+                            <tr><th>{{ _('Score Range') }}</th><th>{{ _('What It Means') }}</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td><span class="badge badge-success">400-550</span></td><td>Exact title + platform + date + priority boost</td></tr>
-                            <tr><td><span class="badge badge-cyan">300-400</span></td><td>Exact title + some bonuses</td></tr>
-                            <tr><td><span class="badge badge-warning">200-300</span></td><td>Close title match + platform confirmed</td></tr>
-                            <tr><td><span class="badge badge-error">100-200</span></td><td>Partial match or missing platform</td></tr>
-                            <tr><td><span class="badge badge-muted">0-100</span></td><td>Weak match — likely wrong game</td></tr>
+                            <tr><td><span class="badge badge-success">400-550</span></td><td>{{ _('Exact title + platform + date + priority boost') }}</td></tr>
+                            <tr><td><span class="badge badge-cyan">300-400</span></td><td>{{ _('Exact title + some bonuses') }}</td></tr>
+                            <tr><td><span class="badge badge-warning">200-300</span></td><td>{{ _('Close title match + platform confirmed') }}</td></tr>
+                            <tr><td><span class="badge badge-error">100-200</span></td><td>{{ _('Partial match or missing platform') }}</td></tr>
+                            <tr><td><span class="badge badge-muted">0-100</span></td><td>{{ _('Weak match — likely wrong game') }}</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -227,22 +227,22 @@
             <div class="match-filter-panel" id="matchCriteriaPanel" style="display: none;">
                 <div class="match-criteria-row">
                     <div class="match-criteria-field">
-                        <label for="matchTitleQuality" class="form-label">Minimum Title Quality</label>
+                        <label for="matchTitleQuality" class="form-label">{{ _('Minimum Title Quality') }}</label>
                         <select id="matchTitleQuality" class="form-select" data-on-change="updateMatchCriteria">
-                            <option value="exact">Exact (score &ge; 280)</option>
-                            <option value="close" selected>Close (score &ge; 150)</option>
-                            <option value="partial">Partial (score &ge; 50)</option>
-                            <option value="any">Any (no minimum)</option>
+                            <option value="exact">{{ _('Exact (score ≥ %(n)s)', n=280) }}</option>
+                            <option value="close" selected>{{ _('Close (score ≥ %(n)s)', n=150) }}</option>
+                            <option value="partial">{{ _('Partial (score ≥ %(n)s)', n=50) }}</option>
+                            <option value="any">{{ _('Any (no minimum)') }}</option>
                         </select>
                     </div>
                     <div class="match-criteria-field">
-                        <label class="form-label" for="matchPlatformRequired">Platform Match Required</label>
+                        <label class="form-label" for="matchPlatformRequired">{{ _('Platform Match Required') }}</label>
                         <div style="padding-top: 0.35rem;">
                             <label class="toggle-switch">
                                 <input type="checkbox" id="matchPlatformRequired" checked data-on-change="updateMatchCriteria">
                                 <span class="toggle-slider"></span>
                             </label>
-                            <span class="text-secondary" style="margin-left: var(--spacing-sm);">Only accept results matching the game's system</span>
+                            <span class="text-secondary" style="margin-left: var(--spacing-sm);">{{ _('Only accept results matching the game\'s system') }}</span>
                         </div>
                     </div>
                 </div>
@@ -252,15 +252,15 @@
         <div class="scraper-settings-actions">
             <button type="button" data-on-click="saveScraperSettings" class="btn btn-primary" id="saveScraperBtn">
                 <span class="btn-icon">💾</span>
-                Save Settings
+                {{ _('Save Settings') }}
             </button>
             <button type="button" data-on-click="resetScraperPriority" class="btn btn-secondary">
                 <span class="btn-icon">🔄</span>
-                Reset to Default
+                {{ _('Reset to Default') }}
             </button>
             <button type="button" data-on-click="checkRateLimits" class="btn btn-secondary" id="checkRateLimitsBtn">
                 <span class="btn-icon">📊</span>
-                Check Rate Limits
+                {{ _('Check Rate Limits') }}
             </button>
         </div>
         <div id="scraperSettingsResult" role="status" aria-live="polite" style="margin-top: var(--spacing-md);"></div>
@@ -272,145 +272,145 @@
 {% if current_user and current_user.role == 'admin' %}
 <section class="card mb-xl" id="apikeys">
     <div class="card-header">
-        <h2 class="card-title">🔑 API Keys</h2>
+        <h2 class="card-title">🔑 {{ _('API Keys') }}</h2>
     </div>
     <div class="card-body">
         <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
-            Configure API keys for online scrapers. Keys are stored locally and never shared.
+            {{ _('Configure API keys for online scrapers. Keys are stored locally and never shared.') }}
         </p>
         
         <div class="api-key-list">
             <!-- TheGamesDB -->
             <div class="api-key-item">
                 <div class="api-key-header">
-                    <span class="api-key-name">🎮 TheGamesDB — Public API Key</span>
-                    <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Keys →</a>
+                    <span class="api-key-name">🎮 {{ _('TheGamesDB — Public API Key') }}</span>
+                    <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer" class="api-key-link">{{ _('Get API Keys →') }}</a>
                 </div>
                 <input type="password" autocomplete="off" id="apikey-tgdb-public" class="api-key-input"
                        value="{{ scraper_settings.api_keys.tgdb_public }}"
-                       placeholder="Per-IP rate limit — used as primary for scraping">
-                <span class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">Primary key. Per-IP rate limit, best for regular use.</span>
+                       placeholder="{{ _('Per-IP rate limit — used as primary for scraping') }}">
+                <span class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">{{ _('Primary key. Per-IP rate limit, best for regular use.') }}</span>
             </div>
 
             <div class="api-key-item">
                 <div class="api-key-header">
-                    <span class="api-key-name">🎮 TheGamesDB — Private API Key</span>
+                    <span class="api-key-name">🎮 {{ _('TheGamesDB — Private API Key') }}</span>
                 </div>
                 <input type="password" autocomplete="off" id="apikey-tgdb" class="api-key-input"
                        value="{{ scraper_settings.api_keys.tgdb }}"
-                       placeholder="Shared monthly pool — used as fallback">
-                <span class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">Fallback key. Shared monthly pool (~6,000 req/month).</span>
+                       placeholder="{{ _('Shared monthly pool — used as fallback') }}">
+                <span class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">{{ _('Fallback key. Shared monthly pool (~6,000 req/month).') }}</span>
             </div>
             
             <!-- IGDB -->
             <div class="api-key-item">
                 <div class="api-key-header">
-                    <span class="api-key-name">🌐 IGDB / Twitch Client ID</span>
-                    <a href="https://api-docs.igdb.com/#getting-started" target="_blank" rel="noopener noreferrer" class="api-key-link">Get Credentials →</a>
+                    <span class="api-key-name">🌐 {{ _('IGDB / Twitch Client ID') }}</span>
+                    <a href="https://api-docs.igdb.com/#getting-started" target="_blank" rel="noopener noreferrer" class="api-key-link">{{ _('Get Credentials →') }}</a>
                 </div>
                 <input type="text" id="apikey-igdb-client-id" class="api-key-input" 
                        value="{{ scraper_settings.api_keys.igdb_client_id }}" 
-                       placeholder="Enter Twitch Client ID">
+                       placeholder="{{ _('Enter Twitch Client ID') }}">
             </div>
             
             <div class="api-key-item">
                 <div class="api-key-header">
-                    <span class="api-key-name">🌐 IGDB / Twitch Client Secret</span>
+                    <span class="api-key-name">🌐 {{ _('IGDB / Twitch Client Secret') }}</span>
                 </div>
                 <input type="password" autocomplete="off" id="apikey-igdb-client-secret" class="api-key-input" 
                        value="{{ scraper_settings.api_keys.igdb_client_secret }}" 
-                       placeholder="Enter Twitch Client Secret">
+                       placeholder="{{ _('Enter Twitch Client Secret') }}">
             </div>
             
             <!-- RAWG.io -->
             <div class="api-key-item">
                 <div class="api-key-header">
-                    <span class="api-key-name">🎮 RAWG.io API Key</span>
-                    <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
+                    <span class="api-key-name">🎮 {{ _('RAWG.io API Key') }}</span>
+                    <a href="https://rawg.io/apidocs" target="_blank" rel="noopener noreferrer" class="api-key-link">{{ _('Get API Key →') }}</a>
                 </div>
                 <input type="password" autocomplete="off" id="apikey-rawg" class="api-key-input" 
                        value="{{ scraper_settings.api_keys.rawg }}" 
-                       placeholder="Enter RAWG.io API key">
+                       placeholder="{{ _('Enter RAWG.io API key') }}">
             </div>
             
             <!-- ScreenScraper -->
             <div class="api-key-item" style="border-top: 1px solid rgba(76, 201, 240, 0.2); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
                 <div class="api-key-header">
-                    <span class="api-key-name">🖥️ ScreenScraper Username</span>
-                    <a href="https://www.screenscraper.fr/membreinscription.php" target="_blank" rel="noopener noreferrer" class="api-key-link">Register →</a>
+                    <span class="api-key-name">🖥️ {{ _('ScreenScraper Username') }}</span>
+                    <a href="https://www.screenscraper.fr/membreinscription.php" target="_blank" rel="noopener noreferrer" class="api-key-link">{{ _('Register →') }}</a>
                 </div>
                 <input type="text" id="apikey-screenscraper-username" class="api-key-input" 
                        value="{{ scraper_settings.api_keys.screenscraper_username }}" 
-                       placeholder="Your member account username">
+                       placeholder="{{ _('Your member account username') }}">
             </div>
             
             <div class="api-key-item">
                 <div class="api-key-header">
-                    <span class="api-key-name">🖥️ ScreenScraper Password</span>
+                    <span class="api-key-name">🖥️ {{ _('ScreenScraper Password') }}</span>
                 </div>
                 <input type="password" autocomplete="off" id="apikey-screenscraper-password" class="api-key-input" 
                        value="{{ scraper_settings.api_keys.screenscraper_password }}" 
-                       placeholder="Your member account login password">
+                       placeholder="{{ _('Your member account login password') }}">
             </div>
             
             <div class="api-key-item">
                 <div class="api-key-header">
-                    <span class="api-key-name">🖥️ ScreenScraper Developer ID</span>
-                    <a href="https://www.screenscraper.fr/forumsujets.php?frub=12" target="_blank" rel="noopener noreferrer" class="api-key-link">Request Dev Access →</a>
+                    <span class="api-key-name">🖥️ {{ _('ScreenScraper Developer ID') }}</span>
+                    <a href="https://www.screenscraper.fr/forumsujets.php?frub=12" target="_blank" rel="noopener noreferrer" class="api-key-link">{{ _('Request Dev Access →') }}</a>
                 </div>
                 <input type="text" id="apikey-screenscraper-devid" class="api-key-input" 
                        value="{{ scraper_settings.api_keys.screenscraper_devid }}" 
-                       placeholder="Dev Username from developer area">
+                       placeholder="{{ _('Dev Username from developer area') }}">
             </div>
             
             <div class="api-key-item">
                 <div class="api-key-header">
-                    <span class="api-key-name">🖥️ ScreenScraper Developer Password</span>
+                    <span class="api-key-name">🖥️ {{ _('ScreenScraper Developer Password') }}</span>
                 </div>
                 <input type="password" autocomplete="off" id="apikey-screenscraper-devpassword" class="api-key-input" 
                        value="{{ scraper_settings.api_keys.screenscraper_devpassword }}" 
-                       placeholder="Password from developer area (NOT debug password)">
+                       placeholder="{{ _('Password from developer area (NOT debug password)') }}">
             </div>
             
             <!-- RetroAchievements -->
             <div class="api-key-item" style="border-top: 1px solid rgba(76, 201, 240, 0.2); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
                 <div class="api-key-header">
-                    <span class="api-key-name">🏆 RetroAchievements Username</span>
-                    <a href="https://retroachievements.org/" target="_blank" rel="noopener noreferrer" class="api-key-link">Register →</a>
+                    <span class="api-key-name">🏆 {{ _('RetroAchievements Username') }}</span>
+                    <a href="https://retroachievements.org/" target="_blank" rel="noopener noreferrer" class="api-key-link">{{ _('Register →') }}</a>
                 </div>
                 <input type="text" id="apikey-ra-username" class="api-key-input" 
                        value="{{ scraper_settings.api_keys.ra_username }}" 
-                       placeholder="Your RetroAchievements username">
+                       placeholder="{{ _('Your RetroAchievements username') }}">
             </div>
             
             <div class="api-key-item">
                 <div class="api-key-header">
-                    <span class="api-key-name">🏆 RetroAchievements API Key</span>
-                    <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
+                    <span class="api-key-name">🏆 {{ _('RetroAchievements API Key') }}</span>
+                    <a href="https://retroachievements.org/controlpanel.php" target="_blank" rel="noopener noreferrer" class="api-key-link">{{ _('Get API Key →') }}</a>
                 </div>
                 <input type="password" autocomplete="off" id="apikey-ra-apikey" class="api-key-input"
                        value="{{ scraper_settings.api_keys.ra_apikey }}"
-                       placeholder="Web API Key from Settings > Keys">
+                       placeholder="{{ _('Web API Key from Settings > Keys') }}">
             </div>
 
             <!-- Steam -->
             <div class="api-key-item" style="border-top: 1px solid rgba(76, 201, 240, 0.2); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
                 <div class="api-key-header">
-                    <span class="api-key-name">🎮 Steam Web API Key</span>
-                    <a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
+                    <span class="api-key-name">🎮 {{ _('Steam Web API Key') }}</span>
+                    <a href="https://steamcommunity.com/dev/apikey" target="_blank" rel="noopener noreferrer" class="api-key-link">{{ _('Get API Key →') }}</a>
                 </div>
                 <input type="password" autocomplete="off" id="apikey-steam-api-key" class="api-key-input"
                        value="{{ scraper_settings.api_keys.steam_api_key }}"
-                       placeholder="Your Steam Web API Key">
+                       placeholder="{{ _('Your Steam Web API Key') }}">
             </div>
             <div class="api-key-item">
                 <div class="api-key-header">
-                    <span class="api-key-name">🎮 Steam ID</span>
+                    <span class="api-key-name">🎮 {{ _('Steam ID') }}</span>
                 </div>
                 <input type="text" id="apikey-steam-id" class="api-key-input"
                        value="{{ scraper_settings.api_keys.steam_id }}"
-                       placeholder="17-digit Steam ID or custom URL name">
-                <span class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">Your 17-digit Steam ID (e.g. 76561198012345678) or custom URL name. Find it at <a href="https://steamid.io" target="_blank" rel="noopener noreferrer" style="color: var(--primary-cyan);">steamid.io</a></span>
+                       placeholder="{{ _('17-digit Steam ID or custom URL name') }}">
+                <span class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">{% trans %}Your 17-digit Steam ID (e.g. 76561198012345678) or custom URL name. Find it at <a href="https://steamid.io" target="_blank" rel="noopener noreferrer" style="color: var(--primary-cyan);">steamid.io</a>{% endtrans %}</span>
             </div>
 
             <!-- Xbox: a per-user OpenXBL key, set in My Profile (PASS-59-261) -->
@@ -424,15 +424,15 @@
             <!-- AI Metadata -->
             <div class="api-key-item" style="border-top: 1px solid rgba(76, 201, 240, 0.2); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
                 <div class="api-key-header">
-                    <span class="api-key-name">🤖 AI Metadata Provider</span>
+                    <span class="api-key-name">🤖 {{ _('AI Metadata Provider') }}</span>
                 </div>
                 <select id="apikey-ai-provider" class="api-key-input" data-on-change="updateAIProviderFields" style="cursor: pointer;">
-                    <option value="">-- Select Provider --</option>
+                    <option value="">{{ _('-- Select Provider --') }}</option>
                     <option value="gemini" {{ 'selected' if scraper_settings.api_keys.ai_provider == 'gemini' else '' }}>Google Gemini</option>
                     <option value="openai" {{ 'selected' if scraper_settings.api_keys.ai_provider == 'openai' else '' }}>OpenAI</option>
                     <option value="claude" {{ 'selected' if scraper_settings.api_keys.ai_provider == 'claude' else '' }}>Anthropic Claude</option>
                 </select>
-                <span class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">AI fills text-only fields (genre, structure, perspective, etc.). API usage costs apply.</span>
+                <span class="text-muted" style="font-size: 0.8rem; margin-top: 2px; display: block;">{{ _('AI fills text-only fields (genre, structure, perspective, etc.). API usage costs apply.') }}</span>
                 <button type="button" data-on-click="testAiKey" class="btn btn-secondary" id="testAiKeyBtn" style="margin-top: var(--spacing-sm);">
                     <span class="btn-icon">🔌</span>
                     {{ _('Test saved AI key') }}
@@ -444,32 +444,32 @@
             <div id="ai-fields-gemini" style="display: none;">
                 <div class="api-key-item">
                     <div class="api-key-header">
-                        <span class="api-key-name">🤖 Gemini API Key</span>
-                        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
+                        <span class="api-key-name">🤖 {{ _('Gemini API Key') }}</span>
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="api-key-link">{{ _('Get API Key →') }}</a>
                     </div>
                     <input type="password" autocomplete="off" id="apikey-ai-gemini-key" class="api-key-input"
                            value="{{ scraper_settings.api_keys.ai_gemini_api_key }}"
-                           placeholder="Enter Google Gemini API key">
+                           placeholder="{{ _('Enter Google Gemini API key') }}">
                 </div>
                 <div class="api-key-item">
                     <div class="api-key-header">
-                        <span class="api-key-name">🤖 Gemini Model</span>
+                        <span class="api-key-name">🤖 {{ _('Gemini Model') }}</span>
                     </div>
                     <select id="apikey-ai-gemini-model" class="api-key-input" style="cursor: pointer;">
-                        <option value="gemini-2.5-flash-lite" {{ 'selected' if scraper_settings.api_keys.ai_gemini_model == 'gemini-2.5-flash-lite' else '' }}>Gemini 2.5 Flash Lite — $0.10 in / $0.40 out per 1M tokens (Recommended)</option>
-                        <option value="gemini-2.5-flash" {{ 'selected' if scraper_settings.api_keys.ai_gemini_model == 'gemini-2.5-flash' else '' }}>Gemini 2.5 Flash — $0.15 in / $0.60 out per 1M tokens</option>
-                        <option value="gemini-3-flash-preview" {{ 'selected' if scraper_settings.api_keys.ai_gemini_model == 'gemini-3-flash-preview' else '' }}>Gemini 3 Flash (Preview) — $0.50 in / $3.00 out per 1M tokens</option>
-                        <option value="gemini-2.5-pro" {{ 'selected' if scraper_settings.api_keys.ai_gemini_model == 'gemini-2.5-pro' else '' }}>Gemini 2.5 Pro — $1.25 in / $10.00 out per 1M tokens</option>
+                        <option value="gemini-2.5-flash-lite" {{ 'selected' if scraper_settings.api_keys.ai_gemini_model == 'gemini-2.5-flash-lite' else '' }}>Gemini 2.5 Flash Lite — {{ _('$%(inp)s in / $%(out)s out per 1M tokens', inp='0.10', out='0.40') }} ({{ _('Recommended') }})</option>
+                        <option value="gemini-2.5-flash" {{ 'selected' if scraper_settings.api_keys.ai_gemini_model == 'gemini-2.5-flash' else '' }}>Gemini 2.5 Flash — {{ _('$%(inp)s in / $%(out)s out per 1M tokens', inp='0.15', out='0.60') }}</option>
+                        <option value="gemini-3-flash-preview" {{ 'selected' if scraper_settings.api_keys.ai_gemini_model == 'gemini-3-flash-preview' else '' }}>Gemini 3 Flash (Preview) — {{ _('$%(inp)s in / $%(out)s out per 1M tokens', inp='0.50', out='3.00') }}</option>
+                        <option value="gemini-2.5-pro" {{ 'selected' if scraper_settings.api_keys.ai_gemini_model == 'gemini-2.5-pro' else '' }}>Gemini 2.5 Pro — {{ _('$%(inp)s in / $%(out)s out per 1M tokens', inp='1.25', out='10.00') }}</option>
                     </select>
                 </div>
                 <div class="api-key-item">
                     <div class="api-key-header">
-                        <span class="api-key-name">☁️ GCP Project ID</span>
-                        <span class="text-muted" style="font-size: 0.75rem;">Optional — required for Google Cloud billing credits</span>
+                        <span class="api-key-name">☁️ {{ _('GCP Project ID') }}</span>
+                        <span class="text-muted" style="font-size: 0.75rem;">{{ _('Optional — required for Google Cloud billing credits') }}</span>
                     </div>
                     <input type="text" id="apikey-ai-gemini-project-id" class="api-key-input"
                            value="{{ scraper_settings.api_keys.ai_gemini_project_id }}"
-                           placeholder="e.g. my-project-123456">
+                           placeholder="{{ _('e.g. my-project-123456') }}">
                 </div>
             </div>
 
@@ -477,20 +477,20 @@
             <div id="ai-fields-openai" style="display: none;">
                 <div class="api-key-item">
                     <div class="api-key-header">
-                        <span class="api-key-name">🤖 OpenAI API Key</span>
-                        <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
+                        <span class="api-key-name">🤖 {{ _('OpenAI API Key') }}</span>
+                        <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" class="api-key-link">{{ _('Get API Key →') }}</a>
                     </div>
                     <input type="password" autocomplete="off" id="apikey-ai-openai-key" class="api-key-input"
                            value="{{ scraper_settings.api_keys.ai_openai_api_key }}"
-                           placeholder="Enter OpenAI API key">
+                           placeholder="{{ _('Enter OpenAI API key') }}">
                 </div>
                 <div class="api-key-item">
                     <div class="api-key-header">
-                        <span class="api-key-name">🤖 OpenAI Model</span>
+                        <span class="api-key-name">🤖 {{ _('OpenAI Model') }}</span>
                     </div>
                     <select id="apikey-ai-openai-model" class="api-key-input" style="cursor: pointer;">
-                        <option value="gpt-4o-mini" {{ 'selected' if scraper_settings.api_keys.ai_openai_model == 'gpt-4o-mini' else '' }}>GPT-4o Mini — $0.15 in / $0.60 out per 1M tokens (Recommended)</option>
-                        <option value="gpt-4o" {{ 'selected' if scraper_settings.api_keys.ai_openai_model == 'gpt-4o' else '' }}>GPT-4o — $2.50 in / $10.00 out per 1M tokens</option>
+                        <option value="gpt-4o-mini" {{ 'selected' if scraper_settings.api_keys.ai_openai_model == 'gpt-4o-mini' else '' }}>GPT-4o Mini — {{ _('$%(inp)s in / $%(out)s out per 1M tokens', inp='0.15', out='0.60') }} ({{ _('Recommended') }})</option>
+                        <option value="gpt-4o" {{ 'selected' if scraper_settings.api_keys.ai_openai_model == 'gpt-4o' else '' }}>GPT-4o — {{ _('$%(inp)s in / $%(out)s out per 1M tokens', inp='2.50', out='10.00') }}</option>
                     </select>
                 </div>
             </div>
@@ -499,21 +499,21 @@
             <div id="ai-fields-claude" style="display: none;">
                 <div class="api-key-item">
                     <div class="api-key-header">
-                        <span class="api-key-name">🤖 Anthropic API Key</span>
-                        <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener noreferrer" class="api-key-link">Get API Key →</a>
+                        <span class="api-key-name">🤖 {{ _('Anthropic API Key') }}</span>
+                        <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener noreferrer" class="api-key-link">{{ _('Get API Key →') }}</a>
                     </div>
                     <input type="password" autocomplete="off" id="apikey-ai-claude-key" class="api-key-input"
                            value="{{ scraper_settings.api_keys.ai_claude_api_key }}"
-                           placeholder="Enter Anthropic API key">
+                           placeholder="{{ _('Enter Anthropic API key') }}">
                 </div>
                 <div class="api-key-item">
                     <div class="api-key-header">
-                        <span class="api-key-name">🤖 Claude Model</span>
+                        <span class="api-key-name">🤖 {{ _('Claude Model') }}</span>
                     </div>
                     <select id="apikey-ai-claude-model" class="api-key-input" style="cursor: pointer;">
-                        <option value="claude-haiku-5-5" {{ 'selected' if scraper_settings.api_keys.ai_claude_model == 'claude-haiku-5-5' else '' }}>Claude Haiku 5.5 — $0.10 in / $0.50 out per 1M tokens (Recommended)</option>
-                        <option value="claude-sonnet-5-5" {{ 'selected' if scraper_settings.api_keys.ai_claude_model == 'claude-sonnet-5-5' else '' }}>Claude Sonnet 5.5 — $2.00 in / $10.00 out per 1M tokens</option>
-                        <option value="claude-opus-5-5" {{ 'selected' if scraper_settings.api_keys.ai_claude_model == 'claude-opus-5-5' else '' }}>Claude Opus 5.5 — $4.00 in / $20.00 out per 1M tokens</option>
+                        <option value="claude-haiku-5-5" {{ 'selected' if scraper_settings.api_keys.ai_claude_model == 'claude-haiku-5-5' else '' }}>Claude Haiku 5.5 — {{ _('$%(inp)s in / $%(out)s out per 1M tokens', inp='0.10', out='0.50') }} ({{ _('Recommended') }})</option>
+                        <option value="claude-sonnet-5-5" {{ 'selected' if scraper_settings.api_keys.ai_claude_model == 'claude-sonnet-5-5' else '' }}>Claude Sonnet 5.5 — {{ _('$%(inp)s in / $%(out)s out per 1M tokens', inp='2.00', out='10.00') }}</option>
+                        <option value="claude-opus-5-5" {{ 'selected' if scraper_settings.api_keys.ai_claude_model == 'claude-opus-5-5' else '' }}>Claude Opus 5.5 — {{ _('$%(inp)s in / $%(out)s out per 1M tokens', inp='4.00', out='20.00') }}</option>
                     </select>
                 </div>
                 <div class="api-key-item">
@@ -532,7 +532,7 @@
         <div style="margin-top: var(--spacing-xl);">
             <button type="button" data-on-click="saveApiKeys" class="btn btn-primary" id="saveApiKeysBtn">
                 <span class="btn-icon">💾</span>
-                Save API Keys
+                {{ _('Save API Keys') }}
             </button>
         </div>
         <div id="apiKeysResult" role="status" aria-live="polite" style="margin-top: var(--spacing-md);"></div>

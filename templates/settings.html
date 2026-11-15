@@ -1435,13 +1435,13 @@ function loadPathSettings() {
                 
                 // Show current effective paths as hints
                 document.getElementById('romPathDefault').textContent =
-                    data.paths.rom_path ? 'Current: ' + data.paths.rom_path : '';
+                    data.paths.rom_path ? t({{ _('Current: {path}')|tojson }}, {path: data.paths.rom_path}) : '';
                 document.getElementById('esdeGamelistsDefault').textContent =
-                    data.paths.esde_gamelists ? 'Current: ' + data.paths.esde_gamelists : '';
+                    data.paths.esde_gamelists ? t({{ _('Current: {path}')|tojson }}, {path: data.paths.esde_gamelists}) : '';
                 document.getElementById('esdeMediaDefault').textContent =
-                    data.paths.esde_media ? 'Current: ' + data.paths.esde_media : '';
+                    data.paths.esde_media ? t({{ _('Current: {path}')|tojson }}, {path: data.paths.esde_media}) : '';
                 document.getElementById('rpcs3TrophyDefault').textContent =
-                    data.paths.rpcs3_trophy ? 'Current: ' + data.paths.rpcs3_trophy : '';
+                    data.paths.rpcs3_trophy ? t({{ _('Current: {path}')|tojson }}, {path: data.paths.rpcs3_trophy}) : '';
             }
         })
         .catch(e => console.error('Failed to load path settings:', e));
@@ -2327,7 +2327,7 @@ async function checkScraperStatus() {
             const dot = statusEl.querySelector('.status-dot');
             const text = statusEl.querySelector('.status-text');
             dot.className = 'status-dot checking';
-            text.textContent = 'Checking...';
+            text.textContent = {{ _('Checking...')|tojson }};
         }
     });
 
@@ -2354,17 +2354,17 @@ async function checkApiStatus(scraper, url) {
         
         if (data.online) {
             dot.classList.add('online');
-            text.textContent = 'Online';
+            text.textContent = {{ _('Online')|tojson }};
         } else {
             dot.classList.add('offline');
-            text.textContent = data.reason || 'Offline';
+            text.textContent = data.reason || {{ _('Offline')|tojson }};
         }
     } catch (e) {
         const dot = statusEl.querySelector('.status-dot');
         const text = statusEl.querySelector('.status-text');
         dot.classList.remove('checking');
         dot.classList.add('offline');
-        text.textContent = 'Error';
+        text.textContent = {{ _('Error')|tojson }};
     }
 }
 
@@ -2380,15 +2380,15 @@ function formatResetTime(value) {
         if (days > 0) parts.push(`${days}d`);
         if (hours > 0) parts.push(`${hours}h`);
         if (mins > 0 && days === 0) parts.push(`${mins}m`);
-        return parts.length > 0 ? `Resets in ${parts.join(' ')}` : 'Resets soon';
+        return parts.length > 0 ? t({{ _('Resets in {time}')|tojson }}, {time: parts.join(' ')}) : {{ _('Resets soon')|tojson }};
     }
     // Try parsing as date string
     const date = new Date(value);
     if (!isNaN(date.getTime())) {
         if (typeof DateUtils !== 'undefined') {
-            return `Resets: ${DateUtils.formatShort(date)}`;
+            return t({{ _('Resets: {when}')|tojson }}, {when: DateUtils.formatShort(date)});
         }
-        return `Resets: ${date.toISOString().slice(0, 16).replace('T', ' ')}`;
+        return t({{ _('Resets: {when}')|tojson }}, {when: date.toISOString().slice(0, 16).replace('T', ' ')});
     }
     return String(value);
 }
@@ -2441,8 +2441,8 @@ async function checkRateLimits() {
     const resultEl = document.getElementById('rateLimitsResult');
 
     btn.disabled = true;
-    btn.innerHTML = '<span class="btn-icon">⏳</span> Checking...';
-    resultEl.innerHTML = '<div class="alert alert-info">Checking rate limits...</div>';
+    btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Checking...')|tojson }});
+    resultEl.innerHTML = `<div class="alert alert-info">${escapeHtml({{ _('Checking rate limits...')|tojson }})}</div>`;
 
     const now = new Date();
     const timestamp = (typeof DateUtils !== 'undefined')
@@ -2471,21 +2471,21 @@ async function checkRateLimits() {
             if (d.public_key_configured) {
                 if (d.public_key_status === 'active' && d.public_remaining_monthly !== undefined) {
                     const pubRem = Number(d.public_remaining_monthly) || 0;
-                    const pubRemText = `<span class="${pubRem > 500 ? 'text-success' : pubRem > 100 ? 'text-warning' : 'text-danger'}">${formatNumber(pubRem)}</span> remaining (monthly)`;
-                    details.push(`Public key: ${pubRemText}`);
-                    const pubResetText = d.public_reset_date ? `Resets: ${escapeHtml(d.public_reset_date)}` : null;
-                    const pubExtraText = d.public_extra_allowance > 0 ? `Extra: ${formatNumber(d.public_extra_allowance)}` : '';
+                    const pubRemText = `<span class="${pubRem > 500 ? 'text-success' : pubRem > 100 ? 'text-warning' : 'text-danger'}">${formatNumber(pubRem)}</span> ${t({{ _('remaining (monthly)')|tojson }})}`;
+                    details.push(t({{ _('Public key: {status}')|tojson }}, {status: pubRemText}));
+                    const pubResetText = d.public_reset_date ? t({{ _('Resets: {when}')|tojson }}, {when: escapeHtml(d.public_reset_date)}) : null;
+                    const pubExtraText = d.public_extra_allowance > 0 ? t({{ _('Extra: {n}')|tojson }}, {n: formatNumber(d.public_extra_allowance)}) : '';
                     const pubSubDetails = [pubResetText, pubExtraText].filter(Boolean).join(' &middot; ');
                     if (pubSubDetails) details.push(pubSubDetails);
                 } else if (d.public_key_status === 'active') {
-                    details.push('Public key: <span class="text-success">Active</span>');
+                    details.push(t({{ _('Public key: {status}')|tojson }}, {status: `<span class="text-success">${t({{ _('Active')|tojson }})}</span>`}));
                 } else if (d.public_key_status === 'exhausted') {
-                    details.push('Public key: <span class="text-danger">Allowance exhausted</span>');
+                    details.push(t({{ _('Public key: {status}')|tojson }}, {status: `<span class="text-danger">${t({{ _('Allowance exhausted')|tojson }})}</span>`}));
                 } else {
-                    details.push(`Public key: <span class="text-danger">${escapeHtml(d.public_key_status || 'Error')}</span>`);
+                    details.push(t({{ _('Public key: {status}')|tojson }}, {status: `<span class="text-danger">${escapeHtml(d.public_key_status || t({{ _('Error')|tojson }}))}</span>`}));
                 }
             } else {
-                details.push('Public key: <span class="text-muted">Not configured</span>');
+                details.push(t({{ _('Public key: {status}')|tojson }}, {status: `<span class="text-muted">${t({{ _('Not configured')|tojson }})}</span>`}));
             }
 
             // Private key status
@@ -2493,17 +2493,17 @@ async function checkRateLimits() {
                 const rem = Number(d.remaining_monthly) || 0;
                 const remText = d.private_key_error
                     ? `<span class="text-danger">${escapeHtml(d.private_key_error)}</span>`
-                    : `<span class="${rem > 500 ? 'text-success' : rem > 100 ? 'text-warning' : 'text-danger'}">${formatNumber(rem)}</span> remaining (monthly)`;
-                details.push(`Private key: ${remText}`);
+                    : `<span class="${rem > 500 ? 'text-success' : rem > 100 ? 'text-warning' : 'text-danger'}">${formatNumber(rem)}</span> ${t({{ _('remaining (monthly)')|tojson }})}`;
+                details.push(t({{ _('Private key: {status}')|tojson }}, {status: remText}));
 
                 if (!d.private_key_error) {
-                    const resetText = formatResetTime(d.refresh_timer) || (d.reset_date ? `Resets: ${escapeHtml(d.reset_date)}` : null);
-                    const extraText = d.extra_allowance > 0 ? `Extra: ${formatNumber(d.extra_allowance)}` : '';
+                    const resetText = formatResetTime(d.refresh_timer) || (d.reset_date ? t({{ _('Resets: {when}')|tojson }}, {when: escapeHtml(d.reset_date)}) : null);
+                    const extraText = d.extra_allowance > 0 ? t({{ _('Extra: {n}')|tojson }}, {n: formatNumber(d.extra_allowance)}) : '';
                     const subDetails = [resetText, extraText].filter(Boolean).join(' &middot; ');
                     if (subDetails) details.push(subDetails);
                 }
             } else {
-                details.push('Private key: <span class="text-muted">Not configured</span>');
+                details.push(t({{ _('Private key: {status}')|tojson }}, {status: `<span class="text-muted">${t({{ _('Not configured')|tojson }})}</span>`}));
             }
 
             // Determine overall color based on best available key status
@@ -2530,13 +2530,13 @@ async function checkRateLimits() {
         } else {
             cards.push(`<div class="rate-limit-item status-red">
                 <strong>🎮 TheGamesDB</strong>
-                <span class="rate-limit-value text-danger">${escapeHtml(d.error || 'Error checking')}</span>
+                <span class="rate-limit-value text-danger">${escapeHtml(d.error || t({{ _('Error checking')|tojson }}))}</span>
             </div>`);
         }
     } else {
         cards.push(`<div class="rate-limit-item status-red">
             <strong>🎮 TheGamesDB</strong>
-            <span class="rate-limit-value text-danger">Connection error</span>
+            <span class="rate-limit-value text-danger">${t({{ _('Connection error')|tojson }})}</span>
         </div>`);
     }
 
@@ -2551,26 +2551,26 @@ async function checkRateLimits() {
             const pctText = max > 0 ? `${Math.round((remaining / max) * 100)}%` : '';
             cards.push(`<div class="rate-limit-item ${color.css}">
                 <strong>🖥️ ScreenScraper</strong>
-                <span class="rate-limit-value"><span class="${remaining > max * 0.5 ? 'text-success' : remaining > max * 0.2 ? 'text-warning' : 'text-danger'}">${formatRatio(remaining, max)}</span> requests remaining today ${pctText ? `(${pctText})` : ''}</span>
+                <span class="rate-limit-value"><span class="${remaining > max * 0.5 ? 'text-success' : remaining > max * 0.2 ? 'text-warning' : 'text-danger'}">${formatRatio(remaining, max)}</span> ${t({{ _('requests remaining today')|tojson }})} ${pctText ? `(${pctText})` : ''}</span>
                 ${buildBar(remaining, max, color.bar)}
                 <span class="rate-limit-detail">
-                    Per-minute limit: ${escapeHtml(d.max_requests_per_min)} &middot;
-                    Level: ${escapeHtml(d.user_level)}
-                    ${d.max_threads && d.max_threads !== 'Unknown' ? ` &middot; Threads: ${escapeHtml(d.max_threads)}` : ''}
-                    &middot; Speed: ${escapeHtml(d.max_download_speed)} KB/s<br>
-                    Resets daily at midnight (UTC)
+                    ${t({{ _('Per-minute limit: {n}')|tojson }}, {n: escapeHtml(d.max_requests_per_min)})} &middot;
+                    ${t({{ _('Level: {level}')|tojson }}, {level: escapeHtml(d.user_level)})}
+                    ${d.max_threads && d.max_threads !== 'Unknown' ? ` &middot; ${t({{ _('Threads: {n}')|tojson }}, {n: escapeHtml(d.max_threads)})}` : ''}
+                    &middot; ${t({{ _('Speed: {n} KB/s')|tojson }}, {n: escapeHtml(d.max_download_speed)})}<br>
+                    ${t({{ _('Resets daily at midnight (UTC)')|tojson }})}
                 </span>
             </div>`);
         } else {
             cards.push(`<div class="rate-limit-item status-gray">
                 <strong>🖥️ ScreenScraper</strong>
-                <span class="rate-limit-value text-muted">${escapeHtml(d.error || 'Not configured')}</span>
+                <span class="rate-limit-value text-muted">${escapeHtml(d.error || t({{ _('Not configured')|tojson }}))}</span>
             </div>`);
         }
     } else {
         cards.push(`<div class="rate-limit-item status-gray">
             <strong>🖥️ ScreenScraper</strong>
-            <span class="rate-limit-value text-muted">Not configured</span>
+            <span class="rate-limit-value text-muted">${t({{ _('Not configured')|tojson }})}</span>
         </div>`);
     }
 
@@ -2579,8 +2579,8 @@ async function checkRateLimits() {
         const d = igdbRes.value;
         cards.push(`<div class="rate-limit-item status-green">
             <strong>🌐 IGDB</strong>
-            <span class="rate-limit-value">${escapeHtml(d.limit)} requests/second (OAuth token-based)</span>
-            <span class="rate-limit-detail">Token-based authentication — no daily quota</span>
+            <span class="rate-limit-value">${t({{ _('{n} requests/second (OAuth token-based)')|tojson }}, {n: escapeHtml(d.limit)})}</span>
+            <span class="rate-limit-detail">${t({{ _('Token-based authentication — no daily quota')|tojson }})}</span>
         </div>`);
     }
 
@@ -2591,11 +2591,11 @@ async function checkRateLimits() {
             const hasRemaining = d.remaining !== undefined && d.remaining !== null;
             const statusCss = hasRemaining ? getUsageColor(d.remaining, d.limit).css : 'status-gray';
             const remainingText = hasRemaining
-                ? `<span class="${d.remaining > d.limit * 0.5 ? 'text-success' : d.remaining > d.limit * 0.2 ? 'text-warning' : 'text-danger'}">${formatNumber(d.remaining)}</span> / ${formatNumber(d.limit)} requests remaining`
-                : `${formatNumber(d.limit)} requests/month (free tier)`;
+                ? `<span class="${d.remaining > d.limit * 0.5 ? 'text-success' : d.remaining > d.limit * 0.2 ? 'text-warning' : 'text-danger'}">${formatNumber(d.remaining)}</span> / ${formatNumber(d.limit)} ${t({{ _('requests remaining')|tojson }})}`
+                : t({{ _('{n} requests/month (free tier)')|tojson }}, {n: formatNumber(d.limit)});
             const detailParts = [];
-            if (d.reset_date) detailParts.push(`Resets: ${escapeHtml(d.reset_date)}`);
-            if (!hasRemaining) detailParts.push('No live usage tracking from API');
+            if (d.reset_date) detailParts.push(t({{ _('Resets: {when}')|tojson }}, {when: escapeHtml(d.reset_date)}));
+            if (!hasRemaining) detailParts.push(t({{ _('No live usage tracking from API')|tojson }}));
             cards.push(`<div class="rate-limit-item ${statusCss}">
                 <strong>🕹️ RAWG</strong>
                 <span class="rate-limit-value">${remainingText}</span>
@@ -2604,13 +2604,13 @@ async function checkRateLimits() {
         } else {
             cards.push(`<div class="rate-limit-item status-gray">
                 <strong>🕹️ RAWG</strong>
-                <span class="rate-limit-value text-muted">${escapeHtml(d.error || 'Not configured')}</span>
+                <span class="rate-limit-value text-muted">${escapeHtml(d.error || t({{ _('Not configured')|tojson }}))}</span>
             </div>`);
         }
     } else {
         cards.push(`<div class="rate-limit-item status-gray">
             <strong>🕹️ RAWG</strong>
-            <span class="rate-limit-value text-muted">Connection error</span>
+            <span class="rate-limit-value text-muted">${t({{ _('Connection error')|tojson }})}</span>
         </div>`);
     }
 
@@ -2619,7 +2619,7 @@ async function checkRateLimits() {
         const d = raRes.value;
         cards.push(`<div class="rate-limit-item status-gray">
             <strong>🏆 RetroAchievements</strong>
-            <span class="rate-limit-value">No published rate limits</span>
+            <span class="rate-limit-value">${t({{ _('No published rate limits')|tojson }})}</span>
             <span class="rate-limit-detail">${escapeHtml(d.note)}</span>
         </div>`);
     }
@@ -2638,15 +2638,15 @@ async function checkRateLimits() {
                 const max = d.requests_limit;
                 const pct = Math.round((rem / max) * 100);
                 const cls = rem > max * 0.5 ? 'text-success' : rem > max * 0.2 ? 'text-warning' : 'text-danger';
-                details.push(`Requests: <span class="${cls}">${formatNumber(rem)}</span> / ${formatNumber(max)} remaining (${pct}%)`);
+                details.push(t({{ _('Requests: {used} remaining ({pct})')|tojson }}, {used: `<span class="${cls}">${formatNumber(rem)}</span> / ${formatNumber(max)}`, pct: pct + '%'}));
                 if (d.requests_reset) {
                     // Parse ISO reset time to readable format
                     try {
                         const resetDate = new Date(d.requests_reset);
                         const resetStr = resetDate.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
-                        details.push(`Resets: ${resetStr}`);
+                        details.push(t({{ _('Resets: {when}')|tojson }}, {when: resetStr}));
                     } catch(e) {
-                        details.push(`Resets: ${escapeHtml(d.requests_reset)}`);
+                        details.push(t({{ _('Resets: {when}')|tojson }}, {when: escapeHtml(d.requests_reset)}));
                     }
                 }
             }
@@ -2657,7 +2657,7 @@ async function checkRateLimits() {
                 const max = d.tokens_limit;
                 const pct = Math.round((rem / max) * 100);
                 const cls = rem > max * 0.5 ? 'text-success' : rem > max * 0.2 ? 'text-warning' : 'text-danger';
-                details.push(`Tokens: <span class="${cls}">${formatNumber(rem)}</span> / ${formatNumber(max)} remaining (${pct}%)`);
+                details.push(t({{ _('Tokens: {used} remaining ({pct})')|tojson }}, {used: `<span class="${cls}">${formatNumber(rem)}</span> / ${formatNumber(max)}`, pct: pct + '%'}));
             }
 
             // Input token limits (Anthropic-specific)
@@ -2666,17 +2666,17 @@ async function checkRateLimits() {
                 const max = d.input_tokens_limit;
                 const pct = Math.round((rem / max) * 100);
                 const cls = rem > max * 0.5 ? 'text-success' : rem > max * 0.2 ? 'text-warning' : 'text-danger';
-                details.push(`Input tokens: <span class="${cls}">${formatNumber(rem)}</span> / ${formatNumber(max)} remaining (${pct}%)`);
+                details.push(t({{ _('Input tokens: {used} remaining ({pct})')|tojson }}, {used: `<span class="${cls}">${formatNumber(rem)}</span> / ${formatNumber(max)}`, pct: pct + '%'}));
             }
 
             // Gemini static limits (when no headers available)
             if (d.static_rpm !== undefined) {
-                details.push(`Rate: ${d.static_rpm} requests/min &middot; ${formatNumber(d.static_rpd)} requests/day (free tier)`);
+                details.push(t({{ _('Rate: {rpm} requests/min')|tojson }}, {rpm: d.static_rpm}) + ' &middot; ' + t({{ _('{rpd} requests/day (free tier)')|tojson }}, {rpd: formatNumber(d.static_rpd)}));
             }
 
             // Fallback when no rate limit data at all
             if (details.length === 0) {
-                details.push('API online — no rate limit data returned');
+                details.push(t({{ _('API online — no rate limit data returned')|tojson }}));
             }
 
             // Determine color
@@ -2688,33 +2688,33 @@ async function checkRateLimits() {
             }
 
             cards.push(`<div class="rate-limit-item ${statusCss}">
-                <strong>🤖 AI &mdash; ${escapeHtml(d.provider)}</strong>
-                <span class="rate-limit-detail">Model: ${escapeHtml(d.model)}<br>${details.join('<br>')}</span>
+                <strong>🤖 ${t({{ _('AI')|tojson }})} &mdash; ${escapeHtml(d.provider)}</strong>
+                <span class="rate-limit-detail">${t({{ _('Model: {model}')|tojson }}, {model: escapeHtml(d.model)})}<br>${details.join('<br>')}</span>
             </div>`);
         } else {
             cards.push(`<div class="rate-limit-item status-gray">
-                <strong>🤖 AI Provider</strong>
-                <span class="rate-limit-value text-muted">${escapeHtml(d.error || 'Not configured')}</span>
+                <strong>🤖 ${t({{ _('AI Provider')|tojson }})}</strong>
+                <span class="rate-limit-value text-muted">${escapeHtml(d.error || t({{ _('Not configured')|tojson }}))}</span>
             </div>`);
         }
     } else {
         cards.push(`<div class="rate-limit-item status-gray">
-            <strong>🤖 AI Provider</strong>
-            <span class="rate-limit-value text-muted">Not configured</span>
+            <strong>🤖 ${t({{ _('AI Provider')|tojson }})}</strong>
+            <span class="rate-limit-value text-muted">${t({{ _('Not configured')|tojson }})}</span>
         </div>`);
     }
 
     if (cards.length > 0) {
         resultEl.innerHTML = `<div class="rate-limits-container">
-            <div class="rate-limit-header">📊 Last checked: ${timestamp}</div>
+            <div class="rate-limit-header">📊 ${t({{ _('Last checked: {time}')|tojson }}, {time: timestamp})}</div>
             ${cards.join('')}
         </div>`;
     } else {
-        resultEl.innerHTML = '<div class="alert alert-warning">No rate limit information available</div>';
+        resultEl.innerHTML = `<div class="alert alert-warning">${escapeHtml({{ _('No rate limit information available')|tojson }})}</div>`;
     }
 
     btn.disabled = false;
-    btn.innerHTML = '<span class="btn-icon">📊</span> Check Rate Limits';
+    btn.innerHTML = '<span class="btn-icon">📊</span> ' + escapeHtml({{ _('Check Rate Limits')|tojson }});
 }
 
 // Save scraper settings
@@ -2723,7 +2723,7 @@ async function saveScraperSettings() {
     const resultEl = document.getElementById('scraperSettingsResult');
     
     btn.disabled = true;
-    btn.innerHTML = '<span class="btn-icon">⏳</span> Saving...';
+    btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Saving...')|tojson }});
     
     try {
         const response = await fetch('/api/scraper-settings', {
@@ -2736,23 +2736,23 @@ async function saveScraperSettings() {
         
         if (data.success) {
             savedScraperSettings = JSON.parse(JSON.stringify(scraperSettings));
-            resultEl.innerHTML = '<div class="alert alert-success">✅ Settings saved! Checking scraper status...</div>';
+            resultEl.innerHTML = `<div class="alert alert-success">✅ ${escapeHtml({{ _('Settings saved! Checking scraper status...')|tojson }})}</div>`;
             
             // Re-check scraper status after saving
             setTimeout(() => {
                 checkScraperStatus();
-                resultEl.innerHTML = '<div class="alert alert-success">✅ Settings saved successfully!</div>';
+                resultEl.innerHTML = `<div class="alert alert-success">✅ ${escapeHtml({{ _('Settings saved successfully!')|tojson }})}</div>`;
                 setTimeout(() => { resultEl.innerHTML = ''; }, 3000);
             }, 500);
         } else {
             resultEl.innerHTML = `<div class="alert alert-error">❌ ${escapeHtml(data.error || {{ _('Failed to save settings')|tojson }})}</div>`;
         }
     } catch (e) {
-        resultEl.innerHTML = `<div class="alert alert-error">❌ Error: ${escapeHtml(e.message)}</div>`;
+        resultEl.innerHTML = `<div class="alert alert-error">❌ ${escapeHtml(t({{ _('Error: {error}')|tojson }}, {error: e.message}))}</div>`;
     }
 
     btn.disabled = false;
-    btn.innerHTML = '<span class="btn-icon">💾</span> Save Settings';
+    btn.innerHTML = '<span class="btn-icon">💾</span> ' + escapeHtml({{ _('Save Settings')|tojson }});
 }
 
 // Save API keys
@@ -2761,7 +2761,7 @@ async function saveApiKeys() {
     const resultEl = document.getElementById('apiKeysResult');
     
     btn.disabled = true;
-    btn.innerHTML = '<span class="btn-icon">⏳</span> Saving...';
+    btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Saving...')|tojson }});
     
     const apiKeys = {
         tgdb: document.getElementById('apikey-tgdb').value.trim(),
@@ -2798,23 +2798,23 @@ async function saveApiKeys() {
         const data = await response.json();
         
         if (data.success) {
-            resultEl.innerHTML = '<div class="alert alert-success">✅ API keys saved! Checking scraper status...</div>';
+            resultEl.innerHTML = `<div class="alert alert-success">✅ ${escapeHtml({{ _('API keys saved! Checking scraper status...')|tojson }})}</div>`;
             
             // Re-check scraper status after saving API keys
             setTimeout(() => {
                 checkScraperStatus();
-                resultEl.innerHTML = '<div class="alert alert-success">✅ API keys saved successfully!</div>';
+                resultEl.innerHTML = `<div class="alert alert-success">✅ ${escapeHtml({{ _('API keys saved successfully!')|tojson }})}</div>`;
                 setTimeout(() => { resultEl.innerHTML = ''; }, 3000);
             }, 500);
         } else {
-            resultEl.innerHTML = `<div class="alert alert-error">❌ ${escapeHtml(data.error || 'Failed to save API keys')}</div>`;
+            resultEl.innerHTML = `<div class="alert alert-error">❌ ${escapeHtml(data.error || {{ _('Failed to save API keys')|tojson }})}</div>`;
         }
     } catch (e) {
-        resultEl.innerHTML = `<div class="alert alert-error">❌ Error: ${escapeHtml(e.message)}</div>`;
+        resultEl.innerHTML = `<div class="alert alert-error">❌ ${escapeHtml(t({{ _('Error: {error}')|tojson }}, {error: e.message}))}</div>`;
     }
 
     btn.disabled = false;
-    btn.innerHTML = '<span class="btn-icon">💾</span> Save API Keys';
+    btn.innerHTML = '<span class="btn-icon">💾</span> ' + escapeHtml({{ _('Save API Keys')|tojson }});
 }
 
 // Reset priority to default
@@ -4477,7 +4477,7 @@ async function importSystemLogos() {
     const resultDiv = document.getElementById('logoImportResult');
     
     btn.disabled = true;
-    btn.innerHTML = '<span class="btn-icon">⏳</span> Importing...';
+    btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Importing...')|tojson }});
     resultDiv.innerHTML = '';
     
     try {
@@ -4487,18 +4487,18 @@ async function importSystemLogos() {
         if (data.success) {
             resultDiv.innerHTML = `<div class="alert alert-success">${escapeHtml(data.message)}</div>`;
             if (data.imported > 0) {
-                resultDiv.innerHTML += `<p class="text-muted" style="margin-top: var(--spacing-sm);">Run "Scan Library" to update the database with the new logos.</p>`;
+                resultDiv.innerHTML += `<p class="text-muted" style="margin-top: var(--spacing-sm);">${escapeHtml({{ _('Run "Scan Library" to update the database with the new logos.')|tojson }})}</p>`;
                 // Refresh logo reference
                 loadSystems();
             }
         } else {
-            resultDiv.innerHTML = `<div class="alert alert-error">Error: ${escapeHtml(data.error || 'An error occurred')}</div>`;
+            resultDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(data.error || {{ _('An error occurred')|tojson }})}</div>`;
         }
     } catch (error) {
-        resultDiv.innerHTML = `<div class="alert alert-error">Failed to import logos: ${escapeHtml(error.message)}</div>`;
+        resultDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(t({{ _('Failed to import logos: {error}')|tojson }}, {error: error.message}))}</div>`;
     } finally {
         btn.disabled = false;
-        btn.innerHTML = '<span class="btn-icon">🖼️</span> Import System Logos';
+        btn.innerHTML = '<span class="btn-icon">🖼️</span> ' + escapeHtml({{ _('Import System Logos')|tojson }});
     }
 }
 

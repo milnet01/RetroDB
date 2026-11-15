@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 07:39+0200\n"
+"POT-Creation-Date: 2026-11-15 08:01+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans\n"
@@ -2816,7 +2816,8 @@ msgstr "请输入一个文件夹路径。"
 #: templates/multi_disc_organizer.html:371 templates/reports.html:1144
 #: templates/reports.html:1147 templates/reports.html:1213
 #: templates/reports.html:1216 templates/rom_tools_settings.html:579
-#: templates/rom_tools_settings.html:582 templates/settings.html:2926
+#: templates/rom_tools_settings.html:582 templates/settings.html:2367
+#: templates/settings.html:2485 templates/settings.html:2926
 #: templates/settings.html:2930 templates/settings.html:2949
 #: templates/settings.html:2953 templates/settings.html:3551
 #: templates/settings.html:3555 templates/settings.html:3623
@@ -3902,7 +3903,8 @@ msgstr "已保存。下次按下游玩时生效。"
 msgid "Saving to the database…"
 msgstr "正在保存到数据库…"
 
-#: services/js_i18n_strings.py:978 templates/settings.html:4787
+#: services/js_i18n_strings.py:978 templates/settings.html:2726
+#: templates/settings.html:2764 templates/settings.html:4787
 #: templates/setup.html:483
 msgid "Saving..."
 msgstr "正在保存…"
@@ -7895,6 +7897,7 @@ msgid "Database Service"
 msgstr "数据库服务"
 
 #: templates/dashboard.html:585 templates/dashboard.html:1308
+#: templates/settings.html:2357
 msgid "Online"
 msgstr "在线"
 
@@ -7908,9 +7911,14 @@ msgstr "ES-DE 本地抓取器"
 msgid "Available"
 msgstr "可用"
 
-#: templates/dashboard.html:602 templates/dashboard.html:612
-#: templates/dashboard.html:632 templates/dashboard.html:642
-#: templates/game_imports.html:368
+#: templates/_settings_tabs/scraping.html:107
+#: templates/_settings_tabs/scraping.html:125
+#: templates/_settings_tabs/scraping.html:143
+#: templates/_settings_tabs/scraping.html:161
+#: templates/_settings_tabs/scraping.html:178 templates/dashboard.html:602
+#: templates/dashboard.html:612 templates/dashboard.html:632
+#: templates/dashboard.html:642 templates/game_imports.html:368
+#: templates/settings.html:2330 templates/settings.html:2444
 msgid "Checking..."
 msgstr "正在检查…"
 
@@ -7982,7 +7990,7 @@ msgstr "有 1 个已配置的 API 处于离线状态"
 msgid "{count} configured APIs are offline"
 msgstr "有 {count} 个已配置的 API 处于离线状态"
 
-#: templates/dashboard.html:1309
+#: templates/dashboard.html:1309 templates/settings.html:2360
 msgid "Offline"
 msgstr "离线"
 
@@ -8290,7 +8298,7 @@ msgid "From the AI, not checked against a review site."
 msgstr "来自 AI,未经评测网站核对。"
 
 #: templates/game_detail.html:274 templates/game_detail.html:279
-#: templates/game_detail.html:284
+#: templates/game_detail.html:284 templates/settings.html:2691
 msgid "AI"
 msgstr "AI"
 
@@ -8862,11 +8870,12 @@ msgstr ""
 msgid "Steam Credentials"
 msgstr "Steam 凭据"
 
-#: templates/game_imports.html:251
+#: templates/_settings_tabs/scraping.html:399 templates/game_imports.html:251
 msgid "Steam Web API Key"
 msgstr "Steam Web API 密钥"
 
-#: templates/_settings_tabs/account.html:239 templates/game_imports.html:251
+#: templates/_settings_tabs/account.html:239
+#: templates/_settings_tabs/scraping.html:404 templates/game_imports.html:251
 msgid "Your Steam Web API Key"
 msgstr "你的 Steam Web API 密钥"
 
@@ -9530,7 +9539,8 @@ msgstr "未找到匹配。"
 #: templates/settings.html:1942 templates/settings.html:1967
 #: templates/settings.html:1970 templates/settings.html:1990
 #: templates/settings.html:2034 templates/settings.html:2056
-#: templates/settings.html:2153 templates/settings.html:4832
+#: templates/settings.html:2153 templates/settings.html:2751
+#: templates/settings.html:2813 templates/settings.html:4832
 #: templates/steam_achievement_game.html:302
 #: templates/xbox_achievement_game.html:293
 #, python-brace-format
@@ -11248,7 +11258,8 @@ msgid "Detection method can be selected directly on the Duplicate Finder page."
 msgstr "检测方式可直接在重复项查找器页面中选择。"
 
 #: templates/_settings_tabs/customization.html:83
-#: templates/rom_tools_settings.html:433
+#: templates/_settings_tabs/scraping.html:255
+#: templates/rom_tools_settings.html:433 templates/settings.html:2755
 msgid "Save Settings"
 msgstr "保存设置"
 
@@ -11256,7 +11267,7 @@ msgstr "保存设置"
 msgid "Reset to Defaults"
 msgstr "恢复默认设置"
 
-#: templates/rom_tools_settings.html:439
+#: templates/rom_tools_settings.html:439 templates/settings.html:2744
 msgid "Settings saved successfully!"
 msgstr "设置已成功保存!"
 
@@ -11497,6 +11508,12 @@ msgstr "删除用户失败"
 msgid "Network error deleting user"
 msgstr "删除用户时出现网络错误"
 
+#: templates/settings.html:1438 templates/settings.html:1440
+#: templates/settings.html:1442 templates/settings.html:1444
+#, python-brace-format
+msgid "Current: {path}"
+msgstr "当前：{path}"
+
 #: templates/settings.html:1466
 msgid "Path settings saved!"
 msgstr "路径设置已保存!"
@@ -11696,7 +11713,7 @@ msgstr "计算失败:{error}"
 msgid "Failed to save scraper setting"
 msgstr "保存抓取设置失败"
 
-#: templates/settings.html:2312
+#: templates/_settings_tabs/scraping.html:173 templates/settings.html:2312
 msgid "AI Metadata"
 msgstr "AI 元数据"
 
@@ -11710,6 +11727,23 @@ msgstr "{name} 已启用"
 msgid "{name} disabled"
 msgstr "{name} 已停用"
 
+#: templates/settings.html:2383
+#, python-brace-format
+msgid "Resets in {time}"
+msgstr "{time}后重置"
+
+#: templates/settings.html:2383
+msgid "Resets soon"
+msgstr "即将重置"
+
+#: templates/settings.html:2389 templates/settings.html:2391
+#: templates/settings.html:2476 templates/settings.html:2500
+#: templates/settings.html:2597 templates/settings.html:2647
+#: templates/settings.html:2649
+#, python-brace-format
+msgid "Resets: {when}"
+msgstr "重置时间：{when}"
+
 #: templates/settings.html:2422
 msgid "Testing…"
 msgstr "正在测试…"
@@ -11722,6 +11756,179 @@ msgstr "密钥有效：%(provider)s 已使用 %(model)s 应答。"
 #: templates/settings.html:2432
 msgid "The key test failed."
 msgstr "密钥测试失败。"
+
+#: templates/settings.html:2445
+msgid "Checking rate limits..."
+msgstr "正在检查速率限制…"
+
+#: templates/settings.html:2474 templates/settings.html:2496
+msgid "remaining (monthly)"
+msgstr "剩余（每月）"
+
+#: templates/settings.html:2475 templates/settings.html:2481
+#: templates/settings.html:2483 templates/settings.html:2485
+#: templates/settings.html:2488
+#, python-brace-format
+msgid "Public key: {status}"
+msgstr "公钥：{status}"
+
+#: templates/settings.html:2477 templates/settings.html:2501
+#, python-brace-format
+msgid "Extra: {n}"
+msgstr "额外：{n}"
+
+#: templates/settings.html:2481
+msgid "Active"
+msgstr "有效"
+
+#: templates/settings.html:2483
+msgid "Allowance exhausted"
+msgstr "额度已用完"
+
+#: templates/settings.html:2488 templates/settings.html:2506
+#: templates/settings.html:2567 templates/settings.html:2573
+#: templates/settings.html:2607 templates/settings.html:2697
+#: templates/settings.html:2703
+msgid "Not configured"
+msgstr "未配置"
+
+#: templates/settings.html:2497 templates/settings.html:2506
+#, python-brace-format
+msgid "Private key: {status}"
+msgstr "私钥：{status}"
+
+#: templates/settings.html:2533
+msgid "Error checking"
+msgstr "检查出错"
+
+#: templates/settings.html:2539 templates/settings.html:2613
+msgid "Connection error"
+msgstr "连接错误"
+
+#: templates/settings.html:2554
+msgid "requests remaining today"
+msgstr "今日剩余请求数"
+
+#: templates/settings.html:2557
+#, python-brace-format
+msgid "Per-minute limit: {n}"
+msgstr "每分钟限制：{n}"
+
+#: templates/settings.html:2558
+#, python-brace-format
+msgid "Level: {level}"
+msgstr "等级：{level}"
+
+#: templates/settings.html:2559
+#, python-brace-format
+msgid "Threads: {n}"
+msgstr "线程数：{n}"
+
+#: templates/settings.html:2560
+#, python-brace-format
+msgid "Speed: {n} KB/s"
+msgstr "速度：{n} KB/秒"
+
+#: templates/settings.html:2561
+msgid "Resets daily at midnight (UTC)"
+msgstr "每天午夜（UTC）重置"
+
+#: templates/settings.html:2582
+#, python-brace-format
+msgid "{n} requests/second (OAuth token-based)"
+msgstr "每秒 {n} 个请求（基于 OAuth 令牌）"
+
+#: templates/settings.html:2583
+msgid "Token-based authentication — no daily quota"
+msgstr "基于令牌的身份验证 — 没有每日配额"
+
+#: templates/settings.html:2594
+msgid "requests remaining"
+msgstr "剩余请求数"
+
+#: templates/settings.html:2595
+#, python-brace-format
+msgid "{n} requests/month (free tier)"
+msgstr "每月 {n} 个请求（免费套餐）"
+
+#: templates/settings.html:2598
+msgid "No live usage tracking from API"
+msgstr "API 不提供实时用量"
+
+#: templates/settings.html:2622
+msgid "No published rate limits"
+msgstr "未公布速率限制"
+
+#: templates/settings.html:2641
+#, python-brace-format
+msgid "Requests: {used} remaining ({pct})"
+msgstr "请求：剩余 {used}（{pct}）"
+
+#: templates/settings.html:2660
+#, python-brace-format
+msgid "Tokens: {used} remaining ({pct})"
+msgstr "令牌：剩余 {used}（{pct}）"
+
+#: templates/settings.html:2669
+#, python-brace-format
+msgid "Input tokens: {used} remaining ({pct})"
+msgstr "输入令牌：剩余 {used}（{pct}）"
+
+#: templates/settings.html:2674
+#, python-brace-format
+msgid "Rate: {rpm} requests/min"
+msgstr "速率：每分钟 {rpm} 个请求"
+
+#: templates/settings.html:2674
+#, python-brace-format
+msgid "{rpd} requests/day (free tier)"
+msgstr "每天 {rpd} 个请求（免费套餐）"
+
+#: templates/settings.html:2679
+msgid "API online — no rate limit data returned"
+msgstr "API 在线 — 未返回速率限制数据"
+
+#: templates/settings.html:2692
+#, python-brace-format
+msgid "Model: {model}"
+msgstr "模型：{model}"
+
+#: templates/settings.html:2696 templates/settings.html:2702
+msgid "AI Provider"
+msgstr "AI 提供商"
+
+#: templates/settings.html:2709
+#, python-brace-format
+msgid "Last checked: {time}"
+msgstr "上次检查：{time}"
+
+#: templates/settings.html:2713
+msgid "No rate limit information available"
+msgstr "暂无速率限制信息"
+
+#: templates/_settings_tabs/scraping.html:263 templates/settings.html:2717
+msgid "Check Rate Limits"
+msgstr "检查速率限制"
+
+#: templates/settings.html:2739
+msgid "Settings saved! Checking scraper status..."
+msgstr "设置已保存！正在检查抓取器状态…"
+
+#: templates/settings.html:2801
+msgid "API keys saved! Checking scraper status..."
+msgstr "API 密钥已保存！正在检查抓取器状态…"
+
+#: templates/settings.html:2806
+msgid "API keys saved successfully!"
+msgstr "API 密钥保存成功！"
+
+#: templates/settings.html:2810
+msgid "Failed to save API keys"
+msgstr "API 密钥保存失败"
+
+#: templates/_settings_tabs/scraping.html:535 templates/settings.html:2817
+msgid "Save API Keys"
+msgstr "保存 API 密钥"
 
 #: templates/settings.html:2909
 msgid "Invalid Input"
@@ -12073,6 +12280,28 @@ msgstr "刷新名称失败"
 #: templates/settings.html:4464
 msgid "Failed to refresh system names"
 msgstr "刷新系统名称失败"
+
+#: templates/settings.html:4480
+msgid "Importing..."
+msgstr "正在导入…"
+
+#: templates/settings.html:4490
+msgid "Run \"Scan Library\" to update the database with the new logos."
+msgstr "请运行“扫描游戏库”，用新徽标更新数据库。"
+
+#: templates/settings.html:4495 templates/setup.html:375
+#: templates/setup.html:435
+msgid "An error occurred"
+msgstr "发生错误"
+
+#: templates/settings.html:4498
+#, python-brace-format
+msgid "Failed to import logos: {error}"
+msgstr "导入徽标失败：{error}"
+
+#: templates/_settings_tabs/scraping.html:58 templates/settings.html:4501
+msgid "Import System Logos"
+msgstr "导入系统徽标"
 
 #: templates/settings.html:4563
 msgid "No bulk scrape state found (all clear)"
@@ -12513,7 +12742,9 @@ msgstr "管理员"
 msgid "ES-DE"
 msgstr "ES-DE"
 
-#: templates/setup.html:20 templates/setup.html:212
+#: templates/_settings_tabs/scraping.html:8
+#: templates/_settings_tabs/scraping.html:275 templates/setup.html:20
+#: templates/setup.html:212
 msgid "API Keys"
 msgstr "API 密钥"
 
@@ -12667,7 +12898,7 @@ msgstr "当前:%(path)s"
 msgid "Example:"
 msgstr "示例："
 
-#: templates/setup.html:166
+#: templates/_settings_tabs/scraping.html:15 templates/setup.html:166
 msgid "ES-DE Integration"
 msgstr "ES-DE 集成"
 
@@ -12681,11 +12912,11 @@ msgstr "如果您使用 ES-DE(EmulationStation Desktop Edition),RetroDB 可以�
 msgid "I don't use ES-DE"
 msgstr "我不使用 ES-DE"
 
-#: templates/setup.html:182
+#: templates/_settings_tabs/scraping.html:19 templates/setup.html:182
 msgid "ES-DE Gamelists Path"
 msgstr "ES-DE 游戏列表路径"
 
-#: templates/setup.html:189
+#: templates/_settings_tabs/scraping.html:30 templates/setup.html:189
 msgid "ES-DE Downloaded Media Path"
 msgstr "ES-DE 已下载媒体路径"
 
@@ -12775,7 +13006,7 @@ msgstr "开发者专区的开发账号用户名"
 msgid "Developer Password"
 msgstr "开发商密码"
 
-#: templates/setup.html:263
+#: templates/_settings_tabs/scraping.html:372 templates/setup.html:263
 msgid "Password from developer area (NOT debug password)"
 msgstr "开发者专区的密码(不是调试密码)"
 
@@ -12812,10 +13043,6 @@ msgstr "完成设置"
 #: templates/setup.html:435
 msgid "Error:"
 msgstr "错误:"
-
-#: templates/setup.html:375 templates/setup.html:435
-msgid "An error occurred"
-msgstr "发生错误"
 
 #: templates/setup.html:392
 msgid "Parent folder"
@@ -14493,6 +14720,7 @@ msgid "RPCS3 Trophy Settings"
 msgstr "RPCS3 奖杯设置"
 
 #: templates/_settings_tabs/data.html:44
+#: templates/_settings_tabs/scraping.html:41
 msgid "RPCS3 Trophy Path"
 msgstr "RPCS3 奖杯路径"
 
@@ -14659,6 +14887,7 @@ msgid "Database path cannot be changed via UI"
 msgstr "数据库路径无法通过界面更改"
 
 #: templates/_settings_tabs/library.html:43
+#: templates/_settings_tabs/scraping.html:54
 msgid "Save Path Settings"
 msgstr "保存路径设置"
 
@@ -14806,6 +15035,324 @@ msgid ""
 "leaves it alone."
 msgstr "误标的光盘可以回到你的游戏列表。之后 Auto-Link 不会再动它。"
 
+#: templates/_settings_tabs/scraping.html:3
+msgid "Scraping settings"
+msgstr "抓取设置"
+
+#: templates/_settings_tabs/scraping.html:6
+msgid "Scraper"
+msgstr "抓取器"
+
+#: templates/_settings_tabs/scraping.html:22
+msgid "e.g. /home/user/.es-de/gamelists"
+msgstr "例如 /home/user/.es-de/gamelists"
+
+#: templates/_settings_tabs/scraping.html:33
+msgid "Leave blank to auto-detect from gamelists path"
+msgstr "留空则根据 gamelists 路径自动检测"
+
+#: templates/_settings_tabs/scraping.html:37
+msgid "Default: Loading..."
+msgstr "默认：正在加载…"
+
+#: templates/_settings_tabs/scraping.html:44
+msgid "e.g. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+msgstr "例如 /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+
+#: templates/_settings_tabs/scraping.html:62
+msgid "Import system logos from your ES-DE installation"
+msgstr "从你的 ES-DE 安装中导入系统徽标"
+
+#: templates/_settings_tabs/scraping.html:71
+msgid "Scraper Configuration"
+msgstr "抓取器配置"
+
+#: templates/_settings_tabs/scraping.html:75
+msgid ""
+"Enable/disable scrapers and drag to set priority order. The scraper at "
+"the top will be tried first during bulk scraping."
+msgstr "启用或停用抓取器，并拖动来设置优先顺序。批量抓取时，会先尝试最上面的抓取器。"
+
+#: templates/_settings_tabs/scraping.html:84
+#: templates/_settings_tabs/scraping.html:89
+msgid "Local"
+msgstr "本地"
+
+#: templates/_settings_tabs/scraping.html:85
+msgid "Import from your local gamelist.xml files"
+msgstr "从本地的 gamelist.xml 文件导入"
+
+#: templates/_settings_tabs/scraping.html:92
+msgid "Enable ES-DE local scraper"
+msgstr "启用 ES-DE 本地抓取器"
+
+#: templates/_settings_tabs/scraping.html:103
+msgid "Primary online scraper for game metadata"
+msgstr "游戏元数据的主要在线抓取器"
+
+#: templates/_settings_tabs/scraping.html:110
+msgid "Enable TheGamesDB scraper"
+msgstr "启用 TheGamesDB 抓取器"
+
+#: templates/_settings_tabs/scraping.html:121
+msgid "Comprehensive game database by Twitch"
+msgstr "由 Twitch 提供的综合游戏数据库"
+
+#: templates/_settings_tabs/scraping.html:128
+msgid "Enable IGDB scraper"
+msgstr "启用 IGDB 抓取器"
+
+#: templates/_settings_tabs/scraping.html:139
+msgid "Large game database with ESRB ratings and Metacritic scores"
+msgstr "大型游戏数据库，含 ESRB 分级和 Metacritic 评分"
+
+#: templates/_settings_tabs/scraping.html:146
+msgid "Enable RAWG.io scraper"
+msgstr "启用 RAWG.io 抓取器"
+
+#: templates/_settings_tabs/scraping.html:157
+msgid "Comprehensive retro gaming database with media (requires account)"
+msgstr "含媒体的综合复古游戏数据库（需要账号）"
+
+#: templates/_settings_tabs/scraping.html:164
+msgid "Enable ScreenScraper scraper"
+msgstr "启用 ScreenScraper 抓取器"
+
+#: templates/_settings_tabs/scraping.html:174
+msgid "AI-powered gap-filler (Gemini, OpenAI, or Claude) — fills text fields only"
+msgstr "AI 驱动的补全工具（Gemini、OpenAI 或 Claude）— 只填写文本字段"
+
+#: templates/_settings_tabs/scraping.html:181
+msgid "Enable AI metadata scraper"
+msgstr "启用 AI 元数据抓取器"
+
+#: templates/_settings_tabs/scraping.html:189
+msgid "Bulk Scrape Match Filtering"
+msgstr "批量抓取匹配筛选"
+
+#: templates/_settings_tabs/scraping.html:191
+msgid ""
+"Controls which search results are accepted during bulk scraping. Results "
+"that don't pass the filter are skipped."
+msgstr "控制批量抓取时接受哪些搜索结果。未通过筛选的结果会被跳过。"
+
+#: templates/_settings_tabs/scraping.html:196
+msgid "Use advanced criteria mode"
+msgstr "使用高级条件模式"
+
+#: templates/_settings_tabs/scraping.html:199
+msgid "Use advanced criteria instead of score threshold"
+msgstr "使用高级条件代替分数阈值"
+
+#: templates/_settings_tabs/scraping.html:205
+msgid "Minimum Match Score"
+msgstr "最低匹配分数"
+
+#: templates/_settings_tabs/scraping.html:213
+msgid "Score Range"
+msgstr "分数范围"
+
+#: templates/_settings_tabs/scraping.html:213
+msgid "What It Means"
+msgstr "含义"
+
+#: templates/_settings_tabs/scraping.html:216
+msgid "Exact title + platform + date + priority boost"
+msgstr "标题完全一致 + 平台 + 日期 + 优先加分"
+
+#: templates/_settings_tabs/scraping.html:217
+msgid "Exact title + some bonuses"
+msgstr "标题完全一致 + 部分加分"
+
+#: templates/_settings_tabs/scraping.html:218
+msgid "Close title match + platform confirmed"
+msgstr "标题接近 + 平台已确认"
+
+#: templates/_settings_tabs/scraping.html:219
+msgid "Partial match or missing platform"
+msgstr "部分匹配或缺少平台"
+
+#: templates/_settings_tabs/scraping.html:220
+msgid "Weak match — likely wrong game"
+msgstr "匹配度低 — 很可能是错误的游戏"
+
+#: templates/_settings_tabs/scraping.html:230
+msgid "Minimum Title Quality"
+msgstr "最低标题质量"
+
+#: templates/_settings_tabs/scraping.html:232
+#, python-format
+msgid "Exact (score ≥ %(n)s)"
+msgstr "完全一致（分数 ≥ %(n)s）"
+
+#: templates/_settings_tabs/scraping.html:233
+#, python-format
+msgid "Close (score ≥ %(n)s)"
+msgstr "接近（分数 ≥ %(n)s）"
+
+#: templates/_settings_tabs/scraping.html:234
+#, python-format
+msgid "Partial (score ≥ %(n)s)"
+msgstr "部分匹配（分数 ≥ %(n)s）"
+
+#: templates/_settings_tabs/scraping.html:235
+msgid "Any (no minimum)"
+msgstr "任意（无最低要求）"
+
+#: templates/_settings_tabs/scraping.html:239
+msgid "Platform Match Required"
+msgstr "必须匹配平台"
+
+#: templates/_settings_tabs/scraping.html:245
+msgid "Only accept results matching the game's system"
+msgstr "只接受与游戏所属系统相符的结果"
+
+#: templates/_settings_tabs/scraping.html:259
+msgid "Reset to Default"
+msgstr "恢复默认设置"
+
+#: templates/_settings_tabs/scraping.html:279
+msgid ""
+"Configure API keys for online scrapers. Keys are stored locally and never"
+" shared."
+msgstr "为在线抓取器配置 API 密钥。密钥只保存在本地，绝不会分享。"
+
+#: templates/_settings_tabs/scraping.html:286
+msgid "TheGamesDB — Public API Key"
+msgstr "TheGamesDB — 公钥"
+
+#: templates/_settings_tabs/scraping.html:287
+msgid "Get API Keys →"
+msgstr "获取 API 密钥 →"
+
+#: templates/_settings_tabs/scraping.html:291
+msgid "Per-IP rate limit — used as primary for scraping"
+msgstr "按 IP 限速 — 抓取时优先使用"
+
+#: templates/_settings_tabs/scraping.html:292
+msgid "Primary key. Per-IP rate limit, best for regular use."
+msgstr "主密钥。按 IP 限速，最适合日常使用。"
+
+#: templates/_settings_tabs/scraping.html:297
+msgid "TheGamesDB — Private API Key"
+msgstr "TheGamesDB — 私钥"
+
+#: templates/_settings_tabs/scraping.html:301
+msgid "Shared monthly pool — used as fallback"
+msgstr "共享的每月额度 — 用作备用"
+
+#: templates/_settings_tabs/scraping.html:302
+msgid "Fallback key. Shared monthly pool (~6,000 req/month)."
+msgstr "备用密钥。共享的每月额度（约 6,000 个请求/月）。"
+
+#: templates/_settings_tabs/scraping.html:308
+msgid "IGDB / Twitch Client ID"
+msgstr "IGDB / Twitch Client ID"
+
+#: templates/_settings_tabs/scraping.html:309
+msgid "Get Credentials →"
+msgstr "获取凭据 →"
+
+#: templates/_settings_tabs/scraping.html:313
+msgid "Enter Twitch Client ID"
+msgstr "输入 Twitch Client ID"
+
+#: templates/_settings_tabs/scraping.html:318
+msgid "IGDB / Twitch Client Secret"
+msgstr "IGDB / Twitch Client Secret"
+
+#: templates/_settings_tabs/scraping.html:322
+msgid "Enter Twitch Client Secret"
+msgstr "输入 Twitch Client Secret"
+
+#: templates/_settings_tabs/scraping.html:328
+msgid "RAWG.io API Key"
+msgstr "RAWG.io API 密钥"
+
+#: templates/_settings_tabs/scraping.html:329
+#: templates/_settings_tabs/scraping.html:389
+#: templates/_settings_tabs/scraping.html:400
+#: templates/_settings_tabs/scraping.html:448
+#: templates/_settings_tabs/scraping.html:481
+#: templates/_settings_tabs/scraping.html:503
+msgid "Get API Key →"
+msgstr "获取 API 密钥 →"
+
+#: templates/_settings_tabs/scraping.html:333
+msgid "Enter RAWG.io API key"
+msgstr "输入 RAWG.io API 密钥"
+
+#: templates/_settings_tabs/scraping.html:339
+msgid "ScreenScraper Username"
+msgstr "ScreenScraper 用户名"
+
+#: templates/_settings_tabs/scraping.html:340
+#: templates/_settings_tabs/scraping.html:379
+msgid "Register →"
+msgstr "注册 →"
+
+#: templates/_settings_tabs/scraping.html:344
+msgid "Your member account username"
+msgstr "你的会员账号用户名"
+
+#: templates/_settings_tabs/scraping.html:349
+msgid "ScreenScraper Password"
+msgstr "ScreenScraper 密码"
+
+#: templates/_settings_tabs/scraping.html:353
+msgid "Your member account login password"
+msgstr "你的会员账号登录密码"
+
+#: templates/_settings_tabs/scraping.html:358
+msgid "ScreenScraper Developer ID"
+msgstr "ScreenScraper 开发者 ID"
+
+#: templates/_settings_tabs/scraping.html:359
+msgid "Request Dev Access →"
+msgstr "申请开发者权限 →"
+
+#: templates/_settings_tabs/scraping.html:363
+msgid "Dev Username from developer area"
+msgstr "开发者区域的开发者用户名"
+
+#: templates/_settings_tabs/scraping.html:368
+msgid "ScreenScraper Developer Password"
+msgstr "ScreenScraper 开发者密码"
+
+#: templates/_settings_tabs/scraping.html:378
+msgid "RetroAchievements Username"
+msgstr "RetroAchievements 用户名"
+
+#: templates/_settings_tabs/scraping.html:383
+msgid "Your RetroAchievements username"
+msgstr "你的 RetroAchievements 用户名"
+
+#: templates/_settings_tabs/scraping.html:388
+msgid "RetroAchievements API Key"
+msgstr "RetroAchievements API 密钥"
+
+#: templates/_settings_tabs/scraping.html:393
+msgid "Web API Key from Settings > Keys"
+msgstr "来自 Settings > Keys 的 Web API Key"
+
+#: templates/_settings_tabs/scraping.html:408
+msgid "Steam ID"
+msgstr "Steam ID"
+
+#: templates/_settings_tabs/scraping.html:412
+msgid "17-digit Steam ID or custom URL name"
+msgstr "17 位 Steam ID 或自定义网址名称"
+
+#: templates/_settings_tabs/scraping.html:413
+msgid ""
+"Your 17-digit Steam ID (e.g. 76561198012345678) or custom URL name. Find "
+"it at <a href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener "
+"noreferrer\" style=\"color: var(--primary-cyan);\">steamid.io</a>"
+msgstr ""
+"你的 17 位 Steam ID（例如 76561198012345678）或自定义网址名称。可在 <a "
+"href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener noreferrer\""
+" style=\"color: var(--primary-cyan);\">steamid.io</a> 查询"
+
 #: templates/_settings_tabs/scraping.html:421
 #, python-format
 msgid ""
@@ -14816,9 +15363,90 @@ msgstr ""
 "每个人在<a href=\"%(profile_url)s\" style=\"color: var(--primary-cyan);\">设置 "
 "&gt; 我的资料</a>中添加自己的免费 OpenXBL 密钥。这里无需任何操作。"
 
+#: templates/_settings_tabs/scraping.html:427
+msgid "AI Metadata Provider"
+msgstr "AI 元数据提供商"
+
+#: templates/_settings_tabs/scraping.html:430
+msgid "-- Select Provider --"
+msgstr "-- 选择提供商 --"
+
+#: templates/_settings_tabs/scraping.html:435
+msgid ""
+"AI fills text-only fields (genre, structure, perspective, etc.). API "
+"usage costs apply."
+msgstr "AI 只填写文本字段（类型、结构、视角等）。使用 API 会产生费用。"
+
 #: templates/_settings_tabs/scraping.html:438
 msgid "Test saved AI key"
 msgstr "测试已保存的 AI 密钥"
+
+#: templates/_settings_tabs/scraping.html:447
+msgid "Gemini API Key"
+msgstr "Gemini API 密钥"
+
+#: templates/_settings_tabs/scraping.html:452
+msgid "Enter Google Gemini API key"
+msgstr "输入 Google Gemini API 密钥"
+
+#: templates/_settings_tabs/scraping.html:456
+msgid "Gemini Model"
+msgstr "Gemini 模型"
+
+#: templates/_settings_tabs/scraping.html:459
+#: templates/_settings_tabs/scraping.html:460
+#: templates/_settings_tabs/scraping.html:461
+#: templates/_settings_tabs/scraping.html:462
+#: templates/_settings_tabs/scraping.html:492
+#: templates/_settings_tabs/scraping.html:493
+#: templates/_settings_tabs/scraping.html:514
+#: templates/_settings_tabs/scraping.html:515
+#: templates/_settings_tabs/scraping.html:516
+#, python-format
+msgid "$%(inp)s in / $%(out)s out per 1M tokens"
+msgstr "每 100 万令牌：输入 $%(inp)s / 输出 $%(out)s"
+
+#: templates/_settings_tabs/scraping.html:459
+#: templates/_settings_tabs/scraping.html:492
+#: templates/_settings_tabs/scraping.html:514
+msgid "Recommended"
+msgstr "推荐"
+
+#: templates/_settings_tabs/scraping.html:467
+msgid "GCP Project ID"
+msgstr "GCP 项目 ID"
+
+#: templates/_settings_tabs/scraping.html:468
+msgid "Optional — required for Google Cloud billing credits"
+msgstr "可选 — 使用 Google Cloud 账单抵扣额度时需要"
+
+#: templates/_settings_tabs/scraping.html:472
+msgid "e.g. my-project-123456"
+msgstr "例如 my-project-123456"
+
+#: templates/_settings_tabs/scraping.html:480
+msgid "OpenAI API Key"
+msgstr "OpenAI API 密钥"
+
+#: templates/_settings_tabs/scraping.html:485
+msgid "Enter OpenAI API key"
+msgstr "输入 OpenAI API 密钥"
+
+#: templates/_settings_tabs/scraping.html:489
+msgid "OpenAI Model"
+msgstr "OpenAI 模型"
+
+#: templates/_settings_tabs/scraping.html:502
+msgid "Anthropic API Key"
+msgstr "Anthropic API 密钥"
+
+#: templates/_settings_tabs/scraping.html:507
+msgid "Enter Anthropic API key"
+msgstr "输入 Anthropic API 密钥"
+
+#: templates/_settings_tabs/scraping.html:511
+msgid "Claude Model"
+msgstr "Claude 模型"
 
 #: templates/_settings_tabs/scraping.html:521
 msgid "Let Claude search the web"

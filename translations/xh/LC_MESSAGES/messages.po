@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 07:39+0200\n"
+"POT-Creation-Date: 2026-11-15 08:01+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: xh\n"
@@ -2894,7 +2894,8 @@ msgstr "Faka indlela enye yefolda."
 #: templates/multi_disc_organizer.html:371 templates/reports.html:1144
 #: templates/reports.html:1147 templates/reports.html:1213
 #: templates/reports.html:1216 templates/rom_tools_settings.html:579
-#: templates/rom_tools_settings.html:582 templates/settings.html:2926
+#: templates/rom_tools_settings.html:582 templates/settings.html:2367
+#: templates/settings.html:2485 templates/settings.html:2926
 #: templates/settings.html:2930 templates/settings.html:2949
 #: templates/settings.html:2953 templates/settings.html:3551
 #: templates/settings.html:3555 templates/settings.html:3623
@@ -4009,7 +4010,8 @@ msgstr "Igciniwe. Iya kusebenza ngexesha elilandelayo xa ucofa u-Dlala."
 msgid "Saving to the database…"
 msgstr "Kugcinwa kwidatabase…"
 
-#: services/js_i18n_strings.py:978 templates/settings.html:4787
+#: services/js_i18n_strings.py:978 templates/settings.html:2726
+#: templates/settings.html:2764 templates/settings.html:4787
 #: templates/setup.html:483
 msgid "Saving..."
 msgstr "Iyagcina..."
@@ -8110,6 +8112,7 @@ msgid "Database Service"
 msgstr "Inkonzo ye-Database"
 
 #: templates/dashboard.html:585 templates/dashboard.html:1308
+#: templates/settings.html:2357
 msgid "Online"
 msgstr "Kwi-inthanethi"
 
@@ -8123,9 +8126,14 @@ msgstr "I-Scraper Yasekhaya yeES-DE"
 msgid "Available"
 msgstr "Iyafumaneka"
 
-#: templates/dashboard.html:602 templates/dashboard.html:612
-#: templates/dashboard.html:632 templates/dashboard.html:642
-#: templates/game_imports.html:368
+#: templates/_settings_tabs/scraping.html:107
+#: templates/_settings_tabs/scraping.html:125
+#: templates/_settings_tabs/scraping.html:143
+#: templates/_settings_tabs/scraping.html:161
+#: templates/_settings_tabs/scraping.html:178 templates/dashboard.html:602
+#: templates/dashboard.html:612 templates/dashboard.html:632
+#: templates/dashboard.html:642 templates/game_imports.html:368
+#: templates/settings.html:2330 templates/settings.html:2444
 msgid "Checking..."
 msgstr "Iyakhangela..."
 
@@ -8197,7 +8205,7 @@ msgstr "I-API e-1 emiselweyo ayikho kwi-intanethi"
 msgid "{count} configured APIs are offline"
 msgstr "Ii-API ezingu-{count} ezimiselweyo azikho kwi-intanethi"
 
-#: templates/dashboard.html:1309
+#: templates/dashboard.html:1309 templates/settings.html:2360
 msgid "Offline"
 msgstr "Ayikho kwi-intanethi"
 
@@ -8514,7 +8522,7 @@ msgid "From the AI, not checked against a review site."
 msgstr "Isuka kwi-AI, ayihlolwanga kwisiza semiphandle."
 
 #: templates/game_detail.html:274 templates/game_detail.html:279
-#: templates/game_detail.html:284
+#: templates/game_detail.html:284 templates/settings.html:2691
 msgid "AI"
 msgstr "AI"
 
@@ -9101,11 +9109,12 @@ msgstr ""
 msgid "Steam Credentials"
 msgstr "Iziqinisekiso zeSteam"
 
-#: templates/game_imports.html:251
+#: templates/_settings_tabs/scraping.html:399 templates/game_imports.html:251
 msgid "Steam Web API Key"
 msgstr "Isitshixo se-Steam Web API"
 
-#: templates/_settings_tabs/account.html:239 templates/game_imports.html:251
+#: templates/_settings_tabs/account.html:239
+#: templates/_settings_tabs/scraping.html:404 templates/game_imports.html:251
 msgid "Your Steam Web API Key"
 msgstr "Isitshixo sakho se-Steam Web API"
 
@@ -9796,7 +9805,8 @@ msgstr "Akukho kufanisa kufunyenweyo."
 #: templates/settings.html:1942 templates/settings.html:1967
 #: templates/settings.html:1970 templates/settings.html:1990
 #: templates/settings.html:2034 templates/settings.html:2056
-#: templates/settings.html:2153 templates/settings.html:4832
+#: templates/settings.html:2153 templates/settings.html:2751
+#: templates/settings.html:2813 templates/settings.html:4832
 #: templates/steam_achievement_game.html:302
 #: templates/xbox_achievement_game.html:293
 #, python-brace-format
@@ -11671,7 +11681,8 @@ msgid "Detection method can be selected directly on the Duplicate Finder page."
 msgstr "Indlela yokufumana inokukhethwa ngqo kwiphepha leMfumani yeDuplicate."
 
 #: templates/_settings_tabs/customization.html:83
-#: templates/rom_tools_settings.html:433
+#: templates/_settings_tabs/scraping.html:255
+#: templates/rom_tools_settings.html:433 templates/settings.html:2755
 msgid "Save Settings"
 msgstr "Gcina Iisethingi"
 
@@ -11679,7 +11690,7 @@ msgstr "Gcina Iisethingi"
 msgid "Reset to Defaults"
 msgstr "Buyisela Kokungagqibekanga"
 
-#: templates/rom_tools_settings.html:439
+#: templates/rom_tools_settings.html:439 templates/settings.html:2744
 msgid "Settings saved successfully!"
 msgstr "Iisethingi zigcinwe ngempumelelo!"
 
@@ -11932,6 +11943,12 @@ msgstr "Koyekile ukucima umsebenzisi"
 msgid "Network error deleting user"
 msgstr "Impazamo yenethiwekhi ekususeni umsebenzisi"
 
+#: templates/settings.html:1438 templates/settings.html:1440
+#: templates/settings.html:1442 templates/settings.html:1444
+#, python-brace-format
+msgid "Current: {path}"
+msgstr "Okwangoku: {path}"
+
 #: templates/settings.html:1466
 msgid "Path settings saved!"
 msgstr "Iisethingi zendlela zigciniwe!"
@@ -12134,7 +12151,7 @@ msgstr "Ukubala akuphumelelanga: {error}"
 msgid "Failed to save scraper setting"
 msgstr "Ukugcina isethingi yekhupha akuphumelelanga"
 
-#: templates/settings.html:2312
+#: templates/_settings_tabs/scraping.html:173 templates/settings.html:2312
 msgid "AI Metadata"
 msgstr "Metadata ye-AI"
 
@@ -12148,6 +12165,23 @@ msgstr "{name} ivuliwe"
 msgid "{name} disabled"
 msgstr "{name} ivaliwe"
 
+#: templates/settings.html:2383
+#, python-brace-format
+msgid "Resets in {time}"
+msgstr "Iseta kwakhona kwi-{time}"
+
+#: templates/settings.html:2383
+msgid "Resets soon"
+msgstr "Iseta kwakhona kungekudala"
+
+#: templates/settings.html:2389 templates/settings.html:2391
+#: templates/settings.html:2476 templates/settings.html:2500
+#: templates/settings.html:2597 templates/settings.html:2647
+#: templates/settings.html:2649
+#, python-brace-format
+msgid "Resets: {when}"
+msgstr "Iseta kwakhona: {when}"
+
 #: templates/settings.html:2422
 msgid "Testing…"
 msgstr "Iyavavanya…"
@@ -12160,6 +12194,179 @@ msgstr "Isitshixo siyasebenza: %(provider)s iphendule isebenzisa %(model)s."
 #: templates/settings.html:2432
 msgid "The key test failed."
 msgstr "Uvavanyo lwesitshixo aluphumelelanga."
+
+#: templates/settings.html:2445
+msgid "Checking rate limits..."
+msgstr "Iyakhangela imida yezicelo..."
+
+#: templates/settings.html:2474 templates/settings.html:2496
+msgid "remaining (monthly)"
+msgstr "eseleyo (inyanga nganye)"
+
+#: templates/settings.html:2475 templates/settings.html:2481
+#: templates/settings.html:2483 templates/settings.html:2485
+#: templates/settings.html:2488
+#, python-brace-format
+msgid "Public key: {status}"
+msgstr "Isitshixo sikawonke-wonke: {status}"
+
+#: templates/settings.html:2477 templates/settings.html:2501
+#, python-brace-format
+msgid "Extra: {n}"
+msgstr "Ezongezelelweyo: {n}"
+
+#: templates/settings.html:2481
+msgid "Active"
+msgstr "Iyasebenza"
+
+#: templates/settings.html:2483
+msgid "Allowance exhausted"
+msgstr "Imvume iphelile"
+
+#: templates/settings.html:2488 templates/settings.html:2506
+#: templates/settings.html:2567 templates/settings.html:2573
+#: templates/settings.html:2607 templates/settings.html:2697
+#: templates/settings.html:2703
+msgid "Not configured"
+msgstr "Ayilungiselelwanga"
+
+#: templates/settings.html:2497 templates/settings.html:2506
+#, python-brace-format
+msgid "Private key: {status}"
+msgstr "Isitshixo sangasese: {status}"
+
+#: templates/settings.html:2533
+msgid "Error checking"
+msgstr "Impazamo ekukhangeleni"
+
+#: templates/settings.html:2539 templates/settings.html:2613
+msgid "Connection error"
+msgstr "Impazamo yoqhagamshelo"
+
+#: templates/settings.html:2554
+msgid "requests remaining today"
+msgstr "izicelo ezisele namhlanje"
+
+#: templates/settings.html:2557
+#, python-brace-format
+msgid "Per-minute limit: {n}"
+msgstr "Umda womzuzu: {n}"
+
+#: templates/settings.html:2558
+#, python-brace-format
+msgid "Level: {level}"
+msgstr "Inqanaba: {level}"
+
+#: templates/settings.html:2559
+#, python-brace-format
+msgid "Threads: {n}"
+msgstr "Imisonto: {n}"
+
+#: templates/settings.html:2560
+#, python-brace-format
+msgid "Speed: {n} KB/s"
+msgstr "Isantya: {n} KB/s"
+
+#: templates/settings.html:2561
+msgid "Resets daily at midnight (UTC)"
+msgstr "Iseta kwakhona yonke imihla ngezinga lobusuku (UTC)"
+
+#: templates/settings.html:2582
+#, python-brace-format
+msgid "{n} requests/second (OAuth token-based)"
+msgstr "{n} izicelo ngesekhondi (ngetoken ye-OAuth)"
+
+#: templates/settings.html:2583
+msgid "Token-based authentication — no daily quota"
+msgstr "Ungqinisiso ngetoken — akukho mda wemihla ngemihla"
+
+#: templates/settings.html:2594
+msgid "requests remaining"
+msgstr "izicelo ezisele"
+
+#: templates/settings.html:2595
+#, python-brace-format
+msgid "{n} requests/month (free tier)"
+msgstr "{n} izicelo ngenyanga (inqanaba lasimahla)"
+
+#: templates/settings.html:2598
+msgid "No live usage tracking from API"
+msgstr "Akukho ngqinelwano lokusetyenziswa lwangoku kwi-API"
+
+#: templates/settings.html:2622
+msgid "No published rate limits"
+msgstr "Akukho mida epapashiweyo"
+
+#: templates/settings.html:2641
+#, python-brace-format
+msgid "Requests: {used} remaining ({pct})"
+msgstr "Izicelo: zisele {used} ({pct})"
+
+#: templates/settings.html:2660
+#, python-brace-format
+msgid "Tokens: {used} remaining ({pct})"
+msgstr "Iitoken: zisele {used} ({pct})"
+
+#: templates/settings.html:2669
+#, python-brace-format
+msgid "Input tokens: {used} remaining ({pct})"
+msgstr "Iitoken zokufaka: zisele {used} ({pct})"
+
+#: templates/settings.html:2674
+#, python-brace-format
+msgid "Rate: {rpm} requests/min"
+msgstr "Izinga: {rpm} izicelo/umzuzu"
+
+#: templates/settings.html:2674
+#, python-brace-format
+msgid "{rpd} requests/day (free tier)"
+msgstr "{rpd} izicelo ngosuku (inqanaba lasimahla)"
+
+#: templates/settings.html:2679
+msgid "API online — no rate limit data returned"
+msgstr "I-API iku-intanethi — akukho datha yemida ibuyisiweyo"
+
+#: templates/settings.html:2692
+#, python-brace-format
+msgid "Model: {model}"
+msgstr "Imodeli: {model}"
+
+#: templates/settings.html:2696 templates/settings.html:2702
+msgid "AI Provider"
+msgstr "Umboneleli we-AI"
+
+#: templates/settings.html:2709
+#, python-brace-format
+msgid "Last checked: {time}"
+msgstr "Ukukhangela kokugqibela: {time}"
+
+#: templates/settings.html:2713
+msgid "No rate limit information available"
+msgstr "Akukho ngcaciso yemida yezicelo"
+
+#: templates/_settings_tabs/scraping.html:263 templates/settings.html:2717
+msgid "Check Rate Limits"
+msgstr "Khangela Imida Yezicelo"
+
+#: templates/settings.html:2739
+msgid "Settings saved! Checking scraper status..."
+msgstr "Iisethingi zigciniwe! Iyakhangela imeko ye-scraper..."
+
+#: templates/settings.html:2801
+msgid "API keys saved! Checking scraper status..."
+msgstr "Izitshixo ze-API zigciniwe! Iyakhangela imeko ye-scraper..."
+
+#: templates/settings.html:2806
+msgid "API keys saved successfully!"
+msgstr "Izitshixo ze-API zigciniwe ngempumelelo!"
+
+#: templates/settings.html:2810
+msgid "Failed to save API keys"
+msgstr "Koyekile ukugcina izitshixo ze-API"
+
+#: templates/_settings_tabs/scraping.html:535 templates/settings.html:2817
+msgid "Save API Keys"
+msgstr "Gcina Izitshixo ze-API"
 
 #: templates/settings.html:2909
 msgid "Invalid Input"
@@ -12532,6 +12739,28 @@ msgstr " Koyekile ukuhlaziya amagama"
 #: templates/settings.html:4464
 msgid "Failed to refresh system names"
 msgstr "Koyekile ukuhlaziya amagama eesistim"
+
+#: templates/settings.html:4480
+msgid "Importing..."
+msgstr "Iyangenisa..."
+
+#: templates/settings.html:4490
+msgid "Run \"Scan Library\" to update the database with the new logos."
+msgstr "Qhuba u-\"Scan Library\" ukuhlaziya i-database ngee-logo ezintsha."
+
+#: templates/settings.html:4495 templates/setup.html:375
+#: templates/setup.html:435
+msgid "An error occurred"
+msgstr "Kwenzeke impazamo"
+
+#: templates/settings.html:4498
+#, python-brace-format
+msgid "Failed to import logos: {error}"
+msgstr "Koyekile ukungenisa ii-logo: {error}"
+
+#: templates/_settings_tabs/scraping.html:58 templates/settings.html:4501
+msgid "Import System Logos"
+msgstr "Ngenisa Ii-logo Zesistim"
 
 #: templates/settings.html:4563
 msgid "No bulk scrape state found (all clear)"
@@ -13008,7 +13237,9 @@ msgstr "Umlawuli"
 msgid "ES-DE"
 msgstr "ES-DE"
 
-#: templates/setup.html:20 templates/setup.html:212
+#: templates/_settings_tabs/scraping.html:8
+#: templates/_settings_tabs/scraping.html:275 templates/setup.html:20
+#: templates/setup.html:212
 msgid "API Keys"
 msgstr "Izitshixo ze-API"
 
@@ -13180,7 +13411,7 @@ msgstr "Okwangoku: %(path)s"
 msgid "Example:"
 msgstr "Umzekelo:"
 
-#: templates/setup.html:166
+#: templates/_settings_tabs/scraping.html:15 templates/setup.html:166
 msgid "ES-DE Integration"
 msgstr "Ukudityaniswa kwe-ES-DE"
 
@@ -13196,11 +13427,11 @@ msgstr ""
 msgid "I don't use ES-DE"
 msgstr "Andisebenzisi i-ES-DE"
 
-#: templates/setup.html:182
+#: templates/_settings_tabs/scraping.html:19 templates/setup.html:182
 msgid "ES-DE Gamelists Path"
 msgstr "Indlela yeGamelists ze-ES-DE"
 
-#: templates/setup.html:189
+#: templates/_settings_tabs/scraping.html:30 templates/setup.html:189
 msgid "ES-DE Downloaded Media Path"
 msgstr "Indlela yeMidiya Ekhutshelweyo ye-ES-DE"
 
@@ -13292,7 +13523,7 @@ msgstr "Igama lomsebenzisi lomphuhlisi elisuka kwindawo yabaphuhlisi"
 msgid "Developer Password"
 msgstr "Iphasiwedi yoMphuhlisi"
 
-#: templates/setup.html:263
+#: templates/_settings_tabs/scraping.html:372 templates/setup.html:263
 msgid "Password from developer area (NOT debug password)"
 msgstr "Iphasiwedi esuka kwindawo yabaphuhlisi (ASIYONA iphasiwedi yokulungisa)"
 
@@ -13333,10 +13564,6 @@ msgstr "Gqiba Ukuseta"
 #: templates/setup.html:435
 msgid "Error:"
 msgstr "Impazamo:"
-
-#: templates/setup.html:375 templates/setup.html:435
-msgid "An error occurred"
-msgstr "Kwenzeke impazamo"
 
 #: templates/setup.html:392
 msgid "Parent folder"
@@ -15104,6 +15331,7 @@ msgid "RPCS3 Trophy Settings"
 msgstr "Iisethingi Zeendebe zeRPCS3"
 
 #: templates/_settings_tabs/data.html:44
+#: templates/_settings_tabs/scraping.html:41
 msgid "RPCS3 Trophy Path"
 msgstr "Indlela Yeendebe zeRPCS3"
 
@@ -15284,6 +15512,7 @@ msgid "Database path cannot be changed via UI"
 msgstr "Indlela ye-database ayinako ukutshintshwa nge-UI"
 
 #: templates/_settings_tabs/library.html:43
+#: templates/_settings_tabs/scraping.html:54
 msgid "Save Path Settings"
 msgstr "Gcina Iisethingi Zendlela"
 
@@ -15447,6 +15676,333 @@ msgstr ""
 "Idiski ephawulwe ngempazamo ingabuyela kuluhlu lwakho lwemidlalo. Emva "
 "koko i-Auto-Link iyayiyeka."
 
+#: templates/_settings_tabs/scraping.html:3
+msgid "Scraping settings"
+msgstr "Iisethingi zokukhupha"
+
+#: templates/_settings_tabs/scraping.html:6
+msgid "Scraper"
+msgstr "I-scraper"
+
+#: templates/_settings_tabs/scraping.html:22
+msgid "e.g. /home/user/.es-de/gamelists"
+msgstr "umz. /home/user/.es-de/gamelists"
+
+#: templates/_settings_tabs/scraping.html:33
+msgid "Leave blank to auto-detect from gamelists path"
+msgstr "Yiyeke ingenanto ukuze ifunde ngokuzenzekelayo kwindlela ye-gamelists"
+
+#: templates/_settings_tabs/scraping.html:37
+msgid "Default: Loading..."
+msgstr "Okungagqibekanga: Iyalayisha..."
+
+#: templates/_settings_tabs/scraping.html:44
+msgid "e.g. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+msgstr "umz. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+
+#: templates/_settings_tabs/scraping.html:62
+msgid "Import system logos from your ES-DE installation"
+msgstr "Ngenisa ii-logo zesistim kufakelo lwakho lwe-ES-DE"
+
+#: templates/_settings_tabs/scraping.html:71
+msgid "Scraper Configuration"
+msgstr "Uqwalaselo lwe-Scraper"
+
+#: templates/_settings_tabs/scraping.html:75
+msgid ""
+"Enable/disable scrapers and drag to set priority order. The scraper at "
+"the top will be tried first during bulk scraping."
+msgstr ""
+"Nika amandla okanye cima ii-scraper, uze uzitsale ukuseta ulandelelwano. "
+"I-scraper ephezulu iza kuzanywa kuqala ekukhupheni ngobuninzi."
+
+#: templates/_settings_tabs/scraping.html:84
+#: templates/_settings_tabs/scraping.html:89
+msgid "Local"
+msgstr "Yasekhaya"
+
+#: templates/_settings_tabs/scraping.html:85
+msgid "Import from your local gamelist.xml files"
+msgstr "Ngenisa kumafayile akho e-gamelist.xml asekhaya"
+
+#: templates/_settings_tabs/scraping.html:92
+msgid "Enable ES-DE local scraper"
+msgstr "Nika amandla i-scraper yasekhaya ye-ES-DE"
+
+#: templates/_settings_tabs/scraping.html:103
+msgid "Primary online scraper for game metadata"
+msgstr "I-scraper ephambili ekwi-intanethi yedatha yemidlalo"
+
+#: templates/_settings_tabs/scraping.html:110
+msgid "Enable TheGamesDB scraper"
+msgstr "Nika amandla i-scraper ye-TheGamesDB"
+
+#: templates/_settings_tabs/scraping.html:121
+msgid "Comprehensive game database by Twitch"
+msgstr "Idatha yemidlalo ebanzi evela kwi-Twitch"
+
+#: templates/_settings_tabs/scraping.html:128
+msgid "Enable IGDB scraper"
+msgstr "Nika amandla i-scraper ye-IGDB"
+
+#: templates/_settings_tabs/scraping.html:139
+msgid "Large game database with ESRB ratings and Metacritic scores"
+msgstr "Idatha yemidlalo emikhulu ene-ESRB ratings kunye nezikolo ze-Metacritic"
+
+#: templates/_settings_tabs/scraping.html:146
+msgid "Enable RAWG.io scraper"
+msgstr "Nika amandla i-scraper ye-RAWG.io"
+
+#: templates/_settings_tabs/scraping.html:157
+msgid "Comprehensive retro gaming database with media (requires account)"
+msgstr "Idatha ebanzi yemidlalo yakudala enemidiya (idinga i-akhawunti)"
+
+#: templates/_settings_tabs/scraping.html:164
+msgid "Enable ScreenScraper scraper"
+msgstr "Nika amandla i-scraper ye-ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:174
+msgid "AI-powered gap-filler (Gemini, OpenAI, or Claude) — fills text fields only"
+msgstr ""
+"Umncedisi osebenzisa i-AI (Gemini, OpenAI okanye Claude) — uzalisa "
+"kuphela iindawo zokubhala"
+
+#: templates/_settings_tabs/scraping.html:181
+msgid "Enable AI metadata scraper"
+msgstr "Nika amandla i-scraper yemetadata ye-AI"
+
+#: templates/_settings_tabs/scraping.html:189
+msgid "Bulk Scrape Match Filtering"
+msgstr "Ukuhluza Ukufana Kokukhupha Ngobuninzi"
+
+#: templates/_settings_tabs/scraping.html:191
+msgid ""
+"Controls which search results are accepted during bulk scraping. Results "
+"that don't pass the filter are skipped."
+msgstr ""
+"Ulawula ukuba ngawaphi amathuba afunyenwe amkelekileyo ekukhupheni "
+"ngobuninzi. Amathuba angaphumeleliyo ekuhluzeni ayatsitywa."
+
+#: templates/_settings_tabs/scraping.html:196
+msgid "Use advanced criteria mode"
+msgstr "Sebenzisa imo yemiqathango ephucukileyo"
+
+#: templates/_settings_tabs/scraping.html:199
+msgid "Use advanced criteria instead of score threshold"
+msgstr "Sebenzisa imiqathango ephucukileyo endaweni yomgangatho wesikolo"
+
+#: templates/_settings_tabs/scraping.html:205
+msgid "Minimum Match Score"
+msgstr "Isikolo Esincinci Sokufana"
+
+#: templates/_settings_tabs/scraping.html:213
+msgid "Score Range"
+msgstr "Uluhlu Lwesikolo"
+
+#: templates/_settings_tabs/scraping.html:213
+msgid "What It Means"
+msgstr "Ithetha Ntoni"
+
+#: templates/_settings_tabs/scraping.html:216
+msgid "Exact title + platform + date + priority boost"
+msgstr "Isihloko esifanayo ncam + iplatifomu + umhla + inkxaso"
+
+#: templates/_settings_tabs/scraping.html:217
+msgid "Exact title + some bonuses"
+msgstr "Isihloko esifanayo ncam + ezinye iibhonasi"
+
+#: templates/_settings_tabs/scraping.html:218
+msgid "Close title match + platform confirmed"
+msgstr "Isihloko esisondeleyo + iplatifomu iqinisekisiwe"
+
+#: templates/_settings_tabs/scraping.html:219
+msgid "Partial match or missing platform"
+msgstr "Ukufana kwenxalenye okanye iplatifomu ayikho"
+
+#: templates/_settings_tabs/scraping.html:220
+msgid "Weak match — likely wrong game"
+msgstr "Ukufana okulambathayo — mhlawumbi ngumdlalo ongachanekanga"
+
+#: templates/_settings_tabs/scraping.html:230
+msgid "Minimum Title Quality"
+msgstr "Umgangatho Omncinci Wesihloko"
+
+#: templates/_settings_tabs/scraping.html:232
+#, python-format
+msgid "Exact (score ≥ %(n)s)"
+msgstr "Ncam (isikolo ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:233
+#, python-format
+msgid "Close (score ≥ %(n)s)"
+msgstr "Isondele (isikolo ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:234
+#, python-format
+msgid "Partial (score ≥ %(n)s)"
+msgstr "Inxalenye (isikolo ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:235
+msgid "Any (no minimum)"
+msgstr "Nayiphi na (akukho mncinci)"
+
+#: templates/_settings_tabs/scraping.html:239
+msgid "Platform Match Required"
+msgstr "Kufuneka Iplatifomu Ifane"
+
+#: templates/_settings_tabs/scraping.html:245
+msgid "Only accept results matching the game's system"
+msgstr "Yamkela kuphela amathuba ahambelana nesistim yomdlalo"
+
+#: templates/_settings_tabs/scraping.html:259
+msgid "Reset to Default"
+msgstr "Buyisela Kokungagqibekanga"
+
+#: templates/_settings_tabs/scraping.html:279
+msgid ""
+"Configure API keys for online scrapers. Keys are stored locally and never"
+" shared."
+msgstr ""
+"Qwalasela izitshixo ze-API zee-scraper ezikwi-intanethi. Izitshixo "
+"zigcinwa apha kwikhompyuter yakho, azabelwani."
+
+#: templates/_settings_tabs/scraping.html:286
+msgid "TheGamesDB — Public API Key"
+msgstr "TheGamesDB — Isitshixo se-API Sikawonke-wonke"
+
+#: templates/_settings_tabs/scraping.html:287
+msgid "Get API Keys →"
+msgstr "Fumana Izitshixo ze-API →"
+
+#: templates/_settings_tabs/scraping.html:291
+msgid "Per-IP rate limit — used as primary for scraping"
+msgstr "Umda we-IP nganye — usetyenziswa njengophambili ekukhupheni"
+
+#: templates/_settings_tabs/scraping.html:292
+msgid "Primary key. Per-IP rate limit, best for regular use."
+msgstr "Isitshixo esiphambili. Umda we-IP nganye, silungele ukusetyenziswa rhoqo."
+
+#: templates/_settings_tabs/scraping.html:297
+msgid "TheGamesDB — Private API Key"
+msgstr "TheGamesDB — Isitshixo se-API Sangasese"
+
+#: templates/_settings_tabs/scraping.html:301
+msgid "Shared monthly pool — used as fallback"
+msgstr "Ichibi lenyanga elabelwanayo — lisetyenziswa njengendawo yokubuya"
+
+#: templates/_settings_tabs/scraping.html:302
+msgid "Fallback key. Shared monthly pool (~6,000 req/month)."
+msgstr "Isitshixo sokubuya. Ichibi lenyanga elabelwanayo (~6,000 izicelo/inyanga)."
+
+#: templates/_settings_tabs/scraping.html:308
+msgid "IGDB / Twitch Client ID"
+msgstr "IGDB / Twitch Client ID"
+
+#: templates/_settings_tabs/scraping.html:309
+msgid "Get Credentials →"
+msgstr "Fumana Iinkcukacha →"
+
+#: templates/_settings_tabs/scraping.html:313
+msgid "Enter Twitch Client ID"
+msgstr "Faka i-Twitch Client ID"
+
+#: templates/_settings_tabs/scraping.html:318
+msgid "IGDB / Twitch Client Secret"
+msgstr "IGDB / Twitch Client Secret"
+
+#: templates/_settings_tabs/scraping.html:322
+msgid "Enter Twitch Client Secret"
+msgstr "Faka i-Twitch Client Secret"
+
+#: templates/_settings_tabs/scraping.html:328
+msgid "RAWG.io API Key"
+msgstr "Isitshixo se-API se-RAWG.io"
+
+#: templates/_settings_tabs/scraping.html:329
+#: templates/_settings_tabs/scraping.html:389
+#: templates/_settings_tabs/scraping.html:400
+#: templates/_settings_tabs/scraping.html:448
+#: templates/_settings_tabs/scraping.html:481
+#: templates/_settings_tabs/scraping.html:503
+msgid "Get API Key →"
+msgstr "Fumana Isitshixo se-API →"
+
+#: templates/_settings_tabs/scraping.html:333
+msgid "Enter RAWG.io API key"
+msgstr "Faka isitshixo se-API se-RAWG.io"
+
+#: templates/_settings_tabs/scraping.html:339
+msgid "ScreenScraper Username"
+msgstr "Igama Lomsebenzisi we-ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:340
+#: templates/_settings_tabs/scraping.html:379
+msgid "Register →"
+msgstr "Bhalisa →"
+
+#: templates/_settings_tabs/scraping.html:344
+msgid "Your member account username"
+msgstr "Igama lomsebenzisi le-akhawunti yakho yelungu"
+
+#: templates/_settings_tabs/scraping.html:349
+msgid "ScreenScraper Password"
+msgstr "Iphasiwedi ye-ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:353
+msgid "Your member account login password"
+msgstr "Iphasiwedi yokungena kwi-akhawunti yakho yelungu"
+
+#: templates/_settings_tabs/scraping.html:358
+msgid "ScreenScraper Developer ID"
+msgstr "I-ID Yomphuhlisi we-ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:359
+msgid "Request Dev Access →"
+msgstr "Cela Ukufikelela Komphuhlisi →"
+
+#: templates/_settings_tabs/scraping.html:363
+msgid "Dev Username from developer area"
+msgstr "Igama lomsebenzisi lomphuhlisi elisuka kwindawo yabaphuhlisi"
+
+#: templates/_settings_tabs/scraping.html:368
+msgid "ScreenScraper Developer Password"
+msgstr "Iphasiwedi Yomphuhlisi we-ScreenScraper"
+
+#: templates/_settings_tabs/scraping.html:378
+msgid "RetroAchievements Username"
+msgstr "Igama Lomsebenzisi we-RetroAchievements"
+
+#: templates/_settings_tabs/scraping.html:383
+msgid "Your RetroAchievements username"
+msgstr "Igama lakho lomsebenzisi we-RetroAchievements"
+
+#: templates/_settings_tabs/scraping.html:388
+msgid "RetroAchievements API Key"
+msgstr "Isitshixo se-API se-RetroAchievements"
+
+#: templates/_settings_tabs/scraping.html:393
+msgid "Web API Key from Settings > Keys"
+msgstr "Web API Key ukusuka kwi-Settings > Keys"
+
+#: templates/_settings_tabs/scraping.html:408
+msgid "Steam ID"
+msgstr "Steam ID"
+
+#: templates/_settings_tabs/scraping.html:412
+msgid "17-digit Steam ID or custom URL name"
+msgstr "I-Steam ID eneendawo ezili-17 okanye igama le-URL lakho"
+
+#: templates/_settings_tabs/scraping.html:413
+msgid ""
+"Your 17-digit Steam ID (e.g. 76561198012345678) or custom URL name. Find "
+"it at <a href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener "
+"noreferrer\" style=\"color: var(--primary-cyan);\">steamid.io</a>"
+msgstr ""
+"I-Steam ID yakho eneendawo ezili-17 (umz. 76561198012345678) okanye igama"
+" le-URL lakho. Yifumane kwi-<a href=\"https://steamid.io\" "
+"target=\"_blank\" rel=\"noopener noreferrer\" style=\"color: var"
+"(--primary-cyan);\">steamid.io</a>"
+
 #: templates/_settings_tabs/scraping.html:421
 #, python-format
 msgid ""
@@ -15458,9 +16014,92 @@ msgstr ""
 "href=\"%(profile_url)s\" style=\"color: var(--primary-cyan);\">Iisethingi"
 " &gt; Iprofayile Yam</a>. Akukho nto ifunekayo apha."
 
+#: templates/_settings_tabs/scraping.html:427
+msgid "AI Metadata Provider"
+msgstr "Umboneleli Wemetadata ye-AI"
+
+#: templates/_settings_tabs/scraping.html:430
+msgid "-- Select Provider --"
+msgstr "-- Khetha Umboneleli --"
+
+#: templates/_settings_tabs/scraping.html:435
+msgid ""
+"AI fills text-only fields (genre, structure, perspective, etc.). API "
+"usage costs apply."
+msgstr ""
+"I-AI izalisa kuphela iindawo zokubhala (udidi, ubume, ukujonga, "
+"njl.njl.). Kukho iindleko zokusebenzisa i-API."
+
 #: templates/_settings_tabs/scraping.html:438
 msgid "Test saved AI key"
 msgstr "Vavanya isitshixo se-AI esigciniweyo"
+
+#: templates/_settings_tabs/scraping.html:447
+msgid "Gemini API Key"
+msgstr "Isitshixo se-API se-Gemini"
+
+#: templates/_settings_tabs/scraping.html:452
+msgid "Enter Google Gemini API key"
+msgstr "Faka isitshixo se-API se-Google Gemini"
+
+#: templates/_settings_tabs/scraping.html:456
+msgid "Gemini Model"
+msgstr "Imodeli ye-Gemini"
+
+#: templates/_settings_tabs/scraping.html:459
+#: templates/_settings_tabs/scraping.html:460
+#: templates/_settings_tabs/scraping.html:461
+#: templates/_settings_tabs/scraping.html:462
+#: templates/_settings_tabs/scraping.html:492
+#: templates/_settings_tabs/scraping.html:493
+#: templates/_settings_tabs/scraping.html:514
+#: templates/_settings_tabs/scraping.html:515
+#: templates/_settings_tabs/scraping.html:516
+#, python-format
+msgid "$%(inp)s in / $%(out)s out per 1M tokens"
+msgstr "$%(inp)s ukungena / $%(out)s ukuphuma ngeetoken ezizi-1M"
+
+#: templates/_settings_tabs/scraping.html:459
+#: templates/_settings_tabs/scraping.html:492
+#: templates/_settings_tabs/scraping.html:514
+msgid "Recommended"
+msgstr "Kucetyiswa"
+
+#: templates/_settings_tabs/scraping.html:467
+msgid "GCP Project ID"
+msgstr "I-ID Yeprojekthi ye-GCP"
+
+#: templates/_settings_tabs/scraping.html:468
+msgid "Optional — required for Google Cloud billing credits"
+msgstr "Akunyanzelekanga — iyafuneka kwiikhredithi zebhili ye-Google Cloud"
+
+#: templates/_settings_tabs/scraping.html:472
+msgid "e.g. my-project-123456"
+msgstr "umz. my-project-123456"
+
+#: templates/_settings_tabs/scraping.html:480
+msgid "OpenAI API Key"
+msgstr "Isitshixo se-API se-OpenAI"
+
+#: templates/_settings_tabs/scraping.html:485
+msgid "Enter OpenAI API key"
+msgstr "Faka isitshixo se-API se-OpenAI"
+
+#: templates/_settings_tabs/scraping.html:489
+msgid "OpenAI Model"
+msgstr "Imodeli ye-OpenAI"
+
+#: templates/_settings_tabs/scraping.html:502
+msgid "Anthropic API Key"
+msgstr "Isitshixo se-API se-Anthropic"
+
+#: templates/_settings_tabs/scraping.html:507
+msgid "Enter Anthropic API key"
+msgstr "Faka isitshixo se-API se-Anthropic"
+
+#: templates/_settings_tabs/scraping.html:511
+msgid "Claude Model"
+msgstr "Imodeli ye-Claude"
 
 #: templates/_settings_tabs/scraping.html:521
 msgid "Let Claude search the web"

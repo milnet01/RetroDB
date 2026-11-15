@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 07:39+0200\n"
+"POT-Creation-Date: 2026-11-15 08:01+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: tr\n"
@@ -2877,7 +2877,8 @@ msgstr "Tek bir klasör yolu girin."
 #: templates/multi_disc_organizer.html:371 templates/reports.html:1144
 #: templates/reports.html:1147 templates/reports.html:1213
 #: templates/reports.html:1216 templates/rom_tools_settings.html:579
-#: templates/rom_tools_settings.html:582 templates/settings.html:2926
+#: templates/rom_tools_settings.html:582 templates/settings.html:2367
+#: templates/settings.html:2485 templates/settings.html:2926
 #: templates/settings.html:2930 templates/settings.html:2949
 #: templates/settings.html:2953 templates/settings.html:3551
 #: templates/settings.html:3555 templates/settings.html:3623
@@ -3989,7 +3990,8 @@ msgstr "Kaydedildi. Bir dahaki sefer Oyna'ya bastığınızda uygulanır."
 msgid "Saving to the database…"
 msgstr "Veritabanına kaydediliyor…"
 
-#: services/js_i18n_strings.py:978 templates/settings.html:4787
+#: services/js_i18n_strings.py:978 templates/settings.html:2726
+#: templates/settings.html:2764 templates/settings.html:4787
 #: templates/setup.html:483
 msgid "Saving..."
 msgstr "Kaydediliyor..."
@@ -8083,6 +8085,7 @@ msgid "Database Service"
 msgstr "Veritabanı Servisi"
 
 #: templates/dashboard.html:585 templates/dashboard.html:1308
+#: templates/settings.html:2357
 msgid "Online"
 msgstr "Çevrimiçi"
 
@@ -8096,9 +8099,14 @@ msgstr "ES-DE Yerel Kazıyıcı"
 msgid "Available"
 msgstr "Kullanılabilir"
 
-#: templates/dashboard.html:602 templates/dashboard.html:612
-#: templates/dashboard.html:632 templates/dashboard.html:642
-#: templates/game_imports.html:368
+#: templates/_settings_tabs/scraping.html:107
+#: templates/_settings_tabs/scraping.html:125
+#: templates/_settings_tabs/scraping.html:143
+#: templates/_settings_tabs/scraping.html:161
+#: templates/_settings_tabs/scraping.html:178 templates/dashboard.html:602
+#: templates/dashboard.html:612 templates/dashboard.html:632
+#: templates/dashboard.html:642 templates/game_imports.html:368
+#: templates/settings.html:2330 templates/settings.html:2444
 msgid "Checking..."
 msgstr "Kontrol ediliyor..."
 
@@ -8170,7 +8178,7 @@ msgstr "Yapılandırılmış 1 API çevrimdışı"
 msgid "{count} configured APIs are offline"
 msgstr "Yapılandırılmış {count} API çevrimdışı"
 
-#: templates/dashboard.html:1309
+#: templates/dashboard.html:1309 templates/settings.html:2360
 msgid "Offline"
 msgstr "Çevrimdışı"
 
@@ -8487,7 +8495,7 @@ msgid "From the AI, not checked against a review site."
 msgstr "Yapay zekadan geldi, bir inceleme sitesiyle karşılaştırılmadı."
 
 #: templates/game_detail.html:274 templates/game_detail.html:279
-#: templates/game_detail.html:284
+#: templates/game_detail.html:284 templates/settings.html:2691
 msgid "AI"
 msgstr "YZ"
 
@@ -9076,11 +9084,12 @@ msgstr ""
 msgid "Steam Credentials"
 msgstr "Steam Kimlik Bilgileri"
 
-#: templates/game_imports.html:251
+#: templates/_settings_tabs/scraping.html:399 templates/game_imports.html:251
 msgid "Steam Web API Key"
 msgstr "Steam Web API Anahtarı"
 
-#: templates/_settings_tabs/account.html:239 templates/game_imports.html:251
+#: templates/_settings_tabs/account.html:239
+#: templates/_settings_tabs/scraping.html:404 templates/game_imports.html:251
 msgid "Your Steam Web API Key"
 msgstr "Steam Web API Anahtarınız"
 
@@ -9768,7 +9777,8 @@ msgstr "Eşleşme bulunamadı."
 #: templates/settings.html:1942 templates/settings.html:1967
 #: templates/settings.html:1970 templates/settings.html:1990
 #: templates/settings.html:2034 templates/settings.html:2056
-#: templates/settings.html:2153 templates/settings.html:4832
+#: templates/settings.html:2153 templates/settings.html:2751
+#: templates/settings.html:2813 templates/settings.html:4832
 #: templates/steam_achievement_game.html:302
 #: templates/xbox_achievement_game.html:293
 #, python-brace-format
@@ -11625,7 +11635,8 @@ msgid "Detection method can be selected directly on the Duplicate Finder page."
 msgstr "Algılama yöntemi doğrudan Yinelenen Bulucu sayfasında seçilebilir."
 
 #: templates/_settings_tabs/customization.html:83
-#: templates/rom_tools_settings.html:433
+#: templates/_settings_tabs/scraping.html:255
+#: templates/rom_tools_settings.html:433 templates/settings.html:2755
 msgid "Save Settings"
 msgstr "Ayarları Kaydet"
 
@@ -11633,7 +11644,7 @@ msgstr "Ayarları Kaydet"
 msgid "Reset to Defaults"
 msgstr "Varsayılanlara Sıfırla"
 
-#: templates/rom_tools_settings.html:439
+#: templates/rom_tools_settings.html:439 templates/settings.html:2744
 msgid "Settings saved successfully!"
 msgstr "Ayarlar başarıyla kaydedildi!"
 
@@ -11888,6 +11899,12 @@ msgstr "Kullanıcı silinemedi"
 msgid "Network error deleting user"
 msgstr "Kullanıcı silinirken ağ hatası oluştu"
 
+#: templates/settings.html:1438 templates/settings.html:1440
+#: templates/settings.html:1442 templates/settings.html:1444
+#, python-brace-format
+msgid "Current: {path}"
+msgstr "Şu an: {path}"
+
 #: templates/settings.html:1466
 msgid "Path settings saved!"
 msgstr "Yol ayarları kaydedildi!"
@@ -12090,7 +12107,7 @@ msgstr "Hesaplama başarısız: {error}"
 msgid "Failed to save scraper setting"
 msgstr "Kazıyıcı ayarı kaydedilemedi"
 
-#: templates/settings.html:2312
+#: templates/_settings_tabs/scraping.html:173 templates/settings.html:2312
 msgid "AI Metadata"
 msgstr "Yapay Zekâ Meta Verileri"
 
@@ -12104,6 +12121,23 @@ msgstr "{name} etkinleştirildi"
 msgid "{name} disabled"
 msgstr "{name} devre dışı bırakıldı"
 
+#: templates/settings.html:2383
+#, python-brace-format
+msgid "Resets in {time}"
+msgstr "{time} içinde sıfırlanır"
+
+#: templates/settings.html:2383
+msgid "Resets soon"
+msgstr "Yakında sıfırlanır"
+
+#: templates/settings.html:2389 templates/settings.html:2391
+#: templates/settings.html:2476 templates/settings.html:2500
+#: templates/settings.html:2597 templates/settings.html:2647
+#: templates/settings.html:2649
+#, python-brace-format
+msgid "Resets: {when}"
+msgstr "Sıfırlanma: {when}"
+
 #: templates/settings.html:2422
 msgid "Testing…"
 msgstr "Test ediliyor…"
@@ -12116,6 +12150,179 @@ msgstr "Anahtar çalışıyor: %(provider)s, %(model)s ile yanıt verdi."
 #: templates/settings.html:2432
 msgid "The key test failed."
 msgstr "Anahtar testi başarısız oldu."
+
+#: templates/settings.html:2445
+msgid "Checking rate limits..."
+msgstr "Sınırlar kontrol ediliyor..."
+
+#: templates/settings.html:2474 templates/settings.html:2496
+msgid "remaining (monthly)"
+msgstr "kalan (aylık)"
+
+#: templates/settings.html:2475 templates/settings.html:2481
+#: templates/settings.html:2483 templates/settings.html:2485
+#: templates/settings.html:2488
+#, python-brace-format
+msgid "Public key: {status}"
+msgstr "Herkese açık anahtar: {status}"
+
+#: templates/settings.html:2477 templates/settings.html:2501
+#, python-brace-format
+msgid "Extra: {n}"
+msgstr "Ekstra: {n}"
+
+#: templates/settings.html:2481
+msgid "Active"
+msgstr "Etkin"
+
+#: templates/settings.html:2483
+msgid "Allowance exhausted"
+msgstr "Hak tükendi"
+
+#: templates/settings.html:2488 templates/settings.html:2506
+#: templates/settings.html:2567 templates/settings.html:2573
+#: templates/settings.html:2607 templates/settings.html:2697
+#: templates/settings.html:2703
+msgid "Not configured"
+msgstr "Yapılandırılmadı"
+
+#: templates/settings.html:2497 templates/settings.html:2506
+#, python-brace-format
+msgid "Private key: {status}"
+msgstr "Özel anahtar: {status}"
+
+#: templates/settings.html:2533
+msgid "Error checking"
+msgstr "Kontrol hatası"
+
+#: templates/settings.html:2539 templates/settings.html:2613
+msgid "Connection error"
+msgstr "Bağlantı hatası"
+
+#: templates/settings.html:2554
+msgid "requests remaining today"
+msgstr "bugün kalan istek"
+
+#: templates/settings.html:2557
+#, python-brace-format
+msgid "Per-minute limit: {n}"
+msgstr "Dakika sınırı: {n}"
+
+#: templates/settings.html:2558
+#, python-brace-format
+msgid "Level: {level}"
+msgstr "Seviye: {level}"
+
+#: templates/settings.html:2559
+#, python-brace-format
+msgid "Threads: {n}"
+msgstr "İş parçacığı: {n}"
+
+#: templates/settings.html:2560
+#, python-brace-format
+msgid "Speed: {n} KB/s"
+msgstr "Hız: {n} KB/sn"
+
+#: templates/settings.html:2561
+msgid "Resets daily at midnight (UTC)"
+msgstr "Her gün gece yarısı (UTC) sıfırlanır"
+
+#: templates/settings.html:2582
+#, python-brace-format
+msgid "{n} requests/second (OAuth token-based)"
+msgstr "{n} istek/saniye (OAuth belirteci tabanlı)"
+
+#: templates/settings.html:2583
+msgid "Token-based authentication — no daily quota"
+msgstr "Belirteçle kimlik doğrulama: günlük kota yok"
+
+#: templates/settings.html:2594
+msgid "requests remaining"
+msgstr "kalan istek"
+
+#: templates/settings.html:2595
+#, python-brace-format
+msgid "{n} requests/month (free tier)"
+msgstr "{n} istek/ay (ücretsiz plan)"
+
+#: templates/settings.html:2598
+msgid "No live usage tracking from API"
+msgstr "API'den canlı kullanım bilgisi alınamıyor"
+
+#: templates/settings.html:2622
+msgid "No published rate limits"
+msgstr "Yayımlanmış sınır yok"
+
+#: templates/settings.html:2641
+#, python-brace-format
+msgid "Requests: {used} remaining ({pct})"
+msgstr "İstekler: {used} kaldı ({pct})"
+
+#: templates/settings.html:2660
+#, python-brace-format
+msgid "Tokens: {used} remaining ({pct})"
+msgstr "Belirteçler: {used} kaldı ({pct})"
+
+#: templates/settings.html:2669
+#, python-brace-format
+msgid "Input tokens: {used} remaining ({pct})"
+msgstr "Girdi belirteçleri: {used} kaldı ({pct})"
+
+#: templates/settings.html:2674
+#, python-brace-format
+msgid "Rate: {rpm} requests/min"
+msgstr "Hız: {rpm} istek/dk"
+
+#: templates/settings.html:2674
+#, python-brace-format
+msgid "{rpd} requests/day (free tier)"
+msgstr "{rpd} istek/gün (ücretsiz plan)"
+
+#: templates/settings.html:2679
+msgid "API online — no rate limit data returned"
+msgstr "API çevrimiçi: sınır bilgisi gelmedi"
+
+#: templates/settings.html:2692
+#, python-brace-format
+msgid "Model: {model}"
+msgstr "Model: {model}"
+
+#: templates/settings.html:2696 templates/settings.html:2702
+msgid "AI Provider"
+msgstr "Yapay Zeka Sağlayıcısı"
+
+#: templates/settings.html:2709
+#, python-brace-format
+msgid "Last checked: {time}"
+msgstr "Son kontrol: {time}"
+
+#: templates/settings.html:2713
+msgid "No rate limit information available"
+msgstr "Sınır bilgisi yok"
+
+#: templates/_settings_tabs/scraping.html:263 templates/settings.html:2717
+msgid "Check Rate Limits"
+msgstr "Sınırları Kontrol Et"
+
+#: templates/settings.html:2739
+msgid "Settings saved! Checking scraper status..."
+msgstr "Ayarlar kaydedildi! Kazıyıcı durumu kontrol ediliyor..."
+
+#: templates/settings.html:2801
+msgid "API keys saved! Checking scraper status..."
+msgstr "API anahtarları kaydedildi! Kazıyıcı durumu kontrol ediliyor..."
+
+#: templates/settings.html:2806
+msgid "API keys saved successfully!"
+msgstr "API anahtarları kaydedildi!"
+
+#: templates/settings.html:2810
+msgid "Failed to save API keys"
+msgstr "API anahtarları kaydedilemedi"
+
+#: templates/_settings_tabs/scraping.html:535 templates/settings.html:2817
+msgid "Save API Keys"
+msgstr "API Anahtarlarını Kaydet"
 
 #: templates/settings.html:2909
 msgid "Invalid Input"
@@ -12490,6 +12697,30 @@ msgstr "Adlar yenilenemedi"
 #: templates/settings.html:4464
 msgid "Failed to refresh system names"
 msgstr "Sistem adları yenilenemedi"
+
+#: templates/settings.html:4480
+msgid "Importing..."
+msgstr "İçe aktarılıyor..."
+
+#: templates/settings.html:4490
+msgid "Run \"Scan Library\" to update the database with the new logos."
+msgstr ""
+"Yeni logolarla veritabanını güncellemek için \"Kütüphaneyi Tara\" "
+"seçeneğini çalıştırın."
+
+#: templates/settings.html:4495 templates/setup.html:375
+#: templates/setup.html:435
+msgid "An error occurred"
+msgstr "Bir hata oluştu"
+
+#: templates/settings.html:4498
+#, python-brace-format
+msgid "Failed to import logos: {error}"
+msgstr "Logolar içe aktarılamadı: {error}"
+
+#: templates/_settings_tabs/scraping.html:58 templates/settings.html:4501
+msgid "Import System Logos"
+msgstr "Sistem Logolarını İçe Aktar"
 
 #: templates/settings.html:4563
 msgid "No bulk scrape state found (all clear)"
@@ -12966,7 +13197,9 @@ msgstr "Yönetici"
 msgid "ES-DE"
 msgstr "ES-DE"
 
-#: templates/setup.html:20 templates/setup.html:212
+#: templates/_settings_tabs/scraping.html:8
+#: templates/_settings_tabs/scraping.html:275 templates/setup.html:20
+#: templates/setup.html:212
 msgid "API Keys"
 msgstr "API Anahtarları"
 
@@ -13136,7 +13369,7 @@ msgstr "Geçerli: %(path)s"
 msgid "Example:"
 msgstr "Örnek:"
 
-#: templates/setup.html:166
+#: templates/_settings_tabs/scraping.html:15 templates/setup.html:166
 msgid "ES-DE Integration"
 msgstr "ES-DE Entegrasyonu"
 
@@ -13152,11 +13385,11 @@ msgstr ""
 msgid "I don't use ES-DE"
 msgstr "ES-DE kullanmıyorum"
 
-#: templates/setup.html:182
+#: templates/_settings_tabs/scraping.html:19 templates/setup.html:182
 msgid "ES-DE Gamelists Path"
 msgstr "ES-DE Oyun Listeleri Yolu"
 
-#: templates/setup.html:189
+#: templates/_settings_tabs/scraping.html:30 templates/setup.html:189
 msgid "ES-DE Downloaded Media Path"
 msgstr "ES-DE İndirilen Medya Yolu"
 
@@ -13250,7 +13483,7 @@ msgstr "Geliştirici alanındaki kullanıcı adı"
 msgid "Developer Password"
 msgstr "Geliştirici parolası"
 
-#: templates/setup.html:263
+#: templates/_settings_tabs/scraping.html:372 templates/setup.html:263
 msgid "Password from developer area (NOT debug password)"
 msgstr "Geliştirici alanındaki parola (hata ayıklama parolası DEĞİL)"
 
@@ -13289,10 +13522,6 @@ msgstr "Kurulumu tamamla"
 #: templates/setup.html:435
 msgid "Error:"
 msgstr "Hata:"
-
-#: templates/setup.html:375 templates/setup.html:435
-msgid "An error occurred"
-msgstr "Bir hata oluştu"
 
 #: templates/setup.html:392
 msgid "Parent folder"
@@ -15070,6 +15299,7 @@ msgid "RPCS3 Trophy Settings"
 msgstr "RPCS3 Kupa Ayarları"
 
 #: templates/_settings_tabs/data.html:44
+#: templates/_settings_tabs/scraping.html:41
 msgid "RPCS3 Trophy Path"
 msgstr "RPCS3 Kupa Yolu"
 
@@ -15249,6 +15479,7 @@ msgid "Database path cannot be changed via UI"
 msgstr "Veritabanı yolu arayüz üzerinden değiştirilemez"
 
 #: templates/_settings_tabs/library.html:43
+#: templates/_settings_tabs/scraping.html:54
 msgid "Save Path Settings"
 msgstr "Yol Ayarlarını Kaydet"
 
@@ -15410,6 +15641,333 @@ msgstr ""
 "Yanlışlıkla işaretlenen bir disk oyun listelerinize geri dönebilir. Auto-"
 "Link sonra ona dokunmaz."
 
+#: templates/_settings_tabs/scraping.html:3
+msgid "Scraping settings"
+msgstr "Kazıma ayarları"
+
+#: templates/_settings_tabs/scraping.html:6
+msgid "Scraper"
+msgstr "Kazıyıcı"
+
+#: templates/_settings_tabs/scraping.html:22
+msgid "e.g. /home/user/.es-de/gamelists"
+msgstr "örn. /home/user/.es-de/gamelists"
+
+#: templates/_settings_tabs/scraping.html:33
+msgid "Leave blank to auto-detect from gamelists path"
+msgstr "Gamelist yolundan otomatik algılamak için boş bırakın"
+
+#: templates/_settings_tabs/scraping.html:37
+msgid "Default: Loading..."
+msgstr "Varsayılan: yükleniyor..."
+
+#: templates/_settings_tabs/scraping.html:44
+msgid "e.g. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+msgstr "örn. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+
+#: templates/_settings_tabs/scraping.html:62
+msgid "Import system logos from your ES-DE installation"
+msgstr "Sistem logolarını ES-DE kurulumunuzdan içe aktarın"
+
+#: templates/_settings_tabs/scraping.html:71
+msgid "Scraper Configuration"
+msgstr "Kazıyıcı Yapılandırması"
+
+#: templates/_settings_tabs/scraping.html:75
+msgid ""
+"Enable/disable scrapers and drag to set priority order. The scraper at "
+"the top will be tried first during bulk scraping."
+msgstr ""
+"Kazıyıcıları açıp kapatın ve öncelik sırasını sürükleyerek belirleyin. "
+"Toplu kazımada en üstteki kazıyıcı ilk denenir."
+
+#: templates/_settings_tabs/scraping.html:84
+#: templates/_settings_tabs/scraping.html:89
+msgid "Local"
+msgstr "Yerel"
+
+#: templates/_settings_tabs/scraping.html:85
+msgid "Import from your local gamelist.xml files"
+msgstr "Yerel gamelist.xml dosyalarınızdan içe aktarın"
+
+#: templates/_settings_tabs/scraping.html:92
+msgid "Enable ES-DE local scraper"
+msgstr "ES-DE yerel kazıyıcısını etkinleştir"
+
+#: templates/_settings_tabs/scraping.html:103
+msgid "Primary online scraper for game metadata"
+msgstr "Oyun bilgileri için ana çevrimiçi kazıyıcı"
+
+#: templates/_settings_tabs/scraping.html:110
+msgid "Enable TheGamesDB scraper"
+msgstr "TheGamesDB kazıyıcısını etkinleştir"
+
+#: templates/_settings_tabs/scraping.html:121
+msgid "Comprehensive game database by Twitch"
+msgstr "Twitch'in kapsamlı oyun veritabanı"
+
+#: templates/_settings_tabs/scraping.html:128
+msgid "Enable IGDB scraper"
+msgstr "IGDB kazıyıcısını etkinleştir"
+
+#: templates/_settings_tabs/scraping.html:139
+msgid "Large game database with ESRB ratings and Metacritic scores"
+msgstr "ESRB derecelendirmeleri ve Metacritic puanları olan geniş oyun veritabanı"
+
+#: templates/_settings_tabs/scraping.html:146
+msgid "Enable RAWG.io scraper"
+msgstr "RAWG.io kazıyıcısını etkinleştir"
+
+#: templates/_settings_tabs/scraping.html:157
+msgid "Comprehensive retro gaming database with media (requires account)"
+msgstr "Medya içeren kapsamlı retro oyun veritabanı (hesap gerekir)"
+
+#: templates/_settings_tabs/scraping.html:164
+msgid "Enable ScreenScraper scraper"
+msgstr "ScreenScraper kazıyıcısını etkinleştir"
+
+#: templates/_settings_tabs/scraping.html:174
+msgid "AI-powered gap-filler (Gemini, OpenAI, or Claude) — fills text fields only"
+msgstr ""
+"Yapay zeka ile boşlukları doldurma (Gemini, OpenAI veya Claude): yalnızca"
+" metin alanlarını doldurur"
+
+#: templates/_settings_tabs/scraping.html:181
+msgid "Enable AI metadata scraper"
+msgstr "Yapay zeka üstveri kazıyıcısını etkinleştir"
+
+#: templates/_settings_tabs/scraping.html:189
+msgid "Bulk Scrape Match Filtering"
+msgstr "Toplu Kazıma Eşleşme Filtresi"
+
+#: templates/_settings_tabs/scraping.html:191
+msgid ""
+"Controls which search results are accepted during bulk scraping. Results "
+"that don't pass the filter are skipped."
+msgstr ""
+"Toplu kazıma sırasında hangi arama sonuçlarının kabul edileceğini "
+"belirler. Filtreyi geçemeyen sonuçlar atlanır."
+
+#: templates/_settings_tabs/scraping.html:196
+msgid "Use advanced criteria mode"
+msgstr "Gelişmiş ölçüt modunu kullan"
+
+#: templates/_settings_tabs/scraping.html:199
+msgid "Use advanced criteria instead of score threshold"
+msgstr "Puan eşiği yerine gelişmiş ölçütleri kullan"
+
+#: templates/_settings_tabs/scraping.html:205
+msgid "Minimum Match Score"
+msgstr "En Düşük Eşleşme Puanı"
+
+#: templates/_settings_tabs/scraping.html:213
+msgid "Score Range"
+msgstr "Puan Aralığı"
+
+#: templates/_settings_tabs/scraping.html:213
+msgid "What It Means"
+msgstr "Anlamı"
+
+#: templates/_settings_tabs/scraping.html:216
+msgid "Exact title + platform + date + priority boost"
+msgstr "Tam başlık + platform + tarih + öncelik bonusu"
+
+#: templates/_settings_tabs/scraping.html:217
+msgid "Exact title + some bonuses"
+msgstr "Tam başlık + bazı bonuslar"
+
+#: templates/_settings_tabs/scraping.html:218
+msgid "Close title match + platform confirmed"
+msgstr "Yakın başlık eşleşmesi + platform doğrulandı"
+
+#: templates/_settings_tabs/scraping.html:219
+msgid "Partial match or missing platform"
+msgstr "Kısmi eşleşme veya platform eksik"
+
+#: templates/_settings_tabs/scraping.html:220
+msgid "Weak match — likely wrong game"
+msgstr "Zayıf eşleşme: büyük olasılıkla yanlış oyun"
+
+#: templates/_settings_tabs/scraping.html:230
+msgid "Minimum Title Quality"
+msgstr "En Düşük Başlık Kalitesi"
+
+#: templates/_settings_tabs/scraping.html:232
+#, python-format
+msgid "Exact (score ≥ %(n)s)"
+msgstr "Tam (puan ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:233
+#, python-format
+msgid "Close (score ≥ %(n)s)"
+msgstr "Yakın (puan ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:234
+#, python-format
+msgid "Partial (score ≥ %(n)s)"
+msgstr "Kısmi (puan ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:235
+msgid "Any (no minimum)"
+msgstr "Herhangi (en düşük sınır yok)"
+
+#: templates/_settings_tabs/scraping.html:239
+msgid "Platform Match Required"
+msgstr "Platform Eşleşmesi Gerekli"
+
+#: templates/_settings_tabs/scraping.html:245
+msgid "Only accept results matching the game's system"
+msgstr "Yalnızca oyunun sistemiyle eşleşen sonuçları kabul et"
+
+#: templates/_settings_tabs/scraping.html:259
+msgid "Reset to Default"
+msgstr "Varsayılana Sıfırla"
+
+#: templates/_settings_tabs/scraping.html:279
+msgid ""
+"Configure API keys for online scrapers. Keys are stored locally and never"
+" shared."
+msgstr ""
+"Çevrimiçi kazıyıcılar için API anahtarlarını girin. Anahtarlar yerel "
+"olarak saklanır ve asla paylaşılmaz."
+
+#: templates/_settings_tabs/scraping.html:286
+msgid "TheGamesDB — Public API Key"
+msgstr "TheGamesDB: Herkese Açık API Anahtarı"
+
+#: templates/_settings_tabs/scraping.html:287
+msgid "Get API Keys →"
+msgstr "API Anahtarlarını Al →"
+
+#: templates/_settings_tabs/scraping.html:291
+msgid "Per-IP rate limit — used as primary for scraping"
+msgstr "IP başına sınır: kazıma için birincil olarak kullanılır"
+
+#: templates/_settings_tabs/scraping.html:292
+msgid "Primary key. Per-IP rate limit, best for regular use."
+msgstr "Birincil anahtar. IP başına sınır, düzenli kullanım için en iyisi."
+
+#: templates/_settings_tabs/scraping.html:297
+msgid "TheGamesDB — Private API Key"
+msgstr "TheGamesDB: Özel API Anahtarı"
+
+#: templates/_settings_tabs/scraping.html:301
+msgid "Shared monthly pool — used as fallback"
+msgstr "Paylaşılan aylık havuz: yedek olarak kullanılır"
+
+#: templates/_settings_tabs/scraping.html:302
+msgid "Fallback key. Shared monthly pool (~6,000 req/month)."
+msgstr "Yedek anahtar. Paylaşılan aylık havuz (~6.000 istek/ay)."
+
+#: templates/_settings_tabs/scraping.html:308
+msgid "IGDB / Twitch Client ID"
+msgstr "IGDB / Twitch İstemci Kimliği"
+
+#: templates/_settings_tabs/scraping.html:309
+msgid "Get Credentials →"
+msgstr "Kimlik Bilgilerini Al →"
+
+#: templates/_settings_tabs/scraping.html:313
+msgid "Enter Twitch Client ID"
+msgstr "Twitch İstemci Kimliğini girin"
+
+#: templates/_settings_tabs/scraping.html:318
+msgid "IGDB / Twitch Client Secret"
+msgstr "IGDB / Twitch İstemci Gizli Anahtarı"
+
+#: templates/_settings_tabs/scraping.html:322
+msgid "Enter Twitch Client Secret"
+msgstr "Twitch İstemci Gizli Anahtarını girin"
+
+#: templates/_settings_tabs/scraping.html:328
+msgid "RAWG.io API Key"
+msgstr "RAWG.io API Anahtarı"
+
+#: templates/_settings_tabs/scraping.html:329
+#: templates/_settings_tabs/scraping.html:389
+#: templates/_settings_tabs/scraping.html:400
+#: templates/_settings_tabs/scraping.html:448
+#: templates/_settings_tabs/scraping.html:481
+#: templates/_settings_tabs/scraping.html:503
+msgid "Get API Key →"
+msgstr "API Anahtarını Al →"
+
+#: templates/_settings_tabs/scraping.html:333
+msgid "Enter RAWG.io API key"
+msgstr "RAWG.io API anahtarını girin"
+
+#: templates/_settings_tabs/scraping.html:339
+msgid "ScreenScraper Username"
+msgstr "ScreenScraper Kullanıcı Adı"
+
+#: templates/_settings_tabs/scraping.html:340
+#: templates/_settings_tabs/scraping.html:379
+msgid "Register →"
+msgstr "Kaydol →"
+
+#: templates/_settings_tabs/scraping.html:344
+msgid "Your member account username"
+msgstr "Üye hesabınızın kullanıcı adı"
+
+#: templates/_settings_tabs/scraping.html:349
+msgid "ScreenScraper Password"
+msgstr "ScreenScraper Şifresi"
+
+#: templates/_settings_tabs/scraping.html:353
+msgid "Your member account login password"
+msgstr "Üye hesabınızın giriş şifresi"
+
+#: templates/_settings_tabs/scraping.html:358
+msgid "ScreenScraper Developer ID"
+msgstr "ScreenScraper Geliştirici Kimliği"
+
+#: templates/_settings_tabs/scraping.html:359
+msgid "Request Dev Access →"
+msgstr "Geliştirici Erişimi İste →"
+
+#: templates/_settings_tabs/scraping.html:363
+msgid "Dev Username from developer area"
+msgstr "Geliştirici alanındaki geliştirici kullanıcı adı"
+
+#: templates/_settings_tabs/scraping.html:368
+msgid "ScreenScraper Developer Password"
+msgstr "ScreenScraper Geliştirici Şifresi"
+
+#: templates/_settings_tabs/scraping.html:378
+msgid "RetroAchievements Username"
+msgstr "RetroAchievements Kullanıcı Adı"
+
+#: templates/_settings_tabs/scraping.html:383
+msgid "Your RetroAchievements username"
+msgstr "RetroAchievements kullanıcı adınız"
+
+#: templates/_settings_tabs/scraping.html:388
+msgid "RetroAchievements API Key"
+msgstr "RetroAchievements API Anahtarı"
+
+#: templates/_settings_tabs/scraping.html:393
+msgid "Web API Key from Settings > Keys"
+msgstr "Ayarlar > Keys içindeki Web API anahtarı"
+
+#: templates/_settings_tabs/scraping.html:408
+msgid "Steam ID"
+msgstr "Steam Kimliği"
+
+#: templates/_settings_tabs/scraping.html:412
+msgid "17-digit Steam ID or custom URL name"
+msgstr "17 haneli Steam Kimliği veya özel URL adı"
+
+#: templates/_settings_tabs/scraping.html:413
+msgid ""
+"Your 17-digit Steam ID (e.g. 76561198012345678) or custom URL name. Find "
+"it at <a href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener "
+"noreferrer\" style=\"color: var(--primary-cyan);\">steamid.io</a>"
+msgstr ""
+"17 haneli Steam Kimliğiniz (örn. 76561198012345678) veya özel URL adınız."
+" Şuradan bulabilirsiniz: <a href=\"https://steamid.io\" target=\"_blank\""
+" rel=\"noopener noreferrer\" style=\"color: var(--primary-"
+"cyan);\">steamid.io</a>"
+
 #: templates/_settings_tabs/scraping.html:421
 #, python-format
 msgid ""
@@ -15421,9 +15979,92 @@ msgstr ""
 "style=\"color: var(--primary-cyan);\">Ayarlar &gt; Profilim</a> bölümünde"
 " ekler. Burada bir şey yapmanız gerekmez."
 
+#: templates/_settings_tabs/scraping.html:427
+msgid "AI Metadata Provider"
+msgstr "Yapay Zeka Üstveri Sağlayıcısı"
+
+#: templates/_settings_tabs/scraping.html:430
+msgid "-- Select Provider --"
+msgstr "-- Sağlayıcı Seçin --"
+
+#: templates/_settings_tabs/scraping.html:435
+msgid ""
+"AI fills text-only fields (genre, structure, perspective, etc.). API "
+"usage costs apply."
+msgstr ""
+"Yapay zeka yalnızca metin alanlarını doldurur (tür, yapı, bakış açısı "
+"vb.). API kullanım ücretleri uygulanır."
+
 #: templates/_settings_tabs/scraping.html:438
 msgid "Test saved AI key"
 msgstr "Kayıtlı yapay zekâ anahtarını test et"
+
+#: templates/_settings_tabs/scraping.html:447
+msgid "Gemini API Key"
+msgstr "Gemini API Anahtarı"
+
+#: templates/_settings_tabs/scraping.html:452
+msgid "Enter Google Gemini API key"
+msgstr "Google Gemini API anahtarını girin"
+
+#: templates/_settings_tabs/scraping.html:456
+msgid "Gemini Model"
+msgstr "Gemini Modeli"
+
+#: templates/_settings_tabs/scraping.html:459
+#: templates/_settings_tabs/scraping.html:460
+#: templates/_settings_tabs/scraping.html:461
+#: templates/_settings_tabs/scraping.html:462
+#: templates/_settings_tabs/scraping.html:492
+#: templates/_settings_tabs/scraping.html:493
+#: templates/_settings_tabs/scraping.html:514
+#: templates/_settings_tabs/scraping.html:515
+#: templates/_settings_tabs/scraping.html:516
+#, python-format
+msgid "$%(inp)s in / $%(out)s out per 1M tokens"
+msgstr "1 milyon belirteç başına $%(inp)s girdi / $%(out)s çıktı"
+
+#: templates/_settings_tabs/scraping.html:459
+#: templates/_settings_tabs/scraping.html:492
+#: templates/_settings_tabs/scraping.html:514
+msgid "Recommended"
+msgstr "Önerilen"
+
+#: templates/_settings_tabs/scraping.html:467
+msgid "GCP Project ID"
+msgstr "GCP Proje Kimliği"
+
+#: templates/_settings_tabs/scraping.html:468
+msgid "Optional — required for Google Cloud billing credits"
+msgstr "İsteğe bağlı: Google Cloud faturalama kredileri için gerekir"
+
+#: templates/_settings_tabs/scraping.html:472
+msgid "e.g. my-project-123456"
+msgstr "örn. my-project-123456"
+
+#: templates/_settings_tabs/scraping.html:480
+msgid "OpenAI API Key"
+msgstr "OpenAI API Anahtarı"
+
+#: templates/_settings_tabs/scraping.html:485
+msgid "Enter OpenAI API key"
+msgstr "OpenAI API anahtarını girin"
+
+#: templates/_settings_tabs/scraping.html:489
+msgid "OpenAI Model"
+msgstr "OpenAI Modeli"
+
+#: templates/_settings_tabs/scraping.html:502
+msgid "Anthropic API Key"
+msgstr "Anthropic API Anahtarı"
+
+#: templates/_settings_tabs/scraping.html:507
+msgid "Enter Anthropic API key"
+msgstr "Anthropic API anahtarını girin"
+
+#: templates/_settings_tabs/scraping.html:511
+msgid "Claude Model"
+msgstr "Claude Modeli"
 
 #: templates/_settings_tabs/scraping.html:521
 msgid "Let Claude search the web"

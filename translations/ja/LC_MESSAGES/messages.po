@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 07:39+0200\n"
+"POT-Creation-Date: 2026-11-15 08:01+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -2820,7 +2820,8 @@ msgstr "フォルダーのパスを 1 つ入力してください。"
 #: templates/multi_disc_organizer.html:371 templates/reports.html:1144
 #: templates/reports.html:1147 templates/reports.html:1213
 #: templates/reports.html:1216 templates/rom_tools_settings.html:579
-#: templates/rom_tools_settings.html:582 templates/settings.html:2926
+#: templates/rom_tools_settings.html:582 templates/settings.html:2367
+#: templates/settings.html:2485 templates/settings.html:2926
 #: templates/settings.html:2930 templates/settings.html:2949
 #: templates/settings.html:2953 templates/settings.html:3551
 #: templates/settings.html:3555 templates/settings.html:3623
@@ -3906,7 +3907,8 @@ msgstr "保存しました。次にプレイを押したときに適用されま
 msgid "Saving to the database…"
 msgstr "データベースに保存しています…"
 
-#: services/js_i18n_strings.py:978 templates/settings.html:4787
+#: services/js_i18n_strings.py:978 templates/settings.html:2726
+#: templates/settings.html:2764 templates/settings.html:4787
 #: templates/setup.html:483
 msgid "Saving..."
 msgstr "保存しています..."
@@ -7900,6 +7902,7 @@ msgid "Database Service"
 msgstr "データベースサービス"
 
 #: templates/dashboard.html:585 templates/dashboard.html:1308
+#: templates/settings.html:2357
 msgid "Online"
 msgstr "オンライン"
 
@@ -7913,9 +7916,14 @@ msgstr "ES-DEローカルスクレイパー"
 msgid "Available"
 msgstr "利用可能"
 
-#: templates/dashboard.html:602 templates/dashboard.html:612
-#: templates/dashboard.html:632 templates/dashboard.html:642
-#: templates/game_imports.html:368
+#: templates/_settings_tabs/scraping.html:107
+#: templates/_settings_tabs/scraping.html:125
+#: templates/_settings_tabs/scraping.html:143
+#: templates/_settings_tabs/scraping.html:161
+#: templates/_settings_tabs/scraping.html:178 templates/dashboard.html:602
+#: templates/dashboard.html:612 templates/dashboard.html:632
+#: templates/dashboard.html:642 templates/game_imports.html:368
+#: templates/settings.html:2330 templates/settings.html:2444
 msgid "Checking..."
 msgstr "確認しています..."
 
@@ -7987,7 +7995,7 @@ msgstr "設定済みのAPIが1件オフラインです"
 msgid "{count} configured APIs are offline"
 msgstr "設定済みのAPIが{count}件オフラインです"
 
-#: templates/dashboard.html:1309
+#: templates/dashboard.html:1309 templates/settings.html:2360
 msgid "Offline"
 msgstr "オフライン"
 
@@ -8297,7 +8305,7 @@ msgid "From the AI, not checked against a review site."
 msgstr "AIによる情報で、レビューサイトでの確認はしていません。"
 
 #: templates/game_detail.html:274 templates/game_detail.html:279
-#: templates/game_detail.html:284
+#: templates/game_detail.html:284 templates/settings.html:2691
 msgid "AI"
 msgstr "AI"
 
@@ -8871,11 +8879,12 @@ msgstr ""
 msgid "Steam Credentials"
 msgstr "Steam認証情報"
 
-#: templates/game_imports.html:251
+#: templates/_settings_tabs/scraping.html:399 templates/game_imports.html:251
 msgid "Steam Web API Key"
 msgstr "Steam Web APIキー"
 
-#: templates/_settings_tabs/account.html:239 templates/game_imports.html:251
+#: templates/_settings_tabs/account.html:239
+#: templates/_settings_tabs/scraping.html:404 templates/game_imports.html:251
 msgid "Your Steam Web API Key"
 msgstr "あなたのSteam Web APIキー"
 
@@ -9540,7 +9549,8 @@ msgstr "マッチが見つかりません。"
 #: templates/settings.html:1942 templates/settings.html:1967
 #: templates/settings.html:1970 templates/settings.html:1990
 #: templates/settings.html:2034 templates/settings.html:2056
-#: templates/settings.html:2153 templates/settings.html:4832
+#: templates/settings.html:2153 templates/settings.html:2751
+#: templates/settings.html:2813 templates/settings.html:4832
 #: templates/steam_achievement_game.html:302
 #: templates/xbox_achievement_game.html:293
 #, python-brace-format
@@ -11259,7 +11269,8 @@ msgid "Detection method can be selected directly on the Duplicate Finder page."
 msgstr "検出方法は重複検索ページで直接選択できます。"
 
 #: templates/_settings_tabs/customization.html:83
-#: templates/rom_tools_settings.html:433
+#: templates/_settings_tabs/scraping.html:255
+#: templates/rom_tools_settings.html:433 templates/settings.html:2755
 msgid "Save Settings"
 msgstr "設定を保存"
 
@@ -11267,7 +11278,7 @@ msgstr "設定を保存"
 msgid "Reset to Defaults"
 msgstr "既定値に戻す"
 
-#: templates/rom_tools_settings.html:439
+#: templates/rom_tools_settings.html:439 templates/settings.html:2744
 msgid "Settings saved successfully!"
 msgstr "設定を保存しました!"
 
@@ -11508,6 +11519,12 @@ msgstr "ユーザーを削除できませんでした"
 msgid "Network error deleting user"
 msgstr "ユーザー削除中にネットワークエラーが発生しました"
 
+#: templates/settings.html:1438 templates/settings.html:1440
+#: templates/settings.html:1442 templates/settings.html:1444
+#, python-brace-format
+msgid "Current: {path}"
+msgstr "現在: {path}"
+
 #: templates/settings.html:1466
 msgid "Path settings saved!"
 msgstr "パス設定を保存しました!"
@@ -11707,7 +11724,7 @@ msgstr "計算に失敗しました: {error}"
 msgid "Failed to save scraper setting"
 msgstr "取得設定の保存に失敗しました"
 
-#: templates/settings.html:2312
+#: templates/_settings_tabs/scraping.html:173 templates/settings.html:2312
 msgid "AI Metadata"
 msgstr "AIメタデータ"
 
@@ -11721,6 +11738,23 @@ msgstr "{name}を有効にしました"
 msgid "{name} disabled"
 msgstr "{name}を無効にしました"
 
+#: templates/settings.html:2383
+#, python-brace-format
+msgid "Resets in {time}"
+msgstr "{time}後にリセット"
+
+#: templates/settings.html:2383
+msgid "Resets soon"
+msgstr "まもなくリセット"
+
+#: templates/settings.html:2389 templates/settings.html:2391
+#: templates/settings.html:2476 templates/settings.html:2500
+#: templates/settings.html:2597 templates/settings.html:2647
+#: templates/settings.html:2649
+#, python-brace-format
+msgid "Resets: {when}"
+msgstr "リセット: {when}"
+
 #: templates/settings.html:2422
 msgid "Testing…"
 msgstr "テスト中…"
@@ -11733,6 +11767,179 @@ msgstr "キーは有効です：%(provider)s が %(model)s で応答しました
 #: templates/settings.html:2432
 msgid "The key test failed."
 msgstr "キーのテストに失敗しました。"
+
+#: templates/settings.html:2445
+msgid "Checking rate limits..."
+msgstr "レート制限を確認しています..."
+
+#: templates/settings.html:2474 templates/settings.html:2496
+msgid "remaining (monthly)"
+msgstr "残り(月間)"
+
+#: templates/settings.html:2475 templates/settings.html:2481
+#: templates/settings.html:2483 templates/settings.html:2485
+#: templates/settings.html:2488
+#, python-brace-format
+msgid "Public key: {status}"
+msgstr "公開キー: {status}"
+
+#: templates/settings.html:2477 templates/settings.html:2501
+#, python-brace-format
+msgid "Extra: {n}"
+msgstr "追加: {n}"
+
+#: templates/settings.html:2481
+msgid "Active"
+msgstr "有効"
+
+#: templates/settings.html:2483
+msgid "Allowance exhausted"
+msgstr "利用枠を使い切りました"
+
+#: templates/settings.html:2488 templates/settings.html:2506
+#: templates/settings.html:2567 templates/settings.html:2573
+#: templates/settings.html:2607 templates/settings.html:2697
+#: templates/settings.html:2703
+msgid "Not configured"
+msgstr "未設定"
+
+#: templates/settings.html:2497 templates/settings.html:2506
+#, python-brace-format
+msgid "Private key: {status}"
+msgstr "秘密キー: {status}"
+
+#: templates/settings.html:2533
+msgid "Error checking"
+msgstr "確認エラー"
+
+#: templates/settings.html:2539 templates/settings.html:2613
+msgid "Connection error"
+msgstr "接続エラー"
+
+#: templates/settings.html:2554
+msgid "requests remaining today"
+msgstr "本日の残りリクエスト数"
+
+#: templates/settings.html:2557
+#, python-brace-format
+msgid "Per-minute limit: {n}"
+msgstr "1分あたりの上限: {n}"
+
+#: templates/settings.html:2558
+#, python-brace-format
+msgid "Level: {level}"
+msgstr "レベル: {level}"
+
+#: templates/settings.html:2559
+#, python-brace-format
+msgid "Threads: {n}"
+msgstr "スレッド: {n}"
+
+#: templates/settings.html:2560
+#, python-brace-format
+msgid "Speed: {n} KB/s"
+msgstr "速度: {n} KB/s"
+
+#: templates/settings.html:2561
+msgid "Resets daily at midnight (UTC)"
+msgstr "毎日0時(UTC)にリセット"
+
+#: templates/settings.html:2582
+#, python-brace-format
+msgid "{n} requests/second (OAuth token-based)"
+msgstr "{n} リクエスト/秒(OAuthトークン方式)"
+
+#: templates/settings.html:2583
+msgid "Token-based authentication — no daily quota"
+msgstr "トークン認証 — 1日の上限なし"
+
+#: templates/settings.html:2594
+msgid "requests remaining"
+msgstr "残りリクエスト数"
+
+#: templates/settings.html:2595
+#, python-brace-format
+msgid "{n} requests/month (free tier)"
+msgstr "{n} リクエスト/月(無料プラン)"
+
+#: templates/settings.html:2598
+msgid "No live usage tracking from API"
+msgstr "APIからのリアルタイム使用量は取得できません"
+
+#: templates/settings.html:2622
+msgid "No published rate limits"
+msgstr "公開されているレート制限はありません"
+
+#: templates/settings.html:2641
+#, python-brace-format
+msgid "Requests: {used} remaining ({pct})"
+msgstr "リクエスト: 残り {used}({pct})"
+
+#: templates/settings.html:2660
+#, python-brace-format
+msgid "Tokens: {used} remaining ({pct})"
+msgstr "トークン: 残り {used}({pct})"
+
+#: templates/settings.html:2669
+#, python-brace-format
+msgid "Input tokens: {used} remaining ({pct})"
+msgstr "入力トークン: 残り {used}({pct})"
+
+#: templates/settings.html:2674
+#, python-brace-format
+msgid "Rate: {rpm} requests/min"
+msgstr "レート: {rpm} リクエスト/分"
+
+#: templates/settings.html:2674
+#, python-brace-format
+msgid "{rpd} requests/day (free tier)"
+msgstr "{rpd} リクエスト/日(無料プラン)"
+
+#: templates/settings.html:2679
+msgid "API online — no rate limit data returned"
+msgstr "APIはオンラインです — レート制限のデータは返されませんでした"
+
+#: templates/settings.html:2692
+#, python-brace-format
+msgid "Model: {model}"
+msgstr "モデル: {model}"
+
+#: templates/settings.html:2696 templates/settings.html:2702
+msgid "AI Provider"
+msgstr "AIプロバイダー"
+
+#: templates/settings.html:2709
+#, python-brace-format
+msgid "Last checked: {time}"
+msgstr "最終確認: {time}"
+
+#: templates/settings.html:2713
+msgid "No rate limit information available"
+msgstr "レート制限の情報はありません"
+
+#: templates/_settings_tabs/scraping.html:263 templates/settings.html:2717
+msgid "Check Rate Limits"
+msgstr "レート制限を確認"
+
+#: templates/settings.html:2739
+msgid "Settings saved! Checking scraper status..."
+msgstr "設定を保存しました。スクレイパーの状態を確認しています..."
+
+#: templates/settings.html:2801
+msgid "API keys saved! Checking scraper status..."
+msgstr "APIキーを保存しました。スクレイパーの状態を確認しています..."
+
+#: templates/settings.html:2806
+msgid "API keys saved successfully!"
+msgstr "APIキーを保存しました。"
+
+#: templates/settings.html:2810
+msgid "Failed to save API keys"
+msgstr "APIキーを保存できませんでした"
+
+#: templates/_settings_tabs/scraping.html:535 templates/settings.html:2817
+msgid "Save API Keys"
+msgstr "APIキーを保存"
 
 #: templates/settings.html:2909
 msgid "Invalid Input"
@@ -12086,6 +12293,28 @@ msgstr "名前の更新に失敗しました"
 #: templates/settings.html:4464
 msgid "Failed to refresh system names"
 msgstr "システム名の更新に失敗しました"
+
+#: templates/settings.html:4480
+msgid "Importing..."
+msgstr "インポートしています..."
+
+#: templates/settings.html:4490
+msgid "Run \"Scan Library\" to update the database with the new logos."
+msgstr "「ライブラリをスキャン」を実行すると、新しいロゴがデータベースに反映されます。"
+
+#: templates/settings.html:4495 templates/setup.html:375
+#: templates/setup.html:435
+msgid "An error occurred"
+msgstr "エラーが発生しました"
+
+#: templates/settings.html:4498
+#, python-brace-format
+msgid "Failed to import logos: {error}"
+msgstr "ロゴをインポートできませんでした: {error}"
+
+#: templates/_settings_tabs/scraping.html:58 templates/settings.html:4501
+msgid "Import System Logos"
+msgstr "システムロゴをインポート"
 
 #: templates/settings.html:4563
 msgid "No bulk scrape state found (all clear)"
@@ -12534,7 +12763,9 @@ msgstr "管理者"
 msgid "ES-DE"
 msgstr "ES-DE"
 
-#: templates/setup.html:20 templates/setup.html:212
+#: templates/_settings_tabs/scraping.html:8
+#: templates/_settings_tabs/scraping.html:275 templates/setup.html:20
+#: templates/setup.html:212
 msgid "API Keys"
 msgstr "API キー"
 
@@ -12688,7 +12919,7 @@ msgstr "現在:%(path)s"
 msgid "Example:"
 msgstr "例："
 
-#: templates/setup.html:166
+#: templates/_settings_tabs/scraping.html:15 templates/setup.html:166
 msgid "ES-DE Integration"
 msgstr "ES-DE連携"
 
@@ -12704,11 +12935,11 @@ msgstr ""
 msgid "I don't use ES-DE"
 msgstr "ES-DEを使用しない"
 
-#: templates/setup.html:182
+#: templates/_settings_tabs/scraping.html:19 templates/setup.html:182
 msgid "ES-DE Gamelists Path"
 msgstr "ES-DEのゲームリストのパス"
 
-#: templates/setup.html:189
+#: templates/_settings_tabs/scraping.html:30 templates/setup.html:189
 msgid "ES-DE Downloaded Media Path"
 msgstr "ES-DEのダウンロード済みメディアのパス"
 
@@ -12798,7 +13029,7 @@ msgstr "デベロッパーエリアのユーザー名"
 msgid "Developer Password"
 msgstr "デベロッパーパスワード"
 
-#: templates/setup.html:263
+#: templates/_settings_tabs/scraping.html:372 templates/setup.html:263
 msgid "Password from developer area (NOT debug password)"
 msgstr "デベロッパーエリアのパスワード(デバッグ用パスワードではありません)"
 
@@ -12835,10 +13066,6 @@ msgstr "セットアップを完了"
 #: templates/setup.html:435
 msgid "Error:"
 msgstr "エラー:"
-
-#: templates/setup.html:375 templates/setup.html:435
-msgid "An error occurred"
-msgstr "エラーが発生しました"
 
 #: templates/setup.html:392
 msgid "Parent folder"
@@ -14516,6 +14743,7 @@ msgid "RPCS3 Trophy Settings"
 msgstr "RPCS3トロフィー設定"
 
 #: templates/_settings_tabs/data.html:44
+#: templates/_settings_tabs/scraping.html:41
 msgid "RPCS3 Trophy Path"
 msgstr "RPCS3トロフィーパス"
 
@@ -14682,6 +14910,7 @@ msgid "Database path cannot be changed via UI"
 msgstr "データベースのパスはUIから変更できません"
 
 #: templates/_settings_tabs/library.html:43
+#: templates/_settings_tabs/scraping.html:54
 msgid "Save Path Settings"
 msgstr "パス設定を保存"
 
@@ -14829,6 +15058,324 @@ msgid ""
 "leaves it alone."
 msgstr "誤ってマークしたディスクはゲーム一覧に戻せます。その後 Auto-Link はそのディスクに触れません。"
 
+#: templates/_settings_tabs/scraping.html:3
+msgid "Scraping settings"
+msgstr "スクレイピング設定"
+
+#: templates/_settings_tabs/scraping.html:6
+msgid "Scraper"
+msgstr "スクレイパー"
+
+#: templates/_settings_tabs/scraping.html:22
+msgid "e.g. /home/user/.es-de/gamelists"
+msgstr "例: /home/user/.es-de/gamelists"
+
+#: templates/_settings_tabs/scraping.html:33
+msgid "Leave blank to auto-detect from gamelists path"
+msgstr "空欄にするとgamelistsのパスから自動検出します"
+
+#: templates/_settings_tabs/scraping.html:37
+msgid "Default: Loading..."
+msgstr "デフォルト: 読み込み中..."
+
+#: templates/_settings_tabs/scraping.html:44
+msgid "e.g. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+msgstr "例: /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+
+#: templates/_settings_tabs/scraping.html:62
+msgid "Import system logos from your ES-DE installation"
+msgstr "ES-DEのインストール先からシステムロゴをインポートします"
+
+#: templates/_settings_tabs/scraping.html:71
+msgid "Scraper Configuration"
+msgstr "スクレイパー設定"
+
+#: templates/_settings_tabs/scraping.html:75
+msgid ""
+"Enable/disable scrapers and drag to set priority order. The scraper at "
+"the top will be tried first during bulk scraping."
+msgstr "スクレイパーの有効/無効を切り替え、ドラッグして優先順位を決めます。一括スクレイピングでは一番上のスクレイパーから試します。"
+
+#: templates/_settings_tabs/scraping.html:84
+#: templates/_settings_tabs/scraping.html:89
+msgid "Local"
+msgstr "ローカル"
+
+#: templates/_settings_tabs/scraping.html:85
+msgid "Import from your local gamelist.xml files"
+msgstr "ローカルのgamelist.xmlファイルからインポートします"
+
+#: templates/_settings_tabs/scraping.html:92
+msgid "Enable ES-DE local scraper"
+msgstr "ES-DEローカルスクレイパーを有効にする"
+
+#: templates/_settings_tabs/scraping.html:103
+msgid "Primary online scraper for game metadata"
+msgstr "ゲームのメタデータを取得するメインのオンラインスクレイパー"
+
+#: templates/_settings_tabs/scraping.html:110
+msgid "Enable TheGamesDB scraper"
+msgstr "TheGamesDBスクレイパーを有効にする"
+
+#: templates/_settings_tabs/scraping.html:121
+msgid "Comprehensive game database by Twitch"
+msgstr "Twitchが提供する総合ゲームデータベース"
+
+#: templates/_settings_tabs/scraping.html:128
+msgid "Enable IGDB scraper"
+msgstr "IGDBスクレイパーを有効にする"
+
+#: templates/_settings_tabs/scraping.html:139
+msgid "Large game database with ESRB ratings and Metacritic scores"
+msgstr "ESRB評価とMetacriticスコアを含む大規模ゲームデータベース"
+
+#: templates/_settings_tabs/scraping.html:146
+msgid "Enable RAWG.io scraper"
+msgstr "RAWG.ioスクレイパーを有効にする"
+
+#: templates/_settings_tabs/scraping.html:157
+msgid "Comprehensive retro gaming database with media (requires account)"
+msgstr "メディア付きの総合レトロゲームデータベース(アカウントが必要)"
+
+#: templates/_settings_tabs/scraping.html:164
+msgid "Enable ScreenScraper scraper"
+msgstr "ScreenScraperスクレイパーを有効にする"
+
+#: templates/_settings_tabs/scraping.html:174
+msgid "AI-powered gap-filler (Gemini, OpenAI, or Claude) — fills text fields only"
+msgstr "AIによる補完(Gemini、OpenAI、Claude) — テキスト項目のみ補います"
+
+#: templates/_settings_tabs/scraping.html:181
+msgid "Enable AI metadata scraper"
+msgstr "AIメタデータスクレイパーを有効にする"
+
+#: templates/_settings_tabs/scraping.html:189
+msgid "Bulk Scrape Match Filtering"
+msgstr "一括スクレイピングの一致フィルター"
+
+#: templates/_settings_tabs/scraping.html:191
+msgid ""
+"Controls which search results are accepted during bulk scraping. Results "
+"that don't pass the filter are skipped."
+msgstr "一括スクレイピングで受け入れる検索結果を決めます。フィルターを通らなかった結果はスキップされます。"
+
+#: templates/_settings_tabs/scraping.html:196
+msgid "Use advanced criteria mode"
+msgstr "詳細条件モードを使う"
+
+#: templates/_settings_tabs/scraping.html:199
+msgid "Use advanced criteria instead of score threshold"
+msgstr "スコアのしきい値の代わりに詳細条件を使う"
+
+#: templates/_settings_tabs/scraping.html:205
+msgid "Minimum Match Score"
+msgstr "最低一致スコア"
+
+#: templates/_settings_tabs/scraping.html:213
+msgid "Score Range"
+msgstr "スコア範囲"
+
+#: templates/_settings_tabs/scraping.html:213
+msgid "What It Means"
+msgstr "意味"
+
+#: templates/_settings_tabs/scraping.html:216
+msgid "Exact title + platform + date + priority boost"
+msgstr "タイトル完全一致 + プラットフォーム + 日付 + 優先ボーナス"
+
+#: templates/_settings_tabs/scraping.html:217
+msgid "Exact title + some bonuses"
+msgstr "タイトル完全一致 + いくつかのボーナス"
+
+#: templates/_settings_tabs/scraping.html:218
+msgid "Close title match + platform confirmed"
+msgstr "タイトルがほぼ一致 + プラットフォーム確認済み"
+
+#: templates/_settings_tabs/scraping.html:219
+msgid "Partial match or missing platform"
+msgstr "部分一致、またはプラットフォームなし"
+
+#: templates/_settings_tabs/scraping.html:220
+msgid "Weak match — likely wrong game"
+msgstr "弱い一致 — 別のゲームの可能性が高い"
+
+#: templates/_settings_tabs/scraping.html:230
+msgid "Minimum Title Quality"
+msgstr "タイトルの最低品質"
+
+#: templates/_settings_tabs/scraping.html:232
+#, python-format
+msgid "Exact (score ≥ %(n)s)"
+msgstr "完全一致(スコア ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:233
+#, python-format
+msgid "Close (score ≥ %(n)s)"
+msgstr "ほぼ一致(スコア ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:234
+#, python-format
+msgid "Partial (score ≥ %(n)s)"
+msgstr "部分一致(スコア ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:235
+msgid "Any (no minimum)"
+msgstr "指定なし(下限なし)"
+
+#: templates/_settings_tabs/scraping.html:239
+msgid "Platform Match Required"
+msgstr "プラットフォーム一致を必須にする"
+
+#: templates/_settings_tabs/scraping.html:245
+msgid "Only accept results matching the game's system"
+msgstr "ゲームのシステムと一致する結果のみ受け入れる"
+
+#: templates/_settings_tabs/scraping.html:259
+msgid "Reset to Default"
+msgstr "デフォルトに戻す"
+
+#: templates/_settings_tabs/scraping.html:279
+msgid ""
+"Configure API keys for online scrapers. Keys are stored locally and never"
+" shared."
+msgstr "オンラインスクレイパー用のAPIキーを設定します。キーはこのコンピューターにのみ保存され、共有されません。"
+
+#: templates/_settings_tabs/scraping.html:286
+msgid "TheGamesDB — Public API Key"
+msgstr "TheGamesDB — 公開APIキー"
+
+#: templates/_settings_tabs/scraping.html:287
+msgid "Get API Keys →"
+msgstr "APIキーを取得 →"
+
+#: templates/_settings_tabs/scraping.html:291
+msgid "Per-IP rate limit — used as primary for scraping"
+msgstr "IPごとのレート制限 — スクレイピングのメインに使用"
+
+#: templates/_settings_tabs/scraping.html:292
+msgid "Primary key. Per-IP rate limit, best for regular use."
+msgstr "メインのキー。IPごとのレート制限で、通常の利用に最適です。"
+
+#: templates/_settings_tabs/scraping.html:297
+msgid "TheGamesDB — Private API Key"
+msgstr "TheGamesDB — 非公開APIキー"
+
+#: templates/_settings_tabs/scraping.html:301
+msgid "Shared monthly pool — used as fallback"
+msgstr "共有の月間枠 — 予備として使用"
+
+#: templates/_settings_tabs/scraping.html:302
+msgid "Fallback key. Shared monthly pool (~6,000 req/month)."
+msgstr "予備のキー。共有の月間枠(月約6,000リクエスト)。"
+
+#: templates/_settings_tabs/scraping.html:308
+msgid "IGDB / Twitch Client ID"
+msgstr "IGDB / Twitch Client ID"
+
+#: templates/_settings_tabs/scraping.html:309
+msgid "Get Credentials →"
+msgstr "認証情報を取得 →"
+
+#: templates/_settings_tabs/scraping.html:313
+msgid "Enter Twitch Client ID"
+msgstr "Twitch Client IDを入力"
+
+#: templates/_settings_tabs/scraping.html:318
+msgid "IGDB / Twitch Client Secret"
+msgstr "IGDB / Twitch Client Secret"
+
+#: templates/_settings_tabs/scraping.html:322
+msgid "Enter Twitch Client Secret"
+msgstr "Twitch Client Secretを入力"
+
+#: templates/_settings_tabs/scraping.html:328
+msgid "RAWG.io API Key"
+msgstr "RAWG.io APIキー"
+
+#: templates/_settings_tabs/scraping.html:329
+#: templates/_settings_tabs/scraping.html:389
+#: templates/_settings_tabs/scraping.html:400
+#: templates/_settings_tabs/scraping.html:448
+#: templates/_settings_tabs/scraping.html:481
+#: templates/_settings_tabs/scraping.html:503
+msgid "Get API Key →"
+msgstr "APIキーを取得 →"
+
+#: templates/_settings_tabs/scraping.html:333
+msgid "Enter RAWG.io API key"
+msgstr "RAWG.io APIキーを入力"
+
+#: templates/_settings_tabs/scraping.html:339
+msgid "ScreenScraper Username"
+msgstr "ScreenScraperのユーザー名"
+
+#: templates/_settings_tabs/scraping.html:340
+#: templates/_settings_tabs/scraping.html:379
+msgid "Register →"
+msgstr "登録 →"
+
+#: templates/_settings_tabs/scraping.html:344
+msgid "Your member account username"
+msgstr "会員アカウントのユーザー名"
+
+#: templates/_settings_tabs/scraping.html:349
+msgid "ScreenScraper Password"
+msgstr "ScreenScraperのパスワード"
+
+#: templates/_settings_tabs/scraping.html:353
+msgid "Your member account login password"
+msgstr "会員アカウントのログインパスワード"
+
+#: templates/_settings_tabs/scraping.html:358
+msgid "ScreenScraper Developer ID"
+msgstr "ScreenScraper Developer ID"
+
+#: templates/_settings_tabs/scraping.html:359
+msgid "Request Dev Access →"
+msgstr "開発者アクセスを申請 →"
+
+#: templates/_settings_tabs/scraping.html:363
+msgid "Dev Username from developer area"
+msgstr "開発者エリアのDev Username"
+
+#: templates/_settings_tabs/scraping.html:368
+msgid "ScreenScraper Developer Password"
+msgstr "ScreenScraper開発者パスワード"
+
+#: templates/_settings_tabs/scraping.html:378
+msgid "RetroAchievements Username"
+msgstr "RetroAchievementsのユーザー名"
+
+#: templates/_settings_tabs/scraping.html:383
+msgid "Your RetroAchievements username"
+msgstr "お使いのRetroAchievementsユーザー名"
+
+#: templates/_settings_tabs/scraping.html:388
+msgid "RetroAchievements API Key"
+msgstr "RetroAchievements APIキー"
+
+#: templates/_settings_tabs/scraping.html:393
+msgid "Web API Key from Settings > Keys"
+msgstr "設定 > Keys にあるWeb APIキー"
+
+#: templates/_settings_tabs/scraping.html:408
+msgid "Steam ID"
+msgstr "Steam ID"
+
+#: templates/_settings_tabs/scraping.html:412
+msgid "17-digit Steam ID or custom URL name"
+msgstr "17桁のSteam ID、またはカスタムURL名"
+
+#: templates/_settings_tabs/scraping.html:413
+msgid ""
+"Your 17-digit Steam ID (e.g. 76561198012345678) or custom URL name. Find "
+"it at <a href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener "
+"noreferrer\" style=\"color: var(--primary-cyan);\">steamid.io</a>"
+msgstr ""
+"17桁のSteam ID(例: 76561198012345678)またはカスタムURL名。<a "
+"href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener noreferrer\""
+" style=\"color: var(--primary-cyan);\">steamid.io</a> で確認できます"
+
 #: templates/_settings_tabs/scraping.html:421
 #, python-format
 msgid ""
@@ -14839,9 +15386,90 @@ msgstr ""
 "各ユーザーが自分の無料 OpenXBL キーを <a href=\"%(profile_url)s\" style=\"color: var"
 "(--primary-cyan);\">設定 &gt; マイプロフィール</a> で追加します。ここで設定する必要はありません。"
 
+#: templates/_settings_tabs/scraping.html:427
+msgid "AI Metadata Provider"
+msgstr "AIメタデータプロバイダー"
+
+#: templates/_settings_tabs/scraping.html:430
+msgid "-- Select Provider --"
+msgstr "-- プロバイダーを選択 --"
+
+#: templates/_settings_tabs/scraping.html:435
+msgid ""
+"AI fills text-only fields (genre, structure, perspective, etc.). API "
+"usage costs apply."
+msgstr "AIはテキスト項目(ジャンル、構造、視点など)のみ補います。API利用料がかかります。"
+
 #: templates/_settings_tabs/scraping.html:438
 msgid "Test saved AI key"
 msgstr "保存済みの AI キーをテスト"
+
+#: templates/_settings_tabs/scraping.html:447
+msgid "Gemini API Key"
+msgstr "Gemini APIキー"
+
+#: templates/_settings_tabs/scraping.html:452
+msgid "Enter Google Gemini API key"
+msgstr "Google GeminiのAPIキーを入力"
+
+#: templates/_settings_tabs/scraping.html:456
+msgid "Gemini Model"
+msgstr "Geminiモデル"
+
+#: templates/_settings_tabs/scraping.html:459
+#: templates/_settings_tabs/scraping.html:460
+#: templates/_settings_tabs/scraping.html:461
+#: templates/_settings_tabs/scraping.html:462
+#: templates/_settings_tabs/scraping.html:492
+#: templates/_settings_tabs/scraping.html:493
+#: templates/_settings_tabs/scraping.html:514
+#: templates/_settings_tabs/scraping.html:515
+#: templates/_settings_tabs/scraping.html:516
+#, python-format
+msgid "$%(inp)s in / $%(out)s out per 1M tokens"
+msgstr "100万トークンあたり 入力 $%(inp)s / 出力 $%(out)s"
+
+#: templates/_settings_tabs/scraping.html:459
+#: templates/_settings_tabs/scraping.html:492
+#: templates/_settings_tabs/scraping.html:514
+msgid "Recommended"
+msgstr "おすすめ"
+
+#: templates/_settings_tabs/scraping.html:467
+msgid "GCP Project ID"
+msgstr "GCP Project ID"
+
+#: templates/_settings_tabs/scraping.html:468
+msgid "Optional — required for Google Cloud billing credits"
+msgstr "任意 — Google Cloudの請求クレジットを使う場合に必要"
+
+#: templates/_settings_tabs/scraping.html:472
+msgid "e.g. my-project-123456"
+msgstr "例: my-project-123456"
+
+#: templates/_settings_tabs/scraping.html:480
+msgid "OpenAI API Key"
+msgstr "OpenAI APIキー"
+
+#: templates/_settings_tabs/scraping.html:485
+msgid "Enter OpenAI API key"
+msgstr "OpenAIのAPIキーを入力"
+
+#: templates/_settings_tabs/scraping.html:489
+msgid "OpenAI Model"
+msgstr "OpenAIモデル"
+
+#: templates/_settings_tabs/scraping.html:502
+msgid "Anthropic API Key"
+msgstr "Anthropic APIキー"
+
+#: templates/_settings_tabs/scraping.html:507
+msgid "Enter Anthropic API key"
+msgstr "AnthropicのAPIキーを入力"
+
+#: templates/_settings_tabs/scraping.html:511
+msgid "Claude Model"
+msgstr "Claudeモデル"
 
 #: templates/_settings_tabs/scraping.html:521
 msgid "Let Claude search the web"

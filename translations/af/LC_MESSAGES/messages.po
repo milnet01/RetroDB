@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 07:39+0200\n"
+"POT-Creation-Date: 2026-11-15 08:01+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: af\n"
@@ -2877,7 +2877,8 @@ msgstr "Tik een vouerpad in."
 #: templates/multi_disc_organizer.html:371 templates/reports.html:1144
 #: templates/reports.html:1147 templates/reports.html:1213
 #: templates/reports.html:1216 templates/rom_tools_settings.html:579
-#: templates/rom_tools_settings.html:582 templates/settings.html:2926
+#: templates/rom_tools_settings.html:582 templates/settings.html:2367
+#: templates/settings.html:2485 templates/settings.html:2926
 #: templates/settings.html:2930 templates/settings.html:2949
 #: templates/settings.html:2953 templates/settings.html:3551
 #: templates/settings.html:3555 templates/settings.html:3623
@@ -3987,7 +3988,8 @@ msgstr "Gestoor. Dit word toegepas die volgende keer dat jy Speel druk."
 msgid "Saving to the database…"
 msgstr "Stoor tans in die databasis…"
 
-#: services/js_i18n_strings.py:978 templates/settings.html:4787
+#: services/js_i18n_strings.py:978 templates/settings.html:2726
+#: templates/settings.html:2764 templates/settings.html:4787
 #: templates/setup.html:483
 msgid "Saving..."
 msgstr "Stoor tans..."
@@ -8084,6 +8086,7 @@ msgid "Database Service"
 msgstr "Databasisdiens"
 
 #: templates/dashboard.html:585 templates/dashboard.html:1308
+#: templates/settings.html:2357
 msgid "Online"
 msgstr "Aanlyn"
 
@@ -8097,9 +8100,14 @@ msgstr "ES-DE plaaslike skraper"
 msgid "Available"
 msgstr "Beskikbaar"
 
-#: templates/dashboard.html:602 templates/dashboard.html:612
-#: templates/dashboard.html:632 templates/dashboard.html:642
-#: templates/game_imports.html:368
+#: templates/_settings_tabs/scraping.html:107
+#: templates/_settings_tabs/scraping.html:125
+#: templates/_settings_tabs/scraping.html:143
+#: templates/_settings_tabs/scraping.html:161
+#: templates/_settings_tabs/scraping.html:178 templates/dashboard.html:602
+#: templates/dashboard.html:612 templates/dashboard.html:632
+#: templates/dashboard.html:642 templates/game_imports.html:368
+#: templates/settings.html:2330 templates/settings.html:2444
 msgid "Checking..."
 msgstr "Gaan na..."
 
@@ -8171,7 +8179,7 @@ msgstr "1 opgestelde API is aflyn"
 msgid "{count} configured APIs are offline"
 msgstr "{count} opgestelde API's is aflyn"
 
-#: templates/dashboard.html:1309
+#: templates/dashboard.html:1309 templates/settings.html:2360
 msgid "Offline"
 msgstr "Aflyn"
 
@@ -8488,7 +8496,7 @@ msgid "From the AI, not checked against a review site."
 msgstr "Van die KI, nie teen 'n resensiewebwerf nagegaan nie."
 
 #: templates/game_detail.html:274 templates/game_detail.html:279
-#: templates/game_detail.html:284
+#: templates/game_detail.html:284 templates/settings.html:2691
 msgid "AI"
 msgstr "KI"
 
@@ -9077,11 +9085,12 @@ msgstr ""
 msgid "Steam Credentials"
 msgstr "Steam-geloofsbriewe"
 
-#: templates/game_imports.html:251
+#: templates/_settings_tabs/scraping.html:399 templates/game_imports.html:251
 msgid "Steam Web API Key"
 msgstr "Steam Web API-sleutel"
 
-#: templates/_settings_tabs/account.html:239 templates/game_imports.html:251
+#: templates/_settings_tabs/account.html:239
+#: templates/_settings_tabs/scraping.html:404 templates/game_imports.html:251
 msgid "Your Steam Web API Key"
 msgstr "Jou Steam Web API-sleutel"
 
@@ -9770,7 +9779,8 @@ msgstr "Geen passing gevind nie."
 #: templates/settings.html:1942 templates/settings.html:1967
 #: templates/settings.html:1970 templates/settings.html:1990
 #: templates/settings.html:2034 templates/settings.html:2056
-#: templates/settings.html:2153 templates/settings.html:4832
+#: templates/settings.html:2153 templates/settings.html:2751
+#: templates/settings.html:2813 templates/settings.html:4832
 #: templates/steam_achievement_game.html:302
 #: templates/xbox_achievement_game.html:293
 #, python-brace-format
@@ -11633,7 +11643,8 @@ msgid "Detection method can be selected directly on the Duplicate Finder page."
 msgstr "Die opsporingsmetode kan direk op die Duplikaatvinder-bladsy gekies word."
 
 #: templates/_settings_tabs/customization.html:83
-#: templates/rom_tools_settings.html:433
+#: templates/_settings_tabs/scraping.html:255
+#: templates/rom_tools_settings.html:433 templates/settings.html:2755
 msgid "Save Settings"
 msgstr "Stoor Instellings"
 
@@ -11641,7 +11652,7 @@ msgstr "Stoor Instellings"
 msgid "Reset to Defaults"
 msgstr "Herstel na verstekke"
 
-#: templates/rom_tools_settings.html:439
+#: templates/rom_tools_settings.html:439 templates/settings.html:2744
 msgid "Settings saved successfully!"
 msgstr "Instellings suksesvol gestoor!"
 
@@ -11896,6 +11907,12 @@ msgstr "Kon nie gebruiker verwyder nie"
 msgid "Network error deleting user"
 msgstr "Netwerkfout met verwydering van gebruiker"
 
+#: templates/settings.html:1438 templates/settings.html:1440
+#: templates/settings.html:1442 templates/settings.html:1444
+#, python-brace-format
+msgid "Current: {path}"
+msgstr "Huidig: {path}"
+
 #: templates/settings.html:1466
 msgid "Path settings saved!"
 msgstr "Padinstellings gestoor!"
@@ -12098,7 +12115,7 @@ msgstr "Berekening het misluk: {error}"
 msgid "Failed to save scraper setting"
 msgstr "Kon nie skraapinstelling stoor nie"
 
-#: templates/settings.html:2312
+#: templates/_settings_tabs/scraping.html:173 templates/settings.html:2312
 msgid "AI Metadata"
 msgstr "KI-metadata"
 
@@ -12112,6 +12129,23 @@ msgstr "{name} geaktiveer"
 msgid "{name} disabled"
 msgstr "{name} gedeaktiveer"
 
+#: templates/settings.html:2383
+#, python-brace-format
+msgid "Resets in {time}"
+msgstr "Herstel oor {time}"
+
+#: templates/settings.html:2383
+msgid "Resets soon"
+msgstr "Herstel binnekort"
+
+#: templates/settings.html:2389 templates/settings.html:2391
+#: templates/settings.html:2476 templates/settings.html:2500
+#: templates/settings.html:2597 templates/settings.html:2647
+#: templates/settings.html:2649
+#, python-brace-format
+msgid "Resets: {when}"
+msgstr "Herstel: {when}"
+
 #: templates/settings.html:2422
 msgid "Testing…"
 msgstr "Toets tans…"
@@ -12124,6 +12158,179 @@ msgstr "Die sleutel werk: %(provider)s het geantwoord met %(model)s."
 #: templates/settings.html:2432
 msgid "The key test failed."
 msgstr "Die sleuteltoets het misluk."
+
+#: templates/settings.html:2445
+msgid "Checking rate limits..."
+msgstr "Kyk tans na tempolimiete..."
+
+#: templates/settings.html:2474 templates/settings.html:2496
+msgid "remaining (monthly)"
+msgstr "oor (maandeliks)"
+
+#: templates/settings.html:2475 templates/settings.html:2481
+#: templates/settings.html:2483 templates/settings.html:2485
+#: templates/settings.html:2488
+#, python-brace-format
+msgid "Public key: {status}"
+msgstr "Openbare sleutel: {status}"
+
+#: templates/settings.html:2477 templates/settings.html:2501
+#, python-brace-format
+msgid "Extra: {n}"
+msgstr "Ekstra: {n}"
+
+#: templates/settings.html:2481
+msgid "Active"
+msgstr "Aktief"
+
+#: templates/settings.html:2483
+msgid "Allowance exhausted"
+msgstr "Toelaag opgebruik"
+
+#: templates/settings.html:2488 templates/settings.html:2506
+#: templates/settings.html:2567 templates/settings.html:2573
+#: templates/settings.html:2607 templates/settings.html:2697
+#: templates/settings.html:2703
+msgid "Not configured"
+msgstr "Nie opgestel nie"
+
+#: templates/settings.html:2497 templates/settings.html:2506
+#, python-brace-format
+msgid "Private key: {status}"
+msgstr "Private sleutel: {status}"
+
+#: templates/settings.html:2533
+msgid "Error checking"
+msgstr "Fout met nagaan"
+
+#: templates/settings.html:2539 templates/settings.html:2613
+msgid "Connection error"
+msgstr "Verbindingsfout"
+
+#: templates/settings.html:2554
+msgid "requests remaining today"
+msgstr "versoeke oor vandag"
+
+#: templates/settings.html:2557
+#, python-brace-format
+msgid "Per-minute limit: {n}"
+msgstr "Limiet per minuut: {n}"
+
+#: templates/settings.html:2558
+#, python-brace-format
+msgid "Level: {level}"
+msgstr "Vlak: {level}"
+
+#: templates/settings.html:2559
+#, python-brace-format
+msgid "Threads: {n}"
+msgstr "Drade: {n}"
+
+#: templates/settings.html:2560
+#, python-brace-format
+msgid "Speed: {n} KB/s"
+msgstr "Spoed: {n} KB/s"
+
+#: templates/settings.html:2561
+msgid "Resets daily at midnight (UTC)"
+msgstr "Herstel daagliks om middernag (UTC)"
+
+#: templates/settings.html:2582
+#, python-brace-format
+msgid "{n} requests/second (OAuth token-based)"
+msgstr "{n} versoeke/sekonde (OAuth-teken-gebaseerd)"
+
+#: templates/settings.html:2583
+msgid "Token-based authentication — no daily quota"
+msgstr "Teken-gebaseerde verifikasie — geen daaglikse kwota nie"
+
+#: templates/settings.html:2594
+msgid "requests remaining"
+msgstr "versoeke oor"
+
+#: templates/settings.html:2595
+#, python-brace-format
+msgid "{n} requests/month (free tier)"
+msgstr "{n} versoeke/maand (gratis vlak)"
+
+#: templates/settings.html:2598
+msgid "No live usage tracking from API"
+msgstr "Geen regstreekse gebruiksopsporing vanaf die API nie"
+
+#: templates/settings.html:2622
+msgid "No published rate limits"
+msgstr "Geen gepubliseerde tempolimiete nie"
+
+#: templates/settings.html:2641
+#, python-brace-format
+msgid "Requests: {used} remaining ({pct})"
+msgstr "Versoeke: {used} oor ({pct})"
+
+#: templates/settings.html:2660
+#, python-brace-format
+msgid "Tokens: {used} remaining ({pct})"
+msgstr "Tekens: {used} oor ({pct})"
+
+#: templates/settings.html:2669
+#, python-brace-format
+msgid "Input tokens: {used} remaining ({pct})"
+msgstr "Invoertekens: {used} oor ({pct})"
+
+#: templates/settings.html:2674
+#, python-brace-format
+msgid "Rate: {rpm} requests/min"
+msgstr "Tempo: {rpm} versoeke/min"
+
+#: templates/settings.html:2674
+#, python-brace-format
+msgid "{rpd} requests/day (free tier)"
+msgstr "{rpd} versoeke/dag (gratis vlak)"
+
+#: templates/settings.html:2679
+msgid "API online — no rate limit data returned"
+msgstr "API is aanlyn — geen tempolimiet-data teruggestuur nie"
+
+#: templates/settings.html:2692
+#, python-brace-format
+msgid "Model: {model}"
+msgstr "Model: {model}"
+
+#: templates/settings.html:2696 templates/settings.html:2702
+msgid "AI Provider"
+msgstr "KI-verskaffer"
+
+#: templates/settings.html:2709
+#, python-brace-format
+msgid "Last checked: {time}"
+msgstr "Laas nagegaan: {time}"
+
+#: templates/settings.html:2713
+msgid "No rate limit information available"
+msgstr "Geen tempolimiet-inligting beskikbaar nie"
+
+#: templates/_settings_tabs/scraping.html:263 templates/settings.html:2717
+msgid "Check Rate Limits"
+msgstr "Gaan tempolimiete na"
+
+#: templates/settings.html:2739
+msgid "Settings saved! Checking scraper status..."
+msgstr "Instellings gestoor! Kyk tans na skraper-status..."
+
+#: templates/settings.html:2801
+msgid "API keys saved! Checking scraper status..."
+msgstr "API-sleutels gestoor! Kyk tans na skraper-status..."
+
+#: templates/settings.html:2806
+msgid "API keys saved successfully!"
+msgstr "API-sleutels suksesvol gestoor!"
+
+#: templates/settings.html:2810
+msgid "Failed to save API keys"
+msgstr "Kon nie API-sleutels stoor nie"
+
+#: templates/_settings_tabs/scraping.html:535 templates/settings.html:2817
+msgid "Save API Keys"
+msgstr "Stoor API-sleutels"
 
 #: templates/settings.html:2909
 msgid "Invalid Input"
@@ -12492,6 +12699,30 @@ msgstr "Kon nie name verfris nie"
 #: templates/settings.html:4464
 msgid "Failed to refresh system names"
 msgstr "Kon nie stelselname verfris nie"
+
+#: templates/settings.html:4480
+msgid "Importing..."
+msgstr "Voer tans in..."
+
+#: templates/settings.html:4490
+msgid "Run \"Scan Library\" to update the database with the new logos."
+msgstr ""
+"Voer \"Skandeer biblioteek\" uit om die databasis met die nuwe logo's by "
+"te werk."
+
+#: templates/settings.html:4495 templates/setup.html:375
+#: templates/setup.html:435
+msgid "An error occurred"
+msgstr "'n Fout het voorgekom"
+
+#: templates/settings.html:4498
+#, python-brace-format
+msgid "Failed to import logos: {error}"
+msgstr "Kon nie logo's invoer nie: {error}"
+
+#: templates/_settings_tabs/scraping.html:58 templates/settings.html:4501
+msgid "Import System Logos"
+msgstr "Voer stelsellogo's in"
 
 #: templates/settings.html:4563
 msgid "No bulk scrape state found (all clear)"
@@ -12966,7 +13197,9 @@ msgstr "Admin"
 msgid "ES-DE"
 msgstr "ES-DE"
 
-#: templates/setup.html:20 templates/setup.html:212
+#: templates/_settings_tabs/scraping.html:8
+#: templates/_settings_tabs/scraping.html:275 templates/setup.html:20
+#: templates/setup.html:212
 msgid "API Keys"
 msgstr "API-sleutels"
 
@@ -13136,7 +13369,7 @@ msgstr "Huidig: %(path)s"
 msgid "Example:"
 msgstr "Voorbeeld:"
 
-#: templates/setup.html:166
+#: templates/_settings_tabs/scraping.html:15 templates/setup.html:166
 msgid "ES-DE Integration"
 msgstr "ES-DE-integrasie"
 
@@ -13152,11 +13385,11 @@ msgstr ""
 msgid "I don't use ES-DE"
 msgstr "Ek gebruik nie ES-DE nie"
 
-#: templates/setup.html:182
+#: templates/_settings_tabs/scraping.html:19 templates/setup.html:182
 msgid "ES-DE Gamelists Path"
 msgstr "ES-DE-speletjielyspad"
 
-#: templates/setup.html:189
+#: templates/_settings_tabs/scraping.html:30 templates/setup.html:189
 msgid "ES-DE Downloaded Media Path"
 msgstr "ES-DE-afgelaaide-mediapad"
 
@@ -13248,7 +13481,7 @@ msgstr "Ontwikkelaar-gebruikersnaam vanaf die ontwikkelaararea"
 msgid "Developer Password"
 msgstr "Ontwikkelaar-wagwoord"
 
-#: templates/setup.html:263
+#: templates/_settings_tabs/scraping.html:372 templates/setup.html:263
 msgid "Password from developer area (NOT debug password)"
 msgstr "Wagwoord vanaf die ontwikkelaararea (NIE ontfoutwagwoord nie)"
 
@@ -13289,10 +13522,6 @@ msgstr "Voltooi opstelling"
 #: templates/setup.html:435
 msgid "Error:"
 msgstr "Fout:"
-
-#: templates/setup.html:375 templates/setup.html:435
-msgid "An error occurred"
-msgstr "'n Fout het voorgekom"
 
 #: templates/setup.html:392
 msgid "Parent folder"
@@ -15056,6 +15285,7 @@ msgid "RPCS3 Trophy Settings"
 msgstr "RPCS3-trofeë-instellings"
 
 #: templates/_settings_tabs/data.html:44
+#: templates/_settings_tabs/scraping.html:41
 msgid "RPCS3 Trophy Path"
 msgstr "RPCS3-trofeëpad"
 
@@ -15234,6 +15464,7 @@ msgid "Database path cannot be changed via UI"
 msgstr "Databasispad kan nie via die koppelvlak verander word nie"
 
 #: templates/_settings_tabs/library.html:43
+#: templates/_settings_tabs/scraping.html:54
 msgid "Save Path Settings"
 msgstr "Stoor Padinstellings"
 
@@ -15396,6 +15627,330 @@ msgstr ""
 "'n Skyf wat per ongeluk gemerk is, kan terug in jou speletjielyste. Auto-"
 "Link los dit dan uit."
 
+#: templates/_settings_tabs/scraping.html:3
+msgid "Scraping settings"
+msgstr "Skraap-instellings"
+
+#: templates/_settings_tabs/scraping.html:6
+msgid "Scraper"
+msgstr "Skraper"
+
+#: templates/_settings_tabs/scraping.html:22
+msgid "e.g. /home/user/.es-de/gamelists"
+msgstr "bv. /home/user/.es-de/gamelists"
+
+#: templates/_settings_tabs/scraping.html:33
+msgid "Leave blank to auto-detect from gamelists path"
+msgstr "Los leeg om outomaties uit die gamelists-pad op te spoor"
+
+#: templates/_settings_tabs/scraping.html:37
+msgid "Default: Loading..."
+msgstr "Verstek: Laai tans..."
+
+#: templates/_settings_tabs/scraping.html:44
+msgid "e.g. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+msgstr "bv. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+
+#: templates/_settings_tabs/scraping.html:62
+msgid "Import system logos from your ES-DE installation"
+msgstr "Voer stelsellogo's in vanaf jou ES-DE-installasie"
+
+#: templates/_settings_tabs/scraping.html:71
+msgid "Scraper Configuration"
+msgstr "Skraper-opstelling"
+
+#: templates/_settings_tabs/scraping.html:75
+msgid ""
+"Enable/disable scrapers and drag to set priority order. The scraper at "
+"the top will be tried first during bulk scraping."
+msgstr ""
+"Skakel skrapers aan/af en sleep om die voorkeurvolgorde te stel. Die "
+"skraper heel bo word eerste probeer tydens grootmaat-skraap."
+
+#: templates/_settings_tabs/scraping.html:84
+#: templates/_settings_tabs/scraping.html:89
+msgid "Local"
+msgstr "Plaaslik"
+
+#: templates/_settings_tabs/scraping.html:85
+msgid "Import from your local gamelist.xml files"
+msgstr "Voer in vanaf jou plaaslike gamelist.xml-lêers"
+
+#: templates/_settings_tabs/scraping.html:92
+msgid "Enable ES-DE local scraper"
+msgstr "Skakel ES-DE plaaslike skraper aan"
+
+#: templates/_settings_tabs/scraping.html:103
+msgid "Primary online scraper for game metadata"
+msgstr "Hoof-aanlynskraper vir speletjie-metadata"
+
+#: templates/_settings_tabs/scraping.html:110
+msgid "Enable TheGamesDB scraper"
+msgstr "Skakel TheGamesDB-skraper aan"
+
+#: templates/_settings_tabs/scraping.html:121
+msgid "Comprehensive game database by Twitch"
+msgstr "Omvattende speletjiedatabasis deur Twitch"
+
+#: templates/_settings_tabs/scraping.html:128
+msgid "Enable IGDB scraper"
+msgstr "Skakel IGDB-skraper aan"
+
+#: templates/_settings_tabs/scraping.html:139
+msgid "Large game database with ESRB ratings and Metacritic scores"
+msgstr "Groot speletjiedatabasis met ESRB-gradering en Metacritic-tellings"
+
+#: templates/_settings_tabs/scraping.html:146
+msgid "Enable RAWG.io scraper"
+msgstr "Skakel RAWG.io-skraper aan"
+
+#: templates/_settings_tabs/scraping.html:157
+msgid "Comprehensive retro gaming database with media (requires account)"
+msgstr "Omvattende retro-speletjiedatabasis met media (vereis rekening)"
+
+#: templates/_settings_tabs/scraping.html:164
+msgid "Enable ScreenScraper scraper"
+msgstr "Skakel ScreenScraper-skraper aan"
+
+#: templates/_settings_tabs/scraping.html:174
+msgid "AI-powered gap-filler (Gemini, OpenAI, or Claude) — fills text fields only"
+msgstr "KI-gedrewe gaping-vuller (Gemini, OpenAI of Claude) — vul net teksvelde in"
+
+#: templates/_settings_tabs/scraping.html:181
+msgid "Enable AI metadata scraper"
+msgstr "Skakel KI-metadata-skraper aan"
+
+#: templates/_settings_tabs/scraping.html:189
+msgid "Bulk Scrape Match Filtering"
+msgstr "Grootmaat-skraap-passingsfilter"
+
+#: templates/_settings_tabs/scraping.html:191
+msgid ""
+"Controls which search results are accepted during bulk scraping. Results "
+"that don't pass the filter are skipped."
+msgstr ""
+"Bepaal watter soekresultate tydens grootmaat-skraap aanvaar word. "
+"Resultate wat nie die filter slaag nie word oorgeslaan."
+
+#: templates/_settings_tabs/scraping.html:196
+msgid "Use advanced criteria mode"
+msgstr "Gebruik gevorderde kriteria-modus"
+
+#: templates/_settings_tabs/scraping.html:199
+msgid "Use advanced criteria instead of score threshold"
+msgstr "Gebruik gevorderde kriteria in plaas van tellingdrempel"
+
+#: templates/_settings_tabs/scraping.html:205
+msgid "Minimum Match Score"
+msgstr "Minimum passingtelling"
+
+#: templates/_settings_tabs/scraping.html:213
+msgid "Score Range"
+msgstr "Tellingreeks"
+
+#: templates/_settings_tabs/scraping.html:213
+msgid "What It Means"
+msgstr "Wat dit beteken"
+
+#: templates/_settings_tabs/scraping.html:216
+msgid "Exact title + platform + date + priority boost"
+msgstr "Presiese titel + platform + datum + prioriteitsbonus"
+
+#: templates/_settings_tabs/scraping.html:217
+msgid "Exact title + some bonuses"
+msgstr "Presiese titel + 'n paar bonusse"
+
+#: templates/_settings_tabs/scraping.html:218
+msgid "Close title match + platform confirmed"
+msgstr "Naby titelpassing + platform bevestig"
+
+#: templates/_settings_tabs/scraping.html:219
+msgid "Partial match or missing platform"
+msgstr "Gedeeltelike passing of platform ontbreek"
+
+#: templates/_settings_tabs/scraping.html:220
+msgid "Weak match — likely wrong game"
+msgstr "Swak passing — waarskynlik die verkeerde speletjie"
+
+#: templates/_settings_tabs/scraping.html:230
+msgid "Minimum Title Quality"
+msgstr "Minimum titelgehalte"
+
+#: templates/_settings_tabs/scraping.html:232
+#, python-format
+msgid "Exact (score ≥ %(n)s)"
+msgstr "Presies (telling ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:233
+#, python-format
+msgid "Close (score ≥ %(n)s)"
+msgstr "Naby (telling ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:234
+#, python-format
+msgid "Partial (score ≥ %(n)s)"
+msgstr "Gedeeltelik (telling ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:235
+msgid "Any (no minimum)"
+msgstr "Enige (geen minimum)"
+
+#: templates/_settings_tabs/scraping.html:239
+msgid "Platform Match Required"
+msgstr "Platform-passing vereis"
+
+#: templates/_settings_tabs/scraping.html:245
+msgid "Only accept results matching the game's system"
+msgstr "Aanvaar net resultate wat by die speletjie se stelsel pas"
+
+#: templates/_settings_tabs/scraping.html:259
+msgid "Reset to Default"
+msgstr "Herstel na verstek"
+
+#: templates/_settings_tabs/scraping.html:279
+msgid ""
+"Configure API keys for online scrapers. Keys are stored locally and never"
+" shared."
+msgstr ""
+"Stel API-sleutels vir aanlynskrapers op. Sleutels word plaaslik gestoor "
+"en nooit gedeel nie."
+
+#: templates/_settings_tabs/scraping.html:286
+msgid "TheGamesDB — Public API Key"
+msgstr "TheGamesDB — Openbare API-sleutel"
+
+#: templates/_settings_tabs/scraping.html:287
+msgid "Get API Keys →"
+msgstr "Kry API-sleutels →"
+
+#: templates/_settings_tabs/scraping.html:291
+msgid "Per-IP rate limit — used as primary for scraping"
+msgstr "Limiet per IP — word as primêre sleutel vir skraap gebruik"
+
+#: templates/_settings_tabs/scraping.html:292
+msgid "Primary key. Per-IP rate limit, best for regular use."
+msgstr "Primêre sleutel. Limiet per IP, die beste vir gereelde gebruik."
+
+#: templates/_settings_tabs/scraping.html:297
+msgid "TheGamesDB — Private API Key"
+msgstr "TheGamesDB — Private API-sleutel"
+
+#: templates/_settings_tabs/scraping.html:301
+msgid "Shared monthly pool — used as fallback"
+msgstr "Gedeelde maandelikse poel — word as terugval gebruik"
+
+#: templates/_settings_tabs/scraping.html:302
+msgid "Fallback key. Shared monthly pool (~6,000 req/month)."
+msgstr "Terugval-sleutel. Gedeelde maandelikse poel (~6,000 versoeke/maand)."
+
+#: templates/_settings_tabs/scraping.html:308
+msgid "IGDB / Twitch Client ID"
+msgstr "IGDB / Twitch-kliënt-ID"
+
+#: templates/_settings_tabs/scraping.html:309
+msgid "Get Credentials →"
+msgstr "Kry bewyse →"
+
+#: templates/_settings_tabs/scraping.html:313
+msgid "Enter Twitch Client ID"
+msgstr "Voer Twitch-kliënt-ID in"
+
+#: templates/_settings_tabs/scraping.html:318
+msgid "IGDB / Twitch Client Secret"
+msgstr "IGDB / Twitch-kliëntgeheim"
+
+#: templates/_settings_tabs/scraping.html:322
+msgid "Enter Twitch Client Secret"
+msgstr "Voer Twitch-kliëntgeheim in"
+
+#: templates/_settings_tabs/scraping.html:328
+msgid "RAWG.io API Key"
+msgstr "RAWG.io API-sleutel"
+
+#: templates/_settings_tabs/scraping.html:329
+#: templates/_settings_tabs/scraping.html:389
+#: templates/_settings_tabs/scraping.html:400
+#: templates/_settings_tabs/scraping.html:448
+#: templates/_settings_tabs/scraping.html:481
+#: templates/_settings_tabs/scraping.html:503
+msgid "Get API Key →"
+msgstr "Kry API-sleutel →"
+
+#: templates/_settings_tabs/scraping.html:333
+msgid "Enter RAWG.io API key"
+msgstr "Voer RAWG.io API-sleutel in"
+
+#: templates/_settings_tabs/scraping.html:339
+msgid "ScreenScraper Username"
+msgstr "ScreenScraper-gebruikernaam"
+
+#: templates/_settings_tabs/scraping.html:340
+#: templates/_settings_tabs/scraping.html:379
+msgid "Register →"
+msgstr "Registreer →"
+
+#: templates/_settings_tabs/scraping.html:344
+msgid "Your member account username"
+msgstr "Jou lidrekening se gebruikernaam"
+
+#: templates/_settings_tabs/scraping.html:349
+msgid "ScreenScraper Password"
+msgstr "ScreenScraper-wagwoord"
+
+#: templates/_settings_tabs/scraping.html:353
+msgid "Your member account login password"
+msgstr "Jou lidrekening se aanmeldwagwoord"
+
+#: templates/_settings_tabs/scraping.html:358
+msgid "ScreenScraper Developer ID"
+msgstr "ScreenScraper-ontwikkelaar-ID"
+
+#: templates/_settings_tabs/scraping.html:359
+msgid "Request Dev Access →"
+msgstr "Versoek ontwikkelaartoegang →"
+
+#: templates/_settings_tabs/scraping.html:363
+msgid "Dev Username from developer area"
+msgstr "Ontwikkelaar-gebruikernaam uit die ontwikkelaararea"
+
+#: templates/_settings_tabs/scraping.html:368
+msgid "ScreenScraper Developer Password"
+msgstr "ScreenScraper-ontwikkelaarwagwoord"
+
+#: templates/_settings_tabs/scraping.html:378
+msgid "RetroAchievements Username"
+msgstr "RetroAchievements-gebruikernaam"
+
+#: templates/_settings_tabs/scraping.html:383
+msgid "Your RetroAchievements username"
+msgstr "Jou RetroAchievements-gebruikernaam"
+
+#: templates/_settings_tabs/scraping.html:388
+msgid "RetroAchievements API Key"
+msgstr "RetroAchievements API-sleutel"
+
+#: templates/_settings_tabs/scraping.html:393
+msgid "Web API Key from Settings > Keys"
+msgstr "Web-API-sleutel uit Instellings > Keys"
+
+#: templates/_settings_tabs/scraping.html:408
+msgid "Steam ID"
+msgstr "Steam-ID"
+
+#: templates/_settings_tabs/scraping.html:412
+msgid "17-digit Steam ID or custom URL name"
+msgstr "17-syfer Steam-ID of eie URL-naam"
+
+#: templates/_settings_tabs/scraping.html:413
+msgid ""
+"Your 17-digit Steam ID (e.g. 76561198012345678) or custom URL name. Find "
+"it at <a href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener "
+"noreferrer\" style=\"color: var(--primary-cyan);\">steamid.io</a>"
+msgstr ""
+"Jou 17-syfer Steam-ID (bv. 76561198012345678) of eie URL-naam. Vind dit "
+"by <a href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener "
+"noreferrer\" style=\"color: var(--primary-cyan);\">steamid.io</a>"
+
 #: templates/_settings_tabs/scraping.html:421
 #, python-format
 msgid ""
@@ -15407,9 +15962,92 @@ msgstr ""
 "href=\"%(profile_url)s\" style=\"color: var(--primary-"
 "cyan);\">Instellings &gt; My Profiel</a>. Niks is hier nodig nie."
 
+#: templates/_settings_tabs/scraping.html:427
+msgid "AI Metadata Provider"
+msgstr "KI-metadata-verskaffer"
+
+#: templates/_settings_tabs/scraping.html:430
+msgid "-- Select Provider --"
+msgstr "-- Kies verskaffer --"
+
+#: templates/_settings_tabs/scraping.html:435
+msgid ""
+"AI fills text-only fields (genre, structure, perspective, etc.). API "
+"usage costs apply."
+msgstr ""
+"KI vul net teksvelde in (genre, struktuur, perspektief, ens.). API-"
+"gebruikskoste is van toepassing."
+
 #: templates/_settings_tabs/scraping.html:438
 msgid "Test saved AI key"
 msgstr "Toets gestoorde KI-sleutel"
+
+#: templates/_settings_tabs/scraping.html:447
+msgid "Gemini API Key"
+msgstr "Gemini API-sleutel"
+
+#: templates/_settings_tabs/scraping.html:452
+msgid "Enter Google Gemini API key"
+msgstr "Voer Google Gemini API-sleutel in"
+
+#: templates/_settings_tabs/scraping.html:456
+msgid "Gemini Model"
+msgstr "Gemini-model"
+
+#: templates/_settings_tabs/scraping.html:459
+#: templates/_settings_tabs/scraping.html:460
+#: templates/_settings_tabs/scraping.html:461
+#: templates/_settings_tabs/scraping.html:462
+#: templates/_settings_tabs/scraping.html:492
+#: templates/_settings_tabs/scraping.html:493
+#: templates/_settings_tabs/scraping.html:514
+#: templates/_settings_tabs/scraping.html:515
+#: templates/_settings_tabs/scraping.html:516
+#, python-format
+msgid "$%(inp)s in / $%(out)s out per 1M tokens"
+msgstr "$%(inp)s in / $%(out)s uit per 1M tekens"
+
+#: templates/_settings_tabs/scraping.html:459
+#: templates/_settings_tabs/scraping.html:492
+#: templates/_settings_tabs/scraping.html:514
+msgid "Recommended"
+msgstr "Aanbeveel"
+
+#: templates/_settings_tabs/scraping.html:467
+msgid "GCP Project ID"
+msgstr "GCP-projek-ID"
+
+#: templates/_settings_tabs/scraping.html:468
+msgid "Optional — required for Google Cloud billing credits"
+msgstr "Opsioneel — nodig vir Google Cloud-faktureringskrediete"
+
+#: templates/_settings_tabs/scraping.html:472
+msgid "e.g. my-project-123456"
+msgstr "bv. my-project-123456"
+
+#: templates/_settings_tabs/scraping.html:480
+msgid "OpenAI API Key"
+msgstr "OpenAI API-sleutel"
+
+#: templates/_settings_tabs/scraping.html:485
+msgid "Enter OpenAI API key"
+msgstr "Voer OpenAI API-sleutel in"
+
+#: templates/_settings_tabs/scraping.html:489
+msgid "OpenAI Model"
+msgstr "OpenAI-model"
+
+#: templates/_settings_tabs/scraping.html:502
+msgid "Anthropic API Key"
+msgstr "Anthropic API-sleutel"
+
+#: templates/_settings_tabs/scraping.html:507
+msgid "Enter Anthropic API key"
+msgstr "Voer Anthropic API-sleutel in"
+
+#: templates/_settings_tabs/scraping.html:511
+msgid "Claude Model"
+msgstr "Claude-model"
 
 #: templates/_settings_tabs/scraping.html:521
 msgid "Let Claude search the web"

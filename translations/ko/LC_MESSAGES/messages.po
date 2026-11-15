@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 07:39+0200\n"
+"POT-Creation-Date: 2026-11-15 08:01+0200\n"
 "PO-Revision-Date: 2026-06-30 14:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ko\n"
@@ -2821,7 +2821,8 @@ msgstr "폴더 경로를 하나 입력하세요."
 #: templates/multi_disc_organizer.html:371 templates/reports.html:1144
 #: templates/reports.html:1147 templates/reports.html:1213
 #: templates/reports.html:1216 templates/rom_tools_settings.html:579
-#: templates/rom_tools_settings.html:582 templates/settings.html:2926
+#: templates/rom_tools_settings.html:582 templates/settings.html:2367
+#: templates/settings.html:2485 templates/settings.html:2926
 #: templates/settings.html:2930 templates/settings.html:2949
 #: templates/settings.html:2953 templates/settings.html:3551
 #: templates/settings.html:3555 templates/settings.html:3623
@@ -3907,7 +3908,8 @@ msgstr "저장했습니다. 다음에 실행을 누를 때 적용됩니다."
 msgid "Saving to the database…"
 msgstr "데이터베이스에 저장하는 중…"
 
-#: services/js_i18n_strings.py:978 templates/settings.html:4787
+#: services/js_i18n_strings.py:978 templates/settings.html:2726
+#: templates/settings.html:2764 templates/settings.html:4787
 #: templates/setup.html:483
 msgid "Saving..."
 msgstr "저장 중..."
@@ -7919,6 +7921,7 @@ msgid "Database Service"
 msgstr "데이터베이스 서비스"
 
 #: templates/dashboard.html:585 templates/dashboard.html:1308
+#: templates/settings.html:2357
 msgid "Online"
 msgstr "온라인"
 
@@ -7932,9 +7935,14 @@ msgstr "ES-DE 로컬 스크레이퍼"
 msgid "Available"
 msgstr "사용 가능"
 
-#: templates/dashboard.html:602 templates/dashboard.html:612
-#: templates/dashboard.html:632 templates/dashboard.html:642
-#: templates/game_imports.html:368
+#: templates/_settings_tabs/scraping.html:107
+#: templates/_settings_tabs/scraping.html:125
+#: templates/_settings_tabs/scraping.html:143
+#: templates/_settings_tabs/scraping.html:161
+#: templates/_settings_tabs/scraping.html:178 templates/dashboard.html:602
+#: templates/dashboard.html:612 templates/dashboard.html:632
+#: templates/dashboard.html:642 templates/game_imports.html:368
+#: templates/settings.html:2330 templates/settings.html:2444
 msgid "Checking..."
 msgstr "확인 중..."
 
@@ -8006,7 +8014,7 @@ msgstr "설정된 API 1개가 오프라인입니다"
 msgid "{count} configured APIs are offline"
 msgstr "설정된 API {count}개가 오프라인입니다"
 
-#: templates/dashboard.html:1309
+#: templates/dashboard.html:1309 templates/settings.html:2360
 msgid "Offline"
 msgstr "오프라인"
 
@@ -8316,7 +8324,7 @@ msgid "From the AI, not checked against a review site."
 msgstr "AI가 제공한 정보이며, 리뷰 사이트와 대조하지 않았습니다."
 
 #: templates/game_detail.html:274 templates/game_detail.html:279
-#: templates/game_detail.html:284
+#: templates/game_detail.html:284 templates/settings.html:2691
 msgid "AI"
 msgstr "AI"
 
@@ -8888,11 +8896,12 @@ msgstr ""
 msgid "Steam Credentials"
 msgstr "Steam 자격 증명"
 
-#: templates/game_imports.html:251
+#: templates/_settings_tabs/scraping.html:399 templates/game_imports.html:251
 msgid "Steam Web API Key"
 msgstr "Steam Web API 키"
 
-#: templates/_settings_tabs/account.html:239 templates/game_imports.html:251
+#: templates/_settings_tabs/account.html:239
+#: templates/_settings_tabs/scraping.html:404 templates/game_imports.html:251
 msgid "Your Steam Web API Key"
 msgstr "Steam Web API 키"
 
@@ -9558,7 +9567,8 @@ msgstr "일치하는 항목이 없습니다."
 #: templates/settings.html:1942 templates/settings.html:1967
 #: templates/settings.html:1970 templates/settings.html:1990
 #: templates/settings.html:2034 templates/settings.html:2056
-#: templates/settings.html:2153 templates/settings.html:4832
+#: templates/settings.html:2153 templates/settings.html:2751
+#: templates/settings.html:2813 templates/settings.html:4832
 #: templates/steam_achievement_game.html:302
 #: templates/xbox_achievement_game.html:293
 #, python-brace-format
@@ -11302,7 +11312,8 @@ msgid "Detection method can be selected directly on the Duplicate Finder page."
 msgstr "검색 방식은 중복 찾기 페이지에서 직접 선택할 수 있습니다."
 
 #: templates/_settings_tabs/customization.html:83
-#: templates/rom_tools_settings.html:433
+#: templates/_settings_tabs/scraping.html:255
+#: templates/rom_tools_settings.html:433 templates/settings.html:2755
 msgid "Save Settings"
 msgstr "설정 저장"
 
@@ -11310,7 +11321,7 @@ msgstr "설정 저장"
 msgid "Reset to Defaults"
 msgstr "기본값으로 재설정"
 
-#: templates/rom_tools_settings.html:439
+#: templates/rom_tools_settings.html:439 templates/settings.html:2744
 msgid "Settings saved successfully!"
 msgstr "설정을 저장했습니다!"
 
@@ -11554,6 +11565,12 @@ msgstr "사용자를 삭제하지 못했습니다"
 msgid "Network error deleting user"
 msgstr "사용자 삭제 중 네트워크 오류가 발생했습니다"
 
+#: templates/settings.html:1438 templates/settings.html:1440
+#: templates/settings.html:1442 templates/settings.html:1444
+#, python-brace-format
+msgid "Current: {path}"
+msgstr "현재: {path}"
+
 #: templates/settings.html:1466
 msgid "Path settings saved!"
 msgstr "경로 설정을 저장했습니다!"
@@ -11753,7 +11770,7 @@ msgstr "계산 실패: {error}"
 msgid "Failed to save scraper setting"
 msgstr "스크래핑 설정을 저장하지 못했습니다"
 
-#: templates/settings.html:2312
+#: templates/_settings_tabs/scraping.html:173 templates/settings.html:2312
 msgid "AI Metadata"
 msgstr "AI 메타데이터"
 
@@ -11767,6 +11784,23 @@ msgstr "{name} 사용함"
 msgid "{name} disabled"
 msgstr "{name} 사용 안 함"
 
+#: templates/settings.html:2383
+#, python-brace-format
+msgid "Resets in {time}"
+msgstr "{time} 후 초기화"
+
+#: templates/settings.html:2383
+msgid "Resets soon"
+msgstr "곧 초기화"
+
+#: templates/settings.html:2389 templates/settings.html:2391
+#: templates/settings.html:2476 templates/settings.html:2500
+#: templates/settings.html:2597 templates/settings.html:2647
+#: templates/settings.html:2649
+#, python-brace-format
+msgid "Resets: {when}"
+msgstr "초기화: {when}"
+
 #: templates/settings.html:2422
 msgid "Testing…"
 msgstr "테스트 중…"
@@ -11779,6 +11813,179 @@ msgstr "키가 작동합니다: %(provider)s에서 %(model)s(으)로 응답했�
 #: templates/settings.html:2432
 msgid "The key test failed."
 msgstr "키 테스트에 실패했습니다."
+
+#: templates/settings.html:2445
+msgid "Checking rate limits..."
+msgstr "요청 한도 확인 중..."
+
+#: templates/settings.html:2474 templates/settings.html:2496
+msgid "remaining (monthly)"
+msgstr "남음(월간)"
+
+#: templates/settings.html:2475 templates/settings.html:2481
+#: templates/settings.html:2483 templates/settings.html:2485
+#: templates/settings.html:2488
+#, python-brace-format
+msgid "Public key: {status}"
+msgstr "공개 키: {status}"
+
+#: templates/settings.html:2477 templates/settings.html:2501
+#, python-brace-format
+msgid "Extra: {n}"
+msgstr "추가: {n}"
+
+#: templates/settings.html:2481
+msgid "Active"
+msgstr "사용 중"
+
+#: templates/settings.html:2483
+msgid "Allowance exhausted"
+msgstr "사용량 소진"
+
+#: templates/settings.html:2488 templates/settings.html:2506
+#: templates/settings.html:2567 templates/settings.html:2573
+#: templates/settings.html:2607 templates/settings.html:2697
+#: templates/settings.html:2703
+msgid "Not configured"
+msgstr "설정되지 않음"
+
+#: templates/settings.html:2497 templates/settings.html:2506
+#, python-brace-format
+msgid "Private key: {status}"
+msgstr "비공개 키: {status}"
+
+#: templates/settings.html:2533
+msgid "Error checking"
+msgstr "확인 오류"
+
+#: templates/settings.html:2539 templates/settings.html:2613
+msgid "Connection error"
+msgstr "연결 오류"
+
+#: templates/settings.html:2554
+msgid "requests remaining today"
+msgstr "오늘 남은 요청 수"
+
+#: templates/settings.html:2557
+#, python-brace-format
+msgid "Per-minute limit: {n}"
+msgstr "분당 한도: {n}"
+
+#: templates/settings.html:2558
+#, python-brace-format
+msgid "Level: {level}"
+msgstr "레벨: {level}"
+
+#: templates/settings.html:2559
+#, python-brace-format
+msgid "Threads: {n}"
+msgstr "스레드: {n}"
+
+#: templates/settings.html:2560
+#, python-brace-format
+msgid "Speed: {n} KB/s"
+msgstr "속도: {n} KB/s"
+
+#: templates/settings.html:2561
+msgid "Resets daily at midnight (UTC)"
+msgstr "매일 자정(UTC)에 초기화"
+
+#: templates/settings.html:2582
+#, python-brace-format
+msgid "{n} requests/second (OAuth token-based)"
+msgstr "{n} 요청/초(OAuth 토큰 방식)"
+
+#: templates/settings.html:2583
+msgid "Token-based authentication — no daily quota"
+msgstr "토큰 인증 — 일일 한도 없음"
+
+#: templates/settings.html:2594
+msgid "requests remaining"
+msgstr "남은 요청 수"
+
+#: templates/settings.html:2595
+#, python-brace-format
+msgid "{n} requests/month (free tier)"
+msgstr "{n} 요청/월(무료 등급)"
+
+#: templates/settings.html:2598
+msgid "No live usage tracking from API"
+msgstr "API에서 실시간 사용량을 제공하지 않음"
+
+#: templates/settings.html:2622
+msgid "No published rate limits"
+msgstr "공개된 요청 한도 없음"
+
+#: templates/settings.html:2641
+#, python-brace-format
+msgid "Requests: {used} remaining ({pct})"
+msgstr "요청: {used} 남음({pct})"
+
+#: templates/settings.html:2660
+#, python-brace-format
+msgid "Tokens: {used} remaining ({pct})"
+msgstr "토큰: {used} 남음({pct})"
+
+#: templates/settings.html:2669
+#, python-brace-format
+msgid "Input tokens: {used} remaining ({pct})"
+msgstr "입력 토큰: {used} 남음({pct})"
+
+#: templates/settings.html:2674
+#, python-brace-format
+msgid "Rate: {rpm} requests/min"
+msgstr "속도: {rpm} 요청/분"
+
+#: templates/settings.html:2674
+#, python-brace-format
+msgid "{rpd} requests/day (free tier)"
+msgstr "{rpd} 요청/일(무료 등급)"
+
+#: templates/settings.html:2679
+msgid "API online — no rate limit data returned"
+msgstr "API 온라인 — 요청 한도 데이터가 반환되지 않음"
+
+#: templates/settings.html:2692
+#, python-brace-format
+msgid "Model: {model}"
+msgstr "모델: {model}"
+
+#: templates/settings.html:2696 templates/settings.html:2702
+msgid "AI Provider"
+msgstr "AI 제공자"
+
+#: templates/settings.html:2709
+#, python-brace-format
+msgid "Last checked: {time}"
+msgstr "마지막 확인: {time}"
+
+#: templates/settings.html:2713
+msgid "No rate limit information available"
+msgstr "요청 한도 정보 없음"
+
+#: templates/_settings_tabs/scraping.html:263 templates/settings.html:2717
+msgid "Check Rate Limits"
+msgstr "요청 한도 확인"
+
+#: templates/settings.html:2739
+msgid "Settings saved! Checking scraper status..."
+msgstr "설정을 저장했습니다! 스크래퍼 상태 확인 중..."
+
+#: templates/settings.html:2801
+msgid "API keys saved! Checking scraper status..."
+msgstr "API 키를 저장했습니다! 스크래퍼 상태 확인 중..."
+
+#: templates/settings.html:2806
+msgid "API keys saved successfully!"
+msgstr "API 키를 저장했습니다!"
+
+#: templates/settings.html:2810
+msgid "Failed to save API keys"
+msgstr "API 키를 저장하지 못했습니다"
+
+#: templates/_settings_tabs/scraping.html:535 templates/settings.html:2817
+msgid "Save API Keys"
+msgstr "API 키 저장"
 
 #: templates/settings.html:2909
 msgid "Invalid Input"
@@ -12134,6 +12341,28 @@ msgstr "이름 새로 고침 실패"
 #: templates/settings.html:4464
 msgid "Failed to refresh system names"
 msgstr "시스템 이름 새로 고침 실패"
+
+#: templates/settings.html:4480
+msgid "Importing..."
+msgstr "가져오는 중..."
+
+#: templates/settings.html:4490
+msgid "Run \"Scan Library\" to update the database with the new logos."
+msgstr "\"라이브러리 스캔\"을 실행하면 새 로고가 데이터베이스에 반영됩니다."
+
+#: templates/settings.html:4495 templates/setup.html:375
+#: templates/setup.html:435
+msgid "An error occurred"
+msgstr "오류가 발생했습니다"
+
+#: templates/settings.html:4498
+#, python-brace-format
+msgid "Failed to import logos: {error}"
+msgstr "로고를 가져오지 못했습니다: {error}"
+
+#: templates/_settings_tabs/scraping.html:58 templates/settings.html:4501
+msgid "Import System Logos"
+msgstr "시스템 로고 가져오기"
 
 #: templates/settings.html:4563
 msgid "No bulk scrape state found (all clear)"
@@ -12580,7 +12809,9 @@ msgstr "관리자"
 msgid "ES-DE"
 msgstr "ES-DE"
 
-#: templates/setup.html:20 templates/setup.html:212
+#: templates/_settings_tabs/scraping.html:8
+#: templates/_settings_tabs/scraping.html:275 templates/setup.html:20
+#: templates/setup.html:212
 msgid "API Keys"
 msgstr "API 키"
 
@@ -12742,7 +12973,7 @@ msgstr "현재: %(path)s"
 msgid "Example:"
 msgstr "예시:"
 
-#: templates/setup.html:166
+#: templates/_settings_tabs/scraping.html:15 templates/setup.html:166
 msgid "ES-DE Integration"
 msgstr "ES-DE 연동"
 
@@ -12758,11 +12989,11 @@ msgstr ""
 msgid "I don't use ES-DE"
 msgstr "ES-DE를 사용하지 않음"
 
-#: templates/setup.html:182
+#: templates/_settings_tabs/scraping.html:19 templates/setup.html:182
 msgid "ES-DE Gamelists Path"
 msgstr "ES-DE 게임 목록 경로"
 
-#: templates/setup.html:189
+#: templates/_settings_tabs/scraping.html:30 templates/setup.html:189
 msgid "ES-DE Downloaded Media Path"
 msgstr "ES-DE 다운로드 미디어 경로"
 
@@ -12852,7 +13083,7 @@ msgstr "개발자 영역의 개발자 사용자 이름"
 msgid "Developer Password"
 msgstr "개발사 비밀번호"
 
-#: templates/setup.html:263
+#: templates/_settings_tabs/scraping.html:372 templates/setup.html:263
 msgid "Password from developer area (NOT debug password)"
 msgstr "개발자 영역의 비밀번호 (디버그 비밀번호 아님)"
 
@@ -12889,10 +13120,6 @@ msgstr "설정 완료"
 #: templates/setup.html:435
 msgid "Error:"
 msgstr "오류:"
-
-#: templates/setup.html:375 templates/setup.html:435
-msgid "An error occurred"
-msgstr "오류가 발생했습니다"
 
 #: templates/setup.html:392
 msgid "Parent folder"
@@ -14585,6 +14812,7 @@ msgid "RPCS3 Trophy Settings"
 msgstr "RPCS3 트로피 설정"
 
 #: templates/_settings_tabs/data.html:44
+#: templates/_settings_tabs/scraping.html:41
 msgid "RPCS3 Trophy Path"
 msgstr "RPCS3 트로피 경로"
 
@@ -14751,6 +14979,7 @@ msgid "Database path cannot be changed via UI"
 msgstr "데이터베이스 경로는 UI에서 변경할 수 없습니다"
 
 #: templates/_settings_tabs/library.html:43
+#: templates/_settings_tabs/scraping.html:54
 msgid "Save Path Settings"
 msgstr "경로 설정 저장"
 
@@ -14899,6 +15128,324 @@ msgid ""
 "leaves it alone."
 msgstr "실수로 표시한 디스크를 게임 목록으로 되돌릴 수 있습니다. 그 후 Auto-Link는 이 디스크를 건드리지 않습니다."
 
+#: templates/_settings_tabs/scraping.html:3
+msgid "Scraping settings"
+msgstr "스크래핑 설정"
+
+#: templates/_settings_tabs/scraping.html:6
+msgid "Scraper"
+msgstr "스크래퍼"
+
+#: templates/_settings_tabs/scraping.html:22
+msgid "e.g. /home/user/.es-de/gamelists"
+msgstr "예: /home/user/.es-de/gamelists"
+
+#: templates/_settings_tabs/scraping.html:33
+msgid "Leave blank to auto-detect from gamelists path"
+msgstr "비워 두면 gamelists 경로에서 자동으로 찾습니다"
+
+#: templates/_settings_tabs/scraping.html:37
+msgid "Default: Loading..."
+msgstr "기본값: 불러오는 중..."
+
+#: templates/_settings_tabs/scraping.html:44
+msgid "e.g. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+msgstr "예: /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
+
+#: templates/_settings_tabs/scraping.html:62
+msgid "Import system logos from your ES-DE installation"
+msgstr "ES-DE 설치 폴더에서 시스템 로고를 가져옵니다"
+
+#: templates/_settings_tabs/scraping.html:71
+msgid "Scraper Configuration"
+msgstr "스크래퍼 구성"
+
+#: templates/_settings_tabs/scraping.html:75
+msgid ""
+"Enable/disable scrapers and drag to set priority order. The scraper at "
+"the top will be tried first during bulk scraping."
+msgstr "스크래퍼를 켜고 끄고, 끌어서 우선순위를 정하세요. 일괄 스크래핑에서는 맨 위의 스크래퍼를 먼저 시도합니다."
+
+#: templates/_settings_tabs/scraping.html:84
+#: templates/_settings_tabs/scraping.html:89
+msgid "Local"
+msgstr "로컬"
+
+#: templates/_settings_tabs/scraping.html:85
+msgid "Import from your local gamelist.xml files"
+msgstr "로컬 gamelist.xml 파일에서 가져오기"
+
+#: templates/_settings_tabs/scraping.html:92
+msgid "Enable ES-DE local scraper"
+msgstr "ES-DE 로컬 스크래퍼 사용"
+
+#: templates/_settings_tabs/scraping.html:103
+msgid "Primary online scraper for game metadata"
+msgstr "게임 메타데이터를 가져오는 주요 온라인 스크래퍼"
+
+#: templates/_settings_tabs/scraping.html:110
+msgid "Enable TheGamesDB scraper"
+msgstr "TheGamesDB 스크래퍼 사용"
+
+#: templates/_settings_tabs/scraping.html:121
+msgid "Comprehensive game database by Twitch"
+msgstr "Twitch의 종합 게임 데이터베이스"
+
+#: templates/_settings_tabs/scraping.html:128
+msgid "Enable IGDB scraper"
+msgstr "IGDB 스크래퍼 사용"
+
+#: templates/_settings_tabs/scraping.html:139
+msgid "Large game database with ESRB ratings and Metacritic scores"
+msgstr "ESRB 등급과 Metacritic 점수가 있는 대형 게임 데이터베이스"
+
+#: templates/_settings_tabs/scraping.html:146
+msgid "Enable RAWG.io scraper"
+msgstr "RAWG.io 스크래퍼 사용"
+
+#: templates/_settings_tabs/scraping.html:157
+msgid "Comprehensive retro gaming database with media (requires account)"
+msgstr "미디어가 포함된 종합 레트로 게임 데이터베이스(계정 필요)"
+
+#: templates/_settings_tabs/scraping.html:164
+msgid "Enable ScreenScraper scraper"
+msgstr "ScreenScraper 스크래퍼 사용"
+
+#: templates/_settings_tabs/scraping.html:174
+msgid "AI-powered gap-filler (Gemini, OpenAI, or Claude) — fills text fields only"
+msgstr "AI 기반 빈칸 채우기(Gemini, OpenAI, Claude) — 텍스트 항목만 채움"
+
+#: templates/_settings_tabs/scraping.html:181
+msgid "Enable AI metadata scraper"
+msgstr "AI 메타데이터 스크래퍼 사용"
+
+#: templates/_settings_tabs/scraping.html:189
+msgid "Bulk Scrape Match Filtering"
+msgstr "일괄 스크래핑 일치 필터"
+
+#: templates/_settings_tabs/scraping.html:191
+msgid ""
+"Controls which search results are accepted during bulk scraping. Results "
+"that don't pass the filter are skipped."
+msgstr "일괄 스크래핑에서 받아들일 검색 결과를 정합니다. 필터를 통과하지 못한 결과는 건너뜁니다."
+
+#: templates/_settings_tabs/scraping.html:196
+msgid "Use advanced criteria mode"
+msgstr "고급 조건 모드 사용"
+
+#: templates/_settings_tabs/scraping.html:199
+msgid "Use advanced criteria instead of score threshold"
+msgstr "점수 기준 대신 고급 조건 사용"
+
+#: templates/_settings_tabs/scraping.html:205
+msgid "Minimum Match Score"
+msgstr "최소 일치 점수"
+
+#: templates/_settings_tabs/scraping.html:213
+msgid "Score Range"
+msgstr "점수 범위"
+
+#: templates/_settings_tabs/scraping.html:213
+msgid "What It Means"
+msgstr "의미"
+
+#: templates/_settings_tabs/scraping.html:216
+msgid "Exact title + platform + date + priority boost"
+msgstr "정확한 제목 + 플랫폼 + 날짜 + 우선순위 보너스"
+
+#: templates/_settings_tabs/scraping.html:217
+msgid "Exact title + some bonuses"
+msgstr "정확한 제목 + 일부 보너스"
+
+#: templates/_settings_tabs/scraping.html:218
+msgid "Close title match + platform confirmed"
+msgstr "거의 같은 제목 + 플랫폼 확인됨"
+
+#: templates/_settings_tabs/scraping.html:219
+msgid "Partial match or missing platform"
+msgstr "부분 일치 또는 플랫폼 없음"
+
+#: templates/_settings_tabs/scraping.html:220
+msgid "Weak match — likely wrong game"
+msgstr "약한 일치 — 다른 게임일 가능성 높음"
+
+#: templates/_settings_tabs/scraping.html:230
+msgid "Minimum Title Quality"
+msgstr "최소 제목 품질"
+
+#: templates/_settings_tabs/scraping.html:232
+#, python-format
+msgid "Exact (score ≥ %(n)s)"
+msgstr "정확(점수 ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:233
+#, python-format
+msgid "Close (score ≥ %(n)s)"
+msgstr "근접(점수 ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:234
+#, python-format
+msgid "Partial (score ≥ %(n)s)"
+msgstr "부분(점수 ≥ %(n)s)"
+
+#: templates/_settings_tabs/scraping.html:235
+msgid "Any (no minimum)"
+msgstr "상관없음(최소 없음)"
+
+#: templates/_settings_tabs/scraping.html:239
+msgid "Platform Match Required"
+msgstr "플랫폼 일치 필수"
+
+#: templates/_settings_tabs/scraping.html:245
+msgid "Only accept results matching the game's system"
+msgstr "게임의 시스템과 일치하는 결과만 받아들이기"
+
+#: templates/_settings_tabs/scraping.html:259
+msgid "Reset to Default"
+msgstr "기본값으로 초기화"
+
+#: templates/_settings_tabs/scraping.html:279
+msgid ""
+"Configure API keys for online scrapers. Keys are stored locally and never"
+" shared."
+msgstr "온라인 스크래퍼용 API 키를 설정하세요. 키는 이 컴퓨터에만 저장되며 공유되지 않습니다."
+
+#: templates/_settings_tabs/scraping.html:286
+msgid "TheGamesDB — Public API Key"
+msgstr "TheGamesDB — 공개 API 키"
+
+#: templates/_settings_tabs/scraping.html:287
+msgid "Get API Keys →"
+msgstr "API 키 받기 →"
+
+#: templates/_settings_tabs/scraping.html:291
+msgid "Per-IP rate limit — used as primary for scraping"
+msgstr "IP별 요청 한도 — 스크래핑의 기본 키로 사용"
+
+#: templates/_settings_tabs/scraping.html:292
+msgid "Primary key. Per-IP rate limit, best for regular use."
+msgstr "기본 키. IP별 요청 한도이며 일반 사용에 가장 좋습니다."
+
+#: templates/_settings_tabs/scraping.html:297
+msgid "TheGamesDB — Private API Key"
+msgstr "TheGamesDB — 비공개 API 키"
+
+#: templates/_settings_tabs/scraping.html:301
+msgid "Shared monthly pool — used as fallback"
+msgstr "공유 월간 한도 — 예비로 사용"
+
+#: templates/_settings_tabs/scraping.html:302
+msgid "Fallback key. Shared monthly pool (~6,000 req/month)."
+msgstr "예비 키. 공유 월간 한도(월 약 6,000 요청)."
+
+#: templates/_settings_tabs/scraping.html:308
+msgid "IGDB / Twitch Client ID"
+msgstr "IGDB / Twitch Client ID"
+
+#: templates/_settings_tabs/scraping.html:309
+msgid "Get Credentials →"
+msgstr "자격 증명 받기 →"
+
+#: templates/_settings_tabs/scraping.html:313
+msgid "Enter Twitch Client ID"
+msgstr "Twitch Client ID 입력"
+
+#: templates/_settings_tabs/scraping.html:318
+msgid "IGDB / Twitch Client Secret"
+msgstr "IGDB / Twitch Client Secret"
+
+#: templates/_settings_tabs/scraping.html:322
+msgid "Enter Twitch Client Secret"
+msgstr "Twitch Client Secret 입력"
+
+#: templates/_settings_tabs/scraping.html:328
+msgid "RAWG.io API Key"
+msgstr "RAWG.io API 키"
+
+#: templates/_settings_tabs/scraping.html:329
+#: templates/_settings_tabs/scraping.html:389
+#: templates/_settings_tabs/scraping.html:400
+#: templates/_settings_tabs/scraping.html:448
+#: templates/_settings_tabs/scraping.html:481
+#: templates/_settings_tabs/scraping.html:503
+msgid "Get API Key →"
+msgstr "API 키 받기 →"
+
+#: templates/_settings_tabs/scraping.html:333
+msgid "Enter RAWG.io API key"
+msgstr "RAWG.io API 키 입력"
+
+#: templates/_settings_tabs/scraping.html:339
+msgid "ScreenScraper Username"
+msgstr "ScreenScraper 사용자 이름"
+
+#: templates/_settings_tabs/scraping.html:340
+#: templates/_settings_tabs/scraping.html:379
+msgid "Register →"
+msgstr "등록 →"
+
+#: templates/_settings_tabs/scraping.html:344
+msgid "Your member account username"
+msgstr "회원 계정의 사용자 이름"
+
+#: templates/_settings_tabs/scraping.html:349
+msgid "ScreenScraper Password"
+msgstr "ScreenScraper 비밀번호"
+
+#: templates/_settings_tabs/scraping.html:353
+msgid "Your member account login password"
+msgstr "회원 계정의 로그인 비밀번호"
+
+#: templates/_settings_tabs/scraping.html:358
+msgid "ScreenScraper Developer ID"
+msgstr "ScreenScraper Developer ID"
+
+#: templates/_settings_tabs/scraping.html:359
+msgid "Request Dev Access →"
+msgstr "개발자 접근 요청 →"
+
+#: templates/_settings_tabs/scraping.html:363
+msgid "Dev Username from developer area"
+msgstr "개발자 영역의 Dev Username"
+
+#: templates/_settings_tabs/scraping.html:368
+msgid "ScreenScraper Developer Password"
+msgstr "ScreenScraper 개발자 비밀번호"
+
+#: templates/_settings_tabs/scraping.html:378
+msgid "RetroAchievements Username"
+msgstr "RetroAchievements 사용자 이름"
+
+#: templates/_settings_tabs/scraping.html:383
+msgid "Your RetroAchievements username"
+msgstr "내 RetroAchievements 사용자 이름"
+
+#: templates/_settings_tabs/scraping.html:388
+msgid "RetroAchievements API Key"
+msgstr "RetroAchievements API 키"
+
+#: templates/_settings_tabs/scraping.html:393
+msgid "Web API Key from Settings > Keys"
+msgstr "설정 > Keys의 Web API 키"
+
+#: templates/_settings_tabs/scraping.html:408
+msgid "Steam ID"
+msgstr "Steam ID"
+
+#: templates/_settings_tabs/scraping.html:412
+msgid "17-digit Steam ID or custom URL name"
+msgstr "17자리 Steam ID 또는 사용자 지정 URL 이름"
+
+#: templates/_settings_tabs/scraping.html:413
+msgid ""
+"Your 17-digit Steam ID (e.g. 76561198012345678) or custom URL name. Find "
+"it at <a href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener "
+"noreferrer\" style=\"color: var(--primary-cyan);\">steamid.io</a>"
+msgstr ""
+"17자리 Steam ID(예: 76561198012345678) 또는 사용자 지정 URL 이름. <a "
+"href=\"https://steamid.io\" target=\"_blank\" rel=\"noopener noreferrer\""
+" style=\"color: var(--primary-cyan);\">steamid.io</a>에서 찾을 수 있습니다"
+
 #: templates/_settings_tabs/scraping.html:421
 #, python-format
 msgid ""
@@ -14909,9 +15456,90 @@ msgstr ""
 "각 사용자가 <a href=\"%(profile_url)s\" style=\"color: var(--primary-"
 "cyan);\">설정 &gt; 내 프로필</a>에서 자신의 무료 OpenXBL 키를 추가합니다. 여기서는 설정할 것이 없습니다."
 
+#: templates/_settings_tabs/scraping.html:427
+msgid "AI Metadata Provider"
+msgstr "AI 메타데이터 제공자"
+
+#: templates/_settings_tabs/scraping.html:430
+msgid "-- Select Provider --"
+msgstr "-- 제공자 선택 --"
+
+#: templates/_settings_tabs/scraping.html:435
+msgid ""
+"AI fills text-only fields (genre, structure, perspective, etc.). API "
+"usage costs apply."
+msgstr "AI는 텍스트 항목(장르, 구조, 시점 등)만 채웁니다. API 사용 요금이 부과됩니다."
+
 #: templates/_settings_tabs/scraping.html:438
 msgid "Test saved AI key"
 msgstr "저장된 AI 키 테스트"
+
+#: templates/_settings_tabs/scraping.html:447
+msgid "Gemini API Key"
+msgstr "Gemini API 키"
+
+#: templates/_settings_tabs/scraping.html:452
+msgid "Enter Google Gemini API key"
+msgstr "Google Gemini API 키 입력"
+
+#: templates/_settings_tabs/scraping.html:456
+msgid "Gemini Model"
+msgstr "Gemini 모델"
+
+#: templates/_settings_tabs/scraping.html:459
+#: templates/_settings_tabs/scraping.html:460
+#: templates/_settings_tabs/scraping.html:461
+#: templates/_settings_tabs/scraping.html:462
+#: templates/_settings_tabs/scraping.html:492
+#: templates/_settings_tabs/scraping.html:493
+#: templates/_settings_tabs/scraping.html:514
+#: templates/_settings_tabs/scraping.html:515
+#: templates/_settings_tabs/scraping.html:516
+#, python-format
+msgid "$%(inp)s in / $%(out)s out per 1M tokens"
+msgstr "100만 토큰당 입력 $%(inp)s / 출력 $%(out)s"
+
+#: templates/_settings_tabs/scraping.html:459
+#: templates/_settings_tabs/scraping.html:492
+#: templates/_settings_tabs/scraping.html:514
+msgid "Recommended"
+msgstr "추천"
+
+#: templates/_settings_tabs/scraping.html:467
+msgid "GCP Project ID"
+msgstr "GCP Project ID"
+
+#: templates/_settings_tabs/scraping.html:468
+msgid "Optional — required for Google Cloud billing credits"
+msgstr "선택 사항 — Google Cloud 결제 크레딧에 필요"
+
+#: templates/_settings_tabs/scraping.html:472
+msgid "e.g. my-project-123456"
+msgstr "예: my-project-123456"
+
+#: templates/_settings_tabs/scraping.html:480
+msgid "OpenAI API Key"
+msgstr "OpenAI API 키"
+
+#: templates/_settings_tabs/scraping.html:485
+msgid "Enter OpenAI API key"
+msgstr "OpenAI API 키 입력"
+
+#: templates/_settings_tabs/scraping.html:489
+msgid "OpenAI Model"
+msgstr "OpenAI 모델"
+
+#: templates/_settings_tabs/scraping.html:502
+msgid "Anthropic API Key"
+msgstr "Anthropic API 키"
+
+#: templates/_settings_tabs/scraping.html:507
+msgid "Enter Anthropic API key"
+msgstr "Anthropic API 키 입력"
+
+#: templates/_settings_tabs/scraping.html:511
+msgid "Claude Model"
+msgstr "Claude 모델"
 
 #: templates/_settings_tabs/scraping.html:521
 msgid "Let Claude search the web"
