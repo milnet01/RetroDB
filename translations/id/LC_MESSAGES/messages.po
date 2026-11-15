@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 15:58+0200\n"
+"POT-Creation-Date: 2026-11-15 22:32+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: id\n"
@@ -204,7 +204,7 @@ msgstr "Sistem tidak ditemukan atau tidak memiliki game achievement"
 #: routes/games_ai.py:43 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
 #: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:706
-#: routes/reports.py:847 routes/trophies.py:1349 services/cheats.py:766
+#: routes/reports.py:847 routes/trophies.py:1349 services/cheats.py:826
 #: services/hltb_service.py:163
 msgid "Game not found"
 msgstr "Game tidak ditemukan"
@@ -629,7 +629,7 @@ msgstr "Tidak ada kecocokan yang ditemukan"
 msgid "No game IDs provided"
 msgstr "ID game tidak diberikan"
 
-#: routes/cheats.py:49 services/cheats.py:704
+#: routes/cheats.py:49 services/cheats.py:764
 msgid "Send the names of the cheats to switch on."
 msgstr "Kirim nama cheat yang ingin dinyalakan."
 
@@ -1761,69 +1761,74 @@ msgstr "Anda tidak memiliki izin untuk melakukan tindakan ini"
 msgid "This action requires administrator privileges"
 msgstr "Diperlukan hak akses administrator"
 
-#: services/cheats.py:141
+#: services/cheats.py:143
 #, python-format
 msgid "%(name)s is too large to be a cheat file."
 msgstr "%(name)s terlalu besar untuk menjadi file cheat."
 
-#: services/cheats.py:269 services/cheats.py:289
+#: services/cheats.py:271 services/cheats.py:291
 msgid "Not a cheat file."
 msgstr "Bukan file cheat."
 
-#: services/cheats.py:276
+#: services/cheats.py:278
 msgid "A PCSX2 file with no CRC in its name or its gametitle line."
 msgstr "File PCSX2 tanpa CRC di namanya atau di baris gametitle-nya."
 
-#: services/cheats.py:283
+#: services/cheats.py:285
 msgid "A RetroArch file whose folder names no single system."
 msgstr "File RetroArch yang foldernya tidak menyebut satu sistem tertentu."
 
-#: services/cheats.py:288
+#: services/cheats.py:290
 msgid "A DuckStation file not named by its serial."
 msgstr "File DuckStation yang tidak dinamai sesuai nomor serinya."
 
-#: services/cheats.py:297
+#: services/cheats.py:299
 msgid "That folder was not found."
 msgstr "Folder itu tidak ditemukan."
 
-#: services/cheats.py:300
+#: services/cheats.py:302
 msgid "That folder is RetroDB's own cheat store."
 msgstr "Folder itu adalah penyimpanan cheat milik RetroDB sendiri."
 
-#: services/cheats.py:380
+#: services/cheats.py:387
 #, fuzzy
-msgid "RetroDB cannot unpack cheat.7z on this computer."
+msgid "RetroDB cannot read cheat.7z on this computer."
 msgstr "RetroArch tidak tersedia untuk komputer ini."
 
 #: services/cheats.py:406
 #, fuzzy
-msgid "cheat.7z is larger than 1 GiB unpacked."
-msgstr "Ada gambar yang lebih besar dari 10 MB."
-
-#: services/cheats.py:414
-#, fuzzy
 msgid "cheat.7z holds no MAME cheat files."
 msgstr "Bukan file cheat."
 
-#: services/cheats.py:564 services/cheats.py:582
+#: services/cheats.py:420 services/cheats.py:450 services/cheats.py:460
+#, fuzzy, python-brace-format
+msgid "cheat.7z could not be read."
+msgstr "{count} tidak dapat dibaca."
+
+#: services/cheats.py:440
+#, fuzzy
+msgid "cheat.7z is larger than 1 GiB unpacked."
+msgstr "Ada gambar yang lebih besar dari 10 MB."
+
+#: services/cheats.py:624 services/cheats.py:642
 msgid "The player has no cheats for this system."
 msgstr "Pemutar tidak memiliki cheat untuk sistem ini."
 
-#: services/cheats.py:573 services/cheats.py:596 services/cheats.py:702
-#: services/cheats.py:740 services/cheats.py:748 services/cheats.py:755
+#: services/cheats.py:633 services/cheats.py:656 services/cheats.py:762
+#: services/cheats.py:800 services/cheats.py:808 services/cheats.py:815
 msgid "No cheats were found for this game."
 msgstr "Tidak ada cheat yang ditemukan untuk game ini."
 
-#: services/cheats.py:588
+#: services/cheats.py:648
 msgid "That cheat list is not one of this game's."
 msgstr "Daftar cheat itu bukan milik game ini."
 
-#: services/cheats.py:744 services/cheats.py:775
+#: services/cheats.py:804 services/cheats.py:835
 #, fuzzy
 msgid "Cheats work in the player, DuckStation, PCSX2 and MAME."
 msgstr "Cheat berfungsi di pemutar, DuckStation, dan PCSX2."
 
-#: services/cheats.py:771
+#: services/cheats.py:831
 msgid ""
 "Switch MAME cheats on in MAME while you play: press Tab, then Plugin "
 "Options, then Cheat."
@@ -3374,7 +3379,7 @@ msgstr "Memuat berkas log..."
 msgid "Loading the manual…"
 msgstr "Memuat manual…"
 
-#: services/js_i18n_strings.py:843 templates/_settings_tabs/library.html:291
+#: services/js_i18n_strings.py:843 templates/_settings_tabs/library.html:303
 #: templates/settings_emulators.html:204 templates/settings_emulators.html:222
 msgid "Loading…"
 msgstr "Memuat…"
@@ -3834,7 +3839,7 @@ msgstr "Nama regional cocok"
 
 #: services/js_i18n_strings.py:941 templates/_modals/edit_modal.html:386
 #: templates/_settings_tabs/account.html:228
-#: templates/_settings_tabs/library.html:217 templates/compare_games.html:24
+#: templates/_settings_tabs/library.html:229 templates/compare_games.html:24
 #: templates/compare_games.html:40 templates/rom_tools_settings.html:462
 #: templates/rom_tools_settings.html:501 templates/screenshot_review.html:187
 #: templates/settings.html:1579 templates/settings.html:1687
@@ -6400,7 +6405,7 @@ msgstr "Masukkan nama folder untuk dikecualikan"
 #: templates/_settings_tabs/data.html:124
 #: templates/_settings_tabs/data.html:134
 #: templates/_settings_tabs/data.html:144
-#: templates/_settings_tabs/library.html:223 templates/archive_scanner.html:591
+#: templates/_settings_tabs/library.html:235 templates/archive_scanner.html:591
 #: templates/list_detail.html:419 templates/rom_tools_settings.html:346
 #: templates/rom_tools_settings.html:365
 msgid "Add"
@@ -7371,7 +7376,7 @@ msgid "Xbox 360, PC, Switch"
 msgstr "Xbox 360, PC, Switch"
 
 #: templates/_modals/edit_modal.html:241
-#: templates/_settings_tabs/library.html:161 templates/base.html:1256
+#: templates/_settings_tabs/library.html:173 templates/base.html:1256
 msgid "ESRB (North America)"
 msgstr "ESRB (Amerika Utara)"
 
@@ -7399,12 +7404,12 @@ msgid "RP - Rating Pending"
 msgstr "RP - Rating Tertunda"
 
 #: templates/_modals/edit_modal.html:254
-#: templates/_settings_tabs/library.html:162 templates/base.html:1269
+#: templates/_settings_tabs/library.html:174 templates/base.html:1269
 msgid "PEGI (Europe)"
 msgstr "PEGI (Eropa)"
 
 #: templates/_modals/edit_modal.html:265
-#: templates/_settings_tabs/library.html:163 templates/base.html:1280
+#: templates/_settings_tabs/library.html:175 templates/base.html:1280
 msgid "CERO (Japan)"
 msgstr "CERO (Jepang)"
 
@@ -7430,12 +7435,12 @@ msgid "Z - Ages 18+"
 msgstr "Z - Usia 18+"
 
 #: templates/_modals/edit_modal.html:276
-#: templates/_settings_tabs/library.html:164 templates/base.html:1291
+#: templates/_settings_tabs/library.html:176 templates/base.html:1291
 msgid "USK (Germany)"
 msgstr "USK (Jerman)"
 
 #: templates/_modals/edit_modal.html:287
-#: templates/_settings_tabs/library.html:165 templates/base.html:1302
+#: templates/_settings_tabs/library.html:177 templates/base.html:1302
 msgid "ACB (Australia)"
 msgstr "ACB (Australia)"
 
@@ -7457,12 +7462,12 @@ msgid "R18+ - Restricted"
 msgstr "R18+ - Terbatas"
 
 #: templates/_modals/edit_modal.html:298
-#: templates/_settings_tabs/library.html:166 templates/base.html:1313
+#: templates/_settings_tabs/library.html:178 templates/base.html:1313
 msgid "FPB (South Africa)"
 msgstr "FPB (Afrika Selatan)"
 
 #: templates/_modals/edit_modal.html:312
-#: templates/_settings_tabs/library.html:167 templates/base.html:1327
+#: templates/_settings_tabs/library.html:179 templates/base.html:1327
 msgid "GRAC (South Korea)"
 msgstr "GRAC (Korea Selatan)"
 
@@ -7471,7 +7476,7 @@ msgid "ALL - All Ages"
 msgstr "ALL - Semua Usia"
 
 #: templates/_modals/edit_modal.html:322
-#: templates/_settings_tabs/library.html:168 templates/base.html:1337
+#: templates/_settings_tabs/library.html:180 templates/base.html:1337
 msgid "ClassInd (Brazil)"
 msgstr "ClassInd (Brasil)"
 
@@ -7480,7 +7485,7 @@ msgid "L - General"
 msgstr "L - Umum"
 
 #: templates/_modals/edit_modal.html:334
-#: templates/_settings_tabs/library.html:169 templates/base.html:1349
+#: templates/_settings_tabs/library.html:181 templates/base.html:1349
 msgid "CADPA (China)"
 msgstr "CADPA (Tiongkok)"
 
@@ -12128,7 +12133,7 @@ msgstr "Disc bonus terdeteksi: {count}"
 msgid "Detection failed: {error}"
 msgstr "Deteksi gagal: {error}"
 
-#: templates/_settings_tabs/library.html:263 templates/settings.html:1863
+#: templates/_settings_tabs/library.html:275 templates/settings.html:1863
 #, fuzzy
 msgid "Auto-Detect Bonus Discs"
 msgstr "Total Disc Bonus:"
@@ -12168,7 +12173,7 @@ msgstr "Disc bonus tertaut ke game induk: {count}"
 msgid "Auto-link failed: {error}"
 msgstr "Tautan otomatis gagal: {error}"
 
-#: templates/_settings_tabs/library.html:267 templates/settings.html:1900
+#: templates/_settings_tabs/library.html:279 templates/settings.html:1900
 #, fuzzy
 msgid "Auto-Link to Parents"
 msgstr "Tertaut ke Induk:"
@@ -12264,7 +12269,7 @@ msgstr "Backup gagal: {error}"
 msgid "Backup error: {error}"
 msgstr "Kesalahan backup: {error}"
 
-#: templates/_settings_tabs/library.html:307 templates/settings.html:2092
+#: templates/_settings_tabs/library.html:319 templates/settings.html:2092
 #, fuzzy
 msgid "Create Backup"
 msgstr "Pulihkan Backup"
@@ -15724,35 +15729,46 @@ msgstr "Elite"
 msgid "Theme applies instantly. Changes are saved automatically."
 msgstr "Tema langsung diterapkan. Perubahan disimpan secara otomatis."
 
-#: templates/_settings_tabs/library.html:134
+#: templates/_settings_tabs/library.html:136
+#, fuzzy
+msgid "Moving background"
+msgstr "Menghapus latar belakang…"
+
+#: templates/_settings_tabs/library.html:138
+msgid ""
+"The mist, rain or stars behind the page. It pauses when you are not using"
+" RetroDB. Turn it off to save power on this computer."
+msgstr ""
+
+#: templates/_settings_tabs/library.html:146
 msgid "Language"
 msgstr "Bahasa"
 
-#: templates/_settings_tabs/library.html:145
+#: templates/_settings_tabs/library.html:157
 msgid "Changes the interface language. The page reloads when you switch."
 msgstr "Mengubah bahasa antarmuka. Halaman akan dimuat ulang saat Anda beralih."
 
-#: templates/_settings_tabs/library.html:150
+#: templates/_settings_tabs/library.html:162
 msgid "Preferred Boxart Style"
 msgstr "Gaya Boxart yang Disukai"
 
-#: templates/_settings_tabs/library.html:152
+#: templates/_settings_tabs/library.html:164
 msgid "2D Boxart (Standard)"
 msgstr "Boxart 2D (Standard)"
 
-#: templates/_settings_tabs/library.html:153
+#: templates/_settings_tabs/library.html:165
 msgid "3D Boxart (with 2D fallback)"
 msgstr "Boxart 3D (dengan cadangan 2D)"
 
-#: templates/_settings_tabs/library.html:155
+#: templates/_settings_tabs/library.html:167
 msgid "When 3D is selected, 2D boxart will be shown if no 3D version exists"
 msgstr "Saat 3D dipilih, boxart 2D akan ditampilkan jika tidak ada versi 3D"
 
-#: templates/_settings_tabs/library.html:159
+#: templates/_settings_tabs/library.html:171
 msgid "Preferred Age Rating System"
 msgstr "Sistem Rating Usia yang Disukai"
 
-#: templates/_settings_tabs/library.html:171
+#: templates/_settings_tabs/library.html:183
 msgid ""
 "Ratings from other systems are cross-mapped when the preferred system's "
 "rating is unavailable"
@@ -15760,15 +15776,15 @@ msgstr ""
 "Rating dari sistem lain dipetakan silang saat rating sistem yang disukai "
 "tidak tersedia"
 
-#: templates/_settings_tabs/library.html:177
+#: templates/_settings_tabs/library.html:189
 msgid "Save Display Settings"
 msgstr "Simpan Pengaturan Tampilan"
 
-#: templates/_settings_tabs/library.html:188
+#: templates/_settings_tabs/library.html:200
 msgid "ROM Naming Conventions"
 msgstr "Konvensi Penamaan ROM"
 
-#: templates/_settings_tabs/library.html:192
+#: templates/_settings_tabs/library.html:204
 msgid ""
 "Configure the filename pattern for each system type. Title is always "
 "first.\n"
@@ -15780,11 +15796,11 @@ msgstr ""
 "            Tambahkan tag sesuai urutan yang harus muncul di nama berkas "
 "(mis., <code>Title (Region).zip</code>)."
 
-#: templates/_settings_tabs/library.html:197
+#: templates/_settings_tabs/library.html:209
 msgid "Article Placement"
 msgstr "Penempatan Artikel"
 
-#: templates/_settings_tabs/library.html:199
+#: templates/_settings_tabs/library.html:211
 msgid ""
 "Controls where articles (A, An, The) appear in game titles and ROM "
 "filenames."
@@ -15792,15 +15808,15 @@ msgstr ""
 "Mengontrol di mana artikel (A, An, The) muncul dalam judul game dan nama "
 "berkas ROM."
 
-#: templates/_settings_tabs/library.html:202
+#: templates/_settings_tabs/library.html:214
 msgid "Beginning (natural) — \"The Legend of Zelda\""
 msgstr "Awal (alami) — \"The Legend of Zelda\""
 
-#: templates/_settings_tabs/library.html:203
+#: templates/_settings_tabs/library.html:215
 msgid "End (sort-friendly) — \"Legend of Zelda, The\""
 msgstr "Akhir (ramah pengurutan) — \"Legend of Zelda, The\""
 
-#: templates/_settings_tabs/library.html:205
+#: templates/_settings_tabs/library.html:217
 msgid ""
 "Applies to new scrapes and rename suggestions. Existing titles are not "
 "changed automatically."
@@ -15808,11 +15824,11 @@ msgstr ""
 "Berlaku untuk scrape baru dan saran penggantian nama. Judul yang sudah "
 "ada tidak diubah secara otomatis."
 
-#: templates/_settings_tabs/library.html:209
+#: templates/_settings_tabs/library.html:221
 msgid "Region Options"
 msgstr "Opsi Wilayah"
 
-#: templates/_settings_tabs/library.html:211
+#: templates/_settings_tabs/library.html:223
 msgid ""
 "Configure the available region values and default. The default region is "
 "used when scraping if no region is detected."
@@ -15820,51 +15836,51 @@ msgstr ""
 "Konfigurasikan nilai wilayah yang tersedia dan default. Wilayah default "
 "digunakan saat scrape jika tidak ada wilayah yang terdeteksi."
 
-#: templates/_settings_tabs/library.html:222
+#: templates/_settings_tabs/library.html:234
 #, fuzzy
 msgid "Add region..."
 msgstr "+ Tambah dimensi..."
 
-#: templates/_settings_tabs/library.html:226
+#: templates/_settings_tabs/library.html:238
 msgid "Default Region"
 msgstr "Wilayah Bawaan"
 
-#: templates/_settings_tabs/library.html:242
+#: templates/_settings_tabs/library.html:254
 #, fuzzy
 msgid "Save Naming Settings"
 msgstr "Simpan Pengaturan Saya"
 
-#: templates/_settings_tabs/library.html:253
+#: templates/_settings_tabs/library.html:265
 #, fuzzy
 msgid "Bonus Disc Management"
 msgstr "Manajemen Pengguna"
 
-#: templates/_settings_tabs/library.html:257
+#: templates/_settings_tabs/library.html:269
 msgid ""
 "Bonus discs (making-of, behind the scenes, extras) are hidden by default "
 "on game listing pages. Use this section to auto-detect and link bonus "
 "discs to their parent games."
 msgstr ""
 
-#: templates/_settings_tabs/library.html:271
+#: templates/_settings_tabs/library.html:283
 #, fuzzy
 msgid "View Stats"
 msgstr "Statistik"
 
-#: templates/_settings_tabs/library.html:278
+#: templates/_settings_tabs/library.html:290
 #, fuzzy
 msgid "Detected Bonus Discs"
 msgstr "Total Disc Bonus:"
 
-#: templates/_settings_tabs/library.html:281
+#: templates/_settings_tabs/library.html:293
 msgid "Click \"Auto-Detect Bonus Discs\" to scan your library"
 msgstr ""
 
-#: templates/_settings_tabs/library.html:285
+#: templates/_settings_tabs/library.html:297
 msgid "Current Bonus Discs"
 msgstr "Disc Bonus Saat Ini"
 
-#: templates/_settings_tabs/library.html:288
+#: templates/_settings_tabs/library.html:300
 msgid ""
 "A disc marked by mistake can go back in your game lists. Auto-Link then "
 "leaves it alone."
@@ -15872,25 +15888,25 @@ msgstr ""
 "Disc yang salah ditandai bisa kembali ke daftar game Anda. Setelah itu "
 "Auto-Link tidak akan mengubahnya."
 
-#: templates/_settings_tabs/library.html:301
+#: templates/_settings_tabs/library.html:313
 msgid "Database Backup & Restore"
 msgstr ""
 
-#: templates/_settings_tabs/library.html:311
+#: templates/_settings_tabs/library.html:323
 #, fuzzy
 msgid "Calculate File Sizes"
 msgstr "Menghitung ukuran file..."
 
-#: templates/_settings_tabs/library.html:315
+#: templates/_settings_tabs/library.html:327
 msgid "Create backups before making major changes to your library"
 msgstr ""
 
-#: templates/_settings_tabs/library.html:318
+#: templates/_settings_tabs/library.html:330
 #, fuzzy
 msgid "Available Backups"
 msgstr "Tersedia"
 
-#: templates/_settings_tabs/library.html:320
+#: templates/_settings_tabs/library.html:332
 #, fuzzy
 msgid "Loading backups..."
 msgstr "Memuat nilai..."

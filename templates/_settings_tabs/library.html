@@ -126,6 +126,18 @@
             <span class="form-hint">{{ _('Theme applies instantly. Changes are saved automatically.') }}</span>
         </div>
 
+        <div class="form-group mb-lg">
+            <div class="toggle-item" style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                <label class="toggle-switch" for="backgroundMotionToggle">
+                    <input type="checkbox" id="backgroundMotionToggle" checked
+                           data-on-change="ThemeManager.setMotion" data-args='["$this.checked"]'>
+                    <span class="toggle-slider"></span>
+                </label>
+                <label class="toggle-label" for="backgroundMotionToggle">{{ _('Moving background') }}</label>
+            </div>
+            <span class="form-hint">{{ _('The mist, rain or stars behind the page. It pauses when you are not using RetroDB. Turn it off to save power on this computer.') }}</span>
+        </div>
+
         {# Pass 43.1 — per-user UI language. Mirrors the Theme control's
            label-div + aria-labelledby pairing for an accessible name. Unlike
            Theme (instant, JS-applied) this is a plain <select> POSTed to

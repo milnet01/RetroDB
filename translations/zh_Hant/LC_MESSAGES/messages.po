@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 15:58+0200\n"
+"POT-Creation-Date: 2026-11-15 22:32+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant\n"
@@ -200,7 +200,7 @@ msgstr "未找到系統，或該系統沒有包含成就的遊戲"
 #: routes/games_ai.py:43 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
 #: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:706
-#: routes/reports.py:847 routes/trophies.py:1349 services/cheats.py:766
+#: routes/reports.py:847 routes/trophies.py:1349 services/cheats.py:826
 #: services/hltb_service.py:163
 msgid "Game not found"
 msgstr "未找到遊戲"
@@ -623,7 +623,7 @@ msgstr "未找到符合項目"
 msgid "No game IDs provided"
 msgstr "未提供遊戲 ID"
 
-#: routes/cheats.py:49 services/cheats.py:704
+#: routes/cheats.py:49 services/cheats.py:764
 msgid "Send the names of the cheats to switch on."
 msgstr "請送出要開啟的金手指名稱。"
 
@@ -1717,69 +1717,74 @@ msgstr "你沒有執行此操作的權限"
 msgid "This action requires administrator privileges"
 msgstr "需要管理員權限"
 
-#: services/cheats.py:141
+#: services/cheats.py:143
 #, python-format
 msgid "%(name)s is too large to be a cheat file."
 msgstr "%(name)s 太大，不可能是金手指檔案。"
 
-#: services/cheats.py:269 services/cheats.py:289
+#: services/cheats.py:271 services/cheats.py:291
 msgid "Not a cheat file."
 msgstr "不是金手指檔案。"
 
-#: services/cheats.py:276
+#: services/cheats.py:278
 msgid "A PCSX2 file with no CRC in its name or its gametitle line."
 msgstr "PCSX2 檔案的名稱或 gametitle 行中沒有 CRC。"
 
-#: services/cheats.py:283
+#: services/cheats.py:285
 msgid "A RetroArch file whose folder names no single system."
 msgstr "RetroArch 檔案所在的資料夾沒有對應到單一系統。"
 
-#: services/cheats.py:288
+#: services/cheats.py:290
 msgid "A DuckStation file not named by its serial."
 msgstr "DuckStation 檔案沒有以遊戲序號命名。"
 
-#: services/cheats.py:297
+#: services/cheats.py:299
 msgid "That folder was not found."
 msgstr "找不到該資料夾。"
 
-#: services/cheats.py:300
+#: services/cheats.py:302
 msgid "That folder is RetroDB's own cheat store."
 msgstr "該資料夾是 RetroDB 自己的金手指存放處。"
 
-#: services/cheats.py:380
+#: services/cheats.py:387
 #, fuzzy
-msgid "RetroDB cannot unpack cheat.7z on this computer."
+msgid "RetroDB cannot read cheat.7z on this computer."
 msgstr "RetroArch 沒有適用於這台電腦的版本。"
 
 #: services/cheats.py:406
 #, fuzzy
-msgid "cheat.7z is larger than 1 GiB unpacked."
-msgstr "有一張圖片超過 10 MB。"
-
-#: services/cheats.py:414
-#, fuzzy
 msgid "cheat.7z holds no MAME cheat files."
 msgstr "不是金手指檔案。"
 
-#: services/cheats.py:564 services/cheats.py:582
+#: services/cheats.py:420 services/cheats.py:450 services/cheats.py:460
+#, fuzzy, python-brace-format
+msgid "cheat.7z could not be read."
+msgstr "{count} 張無法讀取。"
+
+#: services/cheats.py:440
+#, fuzzy
+msgid "cheat.7z is larger than 1 GiB unpacked."
+msgstr "有一張圖片超過 10 MB。"
+
+#: services/cheats.py:624 services/cheats.py:642
 msgid "The player has no cheats for this system."
 msgstr "播放器沒有此系統的金手指。"
 
-#: services/cheats.py:573 services/cheats.py:596 services/cheats.py:702
-#: services/cheats.py:740 services/cheats.py:748 services/cheats.py:755
+#: services/cheats.py:633 services/cheats.py:656 services/cheats.py:762
+#: services/cheats.py:800 services/cheats.py:808 services/cheats.py:815
 msgid "No cheats were found for this game."
 msgstr "找不到這個遊戲的金手指。"
 
-#: services/cheats.py:588
+#: services/cheats.py:648
 msgid "That cheat list is not one of this game's."
 msgstr "該金手指清單不屬於這個遊戲。"
 
-#: services/cheats.py:744 services/cheats.py:775
+#: services/cheats.py:804 services/cheats.py:835
 #, fuzzy
 msgid "Cheats work in the player, DuckStation, PCSX2 and MAME."
 msgstr "金手指可在播放器、DuckStation 和 PCSX2 中使用。"
 
-#: services/cheats.py:771
+#: services/cheats.py:831
 msgid ""
 "Switch MAME cheats on in MAME while you play: press Tab, then Plugin "
 "Options, then Cheat."
@@ -3312,7 +3317,7 @@ msgstr "正在載入日誌檔案…"
 msgid "Loading the manual…"
 msgstr "正在載入手冊…"
 
-#: services/js_i18n_strings.py:843 templates/_settings_tabs/library.html:291
+#: services/js_i18n_strings.py:843 templates/_settings_tabs/library.html:303
 #: templates/settings_emulators.html:204 templates/settings_emulators.html:222
 msgid "Loading…"
 msgstr "載入中…"
@@ -3762,7 +3767,7 @@ msgstr "地區名稱符合"
 
 #: services/js_i18n_strings.py:941 templates/_modals/edit_modal.html:386
 #: templates/_settings_tabs/account.html:228
-#: templates/_settings_tabs/library.html:217 templates/compare_games.html:24
+#: templates/_settings_tabs/library.html:229 templates/compare_games.html:24
 #: templates/compare_games.html:40 templates/rom_tools_settings.html:462
 #: templates/rom_tools_settings.html:501 templates/screenshot_review.html:187
 #: templates/settings.html:1579 templates/settings.html:1687
@@ -6243,7 +6248,7 @@ msgstr "輸入要排除的資料夾名稱"
 #: templates/_settings_tabs/data.html:124
 #: templates/_settings_tabs/data.html:134
 #: templates/_settings_tabs/data.html:144
-#: templates/_settings_tabs/library.html:223 templates/archive_scanner.html:591
+#: templates/_settings_tabs/library.html:235 templates/archive_scanner.html:591
 #: templates/list_detail.html:419 templates/rom_tools_settings.html:346
 #: templates/rom_tools_settings.html:365
 msgid "Add"
@@ -7204,7 +7209,7 @@ msgid "Xbox 360, PC, Switch"
 msgstr "Xbox 360、PC、Switch"
 
 #: templates/_modals/edit_modal.html:241
-#: templates/_settings_tabs/library.html:161 templates/base.html:1256
+#: templates/_settings_tabs/library.html:173 templates/base.html:1256
 msgid "ESRB (North America)"
 msgstr "ESRB（北美）"
 
@@ -7232,12 +7237,12 @@ msgid "RP - Rating Pending"
 msgstr "RP - 分級待定"
 
 #: templates/_modals/edit_modal.html:254
-#: templates/_settings_tabs/library.html:162 templates/base.html:1269
+#: templates/_settings_tabs/library.html:174 templates/base.html:1269
 msgid "PEGI (Europe)"
 msgstr "PEGI（歐洲）"
 
 #: templates/_modals/edit_modal.html:265
-#: templates/_settings_tabs/library.html:163 templates/base.html:1280
+#: templates/_settings_tabs/library.html:175 templates/base.html:1280
 msgid "CERO (Japan)"
 msgstr "CERO（日本）"
 
@@ -7263,12 +7268,12 @@ msgid "Z - Ages 18+"
 msgstr "Z - 18 歲以上"
 
 #: templates/_modals/edit_modal.html:276
-#: templates/_settings_tabs/library.html:164 templates/base.html:1291
+#: templates/_settings_tabs/library.html:176 templates/base.html:1291
 msgid "USK (Germany)"
 msgstr "USK（德國）"
 
 #: templates/_modals/edit_modal.html:287
-#: templates/_settings_tabs/library.html:165 templates/base.html:1302
+#: templates/_settings_tabs/library.html:177 templates/base.html:1302
 msgid "ACB (Australia)"
 msgstr "ACB（澳洲）"
 
@@ -7290,12 +7295,12 @@ msgid "R18+ - Restricted"
 msgstr "R18+ - 限制級"
 
 #: templates/_modals/edit_modal.html:298
-#: templates/_settings_tabs/library.html:166 templates/base.html:1313
+#: templates/_settings_tabs/library.html:178 templates/base.html:1313
 msgid "FPB (South Africa)"
 msgstr "FPB（南非）"
 
 #: templates/_modals/edit_modal.html:312
-#: templates/_settings_tabs/library.html:167 templates/base.html:1327
+#: templates/_settings_tabs/library.html:179 templates/base.html:1327
 msgid "GRAC (South Korea)"
 msgstr "GRAC（韓國）"
 
@@ -7304,7 +7309,7 @@ msgid "ALL - All Ages"
 msgstr "ALL - 全年齡"
 
 #: templates/_modals/edit_modal.html:322
-#: templates/_settings_tabs/library.html:168 templates/base.html:1337
+#: templates/_settings_tabs/library.html:180 templates/base.html:1337
 msgid "ClassInd (Brazil)"
 msgstr "ClassInd（巴西）"
 
@@ -7313,7 +7318,7 @@ msgid "L - General"
 msgstr "L - 大眾級"
 
 #: templates/_modals/edit_modal.html:334
-#: templates/_settings_tabs/library.html:169 templates/base.html:1349
+#: templates/_settings_tabs/library.html:181 templates/base.html:1349
 msgid "CADPA (China)"
 msgstr "CADPA（中國）"
 
@@ -11754,7 +11759,7 @@ msgstr "偵測到的額外光碟：{count}"
 msgid "Detection failed: {error}"
 msgstr "偵測失敗：{error}"
 
-#: templates/_settings_tabs/library.html:263 templates/settings.html:1863
+#: templates/_settings_tabs/library.html:275 templates/settings.html:1863
 #, fuzzy
 msgid "Auto-Detect Bonus Discs"
 msgstr "額外光碟總數："
@@ -11794,7 +11799,7 @@ msgstr "已連結到主遊戲的額外光碟：{count}"
 msgid "Auto-link failed: {error}"
 msgstr "自動連結失敗：{error}"
 
-#: templates/_settings_tabs/library.html:267 templates/settings.html:1900
+#: templates/_settings_tabs/library.html:279 templates/settings.html:1900
 #, fuzzy
 msgid "Auto-Link to Parents"
 msgstr "已連結到主遊戲："
@@ -11888,7 +11893,7 @@ msgstr "備份失敗：{error}"
 msgid "Backup error: {error}"
 msgstr "備份錯誤：{error}"
 
-#: templates/_settings_tabs/library.html:307 templates/settings.html:2092
+#: templates/_settings_tabs/library.html:319 templates/settings.html:2092
 #, fuzzy
 msgid "Create Backup"
 msgstr "還原備份"
@@ -15171,49 +15176,60 @@ msgstr "Elite"
 msgid "Theme applies instantly. Changes are saved automatically."
 msgstr "主題即時生效。更改會自動儲存。"
 
-#: templates/_settings_tabs/library.html:134
+#: templates/_settings_tabs/library.html:136
+#, fuzzy
+msgid "Moving background"
+msgstr "正在移除背景…"
+
+#: templates/_settings_tabs/library.html:138
+msgid ""
+"The mist, rain or stars behind the page. It pauses when you are not using"
+" RetroDB. Turn it off to save power on this computer."
+msgstr ""
+
+#: templates/_settings_tabs/library.html:146
 msgid "Language"
 msgstr "語言"
 
-#: templates/_settings_tabs/library.html:145
+#: templates/_settings_tabs/library.html:157
 msgid "Changes the interface language. The page reloads when you switch."
 msgstr "更改介面語言。切換時頁面將重新載入。"
 
-#: templates/_settings_tabs/library.html:150
+#: templates/_settings_tabs/library.html:162
 msgid "Preferred Boxart Style"
 msgstr "首選封面樣式"
 
-#: templates/_settings_tabs/library.html:152
+#: templates/_settings_tabs/library.html:164
 msgid "2D Boxart (Standard)"
 msgstr "2D 封面（標準）"
 
-#: templates/_settings_tabs/library.html:153
+#: templates/_settings_tabs/library.html:165
 msgid "3D Boxart (with 2D fallback)"
 msgstr "3D 封面（回退為 2D）"
 
-#: templates/_settings_tabs/library.html:155
+#: templates/_settings_tabs/library.html:167
 msgid "When 3D is selected, 2D boxart will be shown if no 3D version exists"
 msgstr "選擇 3D 時，若不存在 3D 版本，將顯示 2D 封面"
 
-#: templates/_settings_tabs/library.html:159
+#: templates/_settings_tabs/library.html:171
 msgid "Preferred Age Rating System"
 msgstr "首選年齡分級系統"
 
-#: templates/_settings_tabs/library.html:171
+#: templates/_settings_tabs/library.html:183
 msgid ""
 "Ratings from other systems are cross-mapped when the preferred system's "
 "rating is unavailable"
 msgstr "當首選系統的分級不可用時，將交叉映射來自其他系統的分級"
 
-#: templates/_settings_tabs/library.html:177
+#: templates/_settings_tabs/library.html:189
 msgid "Save Display Settings"
 msgstr "儲存顯示設定"
 
-#: templates/_settings_tabs/library.html:188
+#: templates/_settings_tabs/library.html:200
 msgid "ROM Naming Conventions"
 msgstr "ROM 命名規範"
 
-#: templates/_settings_tabs/library.html:192
+#: templates/_settings_tabs/library.html:204
 msgid ""
 "Configure the filename pattern for each system type. Title is always "
 "first.\n"
@@ -15223,109 +15239,109 @@ msgstr ""
 "為每種系統類型設定檔案名格式。標題始終排在最前。\n"
 "            按標籤應在檔案名中出現的順序新增它們（例如 <code>Title (Region).zip</code>）。"
 
-#: templates/_settings_tabs/library.html:197
+#: templates/_settings_tabs/library.html:209
 msgid "Article Placement"
 msgstr "冠詞位置"
 
-#: templates/_settings_tabs/library.html:199
+#: templates/_settings_tabs/library.html:211
 msgid ""
 "Controls where articles (A, An, The) appear in game titles and ROM "
 "filenames."
 msgstr "控制冠詞（A、An、The）在遊戲標題和 ROM 檔案名稱中的出現位置。"
 
-#: templates/_settings_tabs/library.html:202
+#: templates/_settings_tabs/library.html:214
 msgid "Beginning (natural) — \"The Legend of Zelda\""
 msgstr "開頭（自然）—「The Legend of Zelda」"
 
-#: templates/_settings_tabs/library.html:203
+#: templates/_settings_tabs/library.html:215
 msgid "End (sort-friendly) — \"Legend of Zelda, The\""
 msgstr "置於末尾（便於排序）— 「Legend of Zelda, The」"
 
-#: templates/_settings_tabs/library.html:205
+#: templates/_settings_tabs/library.html:217
 msgid ""
 "Applies to new scrapes and rename suggestions. Existing titles are not "
 "changed automatically."
 msgstr "適用於新的抓取和重新命名建議。現有標題不會自動更改。"
 
-#: templates/_settings_tabs/library.html:209
+#: templates/_settings_tabs/library.html:221
 msgid "Region Options"
 msgstr "地區選項"
 
-#: templates/_settings_tabs/library.html:211
+#: templates/_settings_tabs/library.html:223
 msgid ""
 "Configure the available region values and default. The default region is "
 "used when scraping if no region is detected."
 msgstr "設定可用的地區值和預設地區。抓取時如果未偵測到地區，將使用預設地區。"
 
-#: templates/_settings_tabs/library.html:222
+#: templates/_settings_tabs/library.html:234
 #, fuzzy
 msgid "Add region..."
 msgstr "+ 新增維度……"
 
-#: templates/_settings_tabs/library.html:226
+#: templates/_settings_tabs/library.html:238
 msgid "Default Region"
 msgstr "預設地區"
 
-#: templates/_settings_tabs/library.html:242
+#: templates/_settings_tabs/library.html:254
 #, fuzzy
 msgid "Save Naming Settings"
 msgstr "儲存我的設定"
 
-#: templates/_settings_tabs/library.html:253
+#: templates/_settings_tabs/library.html:265
 #, fuzzy
 msgid "Bonus Disc Management"
 msgstr "使用者管理"
 
-#: templates/_settings_tabs/library.html:257
+#: templates/_settings_tabs/library.html:269
 msgid ""
 "Bonus discs (making-of, behind the scenes, extras) are hidden by default "
 "on game listing pages. Use this section to auto-detect and link bonus "
 "discs to their parent games."
 msgstr ""
 
-#: templates/_settings_tabs/library.html:271
+#: templates/_settings_tabs/library.html:283
 #, fuzzy
 msgid "View Stats"
 msgstr "統計"
 
-#: templates/_settings_tabs/library.html:278
+#: templates/_settings_tabs/library.html:290
 #, fuzzy
 msgid "Detected Bonus Discs"
 msgstr "額外光碟總數："
 
-#: templates/_settings_tabs/library.html:281
+#: templates/_settings_tabs/library.html:293
 msgid "Click \"Auto-Detect Bonus Discs\" to scan your library"
 msgstr ""
 
-#: templates/_settings_tabs/library.html:285
+#: templates/_settings_tabs/library.html:297
 msgid "Current Bonus Discs"
 msgstr "目前的附贈光碟"
 
-#: templates/_settings_tabs/library.html:288
+#: templates/_settings_tabs/library.html:300
 msgid ""
 "A disc marked by mistake can go back in your game lists. Auto-Link then "
 "leaves it alone."
 msgstr "誤標的光碟可以回到你的遊戲清單。之後 Auto-Link 不會再動它。"
 
-#: templates/_settings_tabs/library.html:301
+#: templates/_settings_tabs/library.html:313
 msgid "Database Backup & Restore"
 msgstr ""
 
-#: templates/_settings_tabs/library.html:311
+#: templates/_settings_tabs/library.html:323
 #, fuzzy
 msgid "Calculate File Sizes"
 msgstr "正在計算檔案大小…"
 
-#: templates/_settings_tabs/library.html:315
+#: templates/_settings_tabs/library.html:327
 msgid "Create backups before making major changes to your library"
 msgstr ""
 
-#: templates/_settings_tabs/library.html:318
+#: templates/_settings_tabs/library.html:330
 #, fuzzy
 msgid "Available Backups"
 msgstr "可用"
 
-#: templates/_settings_tabs/library.html:320
+#: templates/_settings_tabs/library.html:332
 #, fuzzy
 msgid "Loading backups..."
 msgstr "正在載入值……"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 15:58+0200\n"
+"POT-Creation-Date: 2026-11-15 22:32+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: pt_BR\n"
@@ -210,7 +210,7 @@ msgstr "Sistema não encontrado ou sem jogos com conquistas"
 #: routes/games_ai.py:43 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
 #: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:706
-#: routes/reports.py:847 routes/trophies.py:1349 services/cheats.py:766
+#: routes/reports.py:847 routes/trophies.py:1349 services/cheats.py:826
 #: services/hltb_service.py:163
 msgid "Game not found"
 msgstr "Jogo não encontrado"
@@ -639,7 +639,7 @@ msgstr "Nenhuma correspondência encontrada"
 msgid "No game IDs provided"
 msgstr "Nenhum ID de jogo fornecido"
 
-#: routes/cheats.py:49 services/cheats.py:704
+#: routes/cheats.py:49 services/cheats.py:764
 msgid "Send the names of the cheats to switch on."
 msgstr "Envie os nomes das trapaças a ativar."
 
@@ -1781,69 +1781,74 @@ msgstr "Você não tem permissão para realizar esta ação"
 msgid "This action requires administrator privileges"
 msgstr "São necessários privilégios de administrador"
 
-#: services/cheats.py:141
+#: services/cheats.py:143
 #, python-format
 msgid "%(name)s is too large to be a cheat file."
 msgstr "%(name)s é grande demais para ser um arquivo de trapaças."
 
-#: services/cheats.py:269 services/cheats.py:289
+#: services/cheats.py:271 services/cheats.py:291
 msgid "Not a cheat file."
 msgstr "Não é um arquivo de trapaças."
 
-#: services/cheats.py:276
+#: services/cheats.py:278
 msgid "A PCSX2 file with no CRC in its name or its gametitle line."
 msgstr "Um arquivo do PCSX2 sem CRC no nome nem na linha gametitle."
 
-#: services/cheats.py:283
+#: services/cheats.py:285
 msgid "A RetroArch file whose folder names no single system."
 msgstr "Um arquivo do RetroArch cuja pasta não indica um único sistema."
 
-#: services/cheats.py:288
+#: services/cheats.py:290
 msgid "A DuckStation file not named by its serial."
 msgstr "Um arquivo do DuckStation que não tem o serial como nome."
 
-#: services/cheats.py:297
+#: services/cheats.py:299
 msgid "That folder was not found."
 msgstr "Essa pasta não foi encontrada."
 
-#: services/cheats.py:300
+#: services/cheats.py:302
 msgid "That folder is RetroDB's own cheat store."
 msgstr "Essa pasta é o próprio depósito de trapaças do RetroDB."
 
-#: services/cheats.py:380
+#: services/cheats.py:387
 #, fuzzy
-msgid "RetroDB cannot unpack cheat.7z on this computer."
+msgid "RetroDB cannot read cheat.7z on this computer."
 msgstr "O RetroArch não é compilado para este computador."
 
 #: services/cheats.py:406
 #, fuzzy
-msgid "cheat.7z is larger than 1 GiB unpacked."
-msgstr "Uma imagem tem mais de 10 MB."
-
-#: services/cheats.py:414
-#, fuzzy
 msgid "cheat.7z holds no MAME cheat files."
 msgstr "Não é um arquivo de trapaças."
 
-#: services/cheats.py:564 services/cheats.py:582
+#: services/cheats.py:420 services/cheats.py:450 services/cheats.py:460
+#, fuzzy, python-brace-format
+msgid "cheat.7z could not be read."
+msgstr "{count} não puderam ser lidas."
+
+#: services/cheats.py:440
+#, fuzzy
+msgid "cheat.7z is larger than 1 GiB unpacked."
+msgstr "Uma imagem tem mais de 10 MB."
+
+#: services/cheats.py:624 services/cheats.py:642
 msgid "The player has no cheats for this system."
 msgstr "O RetroArch (RetroDB) não tem trapaças para este sistema."
 
-#: services/cheats.py:573 services/cheats.py:596 services/cheats.py:702
-#: services/cheats.py:740 services/cheats.py:748 services/cheats.py:755
+#: services/cheats.py:633 services/cheats.py:656 services/cheats.py:762
+#: services/cheats.py:800 services/cheats.py:808 services/cheats.py:815
 msgid "No cheats were found for this game."
 msgstr "Nenhuma trapaça foi encontrada para este jogo."
 
-#: services/cheats.py:588
+#: services/cheats.py:648
 msgid "That cheat list is not one of this game's."
 msgstr "Essa lista de trapaças não é deste jogo."
 
-#: services/cheats.py:744 services/cheats.py:775
+#: services/cheats.py:804 services/cheats.py:835
 #, fuzzy
 msgid "Cheats work in the player, DuckStation, PCSX2 and MAME."
 msgstr "As trapaças funcionam no RetroArch (RetroDB), no DuckStation e no PCSX2."
 
-#: services/cheats.py:771
+#: services/cheats.py:831
 msgid ""
 "Switch MAME cheats on in MAME while you play: press Tab, then Plugin "
 "Options, then Cheat."
@@ -3394,7 +3399,7 @@ msgstr "Carregando arquivo de log..."
 msgid "Loading the manual…"
 msgstr "Carregando o manual…"
 
-#: services/js_i18n_strings.py:843 templates/_settings_tabs/library.html:291
+#: services/js_i18n_strings.py:843 templates/_settings_tabs/library.html:303
 #: templates/settings_emulators.html:204 templates/settings_emulators.html:222
 msgid "Loading…"
 msgstr "Carregando…"
@@ -3854,7 +3859,7 @@ msgstr "Correspondências de nome regional"
 
 #: services/js_i18n_strings.py:941 templates/_modals/edit_modal.html:386
 #: templates/_settings_tabs/account.html:228
-#: templates/_settings_tabs/library.html:217 templates/compare_games.html:24
+#: templates/_settings_tabs/library.html:229 templates/compare_games.html:24
 #: templates/compare_games.html:40 templates/rom_tools_settings.html:462
 #: templates/rom_tools_settings.html:501 templates/screenshot_review.html:187
 #: templates/settings.html:1579 templates/settings.html:1687
@@ -6434,7 +6439,7 @@ msgstr "Insira o nome da pasta a excluir"
 #: templates/_settings_tabs/data.html:124
 #: templates/_settings_tabs/data.html:134
 #: templates/_settings_tabs/data.html:144
-#: templates/_settings_tabs/library.html:223 templates/archive_scanner.html:591
+#: templates/_settings_tabs/library.html:235 templates/archive_scanner.html:591
 #: templates/list_detail.html:419 templates/rom_tools_settings.html:346
 #: templates/rom_tools_settings.html:365
 msgid "Add"
@@ -7403,7 +7408,7 @@ msgid "Xbox 360, PC, Switch"
 msgstr "Xbox 360, PC, Switch"
 
 #: templates/_modals/edit_modal.html:241
-#: templates/_settings_tabs/library.html:161 templates/base.html:1256
+#: templates/_settings_tabs/library.html:173 templates/base.html:1256
 msgid "ESRB (North America)"
 msgstr "ESRB (América do Norte)"
 
@@ -7431,12 +7436,12 @@ msgid "RP - Rating Pending"
 msgstr "RP - Classificação Pendente"
 
 #: templates/_modals/edit_modal.html:254
-#: templates/_settings_tabs/library.html:162 templates/base.html:1269
+#: templates/_settings_tabs/library.html:174 templates/base.html:1269
 msgid "PEGI (Europe)"
 msgstr "PEGI (Europa)"
 
 #: templates/_modals/edit_modal.html:265
-#: templates/_settings_tabs/library.html:163 templates/base.html:1280
+#: templates/_settings_tabs/library.html:175 templates/base.html:1280
 msgid "CERO (Japan)"
 msgstr "CERO (Japão)"
 
@@ -7462,12 +7467,12 @@ msgid "Z - Ages 18+"
 msgstr "Z - 18+ anos"
 
 #: templates/_modals/edit_modal.html:276
-#: templates/_settings_tabs/library.html:164 templates/base.html:1291
+#: templates/_settings_tabs/library.html:176 templates/base.html:1291
 msgid "USK (Germany)"
 msgstr "USK (Alemanha)"
 
 #: templates/_modals/edit_modal.html:287
-#: templates/_settings_tabs/library.html:165 templates/base.html:1302
+#: templates/_settings_tabs/library.html:177 templates/base.html:1302
 msgid "ACB (Australia)"
 msgstr "ACB (Austrália)"
 
@@ -7489,12 +7494,12 @@ msgid "R18+ - Restricted"
 msgstr "R18+ - Restrito"
 
 #: templates/_modals/edit_modal.html:298
-#: templates/_settings_tabs/library.html:166 templates/base.html:1313
+#: templates/_settings_tabs/library.html:178 templates/base.html:1313
 msgid "FPB (South Africa)"
 msgstr "FPB (África do Sul)"
 
 #: templates/_modals/edit_modal.html:312
-#: templates/_settings_tabs/library.html:167 templates/base.html:1327
+#: templates/_settings_tabs/library.html:179 templates/base.html:1327
 msgid "GRAC (South Korea)"
 msgstr "GRAC (Coreia do Sul)"
 
@@ -7503,7 +7508,7 @@ msgid "ALL - All Ages"
 msgstr "ALL - Todas as Idades"
 
 #: templates/_modals/edit_modal.html:322
-#: templates/_settings_tabs/library.html:168 templates/base.html:1337
+#: templates/_settings_tabs/library.html:180 templates/base.html:1337
 msgid "ClassInd (Brazil)"
 msgstr "ClassInd (Brasil)"
 
@@ -7512,7 +7517,7 @@ msgid "L - General"
 msgstr "L - Livre"
 
 #: templates/_modals/edit_modal.html:334
-#: templates/_settings_tabs/library.html:169 templates/base.html:1349
+#: templates/_settings_tabs/library.html:181 templates/base.html:1349
 msgid "CADPA (China)"
 msgstr "CADPA (China)"
 
@@ -12186,7 +12191,7 @@ msgstr "Discos bônus detectados: {count}"
 msgid "Detection failed: {error}"
 msgstr "Falha na detecção: {error}"
 
-#: templates/_settings_tabs/library.html:263 templates/settings.html:1863
+#: templates/_settings_tabs/library.html:275 templates/settings.html:1863
 #, fuzzy
 msgid "Auto-Detect Bonus Discs"
 msgstr "Total de Discos Bônus:"
@@ -12226,7 +12231,7 @@ msgstr "Discos bônus vinculados aos jogos principais: {count}"
 msgid "Auto-link failed: {error}"
 msgstr "Falha na vinculação automática: {error}"
 
-#: templates/_settings_tabs/library.html:267 templates/settings.html:1900
+#: templates/_settings_tabs/library.html:279 templates/settings.html:1900
 #, fuzzy
 msgid "Auto-Link to Parents"
 msgstr "Vinculados ao Principal:"
@@ -12322,7 +12327,7 @@ msgstr "Falha no backup: {error}"
 msgid "Backup error: {error}"
 msgstr "Erro no backup: {error}"
 
-#: templates/_settings_tabs/library.html:307 templates/settings.html:2092
+#: templates/_settings_tabs/library.html:319 templates/settings.html:2092
 #, fuzzy
 msgid "Create Backup"
 msgstr "Restaurar Backup"
@@ -15805,35 +15810,46 @@ msgstr ""
 "O tema é aplicado instantaneamente. As alterações são salvas "
 "automaticamente."
 
-#: templates/_settings_tabs/library.html:134
+#: templates/_settings_tabs/library.html:136
+#, fuzzy
+msgid "Moving background"
+msgstr "Removendo plano de fundo…"
+
+#: templates/_settings_tabs/library.html:138
+msgid ""
+"The mist, rain or stars behind the page. It pauses when you are not using"
+" RetroDB. Turn it off to save power on this computer."
+msgstr ""
+
+#: templates/_settings_tabs/library.html:146
 msgid "Language"
 msgstr "Idioma"
 
-#: templates/_settings_tabs/library.html:145
+#: templates/_settings_tabs/library.html:157
 msgid "Changes the interface language. The page reloads when you switch."
 msgstr "Altera o idioma da interface. A página é recarregada quando você troca."
 
-#: templates/_settings_tabs/library.html:150
+#: templates/_settings_tabs/library.html:162
 msgid "Preferred Boxart Style"
 msgstr "Estilo de capa preferido"
 
-#: templates/_settings_tabs/library.html:152
+#: templates/_settings_tabs/library.html:164
 msgid "2D Boxart (Standard)"
 msgstr "Capa 2D (Padrão)"
 
-#: templates/_settings_tabs/library.html:153
+#: templates/_settings_tabs/library.html:165
 msgid "3D Boxart (with 2D fallback)"
 msgstr "Capa 3D (com alternativa 2D)"
 
-#: templates/_settings_tabs/library.html:155
+#: templates/_settings_tabs/library.html:167
 msgid "When 3D is selected, 2D boxart will be shown if no 3D version exists"
 msgstr "Quando 3D é selecionado, a capa 2D será exibida se não houver versão 3D"
 
-#: templates/_settings_tabs/library.html:159
+#: templates/_settings_tabs/library.html:171
 msgid "Preferred Age Rating System"
 msgstr "Sistema de classificação etária preferido"
 
-#: templates/_settings_tabs/library.html:171
+#: templates/_settings_tabs/library.html:183
 msgid ""
 "Ratings from other systems are cross-mapped when the preferred system's "
 "rating is unavailable"
@@ -15841,15 +15857,15 @@ msgstr ""
 "As classificações de outros sistemas são mapeadas de forma cruzada quando"
 " a classificação do sistema preferido não está disponível"
 
-#: templates/_settings_tabs/library.html:177
+#: templates/_settings_tabs/library.html:189
 msgid "Save Display Settings"
 msgstr "Salvar configurações de exibição"
 
-#: templates/_settings_tabs/library.html:188
+#: templates/_settings_tabs/library.html:200
 msgid "ROM Naming Conventions"
 msgstr "Convenções de nomenclatura de ROM"
 
-#: templates/_settings_tabs/library.html:192
+#: templates/_settings_tabs/library.html:204
 msgid ""
 "Configure the filename pattern for each system type. Title is always "
 "first.\n"
@@ -15861,11 +15877,11 @@ msgstr ""
 "            Adicione as tags na ordem em que devem aparecer nos nomes dos"
 " arquivos (ex.: <code>Title (Region).zip</code>)."
 
-#: templates/_settings_tabs/library.html:197
+#: templates/_settings_tabs/library.html:209
 msgid "Article Placement"
 msgstr "Posicionamento de artigos"
 
-#: templates/_settings_tabs/library.html:199
+#: templates/_settings_tabs/library.html:211
 msgid ""
 "Controls where articles (A, An, The) appear in game titles and ROM "
 "filenames."
@@ -15873,15 +15889,15 @@ msgstr ""
 "Controla onde os artigos (A, An, The) aparecem nos títulos dos jogos e "
 "nos nomes de arquivos de ROM."
 
-#: templates/_settings_tabs/library.html:202
+#: templates/_settings_tabs/library.html:214
 msgid "Beginning (natural) — \"The Legend of Zelda\""
 msgstr "Início (natural) — \"The Legend of Zelda\""
 
-#: templates/_settings_tabs/library.html:203
+#: templates/_settings_tabs/library.html:215
 msgid "End (sort-friendly) — \"Legend of Zelda, The\""
 msgstr "Fim (ideal para ordenação) — \"Legend of Zelda, The\""
 
-#: templates/_settings_tabs/library.html:205
+#: templates/_settings_tabs/library.html:217
 msgid ""
 "Applies to new scrapes and rename suggestions. Existing titles are not "
 "changed automatically."
@@ -15889,11 +15905,11 @@ msgstr ""
 "Aplica-se a novos scrapings e sugestões de renomeação. Os títulos "
 "existentes não são alterados automaticamente."
 
-#: templates/_settings_tabs/library.html:209
+#: templates/_settings_tabs/library.html:221
 msgid "Region Options"
 msgstr "Opções de região"
 
-#: templates/_settings_tabs/library.html:211
+#: templates/_settings_tabs/library.html:223
 msgid ""
 "Configure the available region values and default. The default region is "
 "used when scraping if no region is detected."
@@ -15901,51 +15917,51 @@ msgstr ""
 "Configure os valores de região disponíveis e o padrão. A região padrão é "
 "usada durante o scraping se nenhuma região for detectada."
 
-#: templates/_settings_tabs/library.html:222
+#: templates/_settings_tabs/library.html:234
 #, fuzzy
 msgid "Add region..."
 msgstr "+ Adicionar dimensão..."
 
-#: templates/_settings_tabs/library.html:226
+#: templates/_settings_tabs/library.html:238
 msgid "Default Region"
 msgstr "Região padrão"
 
-#: templates/_settings_tabs/library.html:242
+#: templates/_settings_tabs/library.html:254
 #, fuzzy
 msgid "Save Naming Settings"
 msgstr "Salvar minhas configurações"
 
-#: templates/_settings_tabs/library.html:253
+#: templates/_settings_tabs/library.html:265
 #, fuzzy
 msgid "Bonus Disc Management"
 msgstr "Gerenciamento de usuários"
 
-#: templates/_settings_tabs/library.html:257
+#: templates/_settings_tabs/library.html:269
 msgid ""
 "Bonus discs (making-of, behind the scenes, extras) are hidden by default "
 "on game listing pages. Use this section to auto-detect and link bonus "
 "discs to their parent games."
 msgstr ""
 
-#: templates/_settings_tabs/library.html:271
+#: templates/_settings_tabs/library.html:283
 #, fuzzy
 msgid "View Stats"
 msgstr "Estatísticas"
 
-#: templates/_settings_tabs/library.html:278
+#: templates/_settings_tabs/library.html:290
 #, fuzzy
 msgid "Detected Bonus Discs"
 msgstr "Total de Discos Bônus:"
 
-#: templates/_settings_tabs/library.html:281
+#: templates/_settings_tabs/library.html:293
 msgid "Click \"Auto-Detect Bonus Discs\" to scan your library"
 msgstr ""
 
-#: templates/_settings_tabs/library.html:285
+#: templates/_settings_tabs/library.html:297
 msgid "Current Bonus Discs"
 msgstr "Discos Bônus Atuais"
 
-#: templates/_settings_tabs/library.html:288
+#: templates/_settings_tabs/library.html:300
 msgid ""
 "A disc marked by mistake can go back in your game lists. Auto-Link then "
 "leaves it alone."
@@ -15953,25 +15969,25 @@ msgstr ""
 "Um disco marcado por engano pode voltar às suas listas de jogos. Depois, "
 "o Auto-Link não mexe mais nele."
 
-#: templates/_settings_tabs/library.html:301
+#: templates/_settings_tabs/library.html:313
 msgid "Database Backup & Restore"
 msgstr ""
 
-#: templates/_settings_tabs/library.html:311
+#: templates/_settings_tabs/library.html:323
 #, fuzzy
 msgid "Calculate File Sizes"
 msgstr "Calculando tamanhos dos arquivos..."
 
-#: templates/_settings_tabs/library.html:315
+#: templates/_settings_tabs/library.html:327
 msgid "Create backups before making major changes to your library"
 msgstr ""
 
-#: templates/_settings_tabs/library.html:318
+#: templates/_settings_tabs/library.html:330
 #, fuzzy
 msgid "Available Backups"
 msgstr "Disponível"
 
-#: templates/_settings_tabs/library.html:320
+#: templates/_settings_tabs/library.html:332
 #, fuzzy
 msgid "Loading backups..."
 msgstr "Carregando valores..."

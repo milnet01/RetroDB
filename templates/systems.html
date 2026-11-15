@@ -150,13 +150,21 @@
     left: 2px;
     text-shadow: -2px 0 var(--secondary-magenta);
     clip: rect(24px, 550px, 90px, 0);
-    animation: glitch-anim 3s infinite linear alternate-reverse;
 }
 
 .glitch-text::after {
     left: -2px;
     text-shadow: -2px 0 var(--primary-cyan);
     clip: rect(85px, 550px, 140px, 0);
+}
+
+/* The flicker plays while the pointer is over the title, not all the time:
+   an endless animation repaints the page every frame. */
+.glitch-text:hover::before {
+    animation: glitch-anim 3s infinite linear alternate-reverse;
+}
+
+.glitch-text:hover::after {
     animation: glitch-anim2 3s infinite linear alternate-reverse;
 }
 

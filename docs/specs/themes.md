@@ -54,8 +54,8 @@ Notes:
 - **Cyberpunk is special-cased twice.** In `apply()`, when `theme === 'cyberpunk'`
   the `data-theme` attribute is *removed* rather than set — because cyberpunk
   is the `:root` baseline, not an override. And `_initCyberpunkSmoke` checks
-  `data-mist-enabled` (a per-user setting on `<body>`) and bails early if
-  disabled.
+  `data-mist-enabled` (`<body>`, from the app-wide `enable_mist_effect` in
+  `data/settings.json`) and bails early if disabled.
 
 ---
 
@@ -127,12 +127,18 @@ File: `static/js/theme.js`. Single module-style object exported as
   the FOUC block, §5), else `localStorage[STORAGE_KEY]`, else the
   `data-theme` the FOUC block applied, else `'cyberpunk'`; calls
   `apply(saved, false)` (the `false` suppresses a redundant server save on
-  page load), and wires `visibilitychange` (pause/resume canvas) and
-  `beforeunload` (save smoke state) listeners.
+  page load), and wires the pause listeners (§6) and `beforeunload` (save
+  smoke state).
+- `ThemeManager._MOTION_KEY` — `'retrodb-background-motion'`. localStorage
+  key; `'off'` keeps every background still in this browser.
+  `motionEnabled()` reads it; `setMotion(on)` writes it and re-applies the
+  theme. The Settings > Library > Display switch `#backgroundMotionToggle`
+  calls `setMotion`.
 - `apply(theme, save = true)` — validates against `THEMES`, sets / removes the
   `data-theme` attribute on `<html>`, writes to localStorage, tears down any
   active canvas, then dispatches to the theme's `_initX` method (unless
-  `prefers-reduced-motion: reduce` is true — see §6). Updates the
+  `prefers-reduced-motion: reduce` is true — see §6 — or `motionEnabled()`
+  is false). Updates the
   `.theme-option` UI active state and (if `save`) calls `save(theme)`.
 - `save(theme)` — fire-and-forget POST of `{theme_preference}` to
   `/api/users/settings`, the current user's row in `user_settings`. The route
@@ -152,23 +158,29 @@ File: `static/js/theme.js`. Single module-style object exported as
 | amber       | *(none)*                | *(none)*                                                         |
 
 Dispatch happens in two places — both must be updated when adding a theme:
-`apply()` (selecting the `_initX`) and `_startEffectLoop()` (selecting the
+`apply()` (selecting the `_initX`) and `_drawEffectFrame()` (selecting the
 per-frame draw method based on `this._activeEffect`).
 
 ### Shared canvas plumbing
 
-- `_createCanvas(id)` — appends a fixed-position, full-viewport `<canvas>` at
-  `z-index: -3`, `pointer-events: none`. Stores it as `this._canvas` /
-  `this._ctx` and attaches a debounced (150 ms) resize listener.
-- `_destroyCanvas()` — cancels the RAF loop, zeroes the canvas dimensions
+- `_createCanvas(id, gl = false)` — appends a fixed-position, full-viewport
+  `<canvas>` at `z-index: -3`, `pointer-events: none`. Stores it as
+  `this._canvas` / `this._ctx` (no 2D context when `gl`: the smoke shader
+  takes WebGL) and attaches a debounced (150 ms) resize listener that
+  redraws one frame even while paused.
+- `_destroyCanvas()` — stops the loop, releases the smoke shader's WebGL
+  context (`WEBGL_lose_context`), zeroes the canvas dimensions
   (force-releases the bitmap backing store — important on mobile), removes the
   element, detaches the resize listener, and clears **every** per-theme state
   field (columns, dust, rain, smoke buffers, gradient cache). This is the
   one-stop teardown — new themes that hold state MUST clear it here.
-- `_pauseEffect()` — cancels the RAF but leaves state intact, so
-  `visibilitychange` can resume seamlessly.
-- `_startEffectLoop()` — single RAF loop, **throttled to ~20 fps** (50 ms
-  minimum frame budget) for low CPU. Dispatches to the active draw method.
+- `_pauseEffect()` — cancels the pending frame and timer but leaves state
+  intact; the last frame stays on screen.
+- `_startEffectLoop()` — draws a frame now, then one every `_FRAME_MS`
+  (50 ms, ~20 fps; the smoke shader `_SMOKE_FRAME_MS`, 100 ms) while
+  `_canAnimate()` holds. A `setTimeout` between frames, then one
+  `requestAnimationFrame` to draw, so the browser wakes 20 times a second
+  rather than at the screen's refresh rate.
 
 ### Hardware-tier detection (cyberpunk only)
 
@@ -184,9 +196,15 @@ per-frame draw method based on `this._activeEffect`).
 
 Tiers: `high ≥ 70`, `medium ≥ 45`, `low ≥ 20`, `fallback < 20`.
 
-- `high` / `medium` / `low` use the simplex-noise volumetric pipeline
-  (`_initSmokeSystem` → noise buffer, fBm density, optional colour regions).
-- `fallback` switches to `_initSmokeFallback` — 6 large gradient blobs drifting
+- `high` / `medium` / `low` use the simplex-noise volumetric pipeline as a
+  WebGL fragment shader (`_initSmokeGL`, `_SMOKE_FRAGMENT`): fBm density with
+  the tier's octaves and optional colour regions (a one-row texture). The
+  canvas is the window divided by the tier's `scale`; CSS stretches it, so
+  the shader runs on that many pixels only and the processor does none of
+  it.
+- `fallback`, or no hardware WebGL (no context, a software renderer such as
+  SwiftShader or llvmpipe, a shader that does not build, or a lost context),
+  switches to `_initSmokeFallback` — 6 large gradient blobs drifting
   with random neon colours, drawn via a cached offscreen-gradient pool
   (`_getGradientImage`) capped at 60 entries to avoid unbounded growth.
 
@@ -244,12 +262,17 @@ Rules for this script:
 
 Every non-amber theme ships an animated canvas backdrop. Contract:
 
-- **Frame budget**: ~20 fps, enforced by `_startEffectLoop()` (50 ms
-  `timestamp - this._lastFrame` gate). New effects should target the same.
-- **Pause on hidden tab**: `visibilitychange` listener in `init()` calls
-  `_pauseEffect()` when `document.hidden` and re-starts the loop when the tab
-  becomes visible again. No work needed in the per-theme effect — it's all in
-  the shared loop.
+- **Frame budget**: ~20 fps (`_FRAME_MS`), enforced by `_startEffectLoop()`.
+  Every frame repaints the whole page, so the cost follows the frame rate
+  more than the effect: the smoke, which drifts slowly, runs at 10
+  (`_SMOKE_FRAME_MS`) and moves by time, not by frame. New effects should
+  target 20 or less.
+- **Pause when nobody is using the page**: the loop runs only while
+  `_canAnimate()` holds — the tab is showing, the window has focus, and a
+  pointer, key, wheel, touch or scroll event came in the last `_IDLE_MS`
+  (60 s). `blur` and a hidden tab pause at once; any of those events
+  resumes. No work is needed in the per-theme effect — it's all in the
+  shared loop.
 - **Destroy on theme switch**: every `apply()` call begins with
   `_destroyCanvas()`. State teardown is centralised there; per-theme state
   fields (e.g. `_dustParticles`, `_rainDrops`, `_eliteStars`,

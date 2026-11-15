@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 15:58+0200\n"
+"POT-Creation-Date: 2026-11-15 22:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: eo\n"
@@ -194,7 +194,7 @@ msgstr "⟦Šýšţéɱ ñöţ ƒöüñð öŕ ĥàš ñö àçĥìéⱴéɱéñ
 #: routes/games_ai.py:43 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
 #: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:706
-#: routes/reports.py:847 routes/trophies.py:1349 services/cheats.py:766
+#: routes/reports.py:847 routes/trophies.py:1349 services/cheats.py:826
 #: services/hltb_service.py:163
 msgid "Game not found"
 msgstr "⟦Ĝàɱé ñöţ ƒöüñð⟧"
@@ -615,7 +615,7 @@ msgstr "⟦Ñö ɱàţçĥéš ƒöüñð⟧"
 msgid "No game IDs provided"
 msgstr "⟦Ñö ĝàɱé ÌÐš þŕöⱴìðéð⟧"
 
-#: routes/cheats.py:49 services/cheats.py:704
+#: routes/cheats.py:49 services/cheats.py:764
 msgid "Send the names of the cheats to switch on."
 msgstr "⟦Šéñð ţĥé ñàɱéš öƒ ţĥé çĥéàţš ţö šŵìţçĥ öñ.⟧"
 
@@ -1683,65 +1683,69 @@ msgstr "⟦Ýöü ðö ñöţ ĥàⱴé þéŕɱìššìöñ ţö àççéšš �
 msgid "This action requires administrator privileges"
 msgstr "⟦Ţĥìš àçţìöñ ŕéɋüìŕéš àðɱìñìšţŕàţöŕ þŕìⱴìļéĝéš⟧"
 
-#: services/cheats.py:141
+#: services/cheats.py:143
 #, python-format
 msgid "%(name)s is too large to be a cheat file."
 msgstr "⟦%(name)s ìš ţöö ļàŕĝé ţö ƀé à çĥéàţ ƒìļé.⟧"
 
-#: services/cheats.py:269 services/cheats.py:289
+#: services/cheats.py:271 services/cheats.py:291
 msgid "Not a cheat file."
 msgstr "⟦Ñöţ à çĥéàţ ƒìļé.⟧"
 
-#: services/cheats.py:276
+#: services/cheats.py:278
 msgid "A PCSX2 file with no CRC in its name or its gametitle line."
 msgstr "⟦À ÞÇŠЖ2 ƒìļé ŵìţĥ ñö ÇŔÇ ìñ ìţš ñàɱé öŕ ìţš ĝàɱéţìţļé ļìñé.⟧"
 
-#: services/cheats.py:283
+#: services/cheats.py:285
 msgid "A RetroArch file whose folder names no single system."
 msgstr "⟦À ŔéţŕöÀŕçĥ ƒìļé ŵĥöšé ƒöļðéŕ ñàɱéš ñö šìñĝļé šýšţéɱ.⟧"
 
-#: services/cheats.py:288
+#: services/cheats.py:290
 msgid "A DuckStation file not named by its serial."
 msgstr "⟦À ÐüçķŠţàţìöñ ƒìļé ñöţ ñàɱéð ƀý ìţš šéŕìàļ.⟧"
 
-#: services/cheats.py:297
+#: services/cheats.py:299
 msgid "That folder was not found."
 msgstr "⟦Ţĥàţ ƒöļðéŕ ŵàš ñöţ ƒöüñð.⟧"
 
-#: services/cheats.py:300
+#: services/cheats.py:302
 msgid "That folder is RetroDB's own cheat store."
 msgstr "⟦Ţĥàţ ƒöļðéŕ ìš ŔéţŕöÐƁ'š öŵñ çĥéàţ šţöŕé.⟧"
 
-#: services/cheats.py:380
-msgid "RetroDB cannot unpack cheat.7z on this computer."
-msgstr "⟦ŔéţŕöÐƁ çàññöţ üñþàçķ çĥéàţ.7ž öñ ţĥìš çöɱþüţéŕ.⟧"
+#: services/cheats.py:387
+msgid "RetroDB cannot read cheat.7z on this computer."
+msgstr "⟦ŔéţŕöÐƁ çàññöţ ŕéàð çĥéàţ.7ž öñ ţĥìš çöɱþüţéŕ.⟧"
 
 #: services/cheats.py:406
-msgid "cheat.7z is larger than 1 GiB unpacked."
-msgstr "⟦çĥéàţ.7ž ìš ļàŕĝéŕ ţĥàñ 1 ĜìƁ üñþàçķéð.⟧"
-
-#: services/cheats.py:414
 msgid "cheat.7z holds no MAME cheat files."
 msgstr "⟦çĥéàţ.7ž ĥöļðš ñö ⱮÀⱮÉ çĥéàţ ƒìļéš.⟧"
 
-#: services/cheats.py:564 services/cheats.py:582
+#: services/cheats.py:420 services/cheats.py:450 services/cheats.py:460
+msgid "cheat.7z could not be read."
+msgstr "⟦çĥéàţ.7ž çöüļð ñöţ ƀé ŕéàð.⟧"
+
+#: services/cheats.py:440
+msgid "cheat.7z is larger than 1 GiB unpacked."
+msgstr "⟦çĥéàţ.7ž ìš ļàŕĝéŕ ţĥàñ 1 ĜìƁ üñþàçķéð.⟧"
+
+#: services/cheats.py:624 services/cheats.py:642
 msgid "The player has no cheats for this system."
 msgstr "⟦Ţĥé þļàýéŕ ĥàš ñö çĥéàţš ƒöŕ ţĥìš šýšţéɱ.⟧"
 
-#: services/cheats.py:573 services/cheats.py:596 services/cheats.py:702
-#: services/cheats.py:740 services/cheats.py:748 services/cheats.py:755
+#: services/cheats.py:633 services/cheats.py:656 services/cheats.py:762
+#: services/cheats.py:800 services/cheats.py:808 services/cheats.py:815
 msgid "No cheats were found for this game."
 msgstr "⟦Ñö çĥéàţš ŵéŕé ƒöüñð ƒöŕ ţĥìš ĝàɱé.⟧"
 
-#: services/cheats.py:588
+#: services/cheats.py:648
 msgid "That cheat list is not one of this game's."
 msgstr "⟦Ţĥàţ çĥéàţ ļìšţ ìš ñöţ öñé öƒ ţĥìš ĝàɱé'š.⟧"
 
-#: services/cheats.py:744 services/cheats.py:775
+#: services/cheats.py:804 services/cheats.py:835
 msgid "Cheats work in the player, DuckStation, PCSX2 and MAME."
 msgstr "⟦Çĥéàţš ŵöŕķ ìñ ţĥé þļàýéŕ, ÐüçķŠţàţìöñ, ÞÇŠЖ2 àñð ⱮÀⱮÉ.⟧"
 
-#: services/cheats.py:771
+#: services/cheats.py:831
 msgid "Switch MAME cheats on in MAME while you play: press Tab, then Plugin Options, then Cheat."
 msgstr "⟦Šŵìţçĥ ⱮÀⱮÉ çĥéàţš öñ ìñ ⱮÀⱮÉ ŵĥìļé ýöü þļàý: þŕéšš Ţàƀ, ţĥéñ Þļüĝìñ Öþţìöñš, ţĥéñ Çĥéàţ.⟧"
 
@@ -3260,7 +3264,7 @@ msgstr "⟦Ļöàðìñĝ ļöĝ ƒìļé...⟧"
 msgid "Loading the manual…"
 msgstr "⟦Ļöàðìñĝ ţĥé ɱàñüàļ…⟧"
 
-#: services/js_i18n_strings.py:843 templates/_settings_tabs/library.html:291
+#: services/js_i18n_strings.py:843 templates/_settings_tabs/library.html:303
 #: templates/settings_emulators.html:204 templates/settings_emulators.html:222
 msgid "Loading…"
 msgstr "⟦Ļöàðìñĝ…⟧"
@@ -3706,7 +3710,7 @@ msgstr "⟦Ŕéĝìöñàļ ñàɱé ɱàţçĥéš⟧"
 
 #: services/js_i18n_strings.py:941 templates/_modals/edit_modal.html:386
 #: templates/_settings_tabs/account.html:228
-#: templates/_settings_tabs/library.html:217 templates/compare_games.html:24
+#: templates/_settings_tabs/library.html:229 templates/compare_games.html:24
 #: templates/compare_games.html:40 templates/rom_tools_settings.html:462
 #: templates/rom_tools_settings.html:501 templates/screenshot_review.html:187
 #: templates/settings.html:1579 templates/settings.html:1687
@@ -6100,7 +6104,7 @@ msgstr "⟦Éñţéŕ ƒöļðéŕ ñàɱé ţö éжçļüðé⟧"
 #: templates/_settings_tabs/data.html:124
 #: templates/_settings_tabs/data.html:134
 #: templates/_settings_tabs/data.html:144
-#: templates/_settings_tabs/library.html:223 templates/archive_scanner.html:591
+#: templates/_settings_tabs/library.html:235 templates/archive_scanner.html:591
 #: templates/list_detail.html:419 templates/rom_tools_settings.html:346
 #: templates/rom_tools_settings.html:365
 msgid "Add"
@@ -7057,7 +7061,7 @@ msgid "Xbox 360, PC, Switch"
 msgstr "⟦Жƀöж 360, ÞÇ, Šŵìţçĥ⟧"
 
 #: templates/_modals/edit_modal.html:241
-#: templates/_settings_tabs/library.html:161 templates/base.html:1256
+#: templates/_settings_tabs/library.html:173 templates/base.html:1256
 msgid "ESRB (North America)"
 msgstr "⟦ÉŠŔƁ (Ñöŕţĥ Àɱéŕìçà)⟧"
 
@@ -7085,12 +7089,12 @@ msgid "RP - Rating Pending"
 msgstr "⟦ŔÞ - Ŕàţìñĝ Þéñðìñĝ⟧"
 
 #: templates/_modals/edit_modal.html:254
-#: templates/_settings_tabs/library.html:162 templates/base.html:1269
+#: templates/_settings_tabs/library.html:174 templates/base.html:1269
 msgid "PEGI (Europe)"
 msgstr "⟦ÞÉĜÌ (Éüŕöþé)⟧"
 
 #: templates/_modals/edit_modal.html:265
-#: templates/_settings_tabs/library.html:163 templates/base.html:1280
+#: templates/_settings_tabs/library.html:175 templates/base.html:1280
 msgid "CERO (Japan)"
 msgstr "⟦ÇÉŔÖ (Ĵàþàñ)⟧"
 
@@ -7116,12 +7120,12 @@ msgid "Z - Ages 18+"
 msgstr "⟦Ž - Àĝéš 18+⟧"
 
 #: templates/_modals/edit_modal.html:276
-#: templates/_settings_tabs/library.html:164 templates/base.html:1291
+#: templates/_settings_tabs/library.html:176 templates/base.html:1291
 msgid "USK (Germany)"
 msgstr "⟦ÜŠĶ (Ĝéŕɱàñý)⟧"
 
 #: templates/_modals/edit_modal.html:287
-#: templates/_settings_tabs/library.html:165 templates/base.html:1302
+#: templates/_settings_tabs/library.html:177 templates/base.html:1302
 msgid "ACB (Australia)"
 msgstr "⟦ÀÇƁ (Àüšţŕàļìà)⟧"
 
@@ -7143,12 +7147,12 @@ msgid "R18+ - Restricted"
 msgstr "⟦Ŕ18+ - Ŕéšţŕìçţéð⟧"
 
 #: templates/_modals/edit_modal.html:298
-#: templates/_settings_tabs/library.html:166 templates/base.html:1313
+#: templates/_settings_tabs/library.html:178 templates/base.html:1313
 msgid "FPB (South Africa)"
 msgstr "⟦ƑÞƁ (Šöüţĥ Àƒŕìçà)⟧"
 
 #: templates/_modals/edit_modal.html:312
-#: templates/_settings_tabs/library.html:167 templates/base.html:1327
+#: templates/_settings_tabs/library.html:179 templates/base.html:1327
 msgid "GRAC (South Korea)"
 msgstr "⟦ĜŔÀÇ (Šöüţĥ Ķöŕéà)⟧"
 
@@ -7157,7 +7161,7 @@ msgid "ALL - All Ages"
 msgstr "⟦ÀĻĻ - Àļļ Àĝéš⟧"
 
 #: templates/_modals/edit_modal.html:322
-#: templates/_settings_tabs/library.html:168 templates/base.html:1337
+#: templates/_settings_tabs/library.html:180 templates/base.html:1337
 msgid "ClassInd (Brazil)"
 msgstr "⟦ÇļàššÌñð (Ɓŕàžìļ)⟧"
 
@@ -7166,7 +7170,7 @@ msgid "L - General"
 msgstr "⟦Ļ - Ĝéñéŕàļ⟧"
 
 #: templates/_modals/edit_modal.html:334
-#: templates/_settings_tabs/library.html:169 templates/base.html:1349
+#: templates/_settings_tabs/library.html:181 templates/base.html:1349
 msgid "CADPA (China)"
 msgstr "⟦ÇÀÐÞÀ (Çĥìñà)⟧"
 
@@ -11373,7 +11377,7 @@ msgstr "⟦Ɓöñüš ðìšçš ðéţéçţéð: {count}⟧"
 msgid "Detection failed: {error}"
 msgstr "⟦Ðéţéçţìöñ ƒàìļéð: {error}⟧"
 
-#: templates/_settings_tabs/library.html:263 templates/settings.html:1863
+#: templates/_settings_tabs/library.html:275 templates/settings.html:1863
 msgid "Auto-Detect Bonus Discs"
 msgstr "⟦Àüţö-Ðéţéçţ Ɓöñüš Ðìšçš⟧"
 
@@ -11410,7 +11414,7 @@ msgstr "⟦Ɓöñüš ðìšçš ļìñķéð ţö þàŕéñţ ĝàɱéš: {cou
 msgid "Auto-link failed: {error}"
 msgstr "⟦Àüţö-ļìñķ ƒàìļéð: {error}⟧"
 
-#: templates/_settings_tabs/library.html:267 templates/settings.html:1900
+#: templates/_settings_tabs/library.html:279 templates/settings.html:1900
 msgid "Auto-Link to Parents"
 msgstr "⟦Àüţö-Ļìñķ ţö Þàŕéñţš⟧"
 
@@ -11500,7 +11504,7 @@ msgstr "⟦Ɓàçķüþ ƒàìļéð: {error}⟧"
 msgid "Backup error: {error}"
 msgstr "⟦Ɓàçķüþ éŕŕöŕ: {error}⟧"
 
-#: templates/_settings_tabs/library.html:307 templates/settings.html:2092
+#: templates/_settings_tabs/library.html:319 templates/settings.html:2092
 msgid "Create Backup"
 msgstr "⟦Çŕéàţé Ɓàçķüþ⟧"
 
@@ -14551,47 +14555,55 @@ msgstr "⟦Éļìţé⟧"
 msgid "Theme applies instantly. Changes are saved automatically."
 msgstr "⟦Ţĥéɱé àþþļìéš ìñšţàñţļý. Çĥàñĝéš àŕé šàⱴéð àüţöɱàţìçàļļý.⟧"
 
-#: templates/_settings_tabs/library.html:134
+#: templates/_settings_tabs/library.html:136
+msgid "Moving background"
+msgstr "⟦Ɱöⱴìñĝ ƀàçķĝŕöüñð⟧"
+
+#: templates/_settings_tabs/library.html:138
+msgid "The mist, rain or stars behind the page. It pauses when you are not using RetroDB. Turn it off to save power on this computer."
+msgstr "⟦Ţĥé ɱìšţ, ŕàìñ öŕ šţàŕš ƀéĥìñð ţĥé þàĝé. Ìţ þàüšéš ŵĥéñ ýöü àŕé ñöţ üšìñĝ ŔéţŕöÐƁ. Ţüŕñ ìţ öƒƒ ţö šàⱴé þöŵéŕ öñ ţĥìš çöɱþüţéŕ.⟧"
+
+#: templates/_settings_tabs/library.html:146
 msgid "Language"
 msgstr "⟦Ļàñĝüàĝé⟧"
 
-#: templates/_settings_tabs/library.html:145
+#: templates/_settings_tabs/library.html:157
 msgid "Changes the interface language. The page reloads when you switch."
 msgstr "⟦Çĥàñĝéš ţĥé ìñţéŕƒàçé ļàñĝüàĝé. Ţĥé þàĝé ŕéļöàðš ŵĥéñ ýöü šŵìţçĥ.⟧"
 
-#: templates/_settings_tabs/library.html:150
+#: templates/_settings_tabs/library.html:162
 msgid "Preferred Boxart Style"
 msgstr "⟦Þŕéƒéŕŕéð Ɓöжàŕţ Šţýļé⟧"
 
-#: templates/_settings_tabs/library.html:152
+#: templates/_settings_tabs/library.html:164
 msgid "2D Boxart (Standard)"
 msgstr "⟦2Ð Ɓöжàŕţ (Šţàñðàŕð)⟧"
 
-#: templates/_settings_tabs/library.html:153
+#: templates/_settings_tabs/library.html:165
 msgid "3D Boxart (with 2D fallback)"
 msgstr "⟦3Ð Ɓöжàŕţ (ŵìţĥ 2Ð ƒàļļƀàçķ)⟧"
 
-#: templates/_settings_tabs/library.html:155
+#: templates/_settings_tabs/library.html:167
 msgid "When 3D is selected, 2D boxart will be shown if no 3D version exists"
 msgstr "⟦Ŵĥéñ 3Ð ìš šéļéçţéð, 2Ð ƀöжàŕţ ŵìļļ ƀé šĥöŵñ ìƒ ñö 3Ð ⱴéŕšìöñ éжìšţš⟧"
 
-#: templates/_settings_tabs/library.html:159
+#: templates/_settings_tabs/library.html:171
 msgid "Preferred Age Rating System"
 msgstr "⟦Þŕéƒéŕŕéð Àĝé Ŕàţìñĝ Šýšţéɱ⟧"
 
-#: templates/_settings_tabs/library.html:171
+#: templates/_settings_tabs/library.html:183
 msgid "Ratings from other systems are cross-mapped when the preferred system's rating is unavailable"
 msgstr "⟦Ŕàţìñĝš ƒŕöɱ öţĥéŕ šýšţéɱš àŕé çŕöšš-ɱàþþéð ŵĥéñ ţĥé þŕéƒéŕŕéð šýšţéɱ'š ŕàţìñĝ ìš üñàⱴàìļàƀļé⟧"
 
-#: templates/_settings_tabs/library.html:177
+#: templates/_settings_tabs/library.html:189
 msgid "Save Display Settings"
 msgstr "⟦Šàⱴé Ðìšþļàý Šéţţìñĝš⟧"
 
-#: templates/_settings_tabs/library.html:188
+#: templates/_settings_tabs/library.html:200
 msgid "ROM Naming Conventions"
 msgstr "⟦ŔÖⱮ Ñàɱìñĝ Çöñⱴéñţìöñš⟧"
 
-#: templates/_settings_tabs/library.html:192
+#: templates/_settings_tabs/library.html:204
 msgid ""
 "Configure the filename pattern for each system type. Title is always first.\n"
 "            Add tags in the order they should appear in filenames (e.g., <code>Title (Region).zip</code>)."
@@ -14599,91 +14611,91 @@ msgstr ""
 "⟦Çöñƒìĝüŕé ţĥé ƒìļéñàɱé þàţţéŕñ ƒöŕ éàçĥ šýšţéɱ ţýþé. Ţìţļé ìš àļŵàýš ƒìŕšţ.\n"
 "            Àðð ţàĝš ìñ ţĥé öŕðéŕ ţĥéý šĥöüļð àþþéàŕ ìñ ƒìļéñàɱéš (é.ĝ., <çöðé>Ţìţļé (Ŕéĝìöñ).žìþ</çöðé>).⟧"
 
-#: templates/_settings_tabs/library.html:197
+#: templates/_settings_tabs/library.html:209
 msgid "Article Placement"
 msgstr "⟦Àŕţìçļé Þļàçéɱéñţ⟧"
 
-#: templates/_settings_tabs/library.html:199
+#: templates/_settings_tabs/library.html:211
 msgid "Controls where articles (A, An, The) appear in game titles and ROM filenames."
 msgstr "⟦Çöñţŕöļš ŵĥéŕé àŕţìçļéš (À, Àñ, Ţĥé) àþþéàŕ ìñ ĝàɱé ţìţļéš àñð ŔÖⱮ ƒìļéñàɱéš.⟧"
 
-#: templates/_settings_tabs/library.html:202
+#: templates/_settings_tabs/library.html:214
 msgid "Beginning (natural) — \"The Legend of Zelda\""
 msgstr "⟦Ɓéĝìññìñĝ (ñàţüŕàļ) — \"Ţĥé Ļéĝéñð öƒ Žéļðà\"⟧"
 
-#: templates/_settings_tabs/library.html:203
+#: templates/_settings_tabs/library.html:215
 msgid "End (sort-friendly) — \"Legend of Zelda, The\""
 msgstr "⟦Éñð (šöŕţ-ƒŕìéñðļý) — \"Ļéĝéñð öƒ Žéļðà, Ţĥé\"⟧"
 
-#: templates/_settings_tabs/library.html:205
+#: templates/_settings_tabs/library.html:217
 msgid "Applies to new scrapes and rename suggestions. Existing titles are not changed automatically."
 msgstr "⟦Àþþļìéš ţö ñéŵ šçŕàþéš àñð ŕéñàɱé šüĝĝéšţìöñš. Éжìšţìñĝ ţìţļéš àŕé ñöţ çĥàñĝéð àüţöɱàţìçàļļý.⟧"
 
-#: templates/_settings_tabs/library.html:209
+#: templates/_settings_tabs/library.html:221
 msgid "Region Options"
 msgstr "⟦Ŕéĝìöñ Öþţìöñš⟧"
 
-#: templates/_settings_tabs/library.html:211
+#: templates/_settings_tabs/library.html:223
 msgid "Configure the available region values and default. The default region is used when scraping if no region is detected."
 msgstr "⟦Çöñƒìĝüŕé ţĥé àⱴàìļàƀļé ŕéĝìöñ ⱴàļüéš àñð ðéƒàüļţ. Ţĥé ðéƒàüļţ ŕéĝìöñ ìš üšéð ŵĥéñ šçŕàþìñĝ ìƒ ñö ŕéĝìöñ ìš ðéţéçţéð.⟧"
 
-#: templates/_settings_tabs/library.html:222
+#: templates/_settings_tabs/library.html:234
 msgid "Add region..."
 msgstr "⟦Àðð ŕéĝìöñ...⟧"
 
-#: templates/_settings_tabs/library.html:226
+#: templates/_settings_tabs/library.html:238
 msgid "Default Region"
 msgstr "⟦Ðéƒàüļţ Ŕéĝìöñ⟧"
 
-#: templates/_settings_tabs/library.html:242
+#: templates/_settings_tabs/library.html:254
 msgid "Save Naming Settings"
 msgstr "⟦Šàⱴé Ñàɱìñĝ Šéţţìñĝš⟧"
 
-#: templates/_settings_tabs/library.html:253
+#: templates/_settings_tabs/library.html:265
 msgid "Bonus Disc Management"
 msgstr "⟦Ɓöñüš Ðìšç Ɱàñàĝéɱéñţ⟧"
 
-#: templates/_settings_tabs/library.html:257
+#: templates/_settings_tabs/library.html:269
 msgid "Bonus discs (making-of, behind the scenes, extras) are hidden by default on game listing pages. Use this section to auto-detect and link bonus discs to their parent games."
 msgstr "⟦Ɓöñüš ðìšçš (ɱàķìñĝ-öƒ, ƀéĥìñð ţĥé šçéñéš, éжţŕàš) àŕé ĥìððéñ ƀý ðéƒàüļţ öñ ĝàɱé ļìšţìñĝ þàĝéš. Üšé ţĥìš šéçţìöñ ţö àüţö-ðéţéçţ àñð ļìñķ ƀöñüš ðìšçš ţö ţĥéìŕ þàŕéñţ ĝàɱéš.⟧"
 
-#: templates/_settings_tabs/library.html:271
+#: templates/_settings_tabs/library.html:283
 msgid "View Stats"
 msgstr "⟦Ѵìéŵ Šţàţš⟧"
 
-#: templates/_settings_tabs/library.html:278
+#: templates/_settings_tabs/library.html:290
 msgid "Detected Bonus Discs"
 msgstr "⟦Ðéţéçţéð Ɓöñüš Ðìšçš⟧"
 
-#: templates/_settings_tabs/library.html:281
+#: templates/_settings_tabs/library.html:293
 msgid "Click \"Auto-Detect Bonus Discs\" to scan your library"
 msgstr "⟦Çļìçķ \"Àüţö-Ðéţéçţ Ɓöñüš Ðìšçš\" ţö šçàñ ýöüŕ ļìƀŕàŕý⟧"
 
-#: templates/_settings_tabs/library.html:285
+#: templates/_settings_tabs/library.html:297
 msgid "Current Bonus Discs"
 msgstr "⟦Çüŕŕéñţ Ɓöñüš Ðìšçš⟧"
 
-#: templates/_settings_tabs/library.html:288
+#: templates/_settings_tabs/library.html:300
 msgid "A disc marked by mistake can go back in your game lists. Auto-Link then leaves it alone."
 msgstr "⟦À ðìšç ɱàŕķéð ƀý ɱìšţàķé çàñ ĝö ƀàçķ ìñ ýöüŕ ĝàɱé ļìšţš. Àüţö-Ļìñķ ţĥéñ ļéàⱴéš ìţ àļöñé.⟧"
 
-#: templates/_settings_tabs/library.html:301
+#: templates/_settings_tabs/library.html:313
 msgid "Database Backup & Restore"
 msgstr "⟦Ðàţàƀàšé Ɓàçķüþ & Ŕéšţöŕé⟧"
 
-#: templates/_settings_tabs/library.html:311
+#: templates/_settings_tabs/library.html:323
 msgid "Calculate File Sizes"
 msgstr "⟦Çàļçüļàţé Ƒìļé Šìžéš⟧"
 
-#: templates/_settings_tabs/library.html:315
+#: templates/_settings_tabs/library.html:327
 msgid "Create backups before making major changes to your library"
 msgstr "⟦Çŕéàţé ƀàçķüþš ƀéƒöŕé ɱàķìñĝ ɱàĵöŕ çĥàñĝéš ţö ýöüŕ ļìƀŕàŕý⟧"
 
-#: templates/_settings_tabs/library.html:318
+#: templates/_settings_tabs/library.html:330
 msgid "Available Backups"
 msgstr "⟦Àⱴàìļàƀļé Ɓàçķüþš⟧"
 
-#: templates/_settings_tabs/library.html:320
+#: templates/_settings_tabs/library.html:332
 msgid "Loading backups..."
 msgstr "⟦Ļöàðìñĝ ƀàçķüþš...⟧"
 

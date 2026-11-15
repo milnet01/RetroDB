@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 15:58+0200\n"
+"POT-Creation-Date: 2026-11-15 22:32+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -200,7 +200,7 @@ msgstr "システムが見つからないか、実績対応ゲームがありま
 #: routes/games_ai.py:43 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
 #: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:706
-#: routes/reports.py:847 routes/trophies.py:1349 services/cheats.py:766
+#: routes/reports.py:847 routes/trophies.py:1349 services/cheats.py:826
 #: services/hltb_service.py:163
 msgid "Game not found"
 msgstr "ゲームが見つかりません"
@@ -623,7 +623,7 @@ msgstr "一致するものが見つかりません"
 msgid "No game IDs provided"
 msgstr "ゲームIDが指定されていません"
 
-#: routes/cheats.py:49 services/cheats.py:704
+#: routes/cheats.py:49 services/cheats.py:764
 msgid "Send the names of the cheats to switch on."
 msgstr "オンにするチートの名前を送信してください。"
 
@@ -1721,69 +1721,74 @@ msgstr "この操作を実行する権限がありません"
 msgid "This action requires administrator privileges"
 msgstr "管理者権限が必要です"
 
-#: services/cheats.py:141
+#: services/cheats.py:143
 #, python-format
 msgid "%(name)s is too large to be a cheat file."
 msgstr "%(name)s はチートファイルとしては大きすぎます。"
 
-#: services/cheats.py:269 services/cheats.py:289
+#: services/cheats.py:271 services/cheats.py:291
 msgid "Not a cheat file."
 msgstr "チートファイルではありません。"
 
-#: services/cheats.py:276
+#: services/cheats.py:278
 msgid "A PCSX2 file with no CRC in its name or its gametitle line."
 msgstr "名前にも gametitle 行にも CRC がない PCSX2 ファイルです。"
 
-#: services/cheats.py:283
+#: services/cheats.py:285
 msgid "A RetroArch file whose folder names no single system."
 msgstr "フォルダーが 1 つのシステムを示していない RetroArch ファイルです。"
 
-#: services/cheats.py:288
+#: services/cheats.py:290
 msgid "A DuckStation file not named by its serial."
 msgstr "シリアル番号の名前が付いていない DuckStation ファイルです。"
 
-#: services/cheats.py:297
+#: services/cheats.py:299
 msgid "That folder was not found."
 msgstr "そのフォルダーが見つかりませんでした。"
 
-#: services/cheats.py:300
+#: services/cheats.py:302
 msgid "That folder is RetroDB's own cheat store."
 msgstr "そのフォルダーは RetroDB 自身のチート保管場所です。"
 
-#: services/cheats.py:380
+#: services/cheats.py:387
 #, fuzzy
-msgid "RetroDB cannot unpack cheat.7z on this computer."
+msgid "RetroDB cannot read cheat.7z on this computer."
 msgstr "このコンピューター向けの RetroArch はビルドされていません。"
 
 #: services/cheats.py:406
 #, fuzzy
-msgid "cheat.7z is larger than 1 GiB unpacked."
-msgstr "10 MB を超える画像があります。"
-
-#: services/cheats.py:414
-#, fuzzy
 msgid "cheat.7z holds no MAME cheat files."
 msgstr "チートファイルではありません。"
 
-#: services/cheats.py:564 services/cheats.py:582
+#: services/cheats.py:420 services/cheats.py:450 services/cheats.py:460
+#, fuzzy, python-brace-format
+msgid "cheat.7z could not be read."
+msgstr "{count} 件は読み込めませんでした。"
+
+#: services/cheats.py:440
+#, fuzzy
+msgid "cheat.7z is larger than 1 GiB unpacked."
+msgstr "10 MB を超える画像があります。"
+
+#: services/cheats.py:624 services/cheats.py:642
 msgid "The player has no cheats for this system."
 msgstr "RetroArch (RetroDB) にはこのシステムのチートがありません。"
 
-#: services/cheats.py:573 services/cheats.py:596 services/cheats.py:702
-#: services/cheats.py:740 services/cheats.py:748 services/cheats.py:755
+#: services/cheats.py:633 services/cheats.py:656 services/cheats.py:762
+#: services/cheats.py:800 services/cheats.py:808 services/cheats.py:815
 msgid "No cheats were found for this game."
 msgstr "このゲームのチートは見つかりませんでした。"
 
-#: services/cheats.py:588
+#: services/cheats.py:648
 msgid "That cheat list is not one of this game's."
 msgstr "そのチートリストはこのゲームのものではありません。"
 
-#: services/cheats.py:744 services/cheats.py:775
+#: services/cheats.py:804 services/cheats.py:835
 #, fuzzy
 msgid "Cheats work in the player, DuckStation, PCSX2 and MAME."
 msgstr "チートは RetroArch (RetroDB)、DuckStation、PCSX2 で使えます。"
 
-#: services/cheats.py:771
+#: services/cheats.py:831
 msgid ""
 "Switch MAME cheats on in MAME while you play: press Tab, then Plugin "
 "Options, then Cheat."
@@ -3316,7 +3321,7 @@ msgstr "ログファイルを読み込み中..."
 msgid "Loading the manual…"
 msgstr "マニュアルを読み込み中…"
 
-#: services/js_i18n_strings.py:843 templates/_settings_tabs/library.html:291
+#: services/js_i18n_strings.py:843 templates/_settings_tabs/library.html:303
 #: templates/settings_emulators.html:204 templates/settings_emulators.html:222
 msgid "Loading…"
 msgstr "読み込み中…"
@@ -3766,7 +3771,7 @@ msgstr "地域名の一致"
 
 #: services/js_i18n_strings.py:941 templates/_modals/edit_modal.html:386
 #: templates/_settings_tabs/account.html:228
-#: templates/_settings_tabs/library.html:217 templates/compare_games.html:24
+#: templates/_settings_tabs/library.html:229 templates/compare_games.html:24
 #: templates/compare_games.html:40 templates/rom_tools_settings.html:462
 #: templates/rom_tools_settings.html:501 templates/screenshot_review.html:187
 #: templates/settings.html:1579 templates/settings.html:1687
@@ -6248,7 +6253,7 @@ msgstr "除外するフォルダ名を入力"
 #: templates/_settings_tabs/data.html:124
 #: templates/_settings_tabs/data.html:134
 #: templates/_settings_tabs/data.html:144
-#: templates/_settings_tabs/library.html:223 templates/archive_scanner.html:591
+#: templates/_settings_tabs/library.html:235 templates/archive_scanner.html:591
 #: templates/list_detail.html:419 templates/rom_tools_settings.html:346
 #: templates/rom_tools_settings.html:365
 msgid "Add"
@@ -7209,7 +7214,7 @@ msgid "Xbox 360, PC, Switch"
 msgstr "Xbox 360, PC, Switch"
 
 #: templates/_modals/edit_modal.html:241
-#: templates/_settings_tabs/library.html:161 templates/base.html:1256
+#: templates/_settings_tabs/library.html:173 templates/base.html:1256
 msgid "ESRB (North America)"
 msgstr "ESRB（北米）"
 
@@ -7237,12 +7242,12 @@ msgid "RP - Rating Pending"
 msgstr "RP - レーティング保留中"
 
 #: templates/_modals/edit_modal.html:254
-#: templates/_settings_tabs/library.html:162 templates/base.html:1269
+#: templates/_settings_tabs/library.html:174 templates/base.html:1269
 msgid "PEGI (Europe)"
 msgstr "PEGI（ヨーロッパ）"
 
 #: templates/_modals/edit_modal.html:265
-#: templates/_settings_tabs/library.html:163 templates/base.html:1280
+#: templates/_settings_tabs/library.html:175 templates/base.html:1280
 msgid "CERO (Japan)"
 msgstr "CERO（日本）"
 
@@ -7268,12 +7273,12 @@ msgid "Z - Ages 18+"
 msgstr "Z - 18歳以上"
 
 #: templates/_modals/edit_modal.html:276
-#: templates/_settings_tabs/library.html:164 templates/base.html:1291
+#: templates/_settings_tabs/library.html:176 templates/base.html:1291
 msgid "USK (Germany)"
 msgstr "USK（ドイツ）"
 
 #: templates/_modals/edit_modal.html:287
-#: templates/_settings_tabs/library.html:165 templates/base.html:1302
+#: templates/_settings_tabs/library.html:177 templates/base.html:1302
 msgid "ACB (Australia)"
 msgstr "ACB（オーストラリア）"
 
@@ -7295,12 +7300,12 @@ msgid "R18+ - Restricted"
 msgstr "R18+ - 制限あり"
 
 #: templates/_modals/edit_modal.html:298
-#: templates/_settings_tabs/library.html:166 templates/base.html:1313
+#: templates/_settings_tabs/library.html:178 templates/base.html:1313
 msgid "FPB (South Africa)"
 msgstr "FPB（南アフリカ）"
 
 #: templates/_modals/edit_modal.html:312
-#: templates/_settings_tabs/library.html:167 templates/base.html:1327
+#: templates/_settings_tabs/library.html:179 templates/base.html:1327
 msgid "GRAC (South Korea)"
 msgstr "GRAC（韓国）"
 
@@ -7309,7 +7314,7 @@ msgid "ALL - All Ages"
 msgstr "ALL - 全年齢"
 
 #: templates/_modals/edit_modal.html:322
-#: templates/_settings_tabs/library.html:168 templates/base.html:1337
+#: templates/_settings_tabs/library.html:180 templates/base.html:1337
 msgid "ClassInd (Brazil)"
 msgstr "ClassInd（ブラジル）"
 
@@ -7318,7 +7323,7 @@ msgid "L - General"
 msgstr "L - 一般"
 
 #: templates/_modals/edit_modal.html:334
-#: templates/_settings_tabs/library.html:169 templates/base.html:1349
+#: templates/_settings_tabs/library.html:181 templates/base.html:1349
 msgid "CADPA (China)"
 msgstr "CADPA（中国）"
 
@@ -11764,7 +11769,7 @@ msgstr "検出されたボーナスディスク: {count}"
 msgid "Detection failed: {error}"
 msgstr "検出に失敗しました: {error}"
 
-#: templates/_settings_tabs/library.html:263 templates/settings.html:1863
+#: templates/_settings_tabs/library.html:275 templates/settings.html:1863
 #, fuzzy
 msgid "Auto-Detect Bonus Discs"
 msgstr "ボーナスディスク合計:"
@@ -11804,7 +11809,7 @@ msgstr "親ゲームにリンクしたボーナスディスク: {count}"
 msgid "Auto-link failed: {error}"
 msgstr "自動リンクに失敗しました: {error}"
 
-#: templates/_settings_tabs/library.html:267 templates/settings.html:1900
+#: templates/_settings_tabs/library.html:279 templates/settings.html:1900
 #, fuzzy
 msgid "Auto-Link to Parents"
 msgstr "親にリンク済み:"
@@ -11898,7 +11903,7 @@ msgstr "バックアップに失敗しました: {error}"
 msgid "Backup error: {error}"
 msgstr "バックアップエラー: {error}"
 
-#: templates/_settings_tabs/library.html:307 templates/settings.html:2092
+#: templates/_settings_tabs/library.html:319 templates/settings.html:2092
 #, fuzzy
 msgid "Create Backup"
 msgstr "バックアップを復元"
@@ -15193,49 +15198,60 @@ msgstr "Elite"
 msgid "Theme applies instantly. Changes are saved automatically."
 msgstr "テーマは即座に適用されます。変更は自動的に保存されます。"
 
-#: templates/_settings_tabs/library.html:134
+#: templates/_settings_tabs/library.html:136
+#, fuzzy
+msgid "Moving background"
+msgstr "背景を削除しています…"
+
+#: templates/_settings_tabs/library.html:138
+msgid ""
+"The mist, rain or stars behind the page. It pauses when you are not using"
+" RetroDB. Turn it off to save power on this computer."
+msgstr ""
+
+#: templates/_settings_tabs/library.html:146
 msgid "Language"
 msgstr "言語"
 
-#: templates/_settings_tabs/library.html:145
+#: templates/_settings_tabs/library.html:157
 msgid "Changes the interface language. The page reloads when you switch."
 msgstr "インターフェースの言語を変更します。切り替えるとページが再読み込みされます。"
 
-#: templates/_settings_tabs/library.html:150
+#: templates/_settings_tabs/library.html:162
 msgid "Preferred Boxart Style"
 msgstr "優先するボックスアートスタイル"
 
-#: templates/_settings_tabs/library.html:152
+#: templates/_settings_tabs/library.html:164
 msgid "2D Boxart (Standard)"
 msgstr "2Dボックスアート（標準）"
 
-#: templates/_settings_tabs/library.html:153
+#: templates/_settings_tabs/library.html:165
 msgid "3D Boxart (with 2D fallback)"
 msgstr "3Dボックスアート（2Dフォールバックあり）"
 
-#: templates/_settings_tabs/library.html:155
+#: templates/_settings_tabs/library.html:167
 msgid "When 3D is selected, 2D boxart will be shown if no 3D version exists"
 msgstr "3Dを選択した場合、3D版が存在しないときは2Dボックスアートが表示されます"
 
-#: templates/_settings_tabs/library.html:159
+#: templates/_settings_tabs/library.html:171
 msgid "Preferred Age Rating System"
 msgstr "優先する年齢レーティングシステム"
 
-#: templates/_settings_tabs/library.html:171
+#: templates/_settings_tabs/library.html:183
 msgid ""
 "Ratings from other systems are cross-mapped when the preferred system's "
 "rating is unavailable"
 msgstr "優先システムのレーティングが利用できない場合、他のシステムのレーティングがクロスマッピングされます"
 
-#: templates/_settings_tabs/library.html:177
+#: templates/_settings_tabs/library.html:189
 msgid "Save Display Settings"
 msgstr "表示設定を保存"
 
-#: templates/_settings_tabs/library.html:188
+#: templates/_settings_tabs/library.html:200
 msgid "ROM Naming Conventions"
 msgstr "ROM命名規則"
 
-#: templates/_settings_tabs/library.html:192
+#: templates/_settings_tabs/library.html:204
 msgid ""
 "Configure the filename pattern for each system type. Title is always "
 "first.\n"
@@ -15245,109 +15261,109 @@ msgstr ""
 "各機種タイプのファイル名パターンを設定します。タイトルは常に最初です。\n"
 "            ファイル名に表示される順序でタグを追加します（例：<code>Title (Region).zip</code>）。"
 
-#: templates/_settings_tabs/library.html:197
+#: templates/_settings_tabs/library.html:209
 msgid "Article Placement"
 msgstr "冠詞の配置"
 
-#: templates/_settings_tabs/library.html:199
+#: templates/_settings_tabs/library.html:211
 msgid ""
 "Controls where articles (A, An, The) appear in game titles and ROM "
 "filenames."
 msgstr "ゲームタイトルとROMファイル名で冠詞（A、An、The）が表示される位置を制御します。"
 
-#: templates/_settings_tabs/library.html:202
+#: templates/_settings_tabs/library.html:214
 msgid "Beginning (natural) — \"The Legend of Zelda\""
 msgstr "先頭（自然な順序）— \"The Legend of Zelda\""
 
-#: templates/_settings_tabs/library.html:203
+#: templates/_settings_tabs/library.html:215
 msgid "End (sort-friendly) — \"Legend of Zelda, The\""
 msgstr "末尾（並べ替えに適した順序）— \"Legend of Zelda, The\""
 
-#: templates/_settings_tabs/library.html:205
+#: templates/_settings_tabs/library.html:217
 msgid ""
 "Applies to new scrapes and rename suggestions. Existing titles are not "
 "changed automatically."
 msgstr "新しいスクレイピングとリネームの提案に適用されます。既存のタイトルは自動的には変更されません。"
 
-#: templates/_settings_tabs/library.html:209
+#: templates/_settings_tabs/library.html:221
 msgid "Region Options"
 msgstr "地域の選択肢"
 
-#: templates/_settings_tabs/library.html:211
+#: templates/_settings_tabs/library.html:223
 msgid ""
 "Configure the available region values and default. The default region is "
 "used when scraping if no region is detected."
 msgstr "利用可能な地域の値とデフォルトを設定します。スクレイピング時に地域が検出されない場合、デフォルトの地域が使用されます。"
 
-#: templates/_settings_tabs/library.html:222
+#: templates/_settings_tabs/library.html:234
 #, fuzzy
 msgid "Add region..."
 msgstr "+ 次元を追加..."
 
-#: templates/_settings_tabs/library.html:226
+#: templates/_settings_tabs/library.html:238
 msgid "Default Region"
 msgstr "デフォルト地域"
 
-#: templates/_settings_tabs/library.html:242
+#: templates/_settings_tabs/library.html:254
 #, fuzzy
 msgid "Save Naming Settings"
 msgstr "設定を保存"
 
-#: templates/_settings_tabs/library.html:253
+#: templates/_settings_tabs/library.html:265
 #, fuzzy
 msgid "Bonus Disc Management"
 msgstr "ユーザー管理"
 
-#: templates/_settings_tabs/library.html:257
+#: templates/_settings_tabs/library.html:269
 msgid ""
 "Bonus discs (making-of, behind the scenes, extras) are hidden by default "
 "on game listing pages. Use this section to auto-detect and link bonus "
 "discs to their parent games."
 msgstr ""
 
-#: templates/_settings_tabs/library.html:271
+#: templates/_settings_tabs/library.html:283
 #, fuzzy
 msgid "View Stats"
 msgstr "統計"
 
-#: templates/_settings_tabs/library.html:278
+#: templates/_settings_tabs/library.html:290
 #, fuzzy
 msgid "Detected Bonus Discs"
 msgstr "ボーナスディスク合計:"
 
-#: templates/_settings_tabs/library.html:281
+#: templates/_settings_tabs/library.html:293
 msgid "Click \"Auto-Detect Bonus Discs\" to scan your library"
 msgstr ""
 
-#: templates/_settings_tabs/library.html:285
+#: templates/_settings_tabs/library.html:297
 msgid "Current Bonus Discs"
 msgstr "現在のボーナスディスク"
 
-#: templates/_settings_tabs/library.html:288
+#: templates/_settings_tabs/library.html:300
 msgid ""
 "A disc marked by mistake can go back in your game lists. Auto-Link then "
 "leaves it alone."
 msgstr "誤ってマークしたディスクはゲーム一覧に戻せます。その後 Auto-Link はそのディスクに触れません。"
 
-#: templates/_settings_tabs/library.html:301
+#: templates/_settings_tabs/library.html:313
 msgid "Database Backup & Restore"
 msgstr ""
 
-#: templates/_settings_tabs/library.html:311
+#: templates/_settings_tabs/library.html:323
 #, fuzzy
 msgid "Calculate File Sizes"
 msgstr "ファイルサイズを計算中..."
 
-#: templates/_settings_tabs/library.html:315
+#: templates/_settings_tabs/library.html:327
 msgid "Create backups before making major changes to your library"
 msgstr ""
 
-#: templates/_settings_tabs/library.html:318
+#: templates/_settings_tabs/library.html:330
 #, fuzzy
 msgid "Available Backups"
 msgstr "利用可能"
 
-#: templates/_settings_tabs/library.html:320
+#: templates/_settings_tabs/library.html:332
 #, fuzzy
 msgid "Loading backups..."
 msgstr "値を読み込み中..."

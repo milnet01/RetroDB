@@ -8,10 +8,18 @@ const ThemeManager = {
     THEMES: ['cyberpunk', 'matrix', 'amber', 'ocean', 'christian', 'bladerunner', 'elite'],
     STORAGE_KEY: 'retrodb-theme',
     _SMOKE_STATE_KEY: 'retrodb-smoke-state',
+    // 'off' in this browser's storage keeps every background still.
+    _MOTION_KEY: 'retrodb-background-motion',
+    _FRAME_MS: 50,      // about 20 frames a second
+    // The smoke drifts slowly, so 10 frames a second looks the same, and each
+    // frame repaints the whole page: half the frames, half the graphics work.
+    _SMOKE_FRAME_MS: 100,
+    _IDLE_MS: 60000,    // a minute with no mouse, keys or scrolling pauses it
     _rafId: null,
+    _timerId: null,
+    _lastInput: Date.now(),
     _canvas: null,
     _ctx: null,
-    _lastFrame: 0,
     _activeEffect: null,
     _boundResize: null,
 
@@ -35,12 +43,9 @@ const ThemeManager = {
     _hardwareTier: null,
     _hardwareScore: null,
 
-    // Noise-based smoke state (high/medium/low tiers)
+    // Noise-based smoke state (high/medium/low tiers), drawn by the graphics card
     _smokeTime: 0,
-    _smokeOffscreen: null,
-    _smokeOffCtx: null,
-    _smokeImageData: null,
-    _smokePixels: null,
+    _smokeGL: null,
     _smokeBufW: 0,
     _smokeBufH: 0,
     _smokeColorRegions: null,
@@ -49,88 +54,102 @@ const ThemeManager = {
     _gradientCache: new Map(),
 
     // =========================================================================
-    // Embedded Simplex Noise (josephg/noisejs, public domain)
-    // Only simplex3 is needed — minimal ~80 line extraction
+    // Cyberpunk smoke shaders. The graphics card works out the smoke for each
+    // dot of a small picture (a sixth to a tenth of the window), and the
+    // browser stretches that picture over the window. Simplex noise: Ian
+    // McEwan and Stefan Gustavson, webgl-noise (MIT licence).
     // =========================================================================
 
-    _noise: (() => {
-        // Permutation table (Perlin's original 256-entry table, doubled)
-        const F3 = 1 / 3, G3 = 1 / 6;
-        const grad3 = [
-            [1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],
-            [1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],
-            [0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]
-        ];
-        const p = [151,160,137,91,90,15,131,13,201,95,96,53,194,233,7,225,
-            140,36,103,30,69,142,8,99,37,240,21,10,23,190,6,148,
-            247,120,234,75,0,26,197,62,94,252,219,203,117,35,11,32,
-            57,177,33,88,237,149,56,87,174,20,125,136,171,168,68,175,
-            74,165,71,134,139,48,27,166,77,146,158,231,83,111,229,122,
-            60,211,133,230,220,105,92,41,55,46,245,40,244,102,143,54,
-            65,25,63,161,1,216,80,73,209,76,132,187,208,89,18,169,
-            200,196,135,130,116,188,159,86,164,100,109,198,173,186,3,64,
-            52,217,226,250,124,123,5,202,38,147,118,126,255,82,85,212,
-            207,206,59,227,47,16,58,17,182,189,28,42,223,183,170,213,
-            119,248,152,2,44,154,163,70,221,153,101,155,167,43,172,9,
-            129,22,39,253,19,98,108,110,79,113,224,232,178,185,112,104,
-            218,246,97,228,251,34,242,193,238,210,144,12,191,179,162,241,
-            81,51,145,235,249,14,239,107,49,192,214,31,181,199,106,157,
-            184,84,204,176,115,121,50,45,127,4,150,254,138,236,205,93,
-            222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180];
-        const perm = new Uint8Array(512);
-        const permMod12 = new Uint8Array(512);
-        for (let i = 0; i < 512; i++) {
-            perm[i] = p[i & 255];
-            permMod12[i] = perm[i] % 12;
-        }
+    _SMOKE_VERTEX: 'attribute vec2 p; void main() { gl_Position = vec4(p, 0.0, 1.0); }',
 
-        function dot3(g, x, y, z) { return g[0] * x + g[1] * y + g[2] * z; }
+    _SMOKE_FRAGMENT: `
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+uniform vec2 u_res;
+uniform float u_time;
+uniform int u_octaves;
+uniform float u_tint;
+uniform sampler2D u_regions;
 
-        return {
-            seed(s) {
-                // Simple seed shuffle (xorshift-inspired)
-                if (s > 0 && s < 1) s *= 65536;
-                s = Math.floor(s);
-                if (s < 256) s |= s << 8;
-                for (let i = 0; i < 256; i++) {
-                    let v = (i & 1) ? (p[i] ^ (s & 255)) : (p[i] ^ ((s >> 8) & 255));
-                    perm[i] = perm[i + 256] = v;
-                    permMod12[i] = permMod12[i + 256] = v % 12;
-                }
-            },
-            simplex3(xin, yin, zin) {
-                const s = (xin + yin + zin) * F3;
-                const i = Math.floor(xin + s), j = Math.floor(yin + s), k = Math.floor(zin + s);
-                const t = (i + j + k) * G3;
-                const X0 = i - t, Y0 = j - t, Z0 = k - t;
-                const x0 = xin - X0, y0 = yin - Y0, z0 = zin - Z0;
-                let i1, j1, k1, i2, j2, k2;
-                if (x0 >= y0) {
-                    if (y0 >= z0)      { i1=1;j1=0;k1=0;i2=1;j2=1;k2=0; }
-                    else if (x0 >= z0) { i1=1;j1=0;k1=0;i2=1;j2=0;k2=1; }
-                    else               { i1=0;j1=0;k1=1;i2=1;j2=0;k2=1; }
-                } else {
-                    if (y0 < z0)       { i1=0;j1=0;k1=1;i2=0;j2=1;k2=1; }
-                    else if (x0 < z0)  { i1=0;j1=1;k1=0;i2=0;j2=1;k2=1; }
-                    else               { i1=0;j1=1;k1=0;i2=1;j2=1;k2=0; }
-                }
-                const x1 = x0 - i1 + G3, y1 = y0 - j1 + G3, z1 = z0 - k1 + G3;
-                const x2 = x0 - i2 + 2*G3, y2 = y0 - j2 + 2*G3, z2 = z0 - k2 + 2*G3;
-                const x3 = x0 - 1 + 3*G3, y3 = y0 - 1 + 3*G3, z3 = z0 - 1 + 3*G3;
-                const ii = i & 255, jj = j & 255, kk = k & 255;
-                let n0 = 0, n1 = 0, n2 = 0, n3 = 0;
-                let t0 = 0.6 - x0*x0 - y0*y0 - z0*z0;
-                if (t0 > 0) { t0 *= t0; n0 = t0 * t0 * dot3(grad3[permMod12[ii+perm[jj+perm[kk]]]], x0, y0, z0); }
-                let t1 = 0.6 - x1*x1 - y1*y1 - z1*z1;
-                if (t1 > 0) { t1 *= t1; n1 = t1 * t1 * dot3(grad3[permMod12[ii+i1+perm[jj+j1+perm[kk+k1]]]], x1, y1, z1); }
-                let t2 = 0.6 - x2*x2 - y2*y2 - z2*z2;
-                if (t2 > 0) { t2 *= t2; n2 = t2 * t2 * dot3(grad3[permMod12[ii+i2+perm[jj+j2+perm[kk+k2]]]], x2, y2, z2); }
-                let t3 = 0.6 - x3*x3 - y3*y3 - z3*z3;
-                if (t3 > 0) { t3 *= t3; n3 = t3 * t3 * dot3(grad3[permMod12[ii+1+perm[jj+1+perm[kk+1]]]], x3, y3, z3); }
-                return 32 * (n0 + n1 + n2 + n3); // Returns -1..1
-            }
-        };
-    })(),
+vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec4 permute(vec4 x) { return mod289(((x * 34.0) + 1.0) * x); }
+vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+
+float snoise(vec3 v) {
+    const vec2 C = vec2(1.0 / 6.0, 1.0 / 3.0);
+    const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+    vec3 i = floor(v + dot(v, C.yyy));
+    vec3 x0 = v - i + dot(i, C.xxx);
+    vec3 g = step(x0.yzx, x0.xyz);
+    vec3 l = 1.0 - g;
+    vec3 i1 = min(g.xyz, l.zxy);
+    vec3 i2 = max(g.xyz, l.zxy);
+    vec3 x1 = x0 - i1 + C.xxx;
+    vec3 x2 = x0 - i2 + C.yyy;
+    vec3 x3 = x0 - D.yyy;
+    i = mod289(i);
+    vec4 p = permute(permute(permute(
+                i.z + vec4(0.0, i1.z, i2.z, 1.0))
+              + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+              + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+    float n_ = 0.142857142857;
+    vec3 ns = n_ * D.wyz - D.xzx;
+    vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+    vec4 x_ = floor(j * ns.z);
+    vec4 y_ = floor(j - 7.0 * x_);
+    vec4 x = x_ * ns.x + ns.yyyy;
+    vec4 y = y_ * ns.x + ns.yyyy;
+    vec4 h = 1.0 - abs(x) - abs(y);
+    vec4 b0 = vec4(x.xy, y.xy);
+    vec4 b1 = vec4(x.zw, y.zw);
+    vec4 s0 = floor(b0) * 2.0 + 1.0;
+    vec4 s1 = floor(b1) * 2.0 + 1.0;
+    vec4 sh = -step(h, vec4(0.0));
+    vec4 a0 = b0.xzyw + s0.xzyw * sh.xxyy;
+    vec4 a1 = b1.xzyw + s1.xzyw * sh.zzww;
+    vec3 p0 = vec3(a0.xy, h.x);
+    vec3 p1 = vec3(a0.zw, h.y);
+    vec3 p2 = vec3(a1.xy, h.z);
+    vec3 p3 = vec3(a1.zw, h.w);
+    vec4 norm = taylorInvSqrt(vec4(dot(p0, p0), dot(p1, p1), dot(p2, p2), dot(p3, p3)));
+    p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+    vec4 m = max(0.6 - vec4(dot(x0, x0), dot(x1, x1), dot(x2, x2), dot(x3, x3)), 0.0);
+    m = m * m;
+    return 42.0 * dot(m * m, vec4(dot(p0, x0), dot(p1, x1), dot(p2, x2), dot(p3, x3)));
+}
+
+void main() {
+    vec2 uv = gl_FragCoord.xy / u_res;
+    float down = 1.0 - uv.y;                    // 0 = top of the window, 1 = bottom
+    // Dense at the bottom, gone in the top 15%: skip the noise up there.
+    float mask = smoothstep(0.15, 0.7, down);
+    if (mask <= 0.0) { gl_FragColor = vec4(0.0); return; }
+
+    float nx = uv.x * 3.0;
+    float sy = down * 3.0 - u_time * 0.3;       // rises over time
+    vec3 q = vec3(nx, sy, u_time * 0.15);
+    float d = 0.0, amp = 0.5, freq = 1.0;
+    for (int o = 0; o < 5; o++) {               // fBm; the tier sets how many layers
+        if (o >= u_octaves) break;
+        d += amp * snoise(q * freq);
+        freq *= 2.0;
+        amp *= 0.5;
+    }
+    d += snoise(vec3(nx * 2.5 + 100.0, sy * 2.5, u_time * 0.25)) * 0.15;
+    d = clamp((d * 0.5 + 0.5) * mask, 0.0, 1.0);
+
+    float a = d * 0.12;                         // subtle: at most 12% opaque
+    vec3 c = vec3(140.0, 160.0, 180.0) / 255.0;
+    if (u_tint > 0.5) {
+        float k = d * 0.4;
+        c = c * (1.0 - k) + texture2D(u_regions, vec2(uv.x, 0.5)).rgb * k;
+    }
+    gl_FragColor = vec4(c * a, a);              // the canvas expects premultiplied alpha
+}`,
 
     /**
      * Initialize theme system
@@ -148,18 +167,39 @@ const ThemeManager = {
         if (!this._listenersSet) {
             this._listenersSet = true;
 
-            // Pause/resume canvas effects on tab visibility change
+            // The background moves only while someone is using the page: the
+            // tab is showing, the window is in front, and there was a mouse,
+            // key or scroll in the last _IDLE_MS. Any of those wakes it.
+            const wake = () => {
+                this._lastInput = Date.now();
+                if (this._canAnimate()) this._startEffectLoop();
+            };
+            for (const ev of ['pointermove', 'pointerdown', 'keydown', 'wheel', 'touchstart', 'scroll', 'focus']) {
+                window.addEventListener(ev, wake, { passive: true, capture: true });
+            }
+            window.addEventListener('blur', () => this._pauseEffect());
             document.addEventListener('visibilitychange', () => {
-                if (document.hidden) {
-                    this._pauseEffect();
-                } else if (this._canvas && this._activeEffect) {
-                    this._startEffectLoop();
-                }
+                if (document.hidden) this._pauseEffect();
+                else wake();
             });
 
             // Save smoke state before page unload so it persists across navigations
             window.addEventListener('beforeunload', () => this._saveSmokeState());
         }
+
+        const motionToggle = document.getElementById('backgroundMotionToggle');
+        if (motionToggle) motionToggle.checked = this.motionEnabled();
+    },
+
+    /** Whether this browser shows moving backgrounds (Settings > Display). */
+    motionEnabled() {
+        return localStorage.getItem(this._MOTION_KEY) !== 'off';
+    },
+
+    /** Turn moving backgrounds on or off for this browser, at once. */
+    setMotion(on) {
+        localStorage.setItem(this._MOTION_KEY, on ? 'on' : 'off');
+        this.apply(localStorage.getItem(this.STORAGE_KEY) || 'cyberpunk', false);
     },
 
     /**
@@ -189,7 +229,7 @@ const ThemeManager = {
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         // Start theme-specific canvas effect
-        if (!reduceMotion) {
+        if (!reduceMotion && this.motionEnabled()) {
             if (theme === 'matrix') {
                 this._initMatrixRain();
             } else if (theme === 'ocean') {
@@ -238,26 +278,40 @@ const ThemeManager = {
     // Shared Canvas Management
     // =========================================================================
 
-    _createCanvas(id) {
+    /**
+     * @param {string} id - Element id
+     * @param {boolean} [gl=false] - Leave the context to the caller (the smoke
+     *   shader asks for WebGL; a canvas holds only one kind of context).
+     */
+    _createCanvas(id, gl = false) {
         const canvas = document.createElement('canvas');
         canvas.id = id;
         canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:-3;pointer-events:none;';
         document.body.appendChild(canvas);
         this._canvas = canvas;
-        this._ctx = canvas.getContext('2d');
+        this._ctx = gl ? null : canvas.getContext('2d');
         let resizeTimer;
         this._boundResize = () => {
             clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => this._resizeCanvas(), 150);
+            resizeTimer = setTimeout(() => {
+                // A resize clears the canvas: draw it again, paused or not.
+                this._resizeCanvas();
+                this._pauseEffect();
+                this._startEffectLoop();
+            }, 150);
         };
         window.addEventListener('resize', this._boundResize, { passive: true });
         this._resizeCanvas();
     },
 
     _destroyCanvas() {
-        if (this._rafId) {
-            cancelAnimationFrame(this._rafId);
-            this._rafId = null;
+        this._pauseEffect();
+        // Hand the smoke shader's graphics memory back at once
+        if (this._smokeGL) {
+            const gl = this._smokeGL.gl;
+            this._smokeGL = null;   // first, so the lost-context handler ignores this
+            const lose = gl.getExtension('WEBGL_lose_context');
+            if (lose && !gl.isContextLost()) lose.loseContext();
         }
         if (this._canvas) {
             // Zero dimensions to immediately release bitmap backing store
@@ -279,15 +333,6 @@ const ThemeManager = {
         this._rainTime = 0;
         this._smokeFallbackBalls = null;
         this._smokeCfg = null;
-        // Release noise smoke buffer resources
-        if (this._smokeOffscreen) {
-            this._smokeOffscreen.width = 0;
-            this._smokeOffscreen.height = 0;
-        }
-        this._smokeOffscreen = null;
-        this._smokeOffCtx = null;
-        this._smokeImageData = null;
-        this._smokePixels = null;
         this._smokeBufW = 0;
         this._smokeBufH = 0;
         this._smokeTime = 0;
@@ -357,10 +402,26 @@ const ThemeManager = {
             cancelAnimationFrame(this._rafId);
             this._rafId = null;
         }
+        if (this._timerId) {
+            clearTimeout(this._timerId);
+            this._timerId = null;
+        }
+    },
+
+    /** Someone is using the page: tab showing, window in front, recent input. */
+    _canAnimate() {
+        return !!(this._canvas && this._activeEffect) && !document.hidden
+            && document.hasFocus() && Date.now() - this._lastInput < this._IDLE_MS;
     },
 
     _resizeCanvas() {
         if (!this._canvas) return;
+
+        // The smoke shader draws a small picture the browser stretches.
+        if (this._smokeGL) {
+            this._sizeSmokeCanvas();
+            return;
+        }
 
         const oldW = this._canvas.width;
         const oldH = this._canvas.height;
@@ -374,17 +435,6 @@ const ThemeManager = {
             this._columns = [];
             for (let i = 0; i < colCount; i++) {
                 this._columns[i] = Math.random() * this._canvas.height / fontSize | 0;
-            }
-        }
-
-        // Noise smoke: recreate buffer at new proportions. The color regions
-        // are per buffer column, so a wider buffer needs them rebuilt too or
-        // _drawSmokeFrame reads past their end on every frame.
-        if (this._activeEffect === 'cyberpunk' && this._smokeOffscreen) {
-            this._createSmokeBuffer();
-            const cfg = this._smokeCfg;
-            if (cfg && cfg.colorTint && cfg.colorRegions > 0) {
-                this._computeColorRegions(cfg.colorRegions);
             }
         }
 
@@ -402,36 +452,46 @@ const ThemeManager = {
         }
     },
 
+    /**
+     * Draw a frame now, then one every _FRAME_MS while _canAnimate() holds.
+     * A timer between frames, rather than a callback on every screen refresh,
+     * wakes the browser 20 times a second instead of 60 to 144. Stopped, the
+     * last frame stays on screen; any input restarts it (see init()).
+     */
     _startEffectLoop() {
-        if (this._rafId) return;
-        this._lastFrame = 0;
+        if (this._rafId || this._timerId || !this._canvas) return;
 
-        const loop = (timestamp) => {
-            this._rafId = requestAnimationFrame(loop);
-
-            // Throttle to ~20fps for low CPU usage
-            if (timestamp - this._lastFrame < 50) return;
-            this._lastFrame = timestamp;
-
-            if (this._activeEffect === 'matrix') {
-                this._drawMatrixFrame();
-            } else if (this._activeEffect === 'ocean') {
-                this._drawOceanFrame();
-            } else if (this._activeEffect === 'cyberpunk') {
-                if (this._hardwareTier === 'fallback') {
-                    this._drawCyberpunkFallbackFrame();
-                } else {
-                    this._drawSmokeFrame();
+        const tick = () => {
+            this._timerId = null;
+            this._rafId = requestAnimationFrame(() => {
+                this._rafId = null;
+                this._drawEffectFrame();
+                if (this._canAnimate()) {
+                    this._timerId = setTimeout(tick, this._smokeGL ? this._SMOKE_FRAME_MS : this._FRAME_MS);
                 }
-            } else if (this._activeEffect === 'christian') {
-                this._drawChristianDustFrame();
-            } else if (this._activeEffect === 'bladerunner') {
-                this._drawBladeRunnerRainFrame();
-            } else if (this._activeEffect === 'elite') {
-                this._drawEliteStarfieldFrame();
-            }
+            });
         };
-        this._rafId = requestAnimationFrame(loop);
+        tick();
+    },
+
+    _drawEffectFrame() {
+        if (this._activeEffect === 'matrix') {
+            this._drawMatrixFrame();
+        } else if (this._activeEffect === 'ocean') {
+            this._drawOceanFrame();
+        } else if (this._activeEffect === 'cyberpunk') {
+            if (this._smokeGL) {
+                this._drawSmokeFrame();
+            } else {
+                this._drawCyberpunkFallbackFrame();
+            }
+        } else if (this._activeEffect === 'christian') {
+            this._drawChristianDustFrame();
+        } else if (this._activeEffect === 'bladerunner') {
+            this._drawBladeRunnerRainFrame();
+        } else if (this._activeEffect === 'elite') {
+            this._drawEliteStarfieldFrame();
+        }
     },
 
     // =========================================================================
@@ -697,22 +757,19 @@ const ThemeManager = {
         // Respect prefers-reduced-motion
         if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-        this._createCanvas('cyberpunkSmokeCanvas');
-        this._activeEffect = 'cyberpunk';
+        // Carry on from the previous page if it was a moment ago
+        const state = this._takeSmokeState();
+        const tier = state ? state.tier : this._detectHardwareTier();
 
-        // Try to restore state from previous page navigation
-        if (this._restoreSmokeState()) {
-            this._startEffectLoop();
-            return;
-        }
-
-        // Fresh start: detect hardware and create system
-        const tier = this._detectHardwareTier();
-
-        if (tier === 'fallback') {
-            this._initSmokeFallback();
+        if (tier !== 'fallback' && this._initSmokeGL(tier)) {
+            if (state && state.isNoise) this._smokeTime = state.smokeTime || 0;
         } else {
-            this._initSmokeSystem(tier);
+            // No graphics card to draw it (or a software one): soft blobs instead
+            this._createCanvas('cyberpunkSmokeCanvas');
+            this._activeEffect = 'cyberpunk';
+            if (!(state && state.isFallback && this._restoreFallbackBalls(state.particles))) {
+                this._initSmokeFallback();
+            }
         }
 
         this._startEffectLoop();
@@ -735,7 +792,7 @@ const ThemeManager = {
         if (w === 0 || h === 0) return;
 
         const isFallback = !!this._smokeFallbackBalls;
-        const isNoise = !!this._smokeOffscreen;
+        const isNoise = !!this._smokeGL;
 
         if (!isFallback && !isNoise) return;
 
@@ -766,106 +823,160 @@ const ThemeManager = {
     },
 
     /**
-     * Restore smoke state from sessionStorage
-     * Returns true if state was successfully restored
+     * The state the previous page saved, if it is under 5 seconds old (a
+     * normal page navigation), else null. Read once, then cleared. Restores
+     * the cached hardware tier so it is not benchmarked again.
      */
-    _restoreSmokeState() {
+    _takeSmokeState() {
         try {
             const raw = sessionStorage.getItem(this._SMOKE_STATE_KEY);
-            if (!raw) return false;
-
-            // Clear after reading (one-time restore)
+            if (!raw) return null;
             sessionStorage.removeItem(this._SMOKE_STATE_KEY);
 
             const state = JSON.parse(raw);
+            if (Date.now() - state.timestamp > 5000) return null;
+            if (!(state.tier in this._SMOKE_TIERS) && state.tier !== 'fallback') return null;
 
-            // Only restore if less than 5 seconds old (covers normal page navigations)
-            if (Date.now() - state.timestamp > 5000) return false;
-
-            // Restore cached hardware tier (avoids re-benchmarking)
             this._hardwareTier = state.tier;
             this._hardwareScore = state.score;
-
-            const w = this._canvas.width;
-            const h = this._canvas.height;
-
-            if (state.isFallback) {
-                if (!state.particles || !state.particles.length) return false;
-                this._smokeCfg = this._SMOKE_FALLBACK_CFG;
-                this._smokeFallbackBalls = state.particles.map(p => ({
-                    x: p.xr * w,
-                    y: p.yr * h,
-                    size: p.sz,
-                    color: p.c,
-                    opacity: p.o,
-                    life: p.l,
-                    lifespan: p.ls,
-                    fadeFrames: p.ff,
-                    dx: p.dx,
-                    dy: p.dy
-                }));
-            } else if (state.isNoise) {
-                const tierCfg = this._SMOKE_TIERS[state.tier];
-                if (!tierCfg) return false;
-                this._smokeCfg = tierCfg;
-                // Seed noise identically then restore time coordinate
-                this._noise.seed(42);
-                this._smokeTime = state.smokeTime || 0;
-                this._createSmokeBuffer();
-                if (tierCfg.colorTint && tierCfg.colorRegions > 0) {
-                    this._computeColorRegions(tierCfg.colorRegions);
-                }
-            } else {
-                return false;
-            }
-
-            return true;
+            return state;
         } catch (e) {
-            return false;
+            return null;
         }
     },
 
+    /** Put the saved fallback blobs back; false if there were none. */
+    _restoreFallbackBalls(particles) {
+        if (!particles || !particles.length) return false;
+        const w = this._canvas.width;
+        const h = this._canvas.height;
+        this._smokeCfg = this._SMOKE_FALLBACK_CFG;
+        this._smokeFallbackBalls = particles.map(p => ({
+            x: p.xr * w,
+            y: p.yr * h,
+            size: p.sz,
+            color: p.c,
+            opacity: p.o,
+            life: p.l,
+            lifespan: p.ls,
+            fadeFrames: p.ff,
+            dx: p.dx,
+            dy: p.dy
+        }));
+        return true;
+    },
+
     // =========================================================================
-    // Noise-Based Volumetric Smoke (HIGH / MEDIUM / LOW tiers)
+    // Noise-Based Volumetric Smoke (HIGH / MEDIUM / LOW tiers), on the GPU
     // =========================================================================
 
     /**
-     * Fractal Brownian motion: layer multiple octaves of simplex noise
-     * for organic, detailed turbulence
+     * Start the smoke shader on a new canvas. False, with the canvas gone
+     * again, when there is no WebGL, it runs in software (the processor would
+     * do the work after all), or the shader does not build.
      */
-    _fbm(x, y, t, octaves) {
-        let value = 0;
-        let amplitude = 0.5;
-        let frequency = 1;
-        const noise = this._noise;
-        for (let i = 0; i < octaves; i++) {
-            value += amplitude * noise.simplex3(x * frequency, y * frequency, t * frequency);
-            frequency *= 2;
-            amplitude *= 0.5;
-        }
-        return value;
+    _initSmokeGL(tier) {
+        const cfg = this._SMOKE_TIERS[tier];
+        if (!cfg) return false;
+        this._createCanvas('cyberpunkSmokeCanvas', true);
+        this._activeEffect = 'cyberpunk';
+        const canvas = this._canvas;
+        const gl = canvas.getContext('webgl', {
+            alpha: true, premultipliedAlpha: true, antialias: false,
+            depth: false, stencil: false, powerPreference: 'low-power'
+        });
+        const fail = () => { this._destroyCanvas(); return false; };
+        if (!gl) return fail();
+
+        const info = gl.getExtension('WEBGL_debug_renderer_info');
+        const renderer = info ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL) || '') : '';
+        if (/swiftshader|llvmpipe|software/i.test(renderer)) return fail();
+
+        const compile = (type, src) => {
+            const sh = gl.createShader(type);
+            gl.shaderSource(sh, src);
+            gl.compileShader(sh);
+            return gl.getShaderParameter(sh, gl.COMPILE_STATUS) ? sh : null;
+        };
+        const vs = compile(gl.VERTEX_SHADER, this._SMOKE_VERTEX);
+        const fs = compile(gl.FRAGMENT_SHADER, this._SMOKE_FRAGMENT);
+        if (!vs || !fs) return fail();
+        const prog = gl.createProgram();
+        gl.attachShader(prog, vs);
+        gl.attachShader(prog, fs);
+        gl.linkProgram(prog);
+        if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return fail();
+        gl.useProgram(prog);
+
+        // One rectangle over the whole canvas
+        gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+        const pos = gl.getAttribLocation(prog, 'p');
+        gl.enableVertexAttribArray(pos);
+        gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+
+        // Colour tint per column, one row tall; filled by _sizeSmokeCanvas
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, gl.createTexture());
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.uniform1i(gl.getUniformLocation(prog, 'u_regions'), 0);
+        gl.uniform1i(gl.getUniformLocation(prog, 'u_octaves'), cfg.octaves);
+        gl.uniform1f(gl.getUniformLocation(prog, 'u_tint'), cfg.colorTint ? 1 : 0);
+
+        // A lost context (driver reset, too many contexts) falls back to blobs
+        canvas.addEventListener('webglcontextlost', () => {
+            if (!this._smokeGL || this._canvas !== canvas) return;
+            this._destroyCanvas();
+            this._hardwareTier = 'fallback';
+            this._initCyberpunkSmoke();
+        });
+
+        this._smokeCfg = cfg;
+        this._smokeGL = {
+            gl,
+            uRes: gl.getUniformLocation(prog, 'u_res'),
+            uTime: gl.getUniformLocation(prog, 'u_time')
+        };
+        this._smokeTime = 0;
+        this._sizeSmokeCanvas();
+        return true;
     },
 
     /**
-     * Allocate (or reallocate) the offscreen buffer at tier-appropriate resolution
+     * Size the smoke canvas to the window divided by the tier's scale (the
+     * browser stretches it to fill the window), and redo the colour tint,
+     * whose columns follow the canvas width.
      */
-    _createSmokeBuffer() {
+    _sizeSmokeCanvas() {
+        const s = this._smokeGL;
         const cfg = this._smokeCfg;
-        const scale = cfg.scale;
-        const bw = Math.max(1, Math.ceil(this._canvas.width / scale));
-        const bh = Math.max(1, Math.ceil(this._canvas.height / scale));
-
-        // Reuse existing offscreen canvas if possible, just resize
-        if (!this._smokeOffscreen) {
-            this._smokeOffscreen = document.createElement('canvas');
-            this._smokeOffCtx = this._smokeOffscreen.getContext('2d');
-        }
-        this._smokeOffscreen.width = bw;
-        this._smokeOffscreen.height = bh;
+        const gl = s.gl;
+        const bw = Math.max(1, Math.ceil(window.innerWidth / cfg.scale));
+        const bh = Math.max(1, Math.ceil(window.innerHeight / cfg.scale));
+        this._canvas.width = bw;
+        this._canvas.height = bh;
         this._smokeBufW = bw;
         this._smokeBufH = bh;
-        this._smokeImageData = this._smokeOffCtx.createImageData(bw, bh);
-        this._smokePixels = this._smokeImageData.data;
+        gl.viewport(0, 0, bw, bh);
+        gl.uniform2f(s.uRes, bw, bh);
+
+        if (cfg.colorTint && cfg.colorRegions > 0) {
+            this._computeColorRegions(cfg.colorRegions);
+            // Clamped: left of the first anchor the blend can pass 255, and a
+            // plain Uint8Array would wrap it round into dark stripes.
+            const px = new Uint8ClampedArray(bw * 4);
+            for (let i = 0; i < bw; i++) {
+                const c = this._smokeColorRegions[i];
+                px[i * 4] = c[0];
+                px[i * 4 + 1] = c[1];
+                px[i * 4 + 2] = c[2];
+                px[i * 4 + 3] = 255;
+            }
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, bw, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, px);
+        }
     },
 
     /**
@@ -913,132 +1024,13 @@ const ThemeManager = {
         }
     },
 
-    /**
-     * Core density function: fBm noise + vertical gradient mask + upward scroll
-     * Returns density 0..1
-     */
-    _smokeDensity(bx, by, time, octaves, bw, bh) {
-        // Normalize buffer coords to noise space (scale for good detail)
-        const nx = bx / bw * 3;
-        const ny = by / bh * 3;
-
-        // Upward scroll: offset y by time to simulate rising smoke
-        const scrollY = ny - time * 0.3;
-
-        // Primary fBm
-        let density = this._fbm(nx, scrollY, time * 0.15, octaves);
-
-        // Add turbulence layer (faster-scrolling distortion)
-        const turb = this._noise.simplex3(nx * 2.5 + 100, scrollY * 2.5, time * 0.25) * 0.15;
-        density += turb;
-
-        // Map from [-1,1] to [0,1] range
-        density = density * 0.5 + 0.5;
-
-        // Vertical gradient mask: dense at bottom, dissipating upward
-        // by = 0 is top, by = bh-1 is bottom
-        const heightRatio = by / bh; // 0 = top, 1 = bottom
-        // Smooth density falloff: full at bottom 30%, fades to 0 by top 15%
-        let mask;
-        if (heightRatio > 0.7) {
-            mask = 1;
-        } else if (heightRatio > 0.15) {
-            // Smooth cubic falloff
-            const t = (heightRatio - 0.15) / 0.55;
-            mask = t * t * (3 - 2 * t);
-        } else {
-            mask = 0;
-        }
-
-        density *= mask;
-
-        // Clamp
-        if (density < 0) density = 0;
-        if (density > 1) density = 1;
-
-        return density;
-    },
-
-    /**
-     * Initialize the noise-based smoke system for HIGH/MEDIUM/LOW tiers.
-     * Seeds noise, creates offscreen buffer, pre-computes color regions.
-     */
-    _initSmokeSystem(tier) {
-        const cfg = this._SMOKE_TIERS[tier];
-        this._smokeCfg = cfg;
-
-        // Seed noise deterministically
-        this._noise.seed(42);
-        this._smokeTime = 0;
-
-        // Create downscaled offscreen buffer
-        this._createSmokeBuffer();
-
-        // Pre-compute color regions for tinting (high/medium only)
-        if (cfg.colorTint && cfg.colorRegions > 0) {
-            this._computeColorRegions(cfg.colorRegions);
-        }
-    },
-
-    /**
-     * Per-frame renderer: sample noise into low-res buffer, then upscale to main canvas.
-     * Uses bilinear interpolation via drawImage for smooth appearance.
-     */
+    /** One smoke frame: the shader does the work; this only moves time on. */
     _drawSmokeFrame() {
-        const ctx = this._ctx;
-        const canvas = this._canvas;
-        if (!ctx || !canvas || !this._smokeOffscreen) return;
-
-        const bw = this._smokeBufW;
-        const bh = this._smokeBufH;
-        const cfg = this._smokeCfg;
-        const pixels = this._smokePixels;
-        const time = this._smokeTime;
-        const octaves = cfg.octaves;
-        const colorRegions = this._smokeColorRegions;
-        const hasColor = cfg.colorTint && colorRegions;
-
-        // Base smoke color (slightly blue-tinted white for monochrome glow)
-        const baseR = 140, baseG = 160, baseB = 180;
-
-        // Fill pixel buffer with noise-derived smoke density
-        let idx = 0;
-        for (let by = 0; by < bh; by++) {
-            for (let bx = 0; bx < bw; bx++) {
-                const density = this._smokeDensity(bx, by, time, octaves, bw, bh);
-
-                // Alpha: scale density to visible but subtle range (max ~0.12 opacity)
-                const alpha = density * 0.12 * 255;
-
-                if (hasColor && alpha > 0.5) {
-                    // Blend base color with region tint based on density intensity
-                    const region = colorRegions[bx];
-                    const tintStrength = density * 0.4; // How much color to mix in
-                    const invTint = 1 - tintStrength;
-                    pixels[idx]     = baseR * invTint + region[0] * tintStrength; // R
-                    pixels[idx + 1] = baseG * invTint + region[1] * tintStrength; // G
-                    pixels[idx + 2] = baseB * invTint + region[2] * tintStrength; // B
-                } else {
-                    pixels[idx]     = baseR; // R
-                    pixels[idx + 1] = baseG; // G
-                    pixels[idx + 2] = baseB; // B
-                }
-                pixels[idx + 3] = alpha; // A
-                idx += 4;
-            }
-        }
-
-        // Write pixels to offscreen canvas
-        this._smokeOffCtx.putImageData(this._smokeImageData, 0, 0);
-
-        // Clear main canvas and upscale with bilinear interpolation
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'medium';
-        ctx.drawImage(this._smokeOffscreen, 0, 0, canvas.width, canvas.height);
-
-        // Advance time
-        this._smokeTime += 0.02;
+        const s = this._smokeGL;
+        if (!s || s.gl.isContextLost()) return;
+        s.gl.uniform1f(s.uTime, this._smokeTime);
+        s.gl.drawArrays(s.gl.TRIANGLE_STRIP, 0, 4);
+        this._smokeTime += 0.4 * this._SMOKE_FRAME_MS / 1000;   // 0.4 a second, whatever the frame rate
     },
 
     // =========================================================================
