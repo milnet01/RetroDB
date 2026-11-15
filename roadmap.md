@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=312 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=313 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -2888,9 +2888,8 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     reads localStorage, not the server queue.
   - **Real controls**: the progress toast's stop button and each waiting
     item's "Remove from queue" in the toast.
-  - **Do**: decide with the Settings review whether the card goes
-    (the toast does the job) or shows the server queue and the real
-    result.
+  - **Decided** (user, 2026-11-15): remove the card; the toast does
+    the job.
   **Layman:** The button for a stuck RetroAchievements sync reports success even when nothing was stopped, and its queue box is always empty.
   Kind: fix.
   Source: PASS-59-308 research 2026-11-15.
@@ -2918,12 +2917,55 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     (evidence: inventory.md beside it). Section A lists ten bugs to fix
     whatever is chosen: Add User silently sets the password "changeme";
     non-admins see admin settings whose Save is refused; and others.
-  - **Waiting-on**: user (which of sections B-D to do, and in what
-    order, 2026-11-15). Recommendation: section A first (A1, A2 lead),
-    then Theme/Language and notification times to My Profile, then the
+  - **Decided** (user, 2026-11-15): section A first, A1 and A2 leading.
+    Sections B-D wait for the user after that; the proposed order is
+    Theme/Language and notification times to My Profile, then the
     removals, the rewording, and the bigger moves last.
   **Layman:** A review of every setting found broken buttons, settings in the wrong place and confusing words; the user chooses which changes to make.
   Kind: ux.
+  Source: user-request-2026-11-15.
+
+- 🚫 [PASS-59-0313] **Arcade cheats: a MAME cheat pack, shown for the emulator each system is set to (feature, M).**
+  - **Found**: MAME games (system `mame`) start in standalone MAME
+    0.289 (`/usr/bin/mame`, openSUSE package), args
+    `-rompath "{rom_dir}" "{rom_name}"`, no `-cheat`. The player has no
+    arcade core. The libretro pack's `FBNeo - Arcade Games` folder holds
+    few files and does not work in MAME.
+  - **Source**: Pugsy's XML collection, `cheat.7z` inside a zip, from
+    mamecheat.co.uk (newest found: for MAME 0.264). The RetroArch MAME
+    core reads the same file from `system/mame/`.
+  - **Decided** (user, 2026-11-15): standalone MAME first. A Download
+    button like the other packs, with Import as the backup if the link
+    moves. The Cheats panel follows the emulator the system is set to
+    and shows the cheats for that emulator.
+  - **Do**: pack `mame` in `services/cheats.py`; launch adds `-cheat`
+    and `-cheatpath` for MAME; game page lists the game's cheats (on
+    and off in MAME's own menu, Tab > Cheat). Check whether MAME can
+    start with chosen cheats on before promising switches.
+  Filed with a padded id by mistake; the item is PASS-59-313.
+  **Layman:** Arcade games get cheats too: one button downloads the big MAME cheat collection, and each game page shows the cheats that work in the emulator that game starts with.
+  Kind: feature.
+  Source: user-request-2026-11-15.
+
+- 📋 [PASS-59-313] **Arcade cheats: a MAME cheat pack, shown for the emulator each system is set to (feature, M).**
+  - **Found**: MAME games (system `mame`) start in standalone MAME
+    0.289 (`/usr/bin/mame`, openSUSE package), args
+    `-rompath "{rom_dir}" "{rom_name}"`, no `-cheat`. The player has no
+    arcade core. The libretro pack's `FBNeo - Arcade Games` folder holds
+    few files and does not work in MAME.
+  - **Source**: Pugsy's XML collection, `cheat.7z` inside a zip, from
+    mamecheat.co.uk (newest found: for MAME 0.264). The RetroArch MAME
+    core reads the same file from `system/mame/`.
+  - **Decided** (user, 2026-11-15): standalone MAME first. A Download
+    button like the other packs, with Import as the backup if the link
+    moves. The Cheats panel follows the emulator the system is set to
+    and shows the cheats for that emulator.
+  - **Do**: pack `mame` in `services/cheats.py`; launch adds `-cheat`
+    and `-cheatpath` for MAME; game page lists the game's cheats (on
+    and off in MAME's own menu, Tab > Cheat). Check whether MAME can
+    start with chosen cheats on before promising switches.
+  **Layman:** Arcade games get cheats too: one button downloads the big MAME cheat collection, and each game page shows the cheats that work in the emulator that game starts with.
+  Kind: feature.
   Source: user-request-2026-11-15.
 
 ## 4.0.x — Security and data-loss fixes for the web version
