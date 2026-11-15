@@ -586,3 +586,27 @@ def test_pass_59_197_launch_emulator_name_follows_the_picked_mapping(tmpdb):
     assert launch_emulator_name(1, None) == 'DuckStation'   # system default
     assert launch_emulator_name(1, 2) == 'RetroArch'        # per-game override
     assert launch_emulator_name(999, None) is None          # nothing set up
+
+
+# PASS-59-313 — standalone MAME starts with its cheat plugin reading
+# RetroDB's store, once a cheat collection has been imported.
+
+def test_mame_launch_carries_the_cheat_plugin(tmpdb, monkeypatch, tmp_path):
+    import config
+    monkeypatch.setattr(config, 'BASE_DIR', str(tmp_path / 'app'))
+    from services import cheats
+    (cheats.mame_dir() / 'cheat').mkdir(parents=True)
+    _fullscreen_db(tmpdb, '-rompath "{rom_dir}" "{rom_name}"', binary_name='mame')
+    from services.launch_resolver import resolve_launch_context
+    argv = resolve_launch_context(game_id=1).argv
+    assert argv[1:5] == ['-plugin', 'cheat', '-cheatpath', str(cheats.mame_dir())]
+    assert argv[-1] == 'crash'
+
+
+def test_mame_launch_without_a_collection_is_unchanged(tmpdb, monkeypatch, tmp_path):
+    import config
+    monkeypatch.setattr(config, 'BASE_DIR', str(tmp_path / 'app'))
+    _fullscreen_db(tmpdb, '-rompath "{rom_dir}" "{rom_name}"', binary_name='mame')
+    from services.launch_resolver import resolve_launch_context
+    argv = resolve_launch_context(game_id=1).argv
+    assert argv[1:] == ['-rompath', str(tmpdb['rom_file'].parent), 'crash']

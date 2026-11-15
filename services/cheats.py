@@ -1,5 +1,5 @@
 # =============================================================================
-# RETRODB - Cheats for the player, DuckStation and PCSX2 (PASS-59-155)
+# RETRODB - Cheats for the player, DuckStation, PCSX2 and MAME (PASS-59-155)
 # =============================================================================
 # The game page lists the cheats RetroDB found for a game, one switch each,
 # and the game starts with the switched-on ones. The store has two layers:
@@ -16,6 +16,7 @@
 #   download_pack() / import_folder()     fill the store (§4.2, §4.3)
 #   game_view() / save()                  the Cheats panel (§4.6, §4.7)
 #   place_for_launch() / take_back()      the player's copy, around a session
+#   mame_launch_args()                    MAME's cheat plugin (PASS-59-313)
 # =============================================================================
 
 from __future__ import annotations
@@ -297,10 +298,16 @@ def import_folder(path) -> dict:
     root = store_dir().resolve()
     if src.resolve() == root or root in src.resolve().parents:
         raise CheatError(_("That folder is RetroDB's own cheat store."))
-    result = {'copied': {k: 0 for k in PACKS}, 'unchanged': 0, 'skipped': []}
+    result = {'copied': {k: 0 for k in (*PACKS, 'mame')}, 'unchanged': 0, 'skipped': []}
+    mame = _mame_archive(src)
+    if mame is not None:
+        try:
+            result['copied']['mame'] = _import_mame(mame)
+        except CheatError as e:
+            result['skipped'].append({'file': str(mame), 'reason': str(e)})
     folders = _known_folders()
     for f in sorted(src.rglob('*')):
-        if not f.is_file() or root in f.resolve().parents:
+        if not f.is_file() or f == mame or root in f.resolve().parents:
             continue
         try:
             dest, reason = _sort(f, folders)
@@ -316,6 +323,129 @@ def import_folder(path) -> dict:
         else:
             result['copied'][dest.relative_to(root / 'own').parts[0]] += 1
     return result
+
+
+# -----------------------------------------------------------------------------
+# MAME (PASS-59-313)
+# -----------------------------------------------------------------------------
+# MAME's cheat plugin reads <cheatpath>/cheat/<set>.xml. The collection
+# (Pugsy's, mamecheat.co.uk) comes as cheat.7z, often inside a zip. Its site
+# refuses automated downloads, so it arrives only by import, which unpacks it
+# once into own/mame/cheat/, replaced whole: the game page reads a set's
+# file and MAME reads the same folder. MAME keeps no record of which cheats
+# are on, so the panel lists them and MAME's own menu switches them.
+
+_MAME_ARCHIVE = 'cheat.7z'
+
+
+def mame_dir() -> Path:
+    """MAME's -cheatpath: the folder holding cheat/<set>.xml."""
+    return store_dir() / 'own' / 'mame'
+
+
+def is_mame(emu) -> bool:
+    """Standalone MAME; its RetroArch core reads cheats differently."""
+    return bool(emu) and emu.get('binary_name') == 'mame' and not emu.get('is_retroarch')
+
+
+def _zip_member(f: Path) -> Optional[str]:
+    """The cheat.7z inside zip `f`, or None."""
+    try:
+        with zipfile.ZipFile(f) as zf:
+            for info in zf.infolist():
+                if PurePosixPath(info.filename).name.lower() == _MAME_ARCHIVE:
+                    return info.filename
+    except (OSError, zipfile.BadZipFile):
+        pass
+    return None
+
+
+def _mame_archive(src: Path) -> Optional[Path]:
+    """A cheat.7z under `src`, else the last-named zip holding one
+    (cheat0264.zip after cheat0257.zip)."""
+    files = sorted(f for f in src.rglob('*') if f.is_file())
+    bare = [f for f in files if f.name.lower() == _MAME_ARCHIVE]
+    if bare:
+        return bare[-1]
+    zips = [f for f in files if f.suffix.lower() == '.zip' and _zip_member(f)]
+    return max(zips, key=lambda f: f.name.lower()) if zips else None
+
+
+def _import_mame(archive: Path) -> int:
+    """Unpack the collection into mame_dir()/cheat, whole or not at all,
+    with the 7-Zip tool the player's install uses. Returns the set count."""
+    from services import player_install
+    h = player_install.host()
+    if h not in player_install.SEVEN_ZIP:
+        raise CheatError(_('RetroDB cannot unpack cheat.7z on this computer.'))
+    base = mame_dir()
+    base.mkdir(parents=True, exist_ok=True)
+    work = Path(tempfile.mkdtemp(dir=base, prefix='.import-'))
+    try:
+        seven = archive
+        if archive.suffix.lower() == '.zip':
+            seven = work / _MAME_ARCHIVE
+            with zipfile.ZipFile(archive) as zf, zf.open(_zip_member(archive)) as r, \
+                    open(seven, 'wb') as w:
+                shutil.copyfileobj(r, w, _CHUNK)
+        out = work / 'out'
+        out.mkdir()
+        try:
+            tool = player_install._seven_zip(h, work)
+            player_install._run([str(tool), 'x', '-y', f'-o{out}', str(seven)])
+        except player_install.InstallError as e:
+            raise CheatError(str(e)) from e
+        top = out.resolve()
+        staged = work / 'cheat'
+        count = total = 0
+        for f in sorted(out.rglob('*.xml')):
+            if f.is_symlink() or not f.is_file() or top not in f.resolve().parents:
+                continue
+            total += f.stat().st_size
+            if total > MAX_PACK_BYTES:
+                raise CheatError(_('cheat.7z is larger than 1 GiB unpacked.'))
+            if f.stat().st_size > MAX_FILE_BYTES:
+                continue
+            dest = staged / f.relative_to(out)
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            os.replace(f, dest)
+            count += 1
+        if not count:
+            raise CheatError(_('cheat.7z holds no MAME cheat files.'))
+        live = base / 'cheat'
+        if live.exists():
+            os.replace(live, work / 'old')
+        os.replace(staged, live)
+        return count
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+
+
+def mame_names(rom_path) -> list:
+    """The cheat names in the collection for the set at `rom_path`."""
+    import defusedxml.ElementTree as ET
+    folder = mame_dir() / 'cheat'
+    f = folder / f'{Path(rom_path or "").stem}.xml'
+    if f.parent != folder or not f.is_file():
+        return []
+    try:
+        root = ET.fromstring(_read_text(f))
+    except (OSError, CheatError, ET.ParseError) as e:
+        logger.warning("cheats: %s not read: %s", f, e)
+        return []
+    names = []
+    for c in root.iter('cheat'):
+        desc = (c.get('desc') or '').strip()
+        if desc and desc not in names:
+            names.append(desc)
+    return names
+
+
+def mame_launch_args() -> list:
+    """MAME's cheat plugin, reading the store, once a collection is in."""
+    if not (mame_dir() / 'cheat').is_dir():
+        return []
+    return ['-plugin', 'cheat', '-cheatpath', str(mame_dir())]
 
 
 # -----------------------------------------------------------------------------
@@ -602,9 +732,16 @@ def game_view(game_id) -> Optional[dict]:
     emu = ctx.get('emulator') or {}
     if emu.get('is_player'):
         return _player_view(ctx['game'], view)
+    if is_mame(emu):
+        names = mame_names(ctx['game'].get('rom_path'))
+        view['emulator'] = 'mame'
+        view['cheats'] = [{'name': n, 'enabled': False, 'locked': True} for n in names]
+        if not names:
+            view['reason'] = str(_('No cheats were found for this game.'))
+        return view
     kind = _STANDALONE.get(emu.get('binary_name'))
     if not kind:
-        view['reason'] = str(_('Cheats work in the player, DuckStation and PCSX2.'))
+        view['reason'] = str(_('Cheats work in the player, DuckStation, PCSX2 and MAME.'))
         return view
     view['emulator'] = kind[0]
     if not ctx.get('file'):
@@ -630,7 +767,10 @@ def save(game_id, enabled, source=None) -> None:
     emu = ctx.get('emulator') or {}
     if emu.get('is_player'):
         return _player_save(ctx['game'], enabled, source)
+    if is_mame(emu):
+        raise CheatError(_('Switch MAME cheats on in MAME while you play: press Tab, '
+                           'then Plugin Options, then Cheat.'))
     kind = _STANDALONE.get(emu.get('binary_name'))
     if not kind:
-        raise CheatError(_('Cheats work in the player, DuckStation and PCSX2.'))
+        raise CheatError(_('Cheats work in the player, DuckStation, PCSX2 and MAME.'))
     return _standalone_save(ctx, kind, enabled)

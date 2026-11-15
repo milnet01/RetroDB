@@ -47,7 +47,7 @@ from flask_babel import gettext as _
 
 from services.database import query
 from services.launcher.base import LaunchContext, LaunchResolutionError
-from services import player, player_cores, player_install, ra_sign_in
+from services import cheats, player, player_cores, player_install, ra_sign_in
 from services.rom_scanner import rom_type_problem
 import config
 from settings_manager import get_setting
@@ -649,6 +649,9 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
     if problem:
         raise LaunchResolutionError(problem)
     overrides = _retroarch_overrides(core_path) if emu.get('is_retroarch') else []
+    if cheats.is_mame(emu):
+        # Before the template, so a -plugin the user typed there wins.
+        overrides = cheats.mame_launch_args()
     argv = list(binary_argv_prefix) + overrides + substituted
     if core_path:
         _vice_pad_defaults(binary_str, core_path, rom_path_obj)

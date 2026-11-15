@@ -1,8 +1,8 @@
 <!-- ants-spec-format: 1 -->
 # PASS-59-155 — Cheats for the player, DuckStation and PCSX2
 
-**Status:** built 2026-10-29 for 3.34.0. The manual run in each emulator
-(§7) is still owed.
+**Status:** built 2026-10-29 for 3.34.0; MAME's list added 2026-11-15
+(§4.8, PASS-59-313). The manual run in each emulator (§7) is still owed.
 **Kind:** feature.
 **Source:** ROADMAP PASS-59-155 (user asks and answers 2026-10-22 and
 2026-10-23).
@@ -228,7 +228,7 @@ pack with that pack's date and file count, and an Import folder field.
 
 ```
 GET  /api/games/<id>/cheats      view
-  -> {emulator: "player"|"duckstation"|"pcsx2"|null,
+  -> {emulator: "player"|"duckstation"|"pcsx2"|"mame"|null,
       candidates: [{source, name}], source: str|null,
       cheats: [{name, enabled}], always_on: bool,
       reason: str|null}
@@ -243,6 +243,26 @@ POST /api/cheats/import          admin  body {path}
 `source` is a path relative to `data/cheats/`, and the server checks it is
 one of the game's candidates. Errors use the project's usual
 `error(_('...'))` reply.
+
+### 4.8 MAME (PASS-59-313)
+
+Standalone MAME (`emulators.binary_name` `mame`, not RetroArch) reads
+`<cheatpath>/cheat/<set>.xml` through its `cheat` plugin, which is off
+unless `-plugin cheat` names it. The collection is Pugsy's `cheat.7z`
+from mamecheat.co.uk, often inside a zip. That site refuses automated
+requests (HTTP 403 to `curl`, 2026-11-15), so there is no MAME pack: the
+collection arrives only by import.
+
+- **Import.** A `cheat.7z` in the folder, else the last-named zip holding
+  one, is unpacked with the 7-Zip tool `services/player_install.py`
+  downloads and pins. Its `.xml` files replace `own/mame/cheat/` whole.
+- **Panel.** The game's set is its ROM file name. The panel lists that
+  file's `cheat` `desc` names, without switches: the plugin keeps no
+  record of which cheats are on, so MAME's own menu (Tab, Plugin Options,
+  Cheat) switches them. A PUT is refused with that instruction.
+- **Launch.** With a collection in, the launch puts `-plugin cheat
+  -cheatpath <own/mame>` before the args template, so a `-plugin` the
+  user typed there wins.
 
 ## 5. Invariants
 
@@ -325,6 +345,13 @@ one of the game's candidates. Errors use the project's usual
   *Test:* `tests/test_cheats_player.py`.
   *Breaks when:* the launch path raises from the cheat copy.
 
+- **INV-12** — MAME starts with its cheat plugin only once a collection is
+  imported, and a set's name cannot reach outside `own/mame/cheat/`.
+  *Test:* `tests/test_pass59_313_mame_cheats.py`,
+  `tests/test_launch_resolver.py` (`test_mame_launch_*`).
+  *Breaks when:* the launch adds `-plugin cheat` with no collection, or the
+  set name is joined to the store path unchecked.
+
 ## 6. Failure modes
 
 - **No serial or CRC can be read.** The panel gives `_target`'s reason,
@@ -355,6 +382,7 @@ one of the game's candidates. Errors use the project's usual
 | `tests/test_cheats_standalone.py` | INV-4, INV-5, INV-6 |
 | `tests/test_cheats_store.py` | INV-7, INV-8, INV-9 |
 | `tests/test_cheats_api.py` | INV-10 |
+| `tests/test_pass59_313_mame_cheats.py`, `tests/test_launch_resolver.py` | INV-12 |
 
 All use the conftest media and DB isolation. None reaches the network; the
 download tests serve a zip from a temporary file. Each test is seen to fail
@@ -396,6 +424,7 @@ automated here.
 | INV-4, INV-5, INV-6 | `tests/test_cheats_standalone.py` |
 | INV-7, INV-8, INV-9 | `tests/test_cheats_store.py` |
 | INV-10 | `tests/test_cheats_api.py` |
+| INV-12 | `tests/test_pass59_313_mame_cheats.py`, `tests/test_launch_resolver.py` |
 | Each emulator applies an enabled cheat | **nothing** automated — the manual run in §7; real emulators cannot run in the suite |
 
 ## 11. Cross-doc impact

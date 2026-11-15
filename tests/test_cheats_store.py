@@ -129,7 +129,7 @@ def test_inv9_import_sorts_by_content(store, tmp_path):
     assert (own / 'retroarch/Sony - PlayStation/Crash (USA).cht').is_file()
     assert (own / 'duckstation/SLUS-00433.cht').read_text() == DS_CHT
     assert (own / 'pcsx2/SLUS-20001_67454C1E.pnach').read_text() == PNACH
-    assert result['copied'] == {'retroarch': 2, 'duckstation': 1, 'pcsx2': 1}
+    assert result['copied'] == {'retroarch': 2, 'duckstation': 1, 'pcsx2': 1, 'mame': 0}
     assert sorted(s['file'] for s in result['skipped']) == sorted(
         [str(src / 'odd' / 'notes.txt'), str(src / 'odd' / 'Random (USA).cht')])
 

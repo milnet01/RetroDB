@@ -96,4 +96,4 @@ def test_pass_59_197_an_unsupported_emulator_gets_a_reason(player_game, admin_te
     client, _csrf = admin_test_client()
     data = client.get(f'/api/games/{player_game}/cheats').get_json()['data']
     assert data['emulator'] is None
-    assert data['reason'] == 'Cheats work in the player, DuckStation and PCSX2.'
+    assert data['reason'] == 'Cheats work in the player, DuckStation, PCSX2 and MAME.'
