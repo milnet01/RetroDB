@@ -13,6 +13,17 @@
     </div>
 </div>
 
+<!-- PASS-59-307 — search the manual (static/js/help-search.js) -->
+<div class="help-search" role="search">
+    <div class="search-box">
+        <span class="search-icon" aria-hidden="true">&#128269;</span>
+        <label for="helpSearch" class="visually-hidden">{{ _('Search the manual') }}</label>
+        <input type="search" id="helpSearch" class="search-input"
+               placeholder="{{ _('Search the manual') }}" autocomplete="off" spellcheck="false">
+    </div>
+    <p id="helpSearchStatus" class="help-search-status" role="status" aria-live="polite"></p>
+</div>
+
 <!-- Help Navigation -->
 <div class="help-nav" data-sticky-nav>
     <a href="#installation" class="help-nav-item">Installazione</a>
@@ -62,7 +73,7 @@
     <div class="card-body">
         <h3>Requisiti di sistema</h3>
         <ul>
-            <li><strong>Python 3.8+</strong> con pip</li>
+            <li><strong>Python 3.12+</strong> con pip</li>
             <li><strong>Browser web</strong> (Chrome, Firefox, Safari, Edge)</li>
             <li><strong>Sistema operativo:</strong> Linux, Windows 10/11 o macOS</li>
         </ul>
@@ -87,7 +98,7 @@
 
         <h3>Cosa fa install.py</h3>
         <ul>
-            <li>Verifica che Python 3.8+ e pip siano disponibili</li>
+            <li>Verifica che Python 3.12+ e pip siano disponibili</li>
             <li>Installa le dipendenze Python da <code>requirements.txt</code></li>
             <li>Crea <code>config.py</code> dal modello di esempio</li>
             <li>Crea le cartelle necessarie (database, log, cartelle media)</li>
@@ -142,9 +153,9 @@
   snes/
     Chrono Trigger (USA).sfc
   psx/
-    Final Fantasy VII (USA)/
-      Final Fantasy VII (USA) (Disc 1).chd
-      Final Fantasy VII (USA) (Disc 2).chd</pre>
+    Final Fantasy VII (USA) (Disc 1).chd
+    Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>Tieni i file ROM direttamente nella cartella del sistema. I file nelle sottocartelle vengono ignorati, tranne che per PS3.</p>
         <p>Ogni cartella di sistema dovrebbe contenere un file ES-DE <code>systeminfo.txt</code> che definisce le estensioni di file supportate. RetroDB lo legge durante la scansione per identificare quali file sono ROM valide per ogni sistema.</p>
 
         <div class="help-tip">
@@ -551,10 +562,11 @@
 
         <h3>Scheda Sistema</h3>
         <ul>
-            <li><strong>Manutenzione</strong> &mdash; Ottimizzazione del database (VACUUM/ANALYZE), pulizia dei media orfani, pulizia delle ROM mancanti, cancellazione dei dati scrapati, cancellazione delle importazioni CLZ, standardizzazione delle immagini in blocco</li>
-            <li><strong>Server</strong> &mdash; Configurazione del server (host, porta, modalità di debug)</li>
-            <li><strong>Logging</strong> &mdash; Impostazioni del livello di log per le diverse categorie</li>
-            <li><strong>Risoluzione dei problemi</strong> &mdash; Sblocca lo scraping in blocco, svuota la coda di sincronizzazione RA, svuota l'aggiornamento PSN, svuota la generazione del museo, riavvia il server</li>
+            <li><strong>Manutenzione</strong> &mdash; Pulisci le ROM mancanti, cancella le importazioni CLZ o i dati di scraping, elimina i file multimediali che nessun gioco usa, rimuovi i collegamenti a file multimediali scomparsi e ottimizza il database</li>
+            <li><strong>Aggiornamenti</strong> &mdash; Controlla, scarica e installa una nuova versione</li>
+            <li><strong>Server</strong> &mdash; Riavvia o spegni RetroDB</li>
+            <li><strong>Log</strong> &mdash; Impostazioni del livello di log per le diverse categorie, e i file di log</li>
+            <li><strong>Risoluzione dei problemi</strong> &mdash; Sblocca una sincronizzazione RetroAchievements bloccata</li>
         </ul>
 
         <h3 id="emulators-play">Emulatori e Gioco</h3>
@@ -645,7 +657,7 @@
         <p>Configura quali scraper vengono eseguiti per primi e quali sono abilitati/disabilitati in <strong>Impostazioni &rarr; Scraping &rarr; Scraper</strong>. Trascina per riordinare la priorità. Gli scraper disabilitati non verranno provati durante lo scraping e non attiveranno avvisi sullo stato delle API nella Dashboard.</p>
 
         <h3>Limiti di frequenza</h3>
-        <p>Ogni scraper ha limiti di frequenza configurabili per prevenire il throttling delle API. I ritardi predefiniti sono impostati in modo conservativo. Riduci i ritardi a tuo rischio &mdash; superare i limiti di frequenza delle API può comportare ban temporanei dal rispettivo servizio.</p>
+        <p>RetroDB distanzia da solo le sue richieste a ogni servizio; non c'è nulla da impostare. Quando un servizio dice di aver raggiunto il limite, RetroDB smette di interrogarlo fino all'ora indicata dal servizio e te lo segnala (vedi <a href="#ts-scraping">Risoluzione dei problemi</a>).</p>
     </div>
 </section>
 
@@ -1510,7 +1522,7 @@
 
         <h3>Ricerca HLTB in blocco</h3>
         <p>Esegui una ricerca HowLongToBeat per ogni gioco privo di una stima del tempo di gioco. Ogni corrispondenza viene valutata per titolo + piattaforma + anno di uscita; le corrispondenze ad alta confidenza vengono salvate automaticamente. Tutto ciò che è al di sotto della soglia di confidenza (o con piattaforme in conflitto) viene messo da parte per la revisione umana.</p>
-        <p><em>Nessuna dipendenza esterna (usa il dataset HLTB offline incluso)</em></p>
+        <p><em>Cerca ogni gioco sul sito di HowLongToBeat, quindi serve l'accesso a Internet</em></p>
 
         <h3>Revisione HLTB in sospeso</h3>
         <p>Coda di revisione per le corrispondenze ambigue emerse dalla Ricerca HLTB in blocco. Ogni riga in sospeso mostra il gioco di origine insieme al candidato HLTB (titolo, piattaforma, anno di uscita, confidenza). Approva, rifiuta o scegli una corrispondenza diversa per ogni riga. La scheda dello strumento di revisione appare nell'hub degli Strumenti ROM solo quando c'è almeno una corrispondenza in sospeso.</p>
@@ -1781,82 +1793,225 @@
 <section id="troubleshooting" class="help-section card">
     <h2 class="card-title">Risoluzione dei problemi</h2>
     <div class="card-body">
-        <h3>Problemi comuni</h3>
+        <p>I problemi sono raggruppati per funzione. Scrivi una parola del messaggio che vedi nella casella di ricerca in cima a questa pagina per saltare subito al punto giusto. Quasi tutti i messaggi lasciano anche una riga nel <a href="#logs">Visualizzatore di log</a> (solo amministratori), che dà più dettagli.</p>
 
-        <h4>"Nessuna estensione trovata per il sistema"</h4>
-        <p>La cartella di sistema necessita di un file ES-DE <code>systeminfo.txt</code> valido che definisca le estensioni dei file ROM supportate. Assicurati che la struttura della tua cartella ROM rispetti gli standard di ES-DE.</p>
+        <h3 id="ts-jobs">Operazioni lunghe</h3>
 
-        <h4>"Connessione API fallita"</h4>
+        <h4>Un'operazione sembra bloccata</h4>
+        <p>Lo scraping in blocco, le sincronizzazioni degli obiettivi, gli aggiornamenti PSN, i ridimensionamenti delle immagini e le esecuzioni di Riempimento con IA mostrano un avviso di avanzamento nell'angolo. I suoi pulsanti mettono in pausa, fermano o annullano l'operazione. Uno scraping in blocco si ferma tra un gioco e l'altro, quindi il gioco in corso finisce prima; può volerci un minuto. Se continua a girare, riavvia RetroDB: Impostazioni &rarr; Sistema &rarr; Controlli del server &rarr; <strong>Riavvia server</strong>.</p>
+
+        <h4>Banner "Operazioni interrotte" nella Dashboard</h4>
+        <p>Un'operazione che era in corso o in attesa quando RetroDB si è fermato compare qui. <strong>Riprendi</strong> la continua dal punto in cui aveva salvato per ultimo. <strong>Ignora</strong> la scarta. <strong>Riprendi tutto</strong> e <strong>Ignora tutto</strong> fanno lo stesso per tutte le operazioni in elenco.</p>
+
+        <h3 id="ts-library">Aggiungere giochi</h3>
+
+        <h4>"Percorso ROM non configurato"</h4>
+        <p>Imposta la cartella che contiene le cartelle dei tuoi sistemi in Impostazioni &rarr; Libreria &rarr; Percorsi &rarr; <strong>Percorso libreria ROM</strong>, poi premi <strong>Scansiona libreria</strong>.</p>
+
+        <h4>Una scansione non trova giochi nuovi, oppure manca un sistema</h4>
         <ul>
-            <li>Verifica la tua connessione a internet</li>
-            <li>Verifica le chiavi API in Impostazioni &rarr; Scraping &rarr; Chiavi API</li>
-            <li>Attendi se sei soggetto a limiti di frequenza (alcune API hanno tetti giornalieri/orari)</li>
-            <li>Verifica se lo scraper è abilitato (gli scraper disabilitati mostrano "Disabilitato" nello stato della Dashboard)</li>
-            <li>Controlla il Visualizzatore log per messaggi di errore dettagliati</li>
+            <li>Ogni cartella di sistema ha bisogno di un file ES-DE <code>systeminfo.txt</code> che elenchi le sue estensioni. Una cartella senza di esso viene ignorata; il Visualizzatore di log mostra <code>No extensions found</code> per quella cartella. Le cartelle PS3 non ne hanno bisogno.</li>
+            <li>I file devono stare direttamente nella cartella del sistema. I file in una sottocartella vengono ignorati, tranne che per PS3.</li>
+            <li>Un file la cui estensione non è nell'elenco viene ignorato.</li>
+            <li>Un file spostato o rinominato viene aggiunto come gioco nuovo. Impostazioni &rarr; Sistema &rarr; <strong>Pulisci ROM mancanti</strong> rimuove la vecchia voce.</li>
         </ul>
 
-        <h4>"Scraping in blocco bloccato"</h4>
-        <p>Vai su Impostazioni &rarr; Sistema &rarr; Risoluzione dei problemi &rarr; <strong>"Sblocca scraping in blocco"</strong>. Questo reimposta lo stato del processo senza alterare i tuoi dati.</p>
+        <h3 id="ts-scraping">Scansione (scraping)</h3>
 
-        <h4>"Coda di sincronizzazione RA bloccata"</h4>
-        <p>Svuota la coda di sincronizzazione RetroAchievements da Impostazioni &rarr; Sistema &rarr; Risoluzione dei problemi.</p>
-
-        <h4>"Sincronizzazione PSN bloccata"</h4>
-        <p>Svuota il processo di aggiornamento PSN da Impostazioni &rarr; Sistema &rarr; Risoluzione dei problemi.</p>
-
-        <h4>"Generazione del museo bloccata"</h4>
-        <p>Svuota il processo di generazione del museo da Impostazioni &rarr; Sistema &rarr; Risoluzione dei problemi.</p>
-
-        <h4>"Errori del database"</h4>
-        <ol>
-            <li>Crea un backup se possibile (Impostazioni &rarr; Libreria &rarr; Backup)</li>
-            <li>Prova Impostazioni &rarr; Sistema &rarr; Manutenzione &rarr; <strong>Ottimizza database</strong></li>
-            <li>Verifica i permessi dei file sulla cartella <code>database/</code></li>
-            <li>Ultima risorsa: ripristina da un backup o elimina il database e riesegui la scansione</li>
-        </ol>
-
-        <h4>"Le immagini non vengono salvate"</h4>
-        <p>Verifica che RetroDB possa scrivere nella sua cartella dei media (<code>static/images/</code>, a meno che tu non l'abbia spostata). Su Linux o macOS, <code>chmod -R u+rwX static/images/</code> dà al tuo account l'accesso in scrittura senza contrassegnare le immagini come programmi.</p>
-
-        <h4>"Pagina lenta o non reattiva"</h4>
+        <h4>"No results found. Try a different search term."</h4>
         <ul>
-            <li>Le collezioni di grandi dimensioni possono richiedere tempo per caricarsi &mdash; lo scorrimento infinito carica in blocchi di 100</li>
-            <li>Prova ad aggiornare la pagina per liberare la memoria accumulata</li>
-            <li>Controlla la console del browser per errori JavaScript</li>
-            <li>Prova a passare a un tema con un effetto canvas più leggero (es. Amber o Elite)</li>
-            <li>Gli effetti canvas rilevano automaticamente l'hardware; i dispositivi meno potenti usano il fallback su CPU a frame rate ridotto</li>
+            <li>Accorcia il titolo nella casella di ricerca, oppure prova il nome inglese.</li>
+            <li>Controlla che le fonti siano attivate e mostrino <strong>Online</strong> in Impostazioni &rarr; Scansione &rarr; Scraper.</li>
+            <li>Una fonte che ha raggiunto il limite non restituisce nulla fino all'ora che ha indicato (vedi sotto).</li>
         </ul>
 
-        <h4>Banner "Processi interrotti" nella Dashboard</h4>
-        <p>Se RetroDB si riavvia mentre dei processi sono in esecuzione, questi appaiono in un banner di ripristino. Fai clic su <strong>"Riprendi"</strong> singolarmente o su <strong>"Riprendi tutti"</strong> per riavviarli. Fai clic su <strong>"Ignora"</strong> o <strong>"Ignora tutti"</strong> per rimuoverli.</p>
-
-        <h4>"Autenticazione PSN fallita"</h4>
+        <h4>I dati o le immagini appartengono a un altro gioco</h4>
         <ul>
-            <li>I token NPSSO scadono &mdash; generane uno nuovo da <code>ca.account.sony.com/api/v1/ssocookie</code></li>
-            <li>Assicurati di aver effettuato l'accesso a store.playstation.com prima di visitare l'URL del cookie</li>
-            <li>RetroDB accede di nuovo da solo finché Sony accetta l'NPSSO salvato. Quando Sony lo rifiuta, incolla un nuovo NPSSO in Impostazioni &rarr; Account &rarr; PSN. Per sostituire un token che funziona ancora, esci prima da PlayStation.</li>
+            <li>Uno scraping in blocco cerca in base al nome del file della ROM, quindi un file con un nome sbagliato trova il gioco sbagliato. Rinomina il file, oppure fai lo scraping del gioco nella sua pagina con un titolo di ricerca migliore e scegli il risultato giusto.</li>
+            <li>Nella finestra Modifica gioco, spunta <strong>Mantieni questo titolo durante la scansione</strong> perché le scansioni successive lascino in pace il nome.</li>
+            <li>Per molti giochi, alza il <strong>Punteggio minimo di corrispondenza</strong> in Impostazioni &rarr; Scansione &rarr; Scraper &rarr; Filtro delle corrispondenze nello scraping di massa.</li>
         </ul>
+
+        <h4>Uno scraping non sostituisce un'immagine sbagliata</h4>
+        <p>Lo scraping riempie solo le immagini vuote, e gli screenshot vengono solo aggiunti. Rimuovi l'immagine nella finestra Modifica gioco, poi rifai lo scraping. Una <strong>Riscansione completa</strong> in blocco sostituisce le immagini, a meno che sia spuntato <strong>Mantieni i media esistenti</strong>. Uno screenshot che hai eliminato non viene aggiunto di nuovo.</p>
+
+        <h4>"&hellip; dice che il limite è stato raggiunto" o "&hellip; ha rifiutato la chiave API"</h4>
+        <p>RetroDB smette di interrogare quel servizio fino all'ora indicata nel messaggio. Per una chiave rifiutata: correggila in Impostazioni &rarr; Scansione &rarr; Chiavi API e premi <strong>Salva chiavi API</strong>; salvare chiude subito anche tutte queste pause. Anche un riavvio le chiude.</p>
+
+        <h4>Una fonte mostra un motivo invece di "Online"</h4>
+        <p>Il motivo indica il problema, ad esempio "No API key" o "Invalid API key". Inserisci o correggi la chiave in Impostazioni &rarr; Scansione &rarr; Chiavi API (solo amministratori) e premi <strong>Salva chiavi API</strong>. Una chiave salvata appare come asterischi; lascia stare la casella per tenerla, oppure svuotala e scrivi la chiave nuova.</p>
+
+        <h3 id="ts-bulk-scrape">Scansione in blocco</h3>
+
+        <h4>Una scansione di massa è bloccata</h4>
+        <p>Premi <strong>Annulla</strong> nella finestra Scansione in blocco; clicca l'avviso di avanzamento per aprirla. Il gioco in corso finisce prima. Se continua a girare, vedi <a href="#ts-jobs">Un'operazione sembra bloccata</a>.</p>
+
+        <h4>La maggior parte dei giochi è "Saltata"</h4>
+        <ul>
+            <li><strong>Riempi mancanti</strong> salta un gioco che uno scraping in blocco ha finito nelle ultime 24 ore.</li>
+            <li>Anche un gioco il cui scraping non ha trovato nulla di nuovo conta come saltato.</li>
+            <li>Per rifare subito lo scraping, usa <strong>Riscansione completa</strong>; spunta <strong>Mantieni i media esistenti</strong> per tenere le tue immagini.</li>
+        </ul>
+
+        <h4>Molti giochi "Non riusciti"</h4>
+        <p>"Non riuscito" di solito significa che nessun risultato era abbastanza vicino da essere salvato. Abbassa il <strong>Punteggio minimo di corrispondenza</strong> o la <strong>Qualità minima del titolo</strong> in Impostazioni &rarr; Scansione &rarr; Scraper &rarr; Filtro delle corrispondenze nello scraping di massa, e controlla i nomi dei file. Il Visualizzatore di log elenca ogni gioco senza corrispondenza.</p>
+
+        <h4>"A scrape for &hellip; is already running"</h4>
+        <p>Quel sistema è già in scansione nella stessa modalità. Aspetta che finisca, oppure annullalo. Lo scraping di un altro sistema aspetta in coda e parte da solo.</p>
+
+        <h3 id="ts-ai-fill">Riempimento con IA</h3>
+
+        <h4>"L'AI non ha restituito dati. Controlla la tua chiave API e le impostazioni del provider."</h4>
+        <p>In Impostazioni &rarr; Scansione &rarr; Chiavi API, scegli il <strong>Provider di metadati IA</strong>, inserisci la sua chiave, premi <strong>Salva chiavi API</strong>, poi <strong>Prova la chiave IA salvata</strong>. Se il servizio IA ha rifiutato, il messaggio ne indica il motivo, ad esempio credito esaurito.</p>
+
+        <h4>"L'AI non ha trovato campi mancanti da riempire"</h4>
+        <p>Non è un errore: il gioco non ha niente di vuoto che il Riempimento con IA possa riempire.</p>
+
+        <h4>Il Riempimento con IA in blocco si è fermato da solo</h4>
+        <p>Si ferma dopo tre giochi di fila senza risposta. Controlla la chiave con <strong>Prova la chiave IA salvata</strong>, poi riavvialo. I giochi già riempiti mantengono quanto ricevuto.</p>
+
+        <h3 id="ts-images">Immagini</h3>
+
+        <h4>Dopo uno scraping mancano delle immagini</h4>
+        <p>Un'immagine che non si scarica viene saltata senza messaggio; il Visualizzatore di log ne dice il motivo. Controlla che RetroDB possa scrivere nella sua cartella dei media (<code>static/images/</code> a meno che tu l'abbia spostata). Su Linux o macOS, <code>chmod -R u+rwX static/images/</code> dà al tuo account l'accesso in scrittura senza segnare le immagini come programmi.</p>
+
+        <h4>Il potenziamento non sembra funzionare</h4>
+        <ul>
+            <li>Il primo potenziamento scarica il modello Real-ESRGAN, quindi serve l'accesso a Internet.</li>
+            <li>Una GPU ha bisogno di driver funzionanti (CUDA per NVIDIA, ROCm per AMD). Se la GPU fallisce, il potenziamento passa alla CPU.</li>
+            <li>Se il potenziatore non può girare affatto, RetroDB ingrandisce le immagini nel modo semplice (Lanczos). <code>logs/upscale_worker.log</code> ne dice il motivo.</li>
+        </ul>
+
+        <h3 id="ts-play">Giocare</h3>
+
+        <h4>Il gioco si apre su un altro computer</h4>
+        <p><strong>Gioca</strong> avvia l'emulatore sul computer in cui gira RetroDB, non sul dispositivo su cui l'hai premuto.</p>
+
+        <h4>"Programma dell'emulatore non trovato nel PATH"</h4>
+        <p>Nella pagina Emulatori, sotto <strong>Emulatori registrati</strong>, modifica l'emulatore e scrivi in <strong>Percorso personalizzato dell'eseguibile</strong> la posizione del programma. Oppure aggiungi la cartella che lo contiene sotto <strong>Cartelle degli emulatori</strong>. Per RetroArch, usa <strong>Rileva automaticamente</strong> nella scheda di RetroArch, poi <strong>Salva</strong>.</p>
+
+        <h4>"Nessun emulatore configurato per il sistema &hellip;" o "L'emulatore &hellip; è disattivato"</h4>
+        <p>Scegli un emulatore per il sistema sotto <strong>Associazione per sistema</strong> nella pagina Emulatori, oppure attiva l'emulatore sotto <strong>Emulatori registrati</strong>. Se un gioco è impostato su un emulatore che non esiste più: cancella quella scelta nella sua finestra Modifica gioco.</p>
+
+        <h4>"&hellip; non è impostato alcun core RetroArch" o "Core RetroArch non trovato"</h4>
+        <p>Nella pagina Emulatori, controlla che la scheda di RetroArch punti alla cartella che contiene i tuoi core (<strong>Rileva automaticamente</strong> la compila), poi premi <strong>Salva</strong>. Installa un core mancante con il downloader di core di RetroArch. Oppure scegli un altro emulatore per il sistema sotto <strong>Associazione per sistema</strong>.</p>
+
+        <h4>"File ROM non trovato" o "Il percorso della ROM è fuori dalle cartelle di scansione configurate"</h4>
+        <p>Il file è stato spostato o eliminato dopo l'ultima scansione, oppure sta fuori dalla tua cartella delle ROM. Rimettilo nella cartella del sistema e scansiona di nuovo la libreria.</p>
+
+        <h4>"Questo gioco è già in esecuzione"</h4>
+        <p>Chiudi la finestra dell'emulatore, oppure accetta la proposta di chiuderlo e ripartire.</p>
+
+        <h4>"Impossibile scaricare il core di &hellip;"</h4>
+        <p>Gioca in RetroDB scarica un core mancante la prima volta che giochi, a meno che <strong>Scarica un core mancante quando premi «Gioca»</strong> sia disattivato nella pagina Emulatori. Controlla la connessione a Internet e premi di nuovo Gioca, oppure premi <strong>Installa i core per i miei sistemi</strong> nella pagina Emulatori.</p>
+
+        <h3 id="ts-cheats">Trucchi</h3>
+
+        <h4>"Nessun trucco trovato per questo gioco."</h4>
+        <p>Scarica il pacchetto di trucchi per l'emulatore nella scheda Trucchi della pagina Emulatori, oppure importa lì una cartella di trucchi tuoi. I trucchi funzionano nel player, in DuckStation e in PCSX2.</p>
+
+        <h4>Un trucco attivato non fa nulla</h4>
+        <p>I trucchi valgono dalla prossima volta che premi Gioca. Un trucco attivo disattiva la modalità hardcore di RetroAchievements mentre giochi.</p>
+
+        <h4>"Avvia &hellip; una volta perché crei le sue impostazioni, poi gioca di nuovo."</h4>
+        <p>DuckStation o PCSX2 non ha ancora creato la sua cartella delle impostazioni. Avvia l'emulatore una volta da solo, poi premi di nuovo Gioca.</p>
+
+        <h3 id="ts-achievements">Obiettivi e trofei</h3>
+
+        <h4>Una sincronizzazione RetroAchievements è bloccata o in attesa</h4>
+        <p>Un'operazione RetroAchievements alla volta è in corso; le altre aspettano in coda nell'avviso di avanzamento. Il suo pulsante di stop ferma l'operazione in corso, e ogni operazione in attesa ha un pulsante <strong>Rimuovi dalla coda</strong>.</p>
+
+        <h4>"RetroAchievements non configurato"</h4>
+        <p>Salva il tuo nome utente RetroAchievements e la chiave API web in Impostazioni &rarr; Account &rarr; Il mio profilo &rarr; Impostazioni RetroAchievements.</p>
+
+        <h4>"RetroAchievements non ti ha fatto accedere"</h4>
+        <p>Per accedere e giocare serve la tua password di RetroAchievements, non la chiave API. Vale dalla prossima volta che premi Gioca.</p>
+
+        <h4>"Nessun gioco trovato. Verifica che il tuo profilo Steam e i dettagli dei giochi siano impostati come pubblici."</h4>
+        <p>Sul sito di Steam, imposta come pubblici il profilo e i dettagli dei giochi. La tua chiave Steam e il Steam ID di 17 cifre vanno in Impostazioni &rarr; Account &rarr; Il mio profilo &rarr; Steam.</p>
 
         <h4>"OpenXBL non ha accettato quella chiave"</h4>
         <ul>
-            <li>Copia di nuovo la chiave da <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> e incollala in Impostazioni &rarr; Il mio profilo &rarr; Xbox</li>
-            <li>"È stato raggiunto il limite orario di OpenXBL" significa che la chiave ha usato le sue 150 richieste di quest'ora; attendi e riprova</li>
+            <li>Copia di nuovo la chiave da <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> e incollala in Impostazioni &rarr; Account &rarr; Il mio profilo &rarr; Xbox.</li>
+            <li>"È stato raggiunto il limite orario di OpenXBL" significa che la chiave ha usato le sue 150 richieste di quest'ora. Sincronizza di nuovo più tardi; si riparte dai giochi non ancora sincronizzati.</li>
         </ul>
 
-        <h4>"Errori di upscaling delle immagini"</h4>
+        <h4>"Autenticazione PSN non riuscita"</h4>
         <ul>
-            <li>Il modello ONNX Real-ESRGAN viene scaricato al primo utilizzo &mdash; assicurati di avere accesso a internet</li>
-            <li>L'accelerazione GPU richiede driver compatibili (CUDA per NVIDIA, ROCm per AMD)</li>
-            <li>Se la GPU fallisce, il sistema ricade automaticamente sull'elaborazione tramite CPU</li>
+            <li>Sony non accetta più il token NPSSO che hai salvato. Ottienine uno nuovo con i passaggi in Impostazioni &rarr; Account &rarr; Il mio profilo &rarr; PlayStation Network, poi premi <strong>Salva e prova la connessione</strong>.</li>
+            <li>RetroDB mantiene da solo l'accesso finché Sony accetta il token. Per sostituire un token che funziona ancora, esci prima da PlayStation.</li>
         </ul>
 
-        <h3>Consigli sulle prestazioni</h3>
+        <h4>Una sincronizzazione dei trofei PSN è bloccata</h4>
+        <p>Un aggiornamento PSN ha pulsanti di stop nel suo avviso di avanzamento. Una sincronizzazione completa dei trofei non ne ha; riavviare RetroDB la ferma.</p>
+
+        <h4>I Trofei del collezionista risultano tutti non ottenuti</h4>
+        <p>Premi <strong>Aggiorna avanzamento</strong> nella pagina Trofei del collezionista. Aprire la pagina non li conta.</p>
+
+        <h4>'Nessuna corrispondenza HLTB trovata per &hellip;'</h4>
+        <p>Scrivi nella casella di ricerca il titolo usato da HowLongToBeat e cerca di nuovo. Se HowLongToBeat ha detto di aver ricevuto troppe richieste, RetroDB aspetta 15 minuti prima di chiedere ancora, e fino ad allora una ricerca non trova nulla.</p>
+
+        <h3 id="ts-tools">Museo e strumenti ROM</h3>
+
+        <h4>"Nessun provider AI configurato"</h4>
+        <p>Il Museo scrive le sue pagine con il provider IA impostato in Impostazioni &rarr; Scansione &rarr; Chiavi API. Configurane uno, poi genera di nuovo.</p>
+
+        <h4>La generazione del museo è bloccata</h4>
+        <p>Premi <strong>Annulla</strong> sotto la barra di avanzamento nella pagina del Museo.</p>
+
+        <h4>"chdman non trovato. Installa gli strumenti MAME."</h4>
+        <p>Installa gli strumenti MAME, che includono <code>chdman</code>, oppure indicane la posizione in Strumenti ROM &rarr; Impostazioni.</p>
+
+        <h4>"Questi risultati della scansione sono scaduti. Esegui di nuovo la scansione, poi elimina."</h4>
+        <p>Esegui di nuovo la scansione, poi elimina dai nuovi risultati.</p>
+
+        <h3 id="ts-accounts">Account e accesso</h3>
+
+        <h4>"Troppi tentativi di accesso. Riprova più tardi."</h4>
+        <p>Dopo cinque password sbagliate in cinque minuti, aspetta cinque minuti e riprova.</p>
+
+        <h4>Password dimenticata</h4>
+        <p>Non c'è un ripristino via email. Un amministratore imposta una nuova password in Impostazioni &rarr; Account &rarr; Gestione utenti. Se l'unico amministratore dimentica la sua, ripristina un backup fatto quando la password era nota.</p>
+
+        <h4>"You do not have permission to access this feature"</h4>
+        <p>Il tuo ruolo non include quella funzione. Un amministratore può cambiare il tuo ruolo in Impostazioni &rarr; Account &rarr; Gestione utenti.</p>
+
+        <h3 id="ts-data">Database, backup e aggiornamenti</h3>
+
+        <h4>Errori del database</h4>
+        <ol>
+            <li>Crea un backup, se possibile (Impostazioni &rarr; Libreria &rarr; Backup)</li>
+            <li>Prova Impostazioni &rarr; Sistema &rarr; Manutenzione &rarr; <strong>Ottimizza database</strong>. Può fallire mentre un'operazione sta scrivendo; aspetta che le operazioni finiscano e riprova.</li>
+            <li>Controlla i permessi dei file nella directory <code>database/</code></li>
+            <li>Ultima risorsa: ripristina da un backup</li>
+        </ol>
+
+        <h4>"È in esecuzione un'operazione in background. Attendi che termini prima di ripristinare."</h4>
+        <p>Lascia finire l'operazione, oppure fermala dal suo avviso di avanzamento, poi ripristina. Dopo un ripristino, riavvia RetroDB.</p>
+
+        <h4>"Questa copia di RetroDB è un checkout git. Aggiornala con git pull."</h4>
+        <p>L'aggiornatore installa solo sopra una versione scaricata. Una copia fatta con git si aggiorna con <code>git pull</code>.</p>
+
+        <h4>Un aggiornamento non è riuscito</h4>
+        <p>Un download non riuscito non installa nulla; premi di nuovo <strong>Scarica aggiornamento</strong>. Un'installazione non riuscita rimette da sola la vecchia versione e ne dice il motivo. I dettagli sono in <code>logs/update.log</code>.</p>
+
+        <h3 id="ts-performance">Pagine e velocità</h3>
+
+        <h4>Una pagina è lenta o non risponde</h4>
         <ul>
-            <li>Mantieni il tuo browser aggiornato per le migliori prestazioni</li>
+            <li>Le collezioni grandi possono richiedere tempo per caricarsi &mdash; lo scorrimento infinito carica a lotti di 100</li>
+            <li>Prova ad aggiornare la pagina per liberare la memoria accumulata</li>
+            <li>Controlla la console del browser per errori JavaScript</li>
+            <li>Prova a passare a un tema con un effetto canvas più leggero (ad es. Amber o Elite)</li>
+            <li>Gli effetti canvas rilevano automaticamente l'hardware; i dispositivi meno potenti usano il ripiego su CPU con un frame rate ridotto</li>
+        </ul>
+
+        <h4>Consigli sulle prestazioni</h4>
+        <ul>
+            <li>Tieni il browser aggiornato per le migliori prestazioni</li>
             <li>Chiudi le altre schede del browser quando lavori con collezioni molto grandi</li>
-            <li>Usa i filtri per sistema per ridurre i giochi visualizzati contemporaneamente</li>
-            <li>Esegui periodicamente Ottimizza database dopo operazioni di grandi dimensioni (scraping, pulizia, importazioni)</li>
-            <li>Gli effetti dei temi su canvas rilevano automaticamente l'hardware; i dispositivi meno potenti usano il fallback su CPU</li>
+            <li>Usa i filtri per sistema per ridurre i giochi mostrati insieme</li>
+            <li>Esegui periodicamente Ottimizza database dopo grandi operazioni (scraping, pulizia, importazioni)</li>
         </ul>
     </div>
 </section>
@@ -2094,4 +2249,8 @@ kbd {
     background: rgba(76, 201, 240, 0.05);
 }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset_url('js/help-search.js') }}" defer></script>
 {% endblock %}

@@ -13,6 +13,17 @@
     </div>
 </div>
 
+<!-- PASS-59-307 — search the manual (static/js/help-search.js) -->
+<div class="help-search" role="search">
+    <div class="search-box">
+        <span class="search-icon" aria-hidden="true">&#128269;</span>
+        <label for="helpSearch" class="visually-hidden">{{ _('Search the manual') }}</label>
+        <input type="search" id="helpSearch" class="search-input"
+               placeholder="{{ _('Search the manual') }}" autocomplete="off" spellcheck="false">
+    </div>
+    <p id="helpSearchStatus" class="help-search-status" role="status" aria-live="polite"></p>
+</div>
+
 <!-- Help Navigation -->
 <div class="help-nav" data-sticky-nav>
     <a href="#installation" class="help-nav-item">Installasjon</a>
@@ -62,7 +73,7 @@
     <div class="card-body">
         <h3>Systemkrav</h3>
         <ul>
-            <li><strong>Python 3.8+</strong> med pip</li>
+            <li><strong>Python 3.12+</strong> med pip</li>
             <li><strong>Nettleser</strong> (Chrome, Firefox, Safari, Edge)</li>
             <li><strong>Operativsystem:</strong> Linux, Windows 10/11 eller macOS</li>
         </ul>
@@ -87,7 +98,7 @@
 
         <h3>Hva install.py gjør</h3>
         <ul>
-            <li>Bekrefter at Python 3.8+ og pip er tilgjengelig</li>
+            <li>Bekrefter at Python 3.12+ og pip er tilgjengelig</li>
             <li>Installerer Python-avhengigheter fra <code>requirements.txt</code></li>
             <li>Oppretter <code>config.py</code> fra eksempelmalen</li>
             <li>Oppretter nødvendige mapper (database, logger, mediemapper)</li>
@@ -142,9 +153,9 @@
   snes/
     Chrono Trigger (USA).sfc
   psx/
-    Final Fantasy VII (USA)/
-      Final Fantasy VII (USA) (Disc 1).chd
-      Final Fantasy VII (USA) (Disc 2).chd</pre>
+    Final Fantasy VII (USA) (Disc 1).chd
+    Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>Ha ROM-filene rett i systemmappen. Filer i undermapper hoppes over, bortsett fra for PS3.</p>
         <p>Hver systemmappe bør inneholde en ES-DE <code>systeminfo.txt</code>-fil som definerer støttede filendelser. RetroDB leser denne under skanning for å avgjøre hvilke filer som er gyldige ROM-er for hvert system.</p>
 
         <div class="help-tip">
@@ -551,10 +562,11 @@
 
         <h3>System-fanen</h3>
         <ul>
-            <li><strong>Vedlikehold</strong> &mdash; Databaseoptimalisering (VACUUM/ANALYZE), opprydding av foreldreløse medier, fjerning av manglende ROM-er, tømming av scrapede data, tømming av CLZ-import, masse-standardisering av bilder</li>
-            <li><strong>Server</strong> &mdash; Serverkonfigurasjon (vert, port, feilsøkingsmodus)</li>
-            <li><strong>Logging</strong> &mdash; Logg-nivåinnstillinger for ulike kategorier</li>
-            <li><strong>Feilsøking</strong> &mdash; Fjern fastlåst masse-scraping, tøm RA-synkroniseringskø, tøm PSN-oppdatering, tøm museumsgenerering, start server på nytt</li>
+            <li><strong>Vedlikehold</strong> &mdash; Rydd opp manglende ROM-er, tøm CLZ-importer eller skrapede data, slett mediefiler som ingen spill bruker, fjern lenker til mediefiler som er borte, og optimaliser databasen</li>
+            <li><strong>Oppdateringer</strong> &mdash; Se etter, last ned og installer en ny versjon</li>
+            <li><strong>Server</strong> &mdash; Start RetroDB på nytt eller slå den av</li>
+            <li><strong>Logging</strong> &mdash; Loggnivåinnstillinger for ulike kategorier, og loggfilene</li>
+            <li><strong>Feilsøking</strong> &mdash; Fjern en fastlåst RetroAchievements-synkronisering</li>
         </ul>
 
         <h3 id="emulators-play">Emulatorer og spilling</h3>
@@ -644,7 +656,7 @@
         <p>Konfigurer hvilke skrapere som kjører først, og hvilke som er aktivert/deaktivert, i <strong>Innstillinger &rarr; Scraping &rarr; Skraper</strong>. Dra og slipp for å endre prioritetsrekkefølgen. Deaktiverte skrapere forsøkes ikke under scraping og utløser ikke API-statusvarsler på Dashboardet.</p>
 
         <h3>Hastighetsbegrensning</h3>
-        <p>Hver skraper har konfigurerbare hastighetsgrenser for å unngå API-strupe. Standardforsinkelser er satt konservativt. Reduser forsinkelser på eget ansvar &mdash; å overskride API-hastighetsgrenser kan føre til midlertidig utestengelse fra den aktuelle tjenesten.</p>
+        <p>RetroDB sprer forespørslene sine til hver tjeneste selv; det er ingenting å stille inn. Når en tjeneste sier at grensen er nådd, slutter RetroDB å spørre den til tidspunktet tjenesten oppgir, og sier fra om det (se <a href="#ts-scraping">Feilsøking</a>).</p>
     </div>
 </section>
 
@@ -1504,7 +1516,7 @@
 
         <h3>Masse-HLTB-oppslag</h3>
         <p>Kjør et HowLongToBeat-oppslag for hvert spill som mangler et spilletidsestimat. Hvert treff scores etter tittel + plattform + utgivelsesår; treff med høy tillit lagres automatisk. Alt under tillitsterskelen (eller med motstridende plattformer) parkeres for manuell gjennomgang.</p>
-        <p><em>Ingen eksterne avhengigheter (bruker det medfølgende frakoblede HLTB-datasettet)</em></p>
+        <p><em>Slår opp hvert spill på nettstedet HowLongToBeat, så det trenger internettilgang</em></p>
 
         <h3>HLTB ventende gjennomgang</h3>
         <p>Gjennomgangskø for tvetydige treff funnet av Masse-HLTB-oppslag. Hver ventende rad viser kildespillet sammen med HLTB-kandidaten (tittel, plattform, utgivelsesår, tillit). Godkjenn, avvis, eller velg et annet treff per rad. Gjennomgangsverktøykortet vises kun i ROM-verktøy-navet når det finnes minst ett ventende treff.</p>
@@ -1775,82 +1787,225 @@
 <section id="troubleshooting" class="help-section card">
     <h2 class="card-title">Feilsøking</h2>
     <div class="card-body">
-        <h3>Vanlige problemer</h3>
+        <p>Problemene er gruppert etter funksjon. Skriv et ord fra meldingen du ser i søkefeltet øverst på denne siden for å hoppe til den. De fleste meldinger legger også igjen en linje i <a href="#logs">Loggviser</a> (bare for administratorer), som sier mer.</p>
 
-        <h4>"No extensions found for system"</h4>
-        <p>Systemmappen trenger en gyldig ES-DE <code>systeminfo.txt</code>-fil som definerer støttede ROM-filendelser. Sørg for at ROM-mappestrukturen din samsvarer med ES-DE-standarder.</p>
+        <h3 id="ts-jobs">Lange jobber</h3>
 
-        <h4>"API Connection Failed"</h4>
+        <h4>En jobb ser ut til å sitte fast</h4>
+        <p>Masseskraping, synkronisering av prestasjoner, PSN-oppdateringer, endring av bildestørrelser og AI-utfylling viser et fremdriftsvarsel i hjørnet. Knappene i det setter jobben på pause, stopper den eller avbryter den. En masseskraping stopper mellom to spill, så spillet som pågår, blir ferdig først; det kan ta et minutt. Hvis den fortsatt kjører, start RetroDB på nytt: Innstillinger &rarr; System &rarr; Serverkontroller &rarr; <strong>Start serveren på nytt</strong>.</p>
+
+        <h4>Banneret "Avbrutte jobber" på Oversikt</h4>
+        <p>En jobb som kjørte eller ventet da RetroDB stoppet, vises her. <strong>Fortsett</strong> tar den opp igjen der den sist lagret plassen sin. <strong>Avvis</strong> kaster den. <strong>Fortsett alle</strong> og <strong>Avvis alle</strong> gjør det samme for hver jobb i listen.</p>
+
+        <h3 id="ts-library">Legge til spill</h3>
+
+        <h4>«ROM-sti er ikke konfigurert»</h4>
+        <p>Angi mappen som inneholder systemmappene dine under Innstillinger &rarr; Bibliotek &rarr; Stier &rarr; <strong>Sti til ROM-bibliotek</strong>, og trykk deretter <strong>Skann bibliotek</strong>.</p>
+
+        <h4>En skanning finner ingen nye spill, eller et system mangler</h4>
         <ul>
-            <li>Sjekk internettforbindelsen din</li>
-            <li>Verifiser API-nøkler i Innstillinger &rarr; Scraping &rarr; API-nøkler</li>
-            <li>Vent hvis hastighetsbegrenset (noen API-er har daglige/timevise grenser)</li>
-            <li>Sjekk om skraperen er aktivert (deaktiverte skrapere viser "Disabled" i Dashboard-status)</li>
-            <li>Sjekk Loggvisning for detaljerte feilmeldinger</li>
+            <li>Hver systemmappe trenger en ES-DE-fil <code>systeminfo.txt</code> som lister filtypene. En mappe uten den hoppes over; Loggviser viser <code>No extensions found</code> for den. PS3-mapper trenger ingen.</li>
+            <li>Filene må ligge rett i systemmappen. Filer i en undermappe hoppes over, bortsett fra for PS3.</li>
+            <li>En fil med en filtype som ikke står i listen, hoppes over.</li>
+            <li>En flyttet eller omdøpt fil legges til som et nytt spill. Innstillinger &rarr; System &rarr; <strong>Rydd opp manglende ROM-er</strong> fjerner den gamle oppføringen.</li>
         </ul>
 
-        <h4>"Bulk Scrape Stuck"</h4>
-        <p>Gå til Innstillinger &rarr; System &rarr; Feilsøking &rarr; <strong>"Clear Stuck Bulk Scrape"</strong>. Dette tilbakestiller jobbtilstanden uten å påvirke dataene dine.</p>
+        <h3 id="ts-scraping">Skraping</h3>
 
-        <h4>"RA Sync Queue Stuck"</h4>
-        <p>Tøm RetroAchievements-synkroniseringskøen fra Innstillinger &rarr; System &rarr; Feilsøking.</p>
+        <h4>"No results found. Try a different search term."</h4>
+        <ul>
+            <li>Kort ned tittelen i søkefeltet, eller prøv det engelske navnet.</li>
+            <li>Sjekk at kildene er slått på og viser <strong>Pålogget</strong> under Innstillinger &rarr; Skraper &rarr; Skraper.</li>
+            <li>En kilde som har nådd grensen, returnerer ingenting før tidspunktet den oppga (se nedenfor).</li>
+        </ul>
 
-        <h4>"PSN Sync Stuck"</h4>
-        <p>Tøm PSN-oppdateringsjobben fra Innstillinger &rarr; System &rarr; Feilsøking.</p>
+        <h4>Dataene eller bildene tilhører et annet spill</h4>
+        <ul>
+            <li>En masseskraping søker etter ROM-ens filnavn, så en fil med dårlig navn finner feil spill. Gi filen nytt navn, eller skrap spillet alene på siden sin med en bedre søketittel og velg riktig treff.</li>
+            <li>Kryss av for <strong>Behold denne tittelen ved skraping</strong> i vinduet Rediger spill, så lar senere skrapinger navnet være.</li>
+            <li>For mange spill: øk <strong>Laveste treffpoeng</strong> under Innstillinger &rarr; Skraper &rarr; Skraper &rarr; Treffilter for masseskraping.</li>
+        </ul>
 
-        <h4>"Museum Generation Stuck"</h4>
-        <p>Tøm museumsgenereringsjobben fra Innstillinger &rarr; System &rarr; Feilsøking.</p>
+        <h4>En skraping bytter ikke ut et dårlig bilde</h4>
+        <p>Skraping fyller bare tomme bilder, og skjermbilder legges bare til. Fjern bildet i vinduet Rediger spill, og skrap deretter på nytt. En <strong>Full reskraping</strong> i bulk bytter ut bilder med mindre <strong>Behold eksisterende medier</strong> er avkrysset. Et skjermbilde du har slettet, legges ikke til igjen.</p>
 
-        <h4>"Database Errors"</h4>
+        <h4>"&hellip; sier at grensen er nådd" eller "&hellip; avviste API-nøkkelen"</h4>
+        <p>RetroDB slutter å spørre den tjenesten til tidspunktet i meldingen. En avvist nøkkel: rett den under Innstillinger &rarr; Skraper &rarr; API-nøkler og trykk <strong>Lagre API-nøkler</strong>; lagring avslutter også alle slike pauser samtidig. En omstart avslutter dem også.</p>
+
+        <h4>En kilde viser en årsak i stedet for "Pålogget"</h4>
+        <p>Årsaken nevner problemet, for eksempel "No API key" eller "Invalid API key". Skriv inn eller rett nøkkelen under Innstillinger &rarr; Skraper &rarr; API-nøkler (bare administratorer) og trykk <strong>Lagre API-nøkler</strong>. En lagret nøkkel vises som stjerner; la feltet stå for å beholde den, eller tøm det og skriv inn den nye nøkkelen.</p>
+
+        <h3 id="ts-bulk-scrape">Masseskraping</h3>
+
+        <h4>En masseskraping står fast</h4>
+        <p>Trykk <strong>Avbryt</strong> i vinduet Masseskraping; klikk fremdriftsvarselet for å åpne det. Spillet som skrapes, blir ferdig først. Hvis det fortsatt kjører, se <a href="#ts-jobs">En jobb ser ut til å sitte fast</a>.</p>
+
+        <h4>De fleste spill er "Hoppet over"</h4>
+        <ul>
+            <li><strong>Fyll manglende</strong> hopper over et spill som en masseskraping fullførte de siste 24 timene.</li>
+            <li>Et spill der skrapingen ikke fant noe nytt, teller også som hoppet over.</li>
+            <li>For å skrape dem på nytt nå, bruk <strong>Full reskraping</strong>; kryss av for <strong>Behold eksisterende medier</strong> for å beholde bildene dine.</li>
+        </ul>
+
+        <h4>Mange spill "Feilet"</h4>
+        <p>Feilet betyr vanligvis at ingen treff lå nær nok til å lagres. Senk <strong>Laveste treffpoeng</strong> eller <strong>Laveste tittelkvalitet</strong> under Innstillinger &rarr; Skraper &rarr; Skraper &rarr; Treffilter for masseskraping, og sjekk filnavnene. Loggviser lister hvert spill som ikke fant noe treff.</p>
+
+        <h4>"A scrape for &hellip; is already running"</h4>
+        <p>Det systemet skrapes allerede i samme modus. Vent på den, eller avbryt den. En skraping av et annet system venter i kø og starter av seg selv.</p>
+
+        <h3 id="ts-ai-fill">AI-utfylling</h3>
+
+        <h4>«AI-en returnerte ingen data. Kontroller API-nøkkelen og leverandørinnstillingene.»</h4>
+        <p>Velg <strong>KI-leverandør for metadata</strong> under Innstillinger &rarr; Skraper &rarr; API-nøkler, skriv inn nøkkelen, trykk <strong>Lagre API-nøkler</strong>, og deretter <strong>Test lagret KI-nøkkel</strong>. Hvis AI-tjenesten avviste forespørselen, oppgir meldingen i stedet hvorfor, for eksempel at kreditten er brukt opp.</p>
+
+        <h4>«AI fant ingen manglende felt å fylle ut»</h4>
+        <p>Ikke en feil: spillet har ingenting tomt som AI-utfylling kan fylle ut.</p>
+
+        <h4>Masse-AI-utfylling stoppet av seg selv</h4>
+        <p>Den stopper etter tre spill på rad uten svar. Sjekk nøkkelen med <strong>Test lagret KI-nøkkel</strong>, og kjør den så på nytt. Spill som allerede er fylt ut, beholder det de fikk.</p>
+
+        <h3 id="ts-images">Bilder</h3>
+
+        <h4>Bilder mangler etter en skraping</h4>
+        <p>Et bilde som ikke lar seg laste ned, hoppes over uten melding; Loggviser sier hvorfor. Sjekk at RetroDB kan skrive til mediemappen sin (<code>static/images/</code> med mindre du har flyttet den). På Linux eller macOS gir <code>chmod -R u+rwX static/images/</code> kontoen din skrivetilgang uten å merke bildene som programmer.</p>
+
+        <h4>Oppskalering ser ikke ut til å virke</h4>
+        <ul>
+            <li>Den første oppskaleringen laster ned Real-ESRGAN-modellen, så den trenger internettilgang.</li>
+            <li>En GPU trenger fungerende drivere (CUDA for NVIDIA, ROCm for AMD). Hvis GPU-en feiler, går oppskaleringen over til CPU-en.</li>
+            <li>Hvis oppskaleringen ikke kan kjøre i det hele tatt, forstørrer RetroDB bildene på den enkle måten (Lanczos) i stedet. <code>logs/upscale_worker.log</code> sier hvorfor.</li>
+        </ul>
+
+        <h3 id="ts-play">Spille spill</h3>
+
+        <h4>Spillet åpnes på en annen datamaskin</h4>
+        <p><strong>Spill</strong> starter emulatoren på datamaskinen der RetroDB kjører, ikke på enheten du trykket på den.</p>
+
+        <h4>«Fant ikke emulatorprogrammet i PATH»</h4>
+        <p>På siden Emulatorer, under <strong>Registrerte emulatorer</strong>, redigerer du emulatoren og fyller <strong>Overstyrt programsti</strong> med programmets plassering. Eller legg mappen som inneholder det, til under <strong>Emulatormapper</strong>. For RetroArch bruker du <strong>Oppdag automatisk</strong> på RetroArch-kortet, og deretter <strong>Lagre</strong>.</p>
+
+        <h4>«Ingen emulator er satt opp for systemet &hellip;» eller «Emulatoren &hellip; er slått av»</h4>
+        <p>Velg en emulator for systemet under <strong>Tilordning per system</strong> på siden Emulatorer, eller slå på emulatoren under <strong>Registrerte emulatorer</strong>. Et spill som er satt til en emulator som ikke finnes lenger: fjern det valget i spillets vindu Rediger spill.</p>
+
+        <h4>«&hellip; ingen RetroArch-kjerne er angitt for det» eller «Fant ikke RetroArch-kjernen»</h4>
+        <p>På siden Emulatorer sjekker du at RetroArch-kortet peker på mappen som inneholder kjernene dine (<strong>Oppdag automatisk</strong> fyller den ut), og trykker deretter <strong>Lagre</strong>. Installer en manglende kjerne med RetroArchs egen kjernenedlaster. Eller velg en annen emulator for systemet under <strong>Tilordning per system</strong>.</p>
+
+        <h4>«Fant ikke ROM-filen» eller «ROM-stien er utenfor de konfigurerte skannemappene»</h4>
+        <p>Filen er flyttet eller slettet siden forrige skanning, eller ligger utenfor ROM-mappen din. Legg den tilbake i systemmappen og skann biblioteket på nytt.</p>
+
+        <h4>«Dette spillet kjører allerede»</h4>
+        <p>Lukk emulatorvinduet, eller godta tilbudet om å lukke det og starte på nytt.</p>
+
+        <h4>«Kunne ikke laste ned kjernen for &hellip;»</h4>
+        <p>Spilling i RetroDB laster ned en manglende kjerne første gang du spiller, med mindre <strong>Last ned en manglende kjerne når «Spill» trykkes</strong> er slått av på siden Emulatorer. Sjekk internettforbindelsen og trykk Spill igjen, eller trykk <strong>Installer kjerner for systemene mine</strong> på siden Emulatorer.</p>
+
+        <h3 id="ts-cheats">Juksekoder</h3>
+
+        <h4>«Fant ingen juksekoder for dette spillet.»</h4>
+        <p>Last ned juksekodepakken for emulatoren i kortet Juksekoder på siden Emulatorer, eller importer en mappe med egne juksekoder der. Juksekoder virker i spilleren, DuckStation og PCSX2.</p>
+
+        <h4>En påslått juksekode gjør ingenting</h4>
+        <p>Juksekoder gjelder neste gang du trykker Spill. En juksekode som er på, slår av RetroAchievements hardcore-modus mens du spiller.</p>
+
+        <h4>«Kjør &hellip; én gang så den oppretter innstillingene sine, og spill deretter igjen.»</h4>
+        <p>DuckStation eller PCSX2 har ikke laget innstillingsmappen sin ennå. Start emulatoren én gang for seg selv, og trykk så Spill igjen.</p>
+
+        <h3 id="ts-achievements">Prestasjoner og trofeer</h3>
+
+        <h4>En RetroAchievements-synkronisering sitter fast eller venter</h4>
+        <p>Én RetroAchievements-jobb kjører om gangen; resten venter i kø i fremdriftsvarselet. Stoppknappen avslutter jobben som kjører, og hver ventende jobb har en <strong>Fjern fra køen</strong>-knapp.</p>
+
+        <h4>«RetroAchievements er ikke konfigurert»</h4>
+        <p>Lagre RetroAchievements-brukernavnet og web-API-nøkkelen din under Innstillinger &rarr; Konto &rarr; Min profil &rarr; RetroAchievements-innstillinger.</p>
+
+        <h4>«RetroAchievements logget deg ikke inn»</h4>
+        <p>Pålogging for spilling trenger RetroAchievements-passordet ditt, ikke API-nøkkelen. Det gjelder neste gang du trykker Spill.</p>
+
+        <h4>«Ingen spill funnet. Kontroller at Steam-profilen og spilldetaljene dine er satt til Offentlig.»</h4>
+        <p>På Steam-nettstedet setter du profilen og spilldetaljene til Offentlig. Steam-nøkkelen og den 17-sifrede Steam-ID-en din skal inn under Innstillinger &rarr; Konto &rarr; Min profil &rarr; Steam.</p>
+
+        <h4>«OpenXBL godtok ikke den nøkkelen»</h4>
+        <ul>
+            <li>Kopier nøkkelen på nytt fra <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> og lim den inn under Innstillinger &rarr; Konto &rarr; Min profil &rarr; Xbox.</li>
+            <li>«OpenXBLs grense per time er nådd» betyr at nøkkelen har brukt opp sine 150 forespørsler denne timen. Synkroniser igjen senere; den starter med spillene som ikke er synkronisert ennå.</li>
+        </ul>
+
+        <h4>«PSN-autentisering mislyktes»</h4>
+        <ul>
+            <li>Sony godtar ikke lenger NPSSO-tokenet du har lagret. Få et nytt med trinnene under Innstillinger &rarr; Konto &rarr; Min profil &rarr; PlayStation Network, og trykk deretter <strong>Lagre &amp; test tilkobling</strong>.</li>
+            <li>RetroDB holder påloggingen i gang av seg selv så lenge Sony godtar tokenet. For å bytte ut et token som fortsatt virker, logg først ut av PlayStation.</li>
+        </ul>
+
+        <h4>En PSN-trofésynkronisering sitter fast</h4>
+        <p>En PSN-oppdatering har stoppknapper i fremdriftsvarselet. En full trofésynkronisering har ingen; en omstart av RetroDB avslutter den.</p>
+
+        <h4>Alle samlertrofeer vises som ikke oppnådd</h4>
+        <p>Trykk <strong>Oppdater fremdrift</strong> på siden Samlertrofeer. Å åpne siden teller dem ikke.</p>
+
+        <h4>'Ingen HLTB-treff funnet for «&hellip;»'</h4>
+        <p>Skriv tittelen HowLongToBeat bruker, i søkefeltet og slå opp på nytt. Hvis HowLongToBeat sa at det hadde for mange forespørsler, venter RetroDB 15 minutter før det spør igjen, og et oppslag finner ingenting før da.</p>
+
+        <h3 id="ts-tools">Museum og ROM-verktøy</h3>
+
+        <h4>«Ingen AI-leverandør konfigurert»</h4>
+        <p>Museet skriver sidene sine med AI-leverandøren som er satt under Innstillinger &rarr; Skraper &rarr; API-nøkler. Sett opp én, og generer deretter på nytt.</p>
+
+        <h4>Museumsgenereringen står fast</h4>
+        <p>Trykk <strong>Avbryt</strong> under fremdriftslinjen på museumssiden.</p>
+
+        <h4>«chdman ble ikke funnet. Installer MAME-verktøyene.»</h4>
+        <p>Installer MAME-verktøyene, som inneholder <code>chdman</code>, eller angi plasseringen under ROM-verktøy &rarr; Innstillinger.</p>
+
+        <h4>«Disse skanneresultatene er utløpt. Skann på nytt, og slett deretter.»</h4>
+        <p>Kjør skanningen på nytt, og slett deretter fra de nye resultatene.</p>
+
+        <h3 id="ts-accounts">Kontoer og pålogging</h3>
+
+        <h4>«For mange innloggingsforsøk. Prøv igjen senere.»</h4>
+        <p>Etter fem gale passord på fem minutter må du vente fem minutter og prøve på nytt.</p>
+
+        <h4>Glemt passord</h4>
+        <p>Det finnes ingen tilbakestilling på e-post. En administrator setter et nytt passord under Innstillinger &rarr; Konto &rarr; Brukeradministrasjon. Hvis den eneste administratoren glemmer sitt, gjenopprett en sikkerhetskopi tatt mens passordet var kjent.</p>
+
+        <h4>"You do not have permission to access this feature"</h4>
+        <p>Rollen din omfatter ikke den funksjonen. En administrator kan endre rollen din under Innstillinger &rarr; Konto &rarr; Brukeradministrasjon.</p>
+
+        <h3 id="ts-data">Database, sikkerhetskopier og oppdateringer</h3>
+
+        <h4>Databasefeil</h4>
         <ol>
-            <li>Opprett en sikkerhetskopi hvis mulig (Innstillinger &rarr; Bibliotek &rarr; Sikkerhetskopi)</li>
-            <li>Prøv Innstillinger &rarr; System &rarr; Vedlikehold &rarr; <strong>Optimaliser database</strong></li>
-            <li>Sjekk filtillatelser på <code>database/</code>-mappen</li>
-            <li>Siste utvei: gjenopprett fra en sikkerhetskopi eller slett databasen og skann på nytt</li>
+            <li>Ta en sikkerhetskopi hvis mulig (Innstillinger &rarr; Bibliotek &rarr; Sikkerhetskopi)</li>
+            <li>Prøv Innstillinger &rarr; System &rarr; Vedlikehold &rarr; <strong>Optimaliser databasen</strong>. Det kan feile mens en jobb skriver; vent til jobbene er ferdige og prøv igjen.</li>
+            <li>Sjekk filrettighetene på mappen <code>database/</code></li>
+            <li>Siste utvei: gjenopprett fra en sikkerhetskopi</li>
         </ol>
 
-        <h4>"Images Not Saving"</h4>
-        <p>Sjekk at RetroDB kan skrive til mediemappen sin (<code>static/images/</code>, med mindre du har flyttet den). På Linux eller macOS gir <code>chmod -R u+rwX static/images/</code> kontoen din skrivetilgang uten å merke bildene som programmer.</p>
+        <h4>«En bakgrunnsjobb kjører. Vent til den er ferdig før du gjenoppretter.»</h4>
+        <p>La jobben bli ferdig, eller stopp den fra fremdriftsvarselet, og gjenopprett deretter. Etter en gjenoppretting må du starte RetroDB på nytt.</p>
 
-        <h4>"Page Slow or Unresponsive"</h4>
+        <h4>«Denne kopien av RetroDB er en git-utsjekking. Oppdater den med git pull.»</h4>
+        <p>Oppdateringsprogrammet installerer bare over en nedlastet utgave. En kopi laget med git oppdateres med <code>git pull</code>.</p>
+
+        <h4>En oppdatering feilet</h4>
+        <p>En mislykket nedlasting installerer ingenting; trykk <strong>Last ned oppdatering</strong> igjen. En mislykket installasjon setter den gamle versjonen tilbake av seg selv og sier hvorfor. Detaljene står i <code>logs/update.log</code>.</p>
+
+        <h3 id="ts-performance">Sider og hastighet</h3>
+
+        <h4>En side er treg eller svarer ikke</h4>
         <ul>
-            <li>Store samlinger kan ta tid å laste &mdash; uendelig rulling laster i puljer på 100</li>
-            <li>Prøv å oppdatere siden for å tømme akkumulert minne</li>
-            <li>Sjekk nettleserkonsollen for JavaScript-feil</li>
-            <li>Prøv å bytte til et tema med en lettere lerret-effekt (f.eks. Amber eller Elite)</li>
-            <li>Lerret-effekter oppdager maskinvare automatisk; svakere enheter bruker CPU-reserveløsning med redusert bildefrekvens</li>
+            <li>Store samlinger kan ta tid å laste &mdash; uendelig rulling laster i grupper på 100</li>
+            <li>Prøv å laste siden på nytt for å frigjøre opphopet minne</li>
+            <li>Sjekk nettleserens konsoll for JavaScript-feil</li>
+            <li>Prøv å bytte til et tema med en lettere canvas-effekt (f.eks. Amber eller Elite)</li>
+            <li>Canvas-effekter oppdager maskinvaren automatisk; svakere enheter bruker CPU-reserveløsning med lavere bildefrekvens</li>
         </ul>
 
-        <h4>"Interrupted Jobs"-banner på Dashboard</h4>
-        <p>Hvis RetroDB starter på nytt mens jobber kjører, vises de i et gjenopprettingsbanner. Klikk <strong>"Resume"</strong> individuelt eller <strong>"Resume All"</strong> for å starte dem på nytt. Klikk <strong>"Dismiss"</strong> eller <strong>"Dismiss All"</strong> for å fjerne dem.</p>
-
-        <h4>"PSN Authentication Failed"</h4>
+        <h4>Ytelsestips</h4>
         <ul>
-            <li>NPSSO-tokens utløper &mdash; generer et nytt fra <code>ca.account.sony.com/api/v1/ssocookie</code></li>
-            <li>Sørg for at du er logget inn på store.playstation.com før du besøker informasjonskapsel-URL-en</li>
-            <li>RetroDB logger inn igjen av seg selv så lenge Sony godtar den lagrede NPSSO-en din. Når Sony avviser den, limer du inn en ny i Innstillinger &rarr; Konto &rarr; PSN. For å bytte ut et token som fortsatt virker, logg først ut av PlayStation.</li>
-        </ul>
-
-        <h4>"OpenXBL godtok ikke den nøkkelen"</h4>
-        <ul>
-            <li>Kopier nøkkelen på nytt fra <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> og lim den inn under Innstillinger &rarr; Min profil &rarr; Xbox</li>
-            <li>"OpenXBLs grense per time er nådd" betyr at nøkkelen har brukt sine 150 forespørsler denne timen; vent og prøv igjen</li>
-        </ul>
-
-        <h4>"Image Upscaling Errors"</h4>
-        <ul>
-            <li>Real-ESRGAN ONNX-modellen lastes ned ved første bruk &mdash; sørg for internettilgang</li>
-            <li>GPU-akselerasjon krever kompatible drivere (CUDA for NVIDIA, ROCm for AMD)</li>
-            <li>Hvis GPU-en feiler, faller systemet automatisk tilbake til CPU-behandling</li>
-        </ul>
-
-        <h3>Ytelsestips</h3>
-        <ul>
-            <li>Hold nettleseren din oppdatert for best ytelse</li>
-            <li>Lukk andre nettleserfaner når du arbeider med svært store samlinger</li>
-            <li>Bruk systemfiltre for å redusere antall viste spill av gangen</li>
-            <li>Kjør Optimaliser database jevnlig etter store operasjoner (scraping, opprydding, import)</li>
-            <li>Lerret-temaeffekter oppdager maskinvare automatisk; svakere enheter bruker CPU-reserveløsning</li>
+            <li>Hold nettleseren oppdatert for best ytelse</li>
+            <li>Lukk andre nettleserfaner når du jobber med svært store samlinger</li>
+            <li>Bruk systemfiltre for å redusere antall spill som vises samtidig</li>
+            <li>Kjør Optimaliser databasen jevnlig etter store operasjoner (skraping, opprydding, importer)</li>
         </ul>
     </div>
 </section>
@@ -2088,4 +2243,8 @@ kbd {
     background: rgba(76, 201, 240, 0.05);
 }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset_url('js/help-search.js') }}" defer></script>
 {% endblock %}

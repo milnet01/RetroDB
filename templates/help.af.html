@@ -13,6 +13,17 @@
     </div>
 </div>
 
+<!-- PASS-59-307 — search the manual (static/js/help-search.js) -->
+<div class="help-search" role="search">
+    <div class="search-box">
+        <span class="search-icon" aria-hidden="true">&#128269;</span>
+        <label for="helpSearch" class="visually-hidden">{{ _('Search the manual') }}</label>
+        <input type="search" id="helpSearch" class="search-input"
+               placeholder="{{ _('Search the manual') }}" autocomplete="off" spellcheck="false">
+    </div>
+    <p id="helpSearchStatus" class="help-search-status" role="status" aria-live="polite"></p>
+</div>
+
 <!-- Help Navigation -->
 <div class="help-nav" data-sticky-nav>
     <a href="#installation" class="help-nav-item">Installasie</a>
@@ -62,7 +73,7 @@
     <div class="card-body">
         <h3>Stelselvereistes</h3>
         <ul>
-            <li><strong>Python 3.8+</strong> met pip</li>
+            <li><strong>Python 3.12+</strong> met pip</li>
             <li><strong>Webblaaier</strong> (Chrome, Firefox, Safari, Edge)</li>
             <li><strong>Bedryfstelsel:</strong> Linux, Windows 10/11, of macOS</li>
         </ul>
@@ -87,7 +98,7 @@
 
         <h3>Wat install.py Doen</h3>
         <ul>
-            <li>Verifieer dat Python 3.8+ en pip beskikbaar is</li>
+            <li>Verifieer dat Python 3.12+ en pip beskikbaar is</li>
             <li>Installeer Python-afhanklikhede vanaf <code>requirements.txt</code></li>
             <li>Skep <code>config.py</code> vanaf die voorbeeldsjabloon</li>
             <li>Skep die nodige gidse (databasis-, log- en mediagidse)</li>
@@ -142,9 +153,9 @@
   snes/
     Chrono Trigger (USA).sfc
   psx/
-    Final Fantasy VII (USA)/
-      Final Fantasy VII (USA) (Disc 1).chd
-      Final Fantasy VII (USA) (Disc 2).chd</pre>
+    Final Fantasy VII (USA) (Disc 1).chd
+    Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>Hou ROM-lêers direk in die stelselgids. Lêers in subgidse word oorgeslaan, behalwe vir PS3.</p>
         <p>Elke stelselgids moet 'n ES-DE <code>systeminfo.txt</code>-lêer bevat wat die ondersteunde lêeruitbreidings bepaal. RetroDB lees dit tydens skandering om te bepaal watter lêers geldige ROM's vir elke stelsel is.</p>
 
         <div class="help-tip">
@@ -551,10 +562,11 @@
 
         <h3>Stelsel-oortjie</h3>
         <ul>
-            <li><strong>Onderhoud</strong> &mdash; Databasisoptimering (VACUUM/ANALYZE), skoonmaak van weesmedia, skoonmaak van ontbrekende ROM's, verwyder ontginde data, verwyder CLZ-invoere, grootmaat-beeldstandaardisering</li>
-            <li><strong>Bediener</strong> &mdash; Bedienerkonfigurasie (gasheer, poort, ontfoutmodus)</li>
-            <li><strong>Logboek</strong> &mdash; Loguitvoervlak-instellings vir verskillende kategorieë</li>
-            <li><strong>Probleemoplossing</strong> &mdash; Maak vasgehaakte grootmaat-ontginning skoon, maak RA-sinkronisasietou skoon, maak PSN-verfrissing skoon, maak museumopwekking skoon, herbegin bediener</li>
+            <li><strong>Onderhoud</strong> &mdash; Maak ontbrekende ROM's skoon, verwyder CLZ-invoere of geskraapte data, vee medialêers uit wat geen speletjie gebruik nie, verwyder skakels na medialêers wat weg is, en optimeer die databasis</li>
+            <li><strong>Opdaterings</strong> &mdash; Kyk vir, laai af en installeer 'n nuwe weergawe</li>
+            <li><strong>Bediener</strong> &mdash; Herbegin of sit RetroDB af</li>
+            <li><strong>Logboek</strong> &mdash; Loguitvoervlak-instellings vir verskillende kategorieë, en die loglêers</li>
+            <li><strong>Foutsporing</strong> &mdash; Maak 'n vasgehaakte RetroAchievements-sinkronisering skoon</li>
         </ul>
 
         <h3 id="emulators-play">Emulators en Speel</h3>
@@ -645,7 +657,7 @@
         <p>Stel op watter ontginners eerste loop en watter aan-/afgeskakel is by <strong>Instellings &rarr; Ontginning &rarr; Ontginner</strong>. Sleep-en-los om prioriteit te herrangskik. Gedeaktiveerde ontginners word nie tydens ontginning probeer nie en ontketen nie API-statuswaarskuwings op die Kontrolebord nie.</p>
 
         <h3>Tempolimiete</h3>
-        <p>Elke ontginner het instelbare tempolimiete om API-drosseling te voorkom. Verstekvertragings word konserwatief ingestel. Verminder vertragings op eie risiko &mdash; om API-tempolimiete te oorskry kan lei tot tydelike verbanning vanaf die betrokke diens.</p>
+        <p>RetroDB versprei sy versoeke aan elke diens vanself; daar is niks om te stel nie. Wanneer 'n diens sê sy limiet is bereik, hou RetroDB op om dit te vra tot die tyd wat die diens gee, en sê dit (sien <a href="#ts-scraping">Probleemoplossing</a>).</p>
     </div>
 </section>
 
@@ -1510,7 +1522,7 @@
 
         <h3>Grootmaat-HLTB-opsoek</h3>
         <p>Voer 'n HowLongToBeat-opsoek uit vir elke speletjie sonder 'n speeltyd-beraming. Elke passing word gepunt volgens titel + platform + vrystellingsjaar; hoë-vertroue-passings word outomaties gestoor. Enigiets onder die vertroue-drempel (of met botsende platforms) word geparkeer vir menslike hersiening.</p>
-        <p><em>Geen eksterne afhanklikhede (gebruik die gebundelde vanlyn HLTB-datastel)</em></p>
+        <p><em>Soek elke speletjie op die HowLongToBeat-webwerf op, so dit het internettoegang nodig</em></p>
 
         <h3>HLTB Hangende Hersiening</h3>
         <p>Hersieningstou vir dubbelsinnige passings wat deur Grootmaat-HLTB-opsoek na vore gebring word. Elke hangende ry wys die bronspeletjie langs die HLTB-kandidaat (titel, platform, vrystellingsjaar, vertroue). Keur goed, verwerp, of kies 'n ander passing per ry. Die hersienings-nutsprogramkaart verskyn slegs in die ROM-nutsgoed-middelpunt wanneer daar ten minste een hangende passing is.</p>
@@ -1781,82 +1793,225 @@
 <section id="troubleshooting" class="help-section card">
     <h2 class="card-title">Probleemoplossing</h2>
     <div class="card-body">
-        <h3>Algemene Probleme</h3>
+        <p>Probleme is volgens funksie gegroepeer. Tik 'n woord uit die boodskap wat jy sien in die soekkassie bo-aan hierdie bladsy om daarnatoe te spring. Die meeste boodskappe laat ook 'n reël in die <a href="#logs">Logbekyker</a> (net vir administrateurs), wat meer sê.</p>
 
-        <h4>"No extensions found for system"</h4>
-        <p>Die stelselgids benodig 'n geldige ES-DE <code>systeminfo.txt</code>-lêer wat die ondersteunde ROM-lêeruitbreidings bepaal. Verseker dat jou ROM-gidsstruktuur by ES-DE-standaarde pas.</p>
+        <h3 id="ts-jobs">Lang take</h3>
 
-        <h4>"API Connection Failed"</h4>
+        <h4>'n Taak lyk vasgehaak</h4>
+        <p>Grootmaat-skraaptake, prestasie-sinkronisasies, PSN-verfrissings, beeldgrootte-veranderings en AI-vul-lopies wys 'n vorderingskennisgewing in die hoek. Sy knoppies laat die taak pouseer, stop of kanselleer. 'n Grootmaat-skraap stop tussen twee speletjies, so die speletjie wat besig is, word eers klaar; dit kan 'n minuut neem. As dit steeds loop, herbegin RetroDB: Instellings &rarr; Stelsel &rarr; Bedienerkontroles &rarr; <strong>Herbegin bediener</strong>.</p>
+
+        <h4>"Onderbroke take"-banier op die Kontrolebord</h4>
+        <p>'n Taak wat gedraai het of gewag het toe RetroDB gestop het, verskyn hier. <strong>Hervat</strong> gaan voort waar dit laas sy plek gestoor het. <strong>Maak toe</strong> laat dit vaar. <strong>Hervat almal</strong> en <strong>Maak almal toe</strong> doen dieselfde vir elke taak wat gelys is.</p>
+
+        <h3 id="ts-library">Speletjies byvoeg</h3>
+
+        <h4>"ROM-pad nie opgestel nie"</h4>
+        <p>Stel die gids wat jou stelselgidse bevat in by Instellings &rarr; Biblioteek &rarr; Paaie &rarr; <strong>ROM-teekpad</strong>, en druk dan <strong>Skandeer biblioteek</strong>.</p>
+
+        <h4>'n Skandering vind geen nuwe speletjies nie, of 'n stelsel ontbreek</h4>
         <ul>
-            <li>Gaan jou internetverbinding na</li>
-            <li>Verifieer API-sleutels by Instellings &rarr; Ontginning &rarr; API-sleutels</li>
-            <li>Wag as jy tempo-beperk is (sommige API's het daaglikse/uurlikse limiete)</li>
-            <li>Gaan na of die ontginner aangeskakel is (gedeaktiveerde ontginners wys "Gedeaktiveer" in Kontrolebord-status)</li>
-            <li>Kyk na die Logboekbekyker vir gedetailleerde foutboodskappe</li>
+            <li>Elke stelselgids het 'n ES-DE-lêer <code>systeminfo.txt</code> nodig wat sy lêeruitbreidings lys. 'n Gids sonder een word oorgeslaan; die Logbekyker wys <code>No extensions found</code> daarvoor. PS3-gidse het geen nodig nie.</li>
+            <li>Lêers moet direk in die stelselgids lê. Lêers in 'n subgids word oorgeslaan, behalwe vir PS3.</li>
+            <li>'n Lêer waarvan die uitbreiding nie in die lys is nie, word oorgeslaan.</li>
+            <li>'n Lêer wat verskuif of hernoem is, word as 'n nuwe speletjie bygevoeg. Instellings &rarr; Stelsel &rarr; <strong>Maak Vermiste ROM's Skoon</strong> verwyder die ou inskrywing.</li>
         </ul>
 
-        <h4>"Bulk Scrape Stuck"</h4>
-        <p>Gaan na Instellings &rarr; Stelsel &rarr; Probleemoplossing &rarr; <strong>"Maak Vasgehaakte Grootmaat-ontginning Skoon"</strong>. Dit herstel die taaktoestand sonder om jou data te raak.</p>
+        <h3 id="ts-scraping">Skraap</h3>
 
-        <h4>"RA Sync Queue Stuck"</h4>
-        <p>Maak die RetroAchievements-sinkronisasietou skoon vanaf Instellings &rarr; Stelsel &rarr; Probleemoplossing.</p>
-
-        <h4>"PSN Sync Stuck"</h4>
-        <p>Maak die PSN-verfristaak skoon vanaf Instellings &rarr; Stelsel &rarr; Probleemoplossing.</p>
-
-        <h4>"Museum Generation Stuck"</h4>
-        <p>Maak die museumopwekkingstaak skoon vanaf Instellings &rarr; Stelsel &rarr; Probleemoplossing.</p>
-
-        <h4>"Database Errors"</h4>
-        <ol>
-            <li>Skep 'n rugsteun indien moontlik (Instellings &rarr; Biblioteek &rarr; Rugsteun)</li>
-            <li>Probeer Instellings &rarr; Stelsel &rarr; Onderhoud &rarr; <strong>Optimeer Databasis</strong></li>
-            <li>Gaan lêertoestemmings op die <code>database/</code>-gids na</li>
-            <li>Laaste uitweg: herstel vanaf 'n rugsteun of verwyder die databasis en herskandeer</li>
-        </ol>
-
-        <h4>"Images Not Saving"</h4>
-        <p>Kontroleer dat RetroDB na sy media-gids kan skryf (<code>static/images/</code> tensy jy dit geskuif het). Op Linux of macOS gee <code>chmod -R u+rwX static/images/</code> jou rekening skryftoegang sonder om die beelde as programme te merk.</p>
-
-        <h4>"Page Slow or Unresponsive"</h4>
+        <h4>"Geen resultate gevind nie. Probeer 'n ander soekterm."</h4>
         <ul>
-            <li>Groot versamelings mag tyd neem om te laai &mdash; oneindige rol laai in groepe van 100</li>
-            <li>Probeer om die bladsy te herlaai om opgehoopte geheue vry te maak</li>
-            <li>Kyk na die blaaierkonsole vir JavaScript-foute</li>
-            <li>Probeer oorskakel na 'n tema met 'n ligter doek-effek (bv. Amber of Elite)</li>
-            <li>Doek-effekte bespeur hardeware outomaties; laer-end toestelle gebruik CPU-terugval teen 'n verminderde raamtempo</li>
+            <li>Kort die titel in die soekkassie in, of probeer die Engelse naam.</li>
+            <li>Kyk dat die bronne aangeskakel is en <strong>Aanlyn</strong> wys by Instellings &rarr; Skraap &rarr; Skraper.</li>
+            <li>'n Bron wat sy limiet bereik het, lewer niks tot die tyd wat hy gegee het nie (sien hieronder).</li>
         </ul>
 
-        <h4>"Interrupted Jobs"-banier op die Kontrolebord</h4>
-        <p>As RetroDB herbegin terwyl take loop, verskyn hulle in 'n herstelbanier. Klik <strong>"Hervat"</strong> individueel of <strong>"Hervat Almal"</strong> om hulle te herbegin. Klik <strong>"Verwerp"</strong> of <strong>"Verwerp Almal"</strong> om hulle skoon te maak.</p>
-
-        <h4>"PSN Authentication Failed"</h4>
+        <h4>Die data of prente behoort aan 'n ander speletjie</h4>
         <ul>
-            <li>NPSSO-tekens verval &mdash; genereer 'n nuwe een vanaf <code>ca.account.sony.com/api/v1/ssocookie</code></li>
-            <li>Maak seker jy is aangemeld by store.playstation.com voordat jy die koekie-URL besoek</li>
-            <li>RetroDB meld self weer aan solank Sony jou gestoorde NPSSO aanvaar. Sodra Sony dit weier, plak 'n nuwe een in Instellings &rarr; Rekening &rarr; PSN. Om 'n teken te vervang wat nog werk, meld eers by PlayStation af.</li>
+            <li>'n Grootmaat-skraap soek volgens die ROM se lêernaam, so 'n swak benoemde lêer vind die verkeerde speletjie. Hernoem die lêer, of skraap die speletjie op sy eie bladsy met 'n beter soektitel en kies die regte resultaat.</li>
+            <li>Merk in die Wysig speletjie-venster <strong>Behou hierdie titel wanneer geskraap word</strong> sodat latere skrape die naam met rus laat.</li>
+            <li>Vir baie speletjies, verhoog <strong>Minimum passingtelling</strong> by Instellings &rarr; Skraap &rarr; Skraper &rarr; Grootmaat-skraap-passingsfilter.</li>
         </ul>
+
+        <h4>'n Skraap vervang nie 'n slegte prent nie</h4>
+        <p>Skrape vul net leë prente, en skermkiekies word net bygevoeg. Verwyder die prent in die Wysig speletjie-venster en skraap dan weer. 'n Grootmaat-<strong>Volledige herskraap</strong> vervang prente tensy <strong>Behou bestaande media</strong> gemerk is. 'n Skermkiekie wat jy uitgevee het, word nie weer bygevoeg nie.</p>
+
+        <h4>"&hellip; sê sy limiet is bereik" of "&hellip; het die API-sleutel geweier"</h4>
+        <p>RetroDB hou op om daardie diens te vra tot die tyd in die boodskap. 'n Geweierde sleutel: korrigeer dit by Instellings &rarr; Skraap &rarr; API-sleutels en druk <strong>Stoor API-sleutels</strong>; stoor beëindig ook elke sodanige pouse in een slag. 'n Herbegin beëindig dit ook.</p>
+
+        <h4>'n Bron wys 'n rede in plaas van "Aanlyn"</h4>
+        <p>Die rede noem die probleem, soos "No API key" of "Invalid API key". Voer die sleutel in of korrigeer dit by Instellings &rarr; Skraap &rarr; API-sleutels (net administrateurs) en druk <strong>Stoor API-sleutels</strong>. 'n Gestoorde sleutel wys as sterretjies; los die kassie uit om dit te hou, of maak dit leeg en tik die nuwe sleutel.</p>
+
+        <h3 id="ts-bulk-scrape">Grootmaat-skraap</h3>
+
+        <h4>"Grootmaat-skraap vasgehaak"</h4>
+        <p>Druk <strong>Kanselleer</strong> in die Grootmaatskraap-venster; klik op die vorderingskennisgewing om dit oop te maak. Die speletjie wat geskraap word, word eers klaar. As dit steeds loop, sien <a href="#ts-jobs">'n Taak lyk vasgehaak</a>.</p>
+
+        <h4>Die meeste speletjies is "Oorgeslaan"</h4>
+        <ul>
+            <li><strong>Vul ontbrekende</strong> slaan 'n speletjie oor wat 'n grootmaat-skraap in die laaste 24 uur voltooi het.</li>
+            <li>'n Speletjie waarvan die skraap niks nuuts gevind het nie, tel ook as oorgeslaan.</li>
+            <li>Om hulle nou weer te skraap, gebruik <strong>Volledige herskraap</strong>; merk <strong>Behou bestaande media</strong> om jou prente te hou.</li>
+        </ul>
+
+        <h4>Baie speletjies "Misluk"</h4>
+        <p>Misluk beteken gewoonlik dat geen resultaat naby genoeg was om te stoor nie. Verlaag <strong>Minimum passingtelling</strong> of <strong>Minimum titelgehalte</strong> by Instellings &rarr; Skraap &rarr; Skraper &rarr; Grootmaat-skraap-passingsfilter, en kyk die lêernaam na. Die Logbekyker lys elke speletjie waarvoor geen passing gevind is nie.</p>
+
+        <h4>"'n Skraap vir &hellip; loop reeds"</h4>
+        <p>Daardie stelsel word reeds in dieselfde modus geskraap. Wag daarvoor, of kanselleer dit. 'n Skraap van 'n ander stelsel wag in die ry en begin vanself.</p>
+
+        <h3 id="ts-ai-fill">AI-vul</h3>
+
+        <h4>"KI het geen data teruggestuur nie. Kontroleer jou API-sleutel en verskafferinstellings."</h4>
+        <p>Kies by Instellings &rarr; Skraap &rarr; API-sleutels die <strong>KI-metadata-verskaffer</strong>, voer sy sleutel in, druk <strong>Stoor API-sleutels</strong>, en dan <strong>Toets gestoorde KI-sleutel</strong>. As die KI-diens geweier het, sê die boodskap eerder hoekom, soos geen krediet oor nie.</p>
+
+        <h4>"AI het geen ontbrekende velde gevind om te vul nie"</h4>
+        <p>Nie 'n fout nie: die speletjie het niks leeg wat AI-vul kan vul nie.</p>
+
+        <h4>Grootmaat-AI-vul het vanself gestop</h4>
+        <p>Dit stop nadat drie speletjies agtereenvolgens geen antwoord kry nie. Kyk die sleutel na met <strong>Toets gestoorde KI-sleutel</strong>, en laat dit dan weer loop. Speletjies wat reeds gevul is, hou wat hulle gekry het.</p>
+
+        <h3 id="ts-images">Prente</h3>
+
+        <h4>Prente ontbreek ná 'n skraap</h4>
+        <p>'n Prent wat nie afgelaai kan word nie, word sonder boodskap oorgeslaan; die Logbekyker sê hoekom. Kyk dat RetroDB in sy mediagids kan skryf (<code>static/images/</code> tensy jy dit verskuif het). Op Linux of macOS gee <code>chmod -R u+rwX static/images/</code> jou rekening skryftoegang sonder om die prente as programme te merk.</p>
+
+        <h4>Opskalering lyk of dit nie werk nie</h4>
+        <ul>
+            <li>Die eerste opskalering laai die Real-ESRGAN-model af, so dit het internettoegang nodig.</li>
+            <li>'n GPU het werkende drywers nodig (CUDA vir NVIDIA, ROCm vir AMD). As die GPU misluk, skuif opskalering na die CPU.</li>
+            <li>As die opskaler glad nie kan loop nie, vergroot RetroDB prente eerder op die gewone manier (Lanczos). <code>logs/upscale_worker.log</code> sê hoekom.</li>
+        </ul>
+
+        <h3 id="ts-play">Speletjies speel</h3>
+
+        <h4>Die speletjie maak op 'n ander rekenaar oop</h4>
+        <p><strong>Speel</strong> begin die emulator op die rekenaar waarop RetroDB loop, nie op die toestel waarop jy dit gedruk het nie.</p>
+
+        <h4>"Emulatorprogram nie op PATH gevind nie"</h4>
+        <p>Wysig op die Emulators-bladsy, onder <strong>Geregistreerde emulators</strong>, die emulator en vul <strong>Programpad-oorskrywing</strong> met die program se ligging in. Of voeg die gids wat dit bevat by <strong>Emulatorvouers</strong> by. Vir RetroArch, gebruik <strong>Bespeur outomaties</strong> op die RetroArch-kaart, en dan <strong>Stoor</strong>.</p>
+
+        <h4>"Geen emulator opgestel vir stelsel &hellip; nie" of "Die emulator &hellip; is afgeskakel"</h4>
+        <p>Kies 'n emulator vir die stelsel onder <strong>Toewysing per stelsel</strong> op die Emulators-bladsy, of skakel die emulator aan onder <strong>Geregistreerde emulators</strong>. 'n Speletjie wat op 'n emulator gestel is wat nie meer bestaan nie: maak daardie keuse leeg in sy Wysig speletjie-venster.</p>
+
+        <h4>"&hellip; geen RetroArch-core is daarvoor gestel nie" of "RetroArch-core nie gevind nie"</h4>
+        <p>Kyk op die Emulators-bladsy dat die RetroArch-kaart na die gids met jou cores wys (<strong>Bespeur outomaties</strong> vul dit in), en druk dan <strong>Stoor</strong>. Installeer 'n ontbrekende core met RetroArch se eie core-aflaaier. Of kies 'n ander emulator vir die stelsel onder <strong>Toewysing per stelsel</strong>.</p>
+
+        <h4>"ROM-lêer nie gevind nie" of "ROM-pad is buite die opgestelde skandeergidse"</h4>
+        <p>Die lêer is sedert die laaste skandering verskuif of uitgevee, of lê buite jou ROM-gids. Sit dit terug in die stelselgids en skandeer die biblioteek weer.</p>
+
+        <h4>"Hierdie speletjie loop reeds"</h4>
+        <p>Maak die emulatorvenster toe, of aanvaar die aanbod om dit toe te maak en weer te begin.</p>
+
+        <h4>"Kon nie die &hellip;-core aflaai nie"</h4>
+        <p>Speel in RetroDB laai 'n ontbrekende core die eerste keer wat jy speel af, tensy <strong>Laai 'n ontbrekende core af wanneer “Speel” gedruk word</strong> op die Emulators-bladsy afgeskakel is. Kyk die internetverbinding na en druk weer Speel, of druk <strong>Installeer cores vir my stelsels</strong> op die Emulators-bladsy.</p>
+
+        <h3 id="ts-cheats">Kulkodes</h3>
+
+        <h4>"Geen kulkodes is vir hierdie speletjie gevind nie."</h4>
+        <p>Laai die kulkodepakket vir die emulator af op die Kulkodes-kaart van die Emulators-bladsy, of voer daar 'n gids met jou eie kulkodes in. Kulkodes werk in die speler, DuckStation en PCSX2.</p>
+
+        <h4>'n Aangeskakelde kulkode doen niks</h4>
+        <p>Kulkodes geld die volgende keer wat jy Speel druk. 'n Kulkode wat aan is, skakel RetroAchievements se hardcore-modus af terwyl jy speel.</p>
+
+        <h4>"Laat loop &hellip; een keer sodat dit sy instellings skep, en speel dan weer."</h4>
+        <p>DuckStation of PCSX2 het nog nie sy instellingsgids gemaak nie. Begin die emulator een keer op sy eie en druk dan weer Speel.</p>
+
+        <h3 id="ts-achievements">Prestasies en trofeë</h3>
+
+        <h4>'n RetroAchievements-sinkronisering is vasgehaak of wag</h4>
+        <p>Een RetroAchievements-taak loop op 'n slag; die res wag in die ry in die vorderingskennisgewing. Sy stopknoppie beëindig die lopende taak, en elke wagtende taak het 'n <strong>Verwyder uit wagry</strong>-knoppie.</p>
+
+        <h4>"RetroAchievements is nie opgestel nie"</h4>
+        <p>Stoor jou RetroAchievements-gebruikersnaam en web-API-sleutel by Instellings &rarr; Rekening &rarr; My Profiel &rarr; RetroAchievements-instellings.</p>
+
+        <h4>"RetroAchievements het jou nie aangemeld nie"</h4>
+        <p>Aanmelding vir speel het jou RetroAchievements-wagwoord nodig, nie die API-sleutel nie. Dit tree in werking die volgende keer wat jy Speel druk.</p>
+
+        <h4>"Geen speletjies gevind nie. Kontroleer dat jou Steam-profiel en speletjiebesonderhede op Publiek gestel is."</h4>
+        <p>Stel op die Steam-webwerf jou profiel en sy speletjiebesonderhede op Publiek. Jou Steam-sleutel en 17-syfer Steam-ID gaan in by Instellings &rarr; Rekening &rarr; My Profiel &rarr; Steam.</p>
 
         <h4>"OpenXBL het daardie sleutel nie aanvaar nie"</h4>
         <ul>
-            <li>Kopieer die sleutel weer van <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> af en plak dit in Instellings &rarr; My Profiel &rarr; Xbox</li>
-            <li>"OpenXBL se uurlimiet is bereik" beteken die sleutel het sy 150 versoeke vir hierdie uur gebruik; wag en probeer weer</li>
+            <li>Kopieer die sleutel weer van <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> af en plak dit by Instellings &rarr; Rekening &rarr; My Profiel &rarr; Xbox.</li>
+            <li>"OpenXBL se uurlimiet is bereik" beteken die sleutel het sy 150 versoeke hierdie uur gebruik. Sinkroniseer later weer; dit begin met die speletjies wat nog nie gesinkroniseer is nie.</li>
         </ul>
 
-        <h4>"Image Upscaling Errors"</h4>
+        <h4>"PSN-verifikasie het misluk"</h4>
         <ul>
-            <li>Die Real-ESRGAN ONNX-model word met eerste gebruik afgelaai &mdash; verseker internettoegang</li>
-            <li>GPU-versnelling vereis versoenbare drywers (CUDA vir NVIDIA, ROCm vir AMD)</li>
-            <li>As die GPU misluk, val die stelsel outomaties terug na CPU-verwerking</li>
+            <li>Sony aanvaar nie meer jou gestoorde NPSSO-teken nie. Kry 'n nuwe een met die stappe by Instellings &rarr; Rekening &rarr; My Profiel &rarr; PlayStation Network, en druk dan <strong>Stoor &amp; Toets Koppeling</strong>.</li>
+            <li>RetroDB hou die aanmelding vanself aan solank Sony die teken aanvaar. Om 'n teken te vervang wat nog werk, meld eers by PlayStation af.</li>
         </ul>
 
-        <h3>Werkverrigtingswenke</h3>
+        <h4>'n PSN-trofee-sinkronisering is vasgehaak</h4>
+        <p>'n PSN-verfrissing het stopknoppies in sy vorderingskennisgewing. 'n Volledige trofee-sinkronisering het niks; 'n herbegin van RetroDB beëindig dit.</p>
+
+        <h4>Versamelaartrofeë wys almal as nie verdien nie</h4>
+        <p>Druk <strong>Verfris vordering</strong> op die Versamelaartrofeë-bladsy. Om die bladsy oop te maak, tel hulle nie.</p>
+
+        <h4>"Geen HLTB-passing vir &hellip; gevind nie"</h4>
+        <p>Tik die titel wat HowLongToBeat gebruik in die soekkassie en soek weer. As HowLongToBeat gesê het dit het te veel versoeke gekry, wag RetroDB 15 minute voordat dit weer vra, en 'n soektog vind tot dan niks.</p>
+
+        <h3 id="ts-tools">Museum en ROM-gereedskap</h3>
+
+        <h4>"Geen KI-verskaffer opgestel nie"</h4>
+        <p>Die Museum skryf sy bladsye met die KI-verskaffer wat by Instellings &rarr; Skraap &rarr; API-sleutels gestel is. Stel een op, en genereer dan weer.</p>
+
+        <h4>"Museum-generering vasgehaak"</h4>
+        <p>Druk <strong>Kanselleer</strong> onder die vorderingsbalk op die Museum-bladsy.</p>
+
+        <h4>"chdman nie gevind nie. Installeer asseblief MAME-gereedskap."</h4>
+        <p>Installeer die MAME-gereedskap, wat <code>chdman</code> insluit, of stel sy ligging in by ROM-gereedskap &rarr; Instellings.</p>
+
+        <h4>"Hierdie skanderingsresultate het verval. Skandeer weer en verwyder dan."</h4>
+        <p>Laat die skandering weer loop, en verwyder dan uit die nuwe resultate.</p>
+
+        <h3 id="ts-accounts">Rekeninge en aanmelding</h3>
+
+        <h4>"Te veel aanmeldpogings. Probeer asseblief later weer."</h4>
+        <p>Ná vyf verkeerde wagwoorde in vyf minute, wag vyf minute en probeer weer.</p>
+
+        <h4>'n Vergete wagwoord</h4>
+        <p>Daar is geen herstel per e-pos nie. 'n Administrateur stel 'n nuwe wagwoord by Instellings &rarr; Rekening &rarr; Gebruikerbestuur. As die enigste administrateur syne vergeet, herstel 'n rugsteun wat gemaak is toe die wagwoord bekend was.</p>
+
+        <h4>"Jy het nie toestemming om toegang tot hierdie funksie te kry nie"</h4>
+        <p>Jou rol sluit nie daardie funksie in nie. 'n Administrateur kan jou rol verander by Instellings &rarr; Rekening &rarr; Gebruikerbestuur.</p>
+
+        <h3 id="ts-data">Databasis, rugsteun en opdaterings</h3>
+
+        <h4>"Databasisfoute"</h4>
+        <ol>
+            <li>Skep indien moontlik 'n rugsteun (Instellings &rarr; Biblioteek &rarr; Rugsteun)</li>
+            <li>Probeer Instellings &rarr; Stelsel &rarr; Onderhoud &rarr; <strong>Optimeer databasis</strong>. Dit kan misluk terwyl 'n taak skryf; wag dat take klaar is en probeer weer.</li>
+            <li>Kontroleer lêertoestemmings op die <code>database/</code>-gids</li>
+            <li>Laaste uitweg: herstel uit 'n rugsteun</li>
+        </ol>
+
+        <h4>"'n Agtergrondtaak loop tans. Wag totdat dit klaar is voordat jy herstel."</h4>
+        <p>Laat die taak klaar maak, of stop dit by sy vorderingskennisgewing, en herstel dan. Herbegin RetroDB ná 'n herstel.</p>
+
+        <h4>"Hierdie kopie van RetroDB is 'n git-checkout. Dateer dit op met git pull."</h4>
+        <p>Die opdateerder installeer net oor 'n afgelaaide uitgawe. 'n Kopie wat met git gemaak is, word met <code>git pull</code> opgedateer.</p>
+
+        <h4>'n Opdatering het misluk</h4>
+        <p>'n Mislukte aflaai installeer niks; druk weer <strong>Laai opdatering af</strong>. 'n Mislukte installasie sit die ou weergawe vanself terug en sê hoekom. Besonderhede is in <code>logs/update.log</code>.</p>
+
+        <h3 id="ts-performance">Bladsye en spoed</h3>
+
+        <h4>"Bladsy stadig of reageer nie"</h4>
         <ul>
-            <li>Hou jou blaaier op datum vir beste werkverrigting</li>
+            <li>Groot versamelings kan tyd neem om te laai &mdash; oneindige rol laai in groepe van 100</li>
+            <li>Probeer die bladsy herlaai om opgehoopte geheue skoon te maak</li>
+            <li>Kyk die blaaier se konsole vir JavaScript-foute</li>
+            <li>Probeer oorskakel na 'n tema met 'n ligter doekeffek (bv. Amber of Elite)</li>
+            <li>Doekeffekte bespeur hardeware outomaties; swakker toestelle gebruik 'n CPU-terugval teen 'n laer raamsnelheid</li>
+        </ul>
+
+        <h4>Werkverrigtingswenke</h4>
+        <ul>
+            <li>Hou jou blaaier op datum vir die beste prestasie</li>
             <li>Maak ander blaaieroortjies toe wanneer jy met baie groot versamelings werk</li>
-            <li>Gebruik stelselfilters om die aantal speletjies wat gelyktydig vertoon word, te verminder</li>
-            <li>Voer Optimeer Databasis gereeld uit na groot bewerkings (ontginning, skoonmaak, invoere)</li>
-            <li>Doek-tema-effekte bespeur hardeware outomaties; laer-end toestelle gebruik CPU-terugval</li>
+            <li>Gebruik stelselfilters om minder speletjies op 'n slag te wys</li>
+            <li>Laat Optimeer databasis gereeld loop ná groot bewerkings (skraap, skoonmaak, invoere)</li>
         </ul>
     </div>
 </section>
@@ -2094,4 +2249,8 @@ kbd {
     background: rgba(76, 201, 240, 0.05);
 }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset_url('js/help-search.js') }}" defer></script>
 {% endblock %}

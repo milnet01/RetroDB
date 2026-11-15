@@ -776,6 +776,34 @@
     overflow-x: auto;
 }
 
+/* PASS-59-307 — the manual's search box (static/js/help-search.js). */
+.help-search {
+    margin-bottom: var(--spacing-lg);
+}
+
+.help-search .search-box {
+    min-width: 0;
+}
+
+.help-search-status {
+    margin-top: var(--spacing-sm);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.help-search-status:empty {
+    display: none;
+}
+
+.help-search-hidden {
+    display: none !important;
+}
+
+::highlight(help-search) {
+    background-color: color-mix(in srgb, var(--status-warning) 45%, transparent);
+    color: var(--text-primary);
+}
+
 /* A long command or path wraps on a phone. */
 @media (max-width: 600px) {
     .help-page code {

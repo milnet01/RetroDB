@@ -773,7 +773,7 @@ def api_psn_fetch_library():
 
     if not npsso:
         return error(
-            _('PSN NPSSO not configured. Add it in Settings \u2192 API Keys.'), 400)
+            _('PSN NPSSO not configured. Add it under Settings \u2192 My Profile.'), 400)
 
     # Check local psn_games table first (Pass 31.1 — per user).
     try:

@@ -13,6 +13,17 @@
     </div>
 </div>
 
+<!-- PASS-59-307 — search the manual (static/js/help-search.js) -->
+<div class="help-search" role="search">
+    <div class="search-box">
+        <span class="search-icon" aria-hidden="true">&#128269;</span>
+        <label for="helpSearch" class="visually-hidden">{{ _('Search the manual') }}</label>
+        <input type="search" id="helpSearch" class="search-input"
+               placeholder="{{ _('Search the manual') }}" autocomplete="off" spellcheck="false">
+    </div>
+    <p id="helpSearchStatus" class="help-search-status" role="status" aria-live="polite"></p>
+</div>
+
 <!-- Help Navigation -->
 <div class="help-nav" data-sticky-nav>
     <a href="#installation" class="help-nav-item">Instalasi</a>
@@ -62,7 +73,7 @@
     <div class="card-body">
         <h3>Persyaratan Sistem</h3>
         <ul>
-            <li><strong>Python 3.8+</strong> dengan pip</li>
+            <li><strong>Python 3.12+</strong> dengan pip</li>
             <li><strong>Peramban web</strong> (Chrome, Firefox, Safari, Edge)</li>
             <li><strong>Sistem Operasi:</strong> Linux, Windows 10/11, atau macOS</li>
         </ul>
@@ -87,7 +98,7 @@
 
         <h3>Yang Dilakukan install.py</h3>
         <ul>
-            <li>Memverifikasi Python 3.8+ dan pip tersedia</li>
+            <li>Memverifikasi Python 3.12+ dan pip tersedia</li>
             <li>Memasang dependensi Python dari <code>requirements.txt</code></li>
             <li>Membuat <code>config.py</code> dari template contoh</li>
             <li>Membuat direktori yang diperlukan (database, log, folder media)</li>
@@ -142,9 +153,9 @@
   snes/
     Chrono Trigger (USA).sfc
   psx/
-    Final Fantasy VII (USA)/
-      Final Fantasy VII (USA) (Disc 1).chd
-      Final Fantasy VII (USA) (Disc 2).chd</pre>
+    Final Fantasy VII (USA) (Disc 1).chd
+    Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>Simpan berkas ROM langsung di folder sistem. Berkas di sub-folder dilewati, kecuali untuk PS3.</p>
         <p>Setiap folder sistem harus berisi berkas <code>systeminfo.txt</code> gaya ES-DE yang mendefinisikan ekstensi berkas yang didukung. RetroDB membaca berkas ini saat memindai untuk mengenali berkas mana yang merupakan ROM yang valid untuk setiap sistem.</p>
 
         <div class="help-tip">
@@ -551,10 +562,11 @@
 
         <h3>Tab System</h3>
         <ul>
-            <li><strong>Maintenance</strong> &mdash; Optimasi database (VACUUM/ANALYZE), pembersihan media yatim, pembersihan ROM yang hilang, hapus data hasil scraping, hapus impor CLZ, standardisasi gambar massal</li>
-            <li><strong>Server</strong> &mdash; Konfigurasi server (host, port, mode debug)</li>
-            <li><strong>Logging</strong> &mdash; Pengaturan tingkat log untuk berbagai kategori</li>
-            <li><strong>Troubleshooting</strong> &mdash; Bersihkan pengambilan data massal yang macet, bersihkan antrean sinkronisasi RA, bersihkan penyegaran PSN, bersihkan pembuatan museum, mulai ulang server</li>
+            <li><strong>Pemeliharaan</strong> &mdash; Bersihkan ROM yang hilang, hapus impor CLZ atau data hasil scrape, hapus berkas media yang tidak dipakai game mana pun, hapus tautan ke berkas media yang sudah tidak ada, dan optimalkan database</li>
+            <li><strong>Pembaruan</strong> &mdash; Periksa, unduh, dan pasang versi baru</li>
+            <li><strong>Server</strong> &mdash; Mulai ulang atau matikan RetroDB</li>
+            <li><strong>Logging</strong> &mdash; Pengaturan tingkat log untuk berbagai kategori, dan berkas lognya</li>
+            <li><strong>Pemecahan Masalah</strong> &mdash; Bersihkan sinkronisasi RetroAchievements yang macet</li>
         </ul>
 
         <h3 id="emulators-play">Emulator dan Bermain</h3>
@@ -645,7 +657,7 @@
         <p>Konfigurasikan scraper mana yang berjalan lebih dulu dan mana yang aktif/nonaktif di <strong>Settings &rarr; Scraping &rarr; Scraper</strong>. Seret dan lepas untuk mengurutkan ulang prioritas. Scraper yang dinonaktifkan tidak akan dicoba selama pengambilan data dan tidak akan memicu peringatan status API di Dasbor.</p>
 
         <h3>Pembatasan Laju</h3>
-        <p>Setiap scraper memiliki batas laju yang dapat dikonfigurasi untuk mencegah pembatasan API. Jeda bawaan diatur secara konservatif. Mengurangi jeda adalah risiko Anda sendiri &mdash; melebihi batas laju API dapat mengakibatkan pemblokiran sementara dari layanan terkait.</p>
+        <p>RetroDB mengatur sendiri jeda permintaannya ke setiap layanan; tidak ada yang perlu diatur. Saat sebuah layanan menyatakan batasnya sudah tercapai, RetroDB berhenti meminta ke layanan itu sampai waktu yang diberikannya, dan memberi tahu Anda (lihat <a href="#ts-scraping">Pemecahan Masalah</a>).</p>
     </div>
 </section>
 
@@ -1510,7 +1522,7 @@
 
         <h3>Bulk HLTB Lookup</h3>
         <p>Jalankan pencarian HowLongToBeat untuk setiap game yang belum memiliki estimasi waktu bermain. Setiap kecocokan dinilai berdasarkan judul + platform + tahun rilis; kecocokan dengan keyakinan tinggi disimpan otomatis. Apa pun yang di bawah ambang keyakinan (atau dengan platform yang bertentangan) diparkir untuk ditinjau manusia.</p>
-        <p><em>Tanpa dependensi eksternal (menggunakan dataset HLTB offline bawaan)</em></p>
+        <p><em>Mencari setiap game di situs HowLongToBeat, jadi memerlukan akses internet</em></p>
 
         <h3>HLTB Pending Review</h3>
         <p>Antrean tinjauan untuk kecocokan ambigu yang ditemukan oleh Bulk HLTB Lookup. Setiap baris tertunda menampilkan game sumber berdampingan dengan kandidat HLTB (judul, platform, tahun rilis, tingkat keyakinan). Setujui, tolak, atau pilih kecocokan lain per baris. Kartu perkakas tinjauan hanya muncul di hub ROM Tools saat ada setidaknya satu kecocokan yang tertunda.</p>
@@ -1781,44 +1793,211 @@
 <section id="troubleshooting" class="help-section card">
     <h2 class="card-title">Pemecahan Masalah</h2>
     <div class="card-body">
-        <h3>Masalah Umum</h3>
+        <p>Masalah dikelompokkan menurut fitur. Ketik sebuah kata dari pesan yang Anda lihat ke kotak pencarian di bagian atas halaman ini untuk langsung menuju ke sana. Sebagian besar pesan juga meninggalkan satu baris di <a href="#logs">Penampil Log</a> (khusus admin), yang memberi keterangan lebih lengkap.</p>
 
-        <h4>"No extensions found for system"</h4>
-        <p>Folder sistem memerlukan berkas <code>systeminfo.txt</code> gaya ES-DE yang valid yang mendefinisikan ekstensi berkas ROM yang didukung. Pastikan struktur direktori ROM Anda sesuai dengan standar ES-DE.</p>
+        <h3 id="ts-jobs">Job yang Berjalan Lama</h3>
 
-        <h4>"API Connection Failed"</h4>
+        <h4>Sebuah job tampak macet</h4>
+        <p>Scrape massal, sinkronisasi achievement, penyegaran PSN, pengubahan ukuran gambar, dan proses Isi dengan AI menampilkan notifikasi progres di pojok layar. Tombol-tombolnya menjeda, menghentikan, atau membatalkan job. Scrape massal berhenti di antara dua game, jadi game yang sedang diproses selesai dulu; itu bisa memakan waktu satu menit. Jika job masih berjalan, mulai ulang RetroDB: Pengaturan &rarr; Sistem &rarr; Kontrol Server &rarr; <strong>Mulai Ulang Server</strong>.</p>
+
+        <h4>Spanduk "Job Terhenti" di Dasbor</h4>
+        <p>Job yang sedang berjalan atau menunggu saat RetroDB berhenti ditampilkan di sini. <strong>Lanjutkan</strong> meneruskannya dari tempat terakhir ia menyimpan posisinya. <strong>Tutup</strong> membuangnya. <strong>Lanjutkan Semua</strong> dan <strong>Tutup Semua</strong> melakukan hal yang sama untuk setiap job dalam daftar.</p>
+
+        <h3 id="ts-library">Menambah Game</h3>
+
+        <h4>"Jalur ROM belum dikonfigurasi"</h4>
+        <p>Atur folder yang berisi folder-folder sistem Anda di Pengaturan &rarr; Pustaka &rarr; Jalur &rarr; <strong>Jalur Pustaka ROM</strong>, lalu tekan <strong>Pindai Pustaka</strong>.</p>
+
+        <h4>Pemindaian tidak menemukan game baru, atau ada sistem yang hilang</h4>
         <ul>
-            <li>Periksa koneksi internet Anda</li>
-            <li>Verifikasi kunci API di Settings &rarr; Scraping &rarr; API Keys</li>
-            <li>Tunggu jika terkena batas laju (beberapa API memiliki batas harian/jam)</li>
-            <li>Periksa apakah scraper diaktifkan (scraper yang dinonaktifkan menampilkan "Disabled" di status Dasbor)</li>
-            <li>Periksa Log Viewer untuk pesan error yang rinci</li>
+            <li>Setiap folder sistem memerlukan berkas ES-DE <code>systeminfo.txt</code> yang mencantumkan ekstensi berkasnya. Folder tanpa berkas itu dilewati; Penampil Log menampilkan <code>No extensions found</code> untuknya. Folder PS3 tidak memerlukannya.</li>
+            <li>Berkas harus berada langsung di folder sistem. Berkas di sub-folder dilewati, kecuali untuk PS3.</li>
+            <li>Berkas dengan ekstensi yang tidak ada dalam daftar dilewati.</li>
+            <li>Berkas yang dipindahkan atau diganti namanya ditambahkan sebagai game baru. Pengaturan &rarr; Sistem &rarr; <strong>Bersihkan ROM yang Hilang</strong> menghapus entri lamanya.</li>
         </ul>
 
-        <h4>"Bulk Scrape Stuck"</h4>
-        <p>Buka Settings &rarr; System &rarr; Troubleshooting &rarr; <strong>"Clear Stuck Bulk Scrape"</strong>. Ini mengatur ulang status job tanpa mempengaruhi data Anda.</p>
+        <h3 id="ts-scraping">Scraping</h3>
 
-        <h4>"RA Sync Queue Stuck"</h4>
-        <p>Bersihkan antrean sinkronisasi RetroAchievements dari Settings &rarr; System &rarr; Troubleshooting.</p>
+        <h4>"No results found. Try a different search term."</h4>
+        <ul>
+            <li>Persingkat judul di kotak pencarian, atau coba nama bahasa Inggrisnya.</li>
+            <li>Periksa bahwa sumbernya diaktifkan dan menampilkan <strong>Online</strong> di Pengaturan &rarr; Scraping &rarr; Scraper.</li>
+            <li>Sumber yang mencapai batasnya tidak mengembalikan apa pun sampai waktu yang diberikannya (lihat di bawah).</li>
+        </ul>
 
-        <h4>"PSN Sync Stuck"</h4>
-        <p>Bersihkan job penyegaran PSN dari Settings &rarr; System &rarr; Troubleshooting.</p>
+        <h4>Data atau gambarnya milik game lain</h4>
+        <ul>
+            <li>Scrape massal mencari berdasarkan nama berkas ROM, jadi berkas yang namanya buruk menemukan game yang salah. Ganti nama berkasnya, atau scrape game itu di halamannya sendiri dengan judul pencarian yang lebih baik, lalu pilih hasil yang benar.</li>
+            <li>Di jendela Edit Game, centang <strong>Pertahankan judul ini saat scraping</strong> agar scrape berikutnya tidak mengubah namanya.</li>
+            <li>Untuk banyak game, naikkan <strong>Skor Kecocokan Minimum</strong> di Pengaturan &rarr; Scraping &rarr; Scraper &rarr; Penyaringan Kecocokan Scraping Massal.</li>
+        </ul>
 
-        <h4>"Museum Generation Stuck"</h4>
-        <p>Bersihkan job pembuatan museum dari Settings &rarr; System &rarr; Troubleshooting.</p>
+        <h4>Scrape tidak mengganti gambar yang buruk</h4>
+        <p>Scrape hanya mengisi gambar yang kosong, dan screenshot hanya ditambahkan. Hapus gambarnya di jendela Edit Game, lalu scrape lagi. <strong>Scrape Ulang Penuh</strong> massal mengganti gambar kecuali <strong>Pertahankan media yang ada</strong> dicentang. Screenshot yang sudah Anda hapus tidak ditambahkan lagi.</p>
 
-        <h4>"Database Errors"</h4>
+        <h4>"&hellip; menyatakan batasnya sudah tercapai" atau "&hellip; menolak kunci API"</h4>
+        <p>RetroDB berhenti meminta ke layanan itu sampai waktu yang tertulis di pesan. Kunci yang ditolak: perbaiki di Pengaturan &rarr; Scraping &rarr; Kunci API dan tekan <strong>Simpan Kunci API</strong>; menyimpan juga mengakhiri semua jeda seperti itu sekaligus. Memulai ulang juga mengakhirinya.</p>
+
+        <h4>Sebuah sumber menampilkan alasan, bukan "Online"</h4>
+        <p>Alasan itu menyebut masalahnya, misalnya "No API key" atau "Invalid API key". Masukkan atau perbaiki kuncinya di Pengaturan &rarr; Scraping &rarr; Kunci API (khusus admin) dan tekan <strong>Simpan Kunci API</strong>. Kunci yang tersimpan tampil sebagai bintang; biarkan kotaknya untuk mempertahankannya, atau kosongkan lalu ketik kunci yang baru.</p>
+
+        <h3 id="ts-bulk-scrape">Scrape Massal</h3>
+
+        <h4>Scrape massal macet</h4>
+        <p>Tekan <strong>Batal</strong> di jendela Scraping Massal; klik notifikasi progres untuk membukanya. Game yang sedang di-scrape selesai dulu. Jika masih berjalan, lihat <a href="#ts-jobs">Sebuah job tampak macet</a>.</p>
+
+        <h4>Sebagian besar game "Dilewati"</h4>
+        <ul>
+            <li><strong>Isi yang Hilang</strong> melewati game yang sudah selesai di-scrape massal dalam 24 jam terakhir.</li>
+            <li>Game yang scrape-nya tidak menemukan hal baru juga dihitung dilewati.</li>
+            <li>Untuk men-scrape-nya lagi sekarang, gunakan <strong>Scrape Ulang Penuh</strong>; centang <strong>Pertahankan media yang ada</strong> untuk mempertahankan gambar Anda.</li>
+        </ul>
+
+        <h4>Banyak game "Gagal"</h4>
+        <p>Gagal biasanya berarti tidak ada hasil yang cukup mirip untuk disimpan. Turunkan <strong>Skor Kecocokan Minimum</strong> atau <strong>Kualitas Judul Minimum</strong> di Pengaturan &rarr; Scraping &rarr; Scraper &rarr; Penyaringan Kecocokan Scraping Massal, dan periksa nama berkasnya. Penampil Log mencantumkan setiap game yang tidak menemukan kecocokan.</p>
+
+        <h4>"A scrape for &hellip; is already running"</h4>
+        <p>Sistem itu sedang di-scrape dengan mode yang sama. Tunggu sampai selesai, atau batalkan. Scrape sistem lain menunggu dalam antrean dan mulai sendiri.</p>
+
+        <h3 id="ts-ai-fill">Isi dengan AI</h3>
+
+        <h4>"AI tidak mengembalikan data. Periksa kunci API dan pengaturan penyedia Anda."</h4>
+        <p>Di Pengaturan &rarr; Scraping &rarr; Kunci API, pilih <strong>Penyedia Metadata AI</strong>, masukkan kuncinya, tekan <strong>Simpan Kunci API</strong>, lalu <strong>Uji kunci AI yang tersimpan</strong>. Jika layanan AI menolak, pesannya menyebut alasannya, misalnya kredit habis.</p>
+
+        <h4>"AI tidak menemukan kolom kosong untuk diisi"</h4>
+        <p>Bukan error: game itu tidak punya kolom kosong yang bisa diisi oleh Isi dengan AI.</p>
+
+        <h4>Isi dengan AI massal berhenti sendiri</h4>
+        <p>Proses berhenti setelah tiga game berturut-turut tidak mendapat jawaban. Periksa kuncinya dengan <strong>Uji kunci AI yang tersimpan</strong>, lalu jalankan lagi. Game yang sudah terisi tetap memakai hasilnya.</p>
+
+        <h3 id="ts-images">Gambar</h3>
+
+        <h4>Gambar hilang setelah scrape</h4>
+        <p>Gambar yang gagal diunduh dilewati tanpa pesan; Penampil Log menjelaskan alasannya. Pastikan RetroDB dapat menulis ke folder medianya (<code>static/images/</code> kecuali Anda memindahkannya). Di Linux atau macOS, <code>chmod -R u+rwX static/images/</code> memberi akun Anda akses tulis tanpa menandai gambar sebagai program.</p>
+
+        <h4>Peningkatan resolusi tampaknya tidak berfungsi</h4>
+        <ul>
+            <li>Peningkatan resolusi pertama mengunduh model Real-ESRGAN, jadi memerlukan akses internet.</li>
+            <li>GPU memerlukan driver yang berfungsi (CUDA untuk NVIDIA, ROCm untuk AMD). Jika GPU gagal, peningkatan resolusi pindah ke CPU.</li>
+            <li>Jika peningkat resolusi sama sekali tidak bisa berjalan, RetroDB memperbesar gambar dengan cara biasa (Lanczos). <code>logs/upscale_worker.log</code> menjelaskan alasannya.</li>
+        </ul>
+
+        <h3 id="ts-play">Memainkan Game</h3>
+
+        <h4>Game terbuka di komputer lain</h4>
+        <p><strong>Mainkan</strong> menjalankan emulator di komputer yang menjalankan RetroDB, bukan di perangkat tempat Anda menekannya.</p>
+
+        <h4>"Program emulator tidak ditemukan di PATH"</h4>
+        <p>Di halaman Emulator, di bawah <strong>Emulator terdaftar</strong>, edit emulatornya dan isi <strong>Penimpaan jalur biner</strong> dengan lokasi programnya. Atau tambahkan folder yang menyimpannya di bawah <strong>Folder emulator</strong>. Untuk RetroArch, gunakan <strong>Deteksi otomatis</strong> pada kartu RetroArch, lalu <strong>Simpan</strong>.</p>
+
+        <h4>"Tidak ada emulator yang dikonfigurasi untuk sistem &hellip;" atau "Emulator &hellip; dimatikan"</h4>
+        <p>Pilih emulator untuk sistem itu di bawah <strong>Pemetaan per sistem</strong> di halaman Emulator, atau nyalakan emulatornya di bawah <strong>Emulator terdaftar</strong>. Jika game diatur ke emulator yang sudah tidak ada: hapus pilihan itu di jendela Edit Game-nya.</p>
+
+        <h4>"&hellip; belum ada core RetroArch yang diatur" atau "Core RetroArch tidak ditemukan"</h4>
+        <p>Di halaman Emulator, pastikan kartu RetroArch menunjuk ke folder yang berisi core Anda (<strong>Deteksi otomatis</strong> mengisinya), lalu tekan <strong>Simpan</strong>. Pasang core yang hilang dengan pengunduh core milik RetroArch sendiri. Atau pilih emulator lain untuk sistem itu di bawah <strong>Pemetaan per sistem</strong>.</p>
+
+        <h4>"File ROM tidak ditemukan" atau "Jalur ROM berada di luar folder pindaian yang dikonfigurasi"</h4>
+        <p>Berkasnya dipindahkan atau dihapus sejak pemindaian terakhir, atau berada di luar folder ROM Anda. Kembalikan ke folder sistem dan pindai pustaka lagi.</p>
+
+        <h4>"Game ini sudah berjalan"</h4>
+        <p>Tutup jendela emulator, atau terima tawaran untuk menutupnya dan memulai lagi.</p>
+
+        <h4>"Tidak dapat mengunduh core &hellip;"</h4>
+        <p>Mainkan di RetroDB mengunduh core yang belum ada saat pertama kali Anda bermain, kecuali <strong>Unduh core yang belum ada saat “Mainkan” ditekan</strong> dimatikan di halaman Emulator. Periksa koneksi internet dan tekan Mainkan lagi, atau tekan <strong>Pasang core untuk sistem saya</strong> di halaman Emulator.</p>
+
+        <h3 id="ts-cheats">Cheat</h3>
+
+        <h4>"Tidak ada cheat yang ditemukan untuk game ini."</h4>
+        <p>Unduh paket cheat untuk emulatornya di kartu Cheat pada halaman Emulator, atau impor folder cheat milik Anda di sana. Cheat berfungsi di pemutar, DuckStation, dan PCSX2.</p>
+
+        <h4>Cheat yang dinyalakan tidak berpengaruh</h4>
+        <p>Cheat berlaku saat Anda menekan Mainkan berikutnya. Cheat yang menyala mematikan mode hardcore RetroAchievements selama Anda bermain.</p>
+
+        <h4>"Jalankan &hellip; sekali agar membuat pengaturannya, lalu mainkan lagi."</h4>
+        <p>DuckStation atau PCSX2 belum membuat folder pengaturannya. Jalankan emulatornya sekali secara terpisah, lalu tekan Mainkan lagi.</p>
+
+        <h3 id="ts-achievements">Achievement dan Trofi</h3>
+
+        <h4>Sinkronisasi RetroAchievements macet atau menunggu</h4>
+        <p>Satu job RetroAchievements berjalan dalam satu waktu; sisanya menunggu dalam antrean di notifikasi progres. Tombol hentinya mengakhiri job yang berjalan, dan setiap job yang menunggu punya tombol <strong>Hapus dari antrean</strong>.</p>
+
+        <h4>"RetroAchievements belum dikonfigurasi"</h4>
+        <p>Simpan nama pengguna RetroAchievements dan kunci API web Anda di Pengaturan &rarr; Akun &rarr; Profil Saya &rarr; Pengaturan RetroAchievements.</p>
+
+        <h4>"RetroAchievements tidak memasukkan Anda"</h4>
+        <p>Masuk untuk bermain memerlukan kata sandi RetroAchievements Anda, bukan kunci API. Ini berlaku saat Anda menekan Mainkan berikutnya.</p>
+
+        <h4>"Tidak ada game yang ditemukan. Pastikan profil Steam dan detail game Anda diatur ke Publik."</h4>
+        <p>Di situs Steam, atur profil Anda dan detail game-nya ke Publik. Kunci Steam dan Steam ID 17 digit Anda diisi di Pengaturan &rarr; Akun &rarr; Profil Saya &rarr; Steam.</p>
+
+        <h4>"OpenXBL tidak menerima kunci itu"</h4>
+        <ul>
+            <li>Salin kuncinya lagi dari <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> dan tempel di Pengaturan &rarr; Akun &rarr; Profil Saya &rarr; Xbox.</li>
+            <li>"Batas per jam OpenXBL sudah tercapai" berarti kunci itu sudah memakai 150 permintaannya jam ini. Sinkronkan lagi nanti; sinkronisasi dimulai dari game yang belum disinkronkan.</li>
+        </ul>
+
+        <h4>"Autentikasi PSN gagal"</h4>
+        <ul>
+            <li>Sony tidak lagi menerima token NPSSO yang Anda simpan. Buat yang baru dengan langkah-langkah di Pengaturan &rarr; Akun &rarr; Profil Saya &rarr; PlayStation Network, lalu tekan <strong>Simpan &amp; Uji Koneksi</strong>.</li>
+            <li>RetroDB menjaga sesi masuk tetap berjalan sendiri selama Sony menerima tokennya. Untuk mengganti token yang masih berfungsi, keluar dari PlayStation dulu.</li>
+        </ul>
+
+        <h4>Sinkronisasi trofi PSN macet</h4>
+        <p>Penyegaran PSN punya tombol henti di notifikasi progresnya. Sinkronisasi trofi penuh tidak punya; memulai ulang RetroDB mengakhirinya.</p>
+
+        <h4>Semua Trofi Kolektor tampil belum diperoleh</h4>
+        <p>Tekan <strong>Segarkan Progres</strong> di halaman Trofi Kolektor. Membuka halaman itu tidak menghitungnya.</p>
+
+        <h4>'Tidak ada kecocokan HLTB yang ditemukan untuk &hellip;'</h4>
+        <p>Ketik judul yang dipakai HowLongToBeat di kotak pencarian dan cari lagi. Jika HowLongToBeat menyatakan terlalu banyak permintaan, RetroDB menunggu 15 menit sebelum bertanya lagi, dan pencarian tidak menemukan apa pun sampai saat itu.</p>
+
+        <h3 id="ts-tools">Museum dan Alat ROM</h3>
+
+        <h4>"Tidak ada penyedia AI yang dikonfigurasi"</h4>
+        <p>Museum menulis halamannya dengan penyedia AI yang diatur di Pengaturan &rarr; Scraping &rarr; Kunci API. Siapkan satu, lalu buat lagi.</p>
+
+        <h4>Pembuatan museum macet</h4>
+        <p>Tekan <strong>Batal</strong> di bawah bilah progres pada halaman Museum.</p>
+
+        <h4>"chdman tidak ditemukan. Silakan pasang MAME tools."</h4>
+        <p>Pasang MAME tools, yang menyertakan <code>chdman</code>, atau atur lokasinya di Alat ROM &rarr; Pengaturan.</p>
+
+        <h4>"Hasil pindaian ini sudah kedaluwarsa. Pindai lagi, lalu hapus."</h4>
+        <p>Jalankan pindaian lagi, lalu hapus dari hasil yang baru.</p>
+
+        <h3 id="ts-accounts">Akun dan Masuk</h3>
+
+        <h4>"Terlalu banyak percobaan login. Silakan coba lagi nanti."</h4>
+        <p>Setelah lima kata sandi salah dalam lima menit, tunggu lima menit lalu coba lagi.</p>
+
+        <h4>Lupa kata sandi</h4>
+        <p>Tidak ada reset lewat email. Admin mengatur kata sandi baru di Pengaturan &rarr; Akun &rarr; Manajemen Pengguna. Jika satu-satunya admin lupa kata sandinya, pulihkan backup yang dibuat saat kata sandi masih diketahui.</p>
+
+        <h4>"You do not have permission to access this feature"</h4>
+        <p>Peran Anda tidak mencakup fitur itu. Admin dapat mengubah peran Anda di Pengaturan &rarr; Akun &rarr; Manajemen Pengguna.</p>
+
+        <h3 id="ts-data">Database, Backup, dan Pembaruan</h3>
+
+        <h4>Kesalahan database</h4>
         <ol>
-            <li>Buat cadangan jika memungkinkan (Settings &rarr; Library &rarr; Backup)</li>
-            <li>Coba Settings &rarr; System &rarr; Maintenance &rarr; <strong>Optimize Database</strong></li>
+            <li>Buat backup jika memungkinkan (Pengaturan &rarr; Pustaka &rarr; Backup)</li>
+            <li>Coba Pengaturan &rarr; Sistem &rarr; Pemeliharaan &rarr; <strong>Optimalkan Database</strong>. Ini bisa gagal saat sebuah job sedang menulis; tunggu job selesai lalu coba lagi.</li>
             <li>Periksa hak akses berkas pada direktori <code>database/</code></li>
-            <li>Pilihan terakhir: pulihkan dari cadangan atau hapus database dan pindai ulang</li>
+            <li>Pilihan terakhir: pulihkan dari backup</li>
         </ol>
 
-        <h4>"Images Not Saving"</h4>
-        <p>Pastikan RetroDB dapat menulis ke folder medianya (<code>static/images/</code> kecuali Anda memindahkannya). Di Linux atau macOS, <code>chmod -R u+rwX static/images/</code> memberi akun Anda akses tulis tanpa menandai gambar sebagai program.</p>
+        <h4>"Tugas latar belakang sedang berjalan. Tunggu hingga selesai sebelum memulihkan."</h4>
+        <p>Biarkan job selesai, atau hentikan dari notifikasi progresnya, lalu pulihkan. Setelah pemulihan, mulai ulang RetroDB.</p>
 
-        <h4>"Page Slow or Unresponsive"</h4>
+        <h4>"Salinan RetroDB ini adalah git checkout. Perbarui dengan git pull."</h4>
+        <p>Pembaruan hanya dipasang di atas rilis yang diunduh. Salinan yang dibuat dengan git diperbarui dengan <code>git pull</code>.</p>
+
+        <h4>Pembaruan gagal</h4>
+        <p>Unduhan yang gagal tidak memasang apa pun; tekan <strong>Unduh pembaruan</strong> lagi. Pemasangan yang gagal mengembalikan versi lama sendiri dan menyebut alasannya. Rinciannya ada di <code>logs/update.log</code>.</p>
+
+        <h3 id="ts-performance">Halaman dan Kecepatan</h3>
+
+        <h4>Halaman lambat atau tidak merespons</h4>
         <ul>
             <li>Koleksi besar mungkin butuh waktu untuk dimuat &mdash; infinite scroll memuat dalam kelompok 100</li>
             <li>Coba muat ulang halaman untuk membersihkan memori yang menumpuk</li>
@@ -1827,36 +2006,12 @@
             <li>Efek canvas otomatis mendeteksi perangkat keras; perangkat kelas bawah menggunakan fallback CPU dengan frame rate yang lebih rendah</li>
         </ul>
 
-        <h4>Spanduk "Interrupted Jobs" di Dasbor</h4>
-        <p>Jika RetroDB dimulai ulang saat job sedang berjalan, job tersebut akan muncul di spanduk pemulihan. Klik <strong>"Resume"</strong> satu per satu atau <strong>"Resume All"</strong> untuk memulai ulang semuanya. Klik <strong>"Dismiss"</strong> atau <strong>"Dismiss All"</strong> untuk menghapusnya.</p>
-
-        <h4>"PSN Authentication Failed"</h4>
-        <ul>
-            <li>Token NPSSO kedaluwarsa &mdash; buat yang baru dari <code>ca.account.sony.com/api/v1/ssocookie</code></li>
-            <li>Pastikan Anda sudah masuk ke store.playstation.com sebelum mengunjungi URL cookie tersebut</li>
-            <li>RetroDB masuk kembali dengan sendirinya selama Sony menerima NPSSO Anda yang tersimpan. Setelah Sony menolaknya, tempelkan yang baru di Settings &rarr; Account &rarr; PSN. Untuk mengganti token yang masih berfungsi, keluar dari PlayStation terlebih dahulu.</li>
-        </ul>
-
-        <h4>"OpenXBL tidak menerima kunci itu"</h4>
-        <ul>
-            <li>Salin lagi kunci dari <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> lalu tempelkan di Pengaturan &rarr; Profil Saya &rarr; Xbox</li>
-            <li>"Batas per jam OpenXBL sudah tercapai" berarti kunci sudah memakai 150 permintaannya untuk jam ini; tunggu lalu coba lagi</li>
-        </ul>
-
-        <h4>"Image Upscaling Errors"</h4>
-        <ul>
-            <li>Model ONNX Real-ESRGAN diunduh saat pertama kali digunakan &mdash; pastikan ada akses internet</li>
-            <li>Akselerasi GPU memerlukan driver yang kompatibel (CUDA untuk NVIDIA, ROCm untuk AMD)</li>
-            <li>Jika GPU gagal, sistem otomatis kembali ke pemrosesan CPU</li>
-        </ul>
-
-        <h3>Tips Performa</h3>
+        <h4>Tips Performa</h4>
         <ul>
             <li>Jaga peramban Anda tetap mutakhir untuk performa terbaik</li>
             <li>Tutup tab peramban lain saat bekerja dengan koleksi yang sangat besar</li>
-            <li>Gunakan filter sistem untuk mengurangi jumlah game yang ditampilkan sekaligus</li>
-            <li>Jalankan Optimize Database secara berkala setelah operasi besar (scraping, pembersihan, impor)</li>
-            <li>Efek tema canvas otomatis mendeteksi perangkat keras; perangkat kelas bawah menggunakan fallback CPU</li>
+            <li>Gunakan filter sistem untuk mengurangi game yang ditampilkan sekaligus</li>
+            <li>Jalankan Optimalkan Database secara berkala setelah operasi besar (scraping, pembersihan, impor)</li>
         </ul>
     </div>
 </section>
@@ -2094,4 +2249,8 @@ kbd {
     background: rgba(76, 201, 240, 0.05);
 }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset_url('js/help-search.js') }}" defer></script>
 {% endblock %}

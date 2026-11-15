@@ -60,6 +60,7 @@ EXCLUDED = [
     'ai-fill-bulk.js',          # Page-specific (ROM Tools > Bulk AI Fill)
     'mame-names.js',            # Page-specific (ROM Tools > MAME Names)
     'updates.js',               # Page-specific (Settings > Updates + dashboard banner)
+    'help-search.js',           # Page-specific (Help manual search)
 ]
 
 BUNDLES = [

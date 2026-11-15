@@ -13,6 +13,17 @@
     </div>
 </div>
 
+<!-- PASS-59-307 — search the manual (static/js/help-search.js) -->
+<div class="help-search" role="search">
+    <div class="search-box">
+        <span class="search-icon" aria-hidden="true">&#128269;</span>
+        <label for="helpSearch" class="visually-hidden">{{ _('Search the manual') }}</label>
+        <input type="search" id="helpSearch" class="search-input"
+               placeholder="{{ _('Search the manual') }}" autocomplete="off" spellcheck="false">
+    </div>
+    <p id="helpSearchStatus" class="help-search-status" role="status" aria-live="polite"></p>
+</div>
+
 <!-- Help Navigation -->
 <div class="help-nav" data-sticky-nav>
     <a href="#installation" class="help-nav-item">설치</a>
@@ -62,7 +73,7 @@
     <div class="card-body">
         <h3>시스템 요구 사항</h3>
         <ul>
-            <li><strong>Python 3.8 이상</strong>(pip 포함)</li>
+            <li><strong>Python 3.12 이상</strong>(pip 포함)</li>
             <li><strong>웹 브라우저</strong>(Chrome, Firefox, Safari, Edge)</li>
             <li><strong>운영 체제:</strong> Linux, Windows 10/11 또는 macOS</li>
         </ul>
@@ -87,7 +98,7 @@
 
         <h3>install.py가 수행하는 작업</h3>
         <ul>
-            <li>Python 3.8 이상과 pip가 사용 가능한지 확인합니다</li>
+            <li>Python 3.12 이상과 pip가 사용 가능한지 확인합니다</li>
             <li><code>requirements.txt</code> 에서 Python 의존성을 설치합니다</li>
             <li>예제 템플릿에서 <code>config.py</code> 를 생성합니다</li>
             <li>필요한 디렉터리(데이터베이스, 로그, 미디어 폴더)를 생성합니다</li>
@@ -142,9 +153,9 @@
   snes/
     Chrono Trigger (USA).sfc
   psx/
-    Final Fantasy VII (USA)/
-      Final Fantasy VII (USA) (Disc 1).chd
-      Final Fantasy VII (USA) (Disc 2).chd</pre>
+    Final Fantasy VII (USA) (Disc 1).chd
+    Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>ROM 파일은 시스템 폴더 바로 아래에 두세요. 하위 폴더에 있는 파일은 PS3를 제외하고 건너뜁니다.</p>
         <p>각 시스템 폴더에는 지원되는 파일 확장자를 정의하는 ES-DE <code>systeminfo.txt</code> 파일이 있어야 합니다. RetroDB는 스캔 중에 이 파일을 읽어 각 시스템에서 어떤 파일이 유효한 ROM인지 식별합니다.</p>
 
         <div class="help-tip">
@@ -551,10 +562,11 @@
 
         <h3>시스템 탭</h3>
         <ul>
-            <li><strong>유지 관리</strong> &mdash; 데이터베이스 최적화(VACUUM/ANALYZE), 고아 미디어 정리, 누락된 ROM 정리, 스크래핑 데이터 지우기, CLZ 가져오기 지우기, 일괄 이미지 표준화</li>
-            <li><strong>서버</strong> &mdash; 서버 구성(호스트, 포트, 디버그 모드)</li>
-            <li><strong>로깅</strong> &mdash; 카테고리별 로그 레벨 설정</li>
-            <li><strong>문제 해결</strong> &mdash; 멈춘 일괄 스크래핑 지우기, RA 동기화 큐 지우기, PSN 새로고침 지우기, 박물관 생성 지우기, 서버 재시작</li>
+            <li><strong>유지 관리</strong> &mdash; 누락된 ROM 정리, CLZ 가져오기나 스크래핑 데이터 삭제, 어떤 게임도 쓰지 않는 미디어 파일 삭제, 사라진 미디어 파일로 가는 링크 해제, 데이터베이스 최적화</li>
+            <li><strong>업데이트</strong> &mdash; 새 버전 확인, 다운로드, 설치</li>
+            <li><strong>서버</strong> &mdash; RetroDB 다시 시작 또는 종료</li>
+            <li><strong>로그</strong> &mdash; 카테고리별 로그 수준 설정과 로그 파일</li>
+            <li><strong>문제 해결</strong> &mdash; 멈춘 RetroAchievements 동기화 해제</li>
         </ul>
 
         <h3 id="emulators-play">에뮬레이터와 실행</h3>
@@ -644,7 +656,7 @@
         <p><strong>설정 &rarr; 스크래핑 &rarr; 스크레이퍼</strong>에서 어떤 스크레이퍼를 먼저 실행할지, 어떤 것을 활성화/비활성화할지 구성합니다. 드래그 앤 드롭으로 우선순위를 재정렬하세요. 비활성화된 스크레이퍼는 스크래핑 중에 시도되지 않으며 대시보드에서 API 상태 경고를 트리거하지 않습니다.</p>
 
         <h3>요청 제한(Rate Limiting)</h3>
-        <p>각 스크레이퍼에는 API 제한(throttling)을 방지하기 위한 구성 가능한 요청 제한이 있습니다. 기본 지연 시간은 보수적으로 설정되어 있습니다. 지연 시간 단축은 사용자 책임입니다 &mdash; API 요청 제한을 초과하면 해당 서비스에서 일시적으로 차단될 수 있습니다.</p>
+        <p>RetroDB는 각 서비스로 보내는 요청의 간격을 알아서 조절하므로, 따로 설정할 것이 없습니다. 서비스가 한도에 도달했다고 알려 오면, RetroDB는 그 서비스가 알려 준 시각까지 요청을 멈추고 그 사실을 표시합니다(<a href="#ts-scraping">문제 해결</a> 참조).</p>
     </div>
 </section>
 
@@ -1504,7 +1516,7 @@
 
         <h3>일괄 HLTB 조회</h3>
         <p>플레이 시간 추정치가 없는 모든 게임에 대해 HowLongToBeat 조회를 실행합니다. 각 일치 항목은 제목 + 플랫폼 + 출시 연도로 점수가 매겨지며, 신뢰도가 높은 일치 항목은 자동으로 저장됩니다. 신뢰도 임곗값 미만(또는 플랫폼이 충돌하는) 항목은 사람의 검토를 위해 보류됩니다.</p>
-        <p><em>외부 의존성 없음(번들된 오프라인 HLTB 데이터셋 사용)</em></p>
+        <p><em>HowLongToBeat 웹사이트에서 게임을 하나씩 조회하므로 인터넷 연결이 필요합니다</em></p>
 
         <h3>HLTB 검토 대기</h3>
         <p>일괄 HLTB 조회에서 나온 모호한 일치 항목을 위한 검토 큐입니다. 각 보류 행은 HLTB 후보(제목, 플랫폼, 출시 연도, 신뢰도)와 함께 소스 게임을 보여줍니다. 행마다 승인, 거부 또는 다른 일치 항목을 선택할 수 있습니다. 검토 도구 카드는 보류 중인 일치 항목이 하나 이상 있을 때만 ROM 도구 허브에 나타납니다.</p>
@@ -1775,82 +1787,225 @@
 <section id="troubleshooting" class="help-section card">
     <h2 class="card-title">문제 해결</h2>
     <div class="card-body">
-        <h3>일반적인 문제</h3>
+        <p>문제는 기능별로 묶여 있습니다. 보이는 메시지의 단어를 이 페이지 맨 위의 검색창에 입력하면 해당 항목으로 바로 이동합니다. 대부분의 메시지는 <a href="#logs">로그 뷰어</a>(관리자 전용)에도 한 줄이 남으며, 거기에 더 자세한 내용이 있습니다.</p>
 
-        <h4>"No extensions found for system"</h4>
-        <p>시스템 폴더에는 지원되는 ROM 파일 확장자를 정의하는 유효한 ES-DE <code>systeminfo.txt</code> 파일이 필요합니다. ROM 디렉터리 구조가 ES-DE 표준과 일치하는지 확인하세요.</p>
+        <h3 id="ts-jobs">오래 걸리는 작업</h3>
 
-        <h4>"API Connection Failed"</h4>
+        <h4>작업이 멈춘 것 같습니다</h4>
+        <p>대량 스크래핑, 업적 동기화, PSN 새로고침, 이미지 크기 조정, AI 채우기를 실행하면 구석에 진행 상황 알림이 나타납니다. 알림의 버튼으로 작업을 일시 중지하거나 중지하거나 취소할 수 있습니다. 일괄 스크래핑은 게임과 게임 사이에서 멈추므로 진행 중인 게임이 먼저 끝납니다. 1분쯤 걸릴 수 있습니다. 그래도 계속 실행되면 RetroDB를 다시 시작하세요. 설정 &rarr; 시스템 &rarr; 서버 제어 &rarr; <strong>서버 다시 시작</strong>입니다.</p>
+
+        <h4>대시보드의 "중단된 작업" 배너</h4>
+        <p>RetroDB가 멈췄을 때 실행 중이거나 대기 중이던 작업이 여기에 표시됩니다. <strong>재개</strong>는 마지막으로 위치를 저장한 곳부터 이어서 합니다. <strong>해제</strong>는 작업을 버립니다. <strong>모두 재개</strong>와 <strong>모두 해제</strong>는 목록에 있는 모든 작업에 같은 일을 합니다.</p>
+
+        <h3 id="ts-library">게임 추가</h3>
+
+        <h4>"ROM 경로가 설정되지 않았습니다"</h4>
+        <p>시스템 폴더들이 들어 있는 폴더를 설정 &rarr; 라이브러리 &rarr; 경로 &rarr; <strong>ROM 라이브러리 경로</strong>에서 지정한 다음 <strong>라이브러리 스캔</strong>을 누르세요.</p>
+
+        <h4>스캔해도 새 게임이 나오지 않거나 시스템이 빠져 있습니다</h4>
         <ul>
-            <li>인터넷 연결을 확인하세요</li>
-            <li>설정 &rarr; 스크래핑 &rarr; API 키에서 API 키를 확인하세요</li>
-            <li>요청이 제한된 경우 기다리세요(일부 API는 일일/시간별 상한이 있음)</li>
-            <li>스크레이퍼가 활성화되어 있는지 확인하세요(비활성화된 스크레이퍼는 대시보드 상태에 "비활성화"로 표시됨)</li>
-            <li>자세한 오류 메시지는 로그 뷰어를 확인하세요</li>
+            <li>각 시스템 폴더에는 파일 확장자를 나열한 ES-DE <code>systeminfo.txt</code>가 필요합니다. 없는 폴더는 건너뛰며, 로그 뷰어에는 그 폴더에 대해 <code>No extensions found</code>가 표시됩니다. PS3 폴더에는 필요하지 않습니다.</li>
+            <li>파일은 시스템 폴더 바로 아래에 있어야 합니다. 하위 폴더에 있는 파일은 PS3를 제외하고 건너뜁니다.</li>
+            <li>확장자가 목록에 없는 파일은 건너뜁니다.</li>
+            <li>이동했거나 이름을 바꾼 파일은 새 게임으로 추가됩니다. 설정 &rarr; 시스템 &rarr; <strong>누락된 ROM 정리</strong>로 이전 항목을 지울 수 있습니다.</li>
         </ul>
 
-        <h4>"Bulk Scrape Stuck"</h4>
-        <p>설정 &rarr; 시스템 &rarr; 문제 해결 &rarr; <strong>"멈춘 일괄 스크래핑 지우기"</strong>로 이동하세요. 이는 데이터에 영향을 주지 않고 작업 상태를 재설정합니다.</p>
+        <h3 id="ts-scraping">스크래핑</h3>
 
-        <h4>"RA Sync Queue Stuck"</h4>
-        <p>설정 &rarr; 시스템 &rarr; 문제 해결에서 RetroAchievements 동기화 큐를 지우세요.</p>
-
-        <h4>"PSN Sync Stuck"</h4>
-        <p>설정 &rarr; 시스템 &rarr; 문제 해결에서 PSN 새로고침 작업을 지우세요.</p>
-
-        <h4>"Museum Generation Stuck"</h4>
-        <p>설정 &rarr; 시스템 &rarr; 문제 해결에서 박물관 생성 작업을 지우세요.</p>
-
-        <h4>"Database Errors"</h4>
-        <ol>
-            <li>가능하면 백업을 만드세요(설정 &rarr; 라이브러리 &rarr; 백업)</li>
-            <li>설정 &rarr; 시스템 &rarr; 유지 관리 &rarr; <strong>데이터베이스 최적화</strong>를 시도하세요</li>
-            <li><code>database/</code> 디렉터리의 파일 권한을 확인하세요</li>
-            <li>최후의 수단: 백업에서 복원하거나 데이터베이스를 삭제하고 다시 스캔하세요</li>
-        </ol>
-
-        <h4>"Images Not Saving"</h4>
-        <p>RetroDB가 미디어 폴더(옮기지 않았다면 <code>static/images/</code>)에 쓸 수 있는지 확인하세요. Linux나 macOS에서는 <code>chmod -R u+rwX static/images/</code>가 이미지를 프로그램으로 표시하지 않고 내 계정에 쓰기 권한을 줍니다.</p>
-
-        <h4>"Page Slow or Unresponsive"</h4>
+        <h4>"No results found. Try a different search term."</h4>
         <ul>
-            <li>큰 컬렉션은 로드하는 데 시간이 걸릴 수 있습니다 &mdash; 무한 스크롤은 100개 단위로 로드합니다</li>
-            <li>누적된 메모리를 비우기 위해 페이지를 새로고침해 보세요</li>
-            <li>JavaScript 오류는 브라우저 콘솔을 확인하세요</li>
-            <li>더 가벼운 캔버스 효과의 테마로 전환해 보세요(예: Amber 또는 Elite)</li>
-            <li>캔버스 효과는 하드웨어를 자동 감지하며, 저사양 기기는 낮은 프레임 속도로 CPU 폴백을 사용합니다</li>
+            <li>검색창의 제목을 줄이거나 영어 이름으로 시도해 보세요.</li>
+            <li>설정 &rarr; 스크래핑 &rarr; 스크래퍼에서 소스가 켜져 있고 <strong>온라인</strong>으로 표시되는지 확인하세요.</li>
+            <li>한도에 도달한 소스는 그 소스가 알려 준 시각까지 아무것도 반환하지 않습니다(아래 참조).</li>
         </ul>
 
-        <h4>대시보드의 "Interrupted Jobs" 배너</h4>
-        <p>작업이 실행되는 동안 RetroDB가 재시작되면, 작업이 복구 배너에 나타납니다. 개별적으로 <strong>"재개"</strong>를 클릭하거나 <strong>"모두 재개"</strong>를 클릭하여 다시 시작하세요. <strong>"해제"</strong> 또는 <strong>"모두 해제"</strong>를 클릭하여 지우세요.</p>
-
-        <h4>"PSN Authentication Failed"</h4>
+        <h4>데이터나 이미지가 다른 게임의 것입니다</h4>
         <ul>
-            <li>NPSSO 토큰은 만료됩니다 &mdash; <code>ca.account.sony.com/api/v1/ssocookie</code> 에서 새로 생성하세요</li>
-            <li>쿠키 URL을 방문하기 전에 store.playstation.com에 로그인되어 있는지 확인하세요</li>
-            <li>Sony가 저장된 NPSSO를 받아들이는 동안 RetroDB가 스스로 다시 로그인합니다. Sony가 거부하면 설정 &rarr; 계정 &rarr; PSN에 새 NPSSO를 붙여 넣으세요. 아직 작동하는 토큰을 바꾸려면 먼저 PlayStation에서 로그아웃하세요.</li>
+            <li>일괄 스크래핑은 ROM의 파일 이름으로 검색하므로, 이름이 잘못된 파일은 엉뚱한 게임을 찾습니다. 파일 이름을 고치거나, 그 게임의 페이지에서 더 나은 검색 제목으로 따로 스크래핑한 뒤 올바른 결과를 고르세요.</li>
+            <li>게임 편집 창에서 <strong>스크래핑할 때 이 제목 유지</strong>를 선택하면 이후 스크래핑이 이름을 바꾸지 않습니다.</li>
+            <li>게임이 많다면 설정 &rarr; 스크래핑 &rarr; 스크래퍼 &rarr; 일괄 스크래핑 일치 필터에서 <strong>최소 일치 점수</strong>를 높이세요.</li>
         </ul>
+
+        <h4>스크래핑해도 잘못된 이미지가 바뀌지 않습니다</h4>
+        <p>스크래핑은 비어 있는 이미지만 채우고, 스크린샷은 추가만 합니다. 게임 편집 창에서 이미지를 지운 뒤 다시 스크래핑하세요. 일괄 <strong>전체 재스크랩</strong>은 <strong>기존 미디어 유지</strong>를 선택하지 않으면 이미지를 교체합니다. 직접 삭제한 스크린샷은 다시 추가되지 않습니다.</p>
+
+        <h4>"&hellip;에서 사용 한도에 도달했다고 합니다" 또는 "&hellip;이(가) API 키를 거부했습니다"</h4>
+        <p>RetroDB는 메시지에 적힌 시각까지 그 서비스에 요청하지 않습니다. 키가 거부된 경우: 설정 &rarr; 스크래핑 &rarr; API 키에서 고치고 <strong>API 키 저장</strong>을 누르세요. 저장하면 이런 중단이 한꺼번에 모두 풀립니다. 다시 시작해도 풀립니다.</p>
+
+        <h4>소스에 "온라인" 대신 이유가 표시됩니다</h4>
+        <p>이유에는 문제가 적혀 있습니다. 예를 들어 "No API key"나 "Invalid API key"입니다. 설정 &rarr; 스크래핑 &rarr; API 키(관리자 전용)에서 키를 입력하거나 고치고 <strong>API 키 저장</strong>을 누르세요. 저장된 키는 별표로 표시됩니다. 입력란을 그대로 두면 유지되고, 비운 뒤 새 키를 입력할 수도 있습니다.</p>
+
+        <h3 id="ts-bulk-scrape">대량 스크래핑</h3>
+
+        <h4>일괄 스크래핑이 멈춤</h4>
+        <p>대량 스크래핑 창에서 <strong>취소</strong>를 누르세요. 창은 진행 상황 알림을 클릭하면 열립니다. 스크래핑 중인 게임이 먼저 끝납니다. 그래도 계속 실행되면 <a href="#ts-jobs">작업이 멈춘 것 같습니다</a>를 참조하세요.</p>
+
+        <h4>대부분의 게임이 "건너뜀"으로 나옵니다</h4>
+        <ul>
+            <li><strong>누락 채우기</strong>는 지난 24시간 안에 일괄 스크래핑이 끝난 게임을 건너뜁니다.</li>
+            <li>스크래핑해도 새로운 내용이 없던 게임도 건너뜀으로 셉니다.</li>
+            <li>지금 다시 스크래핑하려면 <strong>전체 재스크랩</strong>을 사용하세요. 이미지를 지키려면 <strong>기존 미디어 유지</strong>를 선택하세요.</li>
+        </ul>
+
+        <h4>많은 게임이 "실패"로 나옵니다</h4>
+        <p>실패는 보통 저장할 만큼 가까운 결과가 없었다는 뜻입니다. 설정 &rarr; 스크래핑 &rarr; 스크래퍼 &rarr; 일괄 스크래핑 일치 필터에서 <strong>최소 일치 점수</strong>나 <strong>최소 제목 품질</strong>을 낮추고, 파일 이름도 확인하세요. 일치를 찾지 못한 게임은 로그 뷰어에 모두 나열됩니다.</p>
+
+        <h4>"A scrape for &hellip; is already running"</h4>
+        <p>그 시스템은 같은 모드로 이미 스크래핑 중입니다. 끝날 때까지 기다리거나 취소하세요. 다른 시스템의 스크래핑은 대기열에서 기다렸다가 저절로 시작됩니다.</p>
+
+        <h3 id="ts-ai-fill">AI 채우기</h3>
+
+        <h4>"AI가 데이터를 반환하지 않았습니다. API 키와 공급자 설정을 확인하세요."</h4>
+        <p>설정 &rarr; 스크래핑 &rarr; API 키에서 <strong>AI 메타데이터 제공자</strong>를 고르고 키를 입력한 다음 <strong>API 키 저장</strong>, 이어서 <strong>저장된 AI 키 테스트</strong>를 누르세요. AI 서비스가 거부했다면, 예를 들어 크레딧이 남아 있지 않다는 식으로 메시지에 이유가 나옵니다.</p>
+
+        <h4>"AI가 채울 빈 항목을 찾지 못했습니다"</h4>
+        <p>오류가 아닙니다. 그 게임에는 AI 채우기가 채울 빈 항목이 없습니다.</p>
+
+        <h4>일괄 AI 채우기가 저절로 멈췄습니다</h4>
+        <p>세 게임 연속으로 답을 받지 못하면 멈춥니다. <strong>저장된 AI 키 테스트</strong>로 키를 확인한 뒤 다시 실행하세요. 이미 채워진 게임은 받은 내용을 그대로 유지합니다.</p>
+
+        <h3 id="ts-images">이미지</h3>
+
+        <h4>스크래핑 뒤에 이미지가 없습니다</h4>
+        <p>다운로드에 실패한 이미지는 메시지 없이 건너뜁니다. 이유는 로그 뷰어에 나옵니다. RetroDB가 미디어 폴더(옮기지 않았다면 <code>static/images/</code>)에 쓸 수 있는지 확인하세요. Linux나 macOS에서는 <code>chmod -R u+rwX static/images/</code>로 이미지를 프로그램으로 표시하지 않고 내 계정에 쓰기 권한을 줄 수 있습니다.</p>
+
+        <h4>업스케일이 작동하지 않는 것 같습니다</h4>
+        <ul>
+            <li>첫 업스케일은 Real-ESRGAN 모델을 다운로드하므로 인터넷 연결이 필요합니다.</li>
+            <li>GPU에는 작동하는 드라이버가 필요합니다(NVIDIA는 CUDA, AMD는 ROCm). GPU가 실패하면 업스케일은 CPU로 넘어갑니다.</li>
+            <li>업스케일러가 아예 실행되지 않으면, RetroDB는 대신 기본 방식(Lanczos)으로 이미지를 키웁니다. 이유는 <code>logs/upscale_worker.log</code>에 나옵니다.</li>
+        </ul>
+
+        <h3 id="ts-play">게임 플레이</h3>
+
+        <h4>게임이 다른 컴퓨터에서 열립니다</h4>
+        <p><strong>실행</strong>은 버튼을 누른 기기가 아니라 RetroDB가 돌아가는 컴퓨터에서 에뮬레이터를 시작합니다.</p>
+
+        <h4>"PATH에서 에뮬레이터 프로그램을 찾을 수 없습니다"</h4>
+        <p>에뮬레이터 페이지의 <strong>등록된 에뮬레이터</strong>에서 해당 에뮬레이터를 편집하고 <strong>실행 파일 경로 재정의</strong>에 프로그램 위치를 입력하세요. 또는 프로그램이 들어 있는 폴더를 <strong>에뮬레이터 폴더</strong>에 추가하세요. RetroArch는 RetroArch 카드의 <strong>자동 감지</strong>를 사용한 다음 <strong>저장</strong>을 누르세요.</p>
+
+        <h4>"시스템 &hellip;에 설정된 에뮬레이터가 없습니다" 또는 "에뮬레이터 &hellip;이(가) 꺼져 있습니다"</h4>
+        <p>에뮬레이터 페이지의 <strong>시스템별 매핑</strong>에서 그 시스템의 에뮬레이터를 고르거나, <strong>등록된 에뮬레이터</strong>에서 그 에뮬레이터를 켜세요. 이미 없어진 에뮬레이터로 설정된 게임은 게임 편집 창에서 그 선택을 지우세요.</p>
+
+        <h4>"&hellip; RetroArch 코어가 설정되지 않았습니다" 또는 "RetroArch 코어를 찾을 수 없습니다"</h4>
+        <p>에뮬레이터 페이지에서 RetroArch 카드가 코어가 들어 있는 폴더를 가리키는지 확인하고(<strong>자동 감지</strong>가 채워 줍니다) <strong>저장</strong>을 누르세요. 없는 코어는 RetroArch 자체의 코어 다운로더로 설치하세요. 또는 <strong>시스템별 매핑</strong>에서 그 시스템에 다른 에뮬레이터를 고르세요.</p>
+
+        <h4>"ROM 파일을 찾을 수 없습니다" 또는 "ROM 경로가 설정된 스캔 폴더 밖에 있습니다"</h4>
+        <p>마지막 스캔 이후 파일이 옮겨지거나 삭제되었거나, ROM 폴더 밖에 있습니다. 파일을 시스템 폴더에 다시 넣고 라이브러리를 다시 스캔하세요.</p>
+
+        <h4>"이 게임은 이미 실행 중입니다"</h4>
+        <p>에뮬레이터 창을 닫거나, 닫고 다시 시작하자는 제안을 수락하세요.</p>
+
+        <h4>"&hellip; 코어를 다운로드할 수 없습니다"</h4>
+        <p>RetroDB에서 플레이하면 처음 플레이할 때 없는 코어를 다운로드합니다. 다만 에뮬레이터 페이지에서 <strong>'실행'을 누를 때 없는 코어 다운로드</strong>를 꺼 둔 경우는 제외입니다. 인터넷 연결을 확인하고 실행을 다시 누르거나, 에뮬레이터 페이지의 <strong>내 시스템용 코어 설치</strong>를 누르세요.</p>
+
+        <h3 id="ts-cheats">치트</h3>
+
+        <h4>"이 게임의 치트를 찾지 못했습니다."</h4>
+        <p>에뮬레이터 페이지의 치트 카드에서 해당 에뮬레이터의 치트 팩을 다운로드하거나, 가지고 있는 치트 폴더를 그곳에서 가져오세요. 치트는 플레이어, DuckStation, PCSX2에서 작동합니다.</p>
+
+        <h4>켜 둔 치트가 아무 효과가 없습니다</h4>
+        <p>치트는 다음에 실행을 누를 때부터 적용됩니다. 치트가 켜져 있으면 플레이하는 동안 RetroAchievements 하드코어 모드가 꺼집니다.</p>
+
+        <h4>"&hellip;을(를) 한 번 실행해 설정을 만든 다음 다시 플레이하세요."</h4>
+        <p>DuckStation이나 PCSX2가 아직 설정 폴더를 만들지 않았습니다. 에뮬레이터를 한 번 단독으로 실행한 다음 실행을 다시 누르세요.</p>
+
+        <h3 id="ts-achievements">업적과 트로피</h3>
+
+        <h4>RetroAchievements 동기화가 멈췄거나 기다리고 있습니다</h4>
+        <p>RetroAchievements 작업은 한 번에 하나만 실행되고, 나머지는 진행 상황 알림 안에서 대기열로 기다립니다. 알림의 중지 버튼은 실행 중인 작업을 끝내며, 기다리는 작업에는 각각 <strong>대기열에서 제거</strong> 버튼이 있습니다.</p>
+
+        <h4>"RetroAchievements가 설정되지 않았습니다"</h4>
+        <p>RetroAchievements 사용자 이름과 웹 API 키를 설정 &rarr; 계정 &rarr; 내 프로필 &rarr; RetroAchievements 설정에 저장하세요.</p>
+
+        <h4>"RetroAchievements에서 로그인하지 못했습니다"</h4>
+        <p>플레이용 로그인에는 API 키가 아니라 RetroAchievements 비밀번호가 필요합니다. 다음에 실행을 누를 때부터 적용됩니다.</p>
+
+        <h4>"게임을 찾을 수 없습니다. Steam 프로필과 게임 세부 정보가 공개로 설정되어 있는지 확인하세요."</h4>
+        <p>Steam 웹사이트에서 프로필과 게임 세부 정보를 공개로 설정하세요. Steam 키와 17자리 Steam ID는 설정 &rarr; 계정 &rarr; 내 프로필 &rarr; Steam에 입력합니다.</p>
 
         <h4>"OpenXBL이 그 키를 받아들이지 않았습니다"</h4>
         <ul>
-            <li><a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a>에서 키를 다시 복사해 설정 &rarr; 내 프로필 &rarr; Xbox에 붙여 넣으세요</li>
-            <li>"OpenXBL의 시간당 한도에 도달했습니다"는 키가 이번 시간의 요청 150건을 모두 썼다는 뜻입니다. 기다렸다가 다시 시도하세요</li>
+            <li><a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a>에서 키를 다시 복사해 설정 &rarr; 계정 &rarr; 내 프로필 &rarr; Xbox에 붙여 넣으세요.</li>
+            <li>"OpenXBL의 시간당 한도에 도달했습니다"는 그 키가 이번 시간의 요청 150건을 모두 썼다는 뜻입니다. 나중에 다시 동기화하세요. 아직 동기화하지 않은 게임부터 시작합니다.</li>
         </ul>
 
-        <h4>"Image Upscaling Errors"</h4>
+        <h4>"PSN 인증에 실패했습니다"</h4>
         <ul>
-            <li>Real-ESRGAN ONNX 모델은 첫 사용 시 다운로드됩니다 &mdash; 인터넷 접근이 가능한지 확인하세요</li>
-            <li>GPU 가속에는 호환되는 드라이버가 필요합니다(NVIDIA용 CUDA, AMD용 ROCm)</li>
-            <li>GPU가 실패하면 시스템이 자동으로 CPU 처리로 폴백합니다</li>
+            <li>Sony가 저장해 둔 NPSSO 토큰을 더 이상 받아들이지 않습니다. 설정 &rarr; 계정 &rarr; 내 프로필 &rarr; PlayStation Network의 안내에 따라 새 토큰을 받은 다음 <strong>저장 및 연결 테스트</strong>를 누르세요.</li>
+            <li>Sony가 토큰을 받아들이는 동안에는 RetroDB가 알아서 로그인을 유지합니다. 아직 작동하는 토큰을 바꾸려면 먼저 PlayStation에서 로그아웃하세요.</li>
         </ul>
 
-        <h3>성능 팁</h3>
+        <h4>PSN 트로피 동기화가 멈췄습니다</h4>
+        <p>PSN 새로고침에는 진행 상황 알림에 중지 버튼이 있습니다. 전체 트로피 동기화에는 없습니다. RetroDB를 다시 시작하면 끝납니다.</p>
+
+        <h4>수집가 트로피가 모두 획득하지 않은 것으로 나옵니다</h4>
+        <p>수집가 트로피 페이지에서 <strong>진행 상황 새로고침</strong>을 누르세요. 페이지를 열기만 해서는 계산되지 않습니다.</p>
+
+        <h4>'"&hellip;"에 대한 HLTB 일치 항목을 찾을 수 없습니다'</h4>
+        <p>HowLongToBeat가 쓰는 제목을 검색창에 입력해 다시 조회하세요. HowLongToBeat가 요청이 너무 많다고 했다면, RetroDB는 15분을 기다린 뒤에 다시 요청하며, 그때까지 조회는 아무것도 찾지 못합니다.</p>
+
+        <h3 id="ts-tools">박물관과 ROM 도구</h3>
+
+        <h4>"설정된 AI 공급자가 없습니다"</h4>
+        <p>박물관은 설정 &rarr; 스크래핑 &rarr; API 키에서 정한 AI 공급자로 페이지를 씁니다. 하나를 설정한 뒤 다시 생성하세요.</p>
+
+        <h4>박물관 생성이 멈춤</h4>
+        <p>박물관 페이지의 진행 표시줄 아래에 있는 <strong>취소</strong>를 누르세요.</p>
+
+        <h4>"chdman을 찾을 수 없습니다. MAME 도구를 설치하세요."</h4>
+        <p><code>chdman</code>이 들어 있는 MAME 도구를 설치하거나, ROM 도구 &rarr; 설정에서 그 위치를 지정하세요.</p>
+
+        <h4>"이 스캔 결과는 만료되었습니다. 다시 스캔한 후 삭제하세요."</h4>
+        <p>스캔을 다시 실행한 다음 새 결과에서 삭제하세요.</p>
+
+        <h3 id="ts-accounts">계정과 로그인</h3>
+
+        <h4>"로그인 시도가 너무 많습니다. 잠시 후 다시 시도하세요."</h4>
+        <p>5분 안에 비밀번호를 다섯 번 틀리면, 5분을 기다린 뒤 다시 시도하세요.</p>
+
+        <h4>비밀번호를 잊었습니다</h4>
+        <p>이메일로 재설정하는 기능은 없습니다. 관리자가 설정 &rarr; 계정 &rarr; 사용자 관리에서 새 비밀번호를 정합니다. 유일한 관리자가 자기 비밀번호를 잊었다면, 비밀번호를 알던 때 만든 백업을 복원하세요.</p>
+
+        <h4>"You do not have permission to access this feature"</h4>
+        <p>내 역할에 그 기능이 포함되어 있지 않습니다. 관리자가 설정 &rarr; 계정 &rarr; 사용자 관리에서 역할을 바꿀 수 있습니다.</p>
+
+        <h3 id="ts-data">데이터베이스, 백업, 업데이트</h3>
+
+        <h4>데이터베이스 오류</h4>
+        <ol>
+            <li>가능하면 백업을 만드세요(설정 &rarr; 라이브러리 &rarr; 백업)</li>
+            <li>설정 &rarr; 시스템 &rarr; 유지 관리 &rarr; <strong>데이터베이스 최적화</strong>를 시도하세요. 작업이 쓰는 중이면 실패할 수 있으니, 작업이 끝나기를 기다린 뒤 다시 시도하세요.</li>
+            <li><code>database/</code> 디렉터리의 파일 권한을 확인하세요</li>
+            <li>최후의 수단: 백업에서 복원하세요</li>
+        </ol>
+
+        <h4>"백그라운드 작업이 실행 중입니다. 복원하기 전에 작업이 완료될 때까지 기다리세요."</h4>
+        <p>작업이 끝나게 두거나 진행 상황 알림에서 중지한 다음 복원하세요. 복원한 뒤에는 RetroDB를 다시 시작하세요.</p>
+
+        <h4>"이 RetroDB는 git 체크아웃입니다. git pull로 업데이트하세요."</h4>
+        <p>업데이트 기능은 다운로드한 릴리스 위에만 설치합니다. git으로 만든 사본은 <code>git pull</code>로 업데이트합니다.</p>
+
+        <h4>업데이트가 실패했습니다</h4>
+        <p>다운로드가 실패하면 아무것도 설치되지 않습니다. <strong>업데이트 다운로드</strong>를 다시 누르세요. 설치가 실패하면 이전 버전이 저절로 복구되고 이유가 표시됩니다. 자세한 내용은 <code>logs/update.log</code>에 있습니다.</p>
+
+        <h3 id="ts-performance">페이지와 속도</h3>
+
+        <h4>페이지가 느리거나 응답하지 않음</h4>
+        <ul>
+            <li>큰 컬렉션은 불러오는 데 시간이 걸릴 수 있습니다 &mdash; 무한 스크롤은 100개씩 불러옵니다</li>
+            <li>페이지를 새로고침해 쌓인 메모리를 비워 보세요</li>
+            <li>브라우저 콘솔에서 JavaScript 오류를 확인하세요</li>
+            <li>캔버스 효과가 더 가벼운 테마(예: Amber 또는 Elite)로 바꿔 보세요</li>
+            <li>캔버스 효과는 하드웨어를 자동으로 감지합니다. 사양이 낮은 기기는 프레임 속도를 낮춘 CPU 대체 방식을 씁니다</li>
+        </ul>
+
+        <h4>성능 팁</h4>
         <ul>
             <li>최상의 성능을 위해 브라우저를 최신 상태로 유지하세요</li>
-            <li>매우 큰 컬렉션으로 작업할 때는 다른 브라우저 탭을 닫으세요</li>
-            <li>한 번에 표시되는 게임을 줄이기 위해 시스템 필터를 사용하세요</li>
-            <li>대량 작업(스크래핑, 정리, 가져오기) 후에는 주기적으로 데이터베이스 최적화를 실행하세요</li>
-            <li>캔버스 테마 효과는 하드웨어를 자동 감지하며, 저사양 기기는 CPU 폴백을 사용합니다</li>
+            <li>아주 큰 컬렉션을 다룰 때는 다른 브라우저 탭을 닫으세요</li>
+            <li>시스템 필터로 한 번에 표시되는 게임을 줄이세요</li>
+            <li>큰 작업(스크래핑, 정리, 가져오기) 뒤에는 주기적으로 데이터베이스 최적화를 실행하세요</li>
         </ul>
     </div>
 </section>
@@ -2087,4 +2242,8 @@ kbd {
     background: rgba(76, 201, 240, 0.05);
 }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset_url('js/help-search.js') }}" defer></script>
 {% endblock %}

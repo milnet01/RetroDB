@@ -49,7 +49,9 @@ CORE_MODULES = (
     ('waitress', 'Waitress'),
 )
 
-MIN_PYTHON = (3, 8)
+# The oldest Python the locked requirements install on: numpy needs 3.12.
+# Raise it when `uv pip compile --python-version` refuses this one.
+MIN_PYTHON = (3, 12)
 
 
 # ── Distro detection ─────────────────────────────────────────────────────────

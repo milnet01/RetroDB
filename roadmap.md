@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=306 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=312 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -2841,6 +2841,90 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Old leftover code on the game page, which can never run, gets removed.
   Kind: refactor.
   Source: PASS-59-251 review 2026-11-09; split from PASS-59-287 2026-11-15.
+
+- ✅ [PASS-59-307] **Make the help manual searchable (feature, S).**
+  - **Do**: a search box on /help that hides sections without a match,
+    highlights the matches, says when nothing matches, and works the
+    same in every language's manual.
+  Shipped 2026-11-15: static/js/help-search.js on all 21 help templates;
+  hides parts without every typed word, accent-blind, CSS Highlight API
+  marks; nav links hide with their targets. Browser-checked desktop +
+  375px, de/ja/he.
+  **Layman:** A search box at the top of the help page shows only the parts of the manual that mention what you type.
+  Kind: feature.
+  Source: user-request-2026-11-15.
+
+- ✅ [PASS-59-308] **Give the help manual troubleshooting for each feature (doc, M).**
+  - **Do**: troubleshooting grouped by feature, each fix checked
+    against the code, mirrored into all 20 help.<locale>.html. Replaces
+    the "Bulk Scrape Stuck" advice, whose button PASS-59-306 removed.
+  Shipped 2026-11-15: Troubleshooting rewritten by feature (ts-*
+  anchors), every fix checked against code; also fixed the manual's psx
+  sub-folder example, scraper-delay claim, HLTB offline claim and the
+  System Tab list. Mirrored into 20 locales; xh and zu have had no
+  native review. Gaps found: PASS-59-312.
+  **Layman:** The help manual's Troubleshooting section gets advice for when a feature such as scraping, playing or achievements does not work.
+  Kind: doc.
+  Source: user-request-2026-11-15.
+
+- ✅ [PASS-59-309] **Add a troubleshooting section to README.md for install and start-up (doc, S).**
+  - **Do**: install and start-up problems only, each checked against
+    install.py, the launchers and app.py.
+  Shipped 2026-11-15: README Troubleshooting. Found and fixed with it:
+  installer_core.MIN_PYTHON was 3.8 though the lock needs 3.12 (numpy
+  2.5.4; uv refuses 3.11); app.py's port-in-use text named a Settings >
+  System > Server Port that never existed.
+  **Layman:** The README says what to do when RetroDB will not install or start.
+  Kind: doc.
+  Source: user-request-2026-11-15.
+
+- 📋 [PASS-59-310] **Settings > System's "Clear Stuck RA Sync" says it cleared things it did not (fix, S).**
+  - **Why**: `clearStuckRASync` in `templates/settings.html` removes
+    localStorage keys `toast-controller.js` already drops on every page
+    load, then posts /api/achievements/sync-cancel and shows "RA sync
+    state and queue cleared!" whatever the reply (409 nothing running,
+    403 another user's job). That route cancels only a running sync,
+    never a refresh or a waiting item. The "Current RA Sync Queue" box
+    reads localStorage, not the server queue.
+  - **Real controls**: the progress toast's stop button and each waiting
+    item's "Remove from queue" in the toast.
+  - **Do**: decide with the Settings review whether the card goes
+    (the toast does the job) or shows the server queue and the real
+    result.
+  **Layman:** The button for a stuck RetroAchievements sync reports success even when nothing was stopped, and its queue box is always empty.
+  Kind: fix.
+  Source: PASS-59-308 research 2026-11-15.
+
+- 📋 [PASS-59-312] **Translate the English left on Settings, the scrape window and two messages (fix, M).**
+  - **Not wrapped for translation**: game_detail.html's scrape window
+    "No results found. Try a different search term." (and its siblings
+    there); services/auth.py "You do not have permission to access this
+    feature"; Settings: My Profile card heading, region chip "Remove",
+    "Add region...", "Add", "Save Naming Settings", the whole Bonus Disc
+    Management and Database Backup & Restore cards, the naming-builder
+    tag labels in JS, "Apply 0 Selected", the Add/Edit User modal titles
+    and the "User ... created successfully" reply, the RA queue box text.
+  - **Help manual**: the Data Normalization paragraph on company names
+    and spellings (Doom/DOOM, Eidos, Atari) is in help.html only; no
+    help.<locale>.html has it.
+  - **Note**: some locale manuals now quote the first two messages
+    translated, ahead of the app; wrapping them closes that gap.
+  **Layman:** Some buttons, headings and messages still show in English whatever language you pick; this translates them.
+  Kind: fix.
+  Source: PASS-59-308 translation and Settings inventory 2026-11-15.
+
+- 📋 [PASS-59-311] **Settings page review: remove, move and reword what makes it hard to use (ux, L).**
+  - **Review**: /mnt/Emulators/.claude/Scratchpad/RetroDB/settings-review/review.md
+    (evidence: inventory.md beside it). Section A lists ten bugs to fix
+    whatever is chosen: Add User silently sets the password "changeme";
+    non-admins see admin settings whose Save is refused; and others.
+  - **Waiting-on**: user (which of sections B-D to do, and in what
+    order, 2026-11-15). Recommendation: section A first (A1, A2 lead),
+    then Theme/Language and notification times to My Profile, then the
+    removals, the rewording, and the bigger moves last.
+  **Layman:** A review of every setting found broken buttons, settings in the wrong place and confusing words; the user chooses which changes to make.
+  Kind: ux.
+  Source: user-request-2026-11-15.
 
 ## 4.0.x — Security and data-loss fixes for the web version
 

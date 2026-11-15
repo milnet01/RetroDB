@@ -13,6 +13,17 @@
     </div>
 </div>
 
+<!-- PASS-59-307 — search the manual (static/js/help-search.js) -->
+<div class="help-search" role="search">
+    <div class="search-box">
+        <span class="search-icon" aria-hidden="true">&#128269;</span>
+        <label for="helpSearch" class="visually-hidden">{{ _('Search the manual') }}</label>
+        <input type="search" id="helpSearch" class="search-input"
+               placeholder="{{ _('Search the manual') }}" autocomplete="off" spellcheck="false">
+    </div>
+    <p id="helpSearchStatus" class="help-search-status" role="status" aria-live="polite"></p>
+</div>
+
 <!-- Help Navigation -->
 <div class="help-nav" data-sticky-nav>
     <a href="#installation" class="help-nav-item">Instalacja</a>
@@ -62,7 +73,7 @@
     <div class="card-body">
         <h3>Wymagania systemowe</h3>
         <ul>
-            <li><strong>Python 3.8+</strong> z pip</li>
+            <li><strong>Python 3.12+</strong> z pip</li>
             <li><strong>Przeglądarka internetowa</strong> (Chrome, Firefox, Safari, Edge)</li>
             <li><strong>System operacyjny:</strong> Linux, Windows 10/11 lub macOS</li>
         </ul>
@@ -87,7 +98,7 @@
 
         <h3>Co robi install.py</h3>
         <ul>
-            <li>Sprawdza dostępność Pythona 3.8+ i pip</li>
+            <li>Sprawdza dostępność Pythona 3.12+ i pip</li>
             <li>Instaluje zależności Pythona z pliku <code>requirements.txt</code></li>
             <li>Tworzy plik <code>config.py</code> na podstawie szablonu przykładowego</li>
             <li>Tworzy wymagane katalogi (baza danych, dzienniki, foldery multimediów)</li>
@@ -142,9 +153,9 @@
   snes/
     Chrono Trigger (USA).sfc
   psx/
-    Final Fantasy VII (USA)/
-      Final Fantasy VII (USA) (Disc 1).chd
-      Final Fantasy VII (USA) (Disc 2).chd</pre>
+    Final Fantasy VII (USA) (Disc 1).chd
+    Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>Trzymaj pliki ROM bezpośrednio w folderze systemu. Pliki w podfolderach są pomijane, z wyjątkiem PS3.</p>
         <p>Każdy folder systemowy powinien zawierać plik ES-DE <code>systeminfo.txt</code>, który definiuje obsługiwane rozszerzenia plików. RetroDB odczytuje go podczas skanowania, aby określić, które pliki są prawidłowymi ROM-ami dla danego systemu.</p>
 
         <div class="help-tip">
@@ -551,10 +562,11 @@
 
         <h3>Zakładka System</h3>
         <ul>
-            <li><strong>Konserwacja</strong> &mdash; optymalizacja bazy danych (VACUUM/ANALYZE), czyszczenie osieroconych multimediów, czyszczenie brakujących ROM-ów, czyszczenie pobranych danych, czyszczenie importów CLZ, masowa standaryzacja obrazów</li>
-            <li><strong>Serwer</strong> &mdash; konfiguracja serwera (host, port, tryb debugowania)</li>
-            <li><strong>Rejestrowanie</strong> &mdash; ustawienia poziomu dziennika dla różnych kategorii</li>
-            <li><strong>Rozwiązywanie problemów</strong> &mdash; czyszczenie zablokowanego masowego pobierania, czyszczenie kolejki synchronizacji RA, czyszczenie odświeżania PSN, czyszczenie generowania muzeum, restart serwera</li>
+            <li><strong>Konserwacja</strong> &mdash; Wyczyść brakujące ROM-y, wyczyść importy CLZ lub pobrane dane, usuń pliki multimediów, których nie używa żadna gra, wyczyść odwołania do nieistniejących plików multimediów i zoptymalizuj bazę danych</li>
+            <li><strong>Aktualizacje</strong> &mdash; Sprawdź, pobierz i zainstaluj nową wersję</li>
+            <li><strong>Serwer</strong> &mdash; Uruchom RetroDB ponownie lub wyłącz</li>
+            <li><strong>Dziennik</strong> &mdash; Ustawienia poziomu dziennika dla różnych kategorii oraz pliki dziennika</li>
+            <li><strong>Rozwiązywanie problemów</strong> &mdash; Wyczyść zawieszoną synchronizację RetroAchievements</li>
         </ul>
 
         <h3 id="emulators-play">Emulatory i granie</h3>
@@ -645,7 +657,7 @@
         <p>Skonfiguruj, które scrapery uruchamiają się jako pierwsze i które są włączone/wyłączone w <strong>Ustawienia &rarr; Pobieranie metadanych &rarr; Scraper</strong>. Przeciągnij i upuść, aby zmienić kolejność priorytetu. Wyłączone scrapery nie będą próbowane podczas pobierania i nie wywołają ostrzeżeń o statusie API w Panelu głównym.</p>
 
         <h3>Ograniczanie liczby żądań</h3>
-        <p>Każdy scraper ma konfigurowalne limity żądań, aby zapobiec ograniczaniu przez API. Domyślne opóźnienia są ustawione zachowawczo. Zmniejszaj opóźnienia na własne ryzyko &mdash; przekroczenie limitów żądań API może skutkować tymczasową blokadą przez daną usługę.</p>
+        <p>RetroDB samo rozkłada w czasie swoje żądania do każdej usługi; nie ma nic do ustawienia. Gdy usługa zgłasza, że osiągnięto jej limit, RetroDB przestaje ją pytać do czasu, który ona poda, i mówi o tym (patrz <a href="#ts-scraping">Rozwiązywanie problemów</a>).</p>
     </div>
 </section>
 
@@ -1510,7 +1522,7 @@
 
         <h3>Masowe wyszukiwanie HLTB</h3>
         <p>Uruchom wyszukiwanie HowLongToBeat dla każdej gry bez szacowanego czasu gry. Każde dopasowanie jest oceniane według tytułu + platformy + roku wydania; dopasowania o wysokiej pewności są zapisywane automatycznie. Wszystko poniżej progu pewności (lub z niezgodnymi platformami) trafia do przeglądu przez człowieka.</p>
-        <p><em>Brak zależności zewnętrznych (używa dołączonego offline zbioru danych HLTB)</em></p>
+        <p><em>Wyszukuje każdą grę na stronie HowLongToBeat, więc potrzebny jest dostęp do internetu</em></p>
 
         <h3>Oczekujący przegląd HLTB</h3>
         <p>Kolejka przeglądu dla niejednoznacznych dopasowań wykrytych przez Masowe wyszukiwanie HLTB. Każdy oczekujący wiersz pokazuje grę źródłową obok kandydata HLTB (tytuł, platforma, rok wydania, pewność). Zatwierdź, odrzuć lub wybierz inne dopasowanie dla każdego wiersza. Karta narzędzia przeglądu pojawia się w centrum Narzędzi ROM tylko wtedy, gdy istnieje co najmniej jedno oczekujące dopasowanie.</p>
@@ -1781,82 +1793,225 @@
 <section id="troubleshooting" class="help-section card">
     <h2 class="card-title">Rozwiązywanie problemów</h2>
     <div class="card-body">
-        <h3>Typowe problemy</h3>
+        <p>Problemy są pogrupowane według funkcji. Wpisz słowo z komunikatu, który widzisz, w polu wyszukiwania u góry tej strony, aby od razu do niego przejść. Większość komunikatów zostawia też wpis w <a href="#logs">Przeglądarce dzienników</a> (tylko dla administratorów), który mówi więcej.</p>
 
-        <h4>„Nie znaleziono rozszerzeń dla systemu”</h4>
-        <p>Folder systemowy potrzebuje prawidłowego pliku ES-DE <code>systeminfo.txt</code>, który definiuje obsługiwane rozszerzenia plików ROM. Upewnij się, że struktura katalogu ROM-ów pasuje do standardów ES-DE.</p>
+        <h3 id="ts-jobs">Długie zadania</h3>
 
-        <h4>„Połączenie z API nie powiodło się”</h4>
+        <h4>Zadanie wygląda na zawieszone</h4>
+        <p>Masowe pobieranie danych, synchronizacje osiągnięć, odświeżanie PSN, zmiana rozmiaru obrazów i uzupełnianie AI pokazują powiadomienie o postępie w rogu ekranu. Jego przyciski wstrzymują, zatrzymują lub anulują zadanie. Masowe pobieranie danych zatrzymuje się między dwiema grami, więc trwająca gra kończy się najpierw; to może zająć minutę. Jeśli zadanie nadal trwa, uruchom RetroDB ponownie: Ustawienia &rarr; System &rarr; Sterowanie serwerem &rarr; <strong>Uruchom serwer ponownie</strong>.</p>
+
+        <h4>Baner „Przerwane zadania” w Panelu</h4>
+        <p>Zadanie, które trwało lub czekało, gdy RetroDB się zatrzymało, pojawia się tutaj. <strong>Wznów</strong> kontynuuje je od miejsca, w którym ostatnio zapisało postęp. <strong>Odrzuć</strong> porzuca je. <strong>Wznów wszystko</strong> i <strong>Odrzuć wszystko</strong> robią to samo dla każdego zadania z listy.</p>
+
+        <h3 id="ts-library">Dodawanie gier</h3>
+
+        <h4>„Ścieżka ROM-ów nie jest skonfigurowana”</h4>
+        <p>Ustaw folder, w którym leżą foldery systemów, w Ustawienia &rarr; Biblioteka &rarr; Ścieżki &rarr; <strong>Ścieżka biblioteki ROM</strong>, a potem naciśnij <strong>Skanuj bibliotekę</strong>.</p>
+
+        <h4>Skanowanie nie znajduje nowych gier albo brakuje systemu</h4>
         <ul>
-            <li>Sprawdź swoje połączenie internetowe</li>
-            <li>Zweryfikuj klucze API w Ustawienia &rarr; Pobieranie metadanych &rarr; Klucze API</li>
-            <li>Poczekaj, jeśli limit żądań został osiągnięty (niektóre API mają dzienne/godzinne limity)</li>
-            <li>Sprawdź, czy scraper jest włączony (wyłączone scrapery pokazują „Wyłączony” w statusie Panelu głównego)</li>
-            <li>Sprawdź Przeglądarkę dzienników w poszukiwaniu szczegółowych komunikatów błędów</li>
+            <li>Każdy folder systemu potrzebuje pliku ES-DE <code>systeminfo.txt</code> z listą rozszerzeń plików. Folder bez niego jest pomijany; Przeglądarka dzienników pokazuje dla niego <code>No extensions found</code>. Foldery PS3 go nie potrzebują.</li>
+            <li>Pliki muszą leżeć bezpośrednio w folderze systemu. Pliki w podfolderze są pomijane, z wyjątkiem PS3.</li>
+            <li>Plik, którego rozszerzenia nie ma na liście, jest pomijany.</li>
+            <li>Przeniesiony lub zmieniony plik jest dodawany jako nowa gra. Ustawienia &rarr; System &rarr; <strong>Wyczyść brakujące ROM-y</strong> usuwa stary wpis.</li>
         </ul>
 
-        <h4>„Masowe pobieranie zablokowane”</h4>
-        <p>Przejdź do Ustawienia &rarr; System &rarr; Rozwiązywanie problemów &rarr; <strong>„Wyczyść zablokowane masowe pobieranie”</strong>. Resetuje to stan zadania bez wpływu na Twoje dane.</p>
+        <h3 id="ts-scraping">Pobieranie danych</h3>
 
-        <h4>„Kolejka synchronizacji RA zablokowana”</h4>
-        <p>Wyczyść kolejkę synchronizacji RetroAchievements z Ustawienia &rarr; System &rarr; Rozwiązywanie problemów.</p>
-
-        <h4>„Synchronizacja PSN zablokowana”</h4>
-        <p>Wyczyść zadanie odświeżania PSN z Ustawienia &rarr; System &rarr; Rozwiązywanie problemów.</p>
-
-        <h4>„Generowanie Muzeum zablokowane”</h4>
-        <p>Wyczyść zadanie generowania muzeum z Ustawienia &rarr; System &rarr; Rozwiązywanie problemów.</p>
-
-        <h4>„Błędy bazy danych”</h4>
-        <ol>
-            <li>Utwórz kopię zapasową, jeśli to możliwe (Ustawienia &rarr; Biblioteka &rarr; Kopia zapasowa)</li>
-            <li>Spróbuj Ustawienia &rarr; System &rarr; Konserwacja &rarr; <strong>Optymalizuj bazę danych</strong></li>
-            <li>Sprawdź uprawnienia plików w katalogu <code>database/</code></li>
-            <li>Ostateczność: przywróć z kopii zapasowej lub usuń bazę danych i przeskanuj ponownie</li>
-        </ol>
-
-        <h4>„Obrazy nie zapisują się”</h4>
-        <p>Sprawdź, czy RetroDB może zapisywać w swoim katalogu multimediów (<code>static/images/</code>, chyba że został przeniesiony). W Linuksie lub macOS polecenie <code>chmod -R u+rwX static/images/</code> daje Twojemu kontu prawo zapisu bez oznaczania obrazów jako programów.</p>
-
-        <h4>„Strona wolna lub niereagująca”</h4>
+        <h4>"No results found. Try a different search term."</h4>
         <ul>
-            <li>Duże kolekcje mogą potrzebować czasu na załadowanie &mdash; nieskończone przewijanie ładuje w partiach po 100</li>
-            <li>Spróbuj odświeżyć stronę, aby wyczyścić zgromadzoną pamięć</li>
-            <li>Sprawdź konsolę przeglądarki pod kątem błędów JavaScript</li>
-            <li>Spróbuj przełączyć się na motyw z lżejszym efektem tła (np. Amber lub Elite)</li>
-            <li>Efekty tła automatycznie wykrywają sprzęt; słabsze urządzenia używają awaryjnego trybu CPU przy zmniejszonej liczbie klatek</li>
+            <li>Skróć tytuł w polu wyszukiwania albo spróbuj angielskiej nazwy.</li>
+            <li>Sprawdź, czy źródła są włączone i pokazują <strong>Online</strong> w Ustawienia &rarr; Pobieranie danych &rarr; Scraper.</li>
+            <li>Źródło, które osiągnęło limit, nic nie zwraca do czasu, który podało (patrz niżej).</li>
         </ul>
 
-        <h4>Baner „Przerwane zadania” w Panelu głównym</h4>
-        <p>Jeśli RetroDB zostanie zrestartowane podczas działania zadań, pojawiają się one w banerze odzyskiwania. Kliknij <strong>„Wznów”</strong> pojedynczo lub <strong>„Wznów wszystkie”</strong>, aby je zrestartować. Kliknij <strong>„Odrzuć”</strong> lub <strong>„Odrzuć wszystkie”</strong>, aby je usunąć.</p>
-
-        <h4>„Uwierzytelnianie PSN nie powiodło się”</h4>
+        <h4>Dane lub obrazy należą do innej gry</h4>
         <ul>
-            <li>Tokeny NPSSO wygasają &mdash; wygeneruj nowy z <code>ca.account.sony.com/api/v1/ssocookie</code></li>
-            <li>Upewnij się, że jesteś zalogowany na store.playstation.com przed odwiedzeniem adresu URL ciasteczka</li>
-            <li>RetroDB sam loguje się ponownie, dopóki Sony akceptuje zapisany NPSSO. Gdy Sony go odrzuci, wklej nowy w Ustawienia &rarr; Konto &rarr; PSN. Aby zastąpić token, który nadal działa, najpierw wyloguj się z PlayStation.</li>
+            <li>Masowe pobieranie danych szuka według nazwy pliku ROM, więc źle nazwany plik znajduje złą grę. Zmień nazwę pliku albo pobierz dane gry na jej własnej stronie z lepszym tytułem wyszukiwania i wybierz właściwy wynik.</li>
+            <li>W oknie Edytuj grę zaznacz <strong>Zachowaj ten tytuł przy pobieraniu danych</strong>, aby kolejne pobrania nie ruszały nazwy.</li>
+            <li>Przy wielu grach zwiększ <strong>Minimalny wynik dopasowania</strong> w Ustawienia &rarr; Pobieranie danych &rarr; Scraper &rarr; Filtrowanie dopasowań przy pobieraniu zbiorczym.</li>
         </ul>
+
+        <h4>Pobieranie danych nie zastępuje złego obrazu</h4>
+        <p>Pobieranie danych wypełnia tylko puste obrazy, a zrzuty ekranu są tylko dodawane. Usuń obraz w oknie Edytuj grę, a potem pobierz dane ponownie. Masowe <strong>Pełne ponowne pobranie</strong> zastępuje obrazy, chyba że zaznaczono <strong>Zachowaj istniejące multimedia</strong>. Usunięty przez Ciebie zrzut ekranu nie jest dodawany ponownie.</p>
+
+        <h4>„&hellip; informuje, że osiągnięto limit” lub „&hellip; odrzucił klucz API”</h4>
+        <p>RetroDB nie pyta tej usługi do czasu podanego w komunikacie. Odrzucony klucz popraw w Ustawienia &rarr; Pobieranie danych &rarr; Klucze API i naciśnij <strong>Zapisz klucze API</strong>; zapis kończy też od razu każdą taką przerwę. Ponowne uruchomienie również je kończy.</p>
+
+        <h4>Źródło pokazuje powód zamiast „Online”</h4>
+        <p>Powód wskazuje problem, na przykład „No API key” lub „Invalid API key”. Wpisz lub popraw klucz w Ustawienia &rarr; Pobieranie danych &rarr; Klucze API (tylko administratorzy) i naciśnij <strong>Zapisz klucze API</strong>. Zapisany klucz widać jako gwiazdki; zostaw pole w spokoju, aby go zachować, albo wyczyść je i wpisz nowy klucz.</p>
+
+        <h3 id="ts-bulk-scrape">Masowe pobieranie danych</h3>
+
+        <h4>Masowe pobieranie danych się zawiesiło</h4>
+        <p>Naciśnij <strong>Anuluj</strong> w oknie Masowe pobieranie danych; kliknij powiadomienie o postępie, aby je otworzyć. Pobierana właśnie gra kończy się najpierw. Jeśli zadanie nadal trwa, zobacz <a href="#ts-jobs">Zadanie wygląda na zawieszone</a>.</p>
+
+        <h4>Większość gier jest „Pominięta”</h4>
+        <ul>
+            <li><strong>Uzupełnij braki</strong> pomija grę, którą masowe pobieranie danych zakończyło w ciągu ostatnich 24 godzin.</li>
+            <li>Gra, której pobranie nie znalazło nic nowego, też liczy się jako pominięta.</li>
+            <li>Aby pobrać je ponownie teraz, użyj <strong>Pełne ponowne pobranie</strong>; zaznacz <strong>Zachowaj istniejące multimedia</strong>, aby zachować swoje obrazy.</li>
+        </ul>
+
+        <h4>Wiele gier ma „Niepowodzenie”</h4>
+        <p>Niepowodzenie zwykle oznacza, że żaden wynik nie był dość bliski, aby go zapisać. Obniż <strong>Minimalny wynik dopasowania</strong> lub <strong>Minimalna jakość tytułu</strong> w Ustawienia &rarr; Pobieranie danych &rarr; Scraper &rarr; Filtrowanie dopasowań przy pobieraniu zbiorczym i sprawdź nazwy plików. Przeglądarka dzienników wymienia każdą grę, dla której nie znaleziono dopasowania.</p>
+
+        <h4>"A scrape for &hellip; is already running"</h4>
+        <p>Ten system jest już pobierany w tym samym trybie. Poczekaj na to albo anuluj. Pobieranie dla innego systemu czeka w kolejce i startuje samo.</p>
+
+        <h3 id="ts-ai-fill">Uzupełnianie AI</h3>
+
+        <h4>„AI nie zwróciło żadnych danych. Sprawdź klucz API i ustawienia dostawcy.”</h4>
+        <p>W Ustawienia &rarr; Pobieranie danych &rarr; Klucze API wybierz <strong>Dostawca metadanych AI</strong>, wpisz jego klucz, naciśnij <strong>Zapisz klucze API</strong>, a potem <strong>Testuj zapisany klucz AI</strong>. Jeśli usługa AI odmówiła, komunikat podaje zamiast tego powód, na przykład brak środków.</p>
+
+        <h4>„AI nie znalazło brakujących pól do uzupełnienia”</h4>
+        <p>To nie błąd: gra nie ma nic pustego, co uzupełnianie AI mogłoby wypełnić.</p>
+
+        <h4>Masowe uzupełnianie AI zatrzymało się samo</h4>
+        <p>Zatrzymuje się, gdy trzy gry z rzędu nie dostaną odpowiedzi. Sprawdź klucz przyciskiem <strong>Testuj zapisany klucz AI</strong>, a potem uruchom je ponownie. Gry już uzupełnione zachowują to, co dostały.</p>
+
+        <h3 id="ts-images">Obrazy</h3>
+
+        <h4>Po pobraniu danych brakuje obrazów</h4>
+        <p>Obraz, którego pobranie się nie powiedzie, jest pomijany bez komunikatu; Przeglądarka dzienników mówi dlaczego. Sprawdź, czy RetroDB może zapisywać w swoim folderze multimediów (<code>static/images/</code>, chyba że go przeniesiono). W systemie Linux lub macOS polecenie <code>chmod -R u+rwX static/images/</code> daje Twojemu kontu prawo zapisu bez oznaczania obrazów jako programów.</p>
+
+        <h4>Powiększanie nie działa</h4>
+        <ul>
+            <li>Pierwsze powiększanie pobiera model Real-ESRGAN, więc potrzebny jest dostęp do internetu.</li>
+            <li>Karta graficzna potrzebuje działających sterowników (CUDA dla NVIDIA, ROCm dla AMD). Jeśli karta zawiedzie, powiększanie przechodzi na procesor.</li>
+            <li>Jeśli powiększanie w ogóle nie może działać, RetroDB powiększa obrazy zwykłą metodą (Lanczos). <code>logs/upscale_worker.log</code> mówi dlaczego.</li>
+        </ul>
+
+        <h3 id="ts-play">Granie</h3>
+
+        <h4>Gra otwiera się na innym komputerze</h4>
+        <p><strong>Graj</strong> uruchamia emulator na komputerze, na którym działa RetroDB, a nie na urządzeniu, na którym naciśnięto przycisk.</p>
+
+        <h4>„Nie znaleziono programu emulatora w PATH”</h4>
+        <p>Na stronie Emulatory, w sekcji <strong>Zarejestrowane emulatory</strong>, edytuj emulator i wpisz w polu <strong>Własna ścieżka pliku wykonywalnego</strong> lokalizację programu. Albo dodaj folder, w którym leży, w sekcji <strong>Foldery emulatorów</strong>. Dla RetroArch użyj <strong>Wykryj automatycznie</strong> na karcie RetroArch, a potem <strong>Zapisz</strong>.</p>
+
+        <h4>„Brak skonfigurowanego emulatora dla systemu &hellip;” lub „Emulator &hellip; jest wyłączony”</h4>
+        <p>Wybierz emulator dla systemu w sekcji <strong>Przypisanie do systemów</strong> na stronie Emulatory albo włącz emulator w sekcji <strong>Zarejestrowane emulatory</strong>. Gra ustawiona na emulator, który już nie istnieje: wyczyść ten wybór w jej oknie Edytuj grę.</p>
+
+        <h4>„&hellip; nie ustawiono dla niego rdzenia RetroArch” lub „Nie znaleziono rdzenia RetroArch”</h4>
+        <p>Na stronie Emulatory sprawdź, czy karta RetroArch wskazuje folder z Twoimi rdzeniami (<strong>Wykryj automatycznie</strong> go uzupełnia), a potem naciśnij <strong>Zapisz</strong>. Brakujący rdzeń zainstaluj własnym pobieraczem rdzeni RetroArch. Albo wybierz inny emulator dla systemu w sekcji <strong>Przypisanie do systemów</strong>.</p>
+
+        <h4>„Nie znaleziono pliku ROM” lub „Ścieżka ROM-u leży poza skonfigurowanymi folderami skanowania”</h4>
+        <p>Plik został przeniesiony lub usunięty od ostatniego skanowania albo leży poza Twoim folderem ROM. Połóż go z powrotem w folderze systemu i zeskanuj bibliotekę ponownie.</p>
+
+        <h4>„Ta gra jest już uruchomiona”</h4>
+        <p>Zamknij okno emulatora albo przyjmij propozycję jego zamknięcia i ponownego uruchomienia.</p>
+
+        <h4>„Nie można pobrać rdzenia &hellip;”</h4>
+        <p>Granie w RetroDB pobiera brakujący rdzeń przy pierwszym graniu, chyba że na stronie Emulatory wyłączono <strong>Pobierz brakujący rdzeń po naciśnięciu „Graj”</strong>. Sprawdź połączenie z internetem i naciśnij Graj ponownie albo naciśnij <strong>Zainstaluj rdzenie dla moich systemów</strong> na stronie Emulatory.</p>
+
+        <h3 id="ts-cheats">Kody</h3>
+
+        <h4>„Nie znaleziono kodów dla tej gry.”</h4>
+        <p>Pobierz pakiet kodów dla emulatora na karcie Kody na stronie Emulatory albo zaimportuj tam folder z własnymi kodami. Kody działają w odtwarzaczu, DuckStation i PCSX2.</p>
+
+        <h4>Włączony kod nic nie robi</h4>
+        <p>Kody są stosowane przy następnym naciśnięciu Graj. Włączony kod wyłącza tryb hardcore RetroAchievements na czas gry.</p>
+
+        <h4>„Uruchom &hellip; raz, aby utworzył swoje ustawienia, a potem zagraj ponownie.”</h4>
+        <p>DuckStation lub PCSX2 nie utworzył jeszcze folderu ustawień. Uruchom emulator raz samodzielnie, a potem naciśnij Graj ponownie.</p>
+
+        <h3 id="ts-achievements">Osiągnięcia i trofea</h3>
+
+        <h4>Synchronizacja RetroAchievements się zawiesiła lub czeka</h4>
+        <p>Naraz działa jedno zadanie RetroAchievements; reszta czeka w kolejce w powiadomieniu o postępie. Jego przycisk zatrzymania kończy trwające zadanie, a każde czekające zadanie ma przycisk <strong>Usuń z kolejki</strong>.</p>
+
+        <h4>„RetroAchievements nie jest skonfigurowane”</h4>
+        <p>Zapisz nazwę użytkownika RetroAchievements i klucz web API w Ustawienia &rarr; Konto &rarr; Mój profil &rarr; Ustawienia RetroAchievements.</p>
+
+        <h4>„RetroAchievements nie zalogowało cię”</h4>
+        <p>Logowanie na czas gry wymaga hasła RetroAchievements, a nie klucza API. Zaczyna działać przy następnym naciśnięciu Graj.</p>
+
+        <h4>„Nie znaleziono gier. Sprawdź, czy Twój profil Steam i szczegóły gier są ustawione jako publiczne.”</h4>
+        <p>Na stronie Steam ustaw swój profil i szczegóły jego gier jako publiczne. Klucz Steam i 17-cyfrowy identyfikator Steam wpisz w Ustawienia &rarr; Konto &rarr; Mój profil &rarr; Steam.</p>
 
         <h4>„OpenXBL nie przyjął tego klucza”</h4>
         <ul>
-            <li>Skopiuj klucz ponownie z <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> i wklej go w Ustawienia &rarr; Mój profil &rarr; Xbox</li>
-            <li>„Osiągnięto godzinny limit OpenXBL” oznacza, że klucz wykorzystał w tej godzinie swoje 150 zapytań; poczekaj i spróbuj ponownie</li>
+            <li>Skopiuj klucz ponownie z <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> i wklej go w Ustawienia &rarr; Konto &rarr; Mój profil &rarr; Xbox.</li>
+            <li>„Osiągnięto godzinny limit OpenXBL” oznacza, że klucz zużył w tej godzinie swoje 150 żądań. Zsynchronizuj ponownie później; synchronizacja zacznie od gier, które nie zostały jeszcze zsynchronizowane.</li>
         </ul>
 
-        <h4>„Błędy powiększania obrazów”</h4>
+        <h4>„Uwierzytelnianie PSN nie powiodło się”</h4>
         <ul>
-            <li>Model ONNX Real-ESRGAN jest pobierany przy pierwszym użyciu &mdash; upewnij się, że masz dostęp do internetu</li>
-            <li>Przyspieszenie GPU wymaga zgodnych sterowników (CUDA dla NVIDIA, ROCm dla AMD)</li>
-            <li>Jeśli GPU zawiedzie, system automatycznie przechodzi na przetwarzanie CPU</li>
+            <li>Sony nie przyjmuje już zapisanego tokenu NPSSO. Pobierz nowy według kroków w Ustawienia &rarr; Konto &rarr; Mój profil &rarr; PlayStation Network, a potem naciśnij <strong>Zapisz i przetestuj połączenie</strong>.</li>
+            <li>RetroDB samo podtrzymuje logowanie, dopóki Sony przyjmuje token. Aby zastąpić token, który nadal działa, najpierw wyloguj się z PlayStation.</li>
         </ul>
 
-        <h3>Wskazówki dotyczące wydajności</h3>
+        <h4>Synchronizacja trofeów PSN się zawiesiła</h4>
+        <p>Odświeżanie PSN ma przyciski zatrzymania w powiadomieniu o postępie. Pełna synchronizacja trofeów ich nie ma; kończy ją ponowne uruchomienie RetroDB.</p>
+
+        <h4>Wszystkie Trofea kolekcjonera pokazują się jako niezdobyte</h4>
+        <p>Naciśnij <strong>Odśwież postęp</strong> na stronie Trofea kolekcjonera. Samo otwarcie strony ich nie liczy.</p>
+
+        <h4>„Nie znaleziono dopasowania HLTB dla &hellip;”</h4>
+        <p>Wpisz w polu wyszukiwania tytuł, którego używa HowLongToBeat, i wyszukaj ponownie. Jeśli HowLongToBeat zgłosiło zbyt wiele żądań, RetroDB czeka 15 minut przed ponownym zapytaniem, a do tego czasu wyszukiwanie niczego nie znajdzie.</p>
+
+        <h3 id="ts-tools">Muzeum i narzędzia ROM</h3>
+
+        <h4>„Nie skonfigurowano dostawcy AI”</h4>
+        <p>Muzeum pisze swoje strony za pomocą dostawcy AI ustawionego w Ustawienia &rarr; Pobieranie danych &rarr; Klucze API. Skonfiguruj go i wygeneruj ponownie.</p>
+
+        <h4>Generowanie muzeum się zawiesiło</h4>
+        <p>Naciśnij <strong>Anuluj</strong> pod paskiem postępu na stronie Muzeum.</p>
+
+        <h4>„Nie znaleziono chdman. Zainstaluj narzędzia MAME.”</h4>
+        <p>Zainstaluj narzędzia MAME, które zawierają <code>chdman</code>, albo ustaw jego lokalizację w Narzędzia ROM &rarr; Ustawienia.</p>
+
+        <h4>„Te wyniki skanowania wygasły. Zeskanuj ponownie, a potem usuń.”</h4>
+        <p>Uruchom skanowanie ponownie, a potem usuwaj z nowych wyników.</p>
+
+        <h3 id="ts-accounts">Konta i logowanie</h3>
+
+        <h4>„Zbyt wiele prób logowania. Spróbuj ponownie później.”</h4>
+        <p>Po pięciu błędnych hasłach w ciągu pięciu minut poczekaj pięć minut i spróbuj ponownie.</p>
+
+        <h4>Zapomniane hasło</h4>
+        <p>Nie ma resetu przez e-mail. Administrator ustawia nowe hasło w Ustawienia &rarr; Konto &rarr; Zarządzanie użytkownikami. Jeśli jedyny administrator zapomni swojego, przywróć kopię zapasową zrobioną, gdy hasło było znane.</p>
+
+        <h4>"You do not have permission to access this feature"</h4>
+        <p>Twoja rola nie obejmuje tej funkcji. Administrator może zmienić Twoją rolę w Ustawienia &rarr; Konto &rarr; Zarządzanie użytkownikami.</p>
+
+        <h3 id="ts-data">Baza danych, kopie zapasowe i aktualizacje</h3>
+
+        <h4>Błędy bazy danych</h4>
+        <ol>
+            <li>Jeśli to możliwe, zrób kopię zapasową (Ustawienia &rarr; Biblioteka &rarr; Kopia zapasowa)</li>
+            <li>Spróbuj Ustawienia &rarr; System &rarr; Konserwacja &rarr; <strong>Optymalizuj bazę danych</strong>. Może się nie udać, gdy zadanie zapisuje; poczekaj, aż zadania się skończą, i spróbuj ponownie.</li>
+            <li>Sprawdź uprawnienia do plików w katalogu <code>database/</code></li>
+            <li>Ostateczność: przywróć z kopii zapasowej</li>
+        </ol>
+
+        <h4>„Zadanie w tle jest w toku. Poczekaj na jego zakończenie przed przywróceniem.”</h4>
+        <p>Pozwól zadaniu się zakończyć albo zatrzymaj je z jego powiadomienia o postępie, a potem przywróć. Po przywróceniu uruchom RetroDB ponownie.</p>
+
+        <h4>„Ta kopia RetroDB jest klonem git. Zaktualizuj ją poleceniem git pull.”</h4>
+        <p>Aktualizator instaluje tylko na pobranym wydaniu. Kopię utworzoną przez git aktualizuje się poleceniem <code>git pull</code>.</p>
+
+        <h4>Aktualizacja się nie powiodła</h4>
+        <p>Nieudane pobieranie niczego nie instaluje; naciśnij <strong>Pobierz aktualizację</strong> ponownie. Nieudana instalacja sama przywraca starą wersję i mówi dlaczego. Szczegóły są w <code>logs/update.log</code>.</p>
+
+        <h3 id="ts-performance">Strony i szybkość</h3>
+
+        <h4>Strona działa wolno lub nie odpowiada</h4>
         <ul>
-            <li>Aktualizuj przeglądarkę dla najlepszej wydajności</li>
+            <li>Duże kolekcje mogą się ładować dłużej &mdash; nieskończone przewijanie ładuje po 100 pozycji</li>
+            <li>Odśwież stronę, aby wyczyścić zgromadzoną pamięć</li>
+            <li>Sprawdź konsolę przeglądarki pod kątem błędów JavaScript</li>
+            <li>Przełącz się na motyw z lżejszym efektem canvas (np. Amber lub Elite)</li>
+            <li>Efekty canvas wykrywają sprzęt automatycznie; słabsze urządzenia używają procesora z niższą liczbą klatek na sekundę</li>
+        </ul>
+
+        <h4>Wskazówki dotyczące wydajności</h4>
+        <ul>
+            <li>Aktualizuj przeglądarkę, aby działała jak najlepiej</li>
             <li>Zamknij inne karty przeglądarki podczas pracy z bardzo dużymi kolekcjami</li>
-            <li>Używaj filtrów systemu, aby zmniejszyć liczbę wyświetlanych gier naraz</li>
-            <li>Uruchamiaj Optymalizację bazy danych okresowo po dużych operacjach (pobieranie, czyszczenie, importy)</li>
-            <li>Efekty motywów tła automatycznie wykrywają sprzęt; słabsze urządzenia używają awaryjnego trybu CPU</li>
+            <li>Używaj filtrów systemów, aby ograniczyć liczbę jednocześnie wyświetlanych gier</li>
+            <li>Uruchamiaj Optymalizuj bazę danych co jakiś czas po dużych operacjach (pobieranie danych, czyszczenie, importy)</li>
         </ul>
     </div>
 </section>
@@ -2095,4 +2250,8 @@ kbd {
     background: rgba(76, 201, 240, 0.05);
 }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset_url('js/help-search.js') }}" defer></script>
 {% endblock %}

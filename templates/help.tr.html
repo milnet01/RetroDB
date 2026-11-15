@@ -13,6 +13,17 @@
     </div>
 </div>
 
+<!-- PASS-59-307 — search the manual (static/js/help-search.js) -->
+<div class="help-search" role="search">
+    <div class="search-box">
+        <span class="search-icon" aria-hidden="true">&#128269;</span>
+        <label for="helpSearch" class="visually-hidden">{{ _('Search the manual') }}</label>
+        <input type="search" id="helpSearch" class="search-input"
+               placeholder="{{ _('Search the manual') }}" autocomplete="off" spellcheck="false">
+    </div>
+    <p id="helpSearchStatus" class="help-search-status" role="status" aria-live="polite"></p>
+</div>
+
 <!-- Help Navigation -->
 <div class="help-nav" data-sticky-nav>
     <a href="#installation" class="help-nav-item">Kurulum</a>
@@ -62,7 +73,7 @@
     <div class="card-body">
         <h3>Sistem Gereksinimleri</h3>
         <ul>
-            <li><strong>Python 3.8+</strong> ve pip</li>
+            <li><strong>Python 3.12+</strong> ve pip</li>
             <li><strong>Web tarayıcısı</strong> (Chrome, Firefox, Safari, Edge)</li>
             <li><strong>İşletim Sistemi:</strong> Linux, Windows 10/11 veya macOS</li>
         </ul>
@@ -87,7 +98,7 @@
 
         <h3>install.py Ne Yapar</h3>
         <ul>
-            <li>Python 3.8+ ve pip'in mevcut olduğunu doğrular</li>
+            <li>Python 3.12+ ve pip'in mevcut olduğunu doğrular</li>
             <li><code>requirements.txt</code> dosyasından Python bağımlılıklarını kurar</li>
             <li>Örnek şablondan <code>config.py</code> dosyasını oluşturur</li>
             <li>Gerekli dizinleri oluşturur (veritabanı, günlükler, medya klasörleri)</li>
@@ -142,9 +153,9 @@
   snes/
     Chrono Trigger (USA).sfc
   psx/
-    Final Fantasy VII (USA)/
-      Final Fantasy VII (USA) (Disc 1).chd
-      Final Fantasy VII (USA) (Disc 2).chd</pre>
+    Final Fantasy VII (USA) (Disc 1).chd
+    Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>ROM dosyalarını doğrudan sistem klasöründe tutun. Alt klasörlerdeki dosyalar atlanır; PS3 bunun dışındadır.</p>
         <p>Her sistem klasörü, desteklenen dosya uzantılarını tanımlayan bir ES-DE <code>systeminfo.txt</code> dosyası içermelidir. RetroDB, her sistem için hangi dosyaların geçerli ROM olduğunu belirlemek amacıyla taramada bunu okur.</p>
 
         <div class="help-tip">
@@ -551,10 +562,11 @@
 
         <h3>Sistem Sekmesi</h3>
         <ul>
-            <li><strong>Bakım</strong> &mdash; Veritabanı optimizasyonu (VACUUM/ANALYZE), sahipsiz medya temizliği, eksik ROM'ları temizleme, veri çekilen verileri temizleme, CLZ içe aktarmalarını temizleme, toplu görsel standartlaştırma</li>
-            <li><strong>Sunucu</strong> &mdash; Sunucu yapılandırması (host, port, hata ayıklama modu)</li>
-            <li><strong>Günlükleme</strong> &mdash; Farklı kategoriler için günlük seviyesi ayarları</li>
-            <li><strong>Sorun Giderme</strong> &mdash; Takılan toplu veri çekmeyi temizleme, RA senkronizasyon kuyruğunu temizleme, PSN yenilemeyi temizleme, müze oluşturmayı temizleme, sunucuyu yeniden başlatma</li>
+            <li><strong>Bakım</strong> &mdash; Eksik ROM'ları temizleme, CLZ içe aktarmalarını veya kazınan verileri temizleme, hiçbir oyunun kullanmadığı medya dosyalarını silme, artık var olmayan medya dosyalarına bağlantıları temizleme ve veritabanını en iyileştirme</li>
+            <li><strong>Güncellemeler</strong> &mdash; Yeni bir sürümü denetleme, indirme ve kurma</li>
+            <li><strong>Sunucu</strong> &mdash; RetroDB'yi yeniden başlatma veya kapatma</li>
+            <li><strong>Günlükleme</strong> &mdash; Farklı kategoriler için günlük düzeyi ayarları ve günlük dosyaları</li>
+            <li><strong>Sorun Giderme</strong> &mdash; Takılmış bir RetroAchievements senkronizasyonunu temizleme</li>
         </ul>
 
         <h3 id="emulators-play">Emülatörler ve Oynama</h3>
@@ -645,7 +657,7 @@
         <p>Hangi veri çekicilerin önce çalışacağını ve hangilerinin etkin/devre dışı olduğunu <strong>Ayarlar &rarr; Veri Çekme &rarr; Veri Çekici</strong> bölümünde yapılandırın. Önceliği yeniden sıralamak için sürükleyip bırakın. Devre dışı bırakılan veri çekiciler, veri çekme sırasında denenmez ve Kontrol Panelinde API durum uyarılarını tetiklemez.</p>
 
         <h3>Hız Sınırlama</h3>
-        <p>Her veri çekicinin, API kısıtlamasını önlemek için yapılandırılabilir hız sınırları vardır. Varsayılan gecikmeler muhafazakâr şekilde ayarlanmıştır. Gecikmeleri kendi sorumluluğunuzda azaltın &mdash; API hız sınırlarını aşmak, ilgili hizmetten geçici olarak yasaklanmanıza neden olabilir.</p>
+        <p>RetroDB her hizmete yaptığı istekleri kendisi aralar; ayarlanacak bir şey yoktur. Bir hizmet sınırına ulaşıldığını bildirdiğinde RetroDB, hizmetin verdiği zamana kadar ona sormaz ve bunu söyler (bkz. <a href="#ts-scraping">Sorun Giderme</a>).</p>
     </div>
 </section>
 
@@ -1510,7 +1522,7 @@
 
         <h3>Toplu HLTB Arama</h3>
         <p>Oynanış süresi tahmini eksik olan her oyun için bir HowLongToBeat araması çalıştırın. Her eşleşme başlık + platform + piyasaya çıkış yılına göre puanlanır; yüksek güvenilirlikli eşleşmeler otomatik olarak kaydedilir. Güven eşiğinin altında kalan (veya çelişen platformlara sahip) her şey insan incelemesi için beklemeye alınır.</p>
-        <p><em>Harici bağımlılık yok (paketlenmiş çevrimdışı HLTB veri kümesini kullanır)</em></p>
+        <p><em>Her oyunu HowLongToBeat sitesinde arar, bu yüzden internet erişimi gerekir</em></p>
 
         <h3>HLTB Bekleyen İnceleme</h3>
         <p>Toplu HLTB Arama tarafından ortaya çıkarılan belirsiz eşleşmeler için inceleme kuyruğu. Her bekleyen satır, kaynak oyunu HLTB adayının (başlık, platform, piyasaya çıkış yılı, güven) yanında gösterir. Her satır için farklı bir eşleşmeyi onaylayın, reddedin veya seçin. İnceleme araç kartı, ROM Araçları merkezinde yalnızca en az bir bekleyen eşleşme olduğunda görünür.</p>
@@ -1781,82 +1793,225 @@
 <section id="troubleshooting" class="help-section card">
     <h2 class="card-title">Sorun Giderme</h2>
     <div class="card-body">
-        <h3>Yaygın Sorunlar</h3>
+        <p>Sorunlar özelliğe göre gruplanmıştır. Gördüğünüz iletiden bir sözcüğü bu sayfanın üstündeki arama kutusuna yazarak doğrudan oraya gidebilirsiniz. İletilerin çoğu <a href="#logs">Günlük Görüntüleyici</a>'ye de (yalnızca yöneticiler) daha fazlasını anlatan bir satır bırakır.</p>
 
-        <h4>"Sistem için uzantı bulunamadı"</h4>
-        <p>Sistem klasörünün, desteklenen ROM dosya uzantılarını tanımlayan geçerli bir ES-DE <code>systeminfo.txt</code> dosyasına ihtiyacı vardır. ROM dizin yapınızın ES-DE standartlarıyla eşleştiğinden emin olun.</p>
+        <h3 id="ts-jobs">Uzun İşler</h3>
 
-        <h4>"API Bağlantısı Başarısız"</h4>
+        <h4>Bir iş takılmış gibi görünüyor</h4>
+        <p>Toplu kazımalar, başarım senkronizasyonları, PSN yenilemeleri, görsel yeniden boyutlandırmaları ve yapay zekâ ile doldurma çalışmaları köşede bir ilerleme bildirimi gösterir. Bildirimdeki düğmeler işi duraklatır, durdurur veya iptal eder. Toplu kazıma iki oyun arasında durur; bu yüzden devam eden oyun önce biter ve bu bir dakika sürebilir. İş hâlâ çalışıyorsa RetroDB'yi yeniden başlatın: Ayarlar &rarr; Sistem &rarr; Sunucu Denetimleri &rarr; <strong>Sunucuyu Yeniden Başlat</strong>.</p>
+
+        <h4>Kontrol Paneli'ndeki "Kesintiye Uğrayan İşler" başlığı</h4>
+        <p>RetroDB durduğunda çalışan veya bekleyen bir iş burada görünür. <strong>Sürdür</strong>, işi son kaydettiği yerden devam ettirir. <strong>Kapat</strong> işi bırakır. <strong>Tümünü Sürdür</strong> ve <strong>Tümünü Kapat</strong> listedeki her iş için aynısını yapar.</p>
+
+        <h3 id="ts-library">Oyun Ekleme</h3>
+
+        <h4>"ROM yolu yapılandırılmamış"</h4>
+        <p>Sistem klasörlerinizi barındıran klasörü Ayarlar &rarr; Kütüphane &rarr; Yollar &rarr; <strong>ROM Kütüphanesi Yolu</strong> bölümünde ayarlayın, ardından <strong>Kütüphaneyi Tara</strong>'ya basın.</p>
+
+        <h4>Tarama yeni oyun bulmuyor veya bir sistem eksik</h4>
         <ul>
-            <li>İnternet bağlantınızı kontrol edin</li>
-            <li>Ayarlar &rarr; Veri Çekme &rarr; API Anahtarları bölümünde API anahtarlarını doğrulayın</li>
-            <li>Hız sınırına takıldıysanız bekleyin (bazı API'lerin günlük/saatlik sınırları vardır)</li>
-            <li>Veri çekicinin etkin olup olmadığını kontrol edin (devre dışı veri çekiciler Kontrol Paneli durumunda "Devre Dışı" gösterir)</li>
-            <li>Ayrıntılı hata mesajları için Günlük Görüntüleyici'yi kontrol edin</li>
+            <li>Her sistem klasörünün dosya uzantılarını listeleyen bir ES-DE <code>systeminfo.txt</code> dosyasına ihtiyacı vardır. Dosyası olmayan klasör atlanır; Günlük Görüntüleyici bunun için <code>No extensions found</code> gösterir. PS3 klasörlerinin buna ihtiyacı yoktur.</li>
+            <li>Dosyalar doğrudan sistem klasöründe durmalıdır. Alt klasörlerdeki dosyalar atlanır; PS3 bunun dışındadır.</li>
+            <li>Uzantısı listede olmayan dosya atlanır.</li>
+            <li>Taşınan veya yeniden adlandırılan dosya yeni bir oyun olarak eklenir. Ayarlar &rarr; Sistem &rarr; <strong>Eksik ROM'ları Temizle</strong> eski kaydı kaldırır.</li>
         </ul>
 
-        <h4>"Toplu Veri Çekme Takıldı"</h4>
-        <p>Ayarlar &rarr; Sistem &rarr; Sorun Giderme &rarr; <strong>"Takılan Toplu Veri Çekmeyi Temizle"</strong> bölümüne gidin. Bu, verilerinizi etkilemeden iş durumunu sıfırlar.</p>
+        <h3 id="ts-scraping">Kazıma</h3>
 
-        <h4>"RA Senkronizasyon Kuyruğu Takıldı"</h4>
-        <p>Ayarlar &rarr; Sistem &rarr; Sorun Giderme bölümünden RetroAchievements senkronizasyon kuyruğunu temizleyin.</p>
-
-        <h4>"PSN Senkronizasyonu Takıldı"</h4>
-        <p>Ayarlar &rarr; Sistem &rarr; Sorun Giderme bölümünden PSN yenileme işini temizleyin.</p>
-
-        <h4>"Müze Oluşturma Takıldı"</h4>
-        <p>Ayarlar &rarr; Sistem &rarr; Sorun Giderme bölümünden müze oluşturma işini temizleyin.</p>
-
-        <h4>"Veritabanı Hataları"</h4>
-        <ol>
-            <li>Mümkünse bir yedek oluşturun (Ayarlar &rarr; Kütüphane &rarr; Yedekleme)</li>
-            <li>Ayarlar &rarr; Sistem &rarr; Bakım &rarr; <strong>Veritabanını Optimize Et</strong> seçeneğini deneyin</li>
-            <li><code>database/</code> dizinindeki dosya izinlerini kontrol edin</li>
-            <li>Son çare: bir yedekten geri yükleyin veya veritabanını silip yeniden tarayın</li>
-        </ol>
-
-        <h4>"Görseller Kaydedilmiyor"</h4>
-        <p>RetroDB'nin medya klasörüne (taşımadıysanız <code>static/images/</code>) yazabildiğini kontrol edin. Linux veya macOS'ta <code>chmod -R u+rwX static/images/</code>, görselleri program olarak işaretlemeden hesabınıza yazma erişimi verir.</p>
-
-        <h4>"Sayfa Yavaş veya Yanıt Vermiyor"</h4>
+        <h4>"No results found. Try a different search term."</h4>
         <ul>
-            <li>Büyük koleksiyonların yüklenmesi zaman alabilir &mdash; sonsuz kaydırma 100'lük gruplar halinde yüklenir</li>
-            <li>Birikmiş belleği temizlemek için sayfayı yenilemeyi deneyin</li>
-            <li>JavaScript hataları için tarayıcı konsolunu kontrol edin</li>
-            <li>Daha hafif bir tuval efektine sahip bir temaya geçmeyi deneyin (örn. Amber veya Elite)</li>
-            <li>Tuval efektleri donanımı otomatik olarak algılar; düşük seviye cihazlar azaltılmış kare hızında CPU yedeğini kullanır</li>
+            <li>Arama kutusundaki başlığı kısaltın veya İngilizce adını deneyin.</li>
+            <li>Kaynakların açık olduğunu ve Ayarlar &rarr; Kazıma &rarr; Kazıyıcı bölümünde <strong>Çevrimiçi</strong> gösterdiğini kontrol edin.</li>
+            <li>Sınırına ulaşan bir kaynak, bildirdiği zamana kadar hiçbir şey döndürmez (aşağıya bakın).</li>
         </ul>
 
-        <h4>Kontrol Panelinde "Kesintiye Uğramış İşler" Banner'ı</h4>
-        <p>İşler çalışırken RetroDB yeniden başlarsa, bir kurtarma banner'ında görünürler. Onları yeniden başlatmak için tek tek <strong>"Devam Ettir"</strong> veya <strong>"Tümünü Devam Ettir"</strong> düğmesine tıklayın. Temizlemek için <strong>"Yoksay"</strong> veya <strong>"Tümünü Yoksay"</strong> düğmesine tıklayın.</p>
-
-        <h4>"PSN Kimlik Doğrulama Başarısız"</h4>
+        <h4>Veriler veya görseller başka bir oyuna ait</h4>
         <ul>
-            <li>NPSSO belirteçlerinin süresi dolar &mdash; <code>ca.account.sony.com/api/v1/ssocookie</code> adresinden yeni bir tane oluşturun</li>
-            <li>Çerez URL'sini ziyaret etmeden önce store.playstation.com adresine giriş yaptığınızdan emin olun</li>
-            <li>RetroDB, Sony kaydedilmiş NPSSO'nuzu kabul ettiği sürece kendiliğinden yeniden oturum açar. Sony onu reddettiğinde Ayarlar &rarr; Hesap &rarr; PSN bölümüne yenisini yapıştırın. Hâlâ çalışan bir belirteci değiştirmek için önce PlayStation oturumunu kapatın.</li>
+            <li>Toplu kazıma ROM'un dosya adıyla arar; bu yüzden kötü adlandırılmış bir dosya yanlış oyunu bulur. Dosyayı yeniden adlandırın veya oyunu kendi sayfasında daha iyi bir arama başlığıyla kazıyıp doğru sonucu seçin.</li>
+            <li>Oyunu Düzenle penceresinde <strong>Kazırken bu başlığı koru</strong> kutusunu işaretleyin; sonraki kazımalar adı olduğu gibi bırakır.</li>
+            <li>Çok sayıda oyun için Ayarlar &rarr; Kazıma &rarr; Kazıyıcı &rarr; Toplu Kazıma Eşleşme Filtresi altındaki <strong>En Düşük Eşleşme Puanı</strong>'nı yükseltin.</li>
         </ul>
+
+        <h4>Kazıma kötü bir görseli değiştirmiyor</h4>
+        <p>Kazıma yalnızca boş görselleri doldurur, ekran görüntüleri ise yalnızca eklenir. Görseli Oyunu Düzenle penceresinde kaldırın, sonra yeniden kazıyın. Toplu <strong>Tam Yeniden Kazıma</strong>, <strong>Mevcut medyayı koru</strong> işaretli değilse görselleri değiştirir. Sildiğiniz bir ekran görüntüsü yeniden eklenmez.</p>
+
+        <h4>"&hellip; sınırına ulaşıldığını bildiriyor" veya "&hellip; API anahtarını reddetti"</h4>
+        <p>RetroDB iletideki zamana kadar o hizmete sormaz. Reddedilen anahtarı Ayarlar &rarr; Kazıma &rarr; API Anahtarları bölümünde düzeltin ve <strong>API Anahtarlarını Kaydet</strong>'e basın; kaydetmek bu tür tüm beklemeleri de hemen sona erdirir. Yeniden başlatma da bunları sona erdirir.</p>
+
+        <h4>Bir kaynak "Çevrimiçi" yerine bir neden gösteriyor</h4>
+        <p>Neden sorunu adlandırır; örneğin "No API key" veya "Invalid API key". Anahtarı Ayarlar &rarr; Kazıma &rarr; API Anahtarları bölümüne girin veya düzeltin (yalnızca yöneticiler) ve <strong>API Anahtarlarını Kaydet</strong>'e basın. Kayıtlı anahtar yıldız olarak görünür; korumak için kutuya dokunmayın veya kutuyu temizleyip yeni anahtarı yazın.</p>
+
+        <h3 id="ts-bulk-scrape">Toplu Kazıma</h3>
+
+        <h4>Toplu kazıma takıldı</h4>
+        <p>Toplu Kazıma penceresinde <strong>İptal</strong>'e basın; açmak için ilerleme bildirimine tıklayın. Kazınan oyun önce biter. İş hâlâ çalışıyorsa <a href="#ts-jobs">Bir iş takılmış gibi görünüyor</a> bölümüne bakın.</p>
+
+        <h4>Oyunların çoğu "Atlandı"</h4>
+        <ul>
+            <li><strong>Eksikleri Doldur</strong>, bir toplu kazımanın son 24 saatte bitirdiği oyunu atlar.</li>
+            <li>Kazıması yeni bir şey bulmayan oyun da atlanmış sayılır.</li>
+            <li>Onları şimdi yeniden kazımak için <strong>Tam Yeniden Kazıma</strong>'yı kullanın; görsellerinizi korumak için <strong>Mevcut medyayı koru</strong>'yu işaretleyin.</li>
+        </ul>
+
+        <h4>Çok sayıda oyun "Başarısız"</h4>
+        <p>Başarısız genellikle hiçbir sonucun kaydedilecek kadar yakın olmadığı anlamına gelir. Ayarlar &rarr; Kazıma &rarr; Kazıyıcı &rarr; Toplu Kazıma Eşleşme Filtresi altındaki <strong>En Düşük Eşleşme Puanı</strong>'nı veya <strong>En Düşük Başlık Kalitesi</strong>'ni düşürün ve dosya adlarını kontrol edin. Günlük Görüntüleyici eşleşme bulunamayan her oyunu listeler.</p>
+
+        <h4>"A scrape for &hellip; is already running"</h4>
+        <p>O sistem zaten aynı kipte kazınıyor. Bitmesini bekleyin veya iptal edin. Başka bir sistemin kazıması sırada bekler ve kendiliğinden başlar.</p>
+
+        <h3 id="ts-ai-fill">Yapay Zekâ ile Doldurma</h3>
+
+        <h4>"Yapay zeka veri döndürmedi. API anahtarınızı ve sağlayıcı ayarlarınızı kontrol edin."</h4>
+        <p>Ayarlar &rarr; Kazıma &rarr; API Anahtarları bölümünde <strong>Yapay Zeka Üstveri Sağlayıcısı</strong>'nı seçin, anahtarını girin, <strong>API Anahtarlarını Kaydet</strong>'e, sonra <strong>Kayıtlı yapay zekâ anahtarını test et</strong>'e basın. Yapay zekâ hizmeti reddettiyse ileti bunun yerine nedenini söyler; örneğin kredi kalmamış olması.</p>
+
+        <h4>"Yapay zeka doldurulacak eksik alan bulamadı"</h4>
+        <p>Bu bir hata değildir: oyunda yapay zekâ ile doldurmanın dolduracağı boş bir şey yoktur.</p>
+
+        <h4>Toplu yapay zekâ ile doldurma kendiliğinden durdu</h4>
+        <p>Art arda üç oyun yanıt alamayınca durur. Anahtarı <strong>Kayıtlı yapay zekâ anahtarını test et</strong> ile kontrol edin, sonra yeniden çalıştırın. Önceden doldurulmuş oyunlar aldıklarını korur.</p>
+
+        <h3 id="ts-images">Görseller</h3>
+
+        <h4>Kazımadan sonra görseller eksik</h4>
+        <p>İndirilemeyen görsel iletisiz atlanır; nedenini Günlük Görüntüleyici söyler. RetroDB'nin medya klasörüne yazabildiğini kontrol edin (taşımadıysanız <code>static/images/</code>). Linux veya macOS'ta <code>chmod -R u+rwX static/images/</code>, görselleri program olarak işaretlemeden hesabınıza yazma izni verir.</p>
+
+        <h4>Büyütme çalışmıyor gibi görünüyor</h4>
+        <ul>
+            <li>İlk büyütme Real-ESRGAN modelini indirir; bu yüzden internet erişimi gerekir.</li>
+            <li>Ekran kartı çalışan sürücülere ihtiyaç duyar (NVIDIA için CUDA, AMD için ROCm). Ekran kartı başarısız olursa büyütme işlemciye geçer.</li>
+            <li>Büyütücü hiç çalışamıyorsa RetroDB görselleri sade yöntemle (Lanczos) büyütür. <code>logs/upscale_worker.log</code> nedenini söyler.</li>
+        </ul>
+
+        <h3 id="ts-play">Oyun Oynama</h3>
+
+        <h4>Oyun başka bir bilgisayarda açılıyor</h4>
+        <p><strong>Oyna</strong>, emülatörü düğmeye bastığınız cihazda değil, RetroDB'nin çalıştığı bilgisayarda başlatır.</p>
+
+        <h4>"Emülatör programı PATH üzerinde bulunamadı"</h4>
+        <p>Emülatörler sayfasında <strong>Kayıtlı emülatörler</strong> altında emülatörü düzenleyin ve <strong>Özel çalıştırılabilir dosya yolu</strong> alanına programın konumunu yazın. Veya programın bulunduğu klasörü <strong>Emülatör klasörleri</strong> altına ekleyin. RetroArch için RetroArch kartında <strong>Otomatik algıla</strong>'yı, ardından <strong>Kaydet</strong>'i kullanın.</p>
+
+        <h4>"&hellip; sistemi için yapılandırılmış emülatör yok" veya "&hellip; emülatörü kapalı"</h4>
+        <p>Emülatörler sayfasında <strong>Sistem başına eşleme</strong> altında sistem için bir emülatör seçin veya emülatörü <strong>Kayıtlı emülatörler</strong> altında açın. Artık var olmayan bir emülatöre ayarlanmış oyun için: o seçimi oyunun Oyunu Düzenle penceresinde temizleyin.</p>
+
+        <h4>"&hellip; bir RetroArch çekirdeği ayarlanmamış" veya "RetroArch core not found"</h4>
+        <p>Emülatörler sayfasında RetroArch kartının çekirdeklerinizin bulunduğu klasörü gösterdiğini kontrol edin (<strong>Otomatik algıla</strong> bunu doldurur), sonra <strong>Kaydet</strong>'e basın. Eksik çekirdeği RetroArch'ın kendi çekirdek indiricisiyle kurun. Veya sistem için <strong>Sistem başına eşleme</strong> altında başka bir emülatör seçin.</p>
+
+        <h4>"ROM dosyası bulunamadı" veya "ROM yolu yapılandırılmış tarama klasörlerinin dışında"</h4>
+        <p>Dosya son taramadan beri taşındı veya silindi ya da ROM klasörünüzün dışında duruyor. Dosyayı sistem klasörüne geri koyun ve kütüphaneyi yeniden tarayın.</p>
+
+        <h4>"Bu oyun zaten çalışıyor"</h4>
+        <p>Emülatör penceresini kapatın veya onu kapatıp yeniden başlatma önerisini kabul edin.</p>
+
+        <h4>"&hellip; çekirdeği indirilemedi"</h4>
+        <p>RetroDB'de Oyna, eksik çekirdeği ilk oynayışta indirir; Emülatörler sayfasında <strong>“Oyna”ya basıldığında eksik çekirdeği indir</strong> kapatılmışsa indirmez. İnternet bağlantısını kontrol edip yeniden Oyna'ya basın veya Emülatörler sayfasında <strong>Sistemlerim için çekirdekleri kur</strong>'a basın.</p>
+
+        <h3 id="ts-cheats">Hileler</h3>
+
+        <h4>"Bu oyun için hile bulunamadı."</h4>
+        <p>Emülatör için hile paketini Emülatörler sayfasındaki Hileler kartından indirin veya kendi hilelerinizin bulunduğu bir klasörü oradan içe aktarın. Hileler oynatıcıda, DuckStation'da ve PCSX2'de çalışır.</p>
+
+        <h4>Açık bir hile hiçbir şey yapmıyor</h4>
+        <p>Hileler bir sonraki Oyna'ya bastığınızda uygulanır. Açık bir hile, oynarken RetroAchievements hardcore kipini kapatır.</p>
+
+        <h4>"&hellip; ayarlarını oluşturması için bir kez çalıştırın, ardından tekrar oynayın."</h4>
+        <p>DuckStation veya PCSX2 henüz ayar klasörünü oluşturmadı. Emülatörü bir kez kendi başına başlatın, sonra yeniden Oyna'ya basın.</p>
+
+        <h3 id="ts-achievements">Başarımlar ve Kupalar</h3>
+
+        <h4>Bir RetroAchievements senkronizasyonu takılmış veya bekliyor</h4>
+        <p>Aynı anda bir RetroAchievements işi çalışır; diğerleri ilerleme bildiriminde sırada bekler. Durdur düğmesi çalışan işi sonlandırır ve bekleyen her işin bir <strong>Kuyruktan kaldır</strong> düğmesi vardır.</p>
+
+        <h4>"RetroAchievements yapılandırılmamış"</h4>
+        <p>RetroAchievements kullanıcı adınızı ve web API anahtarınızı Ayarlar &rarr; Hesap &rarr; Profilim &rarr; RetroAchievements Ayarları bölümüne kaydedin.</p>
+
+        <h4>"RetroAchievements oturumunuzu açmadı"</h4>
+        <p>Oynamak için oturum açmak API anahtarını değil, RetroAchievements parolanızı ister. Bir sonraki Oyna'ya bastığınızda geçerli olur.</p>
+
+        <h4>"Oyun bulunamadı. Steam profilinizin ve oyun ayrıntılarınızın Herkese Açık olarak ayarlandığından emin olun."</h4>
+        <p>Steam sitesinde profilinizi ve oyun ayrıntılarını Herkese Açık yapın. Steam anahtarınız ve 17 haneli Steam kimliğiniz Ayarlar &rarr; Hesap &rarr; Profilim &rarr; Steam bölümüne girilir.</p>
 
         <h4>"OpenXBL bu anahtarı kabul etmedi"</h4>
         <ul>
-            <li>Anahtarı <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> adresinden yeniden kopyalayın ve Ayarlar &rarr; Profilim &rarr; Xbox bölümüne yapıştırın</li>
-            <li>"OpenXBL'in saatlik sınırına ulaşıldı", anahtarın bu saatteki 150 isteğini kullandığı anlamına gelir; bekleyip yeniden deneyin</li>
+            <li>Anahtarı <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> adresinden yeniden kopyalayın ve Ayarlar &rarr; Hesap &rarr; Profilim &rarr; Xbox bölümüne yapıştırın.</li>
+            <li>"OpenXBL'in saatlik sınırına ulaşıldı", anahtarın bu saat 150 isteğini kullandığı anlamına gelir. Daha sonra yeniden senkronize edin; senkronizasyon henüz senkronize edilmemiş oyunlardan başlar.</li>
         </ul>
 
-        <h4>"Görsel Büyütme Hataları"</h4>
+        <h4>"PSN kimlik doğrulaması başarısız oldu"</h4>
         <ul>
-            <li>Real-ESRGAN ONNX modeli ilk kullanımda indirilir &mdash; internet erişimi olduğundan emin olun</li>
-            <li>GPU hızlandırması uyumlu sürücüler gerektirir (NVIDIA için CUDA, AMD için ROCm)</li>
-            <li>GPU başarısız olursa, sistem otomatik olarak CPU işlemeye geri döner</li>
+            <li>Sony artık kayıtlı NPSSO belirtecinizi kabul etmiyor. Ayarlar &rarr; Hesap &rarr; Profilim &rarr; PlayStation Network bölümündeki adımlarla yenisini alın, sonra <strong>Kaydet ve Bağlantıyı Test Et</strong>'e basın.</li>
+            <li>Sony belirteci kabul ettiği sürece RetroDB oturumu kendiliğinden sürdürür. Hâlâ çalışan bir belirteci değiştirmek için önce PlayStation'dan çıkış yapın.</li>
         </ul>
 
-        <h3>Performans İpuçları</h3>
+        <h4>Bir PSN kupa senkronizasyonu takılmış</h4>
+        <p>PSN yenilemesinin ilerleme bildiriminde durdur düğmeleri vardır. Tam kupa senkronizasyonunda yoktur; RetroDB'yi yeniden başlatmak onu sonlandırır.</p>
+
+        <h4>Tüm Koleksiyoncu Kupaları kazanılmamış görünüyor</h4>
+        <p>Koleksiyoncu Kupaları sayfasında <strong>İlerlemeyi Yenile</strong>'ye basın. Sayfayı açmak onları saymaz.</p>
+
+        <h4>'&hellip; için HLTB eşleşmesi bulunamadı'</h4>
+        <p>HowLongToBeat'in kullandığı başlığı arama kutusuna yazın ve yeniden arayın. HowLongToBeat çok fazla istek geldiğini söylediyse RetroDB yeniden sormadan önce 15 dakika bekler ve o zamana kadar arama hiçbir şey bulmaz.</p>
+
+        <h3 id="ts-tools">Müze ve ROM Araçları</h3>
+
+        <h4>"Yapay zeka sağlayıcısı yapılandırılmamış"</h4>
+        <p>Müze sayfalarını Ayarlar &rarr; Kazıma &rarr; API Anahtarları bölümünde ayarlanan yapay zekâ sağlayıcısıyla yazar. Birini ayarlayın, sonra yeniden oluşturun.</p>
+
+        <h4>Müze oluşturma takıldı</h4>
+        <p>Müze sayfasında ilerleme çubuğunun altındaki <strong>İptal</strong>'e basın.</p>
+
+        <h4>"chdman bulunamadı. Lütfen MAME araçlarını kurun."</h4>
+        <p><code>chdman</code> dosyasını içeren MAME araçlarını kurun veya konumunu ROM Araçları &rarr; Ayarlar bölümünde belirtin.</p>
+
+        <h4>"Bu tarama sonuçlarının süresi doldu. Yeniden tarayın, ardından silin."</h4>
+        <p>Taramayı yeniden çalıştırın, sonra yeni sonuçlardan silin.</p>
+
+        <h3 id="ts-accounts">Hesaplar ve Oturum Açma</h3>
+
+        <h4>"Çok fazla giriş denemesi. Lütfen daha sonra tekrar deneyin."</h4>
+        <p>Beş dakika içinde beş yanlış parolanın ardından beş dakika bekleyin ve yeniden deneyin.</p>
+
+        <h4>Unutulan parola</h4>
+        <p>E-postayla sıfırlama yoktur. Bir yönetici Ayarlar &rarr; Hesap &rarr; Kullanıcı Yönetimi bölümünde yeni bir parola belirler. Tek yönetici kendi parolasını unutursa parolanın bilindiği zamanda alınmış bir yedeği geri yükleyin.</p>
+
+        <h4>"You do not have permission to access this feature"</h4>
+        <p>Rolünüz bu özelliği içermiyor. Bir yönetici rolünüzü Ayarlar &rarr; Hesap &rarr; Kullanıcı Yönetimi bölümünde değiştirebilir.</p>
+
+        <h3 id="ts-data">Veritabanı, Yedekler ve Güncellemeler</h3>
+
+        <h4>Veritabanı hataları</h4>
+        <ol>
+            <li>Mümkünse bir yedek oluşturun (Ayarlar &rarr; Kütüphane &rarr; Yedekleme)</li>
+            <li>Ayarlar &rarr; Sistem &rarr; Bakım &rarr; <strong>Veritabanını En İyileştir</strong>'i deneyin. Bir iş yazarken başarısız olabilir; işlerin bitmesini bekleyip yeniden deneyin.</li>
+            <li><code>database/</code> dizinindeki dosya izinlerini kontrol edin</li>
+            <li>Son çare: bir yedekten geri yükleyin</li>
+        </ol>
+
+        <h4>"Arka planda bir iş çalışıyor. Geri yüklemeden önce bitmesini bekleyin."</h4>
+        <p>İşin bitmesine izin verin veya ilerleme bildiriminden durdurun, sonra geri yükleyin. Geri yüklemeden sonra RetroDB'yi yeniden başlatın.</p>
+
+        <h4>"Bu RetroDB kopyası bir git çalışma kopyası. git pull ile güncelleyin."</h4>
+        <p>Güncelleyici yalnızca indirilmiş bir sürümün üzerine kurar. git ile yapılmış kopya <code>git pull</code> ile güncellenir.</p>
+
+        <h4>Bir güncelleme başarısız oldu</h4>
+        <p>Başarısız bir indirme hiçbir şey kurmaz; <strong>Güncellemeyi indir</strong>'e yeniden basın. Başarısız bir kurulum eski sürümü kendiliğinden geri koyar ve nedenini söyler. Ayrıntılar <code>logs/update.log</code> içindedir.</p>
+
+        <h3 id="ts-performance">Sayfalar ve Hız</h3>
+
+        <h4>Bir sayfa yavaş ya da yanıt vermiyor</h4>
+        <ul>
+            <li>Büyük koleksiyonların yüklenmesi zaman alabilir &mdash; sonsuz kaydırma 100'lük gruplar hâlinde yükler</li>
+            <li>Biriken belleği temizlemek için sayfayı yenilemeyi deneyin</li>
+            <li>Tarayıcı konsolunda JavaScript hatalarını kontrol edin</li>
+            <li>Daha hafif bir canvas efektine sahip bir temaya geçmeyi deneyin (ör. Amber veya Elite)</li>
+            <li>Canvas efektleri donanımı otomatik algılar; düşük donanımlı cihazlar düşük kare hızıyla işlemciyi kullanır</li>
+        </ul>
+
+        <h4>Performans İpuçları</h4>
         <ul>
             <li>En iyi performans için tarayıcınızı güncel tutun</li>
             <li>Çok büyük koleksiyonlarla çalışırken diğer tarayıcı sekmelerini kapatın</li>
-            <li>Aynı anda görüntülenen oyun sayısını azaltmak için sistem filtrelerini kullanın</li>
-            <li>Büyük işlemlerden sonra (veri çekme, temizleme, içe aktarma) periyodik olarak Veritabanını Optimize Et'i çalıştırın</li>
-            <li>Tuval tema efektleri donanımı otomatik olarak algılar; düşük seviye cihazlar CPU yedeğini kullanır</li>
+            <li>Aynı anda gösterilen oyunları azaltmak için sistem filtrelerini kullanın</li>
+            <li>Büyük işlemlerden (kazıma, temizlik, içe aktarmalar) sonra Veritabanını En İyileştir'i düzenli olarak çalıştırın</li>
         </ul>
     </div>
 </section>
@@ -2098,4 +2253,8 @@ kbd {
     background: rgba(76, 201, 240, 0.05);
 }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset_url('js/help-search.js') }}" defer></script>
 {% endblock %}

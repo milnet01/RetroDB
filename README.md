@@ -92,7 +92,7 @@ Open your browser to `http://localhost:5000` and follow the setup wizard.
 
 ## Requirements
 
-- **Python** 3.10 or higher (CI tests on 3.12 and 3.13)
+- **Python** 3.12 or higher (CI tests on 3.12 and 3.13)
 - **pip** (Python package manager)
 - **Web Browser** (Chrome, Firefox, Safari, Edge)
 
@@ -172,6 +172,61 @@ To update by hand instead:
 2. Extract the new version over the existing installation
 3. Run `python install.py` to install any new dependencies
 4. Your database and settings will be preserved
+
+## Troubleshooting
+
+Problems with installing and starting RetroDB. For problems inside the app, open **Help** in RetroDB: its Troubleshooting section covers each feature.
+
+### "Python not found" or "Python 3.12+ required"
+
+Install Python 3.12 or newer from [python.org](https://www.python.org/downloads/). On Windows, tick the installer's box that adds Python to PATH. On macOS, `brew install python3` also works. On Linux, use your package manager. Check the version with `python3 --version` (`python --version` on Windows), then run the install again. The **Standalone** download needs no Python at all.
+
+### "ERROR: pip is not available"
+
+The installer prints the command that installs pip on your system. Run it, then run `python install.py` again.
+
+### "Installation completed with errors"
+
+Read the red `ERROR` lines above that message: they name what failed. Check the internet connection, then run `python install.py` again; it keeps your config files. On Debian or Ubuntu, a pip "externally-managed-environment" refusal is retried by the installer itself.
+
+### "ERROR: Port 5000 is already in use"
+
+Another program uses port 5000. The message shows how to find and stop it. Or start RetroDB on another port:
+
+```bash
+# Linux/macOS
+PORT=5001 ./start.sh
+
+# Windows (in the same Command Prompt)
+set PORT=5001
+start.bat
+```
+
+Then open `http://localhost:5001`. Start RetroDB the same way each time to keep that port.
+
+### The browser does not open
+
+The start scripts open the browser by themselves; `python app.py` does not. Open the **Local** address the terminal prints, usually `http://localhost:5000`.
+
+### Signing in the first time
+
+The first account is `admin` with the password `admin`. RetroDB asks you to choose a new password straight away.
+
+### Other devices cannot reach RetroDB
+
+Open the **Network** address the terminal prints, such as `http://192.168.1.20:5000`, not `localhost`. If it shows `127.0.0.1`, RetroDB could not find the computer's network address; use the address your computer's network settings show. A firewall on the computer running RetroDB may also need to allow the port. If `RETRODB_HOST` is set to `127.0.0.1`, RetroDB answers only on its own computer.
+
+### "Permission denied" when running `./start.sh`
+
+Unzipping can drop the permission to run a script. Run `chmod +x start.sh`, or start it with `bash start.sh`.
+
+### "ERROR: the 'retrodb' binary is missing"
+
+The **Standalone** folder is incomplete. Extract the zip again and keep the folder as it is.
+
+### Where to find the logs
+
+The `logs/` folder in the RetroDB folder holds the log files. In the app, admins can read them in **Log Viewer**. Old scrape logs can hold your scraper user name and password, so check a log before you share it.
 
 ## Support development
 

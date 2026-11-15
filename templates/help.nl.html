@@ -13,6 +13,17 @@
     </div>
 </div>
 
+<!-- PASS-59-307 — search the manual (static/js/help-search.js) -->
+<div class="help-search" role="search">
+    <div class="search-box">
+        <span class="search-icon" aria-hidden="true">&#128269;</span>
+        <label for="helpSearch" class="visually-hidden">{{ _('Search the manual') }}</label>
+        <input type="search" id="helpSearch" class="search-input"
+               placeholder="{{ _('Search the manual') }}" autocomplete="off" spellcheck="false">
+    </div>
+    <p id="helpSearchStatus" class="help-search-status" role="status" aria-live="polite"></p>
+</div>
+
 <!-- Help Navigation -->
 <div class="help-nav" data-sticky-nav>
     <a href="#installation" class="help-nav-item">Installatie</a>
@@ -62,7 +73,7 @@
     <div class="card-body">
         <h3>Systeemvereisten</h3>
         <ul>
-            <li><strong>Python 3.8+</strong> met pip</li>
+            <li><strong>Python 3.12+</strong> met pip</li>
             <li><strong>Webbrowser</strong> (Chrome, Firefox, Safari, Edge)</li>
             <li><strong>Besturingssysteem:</strong> Linux, Windows 10/11 of macOS</li>
         </ul>
@@ -87,7 +98,7 @@
 
         <h3>Wat install.py doet</h3>
         <ul>
-            <li>Controleert of Python 3.8+ en pip beschikbaar zijn</li>
+            <li>Controleert of Python 3.12+ en pip beschikbaar zijn</li>
             <li>Installeert Python-afhankelijkheden vanuit <code>requirements.txt</code></li>
             <li>Maakt <code>config.py</code> aan vanuit het voorbeeldsjabloon</li>
             <li>Maakt de benodigde mappen aan (database, logboeken, mediamappen)</li>
@@ -142,9 +153,9 @@
   snes/
     Chrono Trigger (USA).sfc
   psx/
-    Final Fantasy VII (USA)/
-      Final Fantasy VII (USA) (Disc 1).chd
-      Final Fantasy VII (USA) (Disc 2).chd</pre>
+    Final Fantasy VII (USA) (Disc 1).chd
+    Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>Zet ROM-bestanden direct in de systeemmap. Bestanden in submappen worden overgeslagen, behalve voor PS3.</p>
         <p>Elke systeemmap moet een ES-DE-bestand <code>systeminfo.txt</code> bevatten dat de ondersteunde bestandsextensies definieert. RetroDB leest dit tijdens het scannen om te bepalen welke bestanden geldige ROMs zijn voor elk systeem.</p>
 
         <div class="help-tip">
@@ -551,10 +562,11 @@
 
         <h3>Tabblad Systeem</h3>
         <ul>
-            <li><strong>Onderhoud</strong> &mdash; Database-optimalisatie (VACUUM/ANALYZE), opruimen van verweesde media, ontbrekende ROMs opschonen, gescrapete gegevens wissen, CLZ-importen wissen, bulk-afbeeldingsstandaardisatie</li>
-            <li><strong>Server</strong> &mdash; Serverconfiguratie (host, poort, foutopsporingsmodus)</li>
-            <li><strong>Logboekregistratie</strong> &mdash; Loglevelinstellingen per categorie</li>
-            <li><strong>Probleemoplossing</strong> &mdash; Vastgelopen bulk scrapen wissen, RA-synchronisatiewachtrij wissen, PSN-vernieuwing wissen, museumgeneratie wissen, server herstarten</li>
+            <li><strong>Onderhoud</strong> &mdash; Ontbrekende ROM's opschonen, CLZ-imports of gescrapete gegevens wissen, mediabestanden verwijderen die geen enkele game gebruikt, koppelingen naar verdwenen mediabestanden wissen en de database optimaliseren</li>
+            <li><strong>Updates</strong> &mdash; Een nieuwe versie zoeken, downloaden en installeren</li>
+            <li><strong>Server</strong> &mdash; RetroDB opnieuw starten of afsluiten</li>
+            <li><strong>Logboek</strong> &mdash; Logniveau-instellingen voor verschillende categorieën, en de logbestanden</li>
+            <li><strong>Probleemoplossing</strong> &mdash; Een vastgelopen RetroAchievements-synchronisatie wissen</li>
         </ul>
 
         <h3 id="emulators-play">Emulators en spelen</h3>
@@ -645,7 +657,7 @@
         <p>Configureer welke scrapers als eerste draaien en welke in-/uitgeschakeld zijn bij <strong>Instellingen &rarr; Scrapen &rarr; Scraper</strong>. Sleep om de prioriteit te herschikken. Uitgeschakelde scrapers worden niet geprobeerd tijdens het scrapen en activeren geen API-statuswaarschuwingen op het dashboard.</p>
 
         <h3>Snelheidslimiet</h3>
-        <p>Elke scraper heeft instelbare snelheidslimieten om API-drosseling te voorkomen. Standaardvertragingen zijn voorzichtig ingesteld. Verlaag de vertragingen op eigen risico &mdash; het overschrijden van API-snelheidslimieten kan leiden tot tijdelijke blokkering door de betreffende dienst.</p>
+        <p>RetroDB spreidt zijn verzoeken aan elke dienst zelf; er valt niets in te stellen. Als een dienst meldt dat zijn limiet is bereikt, vraagt RetroDB die dienst niets meer tot het tijdstip dat de dienst opgeeft, en zegt dat ook (zie <a href="#ts-scraping">Probleemoplossing</a>).</p>
     </div>
 </section>
 
@@ -1510,7 +1522,7 @@
 
         <h3>Bulk HLTB-opzoeken</h3>
         <p>Voer een HowLongToBeat-opzoeking uit voor elk spel zonder speeltijdschatting. Elke overeenkomst wordt beoordeeld op titel + platform + releasejaar; overeenkomsten met een hoge betrouwbaarheid worden automatisch opgeslagen. Alles onder de betrouwbaarheidsdrempel (of met tegenstrijdige platforms) wordt geparkeerd voor menselijke beoordeling.</p>
-        <p><em>Geen externe afhankelijkheden (gebruikt de meegeleverde offline HLTB-dataset)</em></p>
+        <p><em>Zoekt elke game op de HowLongToBeat-website op en heeft dus internettoegang nodig</em></p>
 
         <h3>HLTB in afwachting van beoordeling</h3>
         <p>Beoordelingswachtrij voor dubbelzinnige overeenkomsten die door Bulk HLTB-opzoeken naar boven zijn gehaald. Elke wachtende rij toont het bronspel naast de HLTB-kandidaat (titel, platform, releasejaar, betrouwbaarheid). Keur per rij goed, wijs af, of kies een andere overeenkomst. De beoordelingskaart verschijnt alleen in het ROM-tools-overzicht wanneer er minstens één wachtende overeenkomst is.</p>
@@ -1781,44 +1793,211 @@
 <section id="troubleshooting" class="help-section card">
     <h2 class="card-title">Probleemoplossing</h2>
     <div class="card-body">
-        <h3>Veelvoorkomende problemen</h3>
+        <p>Problemen zijn per functie gegroepeerd. Typ een woord uit de melding die je ziet in het zoekvak boven aan deze pagina om er direct heen te gaan. Bij de meeste meldingen komt ook een regel in de <a href="#logs">Logviewer</a> (alleen voor beheerders), die meer vertelt.</p>
 
-        <h4>"No extensions found for system"</h4>
-        <p>De systeemmap heeft een geldig ES-DE-bestand <code>systeminfo.txt</code> nodig dat de ondersteunde ROM-bestandsextensies definieert. Zorg ervoor dat de structuur van uw ROM-map overeenkomt met de ES-DE-standaarden.</p>
+        <h3 id="ts-jobs">Langlopende taken</h3>
 
-        <h4>"API Connection Failed"</h4>
+        <h4>Een taak lijkt vast te zitten</h4>
+        <p>Bulkscrapes, prestatiesynchronisaties, PSN-vernieuwingen, formaataanpassingen van afbeeldingen en AI-aanvulrondes tonen een voortgangsmelding in de hoek. Met de knoppen daarin pauzeer, stop of annuleer je de taak. Een bulkscrape stopt tussen twee games, dus de game die bezig is wordt eerst afgemaakt; dat kan een minuut duren. Loopt de taak dan nog, start RetroDB dan opnieuw op: Instellingen &rarr; Systeem &rarr; Serverbediening &rarr; <strong>Server opnieuw starten</strong>.</p>
+
+        <h4>Banner "Onderbroken taken" op het dashboard</h4>
+        <p>Een taak die liep of wachtte toen RetroDB stopte, staat hier. <strong>Hervatten</strong> zet de taak voort vanaf de plek waar hij het laatst is opgeslagen. <strong>Sluiten</strong> laat hem vallen. <strong>Alles hervatten</strong> en <strong>Alles sluiten</strong> doen hetzelfde voor elke taak in de lijst.</p>
+
+        <h3 id="ts-library">Games toevoegen</h3>
+
+        <h4>"ROM-pad niet geconfigureerd"</h4>
+        <p>Stel de map met je systeemmappen in bij Instellingen &rarr; Bibliotheek &rarr; Paden &rarr; <strong>Pad ROM-bibliotheek</strong> en druk dan op <strong>Bibliotheek scannen</strong>.</p>
+
+        <h4>Een scan vindt geen nieuwe games, of een systeem ontbreekt</h4>
         <ul>
-            <li>Controleer uw internetverbinding</li>
-            <li>Controleer de API-sleutels bij Instellingen &rarr; Scrapen &rarr; API-sleutels</li>
-            <li>Wacht als de snelheidslimiet is bereikt (sommige API's hebben dagelijkse/uurlijkse limieten)</li>
-            <li>Controleer of de scraper is ingeschakeld (uitgeschakelde scrapers tonen "Uitgeschakeld" in de dashboardstatus)</li>
-            <li>Bekijk de logboekviewer voor gedetailleerde foutmeldingen</li>
+            <li>Elke systeemmap heeft een ES-DE-bestand <code>systeminfo.txt</code> nodig dat de bestandsextensies opsomt. Een map zonder dat bestand wordt overgeslagen; de Logviewer toont er <code>No extensions found</code> voor. PS3-mappen hebben het niet nodig.</li>
+            <li>Bestanden moeten direct in de systeemmap staan. Bestanden in een submap worden overgeslagen, behalve voor PS3.</li>
+            <li>Een bestand waarvan de extensie niet in de lijst staat, wordt overgeslagen.</li>
+            <li>Een verplaatst of hernoemd bestand wordt als nieuwe game toegevoegd. Instellingen &rarr; Systeem &rarr; <strong>Ontbrekende ROM's opschonen</strong> verwijdert het oude item.</li>
         </ul>
 
-        <h4>"Bulk Scrape Stuck"</h4>
-        <p>Ga naar Instellingen &rarr; Systeem &rarr; Probleemoplossing &rarr; <strong>"Vastgelopen bulk scrapen wissen"</strong>. Dit reset de taakstatus zonder uw gegevens te beïnvloeden.</p>
+        <h3 id="ts-scraping">Scrapen</h3>
 
-        <h4>"RA Sync Queue Stuck"</h4>
-        <p>Wis de RetroAchievements-synchronisatiewachtrij bij Instellingen &rarr; Systeem &rarr; Probleemoplossing.</p>
+        <h4>"No results found. Try a different search term."</h4>
+        <ul>
+            <li>Maak de titel in het zoekvak korter, of probeer de Engelse naam.</li>
+            <li>Controleer of de bronnen aanstaan en <strong>Online</strong> tonen bij Instellingen &rarr; Scrapen &rarr; Scraper.</li>
+            <li>Een bron die zijn limiet heeft bereikt, geeft niets terug tot het tijdstip dat hij opgaf (zie hieronder).</li>
+        </ul>
 
-        <h4>"PSN Sync Stuck"</h4>
-        <p>Wis de PSN-vernieuwingstaak bij Instellingen &rarr; Systeem &rarr; Probleemoplossing.</p>
+        <h4>De gegevens of afbeeldingen horen bij een andere game</h4>
+        <ul>
+            <li>Een bulkscrape zoekt op de bestandsnaam van de ROM, dus een slecht benoemd bestand vindt de verkeerde game. Hernoem het bestand, of scrape de game op zijn eigen pagina met een betere zoektitel en kies het juiste resultaat.</li>
+            <li>Vink in het venster Game bewerken <strong>Deze titel behouden bij scrapen</strong> aan, zodat latere scrapes de naam met rust laten.</li>
+            <li>Verhoog voor veel games de <strong>Minimale overeenkomstscore</strong> bij Instellingen &rarr; Scrapen &rarr; Scraper &rarr; Overeenkomstfilter bij bulkscrapen.</li>
+        </ul>
 
-        <h4>"Museum Generation Stuck"</h4>
-        <p>Wis de museumgeneratietaak bij Instellingen &rarr; Systeem &rarr; Probleemoplossing.</p>
+        <h4>Een scrape vervangt een slechte afbeelding niet</h4>
+        <p>Scrapes vullen alleen lege afbeeldingen, en screenshots worden alleen toegevoegd. Verwijder de afbeelding in het venster Game bewerken en scrape dan opnieuw. Een bulk <strong>Volledige herscrape</strong> vervangt afbeeldingen, tenzij <strong>Bestaande media behouden</strong> is aangevinkt. Een screenshot die je hebt verwijderd, wordt niet opnieuw toegevoegd.</p>
 
-        <h4>"Database Errors"</h4>
+        <h4>"&hellip; meldt dat de limiet is bereikt" of "&hellip; heeft de API-sleutel geweigerd"</h4>
+        <p>RetroDB vraagt die dienst niets meer tot het tijdstip in de melding. Bij een geweigerde sleutel: corrigeer hem bij Instellingen &rarr; Scrapen &rarr; API-sleutels en druk op <strong>API-sleutels opslaan</strong>; opslaan beëindigt ook meteen elke zo'n pauze. Opnieuw opstarten beëindigt ze ook.</p>
+
+        <h4>Een bron toont een reden in plaats van "Online"</h4>
+        <p>De reden noemt het probleem, zoals "No API key" of "Invalid API key". Voer de sleutel in of corrigeer hem bij Instellingen &rarr; Scrapen &rarr; API-sleutels (alleen beheerders) en druk op <strong>API-sleutels opslaan</strong>. Een opgeslagen sleutel staat als sterretjes; laat het vak met rust om hem te behouden, of maak het leeg en typ de nieuwe sleutel.</p>
+
+        <h3 id="ts-bulk-scrape">Bulkscrapen</h3>
+
+        <h4>Een bulk-scrape loopt vast</h4>
+        <p>Druk op <strong>Annuleren</strong> in het venster Bulkscrapen; klik op de voortgangsmelding om het te openen. De game die wordt gescrapet, wordt eerst afgemaakt. Loopt het dan nog, zie <a href="#ts-jobs">Een taak lijkt vast te zitten</a>.</p>
+
+        <h4>De meeste games zijn "Overgeslagen"</h4>
+        <ul>
+            <li><strong>Ontbrekende aanvullen</strong> slaat een game over die een bulkscrape in de laatste 24 uur heeft afgerond.</li>
+            <li>Een game waarvan de scrape niets nieuws vond, telt ook als overgeslagen.</li>
+            <li>Gebruik <strong>Volledige herscrape</strong> om ze nu opnieuw te scrapen; vink <strong>Bestaande media behouden</strong> aan om je afbeeldingen te houden.</li>
+        </ul>
+
+        <h4>Veel games "Mislukt"</h4>
+        <p>Mislukt betekent meestal dat geen enkel resultaat dichtbij genoeg was om op te slaan. Verlaag de <strong>Minimale overeenkomstscore</strong> of <strong>Minimale titelkwaliteit</strong> bij Instellingen &rarr; Scrapen &rarr; Scraper &rarr; Overeenkomstfilter bij bulkscrapen, en controleer de bestandsnamen. De Logviewer toont elke game waarvoor geen overeenkomst werd gevonden.</p>
+
+        <h4>"A scrape for &hellip; is already running"</h4>
+        <p>Dat systeem wordt al in dezelfde modus gescrapet. Wacht erop, of annuleer het. Een scrape van een ander systeem wacht in de rij en start vanzelf.</p>
+
+        <h3 id="ts-ai-fill">AI-aanvulling</h3>
+
+        <h4>"AI heeft geen gegevens teruggegeven. Controleer je API-sleutel en providerinstellingen."</h4>
+        <p>Kies bij Instellingen &rarr; Scrapen &rarr; API-sleutels de <strong>AI-metadata-aanbieder</strong>, voer de sleutel in, druk op <strong>API-sleutels opslaan</strong> en daarna op <strong>Opgeslagen AI-sleutel testen</strong>. Als de AI-dienst heeft geweigerd, staat in de melding in plaats daarvan waarom, bijvoorbeeld dat er geen tegoed meer is.</p>
+
+        <h4>"De AI heeft geen ontbrekende velden gevonden om aan te vullen"</h4>
+        <p>Dit is geen fout: de game heeft niets leegs dat AI-aanvulling kan invullen.</p>
+
+        <h4>Bulk-AI-aanvulling stopte vanzelf</h4>
+        <p>Het stopt nadat drie games achter elkaar geen antwoord krijgen. Controleer de sleutel met <strong>Opgeslagen AI-sleutel testen</strong> en start het dan opnieuw. Games die al zijn aangevuld, houden wat ze kregen.</p>
+
+        <h3 id="ts-images">Afbeeldingen</h3>
+
+        <h4>Na een scrape ontbreken afbeeldingen</h4>
+        <p>Een afbeelding die niet kan worden gedownload, wordt zonder melding overgeslagen; de Logviewer zegt waarom. Controleer of RetroDB naar zijn mediamap kan schrijven (<code>static/images/</code>, tenzij je die hebt verplaatst). Op Linux of macOS geeft <code>chmod -R u+rwX static/images/</code> je account schrijftoegang zonder de afbeeldingen als programma's te markeren.</p>
+
+        <h4>Opschalen lijkt niet te werken</h4>
+        <ul>
+            <li>De eerste opschaling downloadt het Real-ESRGAN-model, dus je hebt internettoegang nodig.</li>
+            <li>Een GPU heeft werkende drivers nodig (CUDA voor NVIDIA, ROCm voor AMD). Als de GPU faalt, schakelt het opschalen over op de CPU.</li>
+            <li>Als de opschaler helemaal niet kan draaien, vergroot RetroDB afbeeldingen op de gewone manier (Lanczos). <code>logs/upscale_worker.log</code> zegt waarom.</li>
+        </ul>
+
+        <h3 id="ts-play">Games spelen</h3>
+
+        <h4>De game opent op een andere computer</h4>
+        <p><strong>Spelen</strong> start de emulator op de computer waarop RetroDB draait, niet op het apparaat waarop je erop drukte.</p>
+
+        <h4>"Emulatorprogramma niet gevonden in het PATH"</h4>
+        <p>Bewerk op de pagina Emulators, onder <strong>Geregistreerde emulators</strong>, de emulator en vul <strong>Eigen programmapad</strong> in met de locatie van het programma. Of voeg de map waarin het staat toe onder <strong>Emulatormappen</strong>. Gebruik voor RetroArch <strong>Automatisch detecteren</strong> op de RetroArch-kaart en daarna <strong>Opslaan</strong>.</p>
+
+        <h4>"Geen emulator ingesteld voor systeem &hellip;" of "De emulator &hellip; staat uit"</h4>
+        <p>Kies onder <strong>Koppeling per systeem</strong> op de pagina Emulators een emulator voor het systeem, of zet de emulator aan onder <strong>Geregistreerde emulators</strong>. Staat een game op een emulator die niet meer bestaat, wis die keuze dan in het venster Game bewerken.</p>
+
+        <h4>"&hellip; er is geen RetroArch-core voor ingesteld" of "RetroArch-core niet gevonden"</h4>
+        <p>Controleer op de pagina Emulators of de RetroArch-kaart naar de map met je cores wijst (<strong>Automatisch detecteren</strong> vult hem in) en druk dan op <strong>Opslaan</strong>. Installeer een ontbrekende core met de eigen coredownloader van RetroArch. Of kies onder <strong>Koppeling per systeem</strong> een andere emulator voor het systeem.</p>
+
+        <h4>"ROM-bestand niet gevonden" of "ROM-pad ligt buiten de ingestelde scanmappen"</h4>
+        <p>Het bestand is sinds de laatste scan verplaatst of verwijderd, of staat buiten je ROM-map. Zet het terug in de systeemmap en scan de bibliotheek opnieuw.</p>
+
+        <h4>"Deze game draait al"</h4>
+        <p>Sluit het emulatorvenster, of accepteer het aanbod om het te sluiten en opnieuw te starten.</p>
+
+        <h4>"Kan de &hellip;-core niet downloaden"</h4>
+        <p>Spelen in RetroDB downloadt een ontbrekende core de eerste keer dat je speelt, tenzij <strong>Een ontbrekende core downloaden wanneer op ‘Spelen’ wordt gedrukt</strong> op de pagina Emulators uitstaat. Controleer de internetverbinding en druk opnieuw op Spelen, of druk op de pagina Emulators op <strong>Cores voor mijn systemen installeren</strong>.</p>
+
+        <h3 id="ts-cheats">Cheats</h3>
+
+        <h4>"Er zijn geen cheats gevonden voor dit spel."</h4>
+        <p>Download het cheatpakket voor de emulator op de Cheats-kaart van de pagina Emulators, of importeer daar een map met je eigen cheats. Cheats werken in de speler, DuckStation en PCSX2.</p>
+
+        <h4>Een ingeschakelde cheat doet niets</h4>
+        <p>Cheats worden toegepast de volgende keer dat je op Spelen drukt. Een cheat die aanstaat, zet de hardcore-modus van RetroAchievements uit zolang je speelt.</p>
+
+        <h4>"Start &hellip; één keer zodat het zijn instellingen aanmaakt, en speel daarna opnieuw."</h4>
+        <p>DuckStation of PCSX2 heeft zijn instellingenmap nog niet gemaakt. Start de emulator één keer zelfstandig en druk dan opnieuw op Spelen.</p>
+
+        <h3 id="ts-achievements">Prestaties en trofeeën</h3>
+
+        <h4>Een RetroAchievements-synchronisatie zit vast of wacht</h4>
+        <p>Er loopt één RetroAchievements-taak tegelijk; de rest wacht in de rij in de voortgangsmelding. De stopknop beëindigt de lopende taak, en elke wachtende taak heeft een knop <strong>Uit wachtrij verwijderen</strong>.</p>
+
+        <h4>"RetroAchievements niet geconfigureerd"</h4>
+        <p>Sla je RetroAchievements-gebruikersnaam en web-API-sleutel op bij Instellingen &rarr; Account &rarr; Mijn profiel &rarr; RetroAchievements-instellingen.</p>
+
+        <h4>"RetroAchievements heeft je niet ingelogd"</h4>
+        <p>Inloggen om te spelen vraagt je RetroAchievements-wachtwoord, niet de API-sleutel. Het gaat in de volgende keer dat je op Spelen drukt.</p>
+
+        <h4>"Geen games gevonden. Controleer of je Steam-profiel en gamegegevens op Openbaar staan."</h4>
+        <p>Zet op de Steam-website je profiel en de gamegegevens ervan op Openbaar. Je Steam-sleutel en 17-cijferige Steam-ID horen bij Instellingen &rarr; Account &rarr; Mijn profiel &rarr; Steam.</p>
+
+        <h4>"OpenXBL heeft die sleutel niet geaccepteerd"</h4>
+        <ul>
+            <li>Kopieer de sleutel opnieuw van <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> en plak hem in Instellingen &rarr; Account &rarr; Mijn profiel &rarr; Xbox.</li>
+            <li>"De uurlimiet van OpenXBL is bereikt" betekent dat de sleutel dit uur zijn 150 verzoeken heeft gebruikt. Synchroniseer later opnieuw; dan begint het met de games die nog niet zijn gesynchroniseerd.</li>
+        </ul>
+
+        <h4>"PSN-authenticatie is mislukt"</h4>
+        <ul>
+            <li>Sony accepteert je opgeslagen NPSSO-token niet meer. Haal een nieuwe op met de stappen bij Instellingen &rarr; Account &rarr; Mijn profiel &rarr; PlayStation Network en druk dan op <strong>Opslaan &amp; verbinding testen</strong>.</li>
+            <li>RetroDB houdt de aanmelding zelf in stand zolang Sony het token accepteert. Wil je een token vervangen dat nog werkt, meld je dan eerst af bij PlayStation.</li>
+        </ul>
+
+        <h4>Een PSN-trofeeënsynchronisatie zit vast</h4>
+        <p>Een PSN-vernieuwing heeft stopknoppen in zijn voortgangsmelding. Een volledige trofeeënsynchronisatie heeft die niet; opnieuw opstarten van RetroDB beëindigt hem.</p>
+
+        <h4>Verzamelaarstrofeeën staan allemaal als niet behaald</h4>
+        <p>Druk op de pagina Verzamelaarstrofeeën op <strong>Voortgang vernieuwen</strong>. Het openen van de pagina telt ze niet mee.</p>
+
+        <h4>'Geen HLTB-overeenkomst gevonden voor &hellip;'</h4>
+        <p>Typ de titel die HowLongToBeat gebruikt in het zoekvak en zoek opnieuw. Als HowLongToBeat meldde dat er te veel verzoeken waren, wacht RetroDB 15 minuten voordat het weer vraagt, en een opzoeking vindt tot dan niets.</p>
+
+        <h3 id="ts-tools">Museum en ROM-tools</h3>
+
+        <h4>"Geen AI-provider geconfigureerd"</h4>
+        <p>Het Museum schrijft zijn pagina's met de AI-provider die is ingesteld bij Instellingen &rarr; Scrapen &rarr; API-sleutels. Stel er een in en genereer dan opnieuw.</p>
+
+        <h4>Het maken van museuminhoud loopt vast</h4>
+        <p>Druk op <strong>Annuleren</strong> onder de voortgangsbalk op de Museum-pagina.</p>
+
+        <h4>"chdman niet gevonden. Installeer de MAME-tools."</h4>
+        <p>Installeer de MAME-tools, waar <code>chdman</code> bij zit, of stel de locatie ervan in bij ROM-tools &rarr; Instellingen.</p>
+
+        <h4>"Deze scanresultaten zijn verlopen. Scan opnieuw en verwijder daarna."</h4>
+        <p>Voer de scan opnieuw uit en verwijder dan uit de nieuwe resultaten.</p>
+
+        <h3 id="ts-accounts">Accounts en inloggen</h3>
+
+        <h4>"Te veel inlogpogingen. Probeer het later opnieuw."</h4>
+        <p>Wacht na vijf verkeerde wachtwoorden in vijf minuten vijf minuten en probeer het opnieuw.</p>
+
+        <h4>Een vergeten wachtwoord</h4>
+        <p>Er is geen reset per e-mail. Een beheerder stelt een nieuw wachtwoord in bij Instellingen &rarr; Account &rarr; Gebruikersbeheer. Vergeet de enige beheerder het zijne, herstel dan een back-up die is gemaakt toen het wachtwoord nog bekend was.</p>
+
+        <h4>"You do not have permission to access this feature"</h4>
+        <p>Je rol omvat die functie niet. Een beheerder kan je rol wijzigen bij Instellingen &rarr; Account &rarr; Gebruikersbeheer.</p>
+
+        <h3 id="ts-data">Database, back-ups en updates</h3>
+
+        <h4>Databasefouten</h4>
         <ol>
             <li>Maak indien mogelijk een back-up (Instellingen &rarr; Bibliotheek &rarr; Back-up)</li>
-            <li>Probeer Instellingen &rarr; Systeem &rarr; Onderhoud &rarr; <strong>Database optimaliseren</strong></li>
+            <li>Probeer Instellingen &rarr; Systeem &rarr; Onderhoud &rarr; <strong>Database optimaliseren</strong>. Het kan mislukken terwijl een taak schrijft; wacht tot de taken klaar zijn en probeer het opnieuw.</li>
             <li>Controleer de bestandsrechten van de map <code>database/</code></li>
-            <li>Laatste redmiddel: herstel vanuit een back-up of verwijder de database en scan opnieuw</li>
+            <li>Laatste redmiddel: herstel vanuit een back-up</li>
         </ol>
 
-        <h4>"Images Not Saving"</h4>
-        <p>Controleer of RetroDB naar zijn mediamap kan schrijven (<code>static/images/</code>, tenzij je die hebt verplaatst). Op Linux of macOS geeft <code>chmod -R u+rwX static/images/</code> je account schrijftoegang zonder de afbeeldingen als programma's te markeren.</p>
+        <h4>"Er draait een achtergrondtaak. Wacht tot deze klaar is voordat je herstelt."</h4>
+        <p>Laat de taak afronden, of stop hem via zijn voortgangsmelding, en herstel dan. Start RetroDB na een herstel opnieuw op.</p>
 
-        <h4>"Page Slow or Unresponsive"</h4>
+        <h4>"Deze kopie van RetroDB is een git-checkout. Werk hem bij met git pull."</h4>
+        <p>De updater installeert alleen over een gedownloade release. Een kopie die met git is gemaakt, werk je bij met <code>git pull</code>.</p>
+
+        <h4>Een update is mislukt</h4>
+        <p>Een mislukte download installeert niets; druk opnieuw op <strong>Update downloaden</strong>. Een mislukte installatie zet de oude versie vanzelf terug en zegt waarom. Details staan in <code>logs/update.log</code>.</p>
+
+        <h3 id="ts-performance">Pagina's en snelheid</h3>
+
+        <h4>Een pagina is traag of reageert niet</h4>
         <ul>
             <li>Grote collecties kunnen even duren om te laden &mdash; oneindig scrollen laadt in batches van 100</li>
             <li>Probeer de pagina te vernieuwen om opgebouwd geheugengebruik te wissen</li>
@@ -1827,36 +2006,12 @@
             <li>Canvas-effecten detecteren automatisch de hardware; minder krachtige apparaten gebruiken CPU-terugval met een lagere framerate</li>
         </ul>
 
-        <h4>Banner "Onderbroken taken" op het dashboard</h4>
-        <p>Als RetroDB opnieuw opstart terwijl er taken lopen, verschijnen deze in een herstelbanner. Klik op <strong>"Hervatten"</strong> per taak of op <strong>"Alles hervatten"</strong> om ze allemaal te herstarten. Klik op <strong>"Negeren"</strong> of <strong>"Alles negeren"</strong> om ze te wissen.</p>
-
-        <h4>"PSN Authentication Failed"</h4>
+        <h4>Prestatietips</h4>
         <ul>
-            <li>NPSSO-tokens verlopen &mdash; genereer een nieuwe via <code>ca.account.sony.com/api/v1/ssocookie</code></li>
-            <li>Zorg ervoor dat u bent aangemeld bij store.playstation.com voordat u de cookie-URL bezoekt</li>
-            <li>RetroDB meldt zich zelf opnieuw aan zolang Sony uw opgeslagen NPSSO accepteert. Zodra Sony deze weigert, plakt u een nieuwe bij Instellingen &rarr; Account &rarr; PSN. Wilt u een token vervangen dat nog werkt, meld u dan eerst af bij PlayStation.</li>
-        </ul>
-
-        <h4>"OpenXBL heeft die sleutel niet geaccepteerd"</h4>
-        <ul>
-            <li>Kopieer de sleutel opnieuw van <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> en plak hem in Instellingen &rarr; Mijn profiel &rarr; Xbox</li>
-            <li>"De uurlimiet van OpenXBL is bereikt" betekent dat de sleutel dit uur zijn 150 verzoeken heeft gebruikt; wacht en probeer het opnieuw</li>
-        </ul>
-
-        <h4>"Image Upscaling Errors"</h4>
-        <ul>
-            <li>Het Real-ESRGAN ONNX-model wordt bij het eerste gebruik gedownload &mdash; zorg voor internettoegang</li>
-            <li>GPU-versnelling vereist compatibele drivers (CUDA voor NVIDIA, ROCm voor AMD)</li>
-            <li>Als de GPU faalt, valt het systeem automatisch terug op CPU-verwerking</li>
-        </ul>
-
-        <h3>Prestatietips</h3>
-        <ul>
-            <li>Houd uw browser up-to-date voor de beste prestaties</li>
+            <li>Houd je browser up-to-date voor de beste prestaties</li>
             <li>Sluit andere browsertabbladen bij het werken met zeer grote collecties</li>
-            <li>Gebruik systeemfilters om het aantal tegelijk weergegeven spellen te beperken</li>
+            <li>Gebruik systeemfilters om het aantal tegelijk weergegeven games te beperken</li>
             <li>Voer Database optimaliseren periodiek uit na grote bewerkingen (scrapen, opschonen, importeren)</li>
-            <li>Canvas-themaeffecten detecteren automatisch de hardware; minder krachtige apparaten gebruiken CPU-terugval</li>
         </ul>
     </div>
 </section>
@@ -2094,4 +2249,8 @@ kbd {
     background: rgba(76, 201, 240, 0.05);
 }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset_url('js/help-search.js') }}" defer></script>
 {% endblock %}

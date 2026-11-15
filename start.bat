@@ -20,7 +20,7 @@ python --version >nul 2>&1
 if %errorlevel% neq 0 (
     python3 --version >nul 2>&1
     if %errorlevel% neq 0 (
-        echo ERROR: Python not found! Please install Python 3.8+ from python.org
+        echo ERROR: Python not found! Please install Python 3.12+ from python.org
         pause
         exit /b 1
     )

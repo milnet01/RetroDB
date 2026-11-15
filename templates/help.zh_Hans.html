@@ -13,6 +13,17 @@
     </div>
 </div>
 
+<!-- PASS-59-307 — search the manual (static/js/help-search.js) -->
+<div class="help-search" role="search">
+    <div class="search-box">
+        <span class="search-icon" aria-hidden="true">&#128269;</span>
+        <label for="helpSearch" class="visually-hidden">{{ _('Search the manual') }}</label>
+        <input type="search" id="helpSearch" class="search-input"
+               placeholder="{{ _('Search the manual') }}" autocomplete="off" spellcheck="false">
+    </div>
+    <p id="helpSearchStatus" class="help-search-status" role="status" aria-live="polite"></p>
+</div>
+
 <!-- Help Navigation -->
 <div class="help-nav" data-sticky-nav>
     <a href="#installation" class="help-nav-item">安装</a>
@@ -62,7 +73,7 @@
     <div class="card-body">
         <h3>系统要求</h3>
         <ul>
-            <li><strong>Python 3.8+</strong> 及 pip</li>
+            <li><strong>Python 3.12+</strong> 及 pip</li>
             <li><strong>网页浏览器</strong>（Chrome、Firefox、Safari、Edge）</li>
             <li><strong>操作系统：</strong>Linux、Windows 10/11 或 macOS</li>
         </ul>
@@ -87,7 +98,7 @@
 
         <h3>install.py 的作用</h3>
         <ul>
-            <li>验证 Python 3.8+ 和 pip 是否可用</li>
+            <li>验证 Python 3.12+ 和 pip 是否可用</li>
             <li>从 <code>requirements.txt</code> 安装 Python 依赖项</li>
             <li>从示例模板创建 <code>config.py</code></li>
             <li>创建所需的目录（数据库、日志、媒体文件夹）</li>
@@ -142,9 +153,9 @@
   snes/
     Chrono Trigger (USA).sfc
   psx/
-    Final Fantasy VII (USA)/
-      Final Fantasy VII (USA) (Disc 1).chd
-      Final Fantasy VII (USA) (Disc 2).chd</pre>
+    Final Fantasy VII (USA) (Disc 1).chd
+    Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>请把 ROM 文件直接放在系统文件夹中。子文件夹中的文件会被跳过，PS3 除外。</p>
         <p>每个系统文件夹都应包含一个 ES-DE <code>systeminfo.txt</code> 文件，用于定义支持的文件扩展名。RetroDB 在扫描时读取该文件，以识别哪些文件是每个系统的有效 ROM。</p>
 
         <div class="help-tip">
@@ -551,10 +562,11 @@
 
         <h3>系统标签页</h3>
         <ul>
-            <li><strong>维护</strong> &mdash; 数据库优化（VACUUM/ANALYZE）、孤立媒体清理、清理缺失的 ROM、清除抓取数据、清除 CLZ 导入、批量图片标准化</li>
-            <li><strong>服务器</strong> &mdash; 服务器配置（主机、端口、调试模式）</li>
-            <li><strong>日志</strong> &mdash; 不同类别的日志级别设置</li>
-            <li><strong>故障排除</strong> &mdash; 清除卡住的批量抓取、清除 RA 同步队列、清除 PSN 刷新、清除博物馆生成、重启服务器</li>
+            <li><strong>维护</strong> &mdash; 清理缺失的 ROM，清除 CLZ 导入或抓取的数据，删除没有游戏使用的媒体文件，清除指向已不存在的媒体文件的链接，以及优化数据库</li>
+            <li><strong>更新</strong> &mdash; 检查、下载并安装新版本</li>
+            <li><strong>服务器</strong> &mdash; 重启或关闭 RetroDB</li>
+            <li><strong>日志</strong> &mdash; 各类别的日志级别设置，以及日志文件</li>
+            <li><strong>故障排除</strong> &mdash; 清除卡住的 RetroAchievements 同步</li>
         </ul>
 
         <h3 id="emulators-play">模拟器与游玩</h3>
@@ -645,7 +657,7 @@
         <p>在 <strong>设置 &rarr; 抓取 &rarr; 抓取器</strong> 中配置哪些抓取器优先运行以及哪些启用/禁用。拖放可重新排序优先级。禁用的抓取器在抓取时不会被尝试，也不会在仪表盘上触发 API 状态警告。</p>
 
         <h3>速率限制</h3>
-        <p>每个抓取器都有可配置的速率限制，以防止 API 被限流。默认延迟设置得较为保守。降低延迟需自行承担风险 &mdash; 超出 API 速率限制可能导致相应服务对你临时封禁。</p>
+        <p>RetroDB 会自行错开对每个服务的请求，无需设置。当某个服务表示已达到限额时，RetroDB 会在该服务给出的时间之前停止向它发出请求，并给出提示（见<a href="#ts-scraping">故障排除</a>）。</p>
     </div>
 </section>
 
@@ -1510,7 +1522,7 @@
 
         <h3>批量 HLTB 查询</h3>
         <p>为每个缺少游玩时长估算的游戏运行 HowLongToBeat 查询。每次匹配都按标题 + 平台 + 发行年份评分；高置信度的匹配会自动保存。低于置信度阈值（或平台存在冲突）的结果会被搁置，等待人工审核。</p>
-        <p><em>无外部依赖（使用内置的离线 HLTB 数据集）</em></p>
+        <p><em>在 HowLongToBeat 网站上查询每个游戏，因此需要联网</em></p>
 
         <h3>HLTB 待审核</h3>
         <p>用于审核批量 HLTB 查询产生的模糊匹配的队列。每一行待处理项都会显示源游戏及其对应的 HLTB 候选项（标题、平台、发行年份、置信度）。可逐行批准、拒绝或选择其他匹配。仅当至少存在一个待处理匹配时，该审核工具卡片才会出现在 ROM 工具中心。</p>
@@ -1781,42 +1793,209 @@
 <section id="troubleshooting" class="help-section card">
     <h2 class="card-title">故障排除</h2>
     <div class="card-body">
-        <h3>常见问题</h3>
+        <p>问题按功能分组。把你看到的消息中的一个词输入本页顶部的搜索框，即可跳到对应位置。大多数消息还会在<a href="#logs">日志查看器</a>（仅管理员可用）中留下一行记录，里面有更多信息。</p>
 
-        <h4>“未找到该系统的扩展名”</h4>
-        <p>该系统文件夹需要一个有效的 ES-DE <code>systeminfo.txt</code> 文件，用于定义支持的 ROM 文件扩展名。请确保你的 ROM 目录结构符合 ES-DE 标准。</p>
+        <h3 id="ts-jobs">长时间任务</h3>
 
-        <h4>“API 连接失败”</h4>
+        <h4>任务似乎卡住了</h4>
+        <p>批量抓取、成就同步、PSN 刷新、图片缩放和 AI 填充运行时，角落会显示进度通知。通知上的按钮可以暂停、停止或取消任务。批量抓取会在两个游戏之间停下，所以正在处理的游戏会先完成；这可能需要一分钟。如果仍在运行，请重启 RetroDB：设置 &rarr; 系统 &rarr; 服务器控制 &rarr; <strong>重启服务器</strong>。</p>
+
+        <h4>仪表盘上的 "Interrupted Jobs" 横幅</h4>
+        <p>RetroDB 停止时正在运行或在等待的任务会显示在这里。<strong>继续</strong>会从任务上次保存进度的位置接着运行。<strong>忽略</strong>会丢弃它。<strong>全部继续</strong>和<strong>全部忽略</strong>会对列出的所有任务执行同样的操作。</p>
+
+        <h3 id="ts-library">添加游戏</h3>
+
+        <h4>“未配置 ROM 路径”</h4>
+        <p>在 设置 &rarr; 游戏库 &rarr; 路径 &rarr; <strong>ROM 库路径</strong> 中设置存放各系统文件夹的文件夹，然后点击<strong>扫描游戏库</strong>。</p>
+
+        <h4>扫描没有找到新游戏，或缺少某个系统</h4>
         <ul>
-            <li>检查你的网络连接</li>
-            <li>在 设置 &rarr; 抓取 &rarr; API 密钥 中核对 API 密钥</li>
-            <li>如遇速率限制请稍候（部分 API 有每日/每小时上限）</li>
-            <li>检查该抓取源是否已启用（已禁用的抓取源在仪表盘状态中显示“已禁用”）</li>
-            <li>查看日志查看器以获取详细的错误信息</li>
+            <li>每个系统文件夹都需要一个 ES-DE 的 <code>systeminfo.txt</code>，其中列出该系统的文件扩展名。没有它的文件夹会被跳过；日志查看器会为它显示 <code>No extensions found</code>。PS3 文件夹不需要它。</li>
+            <li>文件必须直接放在系统文件夹中。子文件夹中的文件会被跳过，PS3 除外。</li>
+            <li>扩展名不在列表中的文件会被跳过。</li>
+            <li>被移动或重命名的文件会作为新游戏添加。设置 &rarr; 系统 &rarr; <strong>清理缺失的 ROM</strong> 会删除旧条目。</li>
         </ul>
 
+        <h3 id="ts-scraping">抓取</h3>
+
+        <h4>“No results found. Try a different search term.”</h4>
+        <ul>
+            <li>在搜索框中缩短标题，或试试英文名。</li>
+            <li>检查数据源已开启，并在 设置 &rarr; 抓取 &rarr; 抓取器 中显示<strong>在线</strong>。</li>
+            <li>已达到限额的数据源在它给出的时间之前不会返回任何结果（见下文）。</li>
+        </ul>
+
+        <h4>数据或图片属于另一个游戏</h4>
+        <ul>
+            <li>批量抓取按 ROM 的文件名搜索，所以命名不当的文件会找到错误的游戏。请重命名文件，或在该游戏自己的页面用更好的搜索标题抓取，并选择正确的结果。</li>
+            <li>在“编辑游戏”窗口中勾选<strong>抓取时保留此标题</strong>，以后的抓取就不会改动名称。</li>
+            <li>对于很多游戏，请在 设置 &rarr; 抓取 &rarr; 抓取器 &rarr; 批量抓取匹配筛选 中调高<strong>最低匹配分数</strong>。</li>
+        </ul>
+
+        <h4>抓取没有替换掉错误的图片</h4>
+        <p>抓取只会填充空的图片，截图只会追加。请先在“编辑游戏”窗口中删除该图片，再重新抓取。批量<strong>完整重新抓取</strong>会替换图片，除非勾选了<strong>保留现有媒体</strong>。你删除过的截图不会再次被添加。</p>
+
+        <h4>“&hellip; 表示已达到其限额”或“&hellip; 拒绝了 API 密钥”</h4>
+        <p>RetroDB 会在消息中给出的时间之前停止向该服务发出请求。如果密钥被拒绝：在 设置 &rarr; 抓取 &rarr; API 密钥 中更正，然后点击<strong>保存 API 密钥</strong>；保存也会立即解除所有这类暂停。重启同样会解除。</p>
+
+        <h4>数据源显示的是原因，而不是“在线”</h4>
+        <p>原因会指明问题，例如 "No API key" 或 "Invalid API key"。在 设置 &rarr; 抓取 &rarr; API 密钥（仅管理员）中输入或更正密钥，然后点击<strong>保存 API 密钥</strong>。已保存的密钥显示为星号；不要动输入框即可保留它，或者清空后输入新密钥。</p>
+
+        <h3 id="ts-bulk-scrape">批量抓取</h3>
+
         <h4>“批量抓取卡住”</h4>
-        <p>前往 设置 &rarr; 系统 &rarr; 故障排除 &rarr; <strong>“清除卡住的批量抓取”</strong>。这会重置任务状态而不影响你的数据。</p>
+        <p>在“批量抓取”窗口中点击<strong>取消</strong>；点击进度通知即可打开该窗口。正在抓取的游戏会先完成。如果仍在运行，见<a href="#ts-jobs">任务似乎卡住了</a>。</p>
 
-        <h4>“RA 同步队列卡住”</h4>
-        <p>从 设置 &rarr; 系统 &rarr; 故障排除 中清除 RetroAchievements 同步队列。</p>
+        <h4>大多数游戏显示“已跳过”</h4>
+        <ul>
+            <li><strong>填充缺失项</strong>会跳过最近 24 小时内已由批量抓取完成的游戏。</li>
+            <li>抓取后没有发现任何新内容的游戏也算作已跳过。</li>
+            <li>要立即重新抓取它们，请使用<strong>完整重新抓取</strong>；勾选<strong>保留现有媒体</strong>可保留你的图片。</li>
+        </ul>
 
-        <h4>“PSN 同步卡住”</h4>
-        <p>从 设置 &rarr; 系统 &rarr; 故障排除 中清除 PSN 刷新任务。</p>
+        <h4>很多游戏显示“失败”</h4>
+        <p>“失败”通常表示没有足够接近的结果可以保存。请在 设置 &rarr; 抓取 &rarr; 抓取器 &rarr; 批量抓取匹配筛选 中调低<strong>最低匹配分数</strong>或<strong>最低标题质量</strong>，并检查文件名。日志查看器会列出每个没有找到匹配的游戏。</p>
+
+        <h4>“&hellip; 的抓取已在运行”</h4>
+        <p>该系统已在以相同模式抓取。请等待它完成，或取消它。另一个系统的抓取会排队等待，并自动开始。</p>
+
+        <h3 id="ts-ai-fill">AI 填充</h3>
+
+        <h4>“AI 未返回任何数据。请检查您的 API 密钥和提供商设置。”</h4>
+        <p>在 设置 &rarr; 抓取 &rarr; API 密钥 中选择<strong>AI 元数据提供商</strong>，输入它的密钥，点击<strong>保存 API 密钥</strong>，然后点击<strong>测试已保存的 AI 密钥</strong>。如果 AI 服务拒绝了请求，消息会改为说明原因，例如额度用完。</p>
+
+        <h4>“AI 未发现需要填充的缺失字段”</h4>
+        <p>这不是错误：这个游戏没有空字段可供 AI 填充。</p>
+
+        <h4>批量 AI 填充自行停止了</h4>
+        <p>连续三个游戏都没有得到回答时它就会停止。请用<strong>测试已保存的 AI 密钥</strong>检查密钥，然后再运行一次。已经填充的游戏会保留得到的内容。</p>
+
+        <h3 id="ts-images">图片</h3>
+
+        <h4>抓取后图片缺失</h4>
+        <p>下载失败的图片会被静默跳过；日志查看器会说明原因。请检查 RetroDB 是否可以写入它的媒体文件夹（除非你移动过，否则是 <code>static/images/</code>）。在 Linux 或 macOS 上，<code>chmod -R u+rwX static/images/</code> 会给你的账户写入权限，同时不会把图片标记为程序。</p>
+
+        <h4>放大似乎不起作用</h4>
+        <ul>
+            <li>第一次放大会下载 Real-ESRGAN 模型，所以需要联网。</li>
+            <li>GPU 需要可用的驱动（NVIDIA 用 CUDA，AMD 用 ROCm）。如果 GPU 失败，放大会改用 CPU。</li>
+            <li>如果放大器完全无法运行，RetroDB 会改用普通方式（Lanczos）放大图片。<code>logs/upscale_worker.log</code> 会说明原因。</li>
+        </ul>
+
+        <h3 id="ts-play">玩游戏</h3>
+
+        <h4>游戏在另一台电脑上打开</h4>
+        <p><strong>游玩</strong>会在运行 RetroDB 的电脑上启动模拟器，而不是在你点击按钮的设备上。</p>
+
+        <h4>“在 PATH 中找不到模拟器程序”</h4>
+        <p>在“模拟器”页面的<strong>已注册的模拟器</strong>下，编辑该模拟器，并在<strong>程序路径覆盖</strong>中填入程序的位置。或者把存放它的文件夹添加到<strong>模拟器文件夹</strong>。对于 RetroArch，请在 RetroArch 卡片上点击<strong>自动检测</strong>，然后点击<strong>保存</strong>。</p>
+
+        <h4>“系统 &hellip; 未配置模拟器”或“模拟器 &hellip; 已关闭”</h4>
+        <p>在“模拟器”页面的<strong>按系统映射</strong>下为该系统选择模拟器，或在<strong>已注册的模拟器</strong>下打开该模拟器。如果某个游戏指定的模拟器已不存在：请在它的“编辑游戏”窗口中清除该选择。</p>
+
+        <h4>“&hellip; 没有为它设置 RetroArch 核心”或“找不到 RetroArch 核心”</h4>
+        <p>在“模拟器”页面检查 RetroArch 卡片是否指向存放你的核心的文件夹（<strong>自动检测</strong>会自动填入），然后点击<strong>保存</strong>。用 RetroArch 自带的核心下载器安装缺少的核心。或者在<strong>按系统映射</strong>下为该系统选择另一个模拟器。</p>
+
+        <h4>“未找到 ROM 文件”或“ROM 路径在已配置的扫描文件夹之外”</h4>
+        <p>该文件在上次扫描后被移动或删除了，或者位于你的 ROM 文件夹之外。请把它放回系统文件夹，然后再次扫描游戏库。</p>
+
+        <h4>“该游戏已在运行中”</h4>
+        <p>关闭模拟器窗口，或接受关闭它并重新开始的提示。</p>
+
+        <h4>“无法下载 &hellip; 核心”</h4>
+        <p>在 RetroDB 中首次游玩时会下载缺少的核心，除非在“模拟器”页面关闭了<strong>按下“游玩”时下载缺少的核心</strong>。请检查网络连接后再次点击“游玩”，或在“模拟器”页面点击<strong>为我的系统安装核心</strong>。</p>
+
+        <h3 id="ts-cheats">金手指</h3>
+
+        <h4>“未找到此游戏的金手指。”</h4>
+        <p>在“模拟器”页面的“金手指”卡片中下载该模拟器的金手指包，或在那里导入你自己的金手指文件夹。金手指可用于播放器、DuckStation 和 PCSX2。</p>
+
+        <h4>已开启的金手指没有任何效果</h4>
+        <p>金手指会在你下次点击“游玩”时生效。开启的金手指会在你游玩期间关闭 RetroAchievements 硬核模式。</p>
+
+        <h4>“请先运行一次 &hellip; 以生成其设置，然后再次游玩。”</h4>
+        <p>DuckStation 或 PCSX2 还没有创建它的设置文件夹。请单独启动一次该模拟器，然后再次点击“游玩”。</p>
+
+        <h3 id="ts-achievements">成就与奖杯</h3>
+
+        <h4>RetroAchievements 同步卡住或在等待</h4>
+        <p>RetroAchievements 同一时间只运行一个任务；其余的在进度通知中排队等待。通知上的停止按钮会结束正在运行的任务，每个等待中的任务都有一个<strong>从队列移除</strong>按钮。</p>
+
+        <h4>“未配置 RetroAchievements”</h4>
+        <p>在 设置 &rarr; 账户 &rarr; 我的资料 &rarr; RetroAchievements 设置 中保存你的 RetroAchievements 用户名和网页 API 密钥。</p>
+
+        <h4>“RetroAchievements 未能让你登录”</h4>
+        <p>为游玩而登录需要你的 RetroAchievements 密码，而不是 API 密钥。它会在你下次点击“游玩”时生效。</p>
+
+        <h4>“未找到游戏。请检查您的 Steam 个人资料和游戏详情是否设置为公开。”</h4>
+        <p>在 Steam 网站上，把你的个人资料及其游戏详情设为公开。你的 Steam 密钥和 17 位 Steam ID 填在 设置 &rarr; 账户 &rarr; 我的资料 &rarr; Steam 中。</p>
+
+        <h4>“OpenXBL 不接受该密钥”</h4>
+        <ul>
+            <li>从 <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> 重新复制密钥，并粘贴到 设置 &rarr; 账户 &rarr; 我的资料 &rarr; Xbox 中。</li>
+            <li>“已达到 OpenXBL 每小时的请求上限”表示该密钥已用完本小时的 150 次请求。请稍后再同步；会先从尚未同步的游戏开始。</li>
+        </ul>
+
+        <h4>“PSN 身份验证失败”</h4>
+        <ul>
+            <li>Sony 不再接受你保存的 NPSSO 令牌。请按 设置 &rarr; 账户 &rarr; 我的资料 &rarr; PlayStation Network 中的步骤获取新的，然后点击<strong>保存&amp;测试连接</strong>。</li>
+            <li>只要 Sony 接受令牌，RetroDB 会自行保持登录。要替换仍然有效的令牌，请先退出 PlayStation 登录。</li>
+        </ul>
+
+        <h4>PSN 奖杯同步卡住</h4>
+        <p>PSN 刷新在进度通知中有停止按钮。完整的奖杯同步没有；重启 RetroDB 会结束它。</p>
+
+        <h4>收藏家奖杯全部显示为未获得</h4>
+        <p>在“收藏家奖杯”页面点击<strong>刷新进度</strong>。打开页面本身不会进行统计。</p>
+
+        <h4>“未找到 &hellip; 的 HLTB 匹配结果”</h4>
+        <p>在搜索框中输入 HowLongToBeat 使用的标题，再查询一次。如果 HowLongToBeat 提示请求过多，RetroDB 会等待 15 分钟再询问，在此之前查询不会找到任何结果。</p>
+
+        <h3 id="ts-tools">博物馆与 ROM 工具</h3>
+
+        <h4>“未配置 AI 提供方”</h4>
+        <p>博物馆使用 设置 &rarr; 抓取 &rarr; API 密钥 中设置的 AI 提供商来撰写页面。请先设置一个，然后再次生成。</p>
 
         <h4>“博物馆生成卡住”</h4>
-        <p>从 设置 &rarr; 系统 &rarr; 故障排除 中清除博物馆生成任务。</p>
+        <p>点击“博物馆”页面进度条下方的<strong>取消</strong>。</p>
+
+        <h4>“未找到 chdman。请安装 MAME 工具。”</h4>
+        <p>请安装 MAME 工具（其中包含 <code>chdman</code>），或在 ROM 工具 &rarr; 设置 中设置它的位置。</p>
+
+        <h4>“这些扫描结果已过期。请重新扫描后再删除。”</h4>
+        <p>重新运行扫描，然后从新结果中删除。</p>
+
+        <h3 id="ts-accounts">账户与登录</h3>
+
+        <h4>“登录尝试次数过多，请稍后再试。”</h4>
+        <p>五分钟内输错五次密码后，请等待五分钟再试。</p>
+
+        <h4>忘记密码</h4>
+        <p>不能通过电子邮件重置。管理员可在 设置 &rarr; 账户 &rarr; 用户管理 中设置新密码。如果唯一的管理员忘了密码，请恢复一份在知道密码时做的备份。</p>
+
+        <h4>“You do not have permission to access this feature”</h4>
+        <p>你的角色不包含该功能。管理员可以在 设置 &rarr; 账户 &rarr; 用户管理 中更改你的角色。</p>
+
+        <h3 id="ts-data">数据库、备份与更新</h3>
 
         <h4>“数据库错误”</h4>
         <ol>
-            <li>如有可能，先创建一个备份（设置 &rarr; 游戏库 &rarr; 备份）</li>
-            <li>尝试 设置 &rarr; 系统 &rarr; 维护 &rarr; <strong>优化数据库</strong></li>
+            <li>如果可能，先创建备份（设置 &rarr; 游戏库 &rarr; 备份）</li>
+            <li>尝试 设置 &rarr; 系统 &rarr; 维护 &rarr; <strong>优化数据库</strong>。任务正在写入时它可能失败；请等任务完成后再试。</li>
             <li>检查 <code>database/</code> 目录的文件权限</li>
-            <li>最后手段：从备份恢复，或删除数据库并重新扫描</li>
+            <li>最后手段：从备份恢复</li>
         </ol>
 
-        <h4>“图片未保存”</h4>
-        <p>检查 RetroDB 能否写入其媒体文件夹（除非你移动过，否则为 <code>static/images/</code>）。在 Linux 或 macOS 上，<code>chmod -R u+rwX static/images/</code> 可为你的账户授予写入权限，而不会把图片标记为程序。</p>
+        <h4>“有后台任务正在运行。请等待其完成后再恢复。”</h4>
+        <p>让任务完成，或在它的进度通知中停止它，然后再恢复。恢复之后，请重启 RetroDB。</p>
+
+        <h4>“这份 RetroDB 是 git 检出副本。请用 git pull 更新。”</h4>
+        <p>更新程序只能安装到下载的发布版本上。用 git 获得的副本请用 <code>git pull</code> 更新。</p>
+
+        <h4>更新失败</h4>
+        <p>下载失败不会安装任何东西；请再次点击<strong>下载更新</strong>。安装失败会自动恢复旧版本，并说明原因。详细信息在 <code>logs/update.log</code> 中。</p>
+
+        <h3 id="ts-performance">页面与速度</h3>
 
         <h4>“页面缓慢或无响应”</h4>
         <ul>
@@ -1827,36 +2006,12 @@
             <li>画布效果会自动检测硬件；低端设备会以降低的帧率使用 CPU 后备方案</li>
         </ul>
 
-        <h4>仪表盘上的“中断的任务”横幅</h4>
-        <p>如果 RetroDB 在任务运行时重启，它们会出现在一个恢复横幅中。逐个点击 <strong>“恢复”</strong> 或点击 <strong>“全部恢复”</strong> 以重新启动它们。点击 <strong>“忽略”</strong> 或 <strong>“全部忽略”</strong> 以清除它们。</p>
-
-        <h4>“PSN 身份验证失败”</h4>
-        <ul>
-            <li>NPSSO 令牌会过期 &mdash; 请从 <code>ca.account.sony.com/api/v1/ssocookie</code> 生成一个新的</li>
-            <li>在访问该 cookie 网址之前，请确保你已登录 store.playstation.com</li>
-            <li>只要 Sony 接受你保存的 NPSSO，RetroDB 就会自动重新登录。一旦 Sony 拒绝它，请在 设置 &rarr; 账户 &rarr; PSN 中粘贴一个新的。若要替换仍然有效的令牌，请先退出 PlayStation 登录。</li>
-        </ul>
-
-        <h4>“OpenXBL 不接受该密钥”</h4>
-        <ul>
-            <li>从 <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> 重新复制密钥，并粘贴到 设置 &rarr; 我的资料 &rarr; Xbox 中</li>
-            <li>“已达到 OpenXBL 每小时的请求上限”表示该密钥本小时的 150 次请求已用完；请稍候再试</li>
-        </ul>
-
-        <h4>“图片放大错误”</h4>
-        <ul>
-            <li>Real-ESRGAN ONNX 模型会在首次使用时下载 &mdash; 请确保有网络访问权限</li>
-            <li>GPU 加速需要兼容的驱动程序（NVIDIA 用 CUDA，AMD 用 ROCm）</li>
-            <li>如果 GPU 失败，系统会自动回退到 CPU 处理</li>
-        </ul>
-
-        <h3>性能提示</h3>
+        <h4>性能提示</h4>
         <ul>
             <li>保持浏览器为最新版本以获得最佳性能</li>
             <li>处理超大型合集时关闭其他浏览器标签页</li>
             <li>使用系统筛选器以减少一次显示的游戏数量</li>
             <li>在大量操作（抓取、清理、导入）后定期运行优化数据库</li>
-            <li>画布主题效果会自动检测硬件；低端设备会使用 CPU 后备方案</li>
         </ul>
     </div>
 </section>
@@ -2094,4 +2249,8 @@ kbd {
     background: rgba(76, 201, 240, 0.05);
 }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset_url('js/help-search.js') }}" defer></script>
 {% endblock %}

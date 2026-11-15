@@ -13,6 +13,17 @@
     </div>
 </div>
 
+<!-- PASS-59-307 — search the manual (static/js/help-search.js) -->
+<div class="help-search" role="search">
+    <div class="search-box">
+        <span class="search-icon" aria-hidden="true">&#128269;</span>
+        <label for="helpSearch" class="visually-hidden">{{ _('Search the manual') }}</label>
+        <input type="search" id="helpSearch" class="search-input"
+               placeholder="{{ _('Search the manual') }}" autocomplete="off" spellcheck="false">
+    </div>
+    <p id="helpSearchStatus" class="help-search-status" role="status" aria-live="polite"></p>
+</div>
+
 <!-- Help Navigation -->
 <div class="help-nav" data-sticky-nav>
     <a href="#installation" class="help-nav-item">Ufakelo</a>
@@ -62,7 +73,7 @@
     <div class="card-body">
         <h3>Iimfuno zeSystem</h3>
         <ul>
-            <li><strong>Python 3.8+</strong> ene-pip</li>
+            <li><strong>Python 3.12+</strong> ene-pip</li>
             <li><strong>Ibhrawza yewebhu</strong> (Chrome, Firefox, Safari, Edge)</li>
             <li><strong>Inkqubo yokusebenza:</strong> Linux, Windows 10/11, okanye macOS</li>
         </ul>
@@ -87,7 +98,7 @@
 
         <h3>Into eyenziwa yi-install.py</h3>
         <ul>
-            <li>Iqinisekisa ukuba i-Python 3.8+ nepip zikhona</li>
+            <li>Iqinisekisa ukuba i-Python 3.12+ nepip zikhona</li>
             <li>Ifaka izixhobo ze-Python ezisuka ku-<code>requirements.txt</code></li>
             <li>Idala <code>config.py</code> isuka kumzekelo we-template</li>
             <li>Idala iifolda ezifunekayo (database, iilog, iifolda zemidiya)</li>
@@ -142,9 +153,9 @@
   snes/
     Chrono Trigger (USA).sfc
   psx/
-    Final Fantasy VII (USA)/
-      Final Fantasy VII (USA) (Disc 1).chd
-      Final Fantasy VII (USA) (Disc 2).chd</pre>
+    Final Fantasy VII (USA) (Disc 1).chd
+    Final Fantasy VII (USA) (Disc 2).chd</pre>
+        <p>Gcina iifayile zeROM ngqo kwifolda yesistim. Iifayile ezikwiifolda ezingaphantsi ziyatsibiwa, ngaphandle kwePS3.</p>
         <p>Ifolda nganye yesistim kufuneka ibe nefayile ye-ES-DE <code>systeminfo.txt</code> echaza izandiso zeefayile ezixhaswayo. IRetroDB iyifunda le fayile ngexesha lokuscana ukuze ichonge ukuba zeziphi iifayile eziziiROM ezisemthethweni kwisistim nganye.</p>
 
         <div class="help-tip">
@@ -551,10 +562,11 @@
 
         <h3>I-tab yeSystem</h3>
         <ul>
-            <li><strong>Maintenance</strong> &mdash; Ukuphuculwa kwe-database (VACUUM/ANALYZE), ukucoca imidiya eziinkedama, ukucoca iiROM ezilahlekileyo, ukucima idata escrapiweyo, ukucima ii-import zeCLZ, i-image standardization ngobuninzi</li>
-            <li><strong>Server</strong> &mdash; Uqwalaselo lweseva (host, port, imowudi yokulungisa iimpazamo)</li>
-            <li><strong>Logging</strong> &mdash; Iisethingi zenqanaba le-log kumacandelo ahlukeneyo</li>
-            <li><strong>Troubleshooting</strong> &mdash; Cima i-bulk scrape exingileyo, cima i-RA sync queue, cima i-PSN refresh, cima ukuvelisa i-museum, phinda-qalisa iseva</li>
+            <li><strong>Ulondolozo</strong> &mdash; Coca iiROM ezilahlekileyo, cima ii-import ze-CLZ okanye idatha ekhutshiweyo, cima iifayile zemidiya engasetyenziswa mdlalo, cima amakhonkco eefayile zemidiya ezingasekho, uze uphucule i-database</li>
+            <li><strong>Uhlaziyo</strong> &mdash; Khangela, ukhuphele uze ufake inguqulo entsha</li>
+            <li><strong>Iseva</strong> &mdash; Qalisa kwakhona okanye ucime iRetroDB</li>
+            <li><strong>Ukurekhoda</strong> &mdash; Iisethingi zenqanaba le-log kumacandelo ahlukeneyo, neefayile ze-log</li>
+            <li><strong>Ukusombulula iingxaki</strong> &mdash; Cima ukulungelelanisa kwe-RetroAchievements okuxingileyo</li>
         </ul>
 
         <h3 id="emulators-play">Ii-emulator nokudlala</h3>
@@ -645,7 +657,7 @@
         <p>Cwangcisa ukuba zeziphi ii-scraper eziqhuba kuqala nezivuliweyo/ezicinyiweyo kwi-<strong>Settings &rarr; Scraping &rarr; Scraper</strong>. Tsala-ubeke ukuhlela kwakhona ukubaluleka. Ii-scraper ezicinyiweyo aziyi kuzanywa ngexesha lokuscrapa kwaye aziyi kubangela izilumkiso zobume be-API kwiDashboard.</p>
 
         <h3>Umda Wexesha (Rate Limiting)</h3>
-        <p>I-scraper nganye inemida yexesha enokucwangciswa ukuthintela ukumiselwa kwe-API. Ukulibaziseka okumiselweyo kubekwe ngokugcinakeleyo. Nciphisa ukulibaziseka ngokwakho &mdash; ukuwugqitha umda wexesha we-API kunganegunga elilihlebeni lethutyana kwinkonzo efanelekileyo.</p>
+        <p>IRetroDB ayahlula ngokwayo izicelo zayo kwinkonzo nganye; akukho nto yokuyimisela. Xa inkonzo ithi umda wayo ufikelelwe, iRetroDB iyayeka ukuyibuza kude kube lixesha elinikwe yinkonzo, kwaye iyakuxelela (jonga <a href="#ts-scraping">Ukucombulula iingxaki</a>).</p>
     </div>
 </section>
 
@@ -1510,7 +1522,7 @@
 
         <h3>Bulk HLTB Lookup</h3>
         <p>Qhuba ukukhangela kweHowLongToBeat kuwo wonke umdlalo ongenayo uqikelelo lwexesha lokudlala. I-match nganye inikwa amanqaku ngesihloko + iplatform + unyaka wokukhutshwa; ii-match ezithembeke kakhulu zigcinwa ngokuzenzekelayo. Nayiphi na into engaphantsi komda wokuthembeka (okanye eneeplatform eziphikisanayo) ipakwa yohlolo lomntu.</p>
-        <p><em>Akukho zixhomekekiswano zangaphandle (isebenzisa i-dataset ye-HLTB engaphakathi engekho kwi-intanethi)</em></p>
+        <p><em>Ikhangela umdlalo ngamnye kwiwebhusayithi ye-HowLongToBeat, ngoko ifuna uqhagamshelo lwe-intanethi</em></p>
 
         <h3>HLTB Pending Review</h3>
         <p>Umgca wohlolo lwee-match ezingacacanga eziveliswe yiBulk HLTB Lookup. Umgca ngamnye olindileyo ubonisa umdlalo womthombo kunye nomgqatswa weHLTB (isihloko, iplatform, unyaka wokukhutshwa, ukuthembeka). Amkela, yala, okanye khetha i-match eyahlukileyo ngomgca. Ikhadi yesixhobo sohlolo ivela kuphela kwiziko lezixhobo zeROM xa kukho ubuncinane i-match enye elindileyo.</p>
@@ -1781,44 +1793,211 @@
 <section id="troubleshooting" class="help-section card">
     <h2 class="card-title">Ukucombulula iingxaki</h2>
     <div class="card-body">
-        <h3>Iingxaki Eziqhelekileyo</h3>
+        <p>Iingxaki zihlelwe ngokwesici ngasinye. Chwetheza igama elivela kumyalezo ohlala ukubona kwibhokisi yokukhangela ephezulu kweli phepha ukuze uye kulo. Uninzi lwemiyalezo lushiya nomgca kwi-<a href="#logs">Umboni we-Log</a> (abalawuli kuphela), obonisa ngakumbi.</p>
 
-        <h4>"No extensions found for system"</h4>
-        <p>Ifolda yesistim ifuna ifayile ye-ES-DE <code>systeminfo.txt</code> esebenzayo echaza izandiso zeefayile zeROM ezixhaswayo. Qinisekisa ukuba isakhelo sefolda yakho yeROM sihambelana nemigangatho ye-ES-DE.</p>
+        <h3 id="ts-jobs">Imisebenzi Emide</h3>
 
-        <h4>"API Connection Failed"</h4>
+        <h4>Umsebenzi ubonakala unganyangeki</h4>
+        <p>Ukukhupha okuninzi, ukulungelelanisa iimpumelelo, ukuhlaziya i-PSN, ukuguqula ubungakanani bemifanekiso nokuqhuba kwe-AI Fill kubonisa isaziso senkqubela embindini wekona. Iiqhosha zalo ziyawumisa okwexeshana, ziwumise, okanye ziwurhoxise umsebenzi. Ukukhupha okuninzi kumela phakathi kwemidlalo emibini, ngoko umdlalo osasebenzayo uqala ugqibe; oko kungathatha umzuzu. Ukuba isaqhuba, qalisa kwakhona iRetroDB: Iisethingi &rarr; Isistim &rarr; Izilawuli Zeseva &rarr; <strong>Qalisa Kwakhona Iseva</strong>.</p>
+
+        <h4>I-banner ye-"Interrupted Jobs" kwi-Dashboard</h4>
+        <p>Umsebenzi owawuqhuba okanye ulindile xa iRetroDB yayeka uboniswa apha. <strong>Qhubeka</strong> iwuqhubela phambili apho wagcina khona indawo yawo. <strong>Chitha</strong> iyawulahla. <strong>Qhubeka Konke</strong> kunye <strong>Chitha Konke</strong> zenza okufanayo kuyo yonke imisebenzi ekuludwe.</p>
+
+        <h3 id="ts-library">Ukongeza Imidlalo</h3>
+
+        <h4>"Indlela yeROM ayimiselwanga"</h4>
+        <p>Misela ifolda equlathe iifolda zakho zesistim kwi-Iisethingi &rarr; Ithala &rarr; Iindlela &rarr; <strong>Indlela Yethala leROM</strong>, uze ucinezele <strong>Skena Ithala</strong>.</p>
+
+        <h4>Ukuskena akufumani midlalo emitsha, okanye isistim ilahlekile</h4>
         <ul>
-            <li>Jonga uqhagamshelwano lwakho lwe-intanethi</li>
-            <li>Qinisekisa ii-API key kwi-Settings &rarr; Scraping &rarr; API Keys</li>
-            <li>Linda ukuba umda wexesha ubekiwe (ezinye ii-API zinemida yemihla/yeeyure)</li>
-            <li>Jonga ukuba i-scraper ivuliwe (ii-scraper ezicinyiweyo zibonisa "Disabled" kubume beDashboard)</li>
-            <li>Jonga i-Log Viewer ukuze ufumane imiyalezo yeempazamo eneenkcukacha</li>
+            <li>Ifolda nganye yesistim ifuna i-<code>systeminfo.txt</code> ye-ES-DE ebala izandiso zayo zeefayile. Ifolda engenayo iyatsibiwa; Umboni we-Log ubonisa <code>No extensions found</code> yayo. Iifolda zePS3 aziyifuni.</li>
+            <li>Iifayile mazihlale ngqo kwifolda yesistim. Iifayile ezikwiifolda ezingaphantsi ziyatsibiwa, ngaphandle kwePS3.</li>
+            <li>Ifayile enesandiso esingekho kuluhlu iyatsibiwa.</li>
+            <li>Ifayile eshenxisiweyo okanye eyiswe igama elitsha yongezwa njengomdlalo omtsha. Iisethingi &rarr; Isistim &rarr; <strong>Coca iiROM Ezilahlekileyo</strong> isusa into endala.</li>
         </ul>
 
-        <h4>"Bulk Scrape Stuck"</h4>
-        <p>Yiya kwi-Settings &rarr; System &rarr; Troubleshooting &rarr; <strong>"Clear Stuck Bulk Scrape"</strong>. Oku kuseta kabusha ubume bomsebenzi ngaphandle kokuchaphazela idata yakho.</p>
+        <h3 id="ts-scraping">Ukukhupha</h3>
 
-        <h4>"RA Sync Queue Stuck"</h4>
-        <p>Cima umgca wokuvumelanisa weRetroAchievements kwi-Settings &rarr; System &rarr; Troubleshooting.</p>
+        <h4>"No results found. Try a different search term."</h4>
+        <ul>
+            <li>Yenza isihloko sibe sifutshane kwibhokisi yokukhangela, okanye zama igama lesiNgesi.</li>
+            <li>Qinisekisa ukuba imithombo ivuliwe kwaye ibonisa <strong>Kwi-inthanethi</strong> kwi-Iisethingi &rarr; Ukukhupha &rarr; I-scraper.</li>
+            <li>Umthombo ofikelele kumda wawo awubuyisi nto kude kube lixesha awalinikayo (jonga ngezantsi).</li>
+        </ul>
 
-        <h4>"PSN Sync Stuck"</h4>
-        <p>Cima umsebenzi we-PSN refresh kwi-Settings &rarr; System &rarr; Troubleshooting.</p>
+        <h4>Idatha okanye imifanekiso ingeyomnye umdlalo</h4>
+        <ul>
+            <li>Ukukhupha okuninzi kukhangela ngegama lefayile yeROM, ngoko ifayile ebizwe kakubi ifumana umdlalo ongachananga. Tshintsha igama lefayile, okanye khupha umdlalo kwiphepha lawo lodwa ngesihloko sokukhangela esingcono uze ukhethe umphumo oluchanileyo.</li>
+            <li>Kwifestile ethi Hlela Umdlalo, tyikisha <strong>Gcina esi sihloko xa ukhupha</strong> ukuze ukukhupha kwakamva kungalichukumisi igama.</li>
+            <li>Kwimidlalo emininzi, nyusa <strong>Isikolo Esincinci Sokufana</strong> kwi-Iisethingi &rarr; Ukukhupha &rarr; I-scraper &rarr; Ukuhluza Ukufana Kokukhupha Ngobuninzi.</li>
+        </ul>
 
-        <h4>"Museum Generation Stuck"</h4>
-        <p>Cima umsebenzi wokuvelisa i-museum kwi-Settings &rarr; System &rarr; Troubleshooting.</p>
+        <h4>Ukukhupha akuyitshintshi imifanekiso emibi</h4>
+        <p>Ukukhupha kuzalisa kuphela imifanekiso engenanto, kwaye imifanekiso yesikrini iyongezwa kuphela. Susa umfanekiso kwifestile ethi Hlela Umdlalo, uze ukhuphe kwakhona. <strong>Ukukhupha Kwakhona Okupheleleyo</strong> kobuninzi kuyitshintsha imifanekiso ngaphandle kokuba <strong>Gcina imidiya ekhoyo</strong> ityikishiwe. Umfanekiso wesikrini obuwucimile awongezwa kwakhona.</p>
 
-        <h4>"Database Errors"</h4>
+        <h4>"&hellip; ithi umda wayo ufikelelwe" okanye "&hellip; yalile isitshixo se-API"</h4>
+        <p>IRetroDB iyayeka ukubuza lo msebenzi kude kube lixesha elikumyalezo. Ukuba isitshixo siyaliwe: silungise kwi-Iisethingi &rarr; Ukukhupha &rarr; Izitshixo ze-API uze ucinezele <strong>Gcina Izitshixo ze-API</strong>; ukugcina kuphelisa zonke ezo zibaleko kwangoko. Ukuqalisa kwakhona kuziphelisa nako.</p>
+
+        <h4>Umthombo ubonisa isizathu endaweni ye-"Kwi-inthanethi"</h4>
+        <p>Isizathu sibiza ingxaki, njenge-"No API key" okanye "Invalid API key". Faka okanye ulungise isitshixo kwi-Iisethingi &rarr; Ukukhupha &rarr; Izitshixo ze-API (abalawuli kuphela) uze ucinezele <strong>Gcina Izitshixo ze-API</strong>. Isitshixo esigciniweyo sibonakala njengeenkwenkwezi; musa ukuyicofa ibhokisi ukuze usigcine, okanye uyicime uze uchwetheze isitshixo esitsha.</p>
+
+        <h3 id="ts-bulk-scrape">Ukukhupha Ngobuninzi</h3>
+
+        <h4>"Ukukhupha Ngobuninzi Kuxingile"</h4>
+        <p>Cinezela <strong>Rhoxisa</strong> kwifestile ethi Ukukhupha okuninzi; cofa isaziso senkqubela ukuze uyivule. Umdlalo okhutshwayo uqala ugqibe. Ukuba isaqhuba, jonga <a href="#ts-jobs">Umsebenzi ubonakala unganyangeki</a>.</p>
+
+        <h4>Uninzi lwemidlalo "Kutsibiwe"</h4>
+        <ul>
+            <li><strong>Zalisa Okulahlekileyo</strong> itsibela umdlalo owugqibileyo ukukhupha okuninzi kwiiyure ezingama-24 zokugqibela.</li>
+            <li>Umdlalo ongafumananga nto intsha xa ukhutshwa nawo ubalwa njengotsibiweyo.</li>
+            <li>Ukubakhupha kwakhona ngoku, sebenzisa <strong>Ukukhupha Kwakhona Okupheleleyo</strong>; tyikisha <strong>Gcina imidiya ekhoyo</strong> ukugcina imifanekiso yakho.</li>
+        </ul>
+
+        <h4>Imidlalo emininzi "Kwehlulekile"</h4>
+        <p>Ukwahluleka kuthetha ukuba akukho mphumo wasondela ngokwaneleyo ukuze ugcinwe. Thoba <strong>Isikolo Esincinci Sokufana</strong> okanye <strong>Umgangatho Omncinci Wesihloko</strong> kwi-Iisethingi &rarr; Ukukhupha &rarr; I-scraper &rarr; Ukuhluza Ukufana Kokukhupha Ngobuninzi, uze ujonge amagama eefayile. Umboni we-Log ubala wonke umdlalo ongafumananga kudibana.</p>
+
+        <h4>"Ukukhupha &hellip; sele kuqhuba"</h4>
+        <p>Eso sistim sele sikhutshwa ngendlela efanayo. Linda ukuba kugqibe, okanye ukurhoxise. Ukukhupha kwesinye isistim kulinda kumgca kwaye kuqala ngokwako.</p>
+
+        <h3 id="ts-ai-fill">AI Fill</h3>
+
+        <h4>"I-AI ayibuyisanga datha. Khangela isitshixo se-API kunye neesethingi zomboneleli."</h4>
+        <p>Kwi-Iisethingi &rarr; Ukukhupha &rarr; Izitshixo ze-API, khetha <strong>Umboneleli Wemetadata ye-AI</strong>, faka isitshixo sawo, cinezela <strong>Gcina Izitshixo ze-API</strong>, uze <strong>Vavanya isitshixo se-AI esigciniweyo</strong>. Ukuba inkonzo ye-AI iyalile, umyalezo uthi kutheni endaweni yoko, njengokuphelelwa yingeniso.</p>
+
+        <h4>"I-AI ayifumananga ndawo zilahlekileyo zokuzalisa"</h4>
+        <p>Ayiyongxaki: umdlalo awunanto ingenanto ukuze i-AI Fill iyizalise.</p>
+
+        <h4>I-AI Fill yobuninzi iyeke ngokwayo</h4>
+        <p>Iyeka emva kwemidlalo emithathu elandelanayo engafumani mpendulo. Jonga isitshixo nge-<strong>Vavanya isitshixo se-AI esigciniweyo</strong>, uze uyiqhube kwakhona. Imidlalo esele izaliswe igcina oko ifumene.</p>
+
+        <h3 id="ts-images">Imifanekiso</h3>
+
+        <h4>Imifanekiso ilahlekile emva kokukhupha</h4>
+        <p>Umfanekiso ohluleka ukukhutshelwa uyatsibiwa ngaphandle komyalezo; Umboni we-Log ubonisa isizathu. Qinisekisa ukuba iRetroDB ingabhala kwifolda yayo yemidiya (<code>static/images/</code> ngaphandle kokuba uyishenxisile). Kwi-Linux okanye kwi-macOS, <code>chmod -R u+rwX static/images/</code> inika i-akhawunti yakho ilungelo lokubhala ngaphandle kokuphawula imifanekiso njengeenkqubo.</p>
+
+        <h4>Ukwandisa akubonakali kusebenza</h4>
+        <ul>
+            <li>Ukwandisa kokuqala kukhuphela imodeli ye-Real-ESRGAN, ngoko kufuna uqhagamshelo lwe-intanethi.</li>
+            <li>I-GPU ifuna oodrayiva abasebenzayo (i-CUDA ye-NVIDIA, i-ROCm ye-AMD). Ukuba i-GPU ayiphumeleli, ukwandisa kuya kwi-CPU.</li>
+            <li>Ukuba isandisi asikwazi ukusebenza kwaphela, iRetroDB inkulisa imifanekiso ngendlela eqhelekileyo (Lanczos) endaweni yoko. <code>logs/upscale_worker.log</code> ibonisa isizathu.</li>
+        </ul>
+
+        <h3 id="ts-play">Ukudlala Imidlalo</h3>
+
+        <h4>Umdlalo uvulwa kwenye ikhompyuter</h4>
+        <p><strong>Dlala</strong> iqalisa i-emulator kwikhompyuter eqhuba iRetroDB, hayi kwisixhobo osicinezele kuso.</p>
+
+        <h4>"Inkqubo ye-emulator ayifumaneki ku-PATH"</h4>
+        <p>Kwiphepha le-Ii-emulator, phantsi kwe-<strong>Ii-emulator ezibhalisiweyo</strong>, hlela i-emulator uze uzalise <strong>Indlela ye-binary ethatha indawo</strong> ngendawo yenkqubo. Okanye yongeza ifolda eyibambileyo phantsi kwe-<strong>Iifolda zee-emulator</strong>. Kwi-RetroArch, sebenzisa <strong>Fumanisa ngokuzenzekelayo</strong> kwikhadi le-RetroArch, uze <strong>Gcina</strong>.</p>
+
+        <h4>"Akukho i-emulator imiselweyo yesistim &hellip;" okanye "I-emulator &hellip; icinyiwe"</h4>
+        <p>Khetha i-emulator yesistim phantsi kwe-<strong>Ulungelelwaniso lwesistim nganye</strong> kwiphepha le-Ii-emulator, okanye vula i-emulator phantsi kwe-<strong>Ii-emulator ezibhalisiweyo</strong>. Umdlalo owubekelwe i-emulator engasekho: cima oko kukhetha kwifestile yawo ethi Hlela Umdlalo.</p>
+
+        <h4>"&hellip; akukho i-core ye-RetroArch isetelwe yona" okanye "I-core ye-RetroArch ayifumaneki"</h4>
+        <p>Kwiphepha le-Ii-emulator, qinisekisa ukuba ikhadi le-RetroArch lalatha kwifolda equlathe ii-core zakho (<strong>Fumanisa ngokuzenzekelayo</strong> iyayizalisa), uze ucinezele <strong>Gcina</strong>. Faka i-core engekhoyo ngesikhuphelo se-core se-RetroArch ngokwayo. Okanye khetha enye i-emulator yesistim phantsi kwe-<strong>Ulungelelwaniso lwesistim nganye</strong>.</p>
+
+        <h4>"Ifayile yeROM ayifunyanwanga" okanye "Indlela ye-ROM ingaphandle kweefolda zokuskena ezimiselweyo"</h4>
+        <p>Ifayile ishenxisiwe okanye icinyiwe ukususela ekuskeneni kokugqibela, okanye ingaphandle kwefolda yakho yeROM. Yibuyisele kwifolda yesistim uze uskene ithala kwakhona.</p>
+
+        <h4>"Lo mdlalo sele uqhuba"</h4>
+        <p>Vala ifestile ye-emulator, okanye wamkele isicelo sokuyivala uqale kwakhona.</p>
+
+        <h4>"Asikwazanga ukukhuphela i-core ye-&hellip;"</h4>
+        <p>Ukucinezela Dlala kwiRetroDB kukhuphela i-core engekhoyo ekuqaleni kokudlala, ngaphandle kokuba <strong>Khuphela i-core engekhoyo xa kucinezelwa u-“Dlala”</strong> icinyiwe kwiphepha le-Ii-emulator. Khangela uqhagamshelo lwe-intanethi uze ucinezele Dlala kwakhona, okanye cinezela <strong>Faka ii-core zeesistim zam</strong> kwiphepha le-Ii-emulator.</p>
+
+        <h3 id="ts-cheats">Ii-cheat</h3>
+
+        <h4>"Akukho zi-cheat zifunyenweyo zalo mdlalo."</h4>
+        <p>Khuphela ipakethe ye-cheat ye-emulator kwikhadi le-Ii-cheat kwiphepha le-Ii-emulator, okanye ngenisa ifolda yee-cheat zakho apho. Ii-cheat zisebenza kwi-player, kwi-DuckStation nakwi-PCSX2.</p>
+
+        <h4>I-cheat evuliweyo ayenzi nto</h4>
+        <p>Ii-cheat zisebenza ngexesha elilandelayo xa ucinezela Dlala. I-cheat evuliweyo icima imowudi ye-hardcore ye-RetroAchievements ngoxa udlala.</p>
+
+        <h4>"Qhuba i-&hellip; kanye ukuze yenze iisethingi zayo, uze udlale kwakhona."</h4>
+        <p>I-DuckStation okanye i-PCSX2 ayikayenzi ifolda yayo yeesethingi. Qalisa i-emulator kanye ngokwayo, uze ucinezele Dlala kwakhona.</p>
+
+        <h3 id="ts-achievements">Iimpumelelo neeNdebe</h3>
+
+        <h4>Ukulungelelanisa kwe-RetroAchievements kuxingile okanye kuyalinda</h4>
+        <p>Umsebenzi omnye we-RetroAchievements uqhuba ngexesha; eminye ilinda emgceni kwisaziso senkqubela. Iqhosha lalo lokumisa liphelisa umsebenzi oqhubayo, kwaye umsebenzi ngamnye olindileyo unaleqhosha le-<strong>Susa emgceni</strong>.</p>
+
+        <h4>"IRetroAchievements ayimiselwanga"</h4>
+        <p>Gcina igama lomsebenzisi we-RetroAchievements nesitshixo se-web API kwi-Iisethingi &rarr; I-akhawunti &rarr; Iprofayile Yam &rarr; Iisethingi zeRetroAchievements.</p>
+
+        <h4>"I-RetroAchievements ayikungenisanga"</h4>
+        <p>Ukungena ukuze udlale kufuna iphasiwedi yakho ye-RetroAchievements, hayi isitshixo se-API. Kusebenza ngexesha elilandelayo xa ucinezela Dlala.</p>
+
+        <h4>"Akukho midlalo ifunyenweyo. Qinisekisa ukuba iprofayile yakho yeSteam neenkcukacha zomdlalo zimiselwe kuLuntu."</h4>
+        <p>Kwiwebhusayithi yeSteam, misela iprofayile yakho neenkcukacha zomdlalo wayo kuLuntu. Isitshixo sakho seSteam kunye ne-Steam ID yamanani angama-17 zingena kwi-Iisethingi &rarr; I-akhawunti &rarr; Iprofayile Yam &rarr; Steam.</p>
+
+        <h4>"I-OpenXBL ayisamkelanga eso sitshixo"</h4>
+        <ul>
+            <li>Kopa isitshixo kwakhona kwi-<a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> uze usincamathisele kwi-Iisethingi &rarr; I-akhawunti &rarr; Iprofayile Yam &rarr; Xbox.</li>
+            <li>"Umda weyure we-OpenXBL ufikelelwe" uthetha ukuba isitshixo sisebenzise izicelo zaso ezili-150 kule yure. Lungelelanisa kwakhona kamva; iqala ngemidlalo engekalungelelaniswa.</li>
+        </ul>
+
+        <h4>"Ukungqinelana kwe-PSN kusilele"</h4>
+        <ul>
+            <li>ISony ayisasamkeli i-token yakho ye-NPSSO egciniweyo. Fumana entsha ngamanyathelo akwi-Iisethingi &rarr; I-akhawunti &rarr; Iprofayile Yam &rarr; PlayStation Network, uze ucinezele <strong>Gcina &amp; Vavanya Uqhagamshelo</strong>.</li>
+            <li>IRetroDB igcina ukungena ngokwayo ngoxa iSony isamkela i-token. Ukutshintsha i-token esasebenzayo, phuma kuqala kwi-PlayStation.</li>
+        </ul>
+
+        <h4>Ukulungelelanisa iindebe ze-PSN kuxingile</h4>
+        <p>Ukuhlaziya kwe-PSN kuneeqhosha zokumisa kwisaziso senkqubela. Ukulungelelanisa iindebe ngokupheleleyo akunazo; ukuqalisa kwakhona iRetroDB kuyiphelisa.</p>
+
+        <h4>Zonke iiNdebe Zomqokeleli zibonisa njengezingafunyanwanga</h4>
+        <p>Cinezela <strong>Hlaziya Inkqubela</strong> kwiphepha le-Iindebe Zomqokeleli. Ukuvula iphepha akuzibali.</p>
+
+        <h4>"Akukho kudibana kweHLTB kufunyenwe kwi-&hellip;"</h4>
+        <p>Chwetheza isihloko esisebenzisa i-HowLongToBeat kwibhokisi yokukhangela uze ukhangele kwakhona. Ukuba i-HowLongToBeat ithe izicelo zininzi kakhulu, iRetroDB ilinda imizuzu eli-15 phambi kokubuza kwakhona, kwaye ukukhangela akufumani nto kude kube ngoko.</p>
+
+        <h3 id="ts-tools">iMyuziyam kunye Nezixhobo zeROM</h3>
+
+        <h4>"Akukho mboneleli we-AI omiselweyo"</h4>
+        <p>IMyuziyam ibhala amaphepha ayo ngomboneleli we-AI omiselwe kwi-Iisethingi &rarr; Ukukhupha &rarr; Izitshixo ze-API. Misela omnye, uze uvelise kwakhona.</p>
+
+        <h4>"Ukuvelisa iMyuziyam Kuxingile"</h4>
+        <p>Cinezela <strong>Rhoxisa</strong> phantsi kwebha yenkqubela kwiphepha leMyuziyam.</p>
+
+        <h4>"i-chdman ayifunyanwanga. Nceda ufake izixhobo zeMAME."</h4>
+        <p>Faka izixhobo zeMAME, ezibandakanya i-<code>chdman</code>, okanye misela indawo yayo kwi-Izixhobo zeROM &rarr; Iisethingi.</p>
+
+        <h4>"Ezi ziphumo zokuskena ziphelelwe lixesha. Skena kwakhona, uze ucime."</h4>
+        <p>Qhuba ukuskena kwakhona, uze ucime kwiziphumo ezintsha.</p>
+
+        <h3 id="ts-accounts">Iiakhawunti Nokungena</h3>
+
+        <h4>"Iinzame ezininzi zokungena. Nceda uzame kwakhona kamva."</h4>
+        <p>Emva kweephasiwedi ezintlanu ezingalunganga kwimizuzu emihlanu, linda imizuzu emihlanu uze uzame kwakhona.</p>
+
+        <h4>Iphasiwedi ebalekileyo</h4>
+        <p>Akukho kuseta kwakhona nge-imeyile. Umlawuli useta iphasiwedi entsha kwi-Iisethingi &rarr; I-akhawunti &rarr; Ulawulo Lwabasebenzisi. Ukuba umlawuli omnye kuphela ulibele eyakhe, buyisela ugcino olwenziwe ngoxa iphasiwedi yayisaziwa.</p>
+
+        <h4>"You do not have permission to access this feature"</h4>
+        <p>Indima yakho ayiquleli eso sici. Umlawuli unokutshintsha indima yakho kwi-Iisethingi &rarr; I-akhawunti &rarr; Ulawulo Lwabasebenzisi.</p>
+
+        <h3 id="ts-data">I-Database, Ugcino Nohlaziyo</h3>
+
+        <h4>"Iimpazamo ze-Database"</h4>
         <ol>
-            <li>Yenza i-backup ukuba kunokwenzeka (Settings &rarr; Library &rarr; Backup)</li>
-            <li>Zama i-Settings &rarr; System &rarr; Maintenance &rarr; <strong>Optimize Database</strong></li>
-            <li>Jonga iimvume zefayile kwifolda ye-<code>database/</code></li>
-            <li>Igqibela: buyisela isuka kwi-backup okanye ucime idatabase uze uphinde uscane</li>
+            <li>Yenza ugcino ukuba kunokwenzeka (Iisethingi &rarr; Ithala &rarr; Ugcino)</li>
+            <li>Zama Iisethingi &rarr; Isistim &rarr; Ulondolozo &rarr; <strong>Phucula i-Database</strong>. Inokusilela ngoxa umsebenzi ubhala; linda imisebenzi igqibe uze uzame kwakhona.</li>
+            <li>Khangela iimvume zeefayile kwifolda ye-<code>database/</code></li>
+            <li>Indlela yokugqibela: buyisela kugcino</li>
         </ol>
 
-        <h4>"Images Not Saving"</h4>
-        <p>Jonga ukuba i-RetroDB iyakwazi ukubhala kwifolda yayo yemidiya (<code>static/images/</code> ngaphandle kokuba uyifudusile). Kwi-Linux okanye kwi-macOS, <code>chmod -R u+rwX static/images/</code> inika iakhawunti yakho imvume yokubhala ngaphandle kokuphawula imifanekiso njengeenkqubo.</p>
+        <h4>"Umsebenzi wangasemva uyaqhuba. Linda ude ugqibe phambi kokubuyisela."</h4>
+        <p>Vumela umsebenzi ugqibe, okanye uwumise kwisaziso senkqubela, uze ubuyisele. Emva kokubuyisela, qalisa kwakhona iRetroDB.</p>
 
-        <h4>"Page Slow or Unresponsive"</h4>
+        <h4>"Le kopi yeRetroDB yi-git checkout. Yihlaziye nge-git pull."</h4>
+        <p>Isihlaziyi sifaka kuphela phezu kwenguqulo ekhutshelweyo. Ikopi eyenziwe nge-git ihlaziywa nge-<code>git pull</code>.</p>
+
+        <h4>Uhlaziyo lusilele</h4>
+        <p>Ukukhuphela okusilelayo akufaki nto; cinezela <strong>Khuphela uhlaziyo</strong> kwakhona. Ukufaka okusilelayo kubuyisela inguqulo endala ngokwako kwaye kuthi kutheni. Iinkcukacha ziku-<code>logs/update.log</code>.</p>
+
+        <h3 id="ts-performance">Amaphepha Nesantya</h3>
+
+        <h4>"Iphepha Liyacotha Okanye Alisabeki"</h4>
         <ul>
             <li>Iingqokelela ezinkulu zingathatha ixesha ukulayisha &mdash; ukutyibiliza okungenasiphelo kulayisha ngamaqela ali-100</li>
             <li>Zama ukuhlaziya iphepha ukucoca imemori eqokelelweyo</li>
@@ -1827,36 +2006,12 @@
             <li>Imikhwa ye-canvas ichonga ngokuzenzekelayo i-hardware; izixhobo eziphantsi zisebenzisa i-CPU fallback ngesantya sefreyimu esinciphisiweyo</li>
         </ul>
 
-        <h4>I-banner ye "Interrupted Jobs" kwiDashboard</h4>
-        <p>Ukuba iRetroDB iyaphinda-qalisa ngeli xesha imisebenzi iqhuba, ivela kwi-banner yophinda-buyiselo. Cofa <strong>"Resume"</strong> ngamnye okanye <strong>"Resume All"</strong> ukuze uyiphinde uqalise. Cofa <strong>"Dismiss"</strong> okanye <strong>"Dismiss All"</strong> ukuze uzicime.</p>
-
-        <h4>"PSN Authentication Failed"</h4>
-        <ul>
-            <li>Ii-NPSSO token ziyaphelelwa &mdash; yenza entsha kwi-<code>ca.account.sony.com/api/v1/ssocookie</code></li>
-            <li>Qinisekisa ukuba ungenile kwi-store.playstation.com phambi kokutyelela i-URL ye-cookie</li>
-            <li>IRetroDB iphinda ingene ngokwayo logama iSony isamkela i-NPSSO yakho egciniweyo. Xa iSony iyiyala, ncamathisela entsha kwi-Settings &rarr; Account &rarr; PSN. Ukuze utshintshe i-token esasebenzayo, qala uphume kwi-PlayStation.</li>
-        </ul>
-
-        <h4>"I-OpenXBL ayisamkelanga eso sitshixo"</h4>
-        <ul>
-            <li>Phinda ukope isitshixo kwi-<a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> uze usincamathisele kwiiSethingi &rarr; Iprofayile Yam &rarr; Xbox</li>
-            <li>"Umda weyure we-OpenXBL ufikelelwe" kuthetha ukuba isitshixo sisebenzise izicelo zaso ezili-150 kule yure; linda uze uzame kwakhona</li>
-        </ul>
-
-        <h4>"Image Upscaling Errors"</h4>
-        <ul>
-            <li>Imodeli ye-Real-ESRGAN ONNX ikhutshelwa xa isetyenziswa okokuqala &mdash; qinisekisa ufikelelo lwe-intanethi</li>
-            <li>Ukukhawulezisa kwe-GPU kufuna ii-driver ezihambelanayo (CUDA yeNVIDIA, ROCm ye-AMD)</li>
-            <li>Ukuba i-GPU iyasilela, isistim ibuyela kokusetyenzwa kwe-CPU ngokuzenzekelayo</li>
-        </ul>
-
-        <h3>Amacebiso oKusebenza</h3>
+        <h4>Amacebiso oKusebenza</h4>
         <ul>
             <li>Gcina ibhrawza yakho ihlaziyiwe ukuze isebenze kakuhle</li>
-            <li>Vala ezinye ii-tab zebhrawza xa usebenza neengqokelela ezinkulu kakhulu</li>
-            <li>Sebenzisa izihluzi zesistim ukunciphisa imidlalo ebonakaliswayo ngaxeshanye</li>
-            <li>Qhuba i-Optimize Database ngamaxesha athile emva kwemisebenzi emikhulu (ukuscrapa, ukucoca, ukungenisa)</li>
-            <li>Imikhwa ye-canvas yethima ichonga ngokuzenzekelayo i-hardware; izixhobo eziphantsi zisebenzisa i-CPU fallback</li>
+            <li>Vala amanye amathebhu ebhrawza xa usebenza neengqokelela ezinkulu kakhulu</li>
+            <li>Sebenzisa izihluzi zesistim ukunciphisa imidlalo ebonisiweyo ngexesha elinye</li>
+            <li>Qhuba i-Optimize Database rhoqo emva kwemisebenzi emikhulu (ukukhupha, ukucoca, ukungenisa)</li>
         </ul>
     </div>
 </section>
@@ -2094,4 +2249,8 @@ kbd {
     background: rgba(76, 201, 240, 0.05);
 }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ asset_url('js/help-search.js') }}" defer></script>
 {% endblock %}
