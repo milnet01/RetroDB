@@ -129,6 +129,8 @@ def settings():
                 'tgdb': config.SCRAPER_TGDB_ENABLED,
                 'igdb': config.SCRAPER_IGDB_ENABLED,
                 'rawg': config.SCRAPER_RAWG_ENABLED,
+                # Same default as scraper_manager, which scrapes with it on.
+                'screenscraper': getattr(config, 'SCRAPER_SCREENSCRAPER_ENABLED', True),
                 'ai': False
             },
             'api_keys': {

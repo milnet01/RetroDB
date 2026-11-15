@@ -2837,6 +2837,8 @@ function resetScraperPriority() {
     scraperSettings.match_mode = 'score';
     scraperSettings.match_criteria = { title_quality: 'close', platform_required: true };
     initMatchFilter();
+    // Nothing is saved yet: the admin may still back out (PASS-59-311 A4).
+    showNotification({{ _('Defaults filled in. Press Save Settings to keep them.')|tojson }}, 'info');
 }
 
 // Match filter initialization
@@ -4553,80 +4555,6 @@ document.addEventListener('DOMContentLoaded', function() {
     loadDropdownOptions('save_type', 'saveTypeOptions');
     loadSystems();
     loadControllers();
-});
-
-// ============================================
-// TROUBLESHOOTING FUNCTIONS
-// ============================================
-
-function clearStuckRASync() {
-    const resultEl = document.getElementById('raSyncClearResult');
-    
-    // Clear RA sync queue from localStorage
-    localStorage.removeItem('raSyncQueue');
-    
-    // Clear session storage items
-    sessionStorage.removeItem('raSyncSystemId');
-    
-    // Also cancel any running sync on server
-    fetch('/api/achievements/sync-cancel', { method: 'POST' })
-        .then(r => r.json())
-        .then(data => {
-            resultEl.innerHTML = '<span style="color: var(--neon-green);">✅ ' + escapeHtml({{ _('RA sync state and queue cleared!')|tojson }}) + '</span>';
-            
-            // Hide any RA sync toasts
-            const toast = document.getElementById('raSyncToast');
-            if (toast) toast.style.display = 'none';
-            
-            // Hide queued toasts
-            const queuedContainer = document.getElementById('raSyncQueuedContainer');
-            if (queuedContainer) queuedContainer.innerHTML = '';
-            
-            // Refresh the state display
-            displayRASyncState();
-        })
-        .catch(() => {
-            resultEl.innerHTML = '<span style="color: var(--neon-green);">✅ ' + escapeHtml({{ _('RA sync queue cleared (server unreachable)')|tojson }}) + '</span>';
-            displayRASyncState();
-        });
-    
-    // Clear the result message after 5 seconds
-    setTimeout(() => {
-        resultEl.innerHTML = '';
-    }, 5000);
-}
-
-function displayRASyncState() {
-    const display = document.getElementById('raSyncStateDisplay');
-    if (!display) return;
-    
-    try {
-        const queue = JSON.parse(localStorage.getItem('raSyncQueue') || '[]');
-        const sessionSystemId = sessionStorage.getItem('raSyncSystemId');
-        
-        if (queue.length === 0 && !sessionSystemId) {
-            display.textContent = {{ _('No items in queue, no active sync.')|tojson }};
-        } else {
-            let text = '';
-            if (sessionSystemId) {
-                text += `Active System ID: ${sessionSystemId}\n\n`;
-            }
-            if (queue.length > 0) {
-                text += `Queue (${queue.length} items):\n`;
-                queue.forEach((item, i) => {
-                    text += `  ${i + 1}. ${item.systemName} (${item.gameCount} games)\n`;
-                });
-            }
-            display.textContent = text;
-        }
-    } catch (e) {
-        display.textContent = 'Error reading state: ' + e.message;
-    }
-}
-
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    displayRASyncState();
 });
 
 // Settings Navigation - Highlight active section on scroll

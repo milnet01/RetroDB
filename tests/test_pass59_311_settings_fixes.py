@@ -52,7 +52,7 @@ def _settings_page(monkeypatch, role, addr):
     # The page reads every setting; setup_complete's stub holds only one.
     full = {**settings_manager.DEFAULT_SETTINGS, 'setup_completed': True}
     monkeypatch.setattr(settings_manager, 'load_settings', lambda: dict(full))
-    client, _ = _signed_in_client(_make_user(f'pass59311-page-{role}', role=role), addr)
+    client, _ = _signed_in_client(_make_user(f'pass59311-page-{role}-{addr}', role=role), addr)
     r = client.get('/settings')
     assert r.status_code == 200
     return r.get_data(as_text=True)
@@ -81,3 +81,14 @@ def test_admin_still_sees_every_card(setup_complete, monkeypatch):
     html = _settings_page(monkeypatch, 'admin', '10.59.311.5')
     for marker in ADMIN_ONLY + ('id="controllers"', 'id="bonus-discs"', 'id="apikeys"'):
         assert marker in html, marker
+
+
+def test_fresh_install_shows_screenscraper_on(setup_complete, monkeypatch):
+    """A8: with no saved scraper settings the switch matches scraper_manager,
+    which scrapes with ScreenScraper on."""
+    from scraper import scraper_manager
+    monkeypatch.setattr(scraper_manager, 'load_scraper_settings', lambda: {})
+    html = _settings_page(monkeypatch, 'admin', '10.59.311.6')
+    tag = html[html.index('id="toggle-screenscraper"'):]
+    tag = tag[:tag.index('data-on-change')]
+    assert ' checked ' in tag, tag

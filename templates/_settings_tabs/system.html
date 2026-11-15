@@ -8,8 +8,7 @@
         {{ subnav_link('server', '⚙️ ' ~ _('Server')) }}
         {% endif %}
         {% if _is_admin %}{{ subnav_link('logging', '📋 ' ~ _('Logging')) }}{% endif %}
-        {{ subnav_link('troubleshooting', '🔧 ' ~ _('Troubleshooting'), active=not _is_admin) }}
-        {{ subnav_link('support', '💝 ' ~ _('Support')) }}
+        {{ subnav_link('support', '💝 ' ~ _('Support'), active=not _is_admin) }}
     {% endcall %}
 
     <!-- Database Maintenance (Admin Only) -->
@@ -407,32 +406,6 @@
     </div>
 </section>
 {% endif %}
-
-<!-- Troubleshooting -->
-<section class="card mt-xl" id="troubleshooting">
-    <div class="card-header">
-        <h2 class="card-title">🔧 {{ _('Troubleshooting') }}</h2>
-    </div>
-    <div class="card-body">
-        <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
-            <span>🏆</span> {{ _('Achievement Sync Issues') }}
-        </h3>
-        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-            {{ _('If achievement syncs get stuck or the queue won\'t process, use this button to clear the sync queue and reset the sync state.') }}
-        </p>
-        <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
-            <button type="button" data-on-click="clearStuckRASync" class="btn btn-danger">
-                <span class="btn-icon">🧹</span>
-                {{ _('Clear Stuck RA Sync') }}
-            </button>
-            <span id="raSyncClearResult" role="status" aria-live="polite" style="font-size: 0.9rem;"></span>
-        </div>
-        <div id="raSyncStatusInfo" style="margin-top: var(--spacing-lg); padding: var(--spacing-md); background: rgba(0, 0, 0, 0.2); border-radius: var(--radius-md);">
-            <h5 style="color: var(--text-secondary); margin-bottom: var(--spacing-sm);">{{ _('Current RA Sync Queue:') }}</h5>
-            <pre id="raSyncStateDisplay" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); white-space: pre-wrap; margin: 0;">{{ _('Loading...') }}</pre>
-        </div>
-    </div>
-</section>
 
 <!-- Support Development -->
 <section class="card mt-xl" id="support">
