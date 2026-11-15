@@ -226,7 +226,7 @@ class TestAnchorsPreserved:
         "scraping": ["esde", "scraper", "apikeys"],
         "data": ["stats", "trophies", "dropdowns", "normalization"],
         "customization": ["notifications", "controllers", "logos"],
-        "system": ["maintenance", "server", "logging", "troubleshooting"],
+        "system": ["maintenance", "server", "logging"],
     }
 
     def test_expected_anchors_covers_all_tabs(self):

@@ -6,7 +6,7 @@ the pseudolocale check proves it is wrapped for i18n in both places.
 """
 
 from bs4 import BeautifulSoup
-from flask import render_template
+from flask import g, render_template
 
 import app as app_module
 from services.i18n import PSEUDO_LOCALE
@@ -36,6 +36,8 @@ def _about_disclaimer(client, headers=None):
 
 def _library_disclaimer(locale):
     with app.test_request_context('/', headers={'Accept-Language': locale}):
+        # The ROM path card is admin-only (PASS-59-311).
+        g.user = {'id': 1, 'role': 'admin'}
         html = render_template('_settings_tabs/library.html')
     card = BeautifulSoup(html, 'html.parser').select_one('section#library')
     node = card.select_one('.legal-disclaimer')
