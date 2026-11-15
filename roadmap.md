@@ -2791,17 +2791,19 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: fix.
   Source: user-request-2026-11-11.
 
-- 📋 [PASS-59-305] **Settings sub-tab labels are wrapped for translation (LOW, S).**
-  - **Problem**: every `subnav_link(href, label)` call in templates passes
-    a bare string ('🔑 API Keys', '📁 Paths' ...), so the links under
-    each Settings tab stay English in every locale. Some section
-    headings they point at (`<h2 class="card-title">🔑 API Keys</h2>` in
-    `_settings_tabs/scraping.html`) are bare too. Found while writing
-    PASS-59-189's message, which could not name "API Keys" truthfully.
-  - **Target**: wrap each label in `_()`, translate the new msgids in
-    all 20 locales, and check with the eo pseudolocale that no sub-tab
-    link or its heading is left unwrapped.
-  **Layman:** The small section links at the top of each Settings tab (such as "API Keys") show in your chosen language, not always English.
+- 📋 [PASS-59-305] **Settings > Scraping is wrapped for translation (LOW, M).**
+  - **Problem**: `templates/_settings_tabs/scraping.html` is almost all
+    bare English: its sub-tab links ('🔍 Scraper', '🔑 API Keys'), its
+    card headings, labels, hints and scraper descriptions. The other
+    Settings tabs' links are wrapped (`'📁 ' ~ _('Paths')`). Found while
+    writing PASS-59-189's message, which could not name "API Keys"
+    truthfully in other languages.
+  - **Target**: wrap the tab's text and the strings its scripts write
+    into it, translate the new msgids in all 20 locales, and check with
+    the eo pseudolocale that nothing on the tab is left unwrapped, as
+    PASS-59-179 did for Settings > System.
+  - **Source**: PASS-59-189 work, 2026-11-15.
+  **Layman:** The Scraping page in Settings shows in your chosen language, not always English.
   Kind: fix.
   Source: PASS-59-189 work, 2026-11-15.
 
