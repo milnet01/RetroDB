@@ -26,6 +26,8 @@ import logging
 import os
 import re
 import shutil
+import sqlite3
+import subprocess
 import tempfile
 import time
 import zipfile
@@ -328,18 +330,22 @@ def import_folder(path) -> dict:
 # -----------------------------------------------------------------------------
 # MAME (PASS-59-313)
 # -----------------------------------------------------------------------------
-# MAME's cheat plugin reads <cheatpath>/cheat/<set>.xml. The collection
-# (Pugsy's, mamecheat.co.uk) comes as cheat.7z, often inside a zip. Its site
-# refuses automated downloads, so it arrives only by import, which unpacks it
-# once into own/mame/cheat/, replaced whole: the game page reads a set's
-# file and MAME reads the same folder. MAME keeps no record of which cheats
-# are on, so the panel lists them and MAME's own menu switches them.
+# MAME's cheat plugin opens <cheatpath>/cheat/<set>.xml, and MAME finds that
+# path inside <cheatpath>/cheat.7z too. The collection (Pugsy's,
+# mamecheat.co.uk) is that cheat.7z, often inside a zip, and its readme says
+# to keep it packed: it holds over 180,000 files. Its site refuses automated
+# downloads, so it arrives only by import, which copies cheat.7z into
+# own/mame/ whole and reads it once, as a stream, to save each arcade set's
+# cheat names in own/mame/names.sqlite3 for the game page. MAME keeps no
+# record of which cheats are on, so the panel lists them and MAME's own menu
+# switches them.
 
 _MAME_ARCHIVE = 'cheat.7z'
+_MAME_NAMES = 'names.sqlite3'
 
 
 def mame_dir() -> Path:
-    """MAME's -cheatpath: the folder holding cheat/<set>.xml."""
+    """MAME's -cheatpath: the folder holding cheat.7z."""
     return store_dir() / 'own' / 'mame'
 
 
@@ -372,66 +378,102 @@ def _mame_archive(src: Path) -> Optional[Path]:
 
 
 def _import_mame(archive: Path) -> int:
-    """Unpack the collection into mame_dir()/cheat, whole or not at all,
-    with the 7-Zip tool the player's install uses. Returns the set count."""
+    """Copy the collection into mame_dir() and save its cheat names, whole
+    or not at all, with the 7-Zip tool the player's install uses. Returns
+    the number of arcade sets with cheats."""
     from services import player_install
     h = player_install.host()
     if h not in player_install.SEVEN_ZIP:
-        raise CheatError(_('RetroDB cannot unpack cheat.7z on this computer.'))
+        raise CheatError(_('RetroDB cannot read cheat.7z on this computer.'))
     base = mame_dir()
     base.mkdir(parents=True, exist_ok=True)
     work = Path(tempfile.mkdtemp(dir=base, prefix='.import-'))
     try:
-        seven = archive
+        seven = work / _MAME_ARCHIVE
         if archive.suffix.lower() == '.zip':
-            seven = work / _MAME_ARCHIVE
             with zipfile.ZipFile(archive) as zf, zf.open(_zip_member(archive)) as r, \
                     open(seven, 'wb') as w:
                 shutil.copyfileobj(r, w, _CHUNK)
-        out = work / 'out'
-        out.mkdir()
+        else:
+            shutil.copyfile(archive, seven)
         try:
             tool = player_install._seven_zip(h, work)
-            player_install._run([str(tool), 'x', '-y', f'-o{out}', str(seven)])
         except player_install.InstallError as e:
             raise CheatError(str(e)) from e
-        top = out.resolve()
-        staged = work / 'cheat'
-        count = total = 0
-        for f in sorted(out.rglob('*.xml')):
-            if f.is_symlink() or not f.is_file() or top not in f.resolve().parents:
-                continue
-            total += f.stat().st_size
-            if total > MAX_PACK_BYTES:
-                raise CheatError(_('cheat.7z is larger than 1 GiB unpacked.'))
-            if f.stat().st_size > MAX_FILE_BYTES:
-                continue
-            dest = staged / f.relative_to(out)
-            dest.parent.mkdir(parents=True, exist_ok=True)
-            os.replace(f, dest)
-            count += 1
+        names = work / _MAME_NAMES
+        count = _index_mame(str(tool), seven, names)
         if not count:
             raise CheatError(_('cheat.7z holds no MAME cheat files.'))
-        live = base / 'cheat'
-        if live.exists():
-            os.replace(live, work / 'old')
-        os.replace(staged, live)
+        os.replace(names, base / _MAME_NAMES)
+        os.replace(seven, base / _MAME_ARCHIVE)
         return count
     finally:
         shutil.rmtree(work, ignore_errors=True)
 
 
-def mame_names(rom_path) -> list:
-    """The cheat names in the collection for the set at `rom_path`."""
-    import defusedxml.ElementTree as ET
-    folder = mame_dir() / 'cheat'
-    f = folder / f'{Path(rom_path or "").stem}.xml'
-    if f.parent != folder or not f.is_file():
-        return []
+def _mame_entries(tool: str, seven: Path) -> list:
+    """(path, unpacked size) of each file in the archive, in archive order."""
     try:
-        root = ET.fromstring(_read_text(f))
-    except (OSError, CheatError, ET.ParseError) as e:
-        logger.warning("cheats: %s not read: %s", f, e)
+        done = subprocess.run([tool, 'l', '-slt', '-ba', str(seven)], stdin=subprocess.DEVNULL,
+                              capture_output=True, timeout=300, check=True)
+    except (OSError, subprocess.SubprocessError) as e:
+        raise CheatError(_('cheat.7z could not be read.')) from e
+    entries, item = [], {}
+    for line in done.stdout.decode('utf-8', 'replace').splitlines() + ['']:
+        if line.strip():
+            key, _sep, value = line.partition(' = ')
+            item[key.strip()] = value
+            continue
+        if item.get('Path') and item.get('Folder') != '+':
+            entries.append((item['Path'], int(item.get('Size') or 0)))
+        item = {}
+    return entries
+
+
+def _index_mame(tool: str, seven: Path, dest: Path) -> int:
+    """Read the archive once, file by file in archive order, and save each
+    top-level <set>.xml's cheat names in `dest`. Software-list folders are
+    passed over: MAME reads them from the archive, the game page never
+    asks. Returns the number of sets saved."""
+    entries = _mame_entries(tool, seven)
+    if sum(size for _p, size in entries) > MAX_PACK_BYTES:
+        raise CheatError(_('cheat.7z is larger than 1 GiB unpacked.'))
+    con = sqlite3.connect(dest)
+    proc = subprocess.Popen([tool, 'x', '-so', str(seven)], stdin=subprocess.DEVNULL,
+                            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    count = 0
+    try:
+        con.execute('CREATE TABLE cheats (game TEXT PRIMARY KEY, names TEXT NOT NULL) WITHOUT ROWID')
+        for path, size in entries:
+            data = proc.stdout.read(size)
+            if len(data) != size:
+                raise CheatError(_('cheat.7z could not be read.'))
+            parts = re.split(r'[\\/]', path)   # 7-Zip on Windows lists with backslashes
+            if len(parts) != 1 or not path.lower().endswith('.xml') or size > MAX_FILE_BYTES:
+                continue
+            names = _cheat_names(data, path)
+            if names:
+                con.execute('INSERT OR REPLACE INTO cheats VALUES (?, ?)', (path[:-4], '\n'.join(names)))
+                count += 1
+        con.commit()
+        if proc.wait(timeout=60) != 0:
+            raise CheatError(_('cheat.7z could not be read.'))
+    finally:
+        proc.stdout.close()
+        if proc.poll() is None:
+            proc.kill()
+            proc.wait()
+        con.close()
+    return count
+
+
+def _cheat_names(xml, label) -> list:
+    """The `desc` names of the cheats in one MAME cheat file, once each."""
+    import defusedxml.ElementTree as ET
+    try:
+        root = ET.fromstring(xml)
+    except ET.ParseError as e:
+        logger.warning("cheats: %s not read: %s", label, e)
         return []
     names = []
     for c in root.iter('cheat'):
@@ -441,9 +483,27 @@ def mame_names(rom_path) -> list:
     return names
 
 
+def mame_names(rom_path) -> list:
+    """The cheat names in the collection for the set at `rom_path`."""
+    stem = Path(str(rom_path or '')).stem
+    f = mame_dir() / _MAME_NAMES
+    if not stem or not f.is_file():
+        return []
+    try:
+        con = sqlite3.connect(f)
+        try:
+            row = con.execute('SELECT names FROM cheats WHERE game = ?', (stem,)).fetchone()
+        finally:
+            con.close()
+    except sqlite3.Error as e:
+        logger.warning("cheats: %s not read: %s", f, e)
+        return []
+    return row[0].split('\n') if row else []
+
+
 def mame_launch_args() -> list:
     """MAME's cheat plugin, reading the store, once a collection is in."""
-    if not (mame_dir() / 'cheat').is_dir():
+    if not (mame_dir() / _MAME_ARCHIVE).is_file():
         return []
     return ['-plugin', 'cheat', '-cheatpath', str(mame_dir())]
 

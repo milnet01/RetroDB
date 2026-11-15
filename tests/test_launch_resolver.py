@@ -595,7 +595,8 @@ def test_mame_launch_carries_the_cheat_plugin(tmpdb, monkeypatch, tmp_path):
     import config
     monkeypatch.setattr(config, 'BASE_DIR', str(tmp_path / 'app'))
     from services import cheats
-    (cheats.mame_dir() / 'cheat').mkdir(parents=True)
+    cheats.mame_dir().mkdir(parents=True)
+    (cheats.mame_dir() / 'cheat.7z').write_bytes(b'7z')
     _fullscreen_db(tmpdb, '-rompath "{rom_dir}" "{rom_name}"', binary_name='mame')
     from services.launch_resolver import resolve_launch_context
     argv = resolve_launch_context(game_id=1).argv

@@ -248,19 +248,25 @@ one of the game's candidates. Errors use the project's usual
 
 Standalone MAME (`emulators.binary_name` `mame`, not RetroArch) reads
 `<cheatpath>/cheat/<set>.xml` through its `cheat` plugin, which is off
-unless `-plugin cheat` names it. The collection is Pugsy's `cheat.7z`
+unless `-plugin cheat` names it, and finds that path inside
+`<cheatpath>/cheat.7z` too. The collection is Pugsy's `cheat.7z`
 from mamecheat.co.uk, often inside a zip. That site refuses automated
 requests (HTTP 403 to `curl`, 2026-11-15), so there is no MAME pack: the
 collection arrives only by import.
 
 - **Import.** A `cheat.7z` in the folder, else the last-named zip holding
-  one, is unpacked with the 7-Zip tool `services/player_install.py`
-  downloads and pins. Its `.xml` files replace `own/mame/cheat/` whole.
+  one, is copied unopened to `own/mame/cheat.7z`: its readme says to keep it
+  packed, and it holds over 180,000 files. The 7-Zip tool
+  `services/player_install.py` downloads and pins lists it (`l -slt`) and
+  streams it once (`x -so`), cut at the listed sizes; each top-level
+  `<set>.xml`'s cheat names go to `own/mame/names.sqlite3`. Software-list
+  folders and `.json` cheat files are left to MAME. Both files replace the
+  old ones together, after the read succeeds.
 - **Panel.** The game's set is its ROM file name. The panel lists that
-  file's `cheat` `desc` names, without switches: the plugin keeps no
+  set's names from `names.sqlite3`, without switches: the plugin keeps no
   record of which cheats are on, so MAME's own menu (Tab, Plugin Options,
   Cheat) switches them. A PUT is refused with that instruction.
-- **Launch.** With a collection in, the launch puts `-plugin cheat
+- **Launch.** With `own/mame/cheat.7z` in, the launch puts `-plugin cheat
   -cheatpath <own/mame>` before the args template, so a `-plugin` the
   user typed there wins.
 
@@ -346,11 +352,12 @@ collection arrives only by import.
   *Breaks when:* the launch path raises from the cheat copy.
 
 - **INV-12** — MAME starts with its cheat plugin only once a collection is
-  imported, and a set's name cannot reach outside `own/mame/cheat/`.
+  imported; the collection stays packed, and a set's name is only a lookup
+  key in `names.sqlite3`.
   *Test:* `tests/test_pass59_313_mame_cheats.py`,
   `tests/test_launch_resolver.py` (`test_mame_launch_*`).
-  *Breaks when:* the launch adds `-plugin cheat` with no collection, or the
-  set name is joined to the store path unchecked.
+  *Breaks when:* the launch adds `-plugin cheat` with no collection, the
+  import unpacks `cheat.7z`, or the set name is joined to a path.
 
 ## 6. Failure modes
 
