@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 15:45+0200\n"
+"POT-Creation-Date: 2026-11-15 15:50+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: he\n"
@@ -141,7 +141,7 @@ msgstr "המשימה לא נמצאה או שכבר טופלה"
 msgid "No handler for job type '%(type)s'"
 msgstr "אין מטפל לסוג המשימה '%(type)s'"
 
-#: app.py:1525 app.py:1559
+#: app.py:1525 app.py:1559 services/auth.py:320
 msgid "You do not have permission to perform this action"
 msgstr "אין לך הרשאה לבצע פעולה זו"
 
@@ -273,8 +273,9 @@ msgstr "תיאור המשחק"
 #: templates/compare_games.html:73 templates/dashboard.html:390
 #: templates/game_detail.html:342 templates/local_trophy_detail.html:99
 #: templates/psn_trophy_detail.html:96 templates/psn_trophy_detail.html:264
-#: templates/reports.html:1161 templates/steam_achievement_game.html:178
-#: templates/system_games.html:63 templates/xbox_achievement_game.html:171
+#: templates/reports.html:1161 templates/settings.html:1541
+#: templates/steam_achievement_game.html:178 templates/system_games.html:63
+#: templates/xbox_achievement_game.html:171
 msgid "Genre"
 msgstr "ז'אנר"
 
@@ -286,8 +287,8 @@ msgstr "ז'אנר"
 #: templates/base.html:1143 templates/compare_games.html:70
 #: templates/game_detail.html:332 templates/local_trophy_detail.html:93
 #: templates/psn_trophy_detail.html:90 templates/reports.html:1161
-#: templates/steam_achievement_game.html:84 templates/system_games.html:72
-#: templates/xbox_achievement_game.html:73
+#: templates/settings.html:1540 templates/steam_achievement_game.html:84
+#: templates/system_games.html:72 templates/xbox_achievement_game.html:73
 msgid "Developer"
 msgstr "מפתח"
 
@@ -299,8 +300,9 @@ msgstr "מפתח"
 #: templates/base.html:1139 templates/compare_games.html:71
 #: templates/game_detail.html:322 templates/game_detail.html:814
 #: templates/local_trophy_detail.html:87 templates/psn_trophy_detail.html:84
-#: templates/reports.html:1161 templates/steam_achievement_game.html:78
-#: templates/system_games.html:69 templates/xbox_achievement_game.html:67
+#: templates/reports.html:1161 templates/settings.html:1539
+#: templates/steam_achievement_game.html:78 templates/system_games.html:69
+#: templates/xbox_achievement_game.html:67
 msgid "Publisher"
 msgstr "מוציא לאור"
 
@@ -339,6 +341,7 @@ msgstr "מצבי משחק"
 #: templates/analytics.html:2432 templates/base.html:1130
 #: templates/compare_games.html:75 templates/game_detail.html:811
 #: templates/reports.html:449 templates/reports.html:1161
+#: templates/settings.html:1537
 msgid "Region"
 msgstr "אזור"
 
@@ -1718,6 +1721,16 @@ msgstr "ה-AI לא נתן תשובה שמישה. נסה שוב מאוחר יות
 msgid "Game not found or not an Xbox game"
 msgstr "המשחק לא נמצא או שאינו משחק Xbox"
 
+#: services/auth.py:349
+#, fuzzy
+msgid "You do not have permission to access this feature"
+msgstr "אין לך הרשאה לבצע פעולה זו"
+
+#: services/auth.py:370
+#, fuzzy
+msgid "This action requires administrator privileges"
+msgstr "נדרשות הרשאות מנהל"
+
 #: services/cheats.py:140
 #, python-format
 msgid "%(name)s is too large to be a cheat file."
@@ -2229,7 +2242,7 @@ msgstr "החל נורמליזציה"
 msgid "Apply failed: {error}"
 msgstr "ההחלה נכשלה: {error}"
 
-#: services/js_i18n_strings.py:613
+#: services/js_i18n_strings.py:613 templates/_settings_tabs/data.html:213
 #, python-brace-format
 msgid "Apply {n} Selected"
 msgstr "החל {n} שנבחרו"
@@ -3280,7 +3293,7 @@ msgstr "מפעיל…"
 msgid "Library scan complete! Found {n} new games."
 msgstr "סריקת הספרייה הושלמה! נמצאו {n} משחקים חדשים."
 
-#: services/js_i18n_strings.py:838
+#: services/js_i18n_strings.py:838 templates/settings.html:1843
 msgid "Link"
 msgstr "קשר"
 
@@ -3296,7 +3309,7 @@ msgstr "טוען קובץ יומן..."
 msgid "Loading the manual…"
 msgstr "טוען את המדריך…"
 
-#: services/js_i18n_strings.py:842 templates/_settings_tabs/library.html:292
+#: services/js_i18n_strings.py:842 templates/_settings_tabs/library.html:291
 #: templates/settings_emulators.html:201 templates/settings_emulators.html:219
 msgid "Loading…"
 msgstr "טוען…"
@@ -3749,10 +3762,11 @@ msgid "Regional name matches"
 msgstr "התאמות שמות אזוריים"
 
 #: services/js_i18n_strings.py:940 templates/_modals/edit_modal.html:386
-#: templates/_settings_tabs/account.html:228 templates/compare_games.html:24
+#: templates/_settings_tabs/account.html:228
+#: templates/_settings_tabs/library.html:217 templates/compare_games.html:24
 #: templates/compare_games.html:40 templates/rom_tools_settings.html:462
 #: templates/rom_tools_settings.html:501 templates/screenshot_review.html:187
-#: templates/settings.html:1579
+#: templates/settings.html:1579 templates/settings.html:1687
 msgid "Remove"
 msgstr "הסר"
 
@@ -3940,7 +3954,8 @@ msgstr "נשמר. יוחל בפעם הבאה שתלחץ על שחק."
 msgid "Saving to the database…"
 msgstr "שומר במסד הנתונים…"
 
-#: services/js_i18n_strings.py:981 templates/settings.html:2736
+#: services/js_i18n_strings.py:981 templates/settings.html:1711
+#: templates/settings.html:1751 templates/settings.html:2736
 #: templates/settings.html:2774 templates/settings.html:4639
 #: templates/setup.html:483
 msgid "Saving..."
@@ -4560,6 +4575,7 @@ msgstr "ייבוא Xbox"
 
 #: services/js_i18n_strings.py:1109 templates/dashboard.html:391
 #: templates/reports.html:452 templates/reports.html:1161
+#: templates/settings.html:1538
 msgid "Year"
 msgstr "שנה"
 
@@ -5615,17 +5631,17 @@ msgid "All Types"
 msgstr "כל הסוגים"
 
 #: templates/all_games.html:52 templates/museum.html:59
-#: templates/systems.html:35
+#: templates/settings.html:1547 templates/systems.html:35
 msgid "Console"
 msgstr "קונסולה"
 
 #: templates/all_games.html:53 templates/museum.html:60
-#: templates/systems.html:36
+#: templates/settings.html:1548 templates/systems.html:36
 msgid "Handheld"
 msgstr "נייד"
 
 #: templates/all_games.html:54 templates/museum.html:61
-#: templates/systems.html:37
+#: templates/settings.html:1549 templates/systems.html:37
 msgid "Computer"
 msgstr "מחשב"
 
@@ -5635,7 +5651,7 @@ msgid "Arcade"
 msgstr "ארקייד"
 
 #: templates/all_games.html:56 templates/museum.html:63
-#: templates/systems.html:39
+#: templates/settings.html:1550 templates/systems.html:39
 msgid "Engine"
 msgstr "מנוע"
 
@@ -6270,7 +6286,8 @@ msgstr "הזן שם תיקייה להחרגה"
 #: templates/_settings_tabs/data.html:114
 #: templates/_settings_tabs/data.html:124
 #: templates/_settings_tabs/data.html:134
-#: templates/_settings_tabs/data.html:144 templates/archive_scanner.html:591
+#: templates/_settings_tabs/data.html:144
+#: templates/_settings_tabs/library.html:223 templates/archive_scanner.html:591
 #: templates/list_detail.html:419 templates/rom_tools_settings.html:346
 #: templates/rom_tools_settings.html:365
 msgid "Add"
@@ -7092,6 +7109,7 @@ msgstr "אין נתוני זמן משחק"
 #: templates/dashboard.html:388 templates/dashboard.html:465
 #: templates/dashboard.html:531 templates/game_detail.html:812
 #: templates/list_detail.html:45 templates/reports.html:1162
+#: templates/settings.html:1574
 msgid "Title"
 msgstr "כותרת"
 
@@ -8812,9 +8830,38 @@ msgstr "מחיקת המשחק נכשלה"
 msgid "An error occurred while deleting the game."
 msgstr "אירעה שגיאה במהלך מחיקת המשחק."
 
+#: templates/game_detail.html:5139
+#, fuzzy, python-brace-format
+msgid "Searching all sources..."
+msgstr "מחפש ב-{source}…"
+
+#: templates/game_detail.html:5159
+#, fuzzy, python-brace-format
+msgid "Search {sources} for metadata and boxart."
+msgstr "חפש מטא-נתונים ועטיפת קופסה במגרדים המופעלים."
+
 #: templates/game_detail.html:5287 templates/game_detail.html:5288
 msgid "Select for hybrid scraping"
 msgstr "בחירה לגרד משולב"
+
+#: templates/_modals/select_filter_modal.html:29
+#: templates/game_detail.html:5303
+msgid "Apply"
+msgstr "החל"
+
+#: templates/game_detail.html:5333
+#, fuzzy, python-brace-format
+msgid "No {source} results"
+msgstr "אין תוצאות"
+
+#: templates/game_detail.html:5345
+msgid "No results found. Try a different search term."
+msgstr ""
+
+#: templates/game_detail.html:5348
+#, fuzzy
+msgid "Error searching. Please try again."
+msgstr "שגיאת רשת. נסו שוב."
 
 #: templates/game_detail.html:5413
 msgid "Sort title generated"
@@ -10670,11 +10717,11 @@ msgstr "השם שונה"
 msgid "File renamed successfully."
 msgstr "שם הקובץ שונה בהצלחה."
 
-#: templates/reports.html:1161
+#: templates/reports.html:1161 templates/settings.html:1542
 msgid "System Type"
 msgstr "סוג מערכת"
 
-#: templates/reports.html:1161
+#: templates/reports.html:1161 templates/settings.html:1543
 msgid "System Name"
 msgstr "שם מערכת"
 
@@ -11778,6 +11825,11 @@ msgstr "נדרשת הפעלה מחדש כדי שהשינויים ייכנסו ל
 msgid "Display settings saved!"
 msgstr "הגדרות התצוגה נשמרו!"
 
+#: templates/settings.html:1572
+#, fuzzy
+msgid "Selected tags (in order):"
+msgstr "בחר תיקייה זו"
+
 #: templates/settings.html:1579
 msgid "Move left"
 msgstr "הזז שמאלה"
@@ -11785,6 +11837,23 @@ msgstr "הזז שמאלה"
 #: templates/settings.html:1579
 msgid "Move right"
 msgstr "הזז ימינה"
+
+#: templates/settings.html:1586
+msgid "Available tags (click to add):"
+msgstr ""
+
+#: templates/settings.html:1590
+#, fuzzy
+msgid "Click to add"
+msgstr "לחץ להגדלה"
+
+#: templates/settings.html:1591
+msgid "All tags in use"
+msgstr ""
+
+#: templates/settings.html:1597 templates/settings.html:3775
+msgid "Preview:"
+msgstr "תצוגה מקדימה:"
 
 #: templates/settings.html:1679
 msgid "Region already exists"
@@ -11818,6 +11887,40 @@ msgstr "אזהרה - נעלם בעוד {seconds} שנ׳"
 msgid "Error - disappears in {seconds}s"
 msgstr "שגיאה - נעלם בעוד {seconds} שנ׳"
 
+#: templates/settings.html:1818
+#, fuzzy, python-brace-format
+msgid "No bonus discs detected in your library."
+msgstr "דיסקי בונוס שזוהו: {count}"
+
+#: templates/settings.html:1820
+#, fuzzy, python-brace-format
+msgid "Found {count} potential bonus disc(s):"
+msgstr "כולל {count} דיסקי בונוס"
+
+#: templates/settings.html:1826
+#, python-brace-format
+msgid "Detected from filename: {filename}"
+msgstr ""
+
+#: templates/settings.html:1829
+#, fuzzy
+msgid "Will search for:"
+msgstr "חיפוש:"
+
+#: templates/settings.html:1831
+msgid "Could not extract parent title - manual linking required"
+msgstr ""
+
+#: templates/settings.html:1838
+#, fuzzy
+msgid "Unknown System"
+msgstr "מערכת לא ידועה"
+
+#: templates/settings.html:1846
+#, fuzzy
+msgid "Mark"
+msgstr "מבוגרים"
+
 #: templates/settings.html:1855
 #, python-brace-format
 msgid "Bonus discs detected: {count}"
@@ -11828,6 +11931,36 @@ msgstr "דיסקי בונוס שזוהו: {count}"
 msgid "Detection failed: {error}"
 msgstr "הזיהוי נכשל: {error}"
 
+#: templates/_settings_tabs/library.html:263 templates/settings.html:1863
+#, fuzzy
+msgid "Auto-Detect Bonus Discs"
+msgstr "סך דיסקי הבונוס:"
+
+#: templates/settings.html:1872
+#, fuzzy
+msgid "Linking..."
+msgstr "מסנכרן..."
+
+#: templates/settings.html:1881
+#, fuzzy
+msgid "Auto-linking complete!"
+msgstr "הגירוד ההמוני הושלם!"
+
+#: templates/settings.html:1883
+#, fuzzy, python-brace-format
+msgid "Linked: {count} bonus disc(s)"
+msgstr "כולל {count} דיסקי בונוס"
+
+#: templates/settings.html:1884
+#, fuzzy, python-brace-format
+msgid "Already linked: {count}"
+msgstr "כבר בספרייה: {count}"
+
+#: templates/settings.html:1885
+#, fuzzy, python-brace-format
+msgid "No parent found: {count}"
+msgstr "נמצאו קטעים: {count}"
+
 #: templates/settings.html:1889
 #, python-brace-format
 msgid "Bonus discs linked to parent games: {count}"
@@ -11837,6 +11970,11 @@ msgstr "דיסקי בונוס שקושרו למשחקי האב: {count}"
 #, python-brace-format
 msgid "Auto-link failed: {error}"
 msgstr "הקישור האוטומטי נכשל: {error}"
+
+#: templates/_settings_tabs/library.html:267 templates/settings.html:1900
+#, fuzzy
+msgid "Auto-Link to Parents"
+msgstr "מקושרים למשחק אב:"
 
 #: templates/settings.html:1916
 msgid "Bonus Disc Statistics"
@@ -11909,6 +12047,11 @@ msgstr "לא דיסק בונוס"
 msgid "Back in your game lists. Auto-Link will leave it alone."
 msgstr "חזר לרשימות המשחקים שלך. Auto-Link לא ייגע בו."
 
+#: templates/settings.html:2077
+#, fuzzy
+msgid "Creating..."
+msgstr "מנקה..."
+
 #: templates/settings.html:2083
 #, python-brace-format
 msgid "Backup created: {filename} ({size})"
@@ -11923,6 +12066,25 @@ msgstr "הגיבוי נכשל: {error}"
 #, python-brace-format
 msgid "Backup error: {error}"
 msgstr "שגיאת גיבוי: {error}"
+
+#: templates/_settings_tabs/library.html:307 templates/settings.html:2092
+#, fuzzy
+msgid "Create Backup"
+msgstr "שחזור גיבוי"
+
+#: templates/settings.html:2103
+msgid "No backups found. Create one to get started."
+msgstr ""
+
+#: templates/settings.html:2116
+#, fuzzy
+msgid "Restore"
+msgstr "אחסון"
+
+#: templates/settings.html:2125
+#, fuzzy
+msgid "Error loading backups"
+msgstr "שגיאה בטעינת המשחקים."
 
 #: templates/settings.html:2130
 msgid "Restore Backup"
@@ -12241,10 +12403,6 @@ msgstr "הוספת בקר ברירת מחדל נכשלה"
 #: templates/settings.html:3700 templates/settings.html:3704
 msgid "Failed to remove default controller"
 msgstr "הסרת בקר ברירת מחדל נכשלה"
-
-#: templates/settings.html:3775
-msgid "Preview:"
-msgstr "תצוגה מקדימה:"
 
 #: templates/settings.html:3776
 #, python-brace-format
@@ -14345,10 +14503,6 @@ msgstr "סמן כמה שתרצה; משחק מוצג אם יש לו אחד מהם
 msgid "Tick any number; a game is hidden if it has any of them."
 msgstr "סמן כמה שתרצה; משחק מוסתר אם יש לו אחד מהם."
 
-#: templates/_modals/select_filter_modal.html:29
-msgid "Apply"
-msgstr "החל"
-
 #: templates/_settings_tabs/_tab_bar.html:7
 msgid "Account"
 msgstr "חשבון"
@@ -14376,6 +14530,7 @@ msgid "Account settings"
 msgstr "הגדרות חשבון"
 
 #: templates/_settings_tabs/account.html:5
+#: templates/_settings_tabs/account.html:15
 msgid "My Profile"
 msgstr "הפרופיל שלי"
 
@@ -15377,21 +15532,80 @@ msgstr ""
 "הגדר את ערכי האזור הזמינים ואת ברירת המחדל. אזור ברירת המחדל משמש בעת "
 "גירוד אם לא זוהה אזור."
 
+#: templates/_settings_tabs/library.html:222
+#, fuzzy
+msgid "Add region..."
+msgstr "+ הוסף ממד..."
+
 #: templates/_settings_tabs/library.html:226
 msgid "Default Region"
 msgstr "אזור ברירת מחדל"
 
-#: templates/_settings_tabs/library.html:286
+#: templates/_settings_tabs/library.html:242
+#, fuzzy
+msgid "Save Naming Settings"
+msgstr "שמור את ההגדרות שלי"
+
+#: templates/_settings_tabs/library.html:253
+#, fuzzy
+msgid "Bonus Disc Management"
+msgstr "ניהול משתמשים"
+
+#: templates/_settings_tabs/library.html:257
+msgid ""
+"Bonus discs (making-of, behind the scenes, extras) are hidden by default "
+"on game listing pages. Use this section to auto-detect and link bonus "
+"discs to their parent games."
+msgstr ""
+
+#: templates/_settings_tabs/library.html:271
+#, fuzzy
+msgid "View Stats"
+msgstr "סטטיסטיקה"
+
+#: templates/_settings_tabs/library.html:278
+#, fuzzy
+msgid "Detected Bonus Discs"
+msgstr "סך דיסקי הבונוס:"
+
+#: templates/_settings_tabs/library.html:281
+msgid "Click \"Auto-Detect Bonus Discs\" to scan your library"
+msgstr ""
+
+#: templates/_settings_tabs/library.html:285
 msgid "Current Bonus Discs"
 msgstr "דיסקי בונוס נוכחיים"
 
-#: templates/_settings_tabs/library.html:289
+#: templates/_settings_tabs/library.html:288
 msgid ""
 "A disc marked by mistake can go back in your game lists. Auto-Link then "
 "leaves it alone."
 msgstr ""
 "דיסק שסומן בטעות יכול לחזור לרשימות המשחקים שלך. אחר כך Auto-Link לא ייגע"
 " בו."
+
+#: templates/_settings_tabs/library.html:301
+msgid "Database Backup & Restore"
+msgstr ""
+
+#: templates/_settings_tabs/library.html:311
+#, fuzzy
+msgid "Calculate File Sizes"
+msgstr "מחשב גדלי קבצים..."
+
+#: templates/_settings_tabs/library.html:315
+msgid "Create backups before making major changes to your library"
+msgstr ""
+
+#: templates/_settings_tabs/library.html:318
+#, fuzzy
+msgid "Available Backups"
+msgstr "זמין"
+
+#: templates/_settings_tabs/library.html:320
+#, fuzzy
+msgid "Loading backups..."
+msgstr "טוען ערכים..."
 
 #: templates/_settings_tabs/scraping.html:3
 msgid "Scraping settings"

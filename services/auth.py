@@ -9,6 +9,7 @@ import hashlib
 import hmac
 import secrets
 from functools import wraps
+from flask_babel import gettext as _
 from flask import current_app, g, session, redirect, url_for, flash, request
 
 from services.database import query
@@ -316,7 +317,7 @@ def _deny_forbidden(flash_message):
     if request.path.startswith('/api/'):
         from services.api_helpers import error as api_error
         return api_error(
-            'You do not have permission to perform this action', 403,
+            _('You do not have permission to perform this action'), 403,
         )
     flash(flash_message, 'error')
     return redirect(url_for('dashboard'))
@@ -345,7 +346,7 @@ def permission_required(permission):
                 return _deny_unauthenticated()
             if not has_permission(permission):
                 return _deny_forbidden(
-                    'You do not have permission to access this feature')
+                    _('You do not have permission to access this feature'))
             return f(*args, **kwargs)
         return decorated_function
     return decorator
@@ -366,7 +367,7 @@ def admin_required(f):
         if not g.user:
             return _deny_unauthenticated()
         if g.user['role'] != 'admin':
-            return _deny_forbidden('This action requires administrator privileges')
+            return _deny_forbidden(_('This action requires administrator privileges'))
         return f(*args, **kwargs)
     return decorated_function
 

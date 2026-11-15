@@ -1534,20 +1534,20 @@ document.addEventListener('DOMContentLoaded', loadDisplaySettings);
 // =============================================================================
 
 const NAMING_AVAILABLE_TAGS = [
-    { key: 'region',      label: 'Region',      example: 'USA' },
-    { key: 'year',        label: 'Year',         example: '1991' },
-    { key: 'publisher',   label: 'Publisher',    example: 'Psygnosis' },
-    { key: 'developer',   label: 'Developer',    example: 'DMA Design' },
-    { key: 'genre',       label: 'Genre',        example: 'Platformer' },
-    { key: 'system_type', label: 'System Type',  example: 'Console' },
-    { key: 'system_name', label: 'System Name',  example: 'Atari ST' },
+    { key: 'region',      label: {{ _('Region')|tojson }},      example: 'USA' },
+    { key: 'year',        label: {{ _('Year')|tojson }},         example: '1991' },
+    { key: 'publisher',   label: {{ _('Publisher')|tojson }},    example: 'Psygnosis' },
+    { key: 'developer',   label: {{ _('Developer')|tojson }},    example: 'DMA Design' },
+    { key: 'genre',       label: {{ _('Genre')|tojson }},        example: 'Platformer' },
+    { key: 'system_type', label: {{ _('System Type')|tojson }},  example: 'Console' },
+    { key: 'system_name', label: {{ _('System Name')|tojson }},  example: 'Atari ST' },
 ];
 
 const NAMING_SYSTEM_TYPES = [
-    { key: 'console',  label: 'Console',  icon: '🎮', example: 'PlayStation, SNES, Dreamcast' },
-    { key: 'handheld', label: 'Handheld', icon: '📱', example: 'Game Boy, PSP, DS' },
-    { key: 'computer', label: 'Computer', icon: '💻', example: 'Amiga, DOS, Atari ST' },
-    { key: 'engine',   label: 'Engine',   icon: '⚙️', example: 'ScummVM, PICO-8, Doom' },
+    { key: 'console',  label: {{ _('Console')|tojson }},  icon: '🎮', example: 'PlayStation, SNES, Dreamcast' },
+    { key: 'handheld', label: {{ _('Handheld')|tojson }}, icon: '📱', example: 'Game Boy, PSP, DS' },
+    { key: 'computer', label: {{ _('Computer')|tojson }}, icon: '💻', example: 'Amiga, DOS, Atari ST' },
+    { key: 'engine',   label: {{ _('Engine')|tojson }},   icon: '⚙️', example: 'ScummVM, PICO-8, Doom' },
 ];
 
 // Current state: { console: ['region'], handheld: ['region'], computer: ['year', 'publisher'], engine: ['region'] }
@@ -1563,15 +1563,15 @@ function renderNamingBuilder() {
         <div style="background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem;">
             <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
                 <span style="font-size: 1.25rem;">${st.icon}</span>
-                <strong style="font-size: 1rem;">${st.label}</strong>
+                <strong style="font-size: 1rem;">${escapeHtml(st.label)}</strong>
                 <span class="text-muted" style="font-size: 0.8rem;">${st.example}</span>
             </div>
 
             <!-- Selected tags (ordered) -->
             <div style="margin-bottom: 0.5rem;">
-                <span class="text-muted" style="font-size: 0.8rem; display: block; margin-bottom: 0.35rem;">Selected tags (in order):</span>
+                <span class="text-muted" style="font-size: 0.8rem; display: block; margin-bottom: 0.35rem;">${escapeHtml({{ _('Selected tags (in order):')|tojson }})}</span>
                 <div class="naming-selected" data-type="${st.key}" style="display: flex; flex-wrap: wrap; gap: 0.35rem; min-height: 32px; padding: 0.35rem; background: rgba(76,201,240,0.05); border: 1px dashed rgba(76,201,240,0.2); border-radius: var(--radius-sm);">
-                    <span style="padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; background: rgba(76,201,240,0.15); border: 1px solid rgba(76,201,240,0.3); color: var(--primary-cyan); cursor: default;">Title</span>
+                    <span style="padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; background: rgba(76,201,240,0.15); border: 1px solid rgba(76,201,240,0.3); color: var(--primary-cyan); cursor: default;">${escapeHtml({{ _('Title')|tojson }})}</span>
                     ${selected.map((tagKey, idx) => {
                         const tag = NAMING_AVAILABLE_TAGS.find(t => t.key === tagKey);
                         const tagLabel = tag ? tag.label : tagKey;
@@ -1583,18 +1583,18 @@ function renderNamingBuilder() {
 
             <!-- Available tags pool -->
             <div style="margin-bottom: 0.5rem;">
-                <span class="text-muted" style="font-size: 0.8rem; display: block; margin-bottom: 0.35rem;">Available tags (click to add):</span>
+                <span class="text-muted" style="font-size: 0.8rem; display: block; margin-bottom: 0.35rem;">${escapeHtml({{ _('Available tags (click to add):')|tojson }})}</span>
                 <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
                     ${available.length > 0 ? available.map(tag => `
                         <button type="button" class="naming-tag-option" data-on-click="addNamingTag" data-args="${actionArgs(String(st.key), String(tag.key))}"
-                            title="Click to add">${tag.label}</button>
-                    `).join('') : '<span class="text-muted" style="font-size: 0.8rem; font-style: italic;">All tags in use</span>'}
+                            title="${escapeHtml({{ _('Click to add')|tojson }})}">${escapeHtml(tag.label)}</button>
+                    `).join('') : '<span class="text-muted" style="font-size: 0.8rem; font-style: italic;">' + escapeHtml({{ _('All tags in use')|tojson }}) + '</span>'}
                 </div>
             </div>
 
             <!-- Preview -->
             <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">
-                Preview: <code style="color: var(--primary-cyan);">${escapeHtml(buildNamingPreview(st.key, selected))}</code>
+                ${escapeHtml({{ _('Preview:')|tojson }})} <code style="color: var(--primary-cyan);">${escapeHtml(buildNamingPreview(st.key, selected))}</code>
             </div>
         </div>`;
     }).join('');
@@ -1684,7 +1684,7 @@ function addRegionOption() {
     const badge = document.createElement('span');
     badge.className = 'badge badge-info';
     badge.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:4px 10px;font-size:0.85rem;';
-    badge.innerHTML = `${escapeHtml(val)}<button type="button" class="btn-icon-only" data-region="${escapeHtml(val)}" data-on-click="removeRegionOption" data-args="${actionArgs('$this', '$this.dataset.region')}" title="Remove" style="background:none;border:none;color:var(--neon-red);cursor:pointer;font-size:1rem;padding:0 2px;">&times;</button>`;
+    badge.innerHTML = `${escapeHtml(val)}<button type="button" class="btn-icon-only" data-region="${escapeHtml(val)}" data-on-click="removeRegionOption" data-args="${actionArgs('$this', '$this.dataset.region')}" title="${escapeHtml({{ _('Remove')|tojson }})}" style="background:none;border:none;color:var(--neon-red);cursor:pointer;font-size:1rem;padding:0 2px;">&times;</button>`;
     container.appendChild(badge);
     // Also add to default region dropdown
     const sel = document.getElementById('defaultRegionSelect');
@@ -1708,7 +1708,7 @@ function saveNamingSettings() {
     const btn = document.getElementById('saveNamingBtn');
     const originalText = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<span class="btn-icon">⏳</span> Saving...';
+    btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Saving...')|tojson }});
 
     fetch('/api/settings', {
         method: 'POST',
@@ -1748,7 +1748,7 @@ function saveNotificationSettings() {
     const btn = document.getElementById('saveNotifSettingsBtn');
     const originalText = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<span class="btn-icon">⏳</span> Saving...';
+    btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Saving...')|tojson }});
 
     const data = {
         notification_timeouts: {
@@ -1815,35 +1815,35 @@ function detectBonusDiscs() {
         .then(data => {
             if (data.success) {
                 if (data.detected === 0) {
-                    resultDiv.innerHTML = '<span class="text-muted">No bonus discs detected in your library.</span>';
+                    resultDiv.innerHTML = '<span class="text-muted">' + escapeHtml({{ _('No bonus discs detected in your library.')|tojson }}) + '</span>';
                 } else {
-                    let html = `<div style="margin-bottom: var(--spacing-md);"><strong style="color: var(--primary-cyan);">Found ${data.detected} potential bonus disc(s):</strong></div>`;
+                    let html = `<div style="margin-bottom: var(--spacing-md);"><strong style="color: var(--primary-cyan);">${escapeHtml(t({{ _('Found {count} potential bonus disc(s):')|tojson }}, {count: data.detected}))}</strong></div>`;
                     html += '<div style="max-height: 400px; overflow-y: auto;">';
                     data.games.forEach(game => {
                         // Build info text
                         let infoText = '';
                         if (game.match_source === 'filename' && game.filename) {
-                            infoText = `<span class="text-muted" style="font-size: 0.8rem;">Detected from filename: ${escapeHtml(game.filename)}</span><br>`;
+                            infoText = `<span class="text-muted" style="font-size: 0.8rem;">${escapeHtml(t({{ _('Detected from filename: {filename}')|tojson }}, {filename: game.filename}))}</span><br>`;
                         }
                         if (game.base_title) {
-                            infoText += `<span style="font-size: 0.85rem;">🔍 Will search for: <strong style="color: var(--neon-green);">${escapeHtml(game.base_title)}</strong></span>`;
+                            infoText += `<span style="font-size: 0.85rem;">🔍 ${escapeHtml({{ _('Will search for:')|tojson }})} <strong style="color: var(--neon-green);">${escapeHtml(game.base_title)}</strong></span>`;
                         } else {
-                            infoText += `<span class="text-muted" style="font-size: 0.85rem;">⚠️ Could not extract parent title - manual linking required</span>`;
+                            infoText += `<span class="text-muted" style="font-size: 0.85rem;">⚠️ ${escapeHtml({{ _('Could not extract parent title - manual linking required')|tojson }})}</span>`;
                         }
                         
                         html += `
                             <div class="bonus-disc-detected-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--spacing-sm); border-bottom: 1px solid var(--card-border);">
                                 <div style="flex: 1;">
                                     <strong>${escapeHtml(game.title)}</strong>
-                                    <span class="badge badge-secondary" style="margin-left: var(--spacing-sm); font-size: 0.7rem;">${escapeHtml(game.system_name || 'Unknown System')}</span>
+                                    <span class="badge badge-secondary" style="margin-left: var(--spacing-sm); font-size: 0.7rem;">${escapeHtml(game.system_name || {{ _('Unknown System')|tojson }})}</span>
                                     <br>${infoText}
                                 </div>
                                 <div style="display: flex; gap: var(--spacing-sm); flex-shrink: 0;">
                                     <button type="button" class="btn btn-sm btn-secondary" data-on-click="showLinkOptions" data-args="${actionArgs(game.id, game.system_id)}">
-                                        🔗 Link
+                                        🔗 ${escapeHtml({{ _('Link')|tojson }})}
                                     </button>
                                     <button type="button" class="btn btn-sm btn-primary" data-on-click="markAsBonusDisc" data-args="${actionArgs(game.id)}">
-                                        🎁 Mark
+                                        🎁 ${escapeHtml({{ _('Mark')|tojson }})}
                                     </button>
                                 </div>
                             </div>
@@ -1860,7 +1860,7 @@ function detectBonusDiscs() {
         .catch(e => showNotification(t({{ _('Error: {error}')|tojson }}, {error: e}), 'error'))
         .finally(() => {
             btn.disabled = false;
-            btn.innerHTML = '<span class="btn-icon">🔍</span> Auto-Detect Bonus Discs';
+            btn.innerHTML = '<span class="btn-icon">🔍</span> ' + escapeHtml({{ _('Auto-Detect Bonus Discs')|tojson }});
         });
 }
 
@@ -1869,7 +1869,7 @@ function autoLinkBonusDiscs() {
     const resultDiv = document.getElementById('bonusDiscResult');
     
     btn.disabled = true;
-    btn.innerHTML = '<span class="btn-icon">⏳</span> Linking...';
+    btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Linking...')|tojson }});
     
     fetch('/api/bonus-discs/auto-link', { method: 'POST' })
         .then(r => r.json())
@@ -1878,11 +1878,11 @@ function autoLinkBonusDiscs() {
                 resultDiv.style.display = 'block';
                 resultDiv.innerHTML = `
                     <div class="glass-panel" style="padding: var(--spacing-md); background: rgba(34, 197, 94, 0.1); border-color: var(--neon-green);">
-                        <strong style="color: var(--neon-green);">✓ Auto-linking complete!</strong>
+                        <strong style="color: var(--neon-green);">✓ ${escapeHtml({{ _('Auto-linking complete!')|tojson }})}</strong>
                         <ul style="margin-top: var(--spacing-sm); font-size: 0.9rem;">
-                            <li>Linked: ${data.linked} bonus disc(s)</li>
-                            <li>Already linked: ${data.already_linked}</li>
-                            <li>No parent found: ${data.no_parent}</li>
+                            <li>${escapeHtml(t({{ _('Linked: {count} bonus disc(s)')|tojson }}, {count: data.linked}))}</li>
+                            <li>${escapeHtml(t({{ _('Already linked: {count}')|tojson }}, {count: data.already_linked}))}</li>
+                            <li>${escapeHtml(t({{ _('No parent found: {count}')|tojson }}, {count: data.no_parent}))}</li>
                         </ul>
                     </div>
                 `;
@@ -1897,7 +1897,7 @@ function autoLinkBonusDiscs() {
         .catch(e => showNotification(t({{ _('Error: {error}')|tojson }}, {error: e}), 'error'))
         .finally(() => {
             btn.disabled = false;
-            btn.innerHTML = '<span class="btn-icon">🔗</span> Auto-Link to Parents';
+            btn.innerHTML = '<span class="btn-icon">🔗</span> ' + escapeHtml({{ _('Auto-Link to Parents')|tojson }});
         });
 }
 
@@ -2074,7 +2074,7 @@ document.addEventListener('DOMContentLoaded', loadCurrentBonusDiscs);
 function createBackup() {
     const btn = document.getElementById('createBackupBtn');
     btn.disabled = true;
-    btn.innerHTML = '<span class="btn-icon">⏳</span> Creating...';
+    btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Creating...')|tojson }});
     
     fetch('/api/backup', { method: 'POST' })
         .then(r => r.json())
@@ -2089,7 +2089,7 @@ function createBackup() {
         .catch(e => showNotification(t({{ _('Backup error: {error}')|tojson }}, {error: e}), 'error'))
         .finally(() => {
             btn.disabled = false;
-            btn.innerHTML = '<span class="btn-icon">💾</span> Create Backup';
+            btn.innerHTML = '<span class="btn-icon">💾</span> ' + escapeHtml({{ _('Create Backup')|tojson }});
         });
 }
 
@@ -2100,7 +2100,7 @@ function loadBackups() {
         .then(data => {
             const container = document.getElementById('backupsList');
             if (!data.success || !data.backups || data.backups.length === 0) {
-                container.innerHTML = '<p class="text-muted">No backups found. Create one to get started.</p>';
+                container.innerHTML = '<p class="text-muted">' + escapeHtml({{ _('No backups found. Create one to get started.')|tojson }}) + '</p>';
                 return;
             }
             
@@ -2113,7 +2113,7 @@ function loadBackups() {
                             <span class="backup-meta">${escapeHtml(backup.size)} • ${escapeHtml(backup.date)}</span>
                         </div>
                         <button type="button" class="btn btn-sm btn-warning" data-on-click="restoreBackup" data-args="${actionArgs(String(backup.filename))}">
-                            Restore
+                            ${escapeHtml({{ _('Restore')|tojson }})}
                         </button>
                     </div>
                 `;
@@ -2122,7 +2122,7 @@ function loadBackups() {
             container.innerHTML = html;
         })
         .catch(e => {
-            document.getElementById('backupsList').innerHTML = '<p class="text-muted">Error loading backups</p>';
+            document.getElementById('backupsList').innerHTML = '<p class="text-muted">' + escapeHtml({{ _('Error loading backups')|tojson }}) + '</p>';
         });
 }
 

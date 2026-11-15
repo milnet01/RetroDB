@@ -5136,7 +5136,7 @@ async function performSearch(event) {
     if (!title) return;
     
     // Show loading
-    resultsDiv.innerHTML = '<div class="scrape-results-loading">🔍 Searching all sources...</div>';
+    resultsDiv.innerHTML = '<div class="scrape-results-loading">🔍 ' + escapeHtml({{ _('Searching all sources...')|tojson }}) + '</div>';
     
     try {
         // First, get scraper settings for priority and enabled status
@@ -5156,7 +5156,7 @@ async function performSearch(event) {
         };
         const enabledNames = priority.filter(s => enabled[s]).map(s => scraperNames[s] || s);
         document.getElementById('scrapeModalSubtitle').textContent = 
-            `Search ${enabledNames.join(', ')} for metadata and boxart.`;
+            t({{ _('Search {sources} for metadata and boxart.')|tojson }}, {sources: enabledNames.join(', ')});
         
         // Now search
         const systemName = {{ game.system_name|tojson }};
@@ -5300,7 +5300,7 @@ async function performSearch(event) {
                             <button class="btn btn-success btn-xs apply-btn"
                                     data-source="${result.source}"
                                     data-id="${encodedId}">
-                                Apply
+                                ${escapeHtml({{ _('Apply')|tojson }})}
                             </button>
                         </div>
                     `;
@@ -5330,7 +5330,7 @@ async function performSearch(event) {
                             <span class="column-count">${results.length}</span>
                         </div>
                         <div class="scrape-column-results">
-                            ${renderResults(results, `No ${config.title} results`)}
+                            ${renderResults(results, t({{ _('No {source} results')|tojson }}, {source: config.title}))}
                         </div>
                     </div>
                 `;
@@ -5342,10 +5342,10 @@ async function performSearch(event) {
                 </div>
             `;
         } else {
-            resultsDiv.innerHTML = '<div class="scrape-results-placeholder">No results found. Try a different search term.</div>';
+            resultsDiv.innerHTML = '<div class="scrape-results-placeholder">' + escapeHtml({{ _('No results found. Try a different search term.')|tojson }}) + '</div>';
         }
     } catch (error) {
-        resultsDiv.innerHTML = '<div class="scrape-results-placeholder">Error searching. Please try again.</div>';
+        resultsDiv.innerHTML = '<div class="scrape-results-placeholder">' + escapeHtml({{ _('Error searching. Please try again.')|tojson }}) + '</div>';
         console.error('Search error:', error);
     }
 }

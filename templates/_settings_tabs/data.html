@@ -210,7 +210,7 @@
             <div style="display: flex; gap: var(--spacing-sm); margin-top: var(--spacing-lg); flex-wrap: wrap;">
                 <button type="button" class="btn btn-secondary" data-on-click="NormalizationManager.selectAllChanged">{{ _('Select All Changed') }}</button>
                 <button type="button" class="btn btn-primary" data-on-click="NormalizationManager.apply" id="normApplyBtn" disabled>
-                    Apply 0 Selected
+                    {{ _('Apply {n} Selected')|replace('{n}', '0') }}
                 </button>
             </div>
         </div>

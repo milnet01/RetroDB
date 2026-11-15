@@ -214,13 +214,13 @@
                 {% for r in user_settings.get('region_options', ['USA', 'Europe', 'Japan', 'World']) %}
                 <span class="badge badge-info" style="display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; font-size: 0.85rem;">
                     {{ r }}
-                    <button type="button" class="btn-icon-only" data-region="{{ r }}" data-on-click="removeRegionOption" data-args='["$this", "$this.dataset.region"]' title="Remove" style="background:none; border:none; color:var(--neon-red); cursor:pointer; font-size:1rem; padding:0 2px;">&times;</button>
+                    <button type="button" class="btn-icon-only" data-region="{{ r }}" data-on-click="removeRegionOption" data-args='["$this", "$this.dataset.region"]' title="{{ _('Remove') }}" style="background:none; border:none; color:var(--neon-red); cursor:pointer; font-size:1rem; padding:0 2px;">&times;</button>
                 </span>
                 {% endfor %}
             </div>
             <div style="display: flex; gap: var(--spacing-sm); max-width: 400px;">
-                <input type="text" id="newRegionInput" class="form-input" placeholder="Add region..." style="flex:1;" data-on-keydown="addRegionOption" data-key="Enter" data-prevent>
-                <button type="button" class="btn btn-sm btn-secondary" data-on-click="addRegionOption">Add</button>
+                <input type="text" id="newRegionInput" class="form-input" placeholder="{{ _('Add region...') }}" style="flex:1;" data-on-keydown="addRegionOption" data-key="Enter" data-prevent>
+                <button type="button" class="btn btn-sm btn-secondary" data-on-click="addRegionOption">{{ _('Add') }}</button>
             </div>
             <div style="margin-top: var(--spacing-sm);">
                 <label class="form-label" style="font-size:0.85rem;" for="defaultRegionSelect">{{ _('Default Region') }}</label>
@@ -239,7 +239,7 @@
         <div style="margin-top: var(--spacing-xl);">
             <button type="button" data-on-click="saveNamingSettings" class="btn btn-primary" id="saveNamingBtn">
                 <span class="btn-icon">💾</span>
-                Save Naming Settings
+                {{ _('Save Naming Settings') }}
             </button>
         </div>
     </div>
@@ -250,36 +250,35 @@
 {% if has_perm('edit') %}
 <section class="card mb-xl" id="bonus-discs">
     <div class="card-header">
-        <h2 class="card-title">🎁 Bonus Disc Management</h2>
+        <h2 class="card-title">🎁 {{ _('Bonus Disc Management') }}</h2>
     </div>
     <div class="card-body">
         <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
-            Bonus discs (making-of, behind the scenes, extras) are hidden by default on game listing pages.
-            Use this section to auto-detect and link bonus discs to their parent games.
+            {{ _('Bonus discs (making-of, behind the scenes, extras) are hidden by default on game listing pages. Use this section to auto-detect and link bonus discs to their parent games.') }}
         </p>
         
         <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; margin-bottom: var(--spacing-lg);">
             <button type="button" data-on-click="detectBonusDiscs" class="btn btn-primary" id="detectBonusBtn">
                 <span class="btn-icon">🔍</span>
-                Auto-Detect Bonus Discs
+                {{ _('Auto-Detect Bonus Discs') }}
             </button>
             <button type="button" data-on-click="autoLinkBonusDiscs" class="btn btn-secondary" id="autoLinkBonusBtn">
                 <span class="btn-icon">🔗</span>
-                Auto-Link to Parents
+                {{ _('Auto-Link to Parents') }}
             </button>
             <button type="button" data-on-click="viewBonusStats" class="btn btn-secondary">
                 <span class="btn-icon">📊</span>
-                View Stats
+                {{ _('View Stats') }}
             </button>
         </div>
         
         <div id="bonusDiscResult" style="display: none; margin-top: var(--spacing-lg);"></div>
         
         <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
-            📋 Detected Bonus Discs
+            📋 {{ _('Detected Bonus Discs') }}
         </h3>
         <div id="detectedBonusDiscs" class="glass-panel" style="padding: var(--spacing-md); min-height: 100px;">
-            <span class="text-muted">Click "Auto-Detect Bonus Discs" to scan your library</span>
+            <span class="text-muted">{{ _('Click "Auto-Detect Bonus Discs" to scan your library') }}</span>
         </div>
 
         <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
@@ -299,26 +298,26 @@
 {% if has_perm('manage_settings') %}
 <section class="card mb-xl" id="backup">
     <div class="card-header">
-        <h2 class="card-title">Database Backup & Restore</h2>
+        <h2 class="card-title">{{ _('Database Backup & Restore') }}</h2>
     </div>
     <div class="card-body">
         <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap; margin-bottom: var(--spacing-lg);">
             <button type="button" data-on-click="createBackup" class="btn btn-primary" id="createBackupBtn">
                 <span class="btn-icon">💾</span>
-                Create Backup
+                {{ _('Create Backup') }}
             </button>
             <button type="button" data-on-click="calculateStorage" class="btn btn-secondary">
                 <span class="btn-icon">📊</span>
-                Calculate File Sizes
+                {{ _('Calculate File Sizes') }}
             </button>
         </div>
         <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-lg);">
-            Create backups before making major changes to your library
+            {{ _('Create backups before making major changes to your library') }}
         </p>
         
-        <h3 class="section-title" style="margin-top: var(--spacing-lg);">Available Backups</h3>
+        <h3 class="section-title" style="margin-top: var(--spacing-lg);">{{ _('Available Backups') }}</h3>
         <div id="backupsList" style="margin-top: var(--spacing-md);">
-            <p class="text-muted">Loading backups...</p>
+            <p class="text-muted">{{ _('Loading backups...') }}</p>
         </div>
     </div>
 </section>

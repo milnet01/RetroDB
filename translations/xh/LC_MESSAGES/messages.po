@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-15 15:45+0200\n"
+"POT-Creation-Date: 2026-11-15 15:50+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: xh\n"
@@ -146,7 +146,7 @@ msgstr "Umsebenzi awufunyenwanga okanye sele uphethwe"
 msgid "No handler for job type '%(type)s'"
 msgstr "Akukho mphathi wohlobo lomsebenzi '%(type)s'"
 
-#: app.py:1525 app.py:1559
+#: app.py:1525 app.py:1559 services/auth.py:320
 msgid "You do not have permission to perform this action"
 msgstr "Awunayo imvume yokwenza esi senzo"
 
@@ -280,8 +280,9 @@ msgstr "Inkcazo Yomdlalo"
 #: templates/compare_games.html:73 templates/dashboard.html:390
 #: templates/game_detail.html:342 templates/local_trophy_detail.html:99
 #: templates/psn_trophy_detail.html:96 templates/psn_trophy_detail.html:264
-#: templates/reports.html:1161 templates/steam_achievement_game.html:178
-#: templates/system_games.html:63 templates/xbox_achievement_game.html:171
+#: templates/reports.html:1161 templates/settings.html:1541
+#: templates/steam_achievement_game.html:178 templates/system_games.html:63
+#: templates/xbox_achievement_game.html:171
 msgid "Genre"
 msgstr "Uhlobo"
 
@@ -293,8 +294,8 @@ msgstr "Uhlobo"
 #: templates/base.html:1143 templates/compare_games.html:70
 #: templates/game_detail.html:332 templates/local_trophy_detail.html:93
 #: templates/psn_trophy_detail.html:90 templates/reports.html:1161
-#: templates/steam_achievement_game.html:84 templates/system_games.html:72
-#: templates/xbox_achievement_game.html:73
+#: templates/settings.html:1540 templates/steam_achievement_game.html:84
+#: templates/system_games.html:72 templates/xbox_achievement_game.html:73
 msgid "Developer"
 msgstr "Umphuhlisi"
 
@@ -306,8 +307,9 @@ msgstr "Umphuhlisi"
 #: templates/base.html:1139 templates/compare_games.html:71
 #: templates/game_detail.html:322 templates/game_detail.html:814
 #: templates/local_trophy_detail.html:87 templates/psn_trophy_detail.html:84
-#: templates/reports.html:1161 templates/steam_achievement_game.html:78
-#: templates/system_games.html:69 templates/xbox_achievement_game.html:67
+#: templates/reports.html:1161 templates/settings.html:1539
+#: templates/steam_achievement_game.html:78 templates/system_games.html:69
+#: templates/xbox_achievement_game.html:67
 msgid "Publisher"
 msgstr "Umpapashi"
 
@@ -346,6 +348,7 @@ msgstr "Iimowudi Zokudlala"
 #: templates/analytics.html:2432 templates/base.html:1130
 #: templates/compare_games.html:75 templates/game_detail.html:811
 #: templates/reports.html:449 templates/reports.html:1161
+#: templates/settings.html:1537
 msgid "Region"
 msgstr "Ummandla"
 
@@ -1764,6 +1767,16 @@ msgstr "I-AI ayinikanga mpendulo isebenzisekayo. Zama kwakhona kamva."
 msgid "Game not found or not an Xbox game"
 msgstr "Umdlalo awufunyanwanga okanye asingomdlalo weXbox"
 
+#: services/auth.py:349
+#, fuzzy
+msgid "You do not have permission to access this feature"
+msgstr "Awunayo imvume yokwenza esi senzo"
+
+#: services/auth.py:370
+#, fuzzy
+msgid "This action requires administrator privileges"
+msgstr "Kufuneka amalungelo omlawuli"
+
 #: services/cheats.py:140
 #, python-format
 msgid "%(name)s is too large to be a cheat file."
@@ -2279,7 +2292,7 @@ msgstr "Faka Ukulungelelanisa"
 msgid "Apply failed: {error}"
 msgstr "Ukufaka akuphumelelanga: {error}"
 
-#: services/js_i18n_strings.py:613
+#: services/js_i18n_strings.py:613 templates/_settings_tabs/data.html:213
 #, python-brace-format
 msgid "Apply {n} Selected"
 msgstr "Faka {n} Okhethiweyo"
@@ -3347,7 +3360,7 @@ msgstr "Iyaqalisa…"
 msgid "Library scan complete! Found {n} new games."
 msgstr "Ukuskenwa kwethala kugqityiwe! Kufunyenwe imidlalo emitsha engu-{n}."
 
-#: services/js_i18n_strings.py:838
+#: services/js_i18n_strings.py:838 templates/settings.html:1843
 msgid "Link"
 msgstr "Xhuma"
 
@@ -3363,7 +3376,7 @@ msgstr "Iyalayisha ifayile yelog..."
 msgid "Loading the manual…"
 msgstr "Ilayisha incwadi yesikhokelo…"
 
-#: services/js_i18n_strings.py:842 templates/_settings_tabs/library.html:292
+#: services/js_i18n_strings.py:842 templates/_settings_tabs/library.html:291
 #: templates/settings_emulators.html:201 templates/settings_emulators.html:219
 msgid "Loading…"
 msgstr "Iyalayisha…"
@@ -3824,10 +3837,11 @@ msgid "Regional name matches"
 msgstr "Amagama angqinelanayo ommandla"
 
 #: services/js_i18n_strings.py:940 templates/_modals/edit_modal.html:386
-#: templates/_settings_tabs/account.html:228 templates/compare_games.html:24
+#: templates/_settings_tabs/account.html:228
+#: templates/_settings_tabs/library.html:217 templates/compare_games.html:24
 #: templates/compare_games.html:40 templates/rom_tools_settings.html:462
 #: templates/rom_tools_settings.html:501 templates/screenshot_review.html:187
-#: templates/settings.html:1579
+#: templates/settings.html:1579 templates/settings.html:1687
 msgid "Remove"
 msgstr "Susa"
 
@@ -4020,7 +4034,8 @@ msgstr "Igciniwe. Iya kusebenza ngexesha elilandelayo xa ucofa u-Dlala."
 msgid "Saving to the database…"
 msgstr "Kugcinwa kwidatabase…"
 
-#: services/js_i18n_strings.py:981 templates/settings.html:2736
+#: services/js_i18n_strings.py:981 templates/settings.html:1711
+#: templates/settings.html:1751 templates/settings.html:2736
 #: templates/settings.html:2774 templates/settings.html:4639
 #: templates/setup.html:483
 msgid "Saving..."
@@ -4655,6 +4670,7 @@ msgstr "Ii-Xbox Import"
 
 #: services/js_i18n_strings.py:1109 templates/dashboard.html:391
 #: templates/reports.html:452 templates/reports.html:1161
+#: templates/settings.html:1538
 msgid "Year"
 msgstr "Unyaka"
 
@@ -5736,17 +5752,17 @@ msgid "All Types"
 msgstr "Zonke Iintlobo"
 
 #: templates/all_games.html:52 templates/museum.html:59
-#: templates/systems.html:35
+#: templates/settings.html:1547 templates/systems.html:35
 msgid "Console"
 msgstr "Ikhonsoli"
 
 #: templates/all_games.html:53 templates/museum.html:60
-#: templates/systems.html:36
+#: templates/settings.html:1548 templates/systems.html:36
 msgid "Handheld"
 msgstr "Ephatwayo"
 
 #: templates/all_games.html:54 templates/museum.html:61
-#: templates/systems.html:37
+#: templates/settings.html:1549 templates/systems.html:37
 msgid "Computer"
 msgstr "Ikhompyutha"
 
@@ -5756,7 +5772,7 @@ msgid "Arcade"
 msgstr "i-Arcade"
 
 #: templates/all_games.html:56 templates/museum.html:63
-#: templates/systems.html:39
+#: templates/settings.html:1550 templates/systems.html:39
 msgid "Engine"
 msgstr "Injini"
 
@@ -6393,7 +6409,8 @@ msgstr "Faka igama lefolda ekufuneka likhutshwe"
 #: templates/_settings_tabs/data.html:114
 #: templates/_settings_tabs/data.html:124
 #: templates/_settings_tabs/data.html:134
-#: templates/_settings_tabs/data.html:144 templates/archive_scanner.html:591
+#: templates/_settings_tabs/data.html:144
+#: templates/_settings_tabs/library.html:223 templates/archive_scanner.html:591
 #: templates/list_detail.html:419 templates/rom_tools_settings.html:346
 #: templates/rom_tools_settings.html:365
 msgid "Add"
@@ -7219,6 +7236,7 @@ msgstr "Akukho datha yexesha lokudlala"
 #: templates/dashboard.html:388 templates/dashboard.html:465
 #: templates/dashboard.html:531 templates/game_detail.html:812
 #: templates/list_detail.html:45 templates/reports.html:1162
+#: templates/settings.html:1574
 msgid "Title"
 msgstr "Isihloko"
 
@@ -8956,9 +8974,38 @@ msgstr "Ukucima umdlalo akuphumelelanga"
 msgid "An error occurred while deleting the game."
 msgstr "Kwenzeke impazamo ngexesha kucinwa umdlalo."
 
+#: templates/game_detail.html:5139
+#, fuzzy, python-brace-format
+msgid "Searching all sources..."
+msgstr "Kukhangelwa kwi-{source}…"
+
+#: templates/game_detail.html:5159
+#, fuzzy, python-brace-format
+msgid "Search {sources} for metadata and boxart."
+msgstr "Khangela ii-scraper ezivuliweyo ukuze ufumane imetadata ne-boxart."
+
 #: templates/game_detail.html:5287 templates/game_detail.html:5288
 msgid "Select for hybrid scraping"
 msgstr "Khetha ukukhupha ngokudibeneyo"
+
+#: templates/_modals/select_filter_modal.html:29
+#: templates/game_detail.html:5303
+msgid "Apply"
+msgstr "Faka"
+
+#: templates/game_detail.html:5333
+#, fuzzy, python-brace-format
+msgid "No {source} results"
+msgstr "Akukho ziphumo"
+
+#: templates/game_detail.html:5345
+msgid "No results found. Try a different search term."
+msgstr ""
+
+#: templates/game_detail.html:5348
+#, fuzzy
+msgid "Error searching. Please try again."
+msgstr "Impazamo yenethiwekhi. Nceda uzame kwakhona."
 
 #: templates/game_detail.html:5413
 msgid "Sort title generated"
@@ -10848,11 +10895,11 @@ msgstr "Iphinde yabizwa"
 msgid "File renamed successfully."
 msgstr "Ifayile iphinde yabizwa ngempumelelo."
 
-#: templates/reports.html:1161
+#: templates/reports.html:1161 templates/settings.html:1542
 msgid "System Type"
 msgstr "Uhlobo Lwesistim"
 
-#: templates/reports.html:1161
+#: templates/reports.html:1161 templates/settings.html:1543
 msgid "System Name"
 msgstr "Igama Lesistim"
 
@@ -12007,6 +12054,11 @@ msgstr "Kufuneka uqalise kwakhona ukuze utshintsho lusebenze ngokupheleleyo"
 msgid "Display settings saved!"
 msgstr "Iisethingi zokubonisa zigciniwe!"
 
+#: templates/settings.html:1572
+#, fuzzy
+msgid "Selected tags (in order):"
+msgstr "Khetha Le Folda"
+
 #: templates/settings.html:1579
 msgid "Move left"
 msgstr "Shenxisa ekhohlo"
@@ -12014,6 +12066,23 @@ msgstr "Shenxisa ekhohlo"
 #: templates/settings.html:1579
 msgid "Move right"
 msgstr "Shenxisa ekunene"
+
+#: templates/settings.html:1586
+msgid "Available tags (click to add):"
+msgstr ""
+
+#: templates/settings.html:1590
+#, fuzzy
+msgid "Click to add"
+msgstr "Cofa ukuze wandise"
+
+#: templates/settings.html:1591
+msgid "All tags in use"
+msgstr ""
+
+#: templates/settings.html:1597 templates/settings.html:3775
+msgid "Preview:"
+msgstr "Umboniso wangaphambili:"
 
 #: templates/settings.html:1679
 msgid "Region already exists"
@@ -12047,6 +12116,40 @@ msgstr "Isilumkiso - siyanyamalala kwi-{seconds}s"
 msgid "Error - disappears in {seconds}s"
 msgstr "Impazamo - iyanyamalala kwi-{seconds}s"
 
+#: templates/settings.html:1818
+#, fuzzy, python-brace-format
+msgid "No bonus discs detected in your library."
+msgstr "Iidiski zebhonasi ezifunyenweyo: {count}"
+
+#: templates/settings.html:1820
+#, fuzzy, python-brace-format
+msgid "Found {count} potential bonus disc(s):"
+msgstr "Inamadiski ebhonasi ayi-{count}"
+
+#: templates/settings.html:1826
+#, python-brace-format
+msgid "Detected from filename: {filename}"
+msgstr ""
+
+#: templates/settings.html:1829
+#, fuzzy
+msgid "Will search for:"
+msgstr "Khangela:"
+
+#: templates/settings.html:1831
+msgid "Could not extract parent title - manual linking required"
+msgstr ""
+
+#: templates/settings.html:1838
+#, fuzzy
+msgid "Unknown System"
+msgstr "Isistim engaziwayo"
+
+#: templates/settings.html:1846
+#, fuzzy
+msgid "Mark"
+msgstr "Abantu abadala"
+
 #: templates/settings.html:1855
 #, python-brace-format
 msgid "Bonus discs detected: {count}"
@@ -12057,6 +12160,36 @@ msgstr "Iidiski zebhonasi ezifunyenweyo: {count}"
 msgid "Detection failed: {error}"
 msgstr "Ukufumana akuphumelelanga: {error}"
 
+#: templates/_settings_tabs/library.html:263 templates/settings.html:1863
+#, fuzzy
+msgid "Auto-Detect Bonus Discs"
+msgstr "Zonke iiDiski zeBhonasi:"
+
+#: templates/settings.html:1872
+#, fuzzy
+msgid "Linking..."
+msgstr "Iyalungelelanisa..."
+
+#: templates/settings.html:1881
+#, fuzzy
+msgid "Auto-linking complete!"
+msgstr "Ukukhutshwa okuninzi kugqityiwe!"
+
+#: templates/settings.html:1883
+#, fuzzy, python-brace-format
+msgid "Linked: {count} bonus disc(s)"
+msgstr "Inamadiski ebhonasi ayi-{count}"
+
+#: templates/settings.html:1884
+#, fuzzy, python-brace-format
+msgid "Already linked: {count}"
+msgstr "Sele ikwiThala: {count}"
+
+#: templates/settings.html:1885
+#, fuzzy, python-brace-format
+msgid "No parent found: {count}"
+msgstr "Amacandelo afunyenweyo: {count}"
+
 #: templates/settings.html:1889
 #, python-brace-format
 msgid "Bonus discs linked to parent games: {count}"
@@ -12066,6 +12199,11 @@ msgstr "Iidiski zeBhonasi ezidityaniswe kwimidlalo yomzali: {count}"
 #, python-brace-format
 msgid "Auto-link failed: {error}"
 msgstr "Ukudibanisa ngokuzenzekelayo akuphumelelanga: {error}"
+
+#: templates/_settings_tabs/library.html:267 templates/settings.html:1900
+#, fuzzy
+msgid "Auto-Link to Parents"
+msgstr "Ezidityaniswe kuMzali:"
 
 #: templates/settings.html:1916
 msgid "Bonus Disc Statistics"
@@ -12138,6 +12276,11 @@ msgstr "Ayiyondiski yebhonasi"
 msgid "Back in your game lists. Auto-Link will leave it alone."
 msgstr "Ibuyele kuluhlu lwakho lwemidlalo. I-Auto-Link izakuyiyeka."
 
+#: templates/settings.html:2077
+#, fuzzy
+msgid "Creating..."
+msgstr "Iyasula..."
+
 #: templates/settings.html:2083
 #, python-brace-format
 msgid "Backup created: {filename} ({size})"
@@ -12152,6 +12295,25 @@ msgstr "Ugcino aluphumelelanga: {error}"
 #, python-brace-format
 msgid "Backup error: {error}"
 msgstr "Impazamo yogcino: {error}"
+
+#: templates/_settings_tabs/library.html:307 templates/settings.html:2092
+#, fuzzy
+msgid "Create Backup"
+msgstr "Buyisela Ugcino"
+
+#: templates/settings.html:2103
+msgid "No backups found. Create one to get started."
+msgstr ""
+
+#: templates/settings.html:2116
+#, fuzzy
+msgid "Restore"
+msgstr "Indawo Yokugcina"
+
+#: templates/settings.html:2125
+#, fuzzy
+msgid "Error loading backups"
+msgstr "Impazamo ekulayisheni imidlalo."
 
 #: templates/settings.html:2130
 msgid "Restore Backup"
@@ -12470,10 +12632,6 @@ msgstr "Koyisekile ukongeza ikhontrola engagqibekanga"
 #: templates/settings.html:3700 templates/settings.html:3704
 msgid "Failed to remove default controller"
 msgstr "Koyisekile ukukhupha ikhontrola engagqibekanga"
-
-#: templates/settings.html:3775
-msgid "Preview:"
-msgstr "Umboniso wangaphambili:"
 
 #: templates/settings.html:3776
 #, python-brace-format
@@ -14632,10 +14790,6 @@ msgstr "Phawula naliphi na inani; umdlalo uyabonakala ukuba unanye kuzo."
 msgid "Tick any number; a game is hidden if it has any of them."
 msgstr "Phawula naliphi na inani; umdlalo uyafihlwa ukuba unanye kuzo."
 
-#: templates/_modals/select_filter_modal.html:29
-msgid "Apply"
-msgstr "Faka"
-
 #: templates/_settings_tabs/_tab_bar.html:7
 msgid "Account"
 msgstr "I-akhawunti"
@@ -14663,6 +14817,7 @@ msgid "Account settings"
 msgstr "Iisethingi ze-akhawunti"
 
 #: templates/_settings_tabs/account.html:5
+#: templates/_settings_tabs/account.html:15
 msgid "My Profile"
 msgstr "Iprofayile Yam"
 
@@ -15700,21 +15855,80 @@ msgstr ""
 "Misela amaxabiso ommandla afumanekayo nomiselweyo. Ummandla omiselweyo "
 "usetyenziswa xa ukhupha ukuba akukho mmandla ubhaqiweyo."
 
+#: templates/_settings_tabs/library.html:222
+#, fuzzy
+msgid "Add region..."
+msgstr "+ Yongeza i-dimension..."
+
 #: templates/_settings_tabs/library.html:226
 msgid "Default Region"
 msgstr "Ummandla Ozenzekelayo"
 
-#: templates/_settings_tabs/library.html:286
+#: templates/_settings_tabs/library.html:242
+#, fuzzy
+msgid "Save Naming Settings"
+msgstr "Gcina Iisethingi Zam"
+
+#: templates/_settings_tabs/library.html:253
+#, fuzzy
+msgid "Bonus Disc Management"
+msgstr "Ulawulo Lwabasebenzisi"
+
+#: templates/_settings_tabs/library.html:257
+msgid ""
+"Bonus discs (making-of, behind the scenes, extras) are hidden by default "
+"on game listing pages. Use this section to auto-detect and link bonus "
+"discs to their parent games."
+msgstr ""
+
+#: templates/_settings_tabs/library.html:271
+#, fuzzy
+msgid "View Stats"
+msgstr "Iistats"
+
+#: templates/_settings_tabs/library.html:278
+#, fuzzy
+msgid "Detected Bonus Discs"
+msgstr "Zonke iiDiski zeBhonasi:"
+
+#: templates/_settings_tabs/library.html:281
+msgid "Click \"Auto-Detect Bonus Discs\" to scan your library"
+msgstr ""
+
+#: templates/_settings_tabs/library.html:285
 msgid "Current Bonus Discs"
 msgstr "Iidiski Zebhonasi Zangoku"
 
-#: templates/_settings_tabs/library.html:289
+#: templates/_settings_tabs/library.html:288
 msgid ""
 "A disc marked by mistake can go back in your game lists. Auto-Link then "
 "leaves it alone."
 msgstr ""
 "Idiski ephawulwe ngempazamo ingabuyela kuluhlu lwakho lwemidlalo. Emva "
 "koko i-Auto-Link iyayiyeka."
+
+#: templates/_settings_tabs/library.html:301
+msgid "Database Backup & Restore"
+msgstr ""
+
+#: templates/_settings_tabs/library.html:311
+#, fuzzy
+msgid "Calculate File Sizes"
+msgstr "Kubalwa ubungakanani beefayile..."
+
+#: templates/_settings_tabs/library.html:315
+msgid "Create backups before making major changes to your library"
+msgstr ""
+
+#: templates/_settings_tabs/library.html:318
+#, fuzzy
+msgid "Available Backups"
+msgstr "Iyafumaneka"
+
+#: templates/_settings_tabs/library.html:320
+#, fuzzy
+msgid "Loading backups..."
+msgstr "Iyalayisha amaxabiso..."
 
 #: templates/_settings_tabs/scraping.html:3
 msgid "Scraping settings"
