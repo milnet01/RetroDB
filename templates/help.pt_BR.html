@@ -520,6 +520,7 @@
     <h2 class="card-title">Configurações</h2>
     <div class="card-body">
         <p>As Configurações estão organizadas em abas, cada uma com subseções. Administradores também veem uma aba Emuladores, que abre sua própria página.</p>
+        <p>Cada pessoa vê apenas as configurações que a sua função pode alterar. Um visualizador ou jogador vê Meu perfil, Fuso horário, Tema, Idioma, estatísticas da biblioteca, troféus e Apoio. Um editor vê também Discos Bônus e Controles. Todo o resto é para administradores.</p>
 
         <h3>Aba Conta</h3>
         <ul>
@@ -566,7 +567,6 @@
             <li><strong>Atualizações</strong> &mdash; Verificar, baixar e instalar uma nova versão</li>
             <li><strong>Servidor</strong> &mdash; Reiniciar ou desligar o RetroDB</li>
             <li><strong>Logs</strong> &mdash; Configurações do nível de log para diferentes categorias e os arquivos de log</li>
-            <li><strong>Solução de Problemas</strong> &mdash; Limpar uma sincronização do RetroAchievements travada</li>
         </ul>
 
         <h3 id="emulators-play">Emuladores e Jogar</h3>
@@ -577,6 +577,7 @@
 
         <h4>Trapaças</h4>
         <p>Em <strong>Trapaças</strong>, na mesma página, pressione <strong>Baixar</strong> para buscar os pacotes públicos e gratuitos de trapaças, ou importe uma pasta de trapaças que você já tem. O RetroDB copia os arquivos e nunca altera a sua pasta; importe de novo para trazer arquivos novos. A página do jogo passa a mostrar um painel <strong>Trapaças</strong> para jogos jogados no RetroArch (RetroDB), no DuckStation ou no PCSX2, com um interruptor liga/desliga para cada trapaça. No RetroArch (RetroDB), as trapaças que você ativa valem a partir da próxima vez que você pressionar Jogar, e um interruptor que você muda no próprio menu do RetroArch durante o jogo é mantido. No DuckStation e no PCSX2, os interruptores são salvos direto nas configurações do emulador para aquele jogo, então uma mudança feita dentro do emulador também aparece no painel. O RetroDB nunca sobrescreve um arquivo de trapaças que o emulador já tem. Uma trapaça ativada pausa o modo hardcore do RetroAchievements; o DuckStation e o PCSX2 ignoram trapaças no modo hardcore.</p>
+        <p>Para jogos de arcade jogados no MAME, baixe no navegador a "MAME XML Cheats Collection" de mamecheat.co.uk e depois importe a pasta que a contém. O RetroDB a descompacta, buscando na internet a ferramenta 7-Zip para isso. A página do jogo então lista as trapaças dele, sem interruptores: o MAME inicia com as trapaças prontas, e você as ativa durante o jogo pressionando <strong>Tab</strong>, depois <strong>Plugin Options</strong> e depois <strong>Cheat</strong>. Importar uma coleção mais nova substitui a antiga.</p>
 
         <h4>Teclas do RetroArch</h4>
         <p>Estas são as teclas padrão do próprio RetroArch; você pode alterá-las no menu dele em <strong>Settings &rarr; Input &rarr; Hotkeys</strong>.</p>
@@ -1564,6 +1565,10 @@
 
         <h3>Visualizar e Aplicar</h3>
         <p>Antes de aplicar a normalização, você pode visualizar quais jogos serão afetados e quais alterações serão feitas. Isso permite que você revise antes de confirmar as mudanças na sua biblioteca.</p>
+
+        <h3>Nomes escritos de duas maneiras</h3>
+        <p>Os botões <strong>Franquia</strong>, <strong>Distribuidora</strong> e <strong>Desenvolvedora</strong> listam nomes escritos com maiúsculas diferentes, como <code>Doom</code> e <code>DOOM</code>. Vale a grafia usada em mais jogos; escolha outra se preferir e pressione <strong>Aplicar</strong>. Se uma busca de metadados ou um Preenchimento por IA posterior trouxer o nome com outras maiúsculas, ele usa a grafia da sua biblioteca.</p>
+        <p>Em <strong>Distribuidora</strong> e <strong>Desenvolvedora</strong>, <strong>Nomes que podem ser a mesma empresa</strong> lista nomes como <code>Eidos</code> e <code>Eidos Interactive</code>. Nada vem marcado, porque nomes parecidos podem ser empresas diferentes: <code>Atari Games</code> e <code>Atari, Inc.</code> são duas. Em uma linha, escolha o nome a manter, marque os nomes que são a mesma empresa e pressione <strong>Mesclar</strong>. Os nomes marcados passam a ser o nome mantido, tanto em Distribuidora quanto em Desenvolvedora, e se uma busca de metadados ou um Preenchimento por IA posterior trouxer um nome mesclado, ele usa o nome mantido.</p>
     </div>
 </section>
 
@@ -1704,8 +1709,8 @@
         <ol>
             <li>Vá para <strong>Configurações &rarr; Conta &rarr; Usuários</strong> (somente administrador)</li>
             <li>Clique em <strong>"Adicionar Usuário"</strong> para criar uma nova conta</li>
-            <li>Defina o nome de usuário, o nome de exibição e a função</li>
-            <li>Novos usuários recebem uma senha padrão que deve ser alterada no primeiro login</li>
+            <li>Defina o nome de usuário, o nome de exibição, a função e uma primeira senha de 12 caracteres ou mais</li>
+            <li>Passe essa senha à pessoa; ela escolhe a própria senha no primeiro login</li>
         </ol>
 
         <h3>Autenticação</h3>
@@ -1908,7 +1913,7 @@
         <h3 id="ts-cheats">Trapaças</h3>
 
         <h4>"Nenhuma trapaça foi encontrada para este jogo."</h4>
-        <p>Baixe o pacote de trapaças do emulador no cartão Trapaças da página Emuladores ou importe lá uma pasta com suas próprias trapaças. As trapaças funcionam no player, no DuckStation e no PCSX2.</p>
+        <p>Baixe o pacote de trapaças do emulador no cartão Trapaças da página Emuladores ou importe lá uma pasta com suas próprias trapaças. As trapaças funcionam no player, no DuckStation, no PCSX2 e no MAME. Para o MAME, importe a coleção de trapaças de mamecheat.co.uk.</p>
 
         <h4>Uma trapaça ativada não faz nada</h4>
         <p>As trapaças valem na próxima vez que você pressionar Jogar. Uma trapaça ativada desliga o modo hardcore do RetroAchievements enquanto você joga.</p>

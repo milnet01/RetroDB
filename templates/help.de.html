@@ -520,6 +520,7 @@
     <h2 class="card-title">Einstellungen</h2>
     <div class="card-body">
         <p>Die Einstellungen sind in Registerkarten gegliedert, jede mit Unterabschnitten. Administratoren sehen zusätzlich eine Registerkarte Emulatoren, die eine eigene Seite öffnet.</p>
+        <p>Jede Person sieht nur die Einstellungen, die ihre Rolle ändern kann. Ein Betrachter oder Spieler sieht Mein Profil, Zeitzone, Design, Sprache, Bibliotheksstatistiken, Trophäen und Unterstützen. Ein Bearbeiter sieht zusätzlich Bonus-Discs und Controller. Alles andere ist für Administratoren.</p>
 
         <h3>Registerkarte „Konto“</h3>
         <ul>
@@ -566,7 +567,6 @@
             <li><strong>Updates</strong> &mdash; Eine neue Version suchen, herunterladen und installieren</li>
             <li><strong>Server</strong> &mdash; RetroDB neu starten oder beenden</li>
             <li><strong>Protokollierung</strong> &mdash; Einstellungen der Protokollstufe für verschiedene Kategorien und die Protokolldateien</li>
-            <li><strong>Fehlerbehebung</strong> &mdash; Eine hängende RetroAchievements-Synchronisierung löschen</li>
         </ul>
 
         <h3 id="emulators-play">Emulatoren und Spielen</h3>
@@ -577,6 +577,7 @@
 
         <h4>Cheats</h4>
         <p>Drücken Sie unter <strong>Cheats</strong> auf derselben Seite auf <strong>Herunterladen</strong>, um die freien öffentlichen Cheat-Pakete zu holen, oder importieren Sie einen Cheat-Ordner, den Sie schon haben. RetroDB kopiert die Dateien und ändert Ihren Ordner nie; importieren Sie erneut, um neue Dateien zu übernehmen. Die Spielseite zeigt dann für Spiele, die in RetroArch (RetroDB), DuckStation oder PCSX2 gespielt werden, einen Bereich <strong>Cheats</strong> mit einem An/Aus-Schalter für jeden Cheat. Bei RetroArch (RetroDB) gelten die eingeschalteten Cheats beim nächsten Drücken von Spielen, und ein Schalter, den Sie während des Spielens im Menü von RetroArch umlegen, bleibt erhalten. Bei DuckStation und PCSX2 werden die Schalter direkt in den Einstellungen des Emulators für dieses Spiel gespeichert, sodass eine Änderung im Emulator auch im Bereich erscheint. RetroDB überschreibt nie eine Cheat-Datei, die der Emulator schon hat. Ein eingeschalteter Cheat pausiert den RetroAchievements-Hardcore-Modus; DuckStation und PCSX2 ignorieren Cheats im Hardcore-Modus.</p>
+        <p>Laden Sie für Arcade-Spiele, die in MAME gespielt werden, die „MAME XML Cheats Collection“ von mamecheat.co.uk in Ihrem Browser herunter und importieren Sie dann den Ordner, der sie enthält. RetroDB entpackt sie und lädt dafür das Werkzeug 7-Zip aus dem Internet. Die Spielseite listet dann die Cheats dieses Spiels ohne Schalter: MAME startet mit bereiten Cheats, und Sie schalten sie beim Spielen ein, indem Sie <strong>Tab</strong>, dann <strong>Plugin Options</strong>, dann <strong>Cheat</strong> drücken. Der Import einer neueren Sammlung ersetzt die alte.</p>
 
         <h4>RetroArch-Tasten</h4>
         <p>Dies sind die Standardtasten von RetroArch selbst; Sie können sie im Menü unter <strong>Settings &rarr; Input &rarr; Hotkeys</strong> ändern.</p>
@@ -1564,6 +1565,10 @@
 
         <h3>Vorschau & Anwenden</h3>
         <p>Vor dem Anwenden der Normalisierung können Sie in einer Vorschau sehen, welche Spiele betroffen sein werden und welche Änderungen vorgenommen werden. So können Sie prüfen, bevor Sie Änderungen an Ihrer Bibliothek festschreiben.</p>
+
+        <h3>Namen mit zwei Schreibweisen</h3>
+        <p>Die Schaltflächen <strong>Franchise</strong>, <strong>Publisher</strong> und <strong>Entwickler</strong> listen Namen auf, die mit unterschiedlicher Groß- und Kleinschreibung geschrieben sind, etwa <code>Doom</code> und <code>DOOM</code>. Gewählt wird die Schreibweise, die bei den meisten Spielen steht; wählen Sie eine andere, wenn Sie möchten, und drücken Sie dann <strong>Anwenden</strong>. Ein späteres Scraping oder AI-Auffüllen, das den Namen mit anderer Groß- und Kleinschreibung liefert, verwendet die Schreibweise Ihrer Bibliothek.</p>
+        <p>Unter <strong>Publisher</strong> und <strong>Entwickler</strong> listet <strong>Namen, die dieselbe Firma sein könnten</strong> Namen wie <code>Eidos</code> und <code>Eidos Interactive</code>. Nichts ist angehakt, weil ähnliche Namen verschiedene Firmen sein können: <code>Atari Games</code> und <code>Atari, Inc.</code> sind zwei. Wählen Sie in einer Zeile den Namen, der bleiben soll, haken Sie die Namen an, die dieselbe Firma sind, und drücken Sie <strong>Zusammenführen</strong>. Die angehakten Namen ändern sich sowohl bei Publisher als auch bei Entwickler auf den behaltenen, und ein späteres Scraping oder AI-Auffüllen, das einen zusammengeführten Namen liefert, verwendet den behaltenen.</p>
     </div>
 </section>
 
@@ -1704,8 +1709,8 @@
         <ol>
             <li>Gehen Sie zu <strong>Einstellungen &rarr; Konto &rarr; Benutzer</strong> (nur Administrator)</li>
             <li>Klicken Sie auf <strong>„Benutzer hinzufügen“</strong>, um ein neues Konto zu erstellen</li>
-            <li>Legen Sie Benutzernamen, Anzeigenamen und Rolle fest</li>
-            <li>Neue Benutzer erhalten ein Standardpasswort, das bei der ersten Anmeldung geändert werden muss</li>
+            <li>Legen Sie Benutzernamen, Anzeigenamen, Rolle und ein erstes Passwort mit 12 oder mehr Zeichen fest</li>
+            <li>Geben Sie ihnen dieses Passwort; sie wählen ihr eigenes bei der ersten Anmeldung</li>
         </ol>
 
         <h3>Authentifizierung</h3>
@@ -1908,7 +1913,7 @@
         <h3 id="ts-cheats">Cheats</h3>
 
         <h4>„Für dieses Spiel wurden keine Cheats gefunden.“</h4>
-        <p>Laden Sie das Cheat-Paket für den Emulator auf der Cheats-Karte der Emulatoren-Seite herunter, oder importieren Sie dort einen Ordner mit eigenen Cheats. Cheats funktionieren im Player, in DuckStation und in PCSX2.</p>
+        <p>Laden Sie das Cheat-Paket für den Emulator auf der Cheats-Karte der Emulatoren-Seite herunter, oder importieren Sie dort einen Ordner mit eigenen Cheats. Cheats funktionieren im Player, in DuckStation, in PCSX2 und in MAME. Importieren Sie für MAME die Cheat-Sammlung von mamecheat.co.uk.</p>
 
         <h4>Ein eingeschalteter Cheat bewirkt nichts</h4>
         <p>Cheats gelten beim nächsten Drücken von Spielen. Ein eingeschalteter Cheat schaltet den RetroAchievements-Hardcore-Modus aus, solange Sie spielen.</p>

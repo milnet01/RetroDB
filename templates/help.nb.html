@@ -520,6 +520,7 @@
     <h2 class="card-title">Innstillinger</h2>
     <div class="card-body">
         <p>Innstillinger er organisert i faner, hver med underseksjoner. Administratorer ser også en Emulatorer-fane, som åpner en egen side.</p>
+        <p>Hver person ser bare innstillingene rollen deres kan endre. En viewer eller spiller ser Min profil, Tidssone, Tema, Språk, bibliotekstatistikk, trofeer og Støtt. En editor ser også Bonusplater og Kontrollere. Alt annet er for administratorer.</p>
 
         <h3>Konto-fanen</h3>
         <ul>
@@ -566,7 +567,6 @@
             <li><strong>Oppdateringer</strong> &mdash; Se etter, last ned og installer en ny versjon</li>
             <li><strong>Server</strong> &mdash; Start RetroDB på nytt eller slå den av</li>
             <li><strong>Logging</strong> &mdash; Loggnivåinnstillinger for ulike kategorier, og loggfilene</li>
-            <li><strong>Feilsøking</strong> &mdash; Fjern en fastlåst RetroAchievements-synkronisering</li>
         </ul>
 
         <h3 id="emulators-play">Emulatorer og spilling</h3>
@@ -577,6 +577,7 @@
 
         <h4>Juksekoder</h4>
         <p>Under <strong>Juksekoder</strong> på samme side trykker du <strong>Last ned</strong> for å hente de gratis offentlige juksekodepakkene, eller du importerer en juksekodemappe du allerede har. RetroDB kopierer filene og endrer aldri mappen din; importer på nytt for å få med nye filer. Spillsiden viser da et <strong>Juksekoder</strong>-panel for spill som spilles i RetroArch (RetroDB), DuckStation eller PCSX2, med en av/på-bryter for hver juksekode. For RetroArch (RetroDB) gjelder juksekodene du slår på neste gang du trykker Spill, og en bryter du endrer i RetroArchs egen meny mens du spiller, blir beholdt. For DuckStation og PCSX2 lagres bryterne rett i emulatorens innstillinger for det spillet, så en endring gjort inne i emulatoren vises også i panelet. RetroDB overskriver aldri en juksekodefil emulatoren allerede har. En juksekode som er på, setter RetroAchievements hardcore-modus på pause; DuckStation og PCSX2 overser juksekoder i hardcore-modus.</p>
+        <p>For arkadespill som spilles i MAME laster du ned «MAME XML Cheats Collection» fra mamecheat.co.uk i nettleseren din, og importerer deretter mappen som inneholder den. RetroDB pakker den ut, og henter da 7-Zip-verktøyet fra internett. Spillsiden viser så spillets juksekoder uten brytere: MAME starter med juksekodene klare, og du slår dem på mens du spiller ved å trykke <strong>Tab</strong>, deretter <strong>Plugin Options</strong>, deretter <strong>Cheat</strong>. Å importere en nyere samling erstatter den gamle.</p>
 
         <h4>RetroArch-taster</h4>
         <p>Dette er RetroArchs egne standardtaster; du kan endre dem i menyen under <strong>Settings &rarr; Input &rarr; Hotkeys</strong>.</p>
@@ -1558,6 +1559,10 @@
 
         <h3>Forhåndsvisning og bruk</h3>
         <p>Før du bruker normalisering, kan du forhåndsvise hvilke spill som påvirkes og hvilke endringer som gjøres. Dette lar deg se over endringene før de utføres på biblioteket ditt.</p>
+
+        <h3>Navn skrevet på to måter</h3>
+        <p>Knappene <strong>Franchise</strong>, <strong>Utgiver</strong> og <strong>Utvikler</strong> viser navn skrevet med ulike store bokstaver, som <code>Doom</code> og <code>DOOM</code>. Skrivemåten som brukes på flest spill, velges; velg en annen hvis du foretrekker det, og trykk så <strong>Bruk</strong>. En senere scraping eller AI-utfylling som bringer navnet med andre store bokstaver, bruker bibliotekets skrivemåte.</p>
+        <p>Under <strong>Utgiver</strong> og <strong>Utvikler</strong> viser <strong>Navn som kan være ett selskap</strong> navn som <code>Eidos</code> og <code>Eidos Interactive</code>. Ingenting er avmerket, fordi like navn kan være ulike selskaper: <code>Atari Games</code> og <code>Atari, Inc.</code> er to. I en rad velger du navnet som skal beholdes, huker av navnene som er samme selskap og trykker <strong>Slå sammen</strong>. De avhukede navnene blir til det beholdte, både i Utgiver og Utvikler, og en senere scraping eller AI-utfylling som bringer et sammenslått navn, bruker det beholdte.</p>
     </div>
 </section>
 
@@ -1698,8 +1703,8 @@
         <ol>
             <li>Gå til <strong>Innstillinger &rarr; Konto &rarr; Brukere</strong> (kun admin)</li>
             <li>Klikk <strong>"Add User"</strong> for å opprette en ny konto</li>
-            <li>Angi brukernavn, visningsnavn og rolle</li>
-            <li>Nye brukere mottar et standardpassord som må endres ved første innlogging</li>
+            <li>Angi brukernavn, visningsnavn, rolle og et første passord på 12 tegn eller mer</li>
+            <li>Gi dem passordet; de velger sitt eget første gang de logger inn</li>
         </ol>
 
         <h3>Autentisering</h3>
@@ -1902,7 +1907,7 @@
         <h3 id="ts-cheats">Juksekoder</h3>
 
         <h4>«Fant ingen juksekoder for dette spillet.»</h4>
-        <p>Last ned juksekodepakken for emulatoren i kortet Juksekoder på siden Emulatorer, eller importer en mappe med egne juksekoder der. Juksekoder virker i spilleren, DuckStation og PCSX2.</p>
+        <p>Last ned juksekodepakken for emulatoren i kortet Juksekoder på siden Emulatorer, eller importer en mappe med egne juksekoder der. Juksekoder virker i spilleren, DuckStation, PCSX2 og MAME. For MAME importerer du juksekodesamlingen fra mamecheat.co.uk.</p>
 
         <h4>En påslått juksekode gjør ingenting</h4>
         <p>Juksekoder gjelder neste gang du trykker Spill. En juksekode som er på, slår av RetroAchievements hardcore-modus mens du spiller.</p>

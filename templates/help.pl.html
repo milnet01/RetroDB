@@ -520,6 +520,7 @@
     <h2 class="card-title">Ustawienia</h2>
     <div class="card-body">
         <p>Ustawienia są zorganizowane w zakładkach, każda z podsekcjami. Administratorzy widzą też zakładkę Emulatory, która otwiera własną stronę.</p>
+        <p>Każda osoba widzi tylko te ustawienia, które może zmienić jej rola. Przeglądający lub gracz widzi Mój profil, Strefę czasową, Motyw, Język, statystyki biblioteki, trofea i Wsparcie. Edytor widzi też Płyty bonusowe i Kontrolery. Wszystko inne jest dla administratorów.</p>
 
         <h3>Zakładka Konto</h3>
         <ul>
@@ -566,7 +567,6 @@
             <li><strong>Aktualizacje</strong> &mdash; Sprawdź, pobierz i zainstaluj nową wersję</li>
             <li><strong>Serwer</strong> &mdash; Uruchom RetroDB ponownie lub wyłącz</li>
             <li><strong>Dziennik</strong> &mdash; Ustawienia poziomu dziennika dla różnych kategorii oraz pliki dziennika</li>
-            <li><strong>Rozwiązywanie problemów</strong> &mdash; Wyczyść zawieszoną synchronizację RetroAchievements</li>
         </ul>
 
         <h3 id="emulators-play">Emulatory i granie</h3>
@@ -577,6 +577,7 @@
 
         <h4>Kody</h4>
         <p>W sekcji <strong>Kody</strong> na tej samej stronie naciśnij <strong>Pobierz</strong>, aby ściągnąć darmowe, publiczne paczki kodów, albo zaimportuj folder z kodami, który już masz. RetroDB kopiuje pliki i nigdy nie zmienia Twojego folderu; zaimportuj ponownie, aby dodać nowe pliki. Strona gry pokazuje wtedy panel <strong>Kody</strong> dla gier uruchamianych w RetroArch (RetroDB), DuckStation lub PCSX2, z przełącznikiem wł./wył. dla każdego kodu. W RetroArch (RetroDB) włączone kody zadziałają, gdy następnym razem naciśniesz Graj, a przełącznik zmieniony w trakcie gry we własnym menu RetroArch zostaje zachowany. W DuckStation i PCSX2 przełączniki są zapisywane bezpośrednio w ustawieniach emulatora dla tej gry, więc zmiana wprowadzona w samym emulatorze też pojawia się w panelu. RetroDB nigdy nie nadpisuje pliku kodów, który emulator już ma. Włączony kod wstrzymuje tryb hardcore RetroAchievements; DuckStation i PCSX2 pomijają kody w trybie hardcore.</p>
+        <p>Dla gier arcade uruchamianych w MAME pobierz w przeglądarce „MAME XML Cheats Collection” z mamecheat.co.uk, a potem zaimportuj folder, w którym się znajduje. RetroDB rozpakowuje ją, pobierając w tym celu z internetu narzędzie 7-Zip. Strona gry pokazuje wtedy kody tej gry, bez przełączników: MAME uruchamia się z gotowymi kodami, a Ty włączasz je podczas gry, naciskając <strong>Tab</strong>, potem <strong>Plugin Options</strong>, potem <strong>Cheat</strong>. Zaimportowanie nowszej kolekcji zastępuje starą.</p>
 
         <h4>Klawisze RetroArch</h4>
         <p>To domyślne klawisze samego RetroArch; możesz je zmienić w jego menu w <strong>Settings &rarr; Input &rarr; Hotkeys</strong>.</p>
@@ -1564,6 +1565,10 @@
 
         <h3>Podgląd i zastosowanie</h3>
         <p>Przed zastosowaniem normalizacji możesz zobaczyć podgląd, które gry zostaną dotknięte i jakie zmiany zostaną wprowadzone. Pozwala to na przegląd przed zatwierdzeniem zmian w bibliotece.</p>
+
+        <h3>Nazwy pisane na dwa sposoby</h3>
+        <p>Przyciski <strong>Franczyza</strong>, <strong>Wydawca</strong> i <strong>Deweloper</strong> wyświetlają nazwy pisane różnymi wielkimi literami, takie jak <code>Doom</code> i <code>DOOM</code>. Wybierany jest zapis użyty w największej liczbie gier; wybierz inny, jeśli wolisz, a potem naciśnij <strong>Zastosuj</strong>. Jeśli późniejsze pobieranie danych lub Uzupełnianie AI przyniesie nazwę zapisaną innymi wielkimi literami, użyje zapisu z Twojej biblioteki.</p>
+        <p>W sekcjach <strong>Wydawca</strong> i <strong>Deweloper</strong> lista <strong>Nazwy, które mogą oznaczać jedną firmę</strong> pokazuje nazwy takie jak <code>Eidos</code> i <code>Eidos Interactive</code>. Nic nie jest zaznaczone, bo podobne nazwy mogą oznaczać różne firmy: <code>Atari Games</code> i <code>Atari, Inc.</code> to dwie firmy. W wierszu wybierz nazwę do zachowania, zaznacz nazwy, które oznaczają tę samą firmę, i naciśnij <strong>Scal</strong>. Zaznaczone nazwy zmieniają się na zachowaną zarówno w Wydawcy, jak i w Deweloperze, a jeśli późniejsze pobieranie danych lub Uzupełnianie AI przyniesie scaloną nazwę, użyje zachowanej.</p>
     </div>
 </section>
 
@@ -1704,8 +1709,8 @@
         <ol>
             <li>Przejdź do <strong>Ustawienia &rarr; Konto &rarr; Użytkownicy</strong> (tylko administrator)</li>
             <li>Kliknij <strong>„Dodaj użytkownika”</strong>, aby utworzyć nowe konto</li>
-            <li>Ustaw nazwę użytkownika, nazwę wyświetlaną i rolę</li>
-            <li>Nowi użytkownicy otrzymują domyślne hasło, które musi zostać zmienione przy pierwszym logowaniu</li>
+            <li>Ustaw nazwę użytkownika, nazwę wyświetlaną, rolę i pierwsze hasło o długości co najmniej 12 znaków</li>
+            <li>Przekaż im to hasło; przy pierwszym logowaniu wybiorą własne</li>
         </ol>
 
         <h3>Uwierzytelnianie</h3>
@@ -1908,7 +1913,7 @@
         <h3 id="ts-cheats">Kody</h3>
 
         <h4>„Nie znaleziono kodów dla tej gry.”</h4>
-        <p>Pobierz pakiet kodów dla emulatora na karcie Kody na stronie Emulatory albo zaimportuj tam folder z własnymi kodami. Kody działają w odtwarzaczu, DuckStation i PCSX2.</p>
+        <p>Pobierz pakiet kodów dla emulatora na karcie Kody na stronie Emulatory albo zaimportuj tam folder z własnymi kodami. Kody działają w odtwarzaczu, DuckStation, PCSX2 i MAME. W przypadku MAME zaimportuj kolekcję kodów z mamecheat.co.uk.</p>
 
         <h4>Włączony kod nic nie robi</h4>
         <p>Kody są stosowane przy następnym naciśnięciu Graj. Włączony kod wyłącza tryb hardcore RetroAchievements na czas gry.</p>

@@ -520,6 +520,7 @@
     <h2 class="card-title">Instellingen</h2>
     <div class="card-body">
         <p>Instellingen zijn georganiseerd in tabbladen, elk met subsecties. Beheerders zien ook een tabblad Emulators, dat een eigen pagina opent.</p>
+        <p>Elke persoon ziet alleen de instellingen die zijn of haar rol mag wijzigen. Een kijker of speler ziet Mijn profiel, Tijdzone, Thema, Taal, bibliotheekstatistieken, trofeeën en Steunen. Een editor ziet ook Bonusschijven en Controllers. Al het andere is voor beheerders.</p>
 
         <h3>Tabblad Account</h3>
         <ul>
@@ -566,7 +567,6 @@
             <li><strong>Updates</strong> &mdash; Een nieuwe versie zoeken, downloaden en installeren</li>
             <li><strong>Server</strong> &mdash; RetroDB opnieuw starten of afsluiten</li>
             <li><strong>Logboek</strong> &mdash; Logniveau-instellingen voor verschillende categorieën, en de logbestanden</li>
-            <li><strong>Probleemoplossing</strong> &mdash; Een vastgelopen RetroAchievements-synchronisatie wissen</li>
         </ul>
 
         <h3 id="emulators-play">Emulators en spelen</h3>
@@ -577,6 +577,7 @@
 
         <h4>Cheats</h4>
         <p>Druk onder <strong>Cheats</strong> op dezelfde pagina op <strong>Downloaden</strong> om de gratis openbare cheatpakketten op te halen, of importeer een cheatmap die u al hebt. RetroDB kopieert de bestanden en wijzigt uw map nooit; importeer opnieuw om nieuwe bestanden op te halen. De spelpagina toont dan een paneel <strong>Cheats</strong> voor spellen die in RetroArch (RetroDB), DuckStation of PCSX2 worden gespeeld, met een aan/uit-schakelaar voor elke cheat. Bij RetroArch (RetroDB) gelden de cheats die u aanzet vanaf de volgende keer dat u op Spelen drukt, en een schakelaar die u tijdens het spelen in het eigen menu van RetroArch omzet, blijft bewaard. Bij DuckStation en PCSX2 worden de schakelaars direct opgeslagen in de instellingen van de emulator voor dat spel, dus een wijziging in de emulator zelf verschijnt ook in het paneel. RetroDB overschrijft nooit een cheatbestand dat de emulator al heeft. Een cheat die aan staat, pauzeert de hardcore-modus van RetroAchievements; DuckStation en PCSX2 negeren cheats in de hardcore-modus.</p>
+        <p>Voor arcadegames die in MAME worden gespeeld, downloadt u in uw browser de "MAME XML Cheats Collection" van mamecheat.co.uk en importeert u daarna de map waarin die staat. RetroDB pakt het bestand uit en haalt daarvoor het hulpprogramma 7-Zip van internet. De spelpagina toont dan de cheats van dat spel, zonder schakelaars: MAME start met de cheats klaar en u zet ze tijdens het spelen aan door op <strong>Tab</strong> te drukken, dan op <strong>Plugin Options</strong> en dan op <strong>Cheat</strong>. Een nieuwere collectie importeren vervangt de oude.</p>
 
         <h4>RetroArch-toetsen</h4>
         <p>Dit zijn de standaardtoetsen van RetroArch zelf; u kunt ze wijzigen in het menu onder <strong>Settings &rarr; Input &rarr; Hotkeys</strong>.</p>
@@ -1564,6 +1565,10 @@
 
         <h3>Voorbeeld & toepassen</h3>
         <p>Voordat u normalisatie toepast, kunt u een voorbeeld bekijken van welke spellen worden beïnvloed en welke wijzigingen zullen worden aangebracht. Zo kunt u alles controleren voordat de wijzigingen in uw bibliotheek worden doorgevoerd.</p>
+
+        <h3>Namen die op twee manieren gespeld zijn</h3>
+        <p>De knoppen <strong>Franchise</strong>, <strong>Uitgever</strong> en <strong>Ontwikkelaar</strong> tonen namen die met verschillende hoofdletters zijn geschreven, zoals <code>Doom</code> en <code>DOOM</code>. De schrijfwijze die bij de meeste games staat wordt gekozen; kies een andere als u dat liever hebt en druk dan op <strong>Toepassen</strong>. Brengt een latere scrape of AI-invulling de naam met andere hoofdletters mee, dan gebruikt die de schrijfwijze van uw bibliotheek.</p>
+        <p>Onder <strong>Uitgever</strong> en <strong>Ontwikkelaar</strong> toont <strong>Namen die mogelijk één bedrijf zijn</strong> namen als <code>Eidos</code> en <code>Eidos Interactive</code>. Er is niets aangevinkt, want namen die op elkaar lijken kunnen verschillende bedrijven zijn: <code>Atari Games</code> en <code>Atari, Inc.</code> zijn er twee. Kies in een rij de naam om te behouden, vink de namen aan die hetzelfde bedrijf zijn en druk op <strong>Samenvoegen</strong>. De aangevinkte namen worden de behouden naam, zowel bij Uitgever als bij Ontwikkelaar, en brengt een latere scrape of AI-invulling een samengevoegde naam mee, dan gebruikt die de behouden naam.</p>
     </div>
 </section>
 
@@ -1704,8 +1709,8 @@
         <ol>
             <li>Ga naar <strong>Instellingen &rarr; Account &rarr; Gebruikers</strong> (alleen beheerder)</li>
             <li>Klik op <strong>"Gebruiker toevoegen"</strong> om een nieuw account aan te maken</li>
-            <li>Stel gebruikersnaam, weergavenaam en rol in</li>
-            <li>Nieuwe gebruikers ontvangen een standaardwachtwoord dat bij de eerste aanmelding moet worden gewijzigd</li>
+            <li>Stel gebruikersnaam, weergavenaam, rol en een eerste wachtwoord van 12 tekens of meer in</li>
+            <li>Geef hun dat wachtwoord; bij de eerste aanmelding kiezen ze zelf een wachtwoord</li>
         </ol>
 
         <h3>Authenticatie</h3>
@@ -1908,7 +1913,7 @@
         <h3 id="ts-cheats">Cheats</h3>
 
         <h4>"Er zijn geen cheats gevonden voor dit spel."</h4>
-        <p>Download het cheatpakket voor de emulator op de Cheats-kaart van de pagina Emulators, of importeer daar een map met je eigen cheats. Cheats werken in de speler, DuckStation en PCSX2.</p>
+        <p>Download het cheatpakket voor de emulator op de Cheats-kaart van de pagina Emulators, of importeer daar een map met je eigen cheats. Cheats werken in de speler, DuckStation, PCSX2 en MAME. Importeer voor MAME de cheatcollectie van mamecheat.co.uk.</p>
 
         <h4>Een ingeschakelde cheat doet niets</h4>
         <p>Cheats worden toegepast de volgende keer dat je op Spelen drukt. Een cheat die aanstaat, zet de hardcore-modus van RetroAchievements uit zolang je speelt.</p>

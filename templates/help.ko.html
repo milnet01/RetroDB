@@ -520,6 +520,7 @@
     <h2 class="card-title">설정</h2>
     <div class="card-body">
         <p>설정은 탭으로 구성되며, 각 탭에는 하위 섹션이 있습니다. 관리자에게는 자체 페이지가 열리는 에뮬레이터 탭도 표시됩니다.</p>
+        <p>각 사용자에게는 자신의 역할로 바꿀 수 있는 설정만 표시됩니다. 뷰어나 플레이어에게는 내 프로필, 시간대, 테마, 언어, 라이브러리 통계, 트로피, 지원이 보입니다. 편집자는 보너스 디스크와 컨트롤러도 볼 수 있습니다. 나머지는 모두 관리자용입니다.</p>
 
         <h3>계정 탭</h3>
         <ul>
@@ -566,7 +567,6 @@
             <li><strong>업데이트</strong> &mdash; 새 버전 확인, 다운로드, 설치</li>
             <li><strong>서버</strong> &mdash; RetroDB 다시 시작 또는 종료</li>
             <li><strong>로그</strong> &mdash; 카테고리별 로그 수준 설정과 로그 파일</li>
-            <li><strong>문제 해결</strong> &mdash; 멈춘 RetroAchievements 동기화 해제</li>
         </ul>
 
         <h3 id="emulators-play">에뮬레이터와 실행</h3>
@@ -577,6 +577,7 @@
 
         <h4>치트</h4>
         <p>같은 페이지의 <strong>치트</strong>에서 <strong>다운로드</strong>를 눌러 무료 공개 치트 팩을 받거나, 이미 가지고 있는 치트 폴더를 가져오세요. RetroDB는 파일을 복사하며 사용자의 폴더는 절대 바꾸지 않습니다. 새 파일을 반영하려면 다시 가져오세요. 그러면 RetroArch (RetroDB), DuckStation 또는 PCSX2로 플레이하는 게임의 게임 페이지에 <strong>치트</strong> 패널이 표시되고, 치트마다 켜기/끄기 스위치가 있습니다. RetroArch (RetroDB)에서는 켠 치트가 다음에 실행을 누를 때 적용되며, 플레이 중에 RetroArch 자체 메뉴에서 바꾼 스위치도 유지됩니다. DuckStation과 PCSX2에서는 스위치가 그 게임에 대한 에뮬레이터 설정에 바로 저장되므로, 에뮬레이터 안에서 바꾼 내용도 패널에 표시됩니다. RetroDB는 에뮬레이터에 이미 있는 치트 파일을 절대 덮어쓰지 않습니다. 켜진 치트가 있으면 RetroAchievements 하드코어 모드가 일시 중지되며, DuckStation과 PCSX2는 하드코어 모드에서 치트를 무시합니다.</p>
+        <p>MAME으로 플레이하는 아케이드 게임은 브라우저에서 mamecheat.co.uk의 "MAME XML Cheats Collection"을 내려받은 다음, 그것이 들어 있는 폴더를 가져오세요. RetroDB가 압축을 풀며, 이를 위해 인터넷에서 7-Zip 도구를 받아 옵니다. 그러면 게임 페이지에 그 게임의 치트가 스위치 없이 나열됩니다. MAME는 치트가 준비된 채로 시작하며, 플레이 중에 <strong>Tab</strong>, <strong>Plugin Options</strong>, <strong>Cheat</strong> 순서로 눌러 켭니다. 더 새로운 컬렉션을 가져오면 이전 것이 교체됩니다.</p>
 
         <h4>RetroArch 키</h4>
         <p>이 키들은 RetroArch의 기본 키이며, 메뉴의 <strong>Settings &rarr; Input &rarr; Hotkeys</strong>에서 바꿀 수 있습니다.</p>
@@ -1558,6 +1559,10 @@
 
         <h3>미리 보기 및 적용</h3>
         <p>정규화를 적용하기 전에, 어떤 게임이 영향을 받고 어떤 변경이 이루어질지 미리 볼 수 있습니다. 이를 통해 라이브러리에 변경 사항을 적용하기 전에 검토할 수 있습니다.</p>
+
+        <h3>두 가지로 표기된 이름</h3>
+        <p><strong>프랜차이즈</strong>, <strong>배급사</strong>, <strong>개발사</strong> 버튼에는 <code>Doom</code>과 <code>DOOM</code>처럼 대소문자가 다르게 표기된 이름이 나열됩니다. 가장 많은 게임에서 쓰는 표기가 선택됩니다. 다른 표기를 원하면 고른 다음 <strong>적용</strong>을 누르세요. 이후 스크래핑이나 AI 채우기에서 대소문자가 다른 이름이 들어와도 라이브러리의 표기를 사용합니다.</p>
+        <p><strong>배급사</strong>와 <strong>개발사</strong>의 <strong>같은 회사일 수 있는 이름</strong>에는 <code>Eidos</code>와 <code>Eidos Interactive</code> 같은 이름이 나열됩니다. 비슷해 보여도 다른 회사일 수 있으므로 아무것도 선택되어 있지 않습니다. 예를 들어 <code>Atari Games</code>와 <code>Atari, Inc.</code>는 서로 다른 회사입니다. 각 행에서 남길 이름을 고르고, 같은 회사인 이름을 선택한 다음 <strong>병합</strong>을 누르세요. 선택한 이름은 배급사와 개발사 모두에서 남긴 이름으로 바뀌며, 이후 스크래핑이나 AI 채우기에서 병합된 이름이 들어와도 남긴 이름을 사용합니다.</p>
     </div>
 </section>
 
@@ -1698,8 +1703,8 @@
         <ol>
             <li><strong>설정 &rarr; 계정 &rarr; 사용자</strong>로 이동합니다(관리자 전용)</li>
             <li><strong>"사용자 추가"</strong>를 클릭하여 새 계정을 만듭니다</li>
-            <li>사용자 이름, 표시 이름, 역할을 설정합니다</li>
-            <li>새 사용자는 첫 로그인 시 변경해야 하는 기본 비밀번호를 받습니다</li>
+            <li>사용자 이름, 표시 이름, 역할, 12자 이상의 첫 비밀번호를 설정합니다</li>
+            <li>그 비밀번호를 사용자에게 알려 주세요. 사용자는 처음 로그인할 때 자신의 비밀번호를 정합니다</li>
         </ol>
 
         <h3>인증</h3>
@@ -1902,7 +1907,7 @@
         <h3 id="ts-cheats">치트</h3>
 
         <h4>"이 게임의 치트를 찾지 못했습니다."</h4>
-        <p>에뮬레이터 페이지의 치트 카드에서 해당 에뮬레이터의 치트 팩을 다운로드하거나, 가지고 있는 치트 폴더를 그곳에서 가져오세요. 치트는 플레이어, DuckStation, PCSX2에서 작동합니다.</p>
+        <p>에뮬레이터 페이지의 치트 카드에서 해당 에뮬레이터의 치트 팩을 다운로드하거나, 가지고 있는 치트 폴더를 그곳에서 가져오세요. 치트는 플레이어, DuckStation, PCSX2, MAME에서 작동합니다. MAME의 경우 mamecheat.co.uk의 치트 컬렉션을 가져오세요.</p>
 
         <h4>켜 둔 치트가 아무 효과가 없습니다</h4>
         <p>치트는 다음에 실행을 누를 때부터 적용됩니다. 치트가 켜져 있으면 플레이하는 동안 RetroAchievements 하드코어 모드가 꺼집니다.</p>

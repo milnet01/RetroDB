@@ -520,6 +520,7 @@
     <h2 class="card-title">Impostazioni</h2>
     <div class="card-body">
         <p>Le impostazioni sono organizzate in schede, ciascuna con sottosezioni. Gli amministratori vedono anche una scheda Emulatori, che apre una pagina propria.</p>
+        <p>Ognuno vede solo le impostazioni che il suo ruolo può modificare. Un visualizzatore o un giocatore vede Il mio profilo, Fuso orario, Tema, Lingua, le statistiche della libreria, i trofei e Sostegno. Un editor vede anche Dischi bonus e Controller. Tutto il resto è riservato agli amministratori.</p>
 
         <h3>Scheda Account</h3>
         <ul>
@@ -566,7 +567,6 @@
             <li><strong>Aggiornamenti</strong> &mdash; Controlla, scarica e installa una nuova versione</li>
             <li><strong>Server</strong> &mdash; Riavvia o spegni RetroDB</li>
             <li><strong>Log</strong> &mdash; Impostazioni del livello di log per le diverse categorie, e i file di log</li>
-            <li><strong>Risoluzione dei problemi</strong> &mdash; Sblocca una sincronizzazione RetroAchievements bloccata</li>
         </ul>
 
         <h3 id="emulators-play">Emulatori e Gioco</h3>
@@ -577,6 +577,7 @@
 
         <h4>Trucchi</h4>
         <p>In <strong>Trucchi</strong>, nella stessa pagina, premi <strong>Scarica</strong> per ottenere i pacchetti di trucchi pubblici e gratuiti, oppure importa una cartella di trucchi che hai già. RetroDB copia i file e non modifica mai la tua cartella; importa di nuovo per aggiungere i file nuovi. La pagina del gioco mostra poi un pannello <strong>Trucchi</strong> per i giochi avviati in RetroArch (RetroDB), DuckStation o PCSX2, con un interruttore per ogni trucco. Per RetroArch (RetroDB) i trucchi che attivi valgono dalla prossima volta che premi Gioca, e un interruttore che cambi nel menu di RetroArch durante il gioco viene mantenuto. Per DuckStation e PCSX2 gli interruttori vengono salvati direttamente nelle impostazioni dell'emulatore per quel gioco, così anche una modifica fatta dentro l'emulatore compare nel pannello. RetroDB non sovrascrive mai un file di trucchi che l'emulatore ha già. Un trucco attivo sospende la modalità hardcore di RetroAchievements; DuckStation e PCSX2 ignorano i trucchi in modalità hardcore.</p>
+        <p>Per i giochi arcade avviati in MAME, scarica la "MAME XML Cheats Collection" da mamecheat.co.uk con il browser, poi importa la cartella che la contiene. RetroDB la estrae, scaricando da internet lo strumento 7-Zip per farlo. La pagina del gioco elenca poi i trucchi di quel gioco senza interruttori: MAME si avvia con i trucchi pronti e li attivi mentre giochi premendo <strong>Tab</strong>, poi <strong>Plugin Options</strong>, poi <strong>Cheat</strong>. Importare una collezione più recente sostituisce quella vecchia.</p>
 
         <h4>Tasti di RetroArch</h4>
         <p>Questi sono i tasti predefiniti di RetroArch; puoi cambiarli nel suo menu in <strong>Settings &rarr; Input &rarr; Hotkeys</strong>.</p>
@@ -1564,6 +1565,10 @@
 
         <h3>Anteprima e applica</h3>
         <p>Prima di applicare la normalizzazione, puoi visualizzare in anteprima quali giochi saranno interessati e quali modifiche verranno apportate. Questo ti consente di esaminare prima di confermare le modifiche alla tua libreria.</p>
+
+        <h3>Nomi scritti in due modi</h3>
+        <p>I pulsanti <strong>Franchise</strong>, <strong>Editore</strong> e <strong>Sviluppatore</strong> elencano nomi scritti con maiuscole diverse, come <code>Doom</code> e <code>DOOM</code>. Viene scelta la grafia usata dal maggior numero di giochi; se preferisci un'altra, selezionala e premi <strong>Applica</strong>. Uno scraping o un AI Fill successivo che porta il nome con maiuscole diverse usa la grafia della tua libreria.</p>
+        <p>In <strong>Editore</strong> e <strong>Sviluppatore</strong>, <strong>Nomi che potrebbero essere la stessa azienda</strong> elenca nomi come <code>Eidos</code> e <code>Eidos Interactive</code>. Nulla è spuntato, perché nomi simili possono essere aziende diverse: <code>Atari Games</code> e <code>Atari, Inc.</code> sono due. In una riga, scegli il nome da tenere, spunta i nomi che sono la stessa azienda e premi <strong>Unisci</strong>. I nomi spuntati diventano quello scelto, sia in Editore sia in Sviluppatore, e uno scraping o un AI Fill successivo che porta un nome unito usa quello scelto.</p>
     </div>
 </section>
 
@@ -1704,8 +1709,8 @@
         <ol>
             <li>Vai su <strong>Impostazioni &rarr; Account &rarr; Utenti</strong> (solo amministratore)</li>
             <li>Fai clic su <strong>"Aggiungi utente"</strong> per creare un nuovo account</li>
-            <li>Imposta nome utente, nome visualizzato e ruolo</li>
-            <li>I nuovi utenti ricevono una password predefinita che deve essere cambiata al primo accesso</li>
+            <li>Imposta nome utente, nome visualizzato, ruolo e una prima password di almeno 12 caratteri</li>
+            <li>Dai loro quella password; sceglieranno la propria al primo accesso</li>
         </ol>
 
         <h3>Autenticazione</h3>
@@ -1908,7 +1913,7 @@
         <h3 id="ts-cheats">Trucchi</h3>
 
         <h4>"Nessun trucco trovato per questo gioco."</h4>
-        <p>Scarica il pacchetto di trucchi per l'emulatore nella scheda Trucchi della pagina Emulatori, oppure importa lì una cartella di trucchi tuoi. I trucchi funzionano nel player, in DuckStation e in PCSX2.</p>
+        <p>Scarica il pacchetto di trucchi per l'emulatore nella scheda Trucchi della pagina Emulatori, oppure importa lì una cartella di trucchi tuoi. I trucchi funzionano nel player, in DuckStation, in PCSX2 e in MAME. Per MAME, importa la collezione di trucchi da mamecheat.co.uk.</p>
 
         <h4>Un trucco attivato non fa nulla</h4>
         <p>I trucchi valgono dalla prossima volta che premi Gioca. Un trucco attivo disattiva la modalità hardcore di RetroAchievements mentre giochi.</p>

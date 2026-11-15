@@ -520,6 +520,7 @@
     <h2 class="card-title">Instellings</h2>
     <div class="card-body">
         <p>Instellings is georganiseer in oortjies, elk met subafdelings. Administrateurs sien ook 'n Emulators-oortjie, wat sy eie bladsy oopmaak.</p>
+        <p>Elke persoon sien net die instellings wat hul rol kan verander. 'n Bekyker of speler sien My Profiel, Tydsone, Tema, Taal, biblioteekstatistieke, trofeë en Ondersteuning. 'n Redigeerder sien ook Bonusskywe en Beheerders. Alles anders is vir administrateurs.</p>
 
         <h3>Rekening-oortjie</h3>
         <ul>
@@ -566,7 +567,6 @@
             <li><strong>Opdaterings</strong> &mdash; Kyk vir, laai af en installeer 'n nuwe weergawe</li>
             <li><strong>Bediener</strong> &mdash; Herbegin of sit RetroDB af</li>
             <li><strong>Logboek</strong> &mdash; Loguitvoervlak-instellings vir verskillende kategorieë, en die loglêers</li>
-            <li><strong>Foutsporing</strong> &mdash; Maak 'n vasgehaakte RetroAchievements-sinkronisering skoon</li>
         </ul>
 
         <h3 id="emulators-play">Emulators en Speel</h3>
@@ -577,6 +577,7 @@
 
         <h4>Kulkodes</h4>
         <p>Druk onder <strong>Kulkodes</strong> op dieselfde bladsy <strong>Laai af</strong> om die gratis openbare kulkodepakke te haal, of voer 'n kulkodevouer in wat jy reeds het. RetroDB kopieer die lêers en verander nooit jou vouer nie; voer weer in om nuwe lêers op te tel. Die speletjiebladsy wys dan 'n <strong>Kulkodes</strong>-paneel vir speletjies wat in RetroArch (RetroDB), DuckStation of PCSX2 gespeel word, met 'n aan/af-skakelaar vir elke kulkode. Vir RetroArch (RetroDB) geld die kulkodes wat jy aanskakel die volgende keer dat jy Speel druk, en 'n skakelaar wat jy tydens die spel in RetroArch se eie kieslys omsit, word behou. Vir DuckStation en PCSX2 word die skakelaars reguit in die emulator se instellings vir daardie speletjie gestoor, sodat 'n verandering binne die emulator ook in die paneel wys. RetroDB oorskryf nooit 'n kulkodelêer wat die emulator reeds het nie. 'n Kulkode wat aan is, onderbreek RetroAchievements se hardcore-modus; DuckStation en PCSX2 ignoreer kulkodes in hardcore-modus.</p>
+        <p>Vir arcade-speletjies wat in MAME gespeel word, laai die "MAME XML Cheats Collection" van mamecheat.co.uk in jou blaaier af en voer dan die gids in wat dit bevat. RetroDB pak dit uit, en haal die 7-Zip-nutsgoed van die internet af om dit te doen. Die speletjiebladsy lys dan daardie speletjie se kulkodes sonder skakelaars: MAME begin met sy kulkodes gereed, en jy skakel hulle aan terwyl jy speel deur <strong>Tab</strong>, dan <strong>Plugin Options</strong>, dan <strong>Cheat</strong> te druk. As jy 'n nuwer versameling invoer, vervang dit die ou een.</p>
 
         <h4>RetroArch-sleutels</h4>
         <p>Dit is RetroArch se eie verstek-sleutels; jy kan dit in sy kieslys onder <strong>Settings &rarr; Input &rarr; Hotkeys</strong> verander.</p>
@@ -1564,6 +1565,10 @@
 
         <h3>Voorskou & Toepassing</h3>
         <p>Voordat jy normalisering toepas, kan jy 'n voorskou sien van watter speletjies geraak sal word en watter veranderinge gemaak sal word. Dit laat jou toe om na te gaan voordat veranderinge aan jou biblioteek vasgelê word.</p>
+
+        <h3>Name met twee spellings</h3>
+        <p>Die <strong>Franchise</strong>-, <strong>Uitgewer</strong>- en <strong>Ontwikkelaar</strong>-knoppies lys name wat met verskillende hoofletters gespel word, soos <code>Doom</code> en <code>DOOM</code>. Die spelling op die meeste speletjies word gekies; kies 'n ander as jy verkies, en druk dan <strong>Pas toe</strong>. 'n Latere skraap of AI-vul wat die naam met ander hoofletters bring, gebruik jou biblioteek se spelling.</p>
+        <p>Onder <strong>Uitgewer</strong> en <strong>Ontwikkelaar</strong> lys <strong>Name wat dalk een maatskappy is</strong> name soos <code>Eidos</code> en <code>Eidos Interactive</code>. Niks is aangevink nie, want soortgelyke name kan verskillende maatskappye wees: <code>Atari Games</code> en <code>Atari, Inc.</code> is twee. Kies in 'n ry die naam om te hou, vink die name aan wat dieselfde maatskappy is, en druk <strong>Voeg saam</strong>. Die aangevinkte name verander na die behoude een in beide Uitgewer en Ontwikkelaar, en 'n latere skraap of AI-vul wat 'n saamgevoegde naam bring, gebruik die behoude een.</p>
     </div>
 </section>
 
@@ -1704,8 +1709,8 @@
         <ol>
             <li>Gaan na <strong>Instellings &rarr; Rekening &rarr; Gebruikers</strong> (slegs admin)</li>
             <li>Klik <strong>"Voeg Gebruiker By"</strong> om 'n nuwe rekening te skep</li>
-            <li>Stel gebruikersnaam, vertoonnaam, en rol</li>
-            <li>Nuwe gebruikers ontvang 'n verstekwagwoord wat met eerste aanmelding verander moet word</li>
+            <li>Stel gebruikersnaam, vertoonnaam, rol en 'n eerste wagwoord van 12 karakters of meer</li>
+            <li>Gee hulle daardie wagwoord; hulle kies hul eie die eerste keer wat hulle aanmeld</li>
         </ol>
 
         <h3>Verifikasie</h3>
@@ -1908,7 +1913,7 @@
         <h3 id="ts-cheats">Kulkodes</h3>
 
         <h4>"Geen kulkodes is vir hierdie speletjie gevind nie."</h4>
-        <p>Laai die kulkodepakket vir die emulator af op die Kulkodes-kaart van die Emulators-bladsy, of voer daar 'n gids met jou eie kulkodes in. Kulkodes werk in die speler, DuckStation en PCSX2.</p>
+        <p>Laai die kulkodepakket vir die emulator af op die Kulkodes-kaart van die Emulators-bladsy, of voer daar 'n gids met jou eie kulkodes in. Kulkodes werk in die speler, DuckStation, PCSX2 en MAME. Voer vir MAME die kulkodeversameling van mamecheat.co.uk in.</p>
 
         <h4>'n Aangeskakelde kulkode doen niks</h4>
         <p>Kulkodes geld die volgende keer wat jy Speel druk. 'n Kulkode wat aan is, skakel RetroAchievements se hardcore-modus af terwyl jy speel.</p>

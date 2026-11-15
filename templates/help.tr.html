@@ -520,6 +520,7 @@
     <h2 class="card-title">Ayarlar</h2>
     <div class="card-body">
         <p>Ayarlar, her biri alt bölümler içeren sekmelerde düzenlenmiştir. Yöneticiler ayrıca kendi sayfasını açan bir Emülatörler sekmesi görür.</p>
+        <p>Herkes yalnızca rolünün değiştirebildiği ayarları görür. Bir görüntüleyici veya oyuncu Profilim, Saat Dilimi, Tema, Dil, kütüphane istatistikleri, kupalar ve Destek bölümlerini görür. Bir düzenleyici ayrıca Bonus Diskler ve Kontrolcüler bölümlerini görür. Geri kalan her şey yöneticiler içindir.</p>
 
         <h3>Hesap Sekmesi</h3>
         <ul>
@@ -566,7 +567,6 @@
             <li><strong>Güncellemeler</strong> &mdash; Yeni bir sürümü denetleme, indirme ve kurma</li>
             <li><strong>Sunucu</strong> &mdash; RetroDB'yi yeniden başlatma veya kapatma</li>
             <li><strong>Günlükleme</strong> &mdash; Farklı kategoriler için günlük düzeyi ayarları ve günlük dosyaları</li>
-            <li><strong>Sorun Giderme</strong> &mdash; Takılmış bir RetroAchievements senkronizasyonunu temizleme</li>
         </ul>
 
         <h3 id="emulators-play">Emülatörler ve Oynama</h3>
@@ -577,6 +577,7 @@
 
         <h4>Hileler</h4>
         <p>Aynı sayfadaki <strong>Hileler</strong> bölümünde, ücretsiz herkese açık hile paketlerini almak için <strong>İndir</strong>'e basın veya zaten sahip olduğunuz bir hile klasörünü içe aktarın. RetroDB dosyaları kopyalar ve klasörünüzü asla değiştirmez; yeni dosyaları almak için yeniden içe aktarın. Ardından oyun sayfası, RetroArch (RetroDB), DuckStation veya PCSX2'de oynanan oyunlar için her hilenin açma/kapama anahtarıyla bir <strong>Hileler</strong> paneli gösterir. RetroArch (RetroDB) için açtığınız hileler Oyna'ya bir sonraki basışınızda uygulanır ve oynarken RetroArch'ın kendi menüsünde değiştirdiğiniz bir anahtar korunur. DuckStation ve PCSX2 için anahtarlar doğrudan emülatörün o oyuna ait ayarlarına kaydedilir; böylece emülatörün içinde yapılan bir değişiklik de panelde görünür. RetroDB emülatörde zaten bulunan bir hile dosyasının üzerine asla yazmaz. Açık bir hile RetroAchievements hardcore modunu duraklatır; DuckStation ve PCSX2 hardcore modda hileleri yok sayar.</p>
+        <p>MAME'de oynanan arcade oyunları için "MAME XML Cheats Collection" paketini mamecheat.co.uk adresinden tarayıcınızla indirin, ardından onu içeren klasörü içe aktarın. RetroDB paketi açar; bunun için 7-Zip aracını internetten indirir. Oyun sayfası bundan sonra o oyunun hilelerini anahtarsız listeler: MAME hileler hazır olarak başlar ve oynarken <strong>Tab</strong>'a, sonra <strong>Plugin Options</strong>'a, sonra <strong>Cheat</strong>'e basarak onları açarsınız. Daha yeni bir koleksiyonu içe aktarmak eskisinin yerini alır.</p>
 
         <h4>RetroArch tuşları</h4>
         <p>Bunlar RetroArch'ın kendi varsayılan tuşlarıdır; menüsündeki <strong>Settings &rarr; Input &rarr; Hotkeys</strong> bölümünden değiştirebilirsiniz.</p>
@@ -1564,6 +1565,10 @@
 
         <h3>Önizleme ve Uygula</h3>
         <p>Normalleştirmeyi uygulamadan önce, hangi oyunların etkileneceğini ve hangi değişikliklerin yapılacağını önizleyebilirsiniz. Bu, kütüphanenizde değişiklikleri onaylamadan önce gözden geçirmenizi sağlar.</p>
+
+        <h3>İki Şekilde Yazılan Adlar</h3>
+        <p><strong>Seri</strong>, <strong>Yayıncı</strong> ve <strong>Geliştirici</strong> düğmeleri, <code>Doom</code> ve <code>DOOM</code> gibi farklı büyük harflerle yazılmış adları listeler. En çok oyunda kullanılan yazım seçilir; isterseniz başka birini seçin, ardından <strong>Uygula</strong>'ya basın. Sonraki bir kazıma veya yapay zekâ ile doldurma adı farklı büyük harflerle getirirse, kütüphanenizdeki yazım kullanılır.</p>
+        <p><strong>Yayıncı</strong> ve <strong>Geliştirici</strong> altında <strong>Aynı şirket olabilecek adlar</strong>, <code>Eidos</code> ve <code>Eidos Interactive</code> gibi adları listeler. Hiçbiri işaretli değildir, çünkü benzer adlar farklı şirketler olabilir: <code>Atari Games</code> ve <code>Atari, Inc.</code> iki ayrı şirkettir. Bir satırda korunacak adı seçin, aynı şirket olan adları işaretleyin ve <strong>Birleştir</strong>'e basın. İşaretli adlar, hem Yayıncı hem de Geliştirici alanında korunan ada dönüşür; sonraki bir kazıma veya yapay zekâ ile doldurma birleştirilmiş bir adı getirirse, korunan ad kullanılır.</p>
     </div>
 </section>
 
@@ -1704,8 +1709,8 @@
         <ol>
             <li><strong>Ayarlar &rarr; Hesap &rarr; Kullanıcılar</strong> bölümüne gidin (yalnızca yönetici)</li>
             <li>Yeni bir hesap oluşturmak için <strong>"Kullanıcı Ekle"</strong> düğmesine tıklayın</li>
-            <li>Kullanıcı adı, görünen ad ve rol ayarlayın</li>
-            <li>Yeni kullanıcılar, ilk girişte değiştirilmesi gereken varsayılan bir şifre alır</li>
+            <li>Kullanıcı adı, görünen ad, rol ve 12 karakter veya daha uzun bir ilk şifre ayarlayın</li>
+            <li>Bu şifreyi kişiye verin; ilk girişte kendi şifresini seçer</li>
         </ol>
 
         <h3>Kimlik Doğrulama</h3>
@@ -1908,7 +1913,7 @@
         <h3 id="ts-cheats">Hileler</h3>
 
         <h4>"Bu oyun için hile bulunamadı."</h4>
-        <p>Emülatör için hile paketini Emülatörler sayfasındaki Hileler kartından indirin veya kendi hilelerinizin bulunduğu bir klasörü oradan içe aktarın. Hileler oynatıcıda, DuckStation'da ve PCSX2'de çalışır.</p>
+        <p>Emülatör için hile paketini Emülatörler sayfasındaki Hileler kartından indirin veya kendi hilelerinizin bulunduğu bir klasörü oradan içe aktarın. Hileler oynatıcıda, DuckStation'da, PCSX2'de ve MAME'de çalışır. MAME için hile koleksiyonunu mamecheat.co.uk adresinden içe aktarın.</p>
 
         <h4>Açık bir hile hiçbir şey yapmıyor</h4>
         <p>Hileler bir sonraki Oyna'ya bastığınızda uygulanır. Açık bir hile, oynarken RetroAchievements hardcore kipini kapatır.</p>

@@ -520,6 +520,7 @@
     <h2 class="card-title">Paramètres</h2>
     <div class="card-body">
         <p>Les paramètres sont organisés en onglets, chacun comportant des sous-sections. Les administrateurs voient aussi un onglet Émulateurs, qui ouvre sa propre page.</p>
+        <p>Chaque personne ne voit que les réglages que son rôle peut modifier. Un lecteur ou un joueur voit Mon profil, Fuseau horaire, Thème, Langue, les statistiques de la bibliothèque, les trophées et Soutien. Un éditeur voit aussi Disques bonus et Manettes. Tout le reste est réservé aux administrateurs.</p>
 
         <h3>Onglet Compte</h3>
         <ul>
@@ -566,7 +567,6 @@
             <li><strong>Mises à jour</strong> &mdash; Rechercher, télécharger et installer une nouvelle version</li>
             <li><strong>Serveur</strong> &mdash; Redémarrer ou arrêter RetroDB</li>
             <li><strong>Journalisation</strong> &mdash; Réglages du niveau de journal pour différentes catégories, et les fichiers de journal</li>
-            <li><strong>Dépannage</strong> &mdash; Débloquer une synchronisation RetroAchievements bloquée</li>
         </ul>
 
         <h3 id="emulators-play">Émulateurs et Jouer</h3>
@@ -577,6 +577,7 @@
 
         <h4>Codes de triche</h4>
         <p>Sous <strong>Codes de triche</strong>, sur la même page, appuyez sur <strong>Télécharger</strong> pour récupérer les packs publics et gratuits de codes de triche, ou importez un dossier de codes de triche que vous avez déjà. RetroDB copie les fichiers et ne modifie jamais votre dossier ; importez à nouveau pour récupérer les nouveaux fichiers. La page du jeu affiche alors un panneau <strong>Codes de triche</strong> pour les jeux lancés dans RetroArch (RetroDB), DuckStation ou PCSX2, avec un interrupteur marche/arrêt pour chaque code. Pour RetroArch (RetroDB), les codes de triche que vous activez s'appliquent la prochaine fois que vous appuyez sur Jouer, et un interrupteur que vous basculez dans le menu de RetroArch lui-même pendant la partie est conservé. Pour DuckStation et PCSX2, les interrupteurs sont enregistrés directement dans les réglages de l'émulateur pour ce jeu, donc un changement fait dans l'émulateur s'affiche aussi dans le panneau. RetroDB n'écrase jamais un fichier de codes de triche que l'émulateur possède déjà. Un code de triche activé suspend le mode hardcore de RetroAchievements ; DuckStation et PCSX2 ignorent les codes de triche en mode hardcore.</p>
+        <p>Pour les jeux d'arcade joués dans MAME, téléchargez la « MAME XML Cheats Collection » sur mamecheat.co.uk dans votre navigateur, puis importez le dossier qui la contient. RetroDB la décompresse, en récupérant pour cela l'outil 7-Zip sur Internet. La page du jeu liste alors les codes de triche de ce jeu, sans interrupteurs : MAME démarre avec ses codes de triche prêts, et vous les activez pendant que vous jouez en appuyant sur <strong>Tab</strong>, puis <strong>Plugin Options</strong>, puis <strong>Cheat</strong>. Importer une collection plus récente remplace l'ancienne.</p>
 
         <h4>Touches de RetroArch</h4>
         <p>Ce sont les touches par défaut de RetroArch lui-même ; vous pouvez les changer dans son menu, sous <strong>Settings &rarr; Input &rarr; Hotkeys</strong>.</p>
@@ -1564,6 +1565,10 @@
 
         <h3>Aperçu et application</h3>
         <p>Avant d'appliquer la normalisation, vous pouvez prévisualiser quels jeux seront affectés et quelles modifications seront effectuées. Cela vous permet de vérifier avant de valider les changements dans votre bibliothèque.</p>
+
+        <h3>Noms écrits de deux façons</h3>
+        <p>Les boutons <strong>Franchise</strong>, <strong>Éditeur</strong> et <strong>Développeur</strong> listent des noms écrits avec des majuscules différentes, comme <code>Doom</code> et <code>DOOM</code>. L'orthographe présente sur le plus de jeux est retenue ; choisissez-en une autre si vous préférez, puis appuyez sur <strong>Appliquer</strong>. Une récupération ou un Remplissage IA ultérieur qui apporte le nom avec d'autres majuscules utilise l'orthographe de votre bibliothèque.</p>
+        <p>Sous <strong>Éditeur</strong> et <strong>Développeur</strong>, <strong>Noms qui pourraient désigner une même société</strong> liste des noms comme <code>Eidos</code> et <code>Eidos Interactive</code>. Rien n'est coché, car des noms qui se ressemblent peuvent désigner des sociétés différentes : <code>Atari Games</code> et <code>Atari, Inc.</code> sont deux sociétés. Dans une ligne, choisissez le nom à garder, cochez les noms qui désignent la même société, puis appuyez sur <strong>Fusionner</strong>. Les noms cochés prennent le nom gardé à la fois dans Éditeur et dans Développeur, et une récupération ou un Remplissage IA ultérieur qui apporte un nom fusionné utilise le nom gardé.</p>
     </div>
 </section>
 
@@ -1704,8 +1709,8 @@
         <ol>
             <li>Rendez-vous sur <strong>Paramètres &rarr; Compte &rarr; Utilisateurs</strong> (administrateur uniquement)</li>
             <li>Cliquez sur <strong>« Ajouter un utilisateur »</strong> pour créer un nouveau compte</li>
-            <li>Définissez le nom d'utilisateur, le nom d'affichage et le rôle</li>
-            <li>Les nouveaux utilisateurs reçoivent un mot de passe par défaut qui doit être changé à la première connexion</li>
+            <li>Définissez le nom d'utilisateur, le nom d'affichage, le rôle et un premier mot de passe de 12 caractères ou plus</li>
+            <li>Donnez-leur ce mot de passe ; ils choisissent le leur à leur première connexion</li>
         </ol>
 
         <h3>Authentification</h3>
@@ -1908,7 +1913,7 @@
         <h3 id="ts-cheats">Codes de triche</h3>
 
         <h4>« Aucun code de triche trouvé pour ce jeu. »</h4>
-        <p>Téléchargez le pack de codes de triche de l'émulateur sur la carte Codes de triche de la page Émulateurs, ou importez-y un dossier de vos propres codes. Les codes de triche fonctionnent dans le lecteur, DuckStation et PCSX2.</p>
+        <p>Téléchargez le pack de codes de triche de l'émulateur sur la carte Codes de triche de la page Émulateurs, ou importez-y un dossier de vos propres codes. Les codes de triche fonctionnent dans le lecteur, DuckStation, PCSX2 et MAME. Pour MAME, importez la collection de codes de triche de mamecheat.co.uk.</p>
 
         <h4>Un code de triche activé ne fait rien</h4>
         <p>Les codes de triche s'appliquent la prochaine fois que vous appuyez sur Jouer. Un code activé désactive le mode hardcore de RetroAchievements pendant que vous jouez.</p>

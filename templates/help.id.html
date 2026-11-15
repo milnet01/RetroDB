@@ -520,6 +520,7 @@
     <h2 class="card-title">Pengaturan</h2>
     <div class="card-body">
         <p>Pengaturan diatur ke dalam tab, masing-masing dengan subbagian. Admin juga melihat tab Emulator, yang membuka halamannya sendiri.</p>
+        <p>Setiap orang hanya melihat pengaturan yang bisa diubah oleh perannya. Viewer atau player melihat Profil Saya, Zona Waktu, Tema, Bahasa, statistik pustaka, trofi, dan Dukungan. Editor juga melihat Disc Bonus dan Kontroler. Selebihnya khusus admin.</p>
 
         <h3>Tab Account</h3>
         <ul>
@@ -566,7 +567,6 @@
             <li><strong>Pembaruan</strong> &mdash; Periksa, unduh, dan pasang versi baru</li>
             <li><strong>Server</strong> &mdash; Mulai ulang atau matikan RetroDB</li>
             <li><strong>Logging</strong> &mdash; Pengaturan tingkat log untuk berbagai kategori, dan berkas lognya</li>
-            <li><strong>Pemecahan Masalah</strong> &mdash; Bersihkan sinkronisasi RetroAchievements yang macet</li>
         </ul>
 
         <h3 id="emulators-play">Emulator dan Bermain</h3>
@@ -577,6 +577,7 @@
 
         <h4>Cheat</h4>
         <p>Di bawah <strong>Cheat</strong> pada halaman yang sama, tekan <strong>Unduh</strong> untuk mengambil paket cheat publik yang gratis, atau impor folder cheat yang sudah Anda miliki. RetroDB menyalin file-nya dan tidak pernah mengubah folder Anda; impor lagi untuk mengambil file baru. Halaman game kemudian menampilkan panel <strong>Cheat</strong> untuk game yang dimainkan di RetroArch (RetroDB), DuckStation, atau PCSX2, dengan sakelar nyala/mati untuk setiap cheat. Untuk RetroArch (RetroDB), cheat yang Anda nyalakan berlaku saat Anda menekan Mainkan berikutnya, dan sakelar yang Anda ubah di menu RetroArch sendiri selama bermain tetap disimpan. Untuk DuckStation dan PCSX2, sakelarnya disimpan langsung di pengaturan emulator untuk game tersebut, sehingga perubahan yang dibuat di dalam emulator juga tampil di panel. RetroDB tidak pernah menimpa file cheat yang sudah dimiliki emulator. Cheat yang menyala menjeda mode hardcore RetroAchievements; DuckStation dan PCSX2 mengabaikan cheat dalam mode hardcore.</p>
+        <p>Untuk game arkade yang dimainkan di MAME, unduh "MAME XML Cheats Collection" dari mamecheat.co.uk lewat browser Anda, lalu impor folder yang berisinya. RetroDB mengekstraknya, dan untuk itu mengambil perkakas 7-Zip dari internet. Halaman game kemudian menampilkan daftar cheat game itu tanpa tombol: MAME dimulai dengan cheat-nya siap, dan Anda menyalakannya saat bermain dengan menekan <strong>Tab</strong>, lalu <strong>Plugin Options</strong>, lalu <strong>Cheat</strong>. Mengimpor koleksi yang lebih baru menggantikan yang lama.</p>
 
         <h4>Tombol RetroArch</h4>
         <p>Ini adalah tombol bawaan RetroArch sendiri; Anda dapat mengubahnya di menunya, di bawah <strong>Settings &rarr; Input &rarr; Hotkeys</strong>.</p>
@@ -1564,6 +1565,10 @@
 
         <h3>Pratinjau & Terapkan</h3>
         <p>Sebelum menerapkan normalisasi, Anda dapat melihat pratinjau game mana yang akan terpengaruh dan perubahan apa yang akan dibuat. Ini memungkinkan Anda meninjau sebelum menerapkan perubahan ke perpustakaan Anda.</p>
+
+        <h3>Nama yang Dieja Dua Cara</h3>
+        <p>Tombol <strong>Waralaba</strong>, <strong>Penerbit</strong>, dan <strong>Pengembang</strong> mendaftar nama yang dieja dengan huruf kapital berbeda, seperti <code>Doom</code> dan <code>DOOM</code>. Ejaan yang dipakai game terbanyak dipilih; pilih yang lain bila Anda mau, lalu tekan <strong>Terapkan</strong>. Scrape atau Isi dengan AI berikutnya yang membawa nama dengan huruf kapital berbeda akan memakai ejaan di pustaka Anda.</p>
+        <p>Di bawah <strong>Penerbit</strong> dan <strong>Pengembang</strong>, <strong>Nama yang mungkin satu perusahaan</strong> mendaftar nama seperti <code>Eidos</code> dan <code>Eidos Interactive</code>. Tidak ada yang dicentang, karena nama yang mirip bisa jadi perusahaan berbeda: <code>Atari Games</code> dan <code>Atari, Inc.</code> adalah dua perusahaan. Pada sebuah baris, pilih nama yang dipertahankan, centang nama yang merupakan perusahaan sama, lalu tekan <strong>Gabungkan</strong>. Nama yang dicentang berubah menjadi nama yang dipertahankan, di Penerbit maupun Pengembang, dan scrape atau Isi dengan AI berikutnya yang membawa nama yang sudah digabung akan memakai nama yang dipertahankan.</p>
     </div>
 </section>
 
@@ -1704,8 +1709,8 @@
         <ol>
             <li>Buka <strong>Settings &rarr; Account &rarr; Users</strong> (khusus admin)</li>
             <li>Klik <strong>"Add User"</strong> untuk membuat akun baru</li>
-            <li>Atur nama pengguna, nama tampilan, dan peran</li>
-            <li>Pengguna baru menerima kata sandi bawaan yang harus diganti saat login pertama kali</li>
+            <li>Atur nama pengguna, nama tampilan, peran, dan kata sandi pertama sepanjang 12 karakter atau lebih</li>
+            <li>Berikan kata sandi itu kepada mereka; mereka memilih kata sandi sendiri saat pertama kali masuk</li>
         </ol>
 
         <h3>Autentikasi</h3>
@@ -1908,7 +1913,7 @@
         <h3 id="ts-cheats">Cheat</h3>
 
         <h4>"Tidak ada cheat yang ditemukan untuk game ini."</h4>
-        <p>Unduh paket cheat untuk emulatornya di kartu Cheat pada halaman Emulator, atau impor folder cheat milik Anda di sana. Cheat berfungsi di pemutar, DuckStation, dan PCSX2.</p>
+        <p>Unduh paket cheat untuk emulatornya di kartu Cheat pada halaman Emulator, atau impor folder cheat milik Anda di sana. Cheat berfungsi di pemutar, DuckStation, PCSX2, dan MAME. Untuk MAME, impor koleksi cheat dari mamecheat.co.uk.</p>
 
         <h4>Cheat yang dinyalakan tidak berpengaruh</h4>
         <p>Cheat berlaku saat Anda menekan Mainkan berikutnya. Cheat yang menyala mematikan mode hardcore RetroAchievements selama Anda bermain.</p>
