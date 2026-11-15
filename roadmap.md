@@ -2896,7 +2896,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: fix.
   Source: PASS-59-308 research 2026-11-15.
 
-- 📋 [PASS-59-312] **Translate the English left on Settings, the scrape window and two messages (fix, M).**
+- ✅ [PASS-59-312] **Translate the English left on Settings, the scrape window and two messages (fix, M).**
   - **Not wrapped for translation**: game_detail.html's scrape window
     "No results found. Try a different search term." (and its siblings
     there); services/auth.py "You do not have permission to access this
@@ -2910,6 +2910,9 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     help.<locale>.html has it.
   - **Note**: some locale manuals now quote the first two messages
     translated, ahead of the app; wrapping them closes that gap.
+  Shipped 2026-11-15 (71dce1d6 wrapping; d3432ae5 locale manuals gained
+  the Names Spelled Two Ways section). The new msgids get their
+  translations from translate_release.py at release.
   **Layman:** Some buttons, headings and messages still show in English whatever language you pick; this translates them.
   Kind: fix.
   Source: PASS-59-308 translation and Settings inventory 2026-11-15.
