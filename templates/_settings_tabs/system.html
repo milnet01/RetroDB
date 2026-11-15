@@ -413,24 +413,6 @@
     </div>
     <div class="card-body">
         <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
-            <span>🔄</span> {{ _('Bulk Scrape Issues') }}
-        </h3>
-        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-            {{ _('If a bulk scrape gets stuck or won\'t clear from the toast notification, use this button to force clear all bulk scrape state from your browser\'s local storage.') }}
-        </p>
-        <div style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
-            <button type="button" data-on-click="clearStuckBulkScrape" class="btn btn-danger">
-                <span class="btn-icon">🧹</span>
-                {{ _('Clear Stuck Bulk Scrape') }}
-            </button>
-            <span id="bulkScrapeClearResult" role="status" aria-live="polite" style="font-size: 0.9rem;"></span>
-        </div>
-        <div id="bulkScrapeStatusInfo" style="margin-top: var(--spacing-lg); padding: var(--spacing-md); background: rgba(0, 0, 0, 0.2); border-radius: var(--radius-md);">
-            <h5 style="color: var(--text-secondary); margin-bottom: var(--spacing-sm);">{{ _('Current Bulk Scrape State:') }}</h5>
-            <pre id="bulkScrapeStateDisplay" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); white-space: pre-wrap; margin: 0;">{{ _('Loading...') }}</pre>
-        </div>
-        
-        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
             <span>🏆</span> {{ _('Achievement Sync Issues') }}
         </h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">

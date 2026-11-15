@@ -2820,7 +2820,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Source: PASS-59-189 work, 2026-11-15.
   Splits-from: PASS-59-278.
 
-- 📋 [PASS-59-306] **Remove the game page's dead bulk-scrape conflict code (refactor, S).**
+- ✅ [PASS-59-306] **Remove the game page's dead bulk-scrape conflict code (refactor, S).**
   - **Status**: todo
   - **Why**: `openScrapeModal` in `templates/game_detail.html` reads
     the localStorage keys `bulkScrapeState` and `bulkScrapeGameIds`.
@@ -2833,6 +2833,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     a bulk scrape from overrunning a service, so nothing needs adding.
   - **Do**: delete the branch, the modal and its helpers, and the debug
     box with its clear button; search the tests for the names first.
+  Shipped 2026-11-15: removed the conflict branch, modal and helpers
+  from game_detail.html, and the Bulk Scrape box with
+  displayBulkScrapeState / clearStuckBulkScrape from Settings > System;
+  catalogs regenerated. The help manual's "Bulk Scrape Stuck" advice is
+  rewritten with the manual's troubleshooting work.
   **Layman:** Old leftover code on the game page, which can never run, gets removed.
   Kind: refactor.
   Source: PASS-59-251 review 2026-11-09; split from PASS-59-287 2026-11-15.

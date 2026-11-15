@@ -4548,91 +4548,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // TROUBLESHOOTING FUNCTIONS
 // ============================================
 
-// Display current bulk scrape state
-function displayBulkScrapeState() {
-    const stateDisplay = document.getElementById('bulkScrapeStateDisplay');
-    const state = localStorage.getItem('bulkScrapeState');
-    const gameIds = localStorage.getItem('bulkScrapeGameIds');
-    const systemId = localStorage.getItem('bulkScrapeSystemId');
-    const queue = localStorage.getItem('bulkScrapeQueue');
-    const pausedForSingle = localStorage.getItem('bulkScrapePausedForSingle');
-    const pausedFromToast = localStorage.getItem('bulkScrapePausedFromToast');
-    
-    if (!state && !gameIds && !queue) {
-        stateDisplay.textContent = {{ _('No bulk scrape state found (all clear)')|tojson }};
-        stateDisplay.style.color = 'var(--neon-green)';
-        return;
-    }
-    
-    let output = '';
-    
-    if (state) {
-        try {
-            const parsed = JSON.parse(state);
-            output += 'State: ' + JSON.stringify(parsed, null, 2) + '\n\n';
-        } catch (e) {
-            output += 'State: (invalid JSON) ' + state + '\n\n';
-        }
-    }
-    
-    if (gameIds) {
-        try {
-            const ids = JSON.parse(gameIds);
-            output += 'Game IDs in queue: ' + ids.length + ' games\n';
-        } catch (e) {
-            output += 'Game IDs: (invalid)\n';
-        }
-    }
-    
-    if (systemId) {
-        output += 'System ID: ' + systemId + '\n';
-    }
-    
-    if (queue) {
-        try {
-            const q = JSON.parse(queue);
-            output += 'Queued scrapes: ' + q.length + '\n';
-        } catch (e) {
-            output += 'Queue: (invalid)\n';
-        }
-    }
-    
-    if (pausedForSingle) output += 'Paused for single: true\n';
-    if (pausedFromToast) output += 'Paused from toast: true\n';
-    
-    stateDisplay.textContent = output || 'No data';
-    stateDisplay.style.color = state ? 'var(--neon-orange)' : 'var(--neon-green)';
-}
-
-// Clear stuck bulk scrape
-function clearStuckBulkScrape() {
-    const resultEl = document.getElementById('bulkScrapeClearResult');
-    
-    // Clear all bulk scrape related localStorage items
-    localStorage.removeItem('bulkScrapeState');
-    localStorage.removeItem('bulkScrapeGameIds');
-    localStorage.removeItem('bulkScrapeSystemId');
-    localStorage.removeItem('bulkScrapeQueue');
-    localStorage.removeItem('bulkScrapePausedForSingle');
-    localStorage.removeItem('bulkScrapePausedFromToast');
-    localStorage.removeItem('showBulkScrapeModal');
-    
-    // Hide active toast if visible
-    if (typeof UnifiedToastController !== 'undefined') {
-        UnifiedToastController.hideActiveToast('bulk-scrape');
-    }
-    
-    resultEl.innerHTML = '<span style="color: var(--neon-green);">✅ ' + escapeHtml({{ _('Bulk scrape state cleared successfully!')|tojson }}) + '</span>';
-    
-    // Refresh the state display
-    displayBulkScrapeState();
-    
-    // Clear the result message after 5 seconds
-    setTimeout(() => {
-        resultEl.innerHTML = '';
-    }, 5000);
-}
-
 function clearStuckRASync() {
     const resultEl = document.getElementById('raSyncClearResult');
     
@@ -4700,7 +4615,6 @@ function displayRASyncState() {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    displayBulkScrapeState();
     displayRASyncState();
 });
 

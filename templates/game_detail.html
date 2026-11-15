@@ -5037,112 +5037,14 @@ document.getElementById('editModal')?.addEventListener('click', function(e) {
 // ============================================
 
 function openScrapeModal() {
-    // Check if this game is part of an active bulk scrape
-    const bulkState = localStorage.getItem('bulkScrapeState');
-    const bulkGameIds = JSON.parse(localStorage.getItem('bulkScrapeGameIds') || '[]');
-    const currentGameId = {{ game.id }};
-    
-    if (bulkState) {
-        try {
-            const state = JSON.parse(bulkState);
-            if (state.running && !state.completed) {
-                // Check if this game is in the bulk scrape queue
-                if (bulkGameIds.includes(currentGameId)) {
-                    showBulkScrapeConflictModal(currentGameId);
-                    return;
-                } else {
-                    // Game not in bulk queue, but need to pause bulk scrape for rate limiting
-                    pauseBulkScrapeForSingle(function() {
-                        actuallyOpenScrapeModal();
-                    });
-                    return;
-                }
-            }
-        } catch (e) {
-            console.error('Error checking bulk scrape state:', e);
-        }
-    }
-    
-    actuallyOpenScrapeModal();
-}
-
-function actuallyOpenScrapeModal() {
     document.getElementById('scrapeModal').classList.add('active');
     document.getElementById('scrapeSearchInput').focus();
     document.body.style.overflow = 'hidden';
 }
 
-function showBulkScrapeConflictModal(gameId) {
-    const modal = document.createElement('div');
-    modal.className = 'confirm-modal active';
-    modal.id = 'bulkConflictModal';
-    modal.innerHTML = `
-        <div class="confirm-modal-content glass-panel" role="dialog" aria-modal="true" aria-labelledby="bulkConflictTitle">
-            <div class="confirm-modal-header">
-                <h2 id="bulkConflictTitle">⚠️ Game in Bulk Scrape Queue</h2>
-            </div>
-            <div class="confirm-modal-body">
-                <p>This game is currently queued in an active bulk scrape operation.</p>
-                <p style="margin-top: 12px;">What would you like to do?</p>
-            </div>
-            <div class="confirm-modal-footer">
-                <button type="button" class="btn btn-secondary" data-on-click="closeBulkConflictModal">
-                    Cancel
-                </button>
-                <button type="button" class="btn btn-primary" data-on-click="scrapeNowRemoveFromBulk" data-args="${actionArgs(gameId)}">
-                    Scrape Now (Remove from Bulk)
-                </button>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(modal);
-    if (window.ModalFocusTrap) {
-        ModalFocusTrap.activate(modal.querySelector('.confirm-modal-content'),
-                                document.activeElement,
-                                { onEscape: closeBulkConflictModal });
-    }
-}
-
-function closeBulkConflictModal() {
-    const modal = document.getElementById('bulkConflictModal');
-    if (!modal) return;
-    modal.remove();
-    if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
-}
-
-function scrapeNowRemoveFromBulk(gameId) {
-    closeBulkConflictModal();
-    
-    // Remove this game from the bulk scrape queue
-    const bulkGameIds = JSON.parse(localStorage.getItem('bulkScrapeGameIds') || '[]');
-    const newQueue = bulkGameIds.filter(id => id !== gameId);
-    localStorage.setItem('bulkScrapeGameIds', JSON.stringify(newQueue));
-    
-    // Pause bulk scrape for rate limiting
-    pauseBulkScrapeForSingle(function() {
-        actuallyOpenScrapeModal();
-    });
-}
-
-function pauseBulkScrapeForSingle(callback) {
-    // Set a flag to pause bulk scrape
-    localStorage.setItem('bulkScrapePausedForSingle', 'true');
-    
-    // Small delay to allow bulk scrape loop to pause
-    setTimeout(function() {
-        callback();
-    }, 500);
-}
-
-function resumeBulkScrapeAfterSingle() {
-    localStorage.removeItem('bulkScrapePausedForSingle');
-}
-
 function closeScrapeModal() {
     document.getElementById('scrapeModal').classList.remove('active');
     document.body.style.overflow = '';
-    // Resume any paused bulk scrape
-    resumeBulkScrapeAfterSingle();
 }
 
 // Delete game from database
