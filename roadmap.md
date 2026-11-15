@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=316 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=317 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -3018,6 +3018,17 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Makes the admin Settings page lighter to open.
   Kind: perf.
   Source: user-request-2026-11-15.
+
+- 📋 [PASS-59-317] **Locale manuals out of step: one extra bold phrase in eight, "Display" named two ways in four (doc-fix, S).**
+  - help.es/fr/it/ja/ko/nb/xh/zu.html each hold one <strong> pair that
+    help.html lacks, near tag 3477 of the whole-file tag sequence; ids and
+    anchors match. Present at 6e72ab2b, before PASS-59-315.
+  - The Display tab is named differently in the manual and the catalog:
+    af (Vertoning / Vertoon), es (Pantalla / Visualización),
+    ko (디스플레이 / 표시), tr (Görünüm / Görüntü).
+  **Layman:** Tidies small differences between the translated help pages and the English one.
+  Kind: doc-fix.
+  Source: PASS-59-315 locale mirroring 2026-11-15.
 
 ## 4.0.x — Security and data-loss fixes for the web version
 
