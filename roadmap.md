@@ -2878,7 +2878,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: doc.
   Source: user-request-2026-11-15.
 
-- 📋 [PASS-59-310] **Settings > System's "Clear Stuck RA Sync" says it cleared things it did not (fix, S).**
+- ✅ [PASS-59-310] **Settings > System's "Clear Stuck RA Sync" says it cleared things it did not (fix, S).**
   - **Why**: `clearStuckRASync` in `templates/settings.html` removes
     localStorage keys `toast-controller.js` already drops on every page
     load, then posts /api/achievements/sync-cancel and shows "RA sync
@@ -2890,6 +2890,8 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     item's "Remove from queue" in the toast.
   - **Decided** (user, 2026-11-15): remove the card; the toast does
     the job.
+  Shipped 2026-11-15 (0231ba6c): the Troubleshooting card and its script
+  removed; help's System Tab list updated.
   **Layman:** The button for a stuck RetroAchievements sync reports success even when nothing was stopped, and its queue box is always empty.
   Kind: fix.
   Source: PASS-59-308 research 2026-11-15.
@@ -2921,6 +2923,10 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     Sections B-D wait for the user after that; the proposed order is
     Theme/Language and notification times to My Profile, then the
     removals, the rewording, and the bigger moves last.
+  - **Section A done 2026-11-15** (67ba0b0f, 0231ba6c): A1-A8 and A10.
+  A9 is PASS-59-312. Tests: tests/test_pass59_311_settings_fixes.py.
+  Help changes still to mirror into the locale manuals. Sections B-D
+  wait for the user.
   **Layman:** A review of every setting found broken buttons, settings in the wrong place and confusing words; the user chooses which changes to make.
   Kind: ux.
   Source: user-request-2026-11-15.
