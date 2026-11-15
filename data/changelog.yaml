@@ -1,6 +1,16 @@
 - version: 4.0.0
   date: 2026-11-15
   tags:
+  - type: fix
+    label: 'Add User now asks for the new person''s first password (12 characters or more), and they choose their own the first time they sign in. Before, every new account quietly got the same password, "changeme", which anyone could use until its owner signed in'
+  - type: fix
+    label: 'Settings shows each person only what their role can change. Viewers and players see their profile, time zone, theme, language, statistics and trophies; editors also see Bonus Discs and Controllers. They used to see admin settings whose Save button was then refused, some showing wrong values'
+  - type: fix
+    label: 'Settings → System no longer has the Clear Stuck RA Sync button. It said it had cleared the sync even when it had not; stop a RetroAchievements sync with the buttons on its progress notice'
+  - type: fix
+    label: 'Settings → Data now shows and scans your own RPCS3 trophy folder when you have set one, instead of greying out Scan Trophies'
+  - type: fix
+    label: 'Small Settings fixes: Reset to Default on the scraper list says to press Save Settings to keep it; a new install shows ScreenScraper switched on, as it really is; the Steam ID help asks for the 17-digit number; the Emulators page no longer mentions an Add button it does not have; the Setup Wizard hides your API keys as you type them'
   - type: enhancement
     label: 'The help manual now has a search box. Type a word to see only the parts of the manual that mention it, with the word marked. It ignores accents and works in every language'
   - type: fix
