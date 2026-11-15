@@ -101,6 +101,19 @@ def _no_service_limits_between_tests():
     service_limits.clear()
 
 
+@pytest.fixture(autouse=True)
+def _no_rate_limit_between_tests():
+    """Every test client shares one address, so a per-minute route limit
+    (AI Fill allows 10) counted calls from earlier tests and refused a later
+    one on a fast run. A test of a limit still counts within itself."""
+    import sys
+    app_module = sys.modules.get('app')
+    limiter = getattr(app_module, 'limiter', None)
+    if limiter is not None:
+        limiter.reset()
+    yield
+
+
 @pytest.fixture
 def app_client(monkeypatch):
     """Function-scoped Flask test client with TESTING=True restored on teardown.
