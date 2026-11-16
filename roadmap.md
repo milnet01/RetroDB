@@ -2937,6 +2937,16 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   The Server Port box notes that the address changes after Restart.
   Order: personal settings to My Profile, removals, rewording, then the
   bigger moves.
+  **B and most of C done 2026-11-16** (893f1e73): personal settings on
+  Account, per-user notification times, paths in one card, logos in one
+  button, Support on Help, port/database/Troubleshooting on System >
+  Server, six dead settings retired. Still to do: Controllers on its own
+  page; all of D (Strict/Normal/Loose, one named Save per card, Change
+  Password confirm box, AI prices, RetroAchievements words, plain words,
+  TheGamesDB and Clear Scraped Data descriptions); help.html Settings
+  sections and the 20 locale manuals; the 4.0.0 changelog and its 20
+  locale copies; catalogs; push. Found: the live server gets PORT=5000
+  from outside RetroDB, so the new port box shows read-only there.
   **Layman:** A review of every setting found broken buttons, settings in the wrong place and confusing words; the user chooses which changes to make.
   Kind: ux.
   Source: user-request-2026-11-15.
