@@ -3012,7 +3012,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: feature.
   Source: user-request-2026-11-15.
 
-- 📋 [PASS-59-314] **MAME cheats: on/off switches on the game page (enhancement, M).**
+- ✅ [PASS-59-314] **MAME cheats: on/off switches on the game page (enhancement, M).**
   - **Found**: MAME 0.289's cheat plugin keeps no record of which cheats
     are on, but exposes `emu.plugin.cheat.list()` / `.get(i):set_enabled()`
     to Lua (`/usr/share/mame/plugins/cheat/init.lua`). An `-autoboot_script`
@@ -3020,6 +3020,13 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - **Open**: where the choices live (MAME has no per-game file to hold
     them), and whether a "run" cheat switched on at boot behaves.
   - Spec: docs/specs/PASS-59-155-cheats.md §4.8.
+  Shipped 2026-11-16. Choices live in data/cheats/own/mame/on/<set>.txt;
+  the launch adds -autoboot_script retrodb.lua, which switches them on
+  at each start (hard resets included) and writes MAME's switches back
+  as the game stops. Only run/off cheats without a value get a switch;
+  value and one-shot cheats stay in MAME's menu. MAME 0.289 on Galaga:
+  Infinite Lives on at start held the lives byte at 6 (251 without); a
+  mid-game change came back to the file. Spec §4.8, INV-13.
   **Layman:** Lets you pick a MAME game's cheats on its page before you press Play, instead of in MAME's own menu.
   Kind: enhancement.
   Source: PASS-59-313 build 2026-11-15.

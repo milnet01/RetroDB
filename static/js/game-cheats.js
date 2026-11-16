@@ -6,9 +6,10 @@
  * list, copied in place at the next Play; for DuckStation and PCSX2 it
  * writes straight into the emulator's settings for this game. The panel
  * re-reads those files each time, so a switch flipped inside the emulator
- * shows here. Switches only for the player on a system with cheats, DuckStation
- * and PCSX2; MAME gets the names alone (PASS-59-313); any other game gets
- * the reason alone (PASS-59-197).
+ * shows here. MAME keeps no record of its own, so its switches are saved by
+ * RetroDB and MAME saves its in-game changes back as it stops (PASS-59-314).
+ * Switches for the player on a system with cheats, DuckStation, PCSX2 and
+ * MAME; any other game gets the reason alone (PASS-59-197).
  *
  * Contract: docs/specs/PASS-59-155-cheats.md §4.6, §4.7.
  */
@@ -64,17 +65,6 @@
         return li;
     }
 
-    // MAME keeps no record of which cheats are on, so its list has no
-    // switches; MAME's own menu turns them on (PASS-59-313).
-    function nameRow(name) {
-        const li = document.createElement('li');
-        const label = document.createElement('span');
-        label.className = 'cheat-name';
-        label.textContent = name;
-        li.append(label);
-        return li;
-    }
-
     function renderNote(panel, view) {
         const note = document.getElementById('cheatsNote');
         note.replaceChildren();
@@ -90,7 +80,7 @@
         }
         const notes = {
             player: t('Switched-on cheats apply the next time you press Play.'),
-            mame: t('Switch these on in MAME while you play: press Tab, then Plugin Options, then Cheat.'),
+            mame: t('Switched-on cheats apply the next time you press Play. Changes made in MAME\'s menu show here after you quit.'),
         };
         note.textContent = notes[view.emulator]
             || t('Saved in the emulator\'s settings for this game. Changes made inside the emulator show here.');
@@ -139,13 +129,12 @@
             rows.push(switchRow(t('Always on while cheats are on'), true, true,
                 t('PCSX2 applies these lines whenever any cheat is on.')));
         }
+        // A locked MAME cheat takes a value or acts once: MAME's menu sets it.
+        const lockedWhy = view.emulator === 'mame'
+            ? t('Set this one in MAME while you play: press Tab, then Plugin Options, then Cheat.')
+            : t('This name holds "=", which the emulator\'s settings cannot hold.');
         for (const c of view.cheats) {
-            if (view.emulator === 'mame') {
-                rows.push(nameRow(c.name));
-                continue;
-            }
-            rows.push(switchRow(c.name, c.enabled, !canEdit || c.locked,
-                c.locked ? t('This name holds "=", which the emulator\'s settings cannot hold.') : ''));
+            rows.push(switchRow(c.name, c.enabled, !canEdit || c.locked, c.locked ? lockedWhy : ''));
         }
         list.replaceChildren(...rows);
         const filter = document.getElementById('cheatsFilter');

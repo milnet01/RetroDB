@@ -120,7 +120,7 @@ def test_an_archive_with_no_cheats_leaves_the_old_collection(store, fake_7zip):
 def test_launch_args_only_once_a_collection_is_in(store, fake_7zip):
     assert cheats.mame_launch_args() == []
     cheats.import_folder(_download_folder(store / 'download', ['pacman']))
-    assert cheats.mame_launch_args() == ['-plugin', 'cheat', '-cheatpath', str(cheats.mame_dir())]
+    assert cheats.mame_launch_args()[:4] == ['-plugin', 'cheat', '-cheatpath', str(cheats.mame_dir())]
 
 
 def test_only_standalone_mame_counts_as_mame():

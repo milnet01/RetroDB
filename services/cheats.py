@@ -11,12 +11,14 @@
 #
 # Each emulator's own files are the record of what is on: the player's in
 # the game's .cht, DuckStation's and PCSX2's in their per-game settings
-# file. RetroDB keeps no table of switches (§4.5).
+# file. RetroDB keeps no table of switches (§4.5). MAME keeps no record, so
+# own/mame/on/<set>.txt is one, which MAME writes back as it stops (§4.8).
 #
 #   download_pack() / import_folder()     fill the store (§4.2, §4.3)
 #   game_view() / save()                  the Cheats panel (§4.6, §4.7)
 #   place_for_launch() / take_back()      the player's copy, around a session
-#   mame_launch_args()                    MAME's cheat plugin (PASS-59-313)
+#   mame_launch_args()                    MAME's cheat plugin and switches
+#                                         (PASS-59-313, PASS-59-314)
 # =============================================================================
 
 from __future__ import annotations
@@ -336,12 +338,69 @@ def import_folder(path) -> dict:
 # to keep it packed: it holds over 180,000 files. Its site refuses automated
 # downloads, so it arrives only by import, which copies cheat.7z into
 # own/mame/ whole and reads it once, as a stream, to save each arcade set's
-# cheat names in own/mame/names.sqlite3 for the game page. MAME keeps no
-# record of which cheats are on, so the panel lists them and MAME's own menu
-# switches them.
+# cheat names in own/mame/names.sqlite3 for the game page.
+#
+# MAME keeps no record of which cheats are on (PASS-59-314). The page's
+# choices go in own/mame/on/<set>.txt, one name a line; _MAME_SCRIPT, which
+# MAME runs at each start (a hard reset included), switches them on and
+# writes MAME's switches back there as the game stops. Only plain on/off
+# cheats get a switch: one with a value to pick, or one that acts once,
+# means nothing switched on before the game starts.
 
 _MAME_ARCHIVE = 'cheat.7z'
 _MAME_NAMES = 'names.sqlite3'
+_MAME_ON = 'on'
+_MAME_SCRIPT_NAME = 'retrodb.lua'
+
+# `switchable` must match _cheat_list's rule. Names are trimmed, as the
+# import trims them. The stop notifier is added once: the script runs again
+# after a hard reset, and the old one is still in place.
+_MAME_SCRIPT = r'''-- Written by RetroDB at each MAME launch (PASS-59-314); edits are lost.
+local ce = emu.plugin.cheat
+if not ce then return end
+local dir = manager.machine.options.entries.autoboot_script:value():match("^(.*)[/\\]")
+local path = dir .. "/on/" .. emu.romname() .. ".txt"
+
+local function trim(s) return (s:gsub("^%s+", ""):gsub("%s+$", "")) end
+local function switchable(c)
+  return c.script and (c.script.run or c.script.off) and not c.parameter
+end
+
+local chosen = {}
+local f = io.open(path, "r")
+if f then
+  for line in f:lines() do chosen[trim(line)] = true end
+  f:close()
+end
+for i, desc in pairs(ce.list()) do
+  local c = ce.get(i)
+  if chosen[trim(desc)] and switchable(c) then c.set_enabled(true) end
+end
+
+if not _G.retrodb_cheats_stop then
+  _G.retrodb_cheats_stop = emu.add_machine_stop_notifier(function()
+    -- No cheats loaded says nothing about the choices: keep them.
+    if next(ce.list()) == nil then return end
+    local on, seen = {}, {}
+    for i, desc in pairs(ce.list()) do
+      local c, name = ce.get(i), trim(desc)
+      if switchable(c) and c.get_enabled() and not seen[name] then
+        seen[name] = true
+        on[#on + 1] = name
+      end
+    end
+    if #on == 0 then
+      os.remove(path)
+      return
+    end
+    local out = io.open(path, "w")
+    if out then
+      out:write(table.concat(on, "\n"), "\n")
+      out:close()
+    end
+  end)
+end
+'''
 
 
 def mame_dir() -> Path:
@@ -432,7 +491,8 @@ def _mame_entries(tool: str, seven: Path) -> list:
 
 def _index_mame(tool: str, seven: Path, dest: Path) -> int:
     """Read the archive once, file by file in archive order, and save each
-    top-level <set>.xml's cheat names in `dest`. Software-list folders are
+    top-level <set>.xml's cheat names, and which of them get a switch, in
+    `dest`. Software-list folders are
     passed over: MAME reads them from the archive, the game page never
     asks. Returns the number of sets saved."""
     entries = _mame_entries(tool, seven)
@@ -443,7 +503,8 @@ def _index_mame(tool: str, seven: Path, dest: Path) -> int:
                             stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
     count = 0
     try:
-        con.execute('CREATE TABLE cheats (game TEXT PRIMARY KEY, names TEXT NOT NULL) WITHOUT ROWID')
+        con.execute('CREATE TABLE cheats (game TEXT PRIMARY KEY, names TEXT NOT NULL, '
+                    'switches TEXT NOT NULL) WITHOUT ROWID')
         for path, size in entries:
             data = proc.stdout.read(size)
             if len(data) != size:
@@ -451,9 +512,10 @@ def _index_mame(tool: str, seven: Path, dest: Path) -> int:
             parts = re.split(r'[\\/]', path)   # 7-Zip on Windows lists with backslashes
             if len(parts) != 1 or not path.lower().endswith('.xml') or size > MAX_FILE_BYTES:
                 continue
-            names = _cheat_names(data, path)
+            names, switches = _cheat_list(data, path)
             if names:
-                con.execute('INSERT OR REPLACE INTO cheats VALUES (?, ?)', (path[:-4], '\n'.join(names)))
+                con.execute('INSERT OR REPLACE INTO cheats VALUES (?, ?, ?)',
+                            (path[:-4], '\n'.join(names), '\n'.join(switches)))
                 count += 1
         con.commit()
         if proc.wait(timeout=60) != 0:
@@ -467,45 +529,120 @@ def _index_mame(tool: str, seven: Path, dest: Path) -> int:
     return count
 
 
-def _cheat_names(xml, label) -> list:
-    """The `desc` names of the cheats in one MAME cheat file, once each."""
+def _cheat_list(xml, label) -> tuple:
+    """(names, switches) of one MAME cheat file: the `desc` names once each,
+    and those of plain on/off cheats, which have a run or off script and no
+    value to pick (_MAME_SCRIPT's `switchable`)."""
     import defusedxml.ElementTree as ET
     try:
         root = ET.fromstring(xml)
     except ET.ParseError as e:
         logger.warning("cheats: %s not read: %s", label, e)
-        return []
-    names = []
+        return [], []
+    names, switches = [], []
     for c in root.iter('cheat'):
         desc = (c.get('desc') or '').strip()
-        if desc and desc not in names:
+        if not desc:
+            continue
+        if desc not in names:
             names.append(desc)
-    return names
+        states = {s.get('state') for s in c.findall('script')}
+        if c.find('parameter') is None and states & {'run', 'off'} and desc not in switches:
+            switches.append(desc)
+    return names, switches
 
 
-def mame_names(rom_path) -> list:
-    """The cheat names in the collection for the set at `rom_path`."""
-    stem = Path(str(rom_path or '')).stem
+def _set_name(rom_path) -> str:
+    """The arcade set a ROM path names: its file name, without folder or
+    extension, so it is never a path."""
+    return Path(str(rom_path or '')).stem
+
+
+def _mame_set(rom_path) -> tuple:
+    """(names, switches) in the collection for the set at `rom_path`. A
+    collection imported before PASS-59-314 holds no switches."""
+    stem = _set_name(rom_path)
     f = mame_dir() / _MAME_NAMES
     if not stem or not f.is_file():
-        return []
+        return [], []
     try:
         con = sqlite3.connect(f)
         try:
-            row = con.execute('SELECT names FROM cheats WHERE game = ?', (stem,)).fetchone()
+            row = con.execute('SELECT * FROM cheats WHERE game = ?', (stem,)).fetchone()
         finally:
             con.close()
     except sqlite3.Error as e:
         logger.warning("cheats: %s not read: %s", f, e)
-        return []
-    return row[0].split('\n') if row else []
+        return [], []
+    if not row:
+        return [], []
+    switches = row[2].split('\n') if len(row) > 2 and row[2] else []
+    return row[1].split('\n'), switches
+
+
+def mame_names(rom_path) -> list:
+    """The cheat names in the collection for the set at `rom_path`."""
+    return _mame_set(rom_path)[0]
+
+
+def _mame_on_file(rom_path) -> Path:
+    return mame_dir() / _MAME_ON / f'{_set_name(rom_path)}.txt'
+
+
+def mame_view(rom_path) -> list:
+    """The panel's rows for a MAME set: every name, switches on as
+    own/mame/on/<set>.txt says, and locked where MAME's menu must set it."""
+    names, switches = _mame_set(rom_path)
+    on = set()
+    f = _mame_on_file(rom_path)
+    if names and f.is_file():
+        try:
+            on = {line.strip() for line in _read_text(f).splitlines()}
+        except (OSError, CheatError) as e:
+            logger.warning("cheats: %s not read: %s", f, e)
+    return [{'name': n, 'enabled': n in on and n in switches, 'locked': n not in switches}
+            for n in names]
+
+
+def mame_save(rom_path, enabled) -> None:
+    """Keep the switched-on names among the set's switches for MAME's next
+    start; none switched on removes the file. Raises CheatError."""
+    if enabled is None:
+        raise CheatError(_('Send the names of the cheats to switch on.'))
+    names, switches = _mame_set(rom_path)
+    if not names:
+        raise CheatError(_('No cheats were found for this game.'))
+    from services import atomic_io
+    f = _mame_on_file(rom_path)
+    on = [n for n in switches if n in enabled]
+    if not on:
+        f.unlink(missing_ok=True)
+        return
+    f.parent.mkdir(parents=True, exist_ok=True)
+    atomic_io.atomic_write_text(str(f), ''.join(f'{n}\n' for n in on))
+
+
+def _write_mame_script() -> Path:
+    script = mame_dir() / _MAME_SCRIPT_NAME
+    (mame_dir() / _MAME_ON).mkdir(exist_ok=True)
+    if not script.is_file() or _read_text(script) != _MAME_SCRIPT:
+        from services import atomic_io
+        atomic_io.atomic_write_text(str(script), _MAME_SCRIPT)
+    return script
 
 
 def mame_launch_args() -> list:
-    """MAME's cheat plugin, reading the store, once a collection is in."""
+    """MAME's cheat plugin, reading the store, once a collection is in, and
+    the script that switches the chosen cheats on. A script that cannot be
+    written leaves the cheats to MAME's menu (INV-11)."""
     if not (mame_dir() / _MAME_ARCHIVE).is_file():
         return []
-    return ['-plugin', 'cheat', '-cheatpath', str(mame_dir())]
+    args = ['-plugin', 'cheat', '-cheatpath', str(mame_dir())]
+    try:
+        return args + ['-autoboot_script', str(_write_mame_script())]
+    except (OSError, CheatError) as e:
+        logger.warning("cheats: MAME starts without the chosen cheats: %s", e)
+        return args
 
 
 # -----------------------------------------------------------------------------
@@ -793,10 +930,9 @@ def game_view(game_id) -> Optional[dict]:
     if emu.get('is_player'):
         return _player_view(ctx['game'], view)
     if is_mame(emu):
-        names = mame_names(ctx['game'].get('rom_path'))
         view['emulator'] = 'mame'
-        view['cheats'] = [{'name': n, 'enabled': False, 'locked': True} for n in names]
-        if not names:
+        view['cheats'] = mame_view(ctx['game'].get('rom_path'))
+        if not view['cheats']:
             view['reason'] = str(_('No cheats were found for this game.'))
         return view
     kind = _STANDALONE.get(emu.get('binary_name'))
@@ -828,8 +964,7 @@ def save(game_id, enabled, source=None) -> None:
     if emu.get('is_player'):
         return _player_save(ctx['game'], enabled, source)
     if is_mame(emu):
-        raise CheatError(_('Switch MAME cheats on in MAME while you play: press Tab, '
-                           'then Plugin Options, then Cheat.'))
+        return mame_save(ctx['game'].get('rom_path'), enabled)
     kind = _STANDALONE.get(emu.get('binary_name'))
     if not kind:
         raise CheatError(_('Cheats work in the player, DuckStation, PCSX2 and MAME.'))

@@ -2,7 +2,7 @@
 # PASS-59-155 — Cheats for the player, DuckStation and PCSX2
 
 **Status:** built 2026-10-29 for 3.34.0; MAME's list added 2026-11-15
-(§4.8, PASS-59-313). The manual run in each emulator (§7) is still owed.
+(§4.8, PASS-59-313), its switches 2026-11-16 (PASS-59-314). The manual run in each emulator (§7) is still owed.
 **Kind:** feature.
 **Source:** ROADMAP PASS-59-155 (user asks and answers 2026-10-22 and
 2026-10-23).
@@ -244,7 +244,7 @@ POST /api/cheats/import          admin  body {path}
 one of the game's candidates. Errors use the project's usual
 `error(_('...'))` reply.
 
-### 4.8 MAME (PASS-59-313)
+### 4.8 MAME (PASS-59-313, PASS-59-314)
 
 Standalone MAME (`emulators.binary_name` `mame`, not RetroArch) reads
 `<cheatpath>/cheat/<set>.xml` through its `cheat` plugin, which is off
@@ -259,16 +259,30 @@ collection arrives only by import.
   packed, and it holds over 180,000 files. The 7-Zip tool
   `services/player_install.py` downloads and pins lists it (`l -slt`) and
   streams it once (`x -so`), cut at the listed sizes; each top-level
-  `<set>.xml`'s cheat names go to `own/mame/names.sqlite3`. Software-list
+  `<set>.xml`'s cheat names go to `own/mame/names.sqlite3`, with the names
+  of its plain on/off cheats: a `run` or `off` script and no `parameter`.
+  A cheat with a value to pick, or one that acts once, means nothing
+  switched on before the game starts. Software-list
   folders and `.json` cheat files are left to MAME. Both files replace the
   old ones together, after the read succeeds.
+- **Choices.** The plugin keeps no record of which cheats are on, so
+  `own/mame/on/<set>.txt` is the record: the switched-on names, one a line.
+  A panel save writes it, keeping only the set's on/off names; none on
+  removes it. An import never touches `on/`.
 - **Panel.** The game's set is its ROM file name. The panel lists that
-  set's names from `names.sqlite3`, without switches: the plugin keeps no
-  record of which cheats are on, so MAME's own menu (Tab, Plugin Options,
-  Cheat) switches them. A PUT is refused with that instruction.
+  set's names from `names.sqlite3`, each on/off cheat with a switch read
+  from its `on/` file. The rest are locked, with MAME's own menu (Tab,
+  Plugin Options, Cheat) named as the way to set them.
 - **Launch.** With `own/mame/cheat.7z` in, the launch puts `-plugin cheat
-  -cheatpath <own/mame>` before the args template, so a `-plugin` the
-  user typed there wins.
+  -cheatpath <own/mame> -autoboot_script <own/mame>/retrodb.lua` before the
+  args template, so a `-plugin` or `-autoboot_script` the user typed there
+  wins. The launch rewrites `retrodb.lua` when it differs. MAME runs it at
+  each start, a hard reset included: it switches on the `on/` file's names
+  among the on/off cheats, and once per session adds a stop notifier that
+  writes MAME's switched-on on/off cheats back to that file, so a switch
+  changed in MAME's menu shows on the page. A session where no cheats
+  loaded leaves the file alone. A script that cannot be written leaves the
+  launch with the plugin alone (INV-11).
 
 ## 5. Invariants
 
@@ -359,6 +373,15 @@ collection arrives only by import.
   *Breaks when:* the launch adds `-plugin cheat` with no collection, the
   import unpacks `cheat.7z`, or the set name is joined to a path.
 
+- **INV-13** — A MAME switch survives to the next start and back. A save
+  writes only the set's on/off names to `on/<set>.txt`; the panel reads
+  them from there; the launch names `retrodb.lua`. A collection imported
+  before PASS-59-314 lists its names locked.
+  *Test:* `tests/test_pass59_314_mame_cheat_switches.py`. Whether MAME
+  obeys the script is the manual run in §7.
+  *Breaks when:* a value or one-shot cheat gets a switch, the launch drops
+  `-autoboot_script`, or the script stops writing back.
+
 ## 6. Failure modes
 
 - **No serial or CRC can be read.** The panel gives `_target`'s reason,
@@ -390,11 +413,12 @@ collection arrives only by import.
 | `tests/test_cheats_store.py` | INV-7, INV-8, INV-9 |
 | `tests/test_cheats_api.py` | INV-10 |
 | `tests/test_pass59_313_mame_cheats.py`, `tests/test_launch_resolver.py` | INV-12 |
+| `tests/test_pass59_314_mame_cheat_switches.py` | INV-13 |
 
 All use the conftest media and DB isolation. None reaches the network; the
 download tests serve a zip from a temporary file. Each test is seen to fail
-before its code exists. A manual run in DuckStation, PCSX2 and the player
-confirms each emulator applies a switched-on cheat. That step cannot be
+before its code exists. A manual run in DuckStation, PCSX2, the player
+and MAME confirms each emulator applies a switched-on cheat. That step cannot be
 automated here.
 
 ## 8. Alternatives considered (and rejected)
@@ -432,6 +456,7 @@ automated here.
 | INV-7, INV-8, INV-9 | `tests/test_cheats_store.py` |
 | INV-10 | `tests/test_cheats_api.py` |
 | INV-12 | `tests/test_pass59_313_mame_cheats.py`, `tests/test_launch_resolver.py` |
+| INV-13 | `tests/test_pass59_314_mame_cheat_switches.py` |
 | Each emulator applies an enabled cheat | **nothing** automated — the manual run in §7; real emulators cannot run in the suite |
 
 ## 11. Cross-doc impact
