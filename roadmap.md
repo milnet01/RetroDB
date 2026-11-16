@@ -3038,7 +3038,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: perf.
   Source: user-request-2026-11-15.
 
-- 📋 [PASS-59-316] **Settings page probes ~330 hardware pictures on every load (perf, S).**
+- ✅ [PASS-59-316] **Settings page probes ~330 hardware pictures on every load (perf, S).**
   - Noted by the 2026-11-15 session (handoff); not yet measured or
     located. Check what requests the admin Settings page makes on load
     and whether they can wait until the section that needs them opens.
@@ -3048,6 +3048,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   pressed meanwhile waits behind them: Save My Profile's reply came ~3 s
   late. The Customization tab's reloadLogoReference already loads the
   table when the tab opens, so the load-time call looks redundant.
+  Done 2026-11-16: the load-time loadSystems() call and the function are
+  gone; the Customization tab's reloadLogoReference fills the table when
+  it opens. Headless Chrome on :5001 (scratch DB, admin): before, 889
+  logo/hardware requests on load; after, 0 (52 requests in all); opening
+  Customization fills 193 rows.
   **Layman:** Makes the admin Settings page lighter to open.
   Kind: perf.
   Source: user-request-2026-11-15.

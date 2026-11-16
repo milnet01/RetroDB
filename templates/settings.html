@@ -2841,23 +2841,6 @@ async function deleteDropdownOption(optionId, category, containerId) {
     );
 }
 
-// =============================================================================
-// SYSTEM LOGO TABLE
-// =============================================================================
-
-async function loadSystems() {
-    try {
-        const response = await fetch('/api/systems-list');
-        const data = await response.json();
-        
-        if (data.success) {
-            // Load logo reference
-            await loadLogoReference(data.systems);
-        }
-    } catch (error) {
-        console.error('Error loading systems:', error);
-    }
-}
 
 // ============================================
 // CLEAR SCRAPED DATA FUNCTIONS
@@ -3446,7 +3429,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadDropdownOptions('dimension', 'dimensionOptions');
     loadDropdownOptions('game_modes', 'gameModesOptions');
     loadDropdownOptions('save_type', 'saveTypeOptions');
-    loadSystems();
+    // The logo table fills when the Customization tab opens (switchSettingsTab).
 });
 
 // Settings Navigation - Highlight active section on scroll
