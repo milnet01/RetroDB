@@ -454,8 +454,9 @@ inline, not after a "validate" call that might be skipped.
 `/api/games/neighbors?id=N&<the /api/games filters and sort>` returns
 `{found, position, total, prev, next}` for the game page's Previous / Next
 links, `prev` / `next` being `{id, title}` or null. A version the list folds
-into its group's card is placed at that card; `found` is false when the game
-is not in the list.
+into its group's card is placed at that card, and a game the filters no
+longer match (scraped from an Unscraped list) is placed where it would sit.
+`found` is false when the list is for another console.
 
 Bulk-id endpoints (`/api/games/ids`, `/api/games/neighbors`, `/api/games/card-data`) use a different
 cap pattern — see Pass 25.8: `LIMIT 20 * MAX_LIST_ROWS` on id-only fetches,

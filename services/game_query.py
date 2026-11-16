@@ -351,6 +351,12 @@ def _build_games_query(params, count_only=False, ids_only=False, user_id=None,
 
     where = " AND ".join(conditions) if conditions else "1=1"
 
+    # Previous / Next: a game the filters no longer match (scraped from an
+    # Unscraped list) keeps its place in the list.
+    if params.get('_keep_id'):
+        where = f"(({where}) OR g.id = ?)"
+        values.append(params['_keep_id'])
+
     if group_versions:
         where, values = one_row_per_group(where, values)
 

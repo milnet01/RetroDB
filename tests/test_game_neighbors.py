@@ -57,9 +57,19 @@ def test_follows_the_lists_filters(games, admin_test_client):
     assert data['prev']['id'] == ids['bravo'] and data['next'] is None
 
 
-def test_game_outside_the_filters_is_not_found(games, admin_test_client):
+def test_game_that_left_the_filters_keeps_its_place(games, admin_test_client):
+    # Scraping a game from an Unscraped list takes it out of that list;
+    # Next must still go to the next unscraped game, not the whole console.
     d, ids = games
     data = _get(admin_test_client, f"id={ids['alpha']}&system={d.sid}&unscraped=1")
+    assert data['found'] is True
+    assert (data['position'], data['total']) == (1, 3)
+    assert data['prev'] is None and data['next']['id'] == ids['bravo']
+
+
+def test_game_on_another_console_is_not_found(games, admin_test_client):
+    d, ids = games
+    data = _get(admin_test_client, f"id={ids['alpha']}&system={d.sid + 999}")
     assert data['found'] is False
 
 

@@ -266,12 +266,17 @@ def api_games_neighbors():
     """The games before and after `id` in a Library or console list, under
     that list's filters and sort (the same params as /api/games), for the
     game page's Previous / Next links. A version the list folds into its
-    group's card is placed at that card. `found` is False when the game is
-    not in the list at all."""
+    group's card is placed at that card, and a game the filters no longer
+    match is placed where it would sit. `found` is False when the game is
+    on another console."""
     game_id = request.args.get('id', type=int)
     if not game_id:
         return error(_('No IDs provided'), 400)
-    ids_sql, ids_vals = _build_games_query(_filter_params(extra=('sort',)), ids_only=True)
+    params = _filter_params(extra=('sort',))
+    game = query("SELECT system_id FROM games WHERE id = ?", (game_id,), one=True)
+    if game and str(game['system_id']) == params.get('system', str(game['system_id'])):
+        params['_keep_id'] = game_id
+    ids_sql, ids_vals = _build_games_query(params, ids_only=True)
     # Pass 25.8 — the same cap as /api/games/ids.
     ids_sql += f" LIMIT {_select_all_cap()}"
     ids = [r['id'] for r in query(ids_sql, tuple(ids_vals))]

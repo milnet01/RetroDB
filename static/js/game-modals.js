@@ -184,8 +184,9 @@ async function initGameNav() {
             return null;
         }
     };
-    // A game outside the saved filters (opened from search, or edited out of
-    // them) steps through the whole list instead.
+    // The server keeps a game the saved filters no longer match (scraped
+    // from an Unscraped list) in its place; a list the game cannot sit in
+    // at all steps through the whole list instead.
     let data = await neighbors(saved ?? fallback);
     if (!data && saved !== null && saved !== fallback) data = await neighbors(fallback);
     if (!data || data.total < 2) return;
