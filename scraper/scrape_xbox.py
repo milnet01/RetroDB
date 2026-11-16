@@ -87,10 +87,12 @@ def _json(resp):
     if resp is None or resp.status_code != 200:
         return None
     try:
-        return resp.json()
+        data = resp.json()
     except ValueError:
         logger.error("OpenXBL: the reply was not JSON")
         return None
+    # OpenXBL wraps Microsoft's reply: {"content": ..., "code": 200}.
+    return data.get('content') if isinstance(data, dict) else None
 
 
 # -----------------------------------------------------------------------------
@@ -207,9 +209,12 @@ def get_achievements(api_key, xuid, title_id, xbox360=False):
     """One title's achievements as {achievements, earned, total}, or None.
 
     Xbox 360 titles have their own OpenXBL path, whose reply is in Microsoft's
-    contract-1 shape; it is converted to contract 2 (X2)."""
-    kind = 'x360' if xbox360 else 'player'
-    data = _json(_get(api_key, f'/achievements/{kind}/{xuid}/title/{title_id}'))
+    contract-1 shape; it is converted to contract 2 (X2). The modern path has
+    no '/title/': with it, OpenXBL answers 200 with no achievements. The
+    Xbox 360 path is not yet confirmed against a live reply."""
+    path = (f'/achievements/x360/{xuid}/title/{title_id}' if xbox360
+            else f'/achievements/player/{xuid}/{title_id}')
+    data = _json(_get(api_key, path))
     achievements = data.get('achievements') if isinstance(data, dict) else None
     if not isinstance(achievements, list):
         return None

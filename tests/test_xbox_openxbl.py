@@ -1,8 +1,8 @@
 """PASS-59-261: Xbox through each user's own OpenXBL key.
 
 No network call is made: `http_get` and the token store are stubbed. The
-reply shapes are Microsoft's TitleHub and achievements shapes, which OpenXBL
-passes through; they are not yet checked against a live OpenXBL reply.
+reply shapes are Microsoft's TitleHub and achievements shapes inside OpenXBL's
+{"content", "code"} envelope, as a live OpenXBL reply showed on 2026-11-16.
 """
 import sqlite3
 
@@ -24,7 +24,8 @@ class _Reply:
         self._body = body
 
     def json(self):
-        return self._body
+        # OpenXBL wraps every answer: {"content": <Microsoft's reply>, "code": 200}.
+        return None if self._body is None else {'content': self._body, 'code': self.status_code}
 
 
 @pytest.fixture
@@ -121,7 +122,7 @@ def test_xbox_360_achievements_use_their_own_path_and_shape(calls):
 def test_xbox_one_achievements_pass_through(calls):
     ach = {'id': '5', 'name': 'A', 'progressState': 'Achieved',
            'progression': {'timeUnlocked': '2020-01-01T00:00:00Z'}}
-    calls.replies['/achievements/player/9/title/77'] = _Reply(200, {'achievements': [ach]})
+    calls.replies['/achievements/player/9/77'] = _Reply(200, {'achievements': [ach]})
     result = scrape_xbox.get_achievements('KEY', '9', '77')
     assert result == {'achievements': [ach], 'earned': 1, 'total': 1}
 
