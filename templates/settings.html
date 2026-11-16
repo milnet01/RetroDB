@@ -161,104 +161,6 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* ============================================
-   SYSTEM CONTROLLERS STICKY NAV
-   ============================================ */
-
-.system-controllers-wrapper {
-    position: relative;
-    margin-bottom: var(--spacing-xl);
-}
-
-.system-controllers-sticky-nav {
-    position: sticky;
-    top: var(--sticky-top);  /* Dynamically set by StickyScroll.stackPositions() */
-    z-index: 50;
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    padding: var(--spacing-sm) var(--spacing-md);
-    background: rgba(15, 20, 25, 0.98);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-md);
-    margin-bottom: var(--spacing-md);
-    transition: opacity 0.2s ease, visibility 0.2s ease;
-}
-
-.system-controllers-sticky-nav.nav-hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-}
-
-.sticky-nav-label {
-    color: var(--text-muted);
-    font-size: 0.8rem;
-    font-weight: 500;
-    white-space: nowrap;
-}
-
-.sticky-nav-letters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    flex: 1;
-}
-
-.sticky-nav-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 28px;
-    height: 28px;
-    padding: 0 6px;
-    background: rgba(76, 201, 240, 0.1);
-    border: 1px solid rgba(76, 201, 240, 0.3);
-    border-radius: var(--radius-sm);
-    color: var(--primary-cyan);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-
-.sticky-nav-btn:hover {
-    background: rgba(76, 201, 240, 0.2);
-    border-color: var(--primary-cyan);
-    transform: translateY(-1px);
-}
-
-.sticky-nav-btn.active {
-    background: var(--primary-cyan);
-    color: var(--bg-darkest);
-}
-
-.sticky-nav-btn.disabled {
-    opacity: 0.3;
-    cursor: default;
-    pointer-events: none;
-}
-
-.system-controller-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-md);
-}
-
-@media (max-width: 900px) {
-    .system-controller-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .sticky-nav-btn {
-        min-width: 24px;
-        height: 24px;
-        font-size: 0.7rem;
-    }
-}
-
 /* Logging Settings Styles */
 .log-category-section {
     padding: var(--spacing-lg);
@@ -542,12 +444,6 @@
     margin-bottom: var(--spacing-sm);
 }
 
-.match-filter-mode {
-    display: flex;
-    align-items: center;
-    margin-bottom: var(--spacing-md);
-}
-
 .match-filter-panel {
     background: rgba(0, 0, 0, 0.15);
     border: 1px solid var(--card-border);
@@ -555,62 +451,20 @@
     padding: var(--spacing-md);
 }
 
-.match-score-input-row {
+.match-choices legend {
+    padding: 0 var(--spacing-xs);
+}
+
+.match-choice {
     display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-md);
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs) 0;
+    cursor: pointer;
 }
 
-.match-score-input-row .form-label {
-    margin-bottom: 0;
-    white-space: nowrap;
-}
-
-.match-score-input-row .form-input {
-    text-align: center;
-}
-
-.match-score-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-}
-
-.match-score-table th {
-    text-align: left;
-    color: var(--text-secondary);
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-bottom: 1px solid var(--card-border);
-    font-weight: 600;
-}
-
-.match-score-table td {
-    padding: var(--spacing-xs) var(--spacing-sm);
-    color: var(--text-secondary);
-}
-
-.match-score-table tr:not(:last-child) td {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.badge-muted {
-    background: rgba(110, 115, 120, 0.3);
-    color: var(--text-muted);
-}
-
-.match-criteria-row {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
-}
-
-.match-criteria-field .form-label {
-    margin-bottom: var(--spacing-xs);
-}
-
-.match-criteria-field .form-select {
-    max-width: 280px;
+.match-choice input {
+    margin-top: 0.3em;
 }
 
 
@@ -1001,21 +855,10 @@ function switchSettingsTab(tabId, skipScroll) {
         history.replaceState(null, '', '#' + tabId);
     }
     
-    // Re-apply masonry layout and reload logo reference when switching to customization tab
-    // (needed because masonry can't calculate when element is hidden)
-    if (tabId === 'customization') {
-        setTimeout(() => {
-            if (typeof applyControllerMasonry === 'function') {
-                applyControllerMasonry();
-            }
-            // Fill the logo table the first time the tab shows; Refresh
-            // System Logos reloads it after that (each load probes every logo).
-            if (!logoReferenceLoaded) reloadLogoReference();
-            // Re-initialize sticky nav observer
-            if (typeof initStickyNavObserver === 'function') {
-                initStickyNavObserver();
-            }
-        }, 50);
+    // Fill the logo table the first time the Customization tab shows;
+    // Refresh System Logos reloads it after that (each load probes every logo).
+    if (tabId === 'customization' && !logoReferenceLoaded) {
+        setTimeout(reloadLogoReference, 50);
     }
     
     // Restack sticky navs and recalculate scroll margins for newly visible panel
@@ -1125,33 +968,44 @@ document.addEventListener('DOMContentLoaded', function() {
 // USER PROFILE AND MANAGEMENT FUNCTIONS
 // =============================================================================
 
-function saveUserSettings() {
+// One Save for My Profile (PASS-59-311 D). A new PSN token or Xbox key is
+// then saved through its own check, which keeps a working PSN token when
+// Sony refuses the new one (PASS-59-111).
+async function saveUserSettings() {
+    const btn = document.getElementById('saveProfileBtn');
+    const npssoBox = document.getElementById('userPsnNpsso');
+    const npsso = npssoBox.value.trim();
+    const npssoIsNew = npsso !== '' && npssoBox.value !== npssoBox.defaultValue;
+    const xboxKey = document.getElementById('userXboxKey').value.trim();
     const data = {
         rpcs3_trophy_path: document.getElementById('userTrophyPath').value.trim(),
         ra_username: document.getElementById('userRaUsername').value.trim(),
         ra_api_key: document.getElementById('userRaApiKey').value.trim(),
         psn_username: document.getElementById('userPsnUsername').value.trim(),
-        psn_npsso: document.getElementById('userPsnNpsso').value.trim(),
         steam_api_key: document.getElementById('userSteamApiKey').value.trim(),
         steam_id: document.getElementById('userSteamId').value.trim()
     };
+    if (!npssoIsNew) data.psn_npsso = npsso;
 
-    fetch('/api/users/settings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    })
-    .then(r => r.json())
-    .then(result => {
-        if (result.success) {
-            showNotification({{ _('Your settings have been saved!')|tojson }}, 'success');
-        } else {
+    btn.disabled = true;
+    try {
+        const result = await (await fetch('/api/users/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })).json();
+        if (!result.success) {
             showNotification(result.error || {{ _('Failed to save settings')|tojson }}, 'error');
+            return;
         }
-    })
-    .catch(e => {
+        showNotification({{ _('Your settings have been saved!')|tojson }}, 'success');
+        if (npssoIsNew && await psnSaveAndTest(npsso)) npssoBox.defaultValue = npssoBox.value;
+        if (xboxKey) await xboxSaveKey(xboxKey);
+    } catch (e) {
         showNotification({{ _('Network error saving settings')|tojson }}, 'error');
-    });
+    } finally {
+        btn.disabled = false;
+    }
 }
 
 // =============================================================================
@@ -1268,6 +1122,14 @@ function changePassword() {
         showNotification({{ _('Please enter a new password')|tojson }}, 'warning');
         return;
     }
+    if (newPassword.length < 12) {
+        showNotification({{ _('Password must be at least 12 characters')|tojson }}, 'error');
+        return;
+    }
+    if (newPassword !== document.getElementById('confirmNewPassword').value) {
+        showNotification({{ _('Passwords do not match.')|tojson }}, 'error');
+        return;
+    }
     
     fetch('/api/profile/password', {
         method: 'POST',
@@ -1283,6 +1145,7 @@ function changePassword() {
             showNotification({{ _('Password changed successfully!')|tojson }}, 'success');
             document.getElementById('currentPassword').value = '';
             document.getElementById('newPassword').value = '';
+            document.getElementById('confirmNewPassword').value = '';
         } else {
             showNotification(result.error || {{ _('Failed to change password')|tojson }}, 'error');
         }
@@ -2199,8 +2062,18 @@ function saveServerPort() {
 // SCRAPER CONFIGURATION - DRAG & DROP + TOGGLES
 // =============================================================================
 
-function setMinimumMatchScore(input) {
-    scraperSettings.minimum_match_score = parseInt(input.value) || 200;
+// Strict / Normal / Loose store a minimum score; Custom puts back the
+// setting the page opened with (PASS-59-311 D).
+const MATCH_PRESET_SCORES = {strict: 300, normal: 200, loose: 100};
+let customMatchSettings = null;
+
+function setMatchStrictness(level) {
+    if (level === 'custom') {
+        Object.assign(scraperSettings, customMatchSettings);
+        return;
+    }
+    scraperSettings.match_mode = 'score';
+    scraperSettings.minimum_match_score = MATCH_PRESET_SCORES[level];
 }
 
 let scraperSettings = {
@@ -2220,6 +2093,11 @@ let scraperSettings = {
 // What the server last stored: a toggle saves this plus its one change, so
 // unsaved priority or match edits are not stored behind the user's back.
 let savedScraperSettings = JSON.parse(JSON.stringify(scraperSettings));
+customMatchSettings = JSON.parse(JSON.stringify({
+    minimum_match_score: scraperSettings.minimum_match_score,
+    match_mode: scraperSettings.match_mode,
+    match_criteria: scraperSettings.match_criteria
+}));
 
 // Load saved priority from server on page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -2229,7 +2107,6 @@ document.addEventListener('DOMContentLoaded', function() {
     checkScraperStatus();
     initDragAndDrop();
     updateAIProviderFields();
-    initMatchFilter();
 });
 
 function reorderScraperList() {
@@ -2789,7 +2666,7 @@ async function saveScraperSettings() {
     }
 
     btn.disabled = false;
-    btn.innerHTML = '<span class="btn-icon">💾</span> ' + escapeHtml({{ _('Save Settings')|tojson }});
+    btn.innerHTML = '<span class="btn-icon">💾</span> ' + escapeHtml({{ _('Save Scraper Settings')|tojson }});
 }
 
 // Save API keys
@@ -2863,41 +2740,10 @@ function resetScraperPriority() {
     scraperSettings.minimum_match_score = 200;
     scraperSettings.match_mode = 'score';
     scraperSettings.match_criteria = { title_quality: 'close', platform_required: true };
-    initMatchFilter();
+    const normal = document.querySelector('input[name="matchStrictness"][value="normal"]');
+    if (normal) normal.checked = true;
     // Nothing is saved yet: the admin may still back out (PASS-59-311 A4).
-    showNotification({{ _('Defaults filled in. Press Save Settings to keep them.')|tojson }}, 'info');
-}
-
-// Match filter initialization
-function initMatchFilter() {
-    const toggle = document.getElementById('matchModeToggle');
-    const scorePanel = document.getElementById('matchScorePanel');
-    const criteriaPanel = document.getElementById('matchCriteriaPanel');
-    const scoreInput = document.getElementById('matchMinScore');
-    const qualitySelect = document.getElementById('matchTitleQuality');
-    const platformCheck = document.getElementById('matchPlatformRequired');
-
-    const isCriteria = scraperSettings.match_mode === 'criteria';
-    toggle.checked = isCriteria;
-    scorePanel.style.display = isCriteria ? 'none' : '';
-    criteriaPanel.style.display = isCriteria ? '' : 'none';
-
-    scoreInput.value = scraperSettings.minimum_match_score || 200;
-    qualitySelect.value = (scraperSettings.match_criteria || {}).title_quality || 'close';
-    platformCheck.checked = (scraperSettings.match_criteria || {}).platform_required !== false;
-}
-
-function toggleMatchMode(advanced) {
-    scraperSettings.match_mode = advanced ? 'criteria' : 'score';
-    document.getElementById('matchScorePanel').style.display = advanced ? 'none' : '';
-    document.getElementById('matchCriteriaPanel').style.display = advanced ? '' : 'none';
-}
-
-function updateMatchCriteria() {
-    scraperSettings.match_criteria = {
-        title_quality: document.getElementById('matchTitleQuality').value,
-        platform_required: document.getElementById('matchPlatformRequired').checked
-    };
+    showNotification({{ _('Defaults filled in. Press Save Scraper Settings to keep them.')|tojson }}, 'info');
 }
 
 // AI provider field visibility
@@ -2996,7 +2842,7 @@ async function deleteDropdownOption(optionId, category, containerId) {
 }
 
 // =============================================================================
-// CONTROLLER MANAGEMENT
+// SYSTEM LOGO TABLE
 // =============================================================================
 
 async function loadSystems() {
@@ -3010,771 +2856,6 @@ async function loadSystems() {
         }
     } catch (error) {
         console.error('Error loading systems:', error);
-    }
-}
-
-async function loadControllers() {
-    // Load system controllers table
-    await loadSystemControllersTable();
-    // Load controller library
-    await loadControllerLibrary();
-    // Populate system dropdown for adding controllers
-    await populateControllerSystemDropdown();
-    // Initialize the system tags containers with placeholder
-    renderSystemTags('new');
-}
-
-async function loadSystemControllersTable() {
-    try {
-        // Get all systems
-        const systemsResponse = await fetch('/api/systems');
-        const systemsData = await systemsResponse.json();
-        
-        const grid = document.getElementById('systemControllersGrid');
-        const navLetters = document.getElementById('systemControllersNavLetters');
-        if (!grid) return;
-        
-        if (!systemsData.success || !systemsData.systems) {
-            grid.innerHTML = '<div class="text-muted" style="grid-column: span 2;">No systems found</div>';
-            if (navLetters) navLetters.innerHTML = '';
-            return;
-        }
-        
-        // Sort systems alphabetically by name
-        const sortedSystems = systemsData.systems.sort((a, b) => 
-            a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
-        );
-        
-        // Build letter map for navigation
-        const letterMap = new Set();
-        sortedSystems.forEach(system => {
-            const firstChar = system.name.charAt(0).toUpperCase();
-            if (/[A-Z]/.test(firstChar)) {
-                letterMap.add(firstChar);
-            } else if (/[0-9]/.test(firstChar)) {
-                letterMap.add('#');
-            }
-        });
-        
-        // Build cards for each system
-        const cards = await Promise.all(sortedSystems.map(async (system) => {
-            let defaultControllers = [];
-            let availableControllers = [];
-            
-            try {
-                const scResp = await fetch(`/api/systems/${system.id}/controllers`);
-                const scData = await scResp.json();
-                if (scData.success) {
-                    defaultControllers = scData.default_controllers || [];
-                    availableControllers = scData.controllers || [];
-                }
-            } catch (e) {
-                console.warn(`Could not load controllers for system ${system.id}`);
-            }
-            
-            const hasDefaults = defaultControllers.length > 0;
-            const statusIcon = hasDefaults ? '✅' : '—';
-            const statusColor = hasDefaults ? 'var(--neon-green)' : 'var(--text-muted)';
-            
-            // Build default controller tags
-            const defaultTags = defaultControllers.length > 0 
-                ? defaultControllers.map(c => `
-                    <span class="badge badge-success" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem;">
-                        ${escapeHtml(c.name)}
-                        <button type="button" class="btn-bare" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', c.name))}" data-on-click="removeDefaultController" data-args="${actionArgs(system.id, c.id)}" style="opacity: 0.7;">×</button>
-                    </span>
-                `).join('')
-                : '<span class="text-muted" style="font-size: 0.8rem;">None set</span>';
-            
-            // Build dropdown options (only system-specific + universal controllers)
-            const defaultIds = defaultControllers.map(c => c.id);
-            const dropdownOptions = availableControllers
-                .filter(c => !defaultIds.includes(c.id))
-                .map(c => `<option value="${c.id}">${c.manufacturer ? escapeHtml(c.manufacturer) + ' - ' : ''}${escapeHtml(c.name)}</option>`)
-                .join('');
-            
-            // Determine data-letter attribute
-            const firstChar = system.name.charAt(0).toUpperCase();
-            const dataLetter = /[A-Z]/.test(firstChar) ? firstChar : '#';
-            
-            return `
-                <div class="system-controller-card glass-panel" data-system-name="${escapeHtml(system.name)}" data-letter="${dataLetter}" style="padding: var(--spacing-md);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-sm);">
-                        <strong style="font-size: 0.95rem; color: var(--text-primary);">${escapeHtml(system.name)}</strong>
-                        <span style="color: ${statusColor}; font-size: 0.85rem;">${statusIcon}</span>
-                    </div>
-                    <div class="default-controller-tags" style="display: flex; flex-wrap: wrap; gap: 4px; min-height: 28px; margin-bottom: 8px;">
-                        ${defaultTags}
-                    </div>
-                    <select class="form-select form-select-sm" style="width: 100%;" 
-                            data-on-change="addDefaultController" data-args="${actionArgs(system.id, '$this.value')}" data-clear-value>
-                        <option value="">+ Add default controller...</option>
-                        ${dropdownOptions}
-                    </select>
-                </div>
-            `;
-        }));
-        
-        grid.innerHTML = cards.join('');
-        
-        // Build navigation letters
-        if (navLetters) {
-            const allLetters = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-            navLetters.innerHTML = allLetters.map(letter => {
-                const hasLetter = letterMap.has(letter);
-                return `<button type="button" class="sticky-nav-btn ${hasLetter ? '' : 'disabled'}" 
-                                data-letter="${letter}" 
-                                data-on-click="scrollToSystemLetter" data-args="${actionArgs(String(letter))}"
-                                ${hasLetter ? '' : 'disabled'}>${letter}</button>`;
-            }).join('');
-        }
-        
-    } catch (error) {
-        console.error('Error loading system controllers:', error);
-        const grid = document.getElementById('systemControllersGrid');
-        if (grid) {
-            grid.innerHTML = '<div class="text-muted" style="grid-column: span 2;">Error loading system controllers</div>';
-        }
-    }
-}
-
-// Scroll to first system starting with the given letter
-function scrollToSystemLetter(letter) {
-    const grid = document.getElementById('systemControllersGrid');
-    if (!grid) return;
-    
-    const cards = grid.querySelectorAll('.system-controller-card');
-    for (const card of cards) {
-        if (card.dataset.letter === letter) {
-            // Scroll using universal sticky offset
-            StickyScroll.to(card);
-            
-            // Highlight the card briefly
-            card.style.transition = 'box-shadow 0.3s ease';
-            card.style.boxShadow = '0 0 20px rgba(76, 201, 240, 0.5)';
-            setTimeout(() => {
-                card.style.boxShadow = '';
-            }, 1500);
-            
-            // Update active letter
-            document.querySelectorAll('.sticky-nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.letter === letter) {
-                    btn.classList.add('active');
-                }
-            });
-            
-            break;
-        }
-    }
-}
-
-// Initialize sticky nav visibility observer
-let stickyNavObserved = false;
-function initStickyNavObserver() {
-    const wrapper = document.getElementById('systemControllersWrapper');
-    const stickyNav = document.getElementById('systemControllersStickyNav');
-
-    // Once per page: each tab switch called this, adding a scroll listener
-    // that was never removed (PASS-59-284).
-    if (!wrapper || !stickyNav || stickyNavObserved) return;
-    stickyNavObserved = true;
-    
-    // Use scroll event to check if we're within the wrapper bounds
-    let ticking = false;
-    
-    function updateStickyNavVisibility() {
-        const wrapperRect = wrapper.getBoundingClientRect();
-        const navHeight = stickyNav.offsetHeight;
-        
-        // Show nav only when:
-        // 1. The top of the wrapper has scrolled past the viewport top (wrapperRect.top <= 0)
-        // 2. The bottom of the wrapper is still below the nav height (wrapperRect.bottom > navHeight + 20)
-        const shouldShow = wrapperRect.top <= 0 && wrapperRect.bottom > (navHeight + 20);
-        
-        // Also show if wrapper is fully visible (hasn't started scrolling yet)
-        const fullyVisible = wrapperRect.top > 0;
-        
-        if (shouldShow || fullyVisible) {
-            stickyNav.classList.remove('nav-hidden');
-        } else {
-            stickyNav.classList.add('nav-hidden');
-        }
-        
-        ticking = false;
-    }
-    
-    window.addEventListener('scroll', function() {
-        if (!ticking) {
-            requestAnimationFrame(updateStickyNavVisibility);
-            ticking = true;
-        }
-    }, { passive: true });
-    
-    // Initial check
-    updateStickyNavVisibility();
-}
-
-// Initialize observer when DOM is ready and tab is visible
-document.addEventListener('DOMContentLoaded', function() {
-    // Delay init slightly to ensure elements exist
-    setTimeout(initStickyNavObserver, 500);
-});
-
-async function loadControllerLibrary() {
-    try {
-        const response = await fetch('/api/controllers');
-        const data = await response.json();
-        
-        const container = document.getElementById('controllerLibrary');
-        if (!container) return;
-        
-        if (data.success && data.controllers && data.controllers.length > 0) {
-            // Update manufacturer suggestions with any custom ones
-            updateManufacturerSuggestionsFromData(data.controllers);
-            
-            // Group by manufacturer (already sorted from API)
-            const byManufacturer = {};
-            data.controllers.forEach(c => {
-                const mfg = c.manufacturer || 'Other';
-                if (!byManufacturer[mfg]) {
-                    byManufacturer[mfg] = [];
-                }
-                byManufacturer[mfg].push(c);
-            });
-            
-            // Sort manufacturers alphabetically
-            const sortedManufacturers = Object.keys(byManufacturer).sort((a, b) => 
-                a.localeCompare(b, undefined, {sensitivity: 'base'})
-            );
-            
-            // Helper to render system badges
-            function renderSystemBadges(c) {
-                if (c.system_names && c.system_names.length > 0) {
-                    if (c.system_names.length <= 2) {
-                        return c.system_names.map(name => 
-                            `<span class="badge badge-secondary" style="font-size: 0.65rem; margin-left: 4px;">${escapeHtml(name)}</span>`
-                        ).join('');
-                    } else {
-                        // Show first system + count
-                        return `<span class="badge badge-secondary" style="font-size: 0.65rem; margin-left: 4px;">${escapeHtml(c.system_names[0])} +${c.system_names.length - 1}</span>`;
-                    }
-                }
-                return '<span class="badge badge-secondary" style="font-size: 0.65rem; margin-left: 4px; opacity: 0.6;">Universal</span>';
-            }
-            
-            // Generate HTML for each manufacturer group
-            const groupsHtml = sortedManufacturers.map(mfg => `
-                <div class="controller-group glass-panel" data-manufacturer="${escapeHtml(mfg)}" style="padding: var(--spacing-md); margin-bottom: var(--spacing-md);">
-                    <h5 style="color: var(--neon-cyan); margin-bottom: var(--spacing-sm); font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
-                        ${getManufacturerIcon(mfg)} ${escapeHtml(mfg)}
-                        <span class="badge badge-secondary" style="font-size: 0.7rem;">${byManufacturer[mfg].length}</span>
-                    </h5>
-                    <div class="controller-list" style="display: flex; flex-direction: column; gap: 6px;">
-                        ${byManufacturer[mfg].sort((a, b) => a.name.localeCompare(b.name)).map(c => `
-                            <div class="controller-item" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); cursor: pointer;" 
-                                 role="button" tabindex="0" aria-expanded="false" data-on-click="toggleControllerDetails" data-args="${actionArgs('$this')}" data-controller-id="${c.id}">
-                                <div style="flex: 1;">
-                                    <span style="font-size: 0.9rem; color: var(--text-primary);">${escapeHtml(c.name)}</span>
-                                    ${c.release_year ? `<span class="text-muted" style="font-size: 0.75rem; margin-left: 8px;">(${c.release_year})</span>` : ''}
-                                    ${renderSystemBadges(c)}
-                                </div>
-                                <span class="expand-icon text-muted" style="font-size: 0.8rem;">▼</span>
-                            </div>
-                            <div class="controller-details" style="display: none; padding: 8px 12px; background: rgba(76, 201, 240, 0.05); border-radius: var(--radius-sm); margin-top: -4px; font-size: 0.85rem;">
-                                <p style="margin: 0 0 8px 0; color: var(--neon-cyan);"><strong>Systems:</strong> ${escapeHtml(c.system_name || 'Universal')}</p>
-                                ${c.description ? `<p style="margin: 0 0 8px 0; color: var(--text-secondary);">${escapeHtml(c.description)}</p>` : ''}
-                                ${c.button_layout ? `<p style="margin: 0; color: var(--text-muted);"><strong>Buttons:</strong> ${escapeHtml(c.button_layout)}</p>` : ''}
-                                <div style="margin-top: 8px; display: flex; gap: 8px;">
-                                    <button type="button" class="btn btn-primary btn-sm" data-on-click="openEditControllerModal" data-args="${actionArgs(c.id)}" data-stop>
-                                        ✏️ Edit
-                                    </button>
-                                    <button type="button" class="btn btn-danger btn-sm" data-name="${escapeHtml(c.name)}" data-on-click="deleteController" data-args="${actionArgs(c.id, '$this.dataset.name')}" data-stop>
-                                        🗑️ Delete
-                                    </button>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
-            
-            container.innerHTML = `
-                <div class="controller-masonry" id="controllerMasonry">
-                    ${groupsHtml}
-                </div>
-                <p class="text-muted" style="margin-top: var(--spacing-md); font-size: 0.85rem;">
-                    📊 ${data.controllers.length} controllers across ${sortedManufacturers.length} manufacturers
-                </p>
-            `;
-            
-            // Apply masonry layout after rendering
-            requestAnimationFrame(() => applyControllerMasonry());
-        } else {
-            container.innerHTML = '<p class="text-muted">No controllers in library. Add some using the form above!</p>';
-        }
-    } catch (error) {
-        console.error('Error loading controller library:', error);
-    }
-}
-
-// Apply masonry layout to controller library (left-to-right alphabetical order)
-function applyControllerMasonry() {
-    const container = document.getElementById('controllerMasonry');
-    if (!container) return;
-    
-    const groups = Array.from(container.querySelectorAll('.controller-group'));
-    if (groups.length === 0) return;
-    
-    // Don't apply if container is hidden (tab not active)
-    const containerWidth = container.offsetWidth;
-    if (containerWidth === 0) {
-        // Reset any previously applied absolute positioning
-        groups.forEach(group => {
-            group.style.position = '';
-            group.style.width = '';
-            group.style.left = '';
-            group.style.top = '';
-        });
-        container.style.height = '';
-        return;
-    }
-    
-    // Determine number of columns based on container width
-    let numColumns = 4;
-    if (containerWidth < 1400) numColumns = 3;
-    if (containerWidth < 1000) numColumns = 2;
-    if (containerWidth < 600) numColumns = 1;
-    
-    const gap = 16; // var(--spacing-md)
-    const columnWidth = (containerWidth - (gap * (numColumns - 1))) / numColumns;
-    
-    // Track height of each column
-    const columnHeights = new Array(numColumns).fill(0);
-    
-    // Position each group in the shortest column (maintains left-to-right order for equal heights)
-    groups.forEach((group, index) => {
-        // Find shortest column (prefer leftmost if equal)
-        let shortestCol = 0;
-        let minHeight = columnHeights[0];
-        for (let i = 1; i < numColumns; i++) {
-            if (columnHeights[i] < minHeight) {
-                minHeight = columnHeights[i];
-                shortestCol = i;
-            }
-        }
-        
-        // Position the group
-        group.style.position = 'absolute';
-        group.style.width = columnWidth + 'px';
-        group.style.left = (shortestCol * (columnWidth + gap)) + 'px';
-        group.style.top = columnHeights[shortestCol] + 'px';
-        
-        // Update column height
-        columnHeights[shortestCol] += group.offsetHeight + gap;
-    });
-    
-    // Set container height to tallest column
-    container.style.position = 'relative';
-    container.style.height = Math.max(...columnHeights) + 'px';
-}
-
-// Re-apply masonry on window resize
-let masonryResizeTimeout;
-window.addEventListener('resize', () => {
-    clearTimeout(masonryResizeTimeout);
-    masonryResizeTimeout = setTimeout(() => {
-        applyControllerMasonry();
-    }, 150);
-});
-
-// Store systems list globally for reuse
-let controllerSystemsList = [];
-
-// Track selected systems for new and edit forms
-let newControllerSelectedSystems = [];
-let editControllerSelectedSystems = [];
-
-// Populate the system dropdown for adding controllers
-async function populateControllerSystemDropdown() {
-    try {
-        const response = await fetch('/api/systems');
-        const data = await response.json();
-        
-        if (!data.success) return;
-        
-        controllerSystemsList = (data.systems || []).sort((a, b) => a.name.localeCompare(b.name));
-        
-        // Populate both new and edit dropdowns
-        populateSystemSelect('newControllerSystemSelect');
-        populateSystemSelect('editControllerSystemSelect');
-    } catch (error) {
-        console.error('Error loading systems for controller dropdown:', error);
-    }
-}
-
-function populateSystemSelect(selectId) {
-    const select = document.getElementById(selectId);
-    if (!select) return;
-    
-    // Clear except first option
-    select.innerHTML = '<option value="">+ Add system...</option>';
-    
-    controllerSystemsList.forEach(system => {
-        const option = document.createElement('option');
-        option.value = system.id;
-        option.textContent = system.name;
-        select.appendChild(option);
-    });
-}
-
-function addSystemToController(mode) {
-    const selectId = mode === 'new' ? 'newControllerSystemSelect' : 'editControllerSystemSelect';
-    const select = document.getElementById(selectId);
-    const systemId = parseInt(select.value);
-    
-    if (!systemId) return;
-    
-    const selectedSystems = mode === 'new' ? newControllerSelectedSystems : editControllerSelectedSystems;
-    
-    // Check if already added
-    if (selectedSystems.find(s => s.id === systemId)) {
-        select.value = '';
-        return;
-    }
-    
-    // Find system info
-    const system = controllerSystemsList.find(s => s.id === systemId);
-    if (system) {
-        selectedSystems.push({ id: system.id, name: system.name });
-        renderSystemTags(mode);
-    }
-    
-    select.value = '';
-}
-
-function removeSystemFromController(mode, systemId) {
-    const selectedSystems = mode === 'new' ? newControllerSelectedSystems : editControllerSelectedSystems;
-    const index = selectedSystems.findIndex(s => s.id === systemId);
-    if (index !== -1) {
-        selectedSystems.splice(index, 1);
-        renderSystemTags(mode);
-    }
-}
-
-function renderSystemTags(mode) {
-    const containerId = mode === 'new' ? 'newControllerSystemTags' : 'editControllerSystemTags';
-    const container = document.getElementById(containerId);
-    const selectedSystems = mode === 'new' ? newControllerSelectedSystems : editControllerSelectedSystems;
-    
-    if (!container) return;
-    
-    if (selectedSystems.length === 0) {
-        container.innerHTML = '<span class="text-muted" style="font-size: 0.85rem; padding: 4px;">Universal (no systems selected)</span>';
-        return;
-    }
-    
-    container.innerHTML = selectedSystems.map(sys => `
-        <span class="badge badge-secondary" style="display: inline-flex; align-items: center; gap: 6px;">
-            ${escapeHtml(sys.name)}
-            <button type="button" class="btn-bare" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', sys.name))}" data-on-click="removeSystemFromController" data-args="${actionArgs(String(mode), sys.id)}" style="opacity: 0.7; font-size: 1.1em;">×</button>
-        </span>
-    `).join('');
-}
-
-function getSelectedSystemIds(mode) {
-    const selectedSystems = mode === 'new' ? newControllerSelectedSystems : editControllerSelectedSystems;
-    return selectedSystems.map(s => s.id);
-}
-
-function clearSelectedSystems(mode) {
-    if (mode === 'new') {
-        newControllerSelectedSystems = [];
-    } else {
-        editControllerSelectedSystems = [];
-    }
-    renderSystemTags(mode);
-}
-
-function getManufacturerIcon(manufacturer) {
-    const icons = {
-        'Nintendo': '🍄',
-        'Sega': '🔵',
-        'Sony': '🎮',
-        'Atari': '🕹️',
-        'NEC': '💿',
-        'SNK': '👊',
-        'Microsoft': '🎯',
-        'Commodore': '💾',
-        'Mattel': '🎲',
-        'Coleco': '🌟',
-        'Bandai': '🎌',
-        'Third Party': '🔧',
-        'Other': '📦'
-    };
-    return icons[manufacturer] || '📦';
-}
-
-function toggleControllerDetails(element) {
-    const details = element.nextElementSibling;
-    const icon = element.querySelector('.expand-icon');
-    
-    if (details.style.display === 'none') {
-        details.style.display = 'block';
-        icon.textContent = '▲';
-    } else {
-        details.style.display = 'none';
-        icon.textContent = '▼';
-    }
-    element.setAttribute('aria-expanded', String(details.style.display === 'block'));
-    
-    // Re-apply masonry layout after height change
-    requestAnimationFrame(() => applyControllerMasonry());
-}
-
-async function addNewController() {
-    const name = document.getElementById('newControllerName').value.trim();
-    const systemIds = getSelectedSystemIds('new');
-    const manufacturer = document.getElementById('newControllerManufacturer').value.trim() || 'Other';
-    const releaseYear = document.getElementById('newControllerYear').value;
-    const buttonLayout = document.getElementById('newControllerButtons').value.trim();
-    const description = document.getElementById('newControllerDescription').value.trim();
-    
-    if (!name) {
-        showModal('⚠️ ' + {{ _('Missing Input')|tojson }}, {{ _('Please enter a controller name')|tojson }});
-        return;
-    }
-    
-    try {
-        const response = await fetch('/api/controllers', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name: name,
-                system_ids: systemIds,
-                manufacturer: manufacturer,
-                release_year: releaseYear ? parseInt(releaseYear) : null,
-                button_layout: buttonLayout,
-                description: description
-            })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            // Clear form
-            document.getElementById('newControllerName').value = '';
-            clearSelectedSystems('new');
-            document.getElementById('newControllerManufacturer').value = '';
-            document.getElementById('newControllerYear').value = '';
-            document.getElementById('newControllerButtons').value = '';
-            document.getElementById('newControllerDescription').value = '';
-            
-            // Save scroll position before reloading
-            const scrollY = window.scrollY;
-            
-            // Reload library and system dropdowns
-            await loadControllerLibrary();
-            await loadSystemControllersTable();
-            
-            // Restore scroll position after reload
-            requestAnimationFrame(() => {
-                window.scrollTo(0, scrollY);
-            });
-            
-            // Update manufacturer suggestions with any new ones
-            updateManufacturerSuggestions();
-            
-            showModal('✅ ' + {{ _('Success')|tojson }}, t({{ _('Controller "{name}" has been added to the library.')|tojson }}, {name}));
-        } else {
-            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to add controller')|tojson }});
-        }
-    } catch (error) {
-        console.error('Error adding controller:', error);
-        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to add controller')|tojson }});
-    }
-}
-
-// Default manufacturer suggestions
-const DEFAULT_MANUFACTURERS = [
-    'Nintendo', 'Sega', 'Sony', 'Atari', 'NEC', 'SNK',
-    'Microsoft', 'Commodore', 'Mattel', 'Coleco', 'Bandai',
-    'Third Party', 'Other'
-];
-
-// Update manufacturer suggestions datalist from already-fetched controller data
-function updateManufacturerSuggestionsFromData(controllers) {
-    // Get unique manufacturers from database
-    const dbManufacturers = new Set();
-    controllers.forEach(c => {
-        if (c.manufacturer) {
-            dbManufacturers.add(c.manufacturer);
-        }
-    });
-    
-    // Combine all manufacturers
-    const allManufacturers = new Set([...DEFAULT_MANUFACTURERS, ...dbManufacturers]);
-    
-    // Sort alphabetically (but keep 'Other' and 'Third Party' at end)
-    const sorted = Array.from(allManufacturers).sort((a, b) => {
-        if (a === 'Other') return 1;
-        if (b === 'Other') return -1;
-        if (a === 'Third Party') return 1;
-        if (b === 'Third Party') return -1;
-        return a.localeCompare(b);
-    });
-    
-    // Update datalist
-    const datalist = document.getElementById('manufacturerSuggestions');
-    if (datalist) {
-        datalist.innerHTML = sorted.map(m => `<option value="${escapeHtml(m)}">`).join('');
-    }
-}
-
-// Fetch controllers and update manufacturer suggestions (standalone call)
-async function updateManufacturerSuggestions() {
-    try {
-        const response = await fetch('/api/controllers');
-        const data = await response.json();
-        
-        if (data.success && data.controllers) {
-            updateManufacturerSuggestionsFromData(data.controllers);
-        }
-    } catch (error) {
-        console.error('Error updating manufacturer suggestions:', error);
-    }
-}
-
-async function setSystemDefaultController(systemId, controllerId) {
-    try {
-        const response = await fetch(`/api/systems/${systemId}/default-controller`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ controller_id: controllerId || null })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            // Quietly reload to update the status column
-            loadSystemControllersTable();
-        } else {
-            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to set default controller')|tojson }});
-        }
-    } catch (error) {
-        console.error('Error setting default controller:', error);
-        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to set default controller')|tojson }});
-    }
-}
-
-async function addDefaultController(systemId, controllerId) {
-    if (!controllerId) return;
-    
-    try {
-        // Get current defaults
-        const getResp = await fetch(`/api/systems/${systemId}/controllers`);
-        const getData = await getResp.json();
-        
-        const currentIds = getData.success && getData.default_controllers 
-            ? getData.default_controllers.map(c => c.id) 
-            : [];
-        
-        // Add new controller to the list
-        currentIds.push(parseInt(controllerId));
-        
-        // Save updated list
-        const response = await fetch(`/api/systems/${systemId}/default-controllers`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ controller_ids: currentIds })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            loadSystemControllersTable();
-        } else {
-            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to add default controller')|tojson }});
-        }
-    } catch (error) {
-        console.error('Error adding default controller:', error);
-        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to add default controller')|tojson }});
-    }
-}
-
-async function removeDefaultController(systemId, controllerId) {
-    try {
-        // Get current defaults
-        const getResp = await fetch(`/api/systems/${systemId}/controllers`);
-        const getData = await getResp.json();
-        
-        const currentIds = getData.success && getData.default_controllers 
-            ? getData.default_controllers.map(c => c.id).filter(id => id !== controllerId)
-            : [];
-        
-        // Save updated list
-        const response = await fetch(`/api/systems/${systemId}/default-controllers`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ controller_ids: currentIds })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            loadSystemControllersTable();
-        } else {
-            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to remove default controller')|tojson }});
-        }
-    } catch (error) {
-        console.error('Error removing default controller:', error);
-        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to remove default controller')|tojson }});
-    }
-}
-
-async function autoAssignDefaultControllers() {
-    const btn = document.getElementById('autoAssignBtn');
-    const resultDiv = document.getElementById('autoAssignResult');
-    
-    btn.disabled = true;
-    btn.innerHTML = '<span class="btn-icon">⏳</span> Assigning...';
-    
-    try {
-        const response = await fetch('/api/systems/assign-default-controllers', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            resultDiv.style.display = 'block';
-            resultDiv.innerHTML = `
-                <div class="alert alert-success" style="margin: 0;">
-                    ✅ Successfully assigned ${data.assigned} default controllers to systems.
-                </div>
-            `;
-            // Reload the table
-            loadSystemControllersTable();
-        } else {
-            resultDiv.style.display = 'block';
-            resultDiv.innerHTML = `
-                <div class="alert alert-error" style="margin: 0;">
-                    ❌ ${escapeHtml(data.error || 'Failed to assign controllers')}
-                </div>
-            `;
-        }
-    } catch (error) {
-        console.error('Error auto-assigning controllers:', error);
-        resultDiv.style.display = 'block';
-        resultDiv.innerHTML = `
-            <div class="alert alert-error" style="margin: 0;">
-                ❌ Network error while assigning controllers
-            </div>
-        `;
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<span class="btn-icon">🎯</span> Auto-Assign Defaults';
     }
 }
 
@@ -4190,161 +3271,6 @@ async function optimizeDatabase() {
 }
 
 
-async function deleteController(controllerId, controllerName) {
-    // Pass 45.4 — controllerName is admin-editable text; escape before
-    // interpolating into the HTML template, then opt in to HTML so the
-    // <strong> + <br><br> still render.
-    showConfirm(
-        '🗑️ ' + {{ _('Delete Controller')|tojson }},
-        t({{ _('Are you sure you want to delete {name}?<br><br>This will remove it from the library and any systems using it as default.')|tojson }}, {name: '<strong>' + escapeHtml(controllerName) + '</strong>'}),
-        async () => {
-            try {
-                // Save scroll position before reloading
-                const scrollY = window.scrollY;
-                
-                const response = await fetch(`/api/controllers/${controllerId}`, {
-                    method: 'DELETE'
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    await loadControllerLibrary();
-                    await loadSystemControllersTable();
-                    
-                    // Restore scroll position after reload
-                    requestAnimationFrame(() => {
-                        window.scrollTo(0, scrollY);
-                    });
-                    
-                    showModal('✅ ' + {{ _('Deleted')|tojson }}, t({{ _('Controller "{name}" has been removed.')|tojson }}, {name: controllerName}));
-                } else {
-                    showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to delete controller')|tojson }});
-                }
-            } catch (error) {
-                console.error('Error deleting controller:', error);
-                showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to delete controller')|tojson }});
-            }
-        },
-        {allowHtml: true}
-    );
-}
-
-// =============================================================================
-// EDIT CONTROLLER MODAL
-// =============================================================================
-
-async function openEditControllerModal(controllerId) {
-    const trigger = document.activeElement;
-    try {
-        const response = await fetch(`/api/controllers/${controllerId}`);
-        const data = await response.json();
-
-        if (!data.success) {
-            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to load controller')|tojson }});
-            return;
-        }
-
-        const c = data.controller;
-
-        document.getElementById('editControllerId').value = c.id;
-        document.getElementById('editControllerName').value = c.name || '';
-        document.getElementById('editControllerManufacturer').value = c.manufacturer || '';
-        document.getElementById('editControllerYear').value = c.release_year || '';
-        document.getElementById('editControllerButtons').value = c.button_layout || '';
-        document.getElementById('editControllerDescription').value = c.description || '';
-
-        editControllerSelectedSystems = [];
-        if (c.system_ids && c.system_ids.length > 0 && c.system_names) {
-            for (let i = 0; i < c.system_ids.length; i++) {
-                editControllerSelectedSystems.push({
-                    id: c.system_ids[i],
-                    name: c.system_names[i]
-                });
-            }
-        }
-        renderSystemTags('edit');
-
-        const modal = document.getElementById('editControllerModal');
-        modal.classList.add('active');
-        if (window.ModalFocusTrap) {
-            ModalFocusTrap.activate(modal, trigger, { onEscape: closeEditControllerModal });
-        }
-    } catch (error) {
-        console.error('Error opening edit modal:', error);
-        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to load controller data')|tojson }});
-    }
-}
-
-function closeEditControllerModal() {
-    document.getElementById('editControllerModal').classList.remove('active');
-    clearSelectedSystems('edit');
-    if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
-}
-
-async function saveControllerChanges() {
-    const controllerId = document.getElementById('editControllerId').value;
-    const name = document.getElementById('editControllerName').value.trim();
-    const systemIds = getSelectedSystemIds('edit');
-    const manufacturer = document.getElementById('editControllerManufacturer').value.trim() || 'Other';
-    const releaseYear = document.getElementById('editControllerYear').value;
-    const buttonLayout = document.getElementById('editControllerButtons').value.trim();
-    const description = document.getElementById('editControllerDescription').value.trim();
-    
-    if (!name) {
-        showModal('⚠️ ' + {{ _('Missing Input')|tojson }}, {{ _('Please enter a controller name')|tojson }});
-        return;
-    }
-    
-    try {
-        // Save scroll position before reloading
-        const scrollY = window.scrollY;
-        
-        const response = await fetch(`/api/controllers/${controllerId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name: name,
-                system_ids: systemIds,
-                manufacturer: manufacturer,
-                release_year: releaseYear ? parseInt(releaseYear) : null,
-                button_layout: buttonLayout,
-                description: description
-            })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            closeEditControllerModal();
-            
-            // Reload library and system dropdowns
-            await loadControllerLibrary();
-            await loadSystemControllersTable();
-            
-            // Restore scroll position after reload
-            requestAnimationFrame(() => {
-                window.scrollTo(0, scrollY);
-            });
-            
-            // Update manufacturer suggestions
-            updateManufacturerSuggestions();
-            
-            showModal('✅ ' + {{ _('Success')|tojson }}, t({{ _('Controller "{name}" has been updated.')|tojson }}, {name}));
-        } else {
-            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to update controller')|tojson }});
-        }
-    } catch (error) {
-        console.error('Error updating controller:', error);
-        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to update controller')|tojson }});
-    }
-}
-
-// Close edit modal when clicking outside
-document.getElementById('editControllerModal')?.addEventListener('click', function(e) {
-    if (e.target === this) closeEditControllerModal();
-});
-
 // =============================================================================
 // LOGO REFERENCE
 // =============================================================================
@@ -4521,7 +3447,6 @@ document.addEventListener('DOMContentLoaded', function() {
     loadDropdownOptions('game_modes', 'gameModesOptions');
     loadDropdownOptions('save_type', 'saveTypeOptions');
     loadSystems();
-    loadControllers();
 });
 
 // Settings Navigation - Highlight active section on scroll
@@ -4835,20 +3760,10 @@ function psnFocusNpssoBox() {
 }
 
 /** Save NPSSO + test in one step */
-async function psnQuickSaveAndTest() {
-    const btn = document.getElementById('psnQuickSaveBtn');
+// Saves a new NPSSO and signs in with it; returns whether Sony took it.
+async function psnSaveAndTest(npsso) {
     const resultSpan = document.getElementById('psnTestResult');
-    const npsso = document.getElementById('userPsnNpsso').value.trim();
     const username = document.getElementById('userPsnUsername').value.trim();
-    const btnLabel = btn.textContent;
-
-    if (!npsso) {
-        resultSpan.innerHTML = '<span style="color: var(--neon-orange);">' + escapeHtml({{ _('Enter an NPSSO token first')|tojson }}) + '</span>';
-        return;
-    }
-
-    btn.disabled = true;
-    btn.textContent = {{ _('Testing...')|tojson }};
     resultSpan.innerHTML = '<span style="color: var(--text-secondary);">' + escapeHtml({{ _('Saving and connecting...')|tojson }}) + '</span>';
 
     try {
@@ -4866,15 +3781,13 @@ async function psnQuickSaveAndTest() {
                 document.getElementById('userPsnUsername').value = data.username;
             }
             loadPsnTokenStatus();
-        } else {
-            resultSpan.innerHTML = '<span style="color: var(--neon-red);">' + escapeHtml(data.error || {{ _('Connection failed')|tojson }}) + '</span>';
+            return true;
         }
+        resultSpan.innerHTML = '<span style="color: var(--neon-red);">' + escapeHtml(data.error || {{ _('Connection failed')|tojson }}) + '</span>';
     } catch (e) {
         resultSpan.innerHTML = '<span style="color: var(--neon-red);">' + escapeHtml({{ _('Error: %(msg)s', msg='{msg}')|tojson }}.replace('{msg}', e.message)) + '</span>';
     }
-
-    btn.disabled = false;
-    btn.textContent = btnLabel;
+    return false;
 }
 
 /** Show whether the user must act on their PSN sign-in. Sony's own 10-day
@@ -4928,16 +3841,9 @@ async function loadXboxKeyStatus() {
     }
 }
 
-async function xboxSaveKey() {
-    const btn = document.getElementById('xboxSaveKeyBtn');
+async function xboxSaveKey(apiKey) {
     const input = document.getElementById('userXboxKey');
     const result = document.getElementById('xboxKeyResult');
-    const apiKey = input.value.trim();
-    if (!apiKey) {
-        result.innerHTML = '<span style="color: var(--neon-orange);">' + escapeHtml({{ _('Paste your OpenXBL key first.')|tojson }}) + '</span>';
-        return;
-    }
-    btn.disabled = true;
     result.innerHTML = '<span style="color: var(--text-secondary);">' + escapeHtml({{ _('Saving and connecting...')|tojson }}) + '</span>';
     try {
         const data = await (await fetch('/api/xbox/key', {
@@ -4956,7 +3862,6 @@ async function xboxSaveKey() {
     } catch (e) {
         result.innerHTML = '<span style="color: var(--neon-red);">' + escapeHtml({{ _('Error: %(msg)s', msg='{msg}')|tojson }}.replace('{msg}', e.message)) + '</span>';
     }
-    btn.disabled = false;
 }
 
 function xboxRemoveKey() {
@@ -4970,7 +3875,6 @@ function xboxRemoveKey() {
         loadXboxKeyStatus();
     });
 }
-window.xboxSaveKey = xboxSaveKey;
 window.xboxRemoveKey = xboxRemoveKey;
 document.addEventListener('DOMContentLoaded', loadXboxKeyStatus);
 

@@ -1,10 +1,22 @@
 - version: 4.0.0
-  date: 2026-11-15
+  date: 2026-11-16
   tags:
+  - type: enhancement
+    label: 'Settings is tidier. Your own choices sit together under Settings → Account: Theme and Language (with the moving background), and how long messages stay on screen, which is now each person''s own. Library → Paths holds all four folders under one Save. System → Server shows the port and where the database is. Support Development moved to the end of the Help page'
+  - type: enhancement
+    label: 'Controllers have their own page. Settings → Customization → Open Controllers goes there: set each system''s default controllers, add your own and edit the controller library'
+  - type: enhancement
+    label: 'Bulk Scrape Match Filtering offers three plain choices instead of a score number and its table: Strict, Normal and Loose. Normal is the old default. A setting you made yourself before shows as Custom until you pick another'
+  - type: enhancement
+    label: 'My Profile has one Save My Profile button instead of three. It checks a new PlayStation token or Xbox key as it saves, and keeps your working PlayStation token if Sony refuses the new one. Change Password now says it needs at least 12 characters and asks for the new password twice'
+  - type: fix
+    label: 'Plainer words in Settings. My Profile says what the RetroAchievements key and the password sign-in each do. API Keys says a person''s own RetroAchievements or Steam key is used first. TheGamesDB''s keys are named Main key and Backup key. The Edit emulator window says Program location and Command-line options. Clear Scraped Data says the picture and video files stay on disk unless you tick the box. The AI model lists no longer show prices, which went out of date'
+  - type: fix
+    label: 'Settings drops what was there twice or did nothing: the Library Statistics card (the Dashboard has it), the Settings copy of Scan Trophies (the PS3 trophies page has it), the separate Import System Logos button (Refresh System Logos now copies ES-DE''s logos first) and six stored settings nothing used. A message time of 0 seconds is refused instead of quietly saved, and saving a new ROM folder no longer says RetroDB must restart'
   - type: performance
     label: 'RetroDB is far lighter on your computer. The Cyberpunk theme''s moving mist kept one processor core fully busy for as long as any RetroDB page was open; the graphics card now draws it, and the processor barely notices. It also draws half as many frames, which looks the same because the mist drifts slowly'
   - type: feature
-    label: 'Moving backgrounds (mist, rain, stars, dust) now pause when you are not using RetroDB: when its window is not in front, its tab is hidden, or a minute passes without the mouse or keyboard. They start again the moment you come back. A new Moving background switch under Settings → Library → Display keeps them still on that computer'
+    label: 'Moving backgrounds (mist, rain, stars, dust) now pause when you are not using RetroDB: when its window is not in front, its tab is hidden, or a minute passes without the mouse or keyboard. They start again the moment you come back. A new Moving background switch under Settings → Account → Theme and Language keeps them still on that computer'
   - type: performance
     label: 'Page titles keep their glow but no longer pulse all the time, and the flickering "glitch" titles on the console and game lists flicker only while the mouse is over them'
   - type: feature
@@ -16,13 +28,11 @@
   - type: fix
     label: 'Add User now asks for the new person''s first password (12 characters or more), and they choose their own the first time they sign in. Before, every new account quietly got the same password, "changeme", which anyone could use until its owner signed in'
   - type: fix
-    label: 'Settings shows each person only what their role can change. Viewers and players see their profile, time zone, theme, language, statistics and trophies; editors also see Bonus Discs and Controllers. They used to see admin settings whose Save button was then refused, some showing wrong values'
+    label: 'Settings shows each person only what their role can change. Viewers and players see the Account tab; editors also see Bonus Discs and Controllers. They used to see admin settings whose Save button was then refused, some showing wrong values'
   - type: fix
     label: 'Settings → System no longer has the Clear Stuck RA Sync button. It said it had cleared the sync even when it had not; stop a RetroAchievements sync with the buttons on its progress notice'
   - type: fix
-    label: 'Settings → Data now shows and scans your own RPCS3 trophy folder when you have set one, instead of greying out Scan Trophies'
-  - type: fix
-    label: 'Small Settings fixes: Reset to Default on the scraper list says to press Save Settings to keep it; a new install shows ScreenScraper switched on, as it really is; the Steam ID help asks for the 17-digit number; the Emulators page no longer mentions an Add button it does not have; the Setup Wizard hides your API keys as you type them'
+    label: 'Small Settings fixes: Reset to Default on the scraper list says to press Save Scraper Settings to keep it; a new install shows ScreenScraper switched on, as it really is; the Steam ID help asks for the 17-digit number; the Emulators page no longer mentions an Add button it does not have; the Setup Wizard hides your API keys as you type them'
   - type: enhancement
     label: 'The help manual now has a search box. Type a word to see only the parts of the manual that mention it, with the word marked. It ignores accents and works in every language'
   - type: fix
@@ -64,7 +74,7 @@
   - type: fix
     label: 'The Library''s filters now match whole values. Choosing the genre "Action" no longer also shows "Action-Adventure" games, so the result matches the count beside it. A game page''s tag lists and Similar Games match the same way'
   - type: security
-    label: 'Settings → My Profile no longer sends your saved RetroAchievements key, PSN token or Steam key to the page. Each box shows only its last four characters, as the Scraping tab''s keys already did. Saving without retyping keeps the saved key, and the PSN "Save & Test Connection" button tests the saved token'
+    label: 'Settings → My Profile no longer sends your saved RetroAchievements key, PSN token or Steam key to the page. Each box shows only its last four characters, as the Scraping tab''s keys already did. Saving without retyping keeps the saved key'
   - type: fix
     label: 'The Log Viewer no longer opens on "Invalid log file". It listed helper logs it would not show, and opened one of them first; it now lists only logs it can open'
   - type: fix

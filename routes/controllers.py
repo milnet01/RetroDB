@@ -4,12 +4,12 @@
 # Handles controller management - CRUD operations and system assignments.
 # =============================================================================
 
-from flask import Blueprint, request
+from flask import Blueprint, request, render_template
 from flask_babel import gettext as _
 import logging
 
 from services.database import query, execute
-from services.auth import login_required, editor_required
+from services.auth import login_required, editor_required, permission_required
 from services.api_helpers import handle_api_errors, success, error
 
 logger = logging.getLogger(__name__)
@@ -137,6 +137,18 @@ SYSTEM_DEFAULT_CONTROLLER = {
     'cps2': 'Arcade Stick (Generic)',
     'cps3': 'Arcade Stick (Generic)',
 }
+
+# =============================================================================
+# CONTROLLERS PAGE
+# =============================================================================
+
+@bp.route('/controllers')
+@login_required
+@permission_required('edit')
+def controllers_page():
+    """Controller library and per-system defaults; linked from Settings > Customization."""
+    return render_template('controllers.html')
+
 
 # =============================================================================
 # CONTROLLERS API

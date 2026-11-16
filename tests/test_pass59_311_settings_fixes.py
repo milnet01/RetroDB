@@ -187,3 +187,114 @@ def test_help_page_carries_support_development(setup_complete, monkeypatch):
     client, _ = _signed_in_client(_make_user('pass59311-help', role='viewer'), '10.59.311.15')
     html = client.get('/help').get_data(as_text=True)
     assert 'id="support"' in html and 'github.com/sponsors/milnet01' in html
+
+
+# --- Section D -------------------------------------------------------------
+
+def _scraping_tab(html):
+    return html[html.index('id="tab-scraping"'):html.index('id="tab-data"')]
+
+
+def _checked_strictness(tab):
+    found = re.findall(r'<input[^>]*name="matchStrictness"[^>]*>', tab)
+    return [re.search(r'value="(\w+)"', tag).group(1) for tag in found if ' checked' in tag], found
+
+
+def test_match_filter_is_three_plain_choices(setup_complete, monkeypatch):
+    """D: Strict / Normal / Loose replace the score box, its table and the
+    criteria switch; the default score is Normal and no Custom shows."""
+    from scraper import scraper_manager
+    monkeypatch.setattr(scraper_manager, 'load_scraper_settings', lambda: {})
+    tab = _scraping_tab(_settings_page(monkeypatch, 'admin', '10.59.311.21'))
+    checked, found = _checked_strictness(tab)
+    assert [re.search(r'value="(\w+)"', t).group(1) for t in found] == ['strict', 'normal', 'loose']
+    assert checked == ['normal']
+    for gone in ('id="matchMinScore"', 'Use advanced criteria', 'Score Range'):
+        assert gone not in tab, gone
+
+
+def test_an_earlier_own_score_shows_as_custom(setup_complete, monkeypatch):
+    from scraper import scraper_manager
+    monkeypatch.setattr(scraper_manager, 'load_scraper_settings',
+                        lambda: {'minimum_match_score': 250, 'match_mode': 'score'})
+    tab = _scraping_tab(_settings_page(monkeypatch, 'admin', '10.59.311.22'))
+    assert _checked_strictness(tab)[0] == ['custom']
+    monkeypatch.setattr(scraper_manager, 'load_scraper_settings',
+                        lambda: {'minimum_match_score': 200, 'match_mode': 'criteria'})
+    tab = _scraping_tab(_settings_page(monkeypatch, 'admin', '10.59.311.23'))
+    assert _checked_strictness(tab)[0] == ['custom']
+
+
+def test_my_profile_has_one_save_and_named_saves(setup_complete, monkeypatch):
+    """D: one Save per card, and each card's Save names what it saves."""
+    html = _settings_page(monkeypatch, 'admin', '10.59.311.24')
+    profile = html[html.index('id="profile"'):html.index('id="appearance"')]
+    assert profile.count('data-on-click="saveUserSettings"') == 1
+    for gone in ('psnQuickSaveAndTest', 'data-on-click="xboxSaveKey"', 'Save My Settings'):
+        assert gone not in profile, gone
+    assert 'Save Scraper Settings' in _scraping_tab(html)
+
+
+def test_change_password_says_how_long_and_asks_twice(setup_complete, monkeypatch):
+    html = _settings_page(monkeypatch, 'viewer', '10.59.311.25')
+    assert 'id="confirmNewPassword"' in html
+    assert 'At least 12 characters' in html
+
+
+def test_controllers_have_their_own_page(setup_complete, monkeypatch):
+    """C: Controllers left Settings > Customization for /controllers."""
+    import app as app_module
+    monkeypatch.setitem(app_module.app.config, 'TESTING', True)
+    html = _settings_page(monkeypatch, 'editor', '10.59.311.26')
+    custom = html[html.index('id="tab-customization"'):]
+    assert 'href="/controllers"' in custom
+    assert 'id="controllerLibrary"' not in html and 'function loadControllers' not in html
+    client, _ = _signed_in_client(_make_user('pass59311-ctrl-ed', role='editor'), '10.59.311.27')
+    page = client.get('/controllers')
+    assert page.status_code == 200
+    body = page.get_data(as_text=True)
+    for marker in ('id="controllerLibrary"', 'id="systemControllersGrid"',
+                   'id="editControllerModal"', 'function loadControllers'):
+        assert marker in body, marker
+    client, _ = _signed_in_client(_make_user('pass59311-ctrl-vw', role='viewer'), '10.59.311.28')
+    assert client.get('/controllers').status_code == 302
+
+
+def test_ai_model_lists_carry_no_prices(setup_complete, monkeypatch):
+    """D: prices go out of date, so the model lists name models only."""
+    tab = _scraping_tab(_settings_page(monkeypatch, 'admin', '10.59.311.29'))
+    assert 'per 1M tokens' not in tab and 'value="claude-haiku-5-5"' in tab
+
+
+def test_retroachievements_words_say_what_each_part_is_for(setup_complete, monkeypatch):
+    """D: My Profile says what the key and the password sign-in each do; API
+    Keys says whose key wins (auth.get_user_ra_credentials,
+    platform_sync._get_steam_credentials)."""
+    html = _settings_page(monkeypatch, 'admin', '10.59.311.30')
+    profile = html[html.index('id="profile"'):html.index('id="appearance"')]
+    assert 'show your achievements' in profile and 'unlock achievements while you play' in profile
+    keys = html[html.index('id="apikeys"'):]
+    assert 'used only for someone who has not added their own' in keys
+    assert 'used only for an admin who has not added their own' in keys
+
+
+def test_plain_words_on_scraping_and_data(setup_complete, monkeypatch):
+    """D: TheGamesDB's keys and description, and what Clear Scraped Data does."""
+    html = _settings_page(monkeypatch, 'admin', '10.59.311.31')
+    for gone in ('Primary online scraper', 'Public API Key', 'Private API Key',
+                 'Per-IP rate limit', 'images, etc.)'):
+        assert gone not in html, gone
+    assert 'TheGamesDB — Main key' in html and 'TheGamesDB — Backup key' in html
+    assert 'Also delete the picture and video files' in html
+
+
+def test_plain_words_on_the_emulators_page(setup_complete, monkeypatch):
+    import app as app_module
+    monkeypatch.setitem(app_module.app.config, 'TESTING', True)
+    client, _ = _signed_in_client(_make_user('pass59311-emu'), '10.59.311.32')
+    html = client.get('/settings/emulators').get_data(as_text=True)
+    for gone in ('prefixes', 'Flatpak sandbox', 'Binary path override', 'Args template',
+                 'placeholder="/mnt/Emulators"'):
+        assert gone not in html, gone
+    for new in ('Program location', 'Command-line options (advanced)', '/home/you/Emulators'):
+        assert new in html, new

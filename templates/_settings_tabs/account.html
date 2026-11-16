@@ -96,7 +96,7 @@
         
         <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">🎖️ {{ _('RetroAchievements Settings') }}</h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-            {{ _('Configure your RetroAchievements credentials to view your achievement progress.') }}
+            {{ _('Your username and web API key show your achievements in RetroDB. To unlock achievements while you play, sign in with your password below.') }}
         </p>
         
         <div class="form-group mb-md">
@@ -115,7 +115,7 @@
         </div>
         
         <div class="form-group mb-lg" id="raPlay" style="display: none;">
-            <div class="form-label">{{ _("Earn achievements in RetroArch, DuckStation and PCSX2") }}</div>
+            <div class="form-label">{{ _("Password sign-in: unlock achievements while you play in RetroArch, DuckStation and PCSX2") }}</div>
             <p class="text-muted" id="raPlayIntro">{{ _("Sign in once and your achievements unlock as you play. Your password goes only to RetroAchievements and is not kept; RetroDB keeps the sign-in token it returns.") }} {{ _("When you press Play in DuckStation or PCSX2, RetroDB writes your sign-in to that emulator's own settings file. A sign-in you made in the emulator's own menu is left alone.") }}</p>
             <p id="raPlaySignedIn" style="display: none;"></p>
             <div class="path-input-row" id="raPlayForm">
@@ -208,13 +208,8 @@
                 </div>
             </div>
 
-            <!-- Quick save + test -->
-            <div style="margin-top: var(--spacing-lg); padding-top: var(--spacing-md); border-top: 1px solid var(--card-border); display: flex; gap: var(--spacing-sm); align-items: center; flex-wrap: wrap;">
-                <button type="button" class="btn btn-primary btn-sm" data-on-click="psnQuickSaveAndTest" id="psnQuickSaveBtn">
-                    {{ _('Save &amp; Test Connection') }}
-                </button>
-                <span id="psnTestResult" style="font-size: 0.85rem;"></span>
-            </div>
+            <p class="field-tip" style="margin-top: var(--spacing-md);">{{ _('Save My Profile at the bottom of this card checks a new token with Sony.') }}</p>
+            <span id="psnTestResult" role="status" aria-live="polite" style="font-size: 0.85rem;"></span>
         </div>
 
         <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">🟢 {{ _('Xbox') }}</h3>
@@ -226,7 +221,6 @@
             <label class="form-label" for="userXboxKey">{{ _('Your OpenXBL API key') }}</label>
             <div style="display: flex; gap: var(--spacing-sm); align-items: center; flex-wrap: wrap;">
                 <input type="password" class="form-input" id="userXboxKey" autocomplete="off" style="flex: 1; min-width: 200px;">
-                <button type="button" class="btn btn-primary btn-sm" data-on-click="xboxSaveKey" id="xboxSaveKeyBtn">{{ _('Save &amp; Test Connection') }}</button>
                 <button type="button" class="btn btn-secondary btn-sm" data-on-click="xboxRemoveKey" id="xboxRemoveKeyBtn" style="display: none;">{{ _('Remove') }}</button>
             </div>
             <span id="xboxKeyResult" role="status" aria-live="polite" style="font-size: 0.85rem;"></span>
@@ -252,8 +246,8 @@
             <span class="field-tip">{% trans %}The 17-digit number, not your profile name. Find it at <a href="https://steamid.io" target="_blank" rel="noopener noreferrer" style="color: var(--primary-cyan);">steamid.io</a>{% endtrans %}</span>
         </div>
 
-        <button type="button" class="btn btn-primary" data-on-click="saveUserSettings">
-            {{ _('Save My Settings') }}
+        <button type="button" class="btn btn-primary" data-on-click="saveUserSettings" id="saveProfileBtn">
+            <span class="btn-icon">💾</span> {{ _('Save My Profile') }}
         </button>
         
         {# Every role has a password and may change it (auth.md, PASS-59-284). #}
@@ -267,9 +261,15 @@
             <input type="password" class="form-input" id="currentPassword" autocomplete="current-password" placeholder="{{ _('Enter current password') }}">
         </div>
         
-        <div class="form-group mb-lg">
+        <div class="form-group mb-md">
             <label class="form-label" for="newPassword">{{ _('New Password') }}</label>
-            <input type="password" class="form-input" id="newPassword" autocomplete="new-password" placeholder="{{ _('Enter new password') }}">
+            <input type="password" class="form-input" id="newPassword" autocomplete="new-password" minlength="12" aria-describedby="newPasswordHint" placeholder="{{ _('Enter new password') }}">
+            <span class="field-tip" id="newPasswordHint">{{ _('At least 12 characters.') }}</span>
+        </div>
+
+        <div class="form-group mb-lg">
+            <label class="form-label" for="confirmNewPassword">{{ _('Type the new password again') }}</label>
+            <input type="password" class="form-input" id="confirmNewPassword" autocomplete="new-password" minlength="12">
         </div>
         
         <button type="button" class="btn btn-warning" data-on-click="changePassword">

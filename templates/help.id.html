@@ -443,9 +443,9 @@
         <ol>
             <li>Kunjungi <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a></li>
             <li>Minta kunci API (gratis, disetujui secara manual) &mdash; Anda akan menerima kunci <strong>Public</strong> dan <strong>Private</strong></li>
-            <li>Masukkan kedua kunci di Settings &rarr; API Keys &rarr; TheGamesDB</li>
-            <li>Kunci <strong>Public</strong> (batas laju per IP) digunakan sebagai kunci utama untuk pengambilan data</li>
-            <li>Kunci <strong>Private</strong> (kuota bersama bulanan) digunakan sebagai cadangan jika kunci publik gagal</li>
+            <li>Di Pengaturan &rarr; Scraping &rarr; Kunci API, isi kunci publik di <strong>TheGamesDB &mdash; Kunci Utama</strong> dan kunci privat di <strong>TheGamesDB &mdash; Kunci Cadangan</strong></li>
+            <li>Kunci utama dipakai lebih dulu; setiap koneksi internet punya jatah sendiri</li>
+            <li>Kunci cadangan dipakai saat kunci utama habis; jatahnya sekitar 6.000 permintaan per bulan</li>
         </ol>
 
         <h4>IGDB (via Twitch)</h4>
@@ -492,7 +492,7 @@
         <p><em>Digunakan untuk impor perpustakaan Steam dan pelacakan achievement.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox terhubung ke RetroDB melalui OpenXBL, layanan gratis. Setiap orang memakai kuncinya sendiri: masuk di <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> dengan akun Xbox Anda, salin kunci API Anda, lalu tempelkan di Pengaturan &rarr; Profil Saya &rarr; Xbox. <strong>Simpan &amp; Uji Koneksi</strong> memeriksa kunci dan menampilkan gamertag Anda. Kunci gratis mengizinkan 150 permintaan per jam.</p>
+        <p>Xbox terhubung ke RetroDB melalui OpenXBL, layanan gratis. Setiap orang memakai kuncinya sendiri: masuk di <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> dengan akun Xbox Anda, salin kunci API Anda, lalu tempelkan di Pengaturan &rarr; Akun &rarr; Profil Saya &rarr; Xbox. <strong>Simpan Profil Saya</strong> memeriksa kunci dan menampilkan gamertag Anda. Kunci gratis mengizinkan 150 permintaan per jam.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN menggunakan autentikasi cookie NPSSO. Lihat bagian <a href="#trophies">Trophies</a> untuk petunjuk pengaturan yang rinci.</p>
@@ -502,15 +502,15 @@
 
         <table class="data-table">
             <thead>
-                <tr><th>Penyedia</th><th>Model Bawaan</th><th>Harga (Input / Output per 1 Juta Token)</th></tr>
+                <tr><th>Penyedia</th><th>Model Bawaan</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0.10 / $0.40</td></tr>
-                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0.15 / $0.60</td></tr>
-                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td><td>$0.10 / $0.50</td></tr>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td></tr>
             </tbody>
         </table>
-        <p>Setiap penyedia menawarkan beberapa tingkatan model. Model termurah sudah bekerja dengan baik untuk metadata dan konten museum. Konfigurasikan penyedia pilihan dan kunci API Anda di <strong>Settings &rarr; Scraping &rarr; API Keys</strong>.</p>
+        <p>Setiap penyedia menawarkan beberapa model. Yang bertanda Disarankan bekerja dengan baik untuk metadata dan konten museum; situs masing-masing penyedia menampilkan harga terbarunya. Konfigurasikan penyedia pilihan dan kunci API Anda di <strong>Pengaturan &rarr; Scraping &rarr; Kunci API</strong>.</p>
         <p>Gemini dan OpenAI selalu mencari di web. Claude hanya mencari jika Anda menyalakan <strong>Izinkan Claude mencari di web</strong> di bawah modelnya. Tanpa pencarian, Claude mengosongkan apa pun yang butuh angka yang dipublikasikan, seperti kopi terjual. Anthropic menarik biaya untuk setiap pencarian: paling banyak 5 pencarian per game, hingga 5 sen AS.</p>
     </div>
 </section>
@@ -520,52 +520,49 @@
     <h2 class="card-title">Pengaturan</h2>
     <div class="card-body">
         <p>Pengaturan diatur ke dalam tab, masing-masing dengan subbagian. Admin juga melihat tab Emulator, yang membuka halamannya sendiri.</p>
-        <p>Setiap orang hanya melihat pengaturan yang bisa diubah oleh perannya. Viewer atau player melihat Profil Saya, Zona Waktu, Tema, Bahasa, statistik pustaka, trofi, dan Dukungan. Editor juga melihat Disc Bonus dan Kontroler. Selebihnya khusus admin.</p>
+        <p>Setiap orang hanya melihat pengaturan yang bisa diubah oleh perannya. Viewer atau player melihat tab Akun. Editor juga melihat Disc Bonus dan Kontroler. Selebihnya khusus admin.</p>
 
         <h3>Tab Account</h3>
         <ul>
-            <li><strong>My Profile</strong> &mdash; Unggah/hapus avatar, nama tampilan, info peran, ubah kata sandi</li>
-            <li><strong>RetroAchievements</strong> &mdash; Nama pengguna dan kunci API untuk integrasi RA</li>
-            <li><strong>PSN</strong> &mdash; Cookie NPSSO untuk sinkronisasi trofi PlayStation Network</li>
+            <li><strong>Profil Saya</strong> &mdash; Avatar Anda, folder trofi RPCS3 Anda, dan akun RetroAchievements, PlayStation Network, Xbox, dan Steam milik Anda sendiri. Nama pengguna RetroAchievements dan kunci API web Anda menampilkan pencapaian Anda; masuk dengan kata sandi Anda membuka pencapaian saat Anda bermain. Satu tombol <strong>Simpan Profil Saya</strong> menyimpan kartu itu dan memeriksa token PlayStation atau kunci Xbox yang baru. <strong>Ubah Kata Sandi</strong> meminta kata sandi baru dua kali; minimal 12 karakter.</li>
+            <li><strong>Tema dan Bahasa</strong> &mdash; Tema Anda, bahasa Anda, dan latar belakang bergerak</li>
+            <li><strong>Notifikasi</strong> &mdash; Berapa lama setiap jenis pesan tampil di layar, hanya untuk Anda</li>
             <li><strong>Timezone</strong> &mdash; Atur zona waktu Anda untuk tampilan tanggal di seluruh aplikasi</li>
             <li><strong>Users</strong> &mdash; Manajemen pengguna: tambah, edit, hapus pengguna, dan tetapkan peran (khusus admin)</li>
         </ul>
 
         <h3>Tab Library</h3>
         <ul>
-            <li><strong>Paths</strong> &mdash; Jalur perpustakaan ROM, lokasi database</li>
-            <li><strong>Display</strong> &mdash; Pilihan tema, gaya boxart (2D/3D), sistem rating usia pilihan, jumlah item per halaman</li>
+            <li><strong>Jalur</strong> &mdash; Folder pustaka ROM, folder gamelist dan media ES-DE, dan folder trofi RPCS3 rumah tangga, dengan satu Simpan</li>
+            <li><strong>Tampilan</strong> &mdash; Gaya boxart (2D/3D) dan sistem peringkat usia pilihan, untuk semua orang</li>
             <li><strong>ROM Naming</strong> &mdash; Penempatan artikel ("The" di depan/belakang), daftar opsi region, region bawaan, konvensi penamaan</li>
+            <li><strong>Disc Bonus</strong> &mdash; Temukan disc bonus dan tautkan ke game-nya</li>
             <li><strong>Backup</strong> &mdash; Buat dan pulihkan cadangan database</li>
         </ul>
 
         <h3>Tab Scraping</h3>
         <ul>
-            <li><strong>ES-DE</strong> &mdash; Jalur gamelist dan media ES-DE untuk impor data lokal</li>
-            <li><strong>Scraper</strong> &mdash; Aktifkan/nonaktifkan scraper masing-masing, urutan prioritas seret-dan-lepas, pengaturan batas laju per scraper</li>
-            <li><strong>API Keys</strong> &mdash; Semua kredensial scraper (TGDB, IGDB, RAWG, ScreenScraper), pemilihan penyedia AI dan pilihan model (Gemini, OpenAI, Claude)</li>
+            <li><strong>Scraper</strong> &mdash; Nyalakan atau matikan scraper dan seret ke urutan pemakaiannya. <strong>Penyaringan Kecocokan Scraping Massal</strong> mengatur seberapa cocok sebuah hasil: <strong>Ketat</strong> hanya menerima judul yang persis sama, <strong>Normal</strong> (bawaan) judul yang mirip pada sistem yang benar, dan <strong>Longgar</strong> juga judul sebagian. Pengaturan dari versi sebelumnya tampil sebagai <strong>Kustom</strong> sampai Anda memilih yang lain.</li>
+            <li><strong>Kunci API</strong> &mdash; Semua kredensial scraper (TheGamesDB, IGDB, RAWG, ScreenScraper), pilihan penyedia AI dan model (Gemini, OpenAI, Claude), serta kunci RetroAchievements dan Steam rumah tangga. Kunci RetroAchievements milik seseorang di Profil Saya dipakai lebih dulu, dan milik rumah tangga hanya untuk orang yang tidak punya. Kunci Steam rumah tangga hanya melayani admin yang tidak punya kunci sendiri.</li>
         </ul>
 
         <h3>Tab Data</h3>
         <ul>
-            <li><strong>Stats</strong> &mdash; Ringkasan statistik perpustakaan (total game, sistem, penggunaan penyimpanan)</li>
-            <li><strong>Trophies</strong> &mdash; Konfigurasi jalur trofi RPCS3 untuk pemindaian trofi PS3 lokal</li>
-            <li><strong>Dropdowns</strong> &mdash; Sesuaikan opsi region dan nilai dropdown lain yang digunakan di seluruh aplikasi</li>
+            <li><strong>Dropdown</strong> &mdash; Atur nilai yang ditawarkan di daftar seperti genre, perspektif, dan tipe simpanan</li>
             <li><strong>Normalization</strong> &mdash; Aturan normalisasi genre dan mode &mdash; tambahkan pemetaan kustom untuk menstandardisasi keluaran scraper</li>
         </ul>
 
         <h3>Tab Customization</h3>
         <ul>
-            <li><strong>Notifications</strong> &mdash; Preferensi durasi tampil notifikasi (success, info, warning, error &mdash; masing-masing dapat dikonfigurasi terpisah)</li>
-            <li><strong>Controllers</strong> &mdash; Kelola perpustakaan kontroler, atur kontroler bawaan per sistem, tambahkan kontroler kustom. Kontroler bawaan menggantikan nilai hasil scraper/AI saat pengambilan metadata.</li>
-            <li><strong>Logos</strong> &mdash; Kustomisasi logo sistem &mdash; impor logo sistem atau segarkan dari bawaan</li>
+            <li><strong>Kontroler</strong> &mdash; <strong>Buka Kontroler</strong> menuju halaman Kontroler. Di sana Anda mengatur kontroler bawaan tiap sistem, menambah kontroler sendiri, dan mengedit pustaka kontroler. Kontroler bawaan menimpa nilai hasil scrape/AI saat mengambil metadata.</li>
+            <li><strong>Logo</strong> &mdash; <strong>Segarkan Logo Sistem</strong> menyalin logo baru dari folder ES-DE Anda, lalu menampilkan sistem mana yang masih belum punya</li>
         </ul>
 
         <h3>Tab System</h3>
         <ul>
-            <li><strong>Pemeliharaan</strong> &mdash; Bersihkan ROM yang hilang, hapus impor CLZ atau data hasil scrape, hapus berkas media yang tidak dipakai game mana pun, hapus tautan ke berkas media yang sudah tidak ada, dan optimalkan database</li>
+            <li><strong>Pemeliharaan</strong> &mdash; Bersihkan ROM yang hilang, hapus impor CLZ atau data hasil scrape, hapus berkas media yang tidak dipakai game mana pun, hapus tautan ke berkas media yang sudah tidak ada, optimalkan database, dan hitung ukuran berkas</li>
             <li><strong>Pembaruan</strong> &mdash; Periksa, unduh, dan pasang versi baru</li>
-            <li><strong>Server</strong> &mdash; Mulai ulang atau matikan RetroDB</li>
+            <li><strong>Server</strong> &mdash; Mulai ulang atau matikan RetroDB, port yang dipakainya (alamat berubah setelah dimulai ulang), dan lokasi databasenya</li>
             <li><strong>Logging</strong> &mdash; Pengaturan tingkat log untuk berbagai kategori, dan berkas lognya</li>
         </ul>
 
@@ -1670,7 +1667,7 @@
         <ul>
             <li><strong>Clean Missing ROMs</strong> &mdash; Hapus entri database untuk game yang berkas ROM-nya tidak lagi ada di disk. Berguna setelah mengatur ulang atau menghapus berkas ROM.</li>
             <li><strong>Orphan Media Cleanup</strong> &mdash; Temukan dan hapus berkas gambar di disk (boxart, screenshot, fanart) yang tidak memiliki referensi database yang sesuai. Pratinjau sebelum menghapus untuk konfirmasi.</li>
-            <li><strong>Clear Scraped Data</strong> &mdash; Hapus semua metadata hasil scraping dari game sambil mempertahankan entri berkas ROM. Berguna untuk memulai ulang dari awal dengan scraping. Pratinjau menampilkan game yang terpengaruh sebelum dijalankan.</li>
+            <li><strong>Hapus Data Scrape</strong> &mdash; Menghapus apa yang diisi scraping pada game hasil scrape, termasuk tautan ke gambar dan videonya, supaya Anda bisa scrape ulang dari awal. Game Anda tetap ada, dan judulnya kembali ke nama berkas (judul yang dikunci tetap). Berkas gambar dan video tetap ada di disk kecuali Anda mencentang <strong>Hapus juga file gambar dan video</strong>. Pratinjau menampilkan berapa banyak game yang terkena.</li>
             <li><strong>Clear CLZ Imports</strong> &mdash; Hapus semua catatan impor CLZ Games (entri hanya metadata tanpa berkas ROM).</li>
         </ul>
 
@@ -1834,7 +1831,7 @@
         <ul>
             <li>Scrape massal mencari berdasarkan nama berkas ROM, jadi berkas yang namanya buruk menemukan game yang salah. Ganti nama berkasnya, atau scrape game itu di halamannya sendiri dengan judul pencarian yang lebih baik, lalu pilih hasil yang benar.</li>
             <li>Di jendela Edit Game, centang <strong>Pertahankan judul ini saat scraping</strong> agar scrape berikutnya tidak mengubah namanya.</li>
-            <li>Untuk banyak game, naikkan <strong>Skor Kecocokan Minimum</strong> di Pengaturan &rarr; Scraping &rarr; Scraper &rarr; Penyaringan Kecocokan Scraping Massal.</li>
+            <li>Untuk banyak game, pilih <strong>Ketat</strong> di Pengaturan &rarr; Scraping &rarr; Scraper &rarr; Penyaringan Kecocokan Scraping Massal.</li>
         </ul>
 
         <h4>Scrape tidak mengganti gambar yang buruk</h4>
@@ -1859,7 +1856,7 @@
         </ul>
 
         <h4>Banyak game "Gagal"</h4>
-        <p>Gagal biasanya berarti tidak ada hasil yang cukup mirip untuk disimpan. Turunkan <strong>Skor Kecocokan Minimum</strong> atau <strong>Kualitas Judul Minimum</strong> di Pengaturan &rarr; Scraping &rarr; Scraper &rarr; Penyaringan Kecocokan Scraping Massal, dan periksa nama berkasnya. Penampil Log mencantumkan setiap game yang tidak menemukan kecocokan.</p>
+        <p>Gagal biasanya berarti tidak ada hasil yang cukup mirip untuk disimpan. Pilih <strong>Longgar</strong> di Pengaturan &rarr; Scraping &rarr; Scraper &rarr; Penyaringan Kecocokan Scraping Massal, dan periksa nama berkasnya. Penampil Log mencantumkan setiap game yang tidak menemukan kecocokan.</p>
 
         <h4>"A scrape for &hellip; is already running"</h4>
         <p>Sistem itu sedang di-scrape dengan mode yang sama. Tunggu sampai selesai, atau batalkan. Scrape sistem lain menunggu dalam antrean dan mulai sendiri.</p>
@@ -1893,7 +1890,7 @@
         <p><strong>Mainkan</strong> menjalankan emulator di komputer yang menjalankan RetroDB, bukan di perangkat tempat Anda menekannya.</p>
 
         <h4>"Program emulator tidak ditemukan di PATH"</h4>
-        <p>Di halaman Emulator, di bawah <strong>Emulator terdaftar</strong>, edit emulatornya dan isi <strong>Penimpaan jalur biner</strong> dengan lokasi programnya. Atau tambahkan folder yang menyimpannya di bawah <strong>Folder emulator</strong>. Untuk RetroArch, gunakan <strong>Deteksi otomatis</strong> pada kartu RetroArch, lalu <strong>Simpan</strong>.</p>
+        <p>Di halaman Emulator, di bawah <strong>Emulator terdaftar</strong>, edit emulatornya dan isi <strong>Lokasi program</strong> dengan lokasi programnya. Atau tambahkan folder yang menyimpannya di bawah <strong>Folder emulator</strong>. Untuk RetroArch, gunakan <strong>Deteksi otomatis</strong> pada kartu RetroArch, lalu <strong>Simpan</strong>.</p>
 
         <h4>"Tidak ada emulator yang dikonfigurasi untuk sistem &hellip;" atau "Emulator &hellip; dimatikan"</h4>
         <p>Pilih emulator untuk sistem itu di bawah <strong>Pemetaan per sistem</strong> di halaman Emulator, atau nyalakan emulatornya di bawah <strong>Emulator terdaftar</strong>. Jika game diatur ke emulator yang sudah tidak ada: hapus pilihan itu di jendela Edit Game-nya.</p>
@@ -1943,7 +1940,7 @@
 
         <h4>"Autentikasi PSN gagal"</h4>
         <ul>
-            <li>Sony tidak lagi menerima token NPSSO yang Anda simpan. Buat yang baru dengan langkah-langkah di Pengaturan &rarr; Akun &rarr; Profil Saya &rarr; PlayStation Network, lalu tekan <strong>Simpan &amp; Uji Koneksi</strong>.</li>
+            <li>Sony tidak lagi menerima token NPSSO yang Anda simpan. Buat yang baru dengan langkah-langkah di Pengaturan &rarr; Akun &rarr; Profil Saya &rarr; PlayStation Network, lalu tekan <strong>Simpan Profil Saya</strong>.</li>
             <li>RetroDB menjaga sesi masuk tetap berjalan sendiri selama Sony menerima tokennya. Untuk mengganti token yang masih berfungsi, keluar dari PlayStation dulu.</li>
         </ul>
 

@@ -1,0 +1,1259 @@
+{% extends "base.html" %}
+{% set adaptive_layout = true %}
+{% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
+
+{% block title %}{{ _('Controllers') }} - RetroDB{% endblock %}
+
+{% block styles %}
+<style>
+/* ============================================
+   SYSTEM CONTROLLERS STICKY NAV
+   ============================================ */
+
+.system-controllers-wrapper {
+    position: relative;
+    margin-bottom: var(--spacing-xl);
+}
+
+.system-controllers-sticky-nav {
+    position: sticky;
+    top: var(--sticky-top);  /* Dynamically set by StickyScroll.stackPositions() */
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: rgba(15, 20, 25, 0.98);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.system-controllers-sticky-nav.nav-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.sticky-nav-label {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.sticky-nav-letters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    flex: 1;
+}
+
+.sticky-nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 6px;
+    background: rgba(76, 201, 240, 0.1);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    border-radius: var(--radius-sm);
+    color: var(--primary-cyan);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.sticky-nav-btn:hover {
+    background: rgba(76, 201, 240, 0.2);
+    border-color: var(--primary-cyan);
+    transform: translateY(-1px);
+}
+
+.sticky-nav-btn.active {
+    background: var(--primary-cyan);
+    color: var(--bg-darkest);
+}
+
+.sticky-nav-btn.disabled {
+    opacity: 0.3;
+    cursor: default;
+    pointer-events: none;
+}
+
+.system-controller-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+}
+
+/* A long controller name in a card's list must not widen the page on a phone. */
+.system-controller-grid > * {
+    min-width: 0;
+}
+
+.system-controller-grid select {
+    max-width: 100%;
+}
+
+.default-controller-tags .badge {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    max-width: 100%;
+}
+
+@media (max-width: 900px) {
+    .system-controller-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .sticky-nav-btn {
+        min-width: 24px;
+        height: 24px;
+        font-size: 0.7rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-box form-page">
+<div class="page-header">
+    <div>
+        <h1 class="page-title">🎮 {{ _('Controllers') }}</h1>
+        <p class="page-subtitle"><a href="{{ url_for('settings.settings') }}#customization">← {{ _('Back to Settings') }}</a></p>
+    </div>
+</div>
+
+    {% call tab_subnav('controllers') %}
+        {{ subnav_link('controllers-defaults', '⚙️ ' ~ _('System Defaults'), active=True) }}
+        {{ subnav_link('controllers-add', '➕ ' ~ _('Add Controller')) }}
+        {{ subnav_link('controllers-library', '📚 ' ~ _('Library')) }}
+    {% endcall %}
+
+    <!-- Controller Management -->
+    <section class="card mb-xl" id="controllers">
+    <div class="card-header">
+        <h2 class="card-title">🎮 {{ _('Controller Management') }}</h2>
+    </div>
+    <div class="card-body">
+        <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
+            {{ _('Manage controllers and assign default controllers to each system. The default controller will automatically appear for all games in that system.') }}
+        </p>
+        
+        <!-- System Default Controllers Section -->
+        <div id="controllers-defaults"></div>
+        <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
+            <span>⚙️</span> {{ _('System Default Controllers') }}
+        </h3>
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            {{ _('Assign a default controller to each system. Games will inherit this controller unless manually changed.') }}
+        </p>
+        <div style="margin-bottom: var(--spacing-lg); display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
+            <button type="button" data-on-click="autoAssignDefaultControllers" class="btn btn-primary" id="autoAssignBtn">
+                <span class="btn-icon">🎯</span>
+                {{ _('Auto-Assign Defaults') }}
+            </button>
+            <span class="text-muted" style="font-size: 0.85rem; align-self: center;">
+                {{ _('Automatically assigns appropriate controllers to all systems based on hardware type') }}
+            </span>
+        </div>
+        <div id="autoAssignResult" style="margin-bottom: var(--spacing-lg); display: none;"></div>
+        
+        <!-- System Controller Assignments - Wrapped with sticky nav -->
+        <div class="system-controllers-wrapper" id="systemControllersWrapper">
+            <!-- Sticky Navigation -->
+            <div class="system-controllers-sticky-nav" id="systemControllersStickyNav" data-sticky-nav data-sticky-scope="systemControllersWrapper">
+                <span class="sticky-nav-label">{{ _('Jump to:') }}</span>
+                <div class="sticky-nav-letters" id="systemControllersNavLetters">
+                    <!-- Letters populated by JavaScript -->
+                </div>
+            </div>
+            
+            <!-- System Controller Grid -->
+            <div class="system-controller-grid" id="systemControllersGrid">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Add New Controller Section -->
+        <div id="controllers-add"></div>
+        <h3 class="section-title" style="margin-bottom: var(--spacing-md); margin-top: var(--spacing-xl);">
+            <span>➕</span> {{ _('Add New Controller') }}
+        </h3>
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            {{ _('Add a custom controller to the library. Select one or more systems, or leave empty for "Universal" controllers.') }}
+        </p>
+        <div class="add-controller-form glass-panel" style="padding: var(--spacing-lg); margin-bottom: var(--spacing-xl);">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md);">
+                <div class="form-group">
+                    <label class="form-label" for="newControllerName">{{ _('Controller Name') }} <span style="color: var(--neon-red);">*</span></label>
+                    <input type="text" class="form-input" id="newControllerName" placeholder="{{ _('e.g., SNES Mouse') }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="newControllerSystemSelect">{{ _('Systems') }}</label>
+                    <div class="system-tags-container" id="newControllerSystemTags" style="display: flex; flex-wrap: wrap; gap: 6px; min-height: 38px; padding: 6px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-md); margin-bottom: 6px;">
+                        <!-- Tags added here -->
+                    </div>
+                    <select class="form-select" id="newControllerSystemSelect" data-on-change="addSystemToController" data-args='["new"]'>
+                        <option value="">{{ _('+ Add system...') }}</option>
+                        <!-- Populated by JavaScript -->
+                    </select>
+                    <span class="field-tip">{{ _('Leave empty for Universal controllers. Select multiple systems for shared controllers.') }}</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="newControllerManufacturer">{{ _('Manufacturer') }}</label>
+                    <input type="text" class="form-input" id="newControllerManufacturer"
+                           list="manufacturerSuggestions" placeholder="{{ _('e.g., Nintendo, Sony, or custom...') }}">
+                    <datalist id="manufacturerSuggestions">
+                        <option value="Nintendo">
+                        <option value="Sega">
+                        <option value="Sony">
+                        <option value="Atari">
+                        <option value="NEC">
+                        <option value="SNK">
+                        <option value="Microsoft">
+                        <option value="Commodore">
+                        <option value="Mattel">
+                        <option value="Coleco">
+                        <option value="Bandai">
+                        <option value="Third Party">
+                        <option value="Other">
+                    </datalist>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="newControllerYear">{{ _('Release Year') }}</label>
+                    <input type="number" class="form-input" id="newControllerYear" placeholder="{{ _('e.g., 1992') }}" min="1970" max="2030">
+                </div>
+            </div>
+            <div class="form-group" style="margin-top: var(--spacing-md);">
+                <label class="form-label" for="newControllerButtons">{{ _('Button Layout') }}</label>
+                <input type="text" class="form-input" id="newControllerButtons" placeholder="{{ _('e.g., D-Pad, A, B, Start, Select') }}">
+            </div>
+            <div class="form-group" style="margin-top: var(--spacing-md);">
+                <label class="form-label" for="newControllerDescription">{{ _('Description') }}</label>
+                <textarea class="form-input" id="newControllerDescription" rows="2" placeholder="{{ _('Brief description of the controller...') }}"></textarea>
+            </div>
+            <div style="margin-top: var(--spacing-lg);">
+                <button type="button" data-on-click="addNewController" class="btn btn-success">
+                    <span class="btn-icon">➕</span>
+                    {{ _('Add Controller') }}
+                </button>
+            </div>
+        </div>
+        
+        <!-- Controller Library Section -->
+        <div id="controllers-library"></div>
+        <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
+            <span>📚</span> {{ _('Controller Library') }}
+        </h3>
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            {{ _('All controllers in the database, sorted alphabetically by manufacturer. Click to expand details. You can delete custom controllers.') }}
+        </p>
+        
+        <div class="controller-library" id="controllerLibrary">
+            <!-- Populated by JavaScript -->
+        </div>
+    </div>
+</section>
+
+<!-- Edit Controller Modal -->
+<div class="modal-overlay" id="editControllerModal">
+    <div class="modal-content" style="max-width: 600px;" role="dialog" aria-modal="true" aria-labelledby="editControllerTitle">
+        <div class="modal-header">
+            <h2 id="editControllerTitle">✏️ {{ _('Edit Controller') }}</h2>
+            <button type="button" class="modal-close" data-on-click="closeEditControllerModal" aria-label="{{ _('Close') }}">×</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="editControllerId">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md);">
+                <div class="form-group">
+                    <label class="form-label" for="editControllerName">{{ _('Controller Name') }} <span style="color: var(--neon-red);">*</span></label>
+                    <input type="text" class="form-input" id="editControllerName" placeholder="{{ _('e.g., SNES Mouse') }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editControllerSystemSelect">{{ _('Systems') }}</label>
+                    <div class="system-tags-container" id="editControllerSystemTags" style="display: flex; flex-wrap: wrap; gap: 6px; min-height: 38px; padding: 6px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-md); margin-bottom: 6px;">
+                        <!-- Tags added here -->
+                    </div>
+                    <select class="form-select" id="editControllerSystemSelect" data-on-change="addSystemToController" data-args='["edit"]'>
+                        <option value="">{{ _('+ Add system...') }}</option>
+                        <!-- Populated by JavaScript -->
+                    </select>
+                    <span class="field-tip">{{ _('Leave empty for Universal controllers.') }}</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editControllerManufacturer">{{ _('Manufacturer') }}</label>
+                    <input type="text" class="form-input" id="editControllerManufacturer"
+                           list="manufacturerSuggestions" placeholder="{{ _('e.g., Nintendo, Sony, or custom...') }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editControllerYear">{{ _('Release Year') }}</label>
+                    <input type="number" class="form-input" id="editControllerYear" placeholder="{{ _('e.g., 1992') }}" min="1970" max="2030">
+                </div>
+            </div>
+            <div class="form-group" style="margin-top: var(--spacing-md);">
+                <label class="form-label" for="editControllerButtons">{{ _('Button Layout') }}</label>
+                <input type="text" class="form-input" id="editControllerButtons" placeholder="{{ _('e.g., D-Pad, A, B, Start, Select') }}">
+            </div>
+            <div class="form-group" style="margin-top: var(--spacing-md);">
+                <label class="form-label" for="editControllerDescription">{{ _('Description') }}</label>
+                <textarea class="form-input" id="editControllerDescription" rows="2" placeholder="{{ _('Brief description of the controller...') }}"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-on-click="closeEditControllerModal">{{ _('Cancel') }}</button>
+            <button type="button" class="btn btn-primary" data-on-click="saveControllerChanges">
+                <span class="btn-icon">💾</span>
+                {{ _('Save Changes') }}
+            </button>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ csp_nonce }}">
+function scrollToSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    document.querySelectorAll('.subnav-link').forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + sectionId);
+    });
+    StickyScroll.to(section);
+}
+
+// =============================================================================
+// CONTROLLER MANAGEMENT
+// =============================================================================
+
+async function loadControllers() {
+    // Load system controllers table
+    await loadSystemControllersTable();
+    // Load controller library
+    await loadControllerLibrary();
+    // Populate system dropdown for adding controllers
+    await populateControllerSystemDropdown();
+    // Initialize the system tags containers with placeholder
+    renderSystemTags('new');
+}
+
+async function loadSystemControllersTable() {
+    try {
+        // Get all systems
+        const systemsResponse = await fetch('/api/systems');
+        const systemsData = await systemsResponse.json();
+        
+        const grid = document.getElementById('systemControllersGrid');
+        const navLetters = document.getElementById('systemControllersNavLetters');
+        if (!grid) return;
+        
+        if (!systemsData.success || !systemsData.systems) {
+            grid.innerHTML = '<div class="text-muted" style="grid-column: span 2;">No systems found</div>';
+            if (navLetters) navLetters.innerHTML = '';
+            return;
+        }
+        
+        // Sort systems alphabetically by name
+        const sortedSystems = systemsData.systems.sort((a, b) => 
+            a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+        );
+        
+        // Build letter map for navigation
+        const letterMap = new Set();
+        sortedSystems.forEach(system => {
+            const firstChar = system.name.charAt(0).toUpperCase();
+            if (/[A-Z]/.test(firstChar)) {
+                letterMap.add(firstChar);
+            } else if (/[0-9]/.test(firstChar)) {
+                letterMap.add('#');
+            }
+        });
+        
+        // Build cards for each system
+        const cards = await Promise.all(sortedSystems.map(async (system) => {
+            let defaultControllers = [];
+            let availableControllers = [];
+            
+            try {
+                const scResp = await fetch(`/api/systems/${system.id}/controllers`);
+                const scData = await scResp.json();
+                if (scData.success) {
+                    defaultControllers = scData.default_controllers || [];
+                    availableControllers = scData.controllers || [];
+                }
+            } catch (e) {
+                console.warn(`Could not load controllers for system ${system.id}`);
+            }
+            
+            const hasDefaults = defaultControllers.length > 0;
+            const statusIcon = hasDefaults ? '✅' : '—';
+            const statusColor = hasDefaults ? 'var(--neon-green)' : 'var(--text-muted)';
+            
+            // Build default controller tags
+            const defaultTags = defaultControllers.length > 0 
+                ? defaultControllers.map(c => `
+                    <span class="badge badge-success" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem;">
+                        ${escapeHtml(c.name)}
+                        <button type="button" class="btn-bare" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', c.name))}" data-on-click="removeDefaultController" data-args="${actionArgs(system.id, c.id)}" style="opacity: 0.7;">×</button>
+                    </span>
+                `).join('')
+                : '<span class="text-muted" style="font-size: 0.8rem;">None set</span>';
+            
+            // Build dropdown options (only system-specific + universal controllers)
+            const defaultIds = defaultControllers.map(c => c.id);
+            const dropdownOptions = availableControllers
+                .filter(c => !defaultIds.includes(c.id))
+                .map(c => `<option value="${c.id}">${c.manufacturer ? escapeHtml(c.manufacturer) + ' - ' : ''}${escapeHtml(c.name)}</option>`)
+                .join('');
+            
+            // Determine data-letter attribute
+            const firstChar = system.name.charAt(0).toUpperCase();
+            const dataLetter = /[A-Z]/.test(firstChar) ? firstChar : '#';
+            
+            return `
+                <div class="system-controller-card glass-panel" data-system-name="${escapeHtml(system.name)}" data-letter="${dataLetter}" style="padding: var(--spacing-md);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-sm);">
+                        <strong style="font-size: 0.95rem; color: var(--text-primary);">${escapeHtml(system.name)}</strong>
+                        <span style="color: ${statusColor}; font-size: 0.85rem;">${statusIcon}</span>
+                    </div>
+                    <div class="default-controller-tags" style="display: flex; flex-wrap: wrap; gap: 4px; min-height: 28px; margin-bottom: 8px;">
+                        ${defaultTags}
+                    </div>
+                    <select class="form-select form-select-sm" style="width: 100%;" 
+                            data-on-change="addDefaultController" data-args="${actionArgs(system.id, '$this.value')}" data-clear-value>
+                        <option value="">+ Add default controller...</option>
+                        ${dropdownOptions}
+                    </select>
+                </div>
+            `;
+        }));
+        
+        grid.innerHTML = cards.join('');
+        
+        // Build navigation letters
+        if (navLetters) {
+            const allLetters = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+            navLetters.innerHTML = allLetters.map(letter => {
+                const hasLetter = letterMap.has(letter);
+                return `<button type="button" class="sticky-nav-btn ${hasLetter ? '' : 'disabled'}" 
+                                data-letter="${letter}" 
+                                data-on-click="scrollToSystemLetter" data-args="${actionArgs(String(letter))}"
+                                ${hasLetter ? '' : 'disabled'}>${letter}</button>`;
+            }).join('');
+        }
+        
+    } catch (error) {
+        console.error('Error loading system controllers:', error);
+        const grid = document.getElementById('systemControllersGrid');
+        if (grid) {
+            grid.innerHTML = '<div class="text-muted" style="grid-column: span 2;">Error loading system controllers</div>';
+        }
+    }
+}
+
+// Scroll to first system starting with the given letter
+function scrollToSystemLetter(letter) {
+    const grid = document.getElementById('systemControllersGrid');
+    if (!grid) return;
+    
+    const cards = grid.querySelectorAll('.system-controller-card');
+    for (const card of cards) {
+        if (card.dataset.letter === letter) {
+            // Scroll using universal sticky offset
+            StickyScroll.to(card);
+            
+            // Highlight the card briefly
+            card.style.transition = 'box-shadow 0.3s ease';
+            card.style.boxShadow = '0 0 20px rgba(76, 201, 240, 0.5)';
+            setTimeout(() => {
+                card.style.boxShadow = '';
+            }, 1500);
+            
+            // Update active letter
+            document.querySelectorAll('.sticky-nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.letter === letter) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            break;
+        }
+    }
+}
+
+// Initialize sticky nav visibility observer
+let stickyNavObserved = false;
+function initStickyNavObserver() {
+    const wrapper = document.getElementById('systemControllersWrapper');
+    const stickyNav = document.getElementById('systemControllersStickyNav');
+
+    // Once per page: each tab switch called this, adding a scroll listener
+    // that was never removed (PASS-59-284).
+    if (!wrapper || !stickyNav || stickyNavObserved) return;
+    stickyNavObserved = true;
+    
+    // Use scroll event to check if we're within the wrapper bounds
+    let ticking = false;
+    
+    function updateStickyNavVisibility() {
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const navHeight = stickyNav.offsetHeight;
+        
+        // Show nav only when:
+        // 1. The top of the wrapper has scrolled past the viewport top (wrapperRect.top <= 0)
+        // 2. The bottom of the wrapper is still below the nav height (wrapperRect.bottom > navHeight + 20)
+        const shouldShow = wrapperRect.top <= 0 && wrapperRect.bottom > (navHeight + 20);
+        
+        // Also show if wrapper is fully visible (hasn't started scrolling yet)
+        const fullyVisible = wrapperRect.top > 0;
+        
+        if (shouldShow || fullyVisible) {
+            stickyNav.classList.remove('nav-hidden');
+        } else {
+            stickyNav.classList.add('nav-hidden');
+        }
+        
+        ticking = false;
+    }
+    
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            requestAnimationFrame(updateStickyNavVisibility);
+            ticking = true;
+        }
+    }, { passive: true });
+    
+    // Initial check
+    updateStickyNavVisibility();
+}
+
+// Initialize observer when DOM is ready and tab is visible
+document.addEventListener('DOMContentLoaded', function() {
+    // Delay init slightly to ensure elements exist
+    setTimeout(initStickyNavObserver, 500);
+});
+
+async function loadControllerLibrary() {
+    try {
+        const response = await fetch('/api/controllers');
+        const data = await response.json();
+        
+        const container = document.getElementById('controllerLibrary');
+        if (!container) return;
+        
+        if (data.success && data.controllers && data.controllers.length > 0) {
+            // Update manufacturer suggestions with any custom ones
+            updateManufacturerSuggestionsFromData(data.controllers);
+            
+            // Group by manufacturer (already sorted from API)
+            const byManufacturer = {};
+            data.controllers.forEach(c => {
+                const mfg = c.manufacturer || 'Other';
+                if (!byManufacturer[mfg]) {
+                    byManufacturer[mfg] = [];
+                }
+                byManufacturer[mfg].push(c);
+            });
+            
+            // Sort manufacturers alphabetically
+            const sortedManufacturers = Object.keys(byManufacturer).sort((a, b) => 
+                a.localeCompare(b, undefined, {sensitivity: 'base'})
+            );
+            
+            // Helper to render system badges
+            function renderSystemBadges(c) {
+                if (c.system_names && c.system_names.length > 0) {
+                    if (c.system_names.length <= 2) {
+                        return c.system_names.map(name => 
+                            `<span class="badge badge-secondary" style="font-size: 0.65rem; margin-left: 4px;">${escapeHtml(name)}</span>`
+                        ).join('');
+                    } else {
+                        // Show first system + count
+                        return `<span class="badge badge-secondary" style="font-size: 0.65rem; margin-left: 4px;">${escapeHtml(c.system_names[0])} +${c.system_names.length - 1}</span>`;
+                    }
+                }
+                return '<span class="badge badge-secondary" style="font-size: 0.65rem; margin-left: 4px; opacity: 0.6;">Universal</span>';
+            }
+            
+            // Generate HTML for each manufacturer group
+            const groupsHtml = sortedManufacturers.map(mfg => `
+                <div class="controller-group glass-panel" data-manufacturer="${escapeHtml(mfg)}" style="padding: var(--spacing-md); margin-bottom: var(--spacing-md);">
+                    <h5 style="color: var(--neon-cyan); margin-bottom: var(--spacing-sm); font-family: var(--font-heading); display: flex; align-items: center; gap: 8px;">
+                        ${getManufacturerIcon(mfg)} ${escapeHtml(mfg)}
+                        <span class="badge badge-secondary" style="font-size: 0.7rem;">${byManufacturer[mfg].length}</span>
+                    </h5>
+                    <div class="controller-list" style="display: flex; flex-direction: column; gap: 6px;">
+                        ${byManufacturer[mfg].sort((a, b) => a.name.localeCompare(b.name)).map(c => `
+                            <div class="controller-item" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(0,0,0,0.2); border-radius: var(--radius-sm); cursor: pointer;" 
+                                 role="button" tabindex="0" aria-expanded="false" data-on-click="toggleControllerDetails" data-args="${actionArgs('$this')}" data-controller-id="${c.id}">
+                                <div style="flex: 1;">
+                                    <span style="font-size: 0.9rem; color: var(--text-primary);">${escapeHtml(c.name)}</span>
+                                    ${c.release_year ? `<span class="text-muted" style="font-size: 0.75rem; margin-left: 8px;">(${c.release_year})</span>` : ''}
+                                    ${renderSystemBadges(c)}
+                                </div>
+                                <span class="expand-icon text-muted" style="font-size: 0.8rem;">▼</span>
+                            </div>
+                            <div class="controller-details" style="display: none; padding: 8px 12px; background: rgba(76, 201, 240, 0.05); border-radius: var(--radius-sm); margin-top: -4px; font-size: 0.85rem;">
+                                <p style="margin: 0 0 8px 0; color: var(--neon-cyan);"><strong>Systems:</strong> ${escapeHtml(c.system_name || 'Universal')}</p>
+                                ${c.description ? `<p style="margin: 0 0 8px 0; color: var(--text-secondary);">${escapeHtml(c.description)}</p>` : ''}
+                                ${c.button_layout ? `<p style="margin: 0; color: var(--text-muted);"><strong>Buttons:</strong> ${escapeHtml(c.button_layout)}</p>` : ''}
+                                <div style="margin-top: 8px; display: flex; gap: 8px;">
+                                    <button type="button" class="btn btn-primary btn-sm" data-on-click="openEditControllerModal" data-args="${actionArgs(c.id)}" data-stop>
+                                        ✏️ Edit
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-sm" data-name="${escapeHtml(c.name)}" data-on-click="deleteController" data-args="${actionArgs(c.id, '$this.dataset.name')}" data-stop>
+                                        🗑️ Delete
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = `
+                <div class="controller-masonry" id="controllerMasonry">
+                    ${groupsHtml}
+                </div>
+                <p class="text-muted" style="margin-top: var(--spacing-md); font-size: 0.85rem;">
+                    📊 ${data.controllers.length} controllers across ${sortedManufacturers.length} manufacturers
+                </p>
+            `;
+            
+            // Apply masonry layout after rendering
+            requestAnimationFrame(() => applyControllerMasonry());
+        } else {
+            container.innerHTML = '<p class="text-muted">No controllers in library. Add some using the form above!</p>';
+        }
+    } catch (error) {
+        console.error('Error loading controller library:', error);
+    }
+}
+
+// Apply masonry layout to controller library (left-to-right alphabetical order)
+function applyControllerMasonry() {
+    const container = document.getElementById('controllerMasonry');
+    if (!container) return;
+    
+    const groups = Array.from(container.querySelectorAll('.controller-group'));
+    if (groups.length === 0) return;
+    
+    // Don't apply if container is hidden (tab not active)
+    const containerWidth = container.offsetWidth;
+    if (containerWidth === 0) {
+        // Reset any previously applied absolute positioning
+        groups.forEach(group => {
+            group.style.position = '';
+            group.style.width = '';
+            group.style.left = '';
+            group.style.top = '';
+        });
+        container.style.height = '';
+        return;
+    }
+    
+    // Determine number of columns based on container width
+    let numColumns = 4;
+    if (containerWidth < 1400) numColumns = 3;
+    if (containerWidth < 1000) numColumns = 2;
+    if (containerWidth < 600) numColumns = 1;
+    
+    const gap = 16; // var(--spacing-md)
+    const columnWidth = (containerWidth - (gap * (numColumns - 1))) / numColumns;
+    
+    // Track height of each column
+    const columnHeights = new Array(numColumns).fill(0);
+    
+    // Position each group in the shortest column (maintains left-to-right order for equal heights)
+    groups.forEach((group, index) => {
+        // Find shortest column (prefer leftmost if equal)
+        let shortestCol = 0;
+        let minHeight = columnHeights[0];
+        for (let i = 1; i < numColumns; i++) {
+            if (columnHeights[i] < minHeight) {
+                minHeight = columnHeights[i];
+                shortestCol = i;
+            }
+        }
+        
+        // Position the group
+        group.style.position = 'absolute';
+        group.style.width = columnWidth + 'px';
+        group.style.left = (shortestCol * (columnWidth + gap)) + 'px';
+        group.style.top = columnHeights[shortestCol] + 'px';
+        
+        // Update column height
+        columnHeights[shortestCol] += group.offsetHeight + gap;
+    });
+    
+    // Set container height to tallest column
+    container.style.position = 'relative';
+    container.style.height = Math.max(...columnHeights) + 'px';
+}
+
+// Re-apply masonry on window resize
+let masonryResizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(masonryResizeTimeout);
+    masonryResizeTimeout = setTimeout(() => {
+        applyControllerMasonry();
+    }, 150);
+});
+
+// Store systems list globally for reuse
+let controllerSystemsList = [];
+
+// Track selected systems for new and edit forms
+let newControllerSelectedSystems = [];
+let editControllerSelectedSystems = [];
+
+// Populate the system dropdown for adding controllers
+async function populateControllerSystemDropdown() {
+    try {
+        const response = await fetch('/api/systems');
+        const data = await response.json();
+        
+        if (!data.success) return;
+        
+        controllerSystemsList = (data.systems || []).sort((a, b) => a.name.localeCompare(b.name));
+        
+        // Populate both new and edit dropdowns
+        populateSystemSelect('newControllerSystemSelect');
+        populateSystemSelect('editControllerSystemSelect');
+    } catch (error) {
+        console.error('Error loading systems for controller dropdown:', error);
+    }
+}
+
+function populateSystemSelect(selectId) {
+    const select = document.getElementById(selectId);
+    if (!select) return;
+    
+    // Clear except first option
+    select.innerHTML = '<option value="">+ Add system...</option>';
+    
+    controllerSystemsList.forEach(system => {
+        const option = document.createElement('option');
+        option.value = system.id;
+        option.textContent = system.name;
+        select.appendChild(option);
+    });
+}
+
+function addSystemToController(mode) {
+    const selectId = mode === 'new' ? 'newControllerSystemSelect' : 'editControllerSystemSelect';
+    const select = document.getElementById(selectId);
+    const systemId = parseInt(select.value);
+    
+    if (!systemId) return;
+    
+    const selectedSystems = mode === 'new' ? newControllerSelectedSystems : editControllerSelectedSystems;
+    
+    // Check if already added
+    if (selectedSystems.find(s => s.id === systemId)) {
+        select.value = '';
+        return;
+    }
+    
+    // Find system info
+    const system = controllerSystemsList.find(s => s.id === systemId);
+    if (system) {
+        selectedSystems.push({ id: system.id, name: system.name });
+        renderSystemTags(mode);
+    }
+    
+    select.value = '';
+}
+
+function removeSystemFromController(mode, systemId) {
+    const selectedSystems = mode === 'new' ? newControllerSelectedSystems : editControllerSelectedSystems;
+    const index = selectedSystems.findIndex(s => s.id === systemId);
+    if (index !== -1) {
+        selectedSystems.splice(index, 1);
+        renderSystemTags(mode);
+    }
+}
+
+function renderSystemTags(mode) {
+    const containerId = mode === 'new' ? 'newControllerSystemTags' : 'editControllerSystemTags';
+    const container = document.getElementById(containerId);
+    const selectedSystems = mode === 'new' ? newControllerSelectedSystems : editControllerSelectedSystems;
+    
+    if (!container) return;
+    
+    if (selectedSystems.length === 0) {
+        container.innerHTML = '<span class="text-muted" style="font-size: 0.85rem; padding: 4px;">Universal (no systems selected)</span>';
+        return;
+    }
+    
+    container.innerHTML = selectedSystems.map(sys => `
+        <span class="badge badge-secondary" style="display: inline-flex; align-items: center; gap: 6px;">
+            ${escapeHtml(sys.name)}
+            <button type="button" class="btn-bare" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', sys.name))}" data-on-click="removeSystemFromController" data-args="${actionArgs(String(mode), sys.id)}" style="opacity: 0.7; font-size: 1.1em;">×</button>
+        </span>
+    `).join('');
+}
+
+function getSelectedSystemIds(mode) {
+    const selectedSystems = mode === 'new' ? newControllerSelectedSystems : editControllerSelectedSystems;
+    return selectedSystems.map(s => s.id);
+}
+
+function clearSelectedSystems(mode) {
+    if (mode === 'new') {
+        newControllerSelectedSystems = [];
+    } else {
+        editControllerSelectedSystems = [];
+    }
+    renderSystemTags(mode);
+}
+
+function getManufacturerIcon(manufacturer) {
+    const icons = {
+        'Nintendo': '🍄',
+        'Sega': '🔵',
+        'Sony': '🎮',
+        'Atari': '🕹️',
+        'NEC': '💿',
+        'SNK': '👊',
+        'Microsoft': '🎯',
+        'Commodore': '💾',
+        'Mattel': '🎲',
+        'Coleco': '🌟',
+        'Bandai': '🎌',
+        'Third Party': '🔧',
+        'Other': '📦'
+    };
+    return icons[manufacturer] || '📦';
+}
+
+function toggleControllerDetails(element) {
+    const details = element.nextElementSibling;
+    const icon = element.querySelector('.expand-icon');
+    
+    if (details.style.display === 'none') {
+        details.style.display = 'block';
+        icon.textContent = '▲';
+    } else {
+        details.style.display = 'none';
+        icon.textContent = '▼';
+    }
+    element.setAttribute('aria-expanded', String(details.style.display === 'block'));
+    
+    // Re-apply masonry layout after height change
+    requestAnimationFrame(() => applyControllerMasonry());
+}
+
+async function addNewController() {
+    const name = document.getElementById('newControllerName').value.trim();
+    const systemIds = getSelectedSystemIds('new');
+    const manufacturer = document.getElementById('newControllerManufacturer').value.trim() || 'Other';
+    const releaseYear = document.getElementById('newControllerYear').value;
+    const buttonLayout = document.getElementById('newControllerButtons').value.trim();
+    const description = document.getElementById('newControllerDescription').value.trim();
+    
+    if (!name) {
+        showModal('⚠️ ' + {{ _('Missing Input')|tojson }}, {{ _('Please enter a controller name')|tojson }});
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/controllers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: name,
+                system_ids: systemIds,
+                manufacturer: manufacturer,
+                release_year: releaseYear ? parseInt(releaseYear) : null,
+                button_layout: buttonLayout,
+                description: description
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Clear form
+            document.getElementById('newControllerName').value = '';
+            clearSelectedSystems('new');
+            document.getElementById('newControllerManufacturer').value = '';
+            document.getElementById('newControllerYear').value = '';
+            document.getElementById('newControllerButtons').value = '';
+            document.getElementById('newControllerDescription').value = '';
+            
+            // Save scroll position before reloading
+            const scrollY = window.scrollY;
+            
+            // Reload library and system dropdowns
+            await loadControllerLibrary();
+            await loadSystemControllersTable();
+            
+            // Restore scroll position after reload
+            requestAnimationFrame(() => {
+                window.scrollTo(0, scrollY);
+            });
+            
+            // Update manufacturer suggestions with any new ones
+            updateManufacturerSuggestions();
+            
+            showModal('✅ ' + {{ _('Success')|tojson }}, t({{ _('Controller "{name}" has been added to the library.')|tojson }}, {name}));
+        } else {
+            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to add controller')|tojson }});
+        }
+    } catch (error) {
+        console.error('Error adding controller:', error);
+        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to add controller')|tojson }});
+    }
+}
+
+// Default manufacturer suggestions
+const DEFAULT_MANUFACTURERS = [
+    'Nintendo', 'Sega', 'Sony', 'Atari', 'NEC', 'SNK',
+    'Microsoft', 'Commodore', 'Mattel', 'Coleco', 'Bandai',
+    'Third Party', 'Other'
+];
+
+// Update manufacturer suggestions datalist from already-fetched controller data
+function updateManufacturerSuggestionsFromData(controllers) {
+    // Get unique manufacturers from database
+    const dbManufacturers = new Set();
+    controllers.forEach(c => {
+        if (c.manufacturer) {
+            dbManufacturers.add(c.manufacturer);
+        }
+    });
+    
+    // Combine all manufacturers
+    const allManufacturers = new Set([...DEFAULT_MANUFACTURERS, ...dbManufacturers]);
+    
+    // Sort alphabetically (but keep 'Other' and 'Third Party' at end)
+    const sorted = Array.from(allManufacturers).sort((a, b) => {
+        if (a === 'Other') return 1;
+        if (b === 'Other') return -1;
+        if (a === 'Third Party') return 1;
+        if (b === 'Third Party') return -1;
+        return a.localeCompare(b);
+    });
+    
+    // Update datalist
+    const datalist = document.getElementById('manufacturerSuggestions');
+    if (datalist) {
+        datalist.innerHTML = sorted.map(m => `<option value="${escapeHtml(m)}">`).join('');
+    }
+}
+
+// Fetch controllers and update manufacturer suggestions (standalone call)
+async function updateManufacturerSuggestions() {
+    try {
+        const response = await fetch('/api/controllers');
+        const data = await response.json();
+        
+        if (data.success && data.controllers) {
+            updateManufacturerSuggestionsFromData(data.controllers);
+        }
+    } catch (error) {
+        console.error('Error updating manufacturer suggestions:', error);
+    }
+}
+
+async function setSystemDefaultController(systemId, controllerId) {
+    try {
+        const response = await fetch(`/api/systems/${systemId}/default-controller`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ controller_id: controllerId || null })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Quietly reload to update the status column
+            loadSystemControllersTable();
+        } else {
+            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to set default controller')|tojson }});
+        }
+    } catch (error) {
+        console.error('Error setting default controller:', error);
+        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to set default controller')|tojson }});
+    }
+}
+
+async function addDefaultController(systemId, controllerId) {
+    if (!controllerId) return;
+    
+    try {
+        // Get current defaults
+        const getResp = await fetch(`/api/systems/${systemId}/controllers`);
+        const getData = await getResp.json();
+        
+        const currentIds = getData.success && getData.default_controllers 
+            ? getData.default_controllers.map(c => c.id) 
+            : [];
+        
+        // Add new controller to the list
+        currentIds.push(parseInt(controllerId));
+        
+        // Save updated list
+        const response = await fetch(`/api/systems/${systemId}/default-controllers`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ controller_ids: currentIds })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            loadSystemControllersTable();
+        } else {
+            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to add default controller')|tojson }});
+        }
+    } catch (error) {
+        console.error('Error adding default controller:', error);
+        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to add default controller')|tojson }});
+    }
+}
+
+async function removeDefaultController(systemId, controllerId) {
+    try {
+        // Get current defaults
+        const getResp = await fetch(`/api/systems/${systemId}/controllers`);
+        const getData = await getResp.json();
+        
+        const currentIds = getData.success && getData.default_controllers 
+            ? getData.default_controllers.map(c => c.id).filter(id => id !== controllerId)
+            : [];
+        
+        // Save updated list
+        const response = await fetch(`/api/systems/${systemId}/default-controllers`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ controller_ids: currentIds })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            loadSystemControllersTable();
+        } else {
+            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to remove default controller')|tojson }});
+        }
+    } catch (error) {
+        console.error('Error removing default controller:', error);
+        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to remove default controller')|tojson }});
+    }
+}
+
+async function autoAssignDefaultControllers() {
+    const btn = document.getElementById('autoAssignBtn');
+    const resultDiv = document.getElementById('autoAssignResult');
+    
+    btn.disabled = true;
+    btn.innerHTML = '<span class="btn-icon">⏳</span> Assigning...';
+    
+    try {
+        const response = await fetch('/api/systems/assign-default-controllers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <div class="alert alert-success" style="margin: 0;">
+                    ✅ Successfully assigned ${data.assigned} default controllers to systems.
+                </div>
+            `;
+            // Reload the table
+            loadSystemControllersTable();
+        } else {
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <div class="alert alert-error" style="margin: 0;">
+                    ❌ ${escapeHtml(data.error || 'Failed to assign controllers')}
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error auto-assigning controllers:', error);
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = `
+            <div class="alert alert-error" style="margin: 0;">
+                ❌ Network error while assigning controllers
+            </div>
+        `;
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="btn-icon">🎯</span> Auto-Assign Defaults';
+    }
+}
+
+
+async function deleteController(controllerId, controllerName) {
+    // Pass 45.4 — controllerName is admin-editable text; escape before
+    // interpolating into the HTML template, then opt in to HTML so the
+    // <strong> + <br><br> still render.
+    showConfirm(
+        '🗑️ ' + {{ _('Delete Controller')|tojson }},
+        t({{ _('Are you sure you want to delete {name}?<br><br>This will remove it from the library and any systems using it as default.')|tojson }}, {name: '<strong>' + escapeHtml(controllerName) + '</strong>'}),
+        async () => {
+            try {
+                // Save scroll position before reloading
+                const scrollY = window.scrollY;
+                
+                const response = await fetch(`/api/controllers/${controllerId}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    await loadControllerLibrary();
+                    await loadSystemControllersTable();
+                    
+                    // Restore scroll position after reload
+                    requestAnimationFrame(() => {
+                        window.scrollTo(0, scrollY);
+                    });
+                    
+                    showModal('✅ ' + {{ _('Deleted')|tojson }}, t({{ _('Controller "{name}" has been removed.')|tojson }}, {name: controllerName}));
+                } else {
+                    showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to delete controller')|tojson }});
+                }
+            } catch (error) {
+                console.error('Error deleting controller:', error);
+                showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to delete controller')|tojson }});
+            }
+        },
+        {allowHtml: true}
+    );
+}
+
+// =============================================================================
+// EDIT CONTROLLER MODAL
+// =============================================================================
+
+async function openEditControllerModal(controllerId) {
+    const trigger = document.activeElement;
+    try {
+        const response = await fetch(`/api/controllers/${controllerId}`);
+        const data = await response.json();
+
+        if (!data.success) {
+            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to load controller')|tojson }});
+            return;
+        }
+
+        const c = data.controller;
+
+        document.getElementById('editControllerId').value = c.id;
+        document.getElementById('editControllerName').value = c.name || '';
+        document.getElementById('editControllerManufacturer').value = c.manufacturer || '';
+        document.getElementById('editControllerYear').value = c.release_year || '';
+        document.getElementById('editControllerButtons').value = c.button_layout || '';
+        document.getElementById('editControllerDescription').value = c.description || '';
+
+        editControllerSelectedSystems = [];
+        if (c.system_ids && c.system_ids.length > 0 && c.system_names) {
+            for (let i = 0; i < c.system_ids.length; i++) {
+                editControllerSelectedSystems.push({
+                    id: c.system_ids[i],
+                    name: c.system_names[i]
+                });
+            }
+        }
+        renderSystemTags('edit');
+
+        const modal = document.getElementById('editControllerModal');
+        modal.classList.add('active');
+        if (window.ModalFocusTrap) {
+            ModalFocusTrap.activate(modal, trigger, { onEscape: closeEditControllerModal });
+        }
+    } catch (error) {
+        console.error('Error opening edit modal:', error);
+        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to load controller data')|tojson }});
+    }
+}
+
+function closeEditControllerModal() {
+    document.getElementById('editControllerModal').classList.remove('active');
+    clearSelectedSystems('edit');
+    if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
+}
+
+async function saveControllerChanges() {
+    const controllerId = document.getElementById('editControllerId').value;
+    const name = document.getElementById('editControllerName').value.trim();
+    const systemIds = getSelectedSystemIds('edit');
+    const manufacturer = document.getElementById('editControllerManufacturer').value.trim() || 'Other';
+    const releaseYear = document.getElementById('editControllerYear').value;
+    const buttonLayout = document.getElementById('editControllerButtons').value.trim();
+    const description = document.getElementById('editControllerDescription').value.trim();
+    
+    if (!name) {
+        showModal('⚠️ ' + {{ _('Missing Input')|tojson }}, {{ _('Please enter a controller name')|tojson }});
+        return;
+    }
+    
+    try {
+        // Save scroll position before reloading
+        const scrollY = window.scrollY;
+        
+        const response = await fetch(`/api/controllers/${controllerId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: name,
+                system_ids: systemIds,
+                manufacturer: manufacturer,
+                release_year: releaseYear ? parseInt(releaseYear) : null,
+                button_layout: buttonLayout,
+                description: description
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            closeEditControllerModal();
+            
+            // Reload library and system dropdowns
+            await loadControllerLibrary();
+            await loadSystemControllersTable();
+            
+            // Restore scroll position after reload
+            requestAnimationFrame(() => {
+                window.scrollTo(0, scrollY);
+            });
+            
+            // Update manufacturer suggestions
+            updateManufacturerSuggestions();
+            
+            showModal('✅ ' + {{ _('Success')|tojson }}, t({{ _('Controller "{name}" has been updated.')|tojson }}, {name}));
+        } else {
+            showModal('❌ ' + {{ _('Error')|tojson }}, data.error || {{ _('Failed to update controller')|tojson }});
+        }
+    } catch (error) {
+        console.error('Error updating controller:', error);
+        showModal('❌ ' + {{ _('Error')|tojson }}, {{ _('Failed to update controller')|tojson }});
+    }
+}
+
+// Close edit modal when clicking outside
+document.getElementById('editControllerModal')?.addEventListener('click', function(e) {
+    if (e.target === this) closeEditControllerModal();
+});
+
+document.addEventListener('DOMContentLoaded', loadControllers);
+</script>
+{% endblock %}

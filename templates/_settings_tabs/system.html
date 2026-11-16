@@ -53,8 +53,8 @@
         <div id="clearClzResult" style="margin-top: var(--spacing-md); display: none;"></div>
 
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-            {{ _('Clear scraped metadata from games to start fresh. Useful before a full re-scrape.') }}
-            <strong>{{ _('Note:') }}</strong> {{ _('This does NOT delete your game entries, only the scraped metadata (description, genre, publisher, ratings, images, etc.)') }}
+            {{ _('Removes what scraping filled in on scraped games: description, genre, publisher, ratings and the links to their pictures and videos. Useful before scraping again from scratch.') }}
+            {{ _('Your games stay in the library, and their titles go back to the file names (a locked title stays).') }}
         </p>
         <div class="clear-scrape-options" style="display: flex; flex-direction: column; gap: var(--spacing-md);">
             <div class="clear-scrape-row" style="display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
@@ -66,10 +66,10 @@
                 </select>
                 <div class="toggle-item">
                     <label class="toggle-switch">
-                        <input type="checkbox" id="clearImagesCheckbox" aria-label="{{ _('Also delete downloaded images') }}">
+                        <input type="checkbox" id="clearImagesCheckbox" aria-label="{{ _('Also delete the picture and video files') }}">
                         <span class="toggle-slider"></span>
                     </label>
-                    <span class="toggle-label">{{ _('Also delete downloaded images') }}</span>
+                    <span class="toggle-label">{{ _('Also delete the picture and video files') }} <span class="text-muted">{{ _('(otherwise they stay on disk, for Orphaned Media Cleanup below)') }}</span></span>
                 </div>
             </div>
             <div style="display: flex; gap: var(--spacing-md); align-items: center;">

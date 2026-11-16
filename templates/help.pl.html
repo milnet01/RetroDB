@@ -443,9 +443,9 @@
         <ol>
             <li>Przejdź do <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a></li>
             <li>Poproś o klucze API (darmowe, zatwierdzane ręcznie) &mdash; otrzymasz klucz <strong>Publiczny</strong> i <strong>Prywatny</strong></li>
-            <li>Wprowadź oba klucze w Ustawienia &rarr; Klucze API &rarr; TheGamesDB</li>
-            <li><strong>Klucz publiczny</strong> (limit na adres IP) jest używany jako główny klucz do pobierania</li>
-            <li><strong>Klucz prywatny</strong> (współdzielona pula miesięczna) jest używany jako zapasowy, gdy klucz publiczny zawiedzie</li>
+            <li>W Ustawienia &rarr; Pobieranie danych &rarr; Klucze API wpisz klucz publiczny w polu <strong>TheGamesDB &mdash; Klucz główny</strong>, a klucz prywatny w polu <strong>TheGamesDB &mdash; Klucz zapasowy</strong></li>
+            <li>Klucz główny jest używany najpierw; każde połączenie z internetem ma własny limit</li>
+            <li>Klucz zapasowy jest używany, gdy klucz główny się wyczerpie; pozwala na około 6000 zapytań miesięcznie</li>
         </ol>
 
         <h4>IGDB (przez Twitch)</h4>
@@ -492,7 +492,7 @@
         <p><em>Używane do importu biblioteki Steam i śledzenia osiągnięć.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox łączy się z RetroDB przez OpenXBL, darmową usługę. Każdy używa własnego klucza: zaloguj się na <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> kontem Xbox, skopiuj swój klucz API i wklej go w Ustawienia &rarr; Mój profil &rarr; Xbox. <strong>Zapisz i przetestuj połączenie</strong> sprawdza klucz i pokazuje Twój gamertag. Darmowy klucz pozwala na 150 zapytań na godzinę.</p>
+        <p>Xbox łączy się z RetroDB przez OpenXBL, darmową usługę. Każdy używa własnego klucza: zaloguj się na <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> kontem Xbox, skopiuj swój klucz API i wklej go w Ustawienia &rarr; Konto &rarr; Mój profil &rarr; Xbox. <strong>Zapisz mój profil</strong> sprawdza klucz i pokazuje Twój gamertag. Darmowy klucz pozwala na 150 zapytań na godzinę.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN używa uwierzytelniania przez ciasteczko NPSSO. Zobacz sekcję <a href="#trophies">Trofea</a>, aby poznać szczegółowe instrukcje konfiguracji.</p>
@@ -502,15 +502,15 @@
 
         <table class="data-table">
             <thead>
-                <tr><th>Dostawca</th><th>Model domyślny</th><th>Cena (wejście / wyjście za 1 mln tokenów)</th></tr>
+                <tr><th>Dostawca</th><th>Model domyślny</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0.10 / $0.40</td></tr>
-                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0.15 / $0.60</td></tr>
-                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td><td>$0.10 / $0.50</td></tr>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td></tr>
             </tbody>
         </table>
-        <p>Każdy dostawca oferuje wiele poziomów modeli. Najtańsze modele sprawdzają się dobrze przy metadanych i treściach muzeum. Skonfiguruj preferowanego dostawcę i klucz API w <strong>Ustawienia &rarr; Pobieranie metadanych &rarr; Klucze API</strong>.</p>
+        <p>Każdy dostawca oferuje kilka modeli. Ten oznaczony jako Zalecane sprawdza się dobrze przy metadanych i treściach muzeum; strona każdego dostawcy podaje aktualne ceny. Skonfiguruj preferowanego dostawcę i klucz API w <strong>Ustawienia &rarr; Pobieranie metadanych &rarr; Klucze API</strong>.</p>
         <p>Gemini i OpenAI zawsze szukają w internecie. Claude szuka tylko wtedy, gdy włączysz <strong>Pozwól Claude szukać w internecie</strong> pod jego modelem. Bez wyszukiwania Claude zostawia puste wszystko, co wymaga opublikowanej liczby, np. sprzedane egzemplarze. Anthropic pobiera opłatę za każde wyszukiwanie: najwyżej 5 wyszukiwań na grę, do 5 centów amerykańskich.</p>
     </div>
 </section>
@@ -520,52 +520,49 @@
     <h2 class="card-title">Ustawienia</h2>
     <div class="card-body">
         <p>Ustawienia są zorganizowane w zakładkach, każda z podsekcjami. Administratorzy widzą też zakładkę Emulatory, która otwiera własną stronę.</p>
-        <p>Każda osoba widzi tylko te ustawienia, które może zmienić jej rola. Przeglądający lub gracz widzi Mój profil, Strefę czasową, Motyw, Język, statystyki biblioteki, trofea i Wsparcie. Edytor widzi też Płyty bonusowe i Kontrolery. Wszystko inne jest dla administratorów.</p>
+        <p>Każda osoba widzi tylko te ustawienia, które może zmienić jej rola. Przeglądający lub gracz widzi zakładkę Konto. Edytor widzi też Płyty bonusowe i Kontrolery. Wszystko inne jest dla administratorów.</p>
 
         <h3>Zakładka Konto</h3>
         <ul>
-            <li><strong>Mój profil</strong> &mdash; przesyłanie/usuwanie awatara, nazwa wyświetlana, informacje o roli, zmiana hasła</li>
-            <li><strong>RetroAchievements</strong> &mdash; nazwa użytkownika i klucz API do integracji z RA</li>
-            <li><strong>PSN</strong> &mdash; ciasteczko NPSSO do synchronizacji trofeów PlayStation Network</li>
+            <li><strong>Mój profil</strong> &mdash; Twój awatar, Twój folder trofeów RPCS3 oraz Twoje własne konta RetroAchievements, PlayStation Network, Xbox i Steam. Twoja nazwa użytkownika i klucz API (web) RetroAchievements pokazują Twoje osiągnięcia; zalogowanie hasłem odblokowuje osiągnięcia podczas gry. Jeden przycisk <strong>Zapisz mój profil</strong> zapisuje całą kartę i sprawdza nowy token PlayStation lub nowy klucz Xbox. <strong>Zmień hasło</strong> prosi o nowe hasło dwa razy; musi mieć co najmniej 12 znaków.</li>
+            <li><strong>Motyw i język</strong> &mdash; Twój motyw, Twój język i ruchome tło</li>
+            <li><strong>Powiadomienia</strong> &mdash; Jak długo każdy rodzaj komunikatu zostaje na ekranie, tylko dla Ciebie</li>
             <li><strong>Strefa czasowa</strong> &mdash; ustaw strefę czasową do wyświetlania dat w całej aplikacji</li>
             <li><strong>Użytkownicy</strong> &mdash; zarządzanie użytkownikami: dodawanie, edycja, usuwanie użytkowników i przypisywanie ról (tylko administrator)</li>
         </ul>
 
         <h3>Zakładka Biblioteka</h3>
         <ul>
-            <li><strong>Ścieżki</strong> &mdash; ścieżka biblioteki ROM-ów, lokalizacja bazy danych</li>
-            <li><strong>Wyświetlanie</strong> &mdash; wybór motywu, styl okładki (2D/3D), preferowany system ocen wiekowych, liczba elementów na stronę</li>
+            <li><strong>Ścieżki</strong> &mdash; Folder biblioteki ROM-ów, foldery gamelist i multimediów ES-DE oraz domowy folder trofeów RPCS3, z jednym przyciskiem Zapisz</li>
+            <li><strong>Wyświetlanie</strong> &mdash; Styl okładki (2D/3D) i preferowany system klasyfikacji wiekowej, dla wszystkich</li>
             <li><strong>Nazewnictwo ROM-ów</strong> &mdash; umiejscowienie przedimka (wiodący/końcowy „The”), lista opcji regionów, domyślny region, konwencje nazewnictwa</li>
+            <li><strong>Płyty bonusowe</strong> &mdash; Znajdź płyty bonusowe i połącz je z ich grami</li>
             <li><strong>Kopia zapasowa</strong> &mdash; tworzenie i przywracanie kopii zapasowych bazy danych</li>
         </ul>
 
         <h3>Zakładka Pobieranie metadanych</h3>
         <ul>
-            <li><strong>ES-DE</strong> &mdash; ścieżki list gier i multimediów ES-DE do importu danych lokalnych</li>
-            <li><strong>Scraper</strong> &mdash; włączanie/wyłączanie poszczególnych scraperów, kolejność priorytetu metodą przeciągnij i upuść, ustawienia limitów zapytań dla każdego scrapera</li>
-            <li><strong>Klucze API</strong> &mdash; wszystkie dane uwierzytelniające scraperów (TGDB, IGDB, RAWG, ScreenScraper), wybór dostawcy AI i modelu (Gemini, OpenAI, Claude)</li>
+            <li><strong>Scraper</strong> &mdash; Włączaj i wyłączaj scrapery oraz przeciągaj je w kolejności, w jakiej są próbowane. <strong>Filtrowanie dopasowań przy pobieraniu zbiorczym</strong> ustala, jak bardzo wynik musi pasować: <strong>Ścisłe</strong> przyjmuje tylko dokładne tytuły, <strong>Normalne</strong> (domyślne) bliski tytuł na właściwym systemie, a <strong>Luźne</strong> także tytuły częściowe. Ustawienie z wcześniejszej wersji pokazuje się jako <strong>Własne</strong>, dopóki nie wybierzesz innego.</li>
+            <li><strong>Klucze API</strong> &mdash; Wszystkie dane dostępowe scraperów (TheGamesDB, IGDB, RAWG, ScreenScraper), wybór dostawcy AI i modelu (Gemini, OpenAI, Claude) oraz domowe klucze RetroAchievements i Steam. Własny klucz RetroAchievements danej osoby z Mój profil jest używany najpierw, a domowy tylko u kogoś, kto własnego nie ma. Domowy klucz Steam służy tylko administratorowi bez własnego klucza.</li>
         </ul>
 
         <h3>Zakładka Dane</h3>
         <ul>
-            <li><strong>Statystyki</strong> &mdash; przegląd statystyk biblioteki (łączna liczba gier, systemów, wykorzystanie miejsca)</li>
-            <li><strong>Trofea</strong> &mdash; konfiguracja ścieżki trofeów RPCS3 do lokalnego skanowania trofeów PS3</li>
-            <li><strong>Listy rozwijane</strong> &mdash; dostosuj opcje regionów i inne wartości list rozwijanych używane w całej aplikacji</li>
+            <li><strong>Listy rozwijane</strong> &mdash; Dostosuj wartości oferowane na listach, takich jak gatunek, perspektywa i typ zapisu</li>
             <li><strong>Normalizacja</strong> &mdash; reguły normalizacji gatunków i trybów &mdash; dodaj niestandardowe mapowania, aby ujednolicić dane wyjściowe scraperów</li>
         </ul>
 
         <h3>Zakładka Personalizacja</h3>
         <ul>
-            <li><strong>Powiadomienia</strong> &mdash; preferencje czasu wygaśnięcia powiadomień (sukces, informacja, ostrzeżenie, błąd &mdash; każde konfigurowalne niezależnie)</li>
-            <li><strong>Kontrolery</strong> &mdash; zarządzaj biblioteką kontrolerów, ustaw domyślne kontrolery dla każdego systemu, dodaj niestandardowe kontrolery. Domyślne kontrolery nadpisują wartości pobrane/z AI podczas pobierania metadanych.</li>
-            <li><strong>Logotypy</strong> &mdash; personalizacja logo systemów &mdash; importuj logotypy systemów lub odśwież domyślne</li>
+            <li><strong>Kontrolery</strong> &mdash; <strong>Otwórz Kontrolery</strong> prowadzi na stronę Kontrolery. Tam ustawiasz domyślne kontrolery każdego systemu, dodajesz własne i edytujesz bibliotekę kontrolerów. Domyślne kontrolery zastępują wartości pobrane/z AI podczas pobierania metadanych.</li>
+            <li><strong>Logo</strong> &mdash; <strong>Odśwież logo systemów</strong> kopiuje nowe logo z Twojego folderu ES-DE, a potem pokazuje, które systemy nadal ich nie mają</li>
         </ul>
 
         <h3>Zakładka System</h3>
         <ul>
-            <li><strong>Konserwacja</strong> &mdash; Wyczyść brakujące ROM-y, wyczyść importy CLZ lub pobrane dane, usuń pliki multimediów, których nie używa żadna gra, wyczyść odwołania do nieistniejących plików multimediów i zoptymalizuj bazę danych</li>
+            <li><strong>Konserwacja</strong> &mdash; Czyszczenie brakujących ROM-ów, usuwanie importów CLZ lub pobranych danych, usuwanie plików multimediów, których żadna gra nie używa, usuwanie powiązań z nieistniejącymi plikami multimediów, optymalizacja bazy danych i obliczanie rozmiarów plików</li>
             <li><strong>Aktualizacje</strong> &mdash; Sprawdź, pobierz i zainstaluj nową wersję</li>
-            <li><strong>Serwer</strong> &mdash; Uruchom RetroDB ponownie lub wyłącz</li>
+            <li><strong>Serwer</strong> &mdash; Restart lub wyłączenie RetroDB, port, którego używa (adres zmienia się po restarcie) i miejsce jego bazy danych</li>
             <li><strong>Dziennik</strong> &mdash; Ustawienia poziomu dziennika dla różnych kategorii oraz pliki dziennika</li>
         </ul>
 
@@ -1670,7 +1667,7 @@
         <ul>
             <li><strong>Czyszczenie brakujących ROM-ów</strong> &mdash; usuwa wpisy w bazie danych dla gier, których pliki ROM już nie istnieją na dysku. Przydatne po zreorganizowaniu lub usunięciu plików ROM.</li>
             <li><strong>Czyszczenie osieroconych multimediów</strong> &mdash; znajduje i usuwa pliki obrazów na dysku (okładki, zrzuty ekranu, fanart), które nie mają odpowiadającego odniesienia w bazie danych. Podgląd przed usunięciem dla potwierdzenia.</li>
-            <li><strong>Czyszczenie pobranych danych</strong> &mdash; usuwa wszystkie pobrane metadane z gier, zachowując wpisy plików ROM. Przydatne przy rozpoczynaniu pobierania od nowa. Podgląd pokazuje dotknięte gry przed wykonaniem.</li>
+            <li><strong>Wyczyść pobrane dane</strong> &mdash; Usuwa to, co pobieranie wypełniło w pobranych grach, razem z powiązaniami z ich obrazami i filmami, aby można było pobrać wszystko od zera. Gry zostają, a ich tytuły wracają do nazw plików (zablokowany tytuł zostaje). Pliki obrazów i filmów zostają na dysku, chyba że zaznaczysz <strong>Usuń też pliki obrazów i filmów</strong>. Podgląd pokazuje, ilu gier dotyczy.</li>
             <li><strong>Czyszczenie importów CLZ</strong> &mdash; usuwa wszystkie rekordy importu CLZ Games (wpisy zawierające tylko metadane, bez plików ROM).</li>
         </ul>
 
@@ -1834,7 +1831,7 @@
         <ul>
             <li>Masowe pobieranie danych szuka według nazwy pliku ROM, więc źle nazwany plik znajduje złą grę. Zmień nazwę pliku albo pobierz dane gry na jej własnej stronie z lepszym tytułem wyszukiwania i wybierz właściwy wynik.</li>
             <li>W oknie Edytuj grę zaznacz <strong>Zachowaj ten tytuł przy pobieraniu danych</strong>, aby kolejne pobrania nie ruszały nazwy.</li>
-            <li>Przy wielu grach zwiększ <strong>Minimalny wynik dopasowania</strong> w Ustawienia &rarr; Pobieranie danych &rarr; Scraper &rarr; Filtrowanie dopasowań przy pobieraniu zbiorczym.</li>
+            <li>Przy wielu grach wybierz <strong>Ścisłe</strong> w Ustawienia &rarr; Pobieranie danych &rarr; Scraper &rarr; Filtrowanie dopasowań przy pobieraniu zbiorczym.</li>
         </ul>
 
         <h4>Pobieranie danych nie zastępuje złego obrazu</h4>
@@ -1859,7 +1856,7 @@
         </ul>
 
         <h4>Wiele gier ma „Niepowodzenie”</h4>
-        <p>Niepowodzenie zwykle oznacza, że żaden wynik nie był dość bliski, aby go zapisać. Obniż <strong>Minimalny wynik dopasowania</strong> lub <strong>Minimalna jakość tytułu</strong> w Ustawienia &rarr; Pobieranie danych &rarr; Scraper &rarr; Filtrowanie dopasowań przy pobieraniu zbiorczym i sprawdź nazwy plików. Przeglądarka dzienników wymienia każdą grę, dla której nie znaleziono dopasowania.</p>
+        <p>Niepowodzenie zwykle oznacza, że żaden wynik nie był dość bliski, aby go zapisać. Wybierz <strong>Luźne</strong> w Ustawienia &rarr; Pobieranie danych &rarr; Scraper &rarr; Filtrowanie dopasowań przy pobieraniu zbiorczym i sprawdź nazwy plików. Przeglądarka dzienników wymienia każdą grę, dla której nie znaleziono dopasowania.</p>
 
         <h4>"A scrape for &hellip; is already running"</h4>
         <p>Ten system jest już pobierany w tym samym trybie. Poczekaj na to albo anuluj. Pobieranie dla innego systemu czeka w kolejce i startuje samo.</p>
@@ -1893,7 +1890,7 @@
         <p><strong>Graj</strong> uruchamia emulator na komputerze, na którym działa RetroDB, a nie na urządzeniu, na którym naciśnięto przycisk.</p>
 
         <h4>„Nie znaleziono programu emulatora w PATH”</h4>
-        <p>Na stronie Emulatory, w sekcji <strong>Zarejestrowane emulatory</strong>, edytuj emulator i wpisz w polu <strong>Własna ścieżka pliku wykonywalnego</strong> lokalizację programu. Albo dodaj folder, w którym leży, w sekcji <strong>Foldery emulatorów</strong>. Dla RetroArch użyj <strong>Wykryj automatycznie</strong> na karcie RetroArch, a potem <strong>Zapisz</strong>.</p>
+        <p>Na stronie Emulatory, w sekcji <strong>Zarejestrowane emulatory</strong>, edytuj emulator i wpisz w polu <strong>Lokalizacja programu</strong>, gdzie leży program. Albo dodaj folder, w którym leży, w sekcji <strong>Foldery emulatorów</strong>. Dla RetroArch użyj <strong>Wykryj automatycznie</strong> na karcie RetroArch, a potem <strong>Zapisz</strong>.</p>
 
         <h4>„Brak skonfigurowanego emulatora dla systemu &hellip;” lub „Emulator &hellip; jest wyłączony”</h4>
         <p>Wybierz emulator dla systemu w sekcji <strong>Przypisanie do systemów</strong> na stronie Emulatory albo włącz emulator w sekcji <strong>Zarejestrowane emulatory</strong>. Gra ustawiona na emulator, który już nie istnieje: wyczyść ten wybór w jej oknie Edytuj grę.</p>
@@ -1943,7 +1940,7 @@
 
         <h4>„Uwierzytelnianie PSN nie powiodło się”</h4>
         <ul>
-            <li>Sony nie przyjmuje już zapisanego tokenu NPSSO. Pobierz nowy według kroków w Ustawienia &rarr; Konto &rarr; Mój profil &rarr; PlayStation Network, a potem naciśnij <strong>Zapisz i przetestuj połączenie</strong>.</li>
+            <li>Sony nie przyjmuje już zapisanego tokenu NPSSO. Pobierz nowy według kroków w Ustawienia &rarr; Konto &rarr; Mój profil &rarr; PlayStation Network, a potem naciśnij <strong>Zapisz mój profil</strong>.</li>
             <li>RetroDB samo podtrzymuje logowanie, dopóki Sony przyjmuje token. Aby zastąpić token, który nadal działa, najpierw wyloguj się z PlayStation.</li>
         </ul>
 

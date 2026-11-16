@@ -1,10 +1,22 @@
 - version: 4.0.0
-  date: '2026-11-15'
+  date: '2026-11-16'
   tags:
+  - type: enhancement
+    label: 'Instellingen is overzichtelijker. Je eigen keuzes staan samen onder Instellingen → Account: Thema en taal (met de bewegende achtergrond) en hoe lang berichten in beeld blijven, wat nu voor ieder persoon apart geldt. Bibliotheek → Paden bundelt alle vier de mappen onder één keer Opslaan. Systeem → Server toont de poort en waar de database staat. Ontwikkeling ondersteunen is naar het einde van de Help-pagina verplaatst'
+  - type: enhancement
+    label: 'Controllers hebben een eigen pagina. Instellingen → Aanpassing → Controllers openen brengt je erheen: stel de standaardcontrollers van elk systeem in, voeg eigen controllers toe en bewerk de controllerbibliotheek'
+  - type: enhancement
+    label: 'Overeenkomstfilter bij bulkscrapen biedt drie duidelijke keuzes in plaats van een scoregetal en zijn tabel: Strikt, Normaal en Los. Normaal is de oude standaard. Een instelling die je eerder zelf hebt gemaakt, staat als Aangepast totdat je een andere kiest'
+  - type: enhancement
+    label: 'Mijn profiel heeft één knop Mijn profiel opslaan in plaats van drie. Die controleert bij het opslaan een nieuw PlayStation-token of een nieuwe Xbox-sleutel en bewaart je werkende PlayStation-token als Sony het nieuwe weigert. Wachtwoord wijzigen zegt nu dat het minstens 12 tekens moet hebben en vraagt twee keer om het nieuwe wachtwoord'
+  - type: fix
+    label: 'Duidelijkere woorden in Instellingen. Mijn profiel zegt wat de RetroAchievements-sleutel en het inloggen met je wachtwoord elk doen. API-sleutels zegt dat de eigen RetroAchievements- of Steam-sleutel van een persoon eerst wordt gebruikt. De sleutels van TheGamesDB heten Hoofdsleutel en Reservesleutel. Het venster voor het bewerken van een emulator zegt Locatie van het programma en Opdrachtregelopties. Gescrapete gegevens wissen zegt dat de afbeeldings- en videobestanden op schijf blijven tenzij je het vakje aanvinkt. De AI-modellijsten tonen geen prijzen meer, die waren verouderd'
+  - type: fix
+    label: 'Instellingen laat weg wat er dubbel stond of niets deed: de kaart Bibliotheekstatistieken (het Dashboard heeft die), de kopie van Trofeeën scannen in Instellingen (de pagina met PS3-trofeeën heeft die), de aparte knop Systeemlogo''s importeren (Systeemlogo''s vernieuwen kopieert nu eerst de logo''s van ES-DE) en zes opgeslagen instellingen die niets gebruikte. Een berichttijd van 0 seconden wordt geweigerd in plaats van stilletjes opgeslagen, en bij het opslaan van een nieuwe ROM-map staat niet meer dat RetroDB opnieuw moet starten'
   - type: performance
     label: 'RetroDB is veel lichter voor je computer. De bewegende mist van het Cyberpunk-thema hield één processorkern volledig bezig zolang er een RetroDB-pagina openstond; nu tekent de videokaart hem en merkt de processor er nauwelijks iets van. Er worden ook half zoveel beelden getekend, wat er hetzelfde uitziet omdat de mist langzaam drijft'
   - type: feature
-    label: 'Bewegende achtergronden (mist, regen, sterren, stof) pauzeren nu wanneer je RetroDB niet gebruikt: als het venster niet vooraan staat, het tabblad verborgen is, of er een minuut voorbijgaat zonder muis of toetsenbord. Ze starten weer zodra je terugkomt. Een nieuwe schakelaar Bewegende achtergrond onder Instellingen → Bibliotheek → Weergave houdt ze op die computer stil'
+    label: 'Bewegende achtergronden (mist, regen, sterren, stof) pauzeren nu wanneer je RetroDB niet gebruikt: als het venster niet vooraan staat, het tabblad verborgen is, of er een minuut voorbijgaat zonder muis of toetsenbord. Ze starten weer zodra je terugkomt. Een nieuwe schakelaar Bewegende achtergrond onder Instellingen → Account → Thema en taal houdt ze op die computer stil'
   - type: performance
     label: 'Paginatitels houden hun gloed maar pulseren niet meer de hele tijd, en de flikkerende "glitch"-titels op de console- en spellijsten flikkeren alleen nog terwijl de muis erboven staat'
   - type: feature
@@ -16,13 +28,11 @@
   - type: fix
     label: 'Gebruiker toevoegen vraagt nu om het eerste wachtwoord van de nieuwe persoon (12 tekens of meer), en die kiest bij de eerste aanmelding een eigen wachtwoord. Eerder kreeg elk nieuw account stilletjes hetzelfde wachtwoord, "changeme", dat iedereen kon gebruiken tot de eigenaar zich aanmeldde'
   - type: fix
-    label: 'Instellingen toont iedereen alleen wat zijn of haar rol mag wijzigen. Kijkers en spelers zien hun profiel, tijdzone, thema, taal, statistieken en trofeeën; editors zien ook Bonusschijven en Controllers. Ze zagen eerder beheerdersinstellingen waarvan de knop Opslaan werd geweigerd, soms met verkeerde waarden'
+    label: 'Instellingen toont iedereen alleen wat zijn of haar rol mag wijzigen. Kijkers en spelers zien het tabblad Account; editors zien ook Bonusschijven en Controllers. Ze zagen eerder beheerdersinstellingen waarvan de knop Opslaan werd geweigerd, soms met verkeerde waarden'
   - type: fix
     label: 'Instellingen → Systeem heeft de knop Vastgelopen RA-synchronisatie wissen niet meer. Die zei dat de synchronisatie gewist was terwijl dat niet zo was; stop een RetroAchievements-synchronisatie met de knoppen op de voortgangsmelding'
   - type: fix
-    label: 'Instellingen → Gegevens toont en scant nu je eigen RPCS3-trofeeënmap als je er een hebt ingesteld, in plaats van Trofeeën scannen uit te grijzen'
-  - type: fix
-    label: 'Kleine fixes in Instellingen: Standaard herstellen op de scraperlijst zegt dat je op Instellingen opslaan moet drukken om het te bewaren; een nieuwe installatie toont ScreenScraper als ingeschakeld, zoals het echt is; de Steam-ID-hulp vraagt om het getal van 17 cijfers; de pagina Emulators noemt geen knop Toevoegen meer die ze niet heeft; de Installatiewizard verbergt je API-sleutels terwijl je ze typt'
+    label: 'Kleine fixes in Instellingen: Standaard herstellen op de scraperlijst zegt dat je op Scraper-instellingen opslaan moet drukken om het te bewaren; een nieuwe installatie toont ScreenScraper als ingeschakeld, zoals het echt is; de Steam-ID-hulp vraagt om het getal van 17 cijfers; de pagina Emulators noemt geen knop Toevoegen meer die ze niet heeft; de Installatiewizard verbergt je API-sleutels terwijl je ze typt'
   - type: enhancement
     label: 'De helphandleiding heeft nu een zoekvak. Typ een woord om alleen de delen van de handleiding te zien die het noemen, met het woord gemarkeerd. Het negeert accenten en werkt in elke taal'
   - type: fix
@@ -64,7 +74,7 @@
   - type: fix
     label: 'De filters van de Bibliotheek vergelijken nu hele waarden. Het genre "Actie" toont niet langer ook "Actie-avontuur"-games, zodat het resultaat klopt met het getal ernaast. De taglijsten op een gamepagina en Vergelijkbare games werken op dezelfde manier'
   - type: security
-    label: 'Instellingen → Mijn profiel stuurt je opgeslagen RetroAchievements-sleutel, PSN-token of Steam-sleutel niet meer naar de pagina. Elk vak toont alleen de laatste vier tekens, zoals de sleutels op het tabblad Scrapen al deden. Opslaan zonder opnieuw te typen houdt de opgeslagen sleutel, en de PSN-knop "Opslaan & verbinding testen" test het opgeslagen token'
+    label: 'Instellingen → Mijn profiel stuurt je opgeslagen RetroAchievements-sleutel, PSN-token of Steam-sleutel niet meer naar de pagina. Elk vak toont alleen de laatste vier tekens, zoals de sleutels op het tabblad Scrapen al deden. Opslaan zonder opnieuw te typen houdt de opgeslagen sleutel'
   - type: fix
     label: 'De Logviewer opent niet meer op "Ongeldig logbestand". Hij toonde hulplogs die hij niet wilde openen, en opende er eerst een van; nu toont hij alleen logs die hij kan openen'
   - type: fix

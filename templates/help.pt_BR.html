@@ -443,9 +443,9 @@
         <ol>
             <li>Acesse <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a></li>
             <li>Solicite as chaves de API (gratuitas, aprovadas manualmente) &mdash; você receberá uma chave <strong>Pública</strong> e uma <strong>Privada</strong></li>
-            <li>Insira ambas as chaves em Configurações &rarr; Chaves de API &rarr; TheGamesDB</li>
-            <li>A <strong>chave Pública</strong> (limite de taxa por IP) é usada como chave primária para a coleta</li>
-            <li>A <strong>chave Privada</strong> (cota mensal compartilhada) é usada como alternativa caso a chave pública falhe</li>
+            <li>Em Configurações &rarr; Busca de metadados &rarr; Chaves de API, coloque a chave pública em <strong>TheGamesDB &mdash; Chave principal</strong> e a chave privada em <strong>TheGamesDB &mdash; Chave reserva</strong></li>
+            <li>A chave principal é usada primeiro; cada conexão de internet tem a sua própria cota</li>
+            <li>A chave reserva é usada quando a chave principal acaba; ela permite cerca de 6.000 solicitações por mês</li>
         </ol>
 
         <h4>IGDB (via Twitch)</h4>
@@ -492,7 +492,7 @@
         <p><em>Usado para a importação da biblioteca Steam e o acompanhamento de conquistas.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>O Xbox chega ao RetroDB pelo OpenXBL, um serviço gratuito. Cada pessoa usa sua própria chave: entre em <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> com sua conta Xbox, copie sua chave de API e cole-a em Configurações &rarr; Meu perfil &rarr; Xbox. <strong>Salvar &amp; testar conexão</strong> verifica a chave e mostra seu gamertag. A chave gratuita permite 150 solicitações por hora.</p>
+        <p>O Xbox chega ao RetroDB pelo OpenXBL, um serviço gratuito. Cada pessoa usa sua própria chave: entre em <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> com sua conta Xbox, copie sua chave de API e cole-a em Configurações &rarr; Conta &rarr; Meu perfil &rarr; Xbox. <strong>Salvar meu perfil</strong> verifica a chave e mostra seu gamertag. A chave gratuita permite 150 solicitações por hora.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>A PSN usa autenticação por cookie NPSSO. Consulte a seção <a href="#trophies">Troféus</a> para instruções detalhadas de configuração.</p>
@@ -502,15 +502,15 @@
 
         <table class="data-table">
             <thead>
-                <tr><th>Provedor</th><th>Modelo Padrão</th><th>Preço (Entrada / Saída por 1M de tokens)</th></tr>
+                <tr><th>Provedor</th><th>Modelo Padrão</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>US$ 0,10 / US$ 0,40</td></tr>
-                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>US$ 0,15 / US$ 0,60</td></tr>
-                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td><td>US$ 0,10 / US$ 0,50</td></tr>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td></tr>
             </tbody>
         </table>
-        <p>Cada provedor oferece vários níveis de modelo. Os modelos mais baratos funcionam bem para metadados e conteúdo do museu. Configure seu provedor preferido e a chave de API em <strong>Configurações &rarr; Coleta de Dados &rarr; Chaves de API</strong>.</p>
+        <p>Cada provedor oferece vários modelos. O marcado como Recomendado funciona bem para metadados e conteúdo do museu; o site de cada provedor tem os preços atuais. Configure seu provedor preferido e a chave de API em <strong>Configurações &rarr; Coleta de Dados &rarr; Chaves de API</strong>.</p>
         <p>O Gemini e o OpenAI sempre pesquisam na web. O Claude só pesquisa quando você liga <strong>Deixar o Claude pesquisar na web</strong> abaixo do modelo dele. Sem pesquisa, o Claude deixa em branco tudo o que precisa de um número publicado, como cópias vendidas. A Anthropic cobra por cada pesquisa: no máximo 5 pesquisas por jogo, até 5 centavos de dólar.</p>
     </div>
 </section>
@@ -520,52 +520,49 @@
     <h2 class="card-title">Configurações</h2>
     <div class="card-body">
         <p>As Configurações estão organizadas em abas, cada uma com subseções. Administradores também veem uma aba Emuladores, que abre sua própria página.</p>
-        <p>Cada pessoa vê apenas as configurações que a sua função pode alterar. Um visualizador ou jogador vê Meu perfil, Fuso horário, Tema, Idioma, estatísticas da biblioteca, troféus e Apoio. Um editor vê também Discos Bônus e Controles. Todo o resto é para administradores.</p>
+        <p>Cada pessoa vê apenas as configurações que a sua função pode alterar. Um visualizador ou jogador vê a aba Conta. Um editor vê também Discos Bônus e Controles. Todo o resto é para administradores.</p>
 
         <h3>Aba Conta</h3>
         <ul>
-            <li><strong>Meu Perfil</strong> &mdash; Envio/remoção de avatar, nome de exibição, informações de função, alteração de senha</li>
-            <li><strong>RetroAchievements</strong> &mdash; Nome de usuário e chave de API para a integração com o RA</li>
-            <li><strong>PSN</strong> &mdash; Cookie NPSSO para a sincronização de troféus da PlayStation Network</li>
+            <li><strong>Meu perfil</strong> &mdash; Seu avatar, sua pasta de troféus do RPCS3 e suas próprias contas do RetroAchievements, PlayStation Network, Xbox e Steam. Seu nome de usuário e sua chave de API web do RetroAchievements mostram suas conquistas; entrar com sua senha libera conquistas enquanto você joga. Um único botão <strong>Salvar meu perfil</strong> salva o cartão e confere um novo token da PlayStation ou uma nova chave do Xbox. <strong>Alterar senha</strong> pede a nova senha duas vezes; ela precisa ter pelo menos 12 caracteres.</li>
+            <li><strong>Tema e idioma</strong> &mdash; Seu tema, seu idioma e o plano de fundo em movimento</li>
+            <li><strong>Notificações</strong> &mdash; Por quanto tempo cada tipo de mensagem fica na tela, só para você</li>
             <li><strong>Fuso Horário</strong> &mdash; Defina seu fuso horário para a exibição de datas em todo o aplicativo</li>
             <li><strong>Usuários</strong> &mdash; Gerenciamento de usuários: adicionar, editar, excluir usuários e atribuir funções (somente administrador)</li>
         </ul>
 
         <h3>Aba Biblioteca</h3>
         <ul>
-            <li><strong>Caminhos</strong> &mdash; Caminho da biblioteca de ROMs, localização do banco de dados</li>
-            <li><strong>Exibição</strong> &mdash; Seleção de tema, estilo de capa (2D/3D), sistema de classificação etária preferido, itens por página</li>
+            <li><strong>Caminhos</strong> &mdash; A pasta da biblioteca de ROMs, as pastas de gamelist e de mídia do ES-DE e a pasta de troféus do RPCS3 da casa, com um único Salvar</li>
+            <li><strong>Exibição</strong> &mdash; Estilo da capa (2D/3D) e sistema de classificação etária preferido, para todos</li>
             <li><strong>Nomenclatura de ROMs</strong> &mdash; Posicionamento do artigo (inicial/final "The"), lista de opções de região, região padrão, convenções de nomenclatura</li>
+            <li><strong>Discos Bônus</strong> &mdash; Encontre discos bônus e ligue-os aos seus jogos</li>
             <li><strong>Backup</strong> &mdash; Criar e restaurar backups do banco de dados</li>
         </ul>
 
         <h3>Aba Coleta de Dados</h3>
         <ul>
-            <li><strong>ES-DE</strong> &mdash; Caminhos de gamelist e mídia do ES-DE para importação de dados locais</li>
-            <li><strong>Coletor</strong> &mdash; Habilitar/desabilitar coletores individuais, ordenação de prioridade por arrastar e soltar, configurações de limite de taxa por coletor</li>
-            <li><strong>Chaves de API</strong> &mdash; Todas as credenciais dos coletores (TGDB, IGDB, RAWG, ScreenScraper), seleção de provedor de IA e escolha de modelo (Gemini, OpenAI, Claude)</li>
+            <li><strong>Coletor</strong> &mdash; Ligue ou desligue os coletores e arraste-os na ordem em que são tentados. <strong>Filtro de correspondência na coleta em massa</strong> define o quanto um resultado precisa combinar: <strong>Rigoroso</strong> aceita só títulos exatos, <strong>Normal</strong> (o padrão) um título parecido no sistema certo, e <strong>Flexível</strong> também títulos parciais. Uma configuração feita em uma versão anterior aparece como <strong>Personalizado</strong> até você escolher outra.</li>
+            <li><strong>Chaves de API</strong> &mdash; Todas as credenciais dos coletores (TheGamesDB, IGDB, RAWG, ScreenScraper), escolha do provedor de IA e do modelo (Gemini, OpenAI, Claude), e as chaves do RetroAchievements e da Steam da casa. A chave própria de uma pessoa do RetroAchievements em Meu perfil é usada primeiro, e a da casa só para quem não tem nenhuma. A chave da Steam da casa serve apenas a um administrador sem chave própria.</li>
         </ul>
 
         <h3>Aba Dados</h3>
         <ul>
-            <li><strong>Estatísticas</strong> &mdash; Visão geral das estatísticas da biblioteca (total de jogos, sistemas, uso de armazenamento)</li>
-            <li><strong>Troféus</strong> &mdash; Configuração do caminho de troféus do RPCS3 para o escaneamento local de troféus de PS3</li>
-            <li><strong>Listas Suspensas</strong> &mdash; Personalize as opções de região e outros valores de listas suspensas usados em todo o aplicativo</li>
+            <li><strong>Menus suspensos</strong> &mdash; Personalize os valores oferecidos em listas como gênero, perspectiva e tipo de salvamento</li>
             <li><strong>Normalização</strong> &mdash; Regras de normalização de gênero e modos &mdash; adicione mapeamentos personalizados para padronizar a saída dos coletores</li>
         </ul>
 
         <h3>Aba Personalização</h3>
         <ul>
-            <li><strong>Notificações</strong> &mdash; Preferências de tempo limite das notificações (sucesso, informação, aviso, erro &mdash; cada um configurável de forma independente)</li>
-            <li><strong>Controles</strong> &mdash; Gerencie a biblioteca de controles, defina controles padrão por sistema, adicione controles personalizados. Os controles padrão substituem os valores coletados/de IA durante a obtenção de metadados.</li>
-            <li><strong>Logotipos</strong> &mdash; Personalização de logotipos de sistemas &mdash; importe logotipos de sistemas ou atualize a partir dos padrões</li>
+            <li><strong>Controles</strong> &mdash; <strong>Abrir Controles</strong> leva à página Controles. Lá você define os controles padrão de cada sistema, adiciona os seus e edita a biblioteca de controles. Os controles padrão substituem os valores coletados/de IA durante a busca de metadados.</li>
+            <li><strong>Logos</strong> &mdash; <strong>Atualizar logos dos sistemas</strong> copia os logos novos da sua pasta do ES-DE e depois mostra quais sistemas ainda não têm nenhum</li>
         </ul>
 
         <h3>Aba Sistema</h3>
         <ul>
-            <li><strong>Manutenção</strong> &mdash; Limpar ROMs ausentes, limpar importações do CLZ ou dados coletados, excluir arquivos de mídia que nenhum jogo usa, limpar vínculos com arquivos de mídia que não existem mais e otimizar o banco de dados</li>
+            <li><strong>Manutenção</strong> &mdash; Limpar ROMs ausentes, apagar importações do CLZ ou dados coletados, excluir os arquivos de mídia que nenhum jogo usa, limpar os vínculos a arquivos de mídia que não existem mais, otimizar o banco de dados e calcular o tamanho dos arquivos</li>
             <li><strong>Atualizações</strong> &mdash; Verificar, baixar e instalar uma nova versão</li>
-            <li><strong>Servidor</strong> &mdash; Reiniciar ou desligar o RetroDB</li>
+            <li><strong>Servidor</strong> &mdash; Reiniciar ou desligar o RetroDB, a porta que ele usa (o endereço muda após Reiniciar) e onde fica o banco de dados</li>
             <li><strong>Logs</strong> &mdash; Configurações do nível de log para diferentes categorias e os arquivos de log</li>
         </ul>
 
@@ -1670,7 +1667,7 @@
         <ul>
             <li><strong>Limpar ROMs Ausentes</strong> &mdash; Remove as entradas do banco de dados de jogos cujos arquivos de ROM não existem mais no disco. Útil após reorganizar ou excluir arquivos de ROM.</li>
             <li><strong>Limpeza de Mídia Órfã</strong> &mdash; Encontra e exclui arquivos de imagem no disco (capa, capturas de tela, fanart) que não têm uma referência correspondente no banco de dados. Visualize antes de excluir para confirmar.</li>
-            <li><strong>Limpar Dados Coletados</strong> &mdash; Remove todos os metadados coletados dos jogos mantendo as entradas de arquivo de ROM. Útil para começar do zero com a coleta. A visualização mostra os jogos afetados antes da execução.</li>
+            <li><strong>Limpar dados de metadados</strong> &mdash; Tira o que a coleta preencheu nos jogos coletados, inclusive os vínculos às suas imagens e vídeos, para você coletar tudo de novo do zero. Seus jogos ficam, e os títulos voltam aos nomes dos arquivos (um título travado fica). Os arquivos de imagens e vídeos ficam no disco, a não ser que você marque <strong>Apagar também os arquivos de imagens e vídeos</strong>. A visualização mostra quantos jogos serão afetados.</li>
             <li><strong>Limpar Importações CLZ</strong> &mdash; Remove todos os registros de importação do CLZ Games (entradas somente de metadados, sem arquivos de ROM).</li>
         </ul>
 
@@ -1834,7 +1831,7 @@
         <ul>
             <li>Uma coleta em lote busca pelo nome do arquivo da ROM, então um arquivo mal nomeado encontra o jogo errado. Renomeie o arquivo ou busque os dados do jogo na página dele, com um título de busca melhor, e escolha o resultado certo.</li>
             <li>Na janela Editar Jogo, marque <strong>Manter este título ao buscar metadados</strong> para que as próximas buscas deixem o nome em paz.</li>
-            <li>Para muitos jogos, aumente a <strong>Pontuação mínima de correspondência</strong> em Configurações &rarr; Busca de metadados &rarr; Coletor &rarr; Filtro de correspondência na coleta em massa.</li>
+            <li>Para muitos jogos, escolha <strong>Rigoroso</strong> em Configurações &rarr; Busca de metadados &rarr; Coletor &rarr; Filtro de correspondência na coleta em massa.</li>
         </ul>
 
         <h4>Uma busca não substitui uma imagem ruim</h4>
@@ -1859,7 +1856,7 @@
         </ul>
 
         <h4>Muitos jogos "Com falha"</h4>
-        <p>Com falha geralmente significa que nenhum resultado foi próximo o bastante para ser salvo. Diminua a <strong>Pontuação mínima de correspondência</strong> ou a <strong>Qualidade mínima do título</strong> em Configurações &rarr; Busca de metadados &rarr; Coletor &rarr; Filtro de correspondência na coleta em massa e confira os nomes dos arquivos. O Visualizador de Log lista cada jogo para o qual nenhuma correspondência foi encontrada.</p>
+        <p>Com falha geralmente significa que nenhum resultado foi próximo o bastante para ser salvo. Escolha <strong>Flexível</strong> em Configurações &rarr; Busca de metadados &rarr; Coletor &rarr; Filtro de correspondência na coleta em massa e confira os nomes dos arquivos. O Visualizador de Log lista cada jogo para o qual nenhuma correspondência foi encontrada.</p>
 
         <h4>"A scrape for &hellip; is already running"</h4>
         <p>Esse sistema já está sendo buscado no mesmo modo. Espere por ele ou cancele-o. A busca de outro sistema espera na fila e começa sozinha.</p>
@@ -1893,7 +1890,7 @@
         <p><strong>Jogar</strong> inicia o emulador no computador em que o RetroDB está rodando, não no dispositivo em que você pressionou o botão.</p>
 
         <h4>"Programa do emulador não encontrado no PATH"</h4>
-        <p>Na página Emuladores, em <strong>Emuladores registrados</strong>, edite o emulador e preencha <strong>Caminho personalizado do executável</strong> com o local do programa. Ou adicione a pasta onde ele está em <strong>Pastas de emuladores</strong>. Para o RetroArch, use <strong>Detectar automaticamente</strong> no cartão do RetroArch e depois <strong>Salvar</strong>.</p>
+        <p>Na página Emuladores, em <strong>Emuladores registrados</strong>, edite o emulador e preencha <strong>Local do programa</strong> com o local do programa. Ou adicione a pasta onde ele está em <strong>Pastas de emuladores</strong>. Para o RetroArch, use <strong>Detectar automaticamente</strong> no cartão do RetroArch e depois <strong>Salvar</strong>.</p>
 
         <h4>"Nenhum emulador configurado para o sistema &hellip;" ou "O emulador &hellip; está desativado"</h4>
         <p>Escolha um emulador para o sistema em <strong>Mapeamento por sistema</strong> na página Emuladores ou ative o emulador em <strong>Emuladores registrados</strong>. Um jogo ajustado para um emulador que não existe mais: limpe essa escolha na janela Editar Jogo dele.</p>
@@ -1943,7 +1940,7 @@
 
         <h4>"Falha na autenticação da PSN"</h4>
         <ul>
-            <li>A Sony não aceita mais o seu token NPSSO salvo. Obtenha um novo com os passos em Configurações &rarr; Conta &rarr; Meu perfil &rarr; PlayStation Network e pressione <strong>Salvar &amp; testar conexão</strong>.</li>
+            <li>A Sony não aceita mais o seu token NPSSO salvo. Obtenha um novo com os passos em Configurações &rarr; Conta &rarr; Meu perfil &rarr; PlayStation Network e pressione <strong>Salvar meu perfil</strong>.</li>
             <li>O RetroDB mantém o login ativo sozinho enquanto a Sony aceitar o token. Para trocar um token que ainda funciona, saia primeiro da PlayStation.</li>
         </ul>
 

@@ -443,9 +443,9 @@
         <ol>
             <li>Yiya kwi-<a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a></li>
             <li>Cela ii-API key (simahla, zamkelwa ngesandla) &mdash; uya kufumana i-key <strong>ekaWonke-wonke</strong> kunye <strong>neyabucala</strong></li>
-            <li>Faka zombini ii-key kwi-Settings &rarr; API Keys &rarr; TheGamesDB</li>
-            <li>I-<strong>key kaWonke-wonke</strong> (umda ngeIP nganye) isetyenziswa njengeyona key iphambili yokuscrapa</li>
-            <li>I-<strong>key yabucala</strong> (echiba yenyanga eyabelwanayo) isetyenziswa njenge-fallback ukuba i-public key iyasilela</li>
+            <li>Kwi-Iisethingi &rarr; Ukukhupha &rarr; Izitshixo ze-API, faka isitshixo sasesidlangalaleni kwi-<strong>TheGamesDB &mdash; Isitshixo esikhulu</strong> uze ufake isitshixo sabucala kwi-<strong>TheGamesDB &mdash; Isitshixo sogcino</strong></li>
+            <li>Isitshixo esikhulu siyasetyenziswa kuqala; uqhagamshelo lwe-intanethi ngalunye lunesabelo salo</li>
+            <li>Isitshixo sogcino siyasetyenziswa xa isitshixo esikhulu siphelile; siyavumela malunga nezicelo ezingama-6,000 ngenyanga</li>
         </ol>
 
         <h4>IGDB (nge-Twitch)</h4>
@@ -492,7 +492,7 @@
         <p><em>Isetyenziselwa ukungenisa ilayibrari yeSteam nokulandelela i-achievement.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>I-Xbox ifikelela kwi-RetroDB ngeOpenXBL, inkonzo yasimahla. Umntu ngamnye usebenzisa isitshixo sakhe: ngena kwi-<a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> nge-akhawunti yakho yeXbox, kopa isitshixo sakho se-API, uze usincamathisele kwiiSethingi &rarr; Iprofayile Yam &rarr; Xbox. <strong>Gcina &amp; Vavanya Uqhagamshelo</strong> ihlola isitshixo kwaye ibonise i-gamertag yakho. Isitshixo sasimahla sivumela izicelo ezili-150 ngeyure.</p>
+        <p>I-Xbox ifikelela kwi-RetroDB ngeOpenXBL, inkonzo yasimahla. Umntu ngamnye usebenzisa isitshixo sakhe: ngena kwi-<a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> nge-akhawunti yakho yeXbox, kopa isitshixo sakho se-API, uze usincamathisele kwiiSethingi &rarr; I-akhawunti &rarr; Iprofayile Yam &rarr; Xbox. <strong>Gcina Iprofayile Yam</strong> ihlola isitshixo kwaye ibonise i-gamertag yakho. Isitshixo sasimahla sivumela izicelo ezili-150 ngeyure.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>I-PSN isebenzisa uqinisekiso lwe-cookie ye-NPSSO. Jonga icandelo le-<a href="#trophies">Iindebe</a> ukuze ufumane imiyalelo yosetho eneenkcukacha.</p>
@@ -502,15 +502,15 @@
 
         <table class="data-table">
             <thead>
-                <tr><th>Provider</th><th>Imodeli emiselweyo</th><th>Ixabiso (Input / Output nge-1M token)</th></tr>
+                <tr><th>Provider</th><th>Imodeli emiselweyo</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0.10 / $0.40</td></tr>
-                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0.15 / $0.60</td></tr>
-                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td><td>$0.10 / $0.50</td></tr>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td></tr>
             </tbody>
         </table>
-        <p>I-provider nganye inikezela ngamanqanaba amaninzi eemodeli. Iimodeli ezona zitshiphu zisebenza kakuhle yemetadata nomxholo wemuseum. Cwangcisa i-provider oyithandayo kunye ne-API key kwi-<strong>Settings &rarr; Scraping &rarr; API Keys</strong>.</p>
+        <p>I-provider nganye inika iimodeli ezininzi. Leyo ichazwe ngelithi Kucetyiswa isebenza kakuhle kwimetadata nakumxholo wemyuziyam; isiza se-provider nganye siqulathe amaxabiso akhoyo. Misela i-provider oyithandayo nesitshixo se-API kwi-<strong>Iisethingi &rarr; Ukukhupha &rarr; Izitshixo ze-API</strong>.</p>
         <p>IGemini neOpenAI zihlala zikhangela kwiwebhu. UClaude ukhangela kuphela xa uvula <strong>Vumela uClaude akhangele kwiwebhu</strong> phantsi kwemodeli yakhe. Ngaphandle kokukhangela, uClaude ushiya kungenanto nantoni na efuna inani elipapashiweyo, njengeekopi ezithengisiweyo. IAnthropic iyabiza ngokukhangela ngakunye: ubuninzi bokukhangela oku-5 ngomdlalo, ukuya kwiisenti ezi-5 zaseMelika.</p>
     </div>
 </section>
@@ -520,52 +520,49 @@
     <h2 class="card-title">Iisethingi</h2>
     <div class="card-body">
         <p>Iisethingi zihlelwe kwii-tab, nganye inamacandelo. Abalawuli bayabona nayo i-tab ethi Ii-emulator, evula iphepha layo.</p>
-        <p>Umntu ngamnye ubona kuphela iisethingi ezinokutshintshwa yindima yakhe. Umbukeli okanye umdlali ubona Iprofayile Yam, Ummandla Wexesha, Umxholo, Ulwimi, izibalo zelayibrari, iindebe neNkxaso. Umhleli ubona kwakhona Iidiski Zebhonasi kunye Neikhontrola. Yonke enye into ngeyabalawuli.</p>
+        <p>Umntu ngamnye ubona kuphela iisethingi ezinokutshintshwa yindima yakhe. Umbukeli okanye umdlali ubona i-tab ethi I-akhawunti. Umhleli ubona kwakhona Iidiski Zebhonasi kunye Neikhontrola. Yonke enye into ngeyabalawuli.</p>
 
         <h3>I-tab ye-Account</h3>
         <ul>
-            <li><strong>My Profile</strong> &mdash; Ukufaka/ukususa i-avatar, igama lokubonisa, ulwazi lwendima, utshintsho lwephasiwedi</li>
-            <li><strong>RetroAchievements</strong> &mdash; Igama lokusebenzisa ne-API key yomanyaniso we-RA</li>
-            <li><strong>PSN</strong> &mdash; I-cookie ye-NPSSO yokuvumelanisa iindebe ze-PlayStation Network</li>
-            <li><strong>Timezone</strong> &mdash; Misela i-timezone yakho ukuze imihla ibonakale kuyo yonke i-app</li>
-            <li><strong>Users</strong> &mdash; Ulawulo lwabasebenzisi: yongeza, hlela, cima abasebenzisi uze wabele iindima (kwi-admin kuphela)</li>
+            <li><strong>Iprofayile Yam</strong> &mdash; I-avatar yakho, ifolda yakho yeendebe zeRPCS3, kunye nee-akhawunti zakho zeRetroAchievements, PlayStation Network, Xbox neSteam. Igama lakho lokusebenzisa kunye nesitshixo se-API sewebhu seRetroAchievements zibonisa impumelelo yakho; ukungena ngephasiwedi kuvula impumelelo ngoxa udlala. Iqhosha elinye, <strong>Gcina Iprofayile Yam</strong>, ligcina ikhadi kwaye lihlola i-token entsha yePlayStation okanye isitshixo seXbox. <strong>Tshintsha Iphasiwedi</strong> icela iphasiwedi entsha kabini; ifuna ubuncinane iimpawu ezili-12.</li>
+            <li><strong>Umxholo noLwimi</strong> &mdash; Umxholo wakho, ulwimi lwakho kunye nemvelaphi ehambayo</li>
+            <li><strong>Izaziso</strong> &mdash; Ixesha ekuhlala ngalo uhlobo ngalunye lomyalezo kwiscreen, kuwe wedwa</li>
+            <li><strong>Ummandla Wexesha</strong> &mdash; Misela i-timezone yakho ukuze imihla ibonakale kuyo yonke i-app</li>
+            <li><strong>Abasebenzisi</strong> &mdash; Ulawulo lwabasebenzisi: yongeza, hlela, cima abasebenzisi uze wabele iindima (kwi-admin kuphela)</li>
         </ul>
 
         <h3>I-tab yeLibrary</h3>
         <ul>
-            <li><strong>Paths</strong> &mdash; Indlela yelayibrari yeROM, indawo ye-database</li>
-            <li><strong>Display</strong> &mdash; Ukhetho lwethima, isitayela se-boxart (2D/3D), inkqubo yekhetho leminyaka yobudala, izinto ngephepha ngalinye</li>
-            <li><strong>ROM Naming</strong> &mdash; Ukubekwa kwe-article (u-"The" ophambili/ongasemva), uluhlu lwekhetho lengingqi, ingingqi emiselweyo, iindlela zokunika amagama</li>
-            <li><strong>Backup</strong> &mdash; Yenza uze ubuyisele ii-backup ze-database</li>
+            <li><strong>Iindlela</strong> &mdash; Ifolda yelayibrari yeROM, iifolda zegamelist neemidiya zeES-DE, kunye nefolda yeendebe zeRPCS3 yekhaya, phantsi kweqhosha elinye lokugcina</li>
+            <li><strong>Umboniso</strong> &mdash; Isitayela se-boxart (2D/3D) kunye nenkqubo yekhetho leminyaka yobudala, kubo bonke</li>
+            <li><strong>Ukubiza Amagama eeROM</strong> &mdash; Ukubekwa kwe-article (u-"The" ophambili/ongasemva), uluhlu lwekhetho lengingqi, ingingqi emiselweyo, iindlela zokunika amagama</li>
+            <li><strong>Iidiski Zebhonasi</strong> &mdash; Fumana iidiski zebhonasi uze uzidibanise nemidlalo yazo</li>
+            <li><strong>Ugcino</strong> &mdash; Yenza uze ubuyisele ii-backup ze-database</li>
         </ul>
 
         <h3>I-tab yeScraping</h3>
         <ul>
-            <li><strong>ES-DE</strong> &mdash; Iindlela zegamelist neemidiya zeES-DE zokungenisa idata yasekhaya</li>
-            <li><strong>Scraper</strong> &mdash; Vula/cima ii-scraper ngazinye, ukumisela ukubaluleka ngokutsala-ubeke, iisethingi zomda wexesha nge-scraper nganye</li>
-            <li><strong>API Keys</strong> &mdash; Zonke iziqinisekiso ze-scraper (TGDB, IGDB, RAWG, ScreenScraper), ukhetho lwe-provider ye-AI nokhetho lwemodeli (Gemini, OpenAI, Claude)</li>
+            <li><strong>I-scraper</strong> &mdash; Vula okanye cima ii-scraper uze uzitsale zibe kulandelelwano ezizama ngalo. <strong>Ukuhluza Ukufana Kokukhupha Ngobuninzi</strong> kumisela ukuba umphumo kufuneka ufane kangakanani: <strong>Ngokuqinileyo</strong> yamkela kuphela izihloko ezichanekileyo, <strong>Eqhelekileyo</strong> (emiselweyo) yamkela isihloko esisondeleyo kwisistim echanekileyo, kwaye <strong>Ngokukhululekileyo</strong> yamkela nezihloko ezingaphelelanga. Isethingi oyenze kwinguqulo yangaphambili siboniswa njenge-<strong>Eyokuzenzela</strong> ude ukhethe enye.</li>
+            <li><strong>Izitshixo ze-API</strong> &mdash; Zonke iziqinisekiso ze-scraper (TheGamesDB, IGDB, RAWG, ScreenScraper), ukhetho lwe-provider ye-AI nokhetho lwemodeli (Gemini, OpenAI, Claude), kunye nezitshixo zekhaya zeRetroAchievements neSteam. Isitshixo sakho seRetroAchievements kwi-Iprofayile Yam siyasetyenziswa kuqala, kwaye esekhaya sisetyenziswa kuphela kumntu ongenaso. Isitshixo seSteam sekhaya sisebenzela kuphela i-admin engenaso isitshixo sayo.</li>
         </ul>
 
         <h3>I-tab yeData</h3>
         <ul>
-            <li><strong>Stats</strong> &mdash; Ushwankathelo lweenkcukacha zelayibrari (imidlalo iyonke, iisistim, ukusetyenziswa kwendawo yokugcina)</li>
-            <li><strong>Trophies</strong> &mdash; Uqwalaselo lwendlela yeendebe zeRPCS3 lokuscana iindebe zePS3 zasekhaya</li>
-            <li><strong>Dropdowns</strong> &mdash; Yenza ngokwakho ikhetho lengingqi namanye amaxabiso e-dropdown asetyenziswa kuyo yonke i-app</li>
-            <li><strong>Normalization</strong> &mdash; Imithetho ye-normalization ye-genre ne-modes &mdash; yongeza ii-mapping ezikhethiweyo ukwenza ithiwe kalinganiso i-output ye-scraper</li>
+            <li><strong>Ii-dropdown</strong> &mdash; Yenza ngokwakho amaxabiso anikezelwayo kuluhlu olufana ne-genre, i-perspective nohlobo lokugcina</li>
+            <li><strong>Ukulungelelanisa</strong> &mdash; Imithetho ye-normalization ye-genre ne-modes &mdash; yongeza ii-mapping ezikhethiweyo ukwenza ithiwe kalinganiso i-output ye-scraper</li>
         </ul>
 
         <h3>I-tab yeCustomization</h3>
         <ul>
-            <li><strong>Notifications</strong> &mdash; Ukhetho lwexesha lesaziso (impumelelo, ulwazi, isilumkiso, impazamo &mdash; nganye ingacwangciswa ngokuzimeleyo)</li>
-            <li><strong>Controllers</strong> &mdash; Lawula ilayibrari ye-controller, misela ii-controller ezimiselweyo ngesistim, yongeza ii-controller ezikhethiweyo. Ii-controller ezimiselweyo zibhala phezu kwamaxabiso escrapiweyo/e-AI ngexesha lokulanda imetadata.</li>
-            <li><strong>Logos</strong> &mdash; Ukwenza ngokwakho iilogo zesistim &mdash; ngenisa iilogo zesistim okanye uzihlaziye ukusuka kwezimiselweyo</li>
+            <li><strong>Iikhontrola</strong> &mdash; <strong>Vula Iikhontrola</strong> iya kwiphepha elinikezelwe iikhontrola. Apho umisela iikhontrola ezimiselweyo zesistim nganye, wongeze eyakho uze uhlele ilayibrari yeekhontrola. Iikhontrola ezimiselweyo zibhala phezu kwamaxabiso escrapiweyo/e-AI ngexesha lokulanda imetadata.</li>
+            <li><strong>Ii-logo</strong> &mdash; <strong>Hlaziya Ii-logo Zesistim</strong> ikopa nayiphi na ilogo entsha kwifolda yakho ye-ES-DE, uze ibonise ukuba zeziphi iisistim ezingenalo ilogo</li>
         </ul>
 
         <h3>I-tab yeSystem</h3>
         <ul>
-            <li><strong>Ulondolozo</strong> &mdash; Coca iiROM ezilahlekileyo, cima ii-import ze-CLZ okanye idatha ekhutshiweyo, cima iifayile zemidiya engasetyenziswa mdlalo, cima amakhonkco eefayile zemidiya ezingasekho, uze uphucule i-database</li>
+            <li><strong>Ulondolozo</strong> &mdash; Coca iiROM ezilahlekileyo, cima ii-import ze-CLZ okanye idatha ekhutshiweyo, cima iifayile zemidiya engasetyenziswa mdlalo, cima amakhonkco eefayile zemidiya ezingasekho, uphucule i-database, uze ubale ubungakanani beefayile</li>
             <li><strong>Uhlaziyo</strong> &mdash; Khangela, ukhuphele uze ufake inguqulo entsha</li>
-            <li><strong>Iseva</strong> &mdash; Qalisa kwakhona okanye ucime iRetroDB</li>
+            <li><strong>Iseva</strong> &mdash; Qalisa kwakhona okanye ucime iRetroDB, i-port ayisebenzisayo (idilesi iyatshintsha emva kokuqalisa kwakhona), nendawo ekuyo i-database yayo</li>
             <li><strong>Ukurekhoda</strong> &mdash; Iisethingi zenqanaba le-log kumacandelo ahlukeneyo, neefayile ze-log</li>
         </ul>
 
@@ -1670,7 +1667,7 @@
         <ul>
             <li><strong>Clean Missing ROMs</strong> &mdash; Susa iingeniso zedatabase zemidlalo apho iifayile zeROM zayo zingasekho kwidiski. Iluncedo emva kokuhlela kwakhona okanye ukucima iifayile zeROM.</li>
             <li><strong>Orphan Media Cleanup</strong> &mdash; Fumana uze ucime iifayile zomfanekiso kwidiski (boxart, ii-screenshot, fanart) ezingenambekiselo yedatabase ehambelanayo. Jonga kuqala phambi kokucima ukuqinisekisa.</li>
-            <li><strong>Clear Scraped Data</strong> &mdash; Susa yonke imetadata escrapiweyo kwimidlalo ugcine iingeniso zeefayile zeROM. Iluncedo yokuqalisa kabusha ngokuscrapa. Ukujonga kuqala kubonisa imidlalo echaphazelekayo phambi kokwenza.</li>
+            <li><strong>Cima Idatha Ekhuphiweyo</strong> &mdash; Isusa konke okuzaliswe kukukhupha kwimidlalo ekhuphiweyo, kubandakanya amakhonkco emifanekiso neevidiyo zayo, ukuze ukwazi ukukhupha kwakhona ukusuka ekuqaleni. Imidlalo ihleli, kwaye izihloko zayo ziyabuyela kumagama eefayile (isihloko esitshixiweyo siyahlala). Iifayile zemifanekiso neevidiyo ziyahlala kwidiski ngaphandle kokuba ukhethe <strong>Cima nazo iifayile zemifanekiso nezevidiyo</strong>. Ukujonga kuqala kubonisa ukuba zingaphi imidlalo echaphazelekayo.</li>
             <li><strong>Clear CLZ Imports</strong> &mdash; Susa zonke iirekhodi zokungenisa zeCLZ Games (iingeniso zemetadata kuphela ngaphandle kweefayile zeROM).</li>
         </ul>
 
@@ -1834,7 +1831,7 @@
         <ul>
             <li>Ukukhupha okuninzi kukhangela ngegama lefayile yeROM, ngoko ifayile ebizwe kakubi ifumana umdlalo ongachananga. Tshintsha igama lefayile, okanye khupha umdlalo kwiphepha lawo lodwa ngesihloko sokukhangela esingcono uze ukhethe umphumo oluchanileyo.</li>
             <li>Kwifestile ethi Hlela Umdlalo, tyikisha <strong>Gcina esi sihloko xa ukhupha</strong> ukuze ukukhupha kwakamva kungalichukumisi igama.</li>
-            <li>Kwimidlalo emininzi, nyusa <strong>Isikolo Esincinci Sokufana</strong> kwi-Iisethingi &rarr; Ukukhupha &rarr; I-scraper &rarr; Ukuhluza Ukufana Kokukhupha Ngobuninzi.</li>
+            <li>Kwimidlalo emininzi, khetha <strong>Ngokuqinileyo</strong> kwi-Iisethingi &rarr; Ukukhupha &rarr; I-scraper &rarr; Ukuhluza Ukufana Kokukhupha Ngobuninzi.</li>
         </ul>
 
         <h4>Ukukhupha akuyitshintshi imifanekiso emibi</h4>
@@ -1859,7 +1856,7 @@
         </ul>
 
         <h4>Imidlalo emininzi "Kwehlulekile"</h4>
-        <p>Ukwahluleka kuthetha ukuba akukho mphumo wasondela ngokwaneleyo ukuze ugcinwe. Thoba <strong>Isikolo Esincinci Sokufana</strong> okanye <strong>Umgangatho Omncinci Wesihloko</strong> kwi-Iisethingi &rarr; Ukukhupha &rarr; I-scraper &rarr; Ukuhluza Ukufana Kokukhupha Ngobuninzi, uze ujonge amagama eefayile. Umboni we-Log ubala wonke umdlalo ongafumananga kudibana.</p>
+        <p>Ukwahluleka kuthetha ukuba akukho mphumo wasondela ngokwaneleyo ukuze ugcinwe. Khetha <strong>Ngokukhululekileyo</strong> kwi-Iisethingi &rarr; Ukukhupha &rarr; I-scraper &rarr; Ukuhluza Ukufana Kokukhupha Ngobuninzi, uze ujonge amagama eefayile. Umboni we-Log ubala wonke umdlalo ongafumananga kudibana.</p>
 
         <h4>"Ukukhupha &hellip; sele kuqhuba"</h4>
         <p>Eso sistim sele sikhutshwa ngendlela efanayo. Linda ukuba kugqibe, okanye ukurhoxise. Ukukhupha kwesinye isistim kulinda kumgca kwaye kuqala ngokwako.</p>
@@ -1893,7 +1890,7 @@
         <p><strong>Dlala</strong> iqalisa i-emulator kwikhompyuter eqhuba iRetroDB, hayi kwisixhobo osicinezele kuso.</p>
 
         <h4>"Inkqubo ye-emulator ayifumaneki ku-PATH"</h4>
-        <p>Kwiphepha le-Ii-emulator, phantsi kwe-<strong>Ii-emulator ezibhalisiweyo</strong>, hlela i-emulator uze uzalise <strong>Indlela ye-binary ethatha indawo</strong> ngendawo yenkqubo. Okanye yongeza ifolda eyibambileyo phantsi kwe-<strong>Iifolda zee-emulator</strong>. Kwi-RetroArch, sebenzisa <strong>Fumanisa ngokuzenzekelayo</strong> kwikhadi le-RetroArch, uze <strong>Gcina</strong>.</p>
+        <p>Kwiphepha le-Ii-emulator, phantsi kwe-<strong>Ii-emulator ezibhalisiweyo</strong>, hlela i-emulator uze ubhale apho inkqubo ikhoyo kwibala elithi <strong>Indawo yenkqubo</strong>. Okanye yongeza ifolda eyibambileyo phantsi kwe-<strong>Iifolda zee-emulator</strong>. Kwi-RetroArch, sebenzisa <strong>Fumanisa ngokuzenzekelayo</strong> kwikhadi le-RetroArch, uze <strong>Gcina</strong>.</p>
 
         <h4>"Akukho i-emulator imiselweyo yesistim &hellip;" okanye "I-emulator &hellip; icinyiwe"</h4>
         <p>Khetha i-emulator yesistim phantsi kwe-<strong>Ulungelelwaniso lwesistim nganye</strong> kwiphepha le-Ii-emulator, okanye vula i-emulator phantsi kwe-<strong>Ii-emulator ezibhalisiweyo</strong>. Umdlalo owubekelwe i-emulator engasekho: cima oko kukhetha kwifestile yawo ethi Hlela Umdlalo.</p>
@@ -1943,7 +1940,7 @@
 
         <h4>"Ukungqinelana kwe-PSN kusilele"</h4>
         <ul>
-            <li>ISony ayisasamkeli i-token yakho ye-NPSSO egciniweyo. Fumana entsha ngamanyathelo akwi-Iisethingi &rarr; I-akhawunti &rarr; Iprofayile Yam &rarr; PlayStation Network, uze ucinezele <strong>Gcina &amp; Vavanya Uqhagamshelo</strong>.</li>
+            <li>ISony ayisasamkeli i-token yakho ye-NPSSO egciniweyo. Fumana entsha ngamanyathelo akwi-Iisethingi &rarr; I-akhawunti &rarr; Iprofayile Yam &rarr; PlayStation Network, uze ucinezele <strong>Gcina Iprofayile Yam</strong>.</li>
             <li>IRetroDB igcina ukungena ngokwayo ngoxa iSony isamkela i-token. Ukutshintsha i-token esasebenzayo, phuma kuqala kwi-PlayStation.</li>
         </ul>
 

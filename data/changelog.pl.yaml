@@ -1,10 +1,22 @@
 - version: 4.0.0
-  date: '2026-11-15'
+  date: '2026-11-16'
   tags:
+  - type: enhancement
+    label: 'Ustawienia są lepiej uporządkowane. Twoje własne wybory są razem w Ustawienia → Konto: Motyw i język (z ruchomym tłem) oraz to, jak długo komunikaty zostają na ekranie, co jest teraz osobne dla każdej osoby. Biblioteka → Ścieżki zbiera wszystkie cztery foldery pod jednym przyciskiem Zapisz. System → Serwer pokazuje port i miejsce bazy danych. Wesprzyj rozwój przeniesiono na koniec strony Pomoc'
+  - type: enhancement
+    label: 'Kontrolery mają własną stronę. Ustawienia → Personalizacja → Otwórz Kontrolery prowadzi tam: ustaw domyślne kontrolery każdego systemu, dodaj własne i edytuj bibliotekę kontrolerów'
+  - type: enhancement
+    label: 'Filtrowanie dopasowań przy pobieraniu zbiorczym daje trzy proste wybory zamiast liczby wyniku i jej tabeli: Ścisłe, Normalne i Luźne. Normalne to dawna wartość domyślna. Ustawienie wybrane przez Ciebie wcześniej pokazuje się jako Własne, dopóki nie wybierzesz innego'
+  - type: enhancement
+    label: 'Mój profil ma jeden przycisk Zapisz mój profil zamiast trzech. Przy zapisie sprawdza nowy token PlayStation lub nowy klucz Xbox i zachowuje Twój działający token PlayStation, jeśli Sony odrzuci nowy. Zmień hasło mówi teraz, że hasło musi mieć co najmniej 12 znaków, i prosi o nowe hasło dwa razy'
+  - type: fix
+    label: 'Prostsze słowa w Ustawieniach. Mój profil mówi, do czego służą klucz RetroAchievements i logowanie hasłem. Klucze API mówią, że własny klucz RetroAchievements lub Steam danej osoby jest używany najpierw. Klucze TheGamesDB nazywają się Klucz główny i Klucz zapasowy. Okno Edytuj emulator mówi Lokalizacja programu i Opcje wiersza poleceń. Wyczyść pobrane dane mówi, że pliki obrazów i filmów zostają na dysku, chyba że zaznaczysz pole. Listy modeli AI nie pokazują już cen, które się zdezaktualizowały'
+  - type: fix
+    label: 'Ustawienia pozbywają się tego, co było podwójne lub nic nie robiło: karty statystyk biblioteki (ma ją Panel), kopii Skanuj trofea w Ustawieniach (ma ją strona trofeów PS3), osobnego przycisku importu logo systemów (Odśwież logo systemów najpierw kopiuje teraz logo z ES-DE) i sześciu zapisanych ustawień, których nic nie używało. Czas komunikatu równy 0 sekund jest odrzucany zamiast po cichu zapisywany, a zapisanie nowego folderu ROM-ów nie mówi już, że RetroDB musi się zrestartować'
   - type: performance
     label: 'RetroDB jest znacznie lżejszy dla Twojego komputera. Ruchoma mgła motywu Cyberpunk zajmowała jeden rdzeń procesora na pełnych obrotach, dopóki otwarta była jakakolwiek strona RetroDB; teraz rysuje ją karta graficzna, a procesor prawie tego nie zauważa. Rysuje też o połowę mniej klatek, co wygląda tak samo, bo mgła dryfuje powoli'
   - type: feature
-    label: 'Ruchome tła (mgła, deszcz, gwiazdy, kurz) zatrzymują się teraz, gdy nie korzystasz z RetroDB: gdy jego okno nie jest na wierzchu, jego karta jest ukryta albo mija minuta bez ruchu myszy i klawiatury. Wracają w chwili, gdy wrócisz. Nowy przełącznik Ruchome tło w Ustawienia → Biblioteka → Wyświetlanie zatrzymuje je na tym komputerze'
+    label: 'Ruchome tła (mgła, deszcz, gwiazdy, kurz) zatrzymują się teraz, gdy nie korzystasz z RetroDB: gdy jego okno nie jest na wierzchu, jego karta jest ukryta albo mija minuta bez ruchu myszy i klawiatury. Wracają w chwili, gdy wrócisz. Nowy przełącznik Ruchome tło w Ustawienia → Konto → Motyw i język zatrzymuje je na tym komputerze'
   - type: performance
     label: 'Tytuły stron zachowują poświatę, ale nie pulsują już cały czas, a migoczące tytuły „glitch” na listach konsol i gier migoczą tylko wtedy, gdy nad nimi jest mysz'
   - type: feature
@@ -16,13 +28,11 @@
   - type: fix
     label: 'Dodaj użytkownika prosi teraz o pierwsze hasło nowej osoby (co najmniej 12 znaków), a ona wybiera własne przy pierwszym logowaniu. Wcześniej każde nowe konto po cichu dostawało to samo hasło, „changeme”, którego mógł użyć każdy, aż właściciel się zalogował'
   - type: fix
-    label: 'Ustawienia pokazują każdemu tylko to, co może zmienić jego rola. Przeglądający i gracze widzą swój profil, strefę czasową, motyw, język, statystyki i trofea; edytorzy widzą także Płyty bonusowe i Kontrolery. Wcześniej widzieli ustawienia administratora, których przycisk zapisu był odrzucany, a część pokazywała błędne wartości'
+    label: 'Ustawienia pokazują każdemu tylko to, co może zmienić jego rola. Przeglądający i gracze widzą zakładkę Konto; edytorzy widzą także Płyty bonusowe i Kontrolery. Wcześniej widzieli ustawienia administratora, których przycisk zapisu był odrzucany, a część pokazywała błędne wartości'
   - type: fix
     label: 'Ustawienia → System nie mają już przycisku wyczyszczenia zawieszonej synchronizacji RA. Twierdził, że wyczyścił synchronizację, choć tego nie zrobił; zatrzymaj synchronizację RetroAchievements przyciskami w jej powiadomieniu o postępie'
   - type: fix
-    label: 'Ustawienia → Dane pokazują i skanują teraz Twój własny folder trofeów RPCS3, jeśli go ustawisz, zamiast wyszarzać Skanuj trofea'
-  - type: fix
-    label: 'Drobne poprawki w Ustawieniach: Przywróć domyślne na liście scraperów mówi, że trzeba nacisnąć Zapisz ustawienia, aby je zachować; nowa instalacja pokazuje ScreenScraper jako włączony, tak jak jest naprawdę; pomoc o Steam ID prosi o liczbę 17-cyfrową; strona Emulatory nie wspomina już o przycisku Dodaj, którego nie ma; Kreator konfiguracji ukrywa Twoje klucze API podczas wpisywania'
+    label: 'Drobne poprawki w Ustawieniach: Przywróć domyślne na liście scraperów mówi, że trzeba nacisnąć Zapisz ustawienia scrapera, aby je zachować; nowa instalacja pokazuje ScreenScraper jako włączony, tak jak jest naprawdę; pomoc o Steam ID prosi o liczbę 17-cyfrową; strona Emulatory nie wspomina już o przycisku Dodaj, którego nie ma; Kreator konfiguracji ukrywa Twoje klucze API podczas wpisywania'
   - type: enhancement
     label: 'Podręcznik pomocy ma teraz pole wyszukiwania. Wpisz słowo, aby zobaczyć tylko te części podręcznika, które go zawierają, z zaznaczonym słowem. Pomija akcenty i działa w każdym języku'
   - type: fix
@@ -64,7 +74,7 @@
   - type: fix
     label: 'Filtry Biblioteki dopasowują teraz całe wartości. Wybranie gatunku „Akcja” nie pokazuje już także gier „Akcja/Przygodowa”, więc wynik zgadza się z liczbą obok. Listy tagów na stronie gry i Podobne gry działają tak samo'
   - type: security
-    label: 'Ustawienia → Mój profil nie wysyła już do strony zapisanego klucza RetroAchievements, tokenu PSN ani klucza Steam. Każde pole pokazuje tylko ostatnie cztery znaki, jak już robiły klucze na karcie Pobieranie danych. Zapisanie bez ponownego wpisywania zachowuje zapisany klucz, a przycisk PSN „Zapisz i przetestuj połączenie” testuje zapisany token'
+    label: 'Ustawienia → Mój profil nie wysyła już do strony zapisanego klucza RetroAchievements, tokenu PSN ani klucza Steam. Każde pole pokazuje tylko ostatnie cztery znaki, jak już robiły klucze na karcie Pobieranie danych. Zapisanie bez ponownego wpisywania zachowuje zapisany klucz'
   - type: fix
     label: 'Przeglądarka dzienników nie otwiera się już na „Nieprawidłowy plik dziennika”. Wymieniała dzienniki pomocnicze, których nie chciała pokazać, i jeden z nich otwierała jako pierwszy; teraz wymienia tylko dzienniki, które może otworzyć'
   - type: fix

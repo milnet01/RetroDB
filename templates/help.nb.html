@@ -443,9 +443,9 @@
         <ol>
             <li>Gå til <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a></li>
             <li>Be om API-nøkler (gratis, godkjennes manuelt) &mdash; du vil motta en <strong>offentlig</strong> og en <strong>privat</strong> nøkkel</li>
-            <li>Angi begge nøklene i Innstillinger &rarr; API-nøkler &rarr; TheGamesDB</li>
-            <li>Den <strong>offentlige nøkkelen</strong> (grense per IP) brukes som hovednøkkel for scraping</li>
-            <li>Den <strong>private nøkkelen</strong> (delt månedlig kvote) brukes som reserveløsning hvis den offentlige nøkkelen feiler</li>
+            <li>Under Innstillinger &rarr; Skraper &rarr; API-nøkler legger du den offentlige nøkkelen i <strong>TheGamesDB &mdash; Hovednøkkel</strong> og den private nøkkelen i <strong>TheGamesDB &mdash; Reservenøkkel</strong></li>
+            <li>Hovednøkkelen brukes først; hver internettforbindelse får sin egen kvote</li>
+            <li>Reservenøkkelen brukes når hovednøkkelen er brukt opp; den tillater omtrent 6 000 forespørsler i måneden</li>
         </ol>
 
         <h4>IGDB (via Twitch)</h4>
@@ -492,7 +492,7 @@
         <p><em>Brukes til Steam-biblioteksimport og sporing av prestasjoner.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox kobles til RetroDB gjennom OpenXBL, en gratis tjeneste. Hver person bruker sin egen nøkkel: logg inn på <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> med Xbox-kontoen din, kopier API-nøkkelen og lim den inn under Innstillinger &rarr; Min profil &rarr; Xbox. <strong>Lagre &amp; test tilkobling</strong> sjekker nøkkelen og viser gamertaggen din. Den gratis nøkkelen tillater 150 forespørsler i timen.</p>
+        <p>Xbox kobles til RetroDB gjennom OpenXBL, en gratis tjeneste. Hver person bruker sin egen nøkkel: logg inn på <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> med Xbox-kontoen din, kopier API-nøkkelen og lim den inn under Innstillinger &rarr; Konto &rarr; Min profil &rarr; Xbox. <strong>Lagre min profil</strong> sjekker nøkkelen og viser gamertaggen din. Den gratis nøkkelen tillater 150 forespørsler i timen.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN bruker NPSSO-informasjonskapsel-autentisering. Se <a href="#trophies">Trofeer</a>-seksjonen for detaljerte oppsettsinstruksjoner.</p>
@@ -502,15 +502,15 @@
 
         <table class="data-table">
             <thead>
-                <tr><th>Leverandør</th><th>Standardmodell</th><th>Pris (input/output per 1M tokens)</th></tr>
+                <tr><th>Leverandør</th><th>Standardmodell</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0.10 / $0.40</td></tr>
-                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0.15 / $0.60</td></tr>
-                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td><td>$0.10 / $0.50</td></tr>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td></tr>
             </tbody>
         </table>
-        <p>Hver leverandør tilbyr flere modellnivåer. De billigste modellene fungerer godt for metadata og museumsinnhold. Konfigurer foretrukket leverandør og API-nøkkel i <strong>Innstillinger &rarr; Scraping &rarr; API-nøkler</strong>.</p>
+        <p>Hver leverandør tilbyr flere modeller. Den som er merket Anbefalt, fungerer godt for metadata og museumsinnhold; hver leverandørs eget nettsted viser gjeldende priser. Konfigurer foretrukket leverandør og API-nøkkel i <strong>Innstillinger &rarr; Skraper &rarr; API-nøkler</strong>.</p>
         <p>Gemini og OpenAI søker alltid på nettet. Claude søker bare når du slår på <strong>La Claude søke på nettet</strong> under modellen. Uten søk lar Claude alt som krever et publisert tall stå tomt, som solgte eksemplarer. Anthropic tar betalt for hvert søk: høyst 5 søk per spill, opptil 5 amerikanske cent.</p>
     </div>
 </section>
@@ -520,52 +520,49 @@
     <h2 class="card-title">Innstillinger</h2>
     <div class="card-body">
         <p>Innstillinger er organisert i faner, hver med underseksjoner. Administratorer ser også en Emulatorer-fane, som åpner en egen side.</p>
-        <p>Hver person ser bare innstillingene rollen deres kan endre. En viewer eller spiller ser Min profil, Tidssone, Tema, Språk, bibliotekstatistikk, trofeer og Støtt. En editor ser også Bonusplater og Kontrollere. Alt annet er for administratorer.</p>
+        <p>Hver person ser bare innstillingene rollen deres kan endre. En viewer eller spiller ser Konto-fanen. En editor ser også Bonusplater og Kontrollere. Alt annet er for administratorer.</p>
 
         <h3>Konto-fanen</h3>
         <ul>
-            <li><strong>Min profil</strong> &mdash; Last opp/fjern avatar, visningsnavn, rolleinfo, endre passord</li>
-            <li><strong>RetroAchievements</strong> &mdash; Brukernavn og API-nøkkel for RA-integrasjon</li>
-            <li><strong>PSN</strong> &mdash; NPSSO-informasjonskapsel for synkronisering av PlayStation Network-trofeer</li>
+            <li><strong>Min profil</strong> &mdash; Avataren din, RPCS3-trofémappen din og dine egne kontoer for RetroAchievements, PlayStation Network, Xbox og Steam. RetroAchievements-brukernavnet og web-API-nøkkelen din viser prestasjonene dine; å logge inn med passordet ditt låser opp prestasjoner mens du spiller. Én <strong>Lagre min profil</strong>-knapp lagrer kortet og sjekker et nytt PlayStation-token eller en ny Xbox-nøkkel. <strong>Endre passord</strong> ber om det nye passordet to ganger; det må ha minst 12 tegn.</li>
+            <li><strong>Tema og språk</strong> &mdash; Temaet ditt, språket ditt og den bevegelige bakgrunnen</li>
+            <li><strong>Varsler</strong> &mdash; Hvor lenge hver type melding blir stående på skjermen, bare for deg</li>
             <li><strong>Tidssone</strong> &mdash; Angi tidssonen din for datovisning i hele appen</li>
             <li><strong>Brukere</strong> &mdash; Brukeradministrasjon: legg til, rediger, slett brukere og tildel roller (kun admin)</li>
         </ul>
 
         <h3>Bibliotek-fanen</h3>
         <ul>
-            <li><strong>Stier</strong> &mdash; ROM-biblioteksti, databaseplassering</li>
-            <li><strong>Visning</strong> &mdash; Temavalg, boksbilde-stil (2D/3D), foretrukket aldersgrense-system, elementer per side</li>
+            <li><strong>Stier</strong> &mdash; ROM-bibliotekmappen, ES-DE-gamelist- og -mediamappene og husholdningens RPCS3-trofémappe, under én Lagre</li>
+            <li><strong>Visning</strong> &mdash; Boxart-stil (2D/3D) og foretrukket aldersgrensesystem, for alle</li>
             <li><strong>ROM-navngiving</strong> &mdash; Plassering av artikkel (ledende/etterfølgende "The"), liste over regionalternativer, standardregion, navngivingskonvensjoner</li>
+            <li><strong>Bonusplater</strong> &mdash; Finn bonusplater og koble dem til spillene sine</li>
             <li><strong>Sikkerhetskopi</strong> &mdash; Opprett og gjenopprett databasesikkerhetskopier</li>
         </ul>
 
         <h3>Scraping-fanen</h3>
         <ul>
-            <li><strong>ES-DE</strong> &mdash; ES-DE-spilliste- og medie-stier for lokal dataimport</li>
-            <li><strong>Skraper</strong> &mdash; Aktiver/deaktiver individuelle skrapere, dra-og-slipp-prioritering, hastighetsgrenseinnstillinger per skraper</li>
-            <li><strong>API-nøkler</strong> &mdash; Alle skraper-legitimasjoner (TGDB, IGDB, RAWG, ScreenScraper), valg av KI-leverandør og modell (Gemini, OpenAI, Claude)</li>
+            <li><strong>Skraper</strong> &mdash; Slå skrapere av eller på og dra dem i den rekkefølgen de prøves. <strong>Treffilter for masseskraping</strong> bestemmer hvor godt et resultat må passe: <strong>Streng</strong> tar bare nøyaktige titler, <strong>Normal</strong> (standard) en tittel som ligger nær på riktig system, og <strong>Løs</strong> også delvise titler. En innstilling fra en tidligere versjon vises som <strong>Egendefinert</strong> til du velger en annen.</li>
+            <li><strong>API-nøkler</strong> &mdash; Alle skraper-legitimasjoner (TheGamesDB, IGDB, RAWG, ScreenScraper), valg av KI-leverandør og modell (Gemini, OpenAI, Claude), og husholdningens RetroAchievements- og Steam-nøkler. En persons egen RetroAchievements-nøkkel i Min profil brukes først, og husholdningens bare for den som ikke har noen. Husholdningens Steam-nøkkel tjener bare en administrator uten egen nøkkel.</li>
         </ul>
 
         <h3>Data-fanen</h3>
         <ul>
-            <li><strong>Statistikk</strong> &mdash; Oversikt over biblioteksstatistikk (totalt antall spill, systemer, lagringsbruk)</li>
-            <li><strong>Trofeer</strong> &mdash; Konfigurasjon av RPCS3-trofesti for lokal skanning av PS3-trofeer</li>
-            <li><strong>Nedtrekksmenyer</strong> &mdash; Tilpass regionalternativer og andre nedtrekksverdier brukt i appen</li>
+            <li><strong>Nedtrekksmenyer</strong> &mdash; Tilpass verdiene som tilbys i lister som sjanger, perspektiv og lagringstype</li>
             <li><strong>Normalisering</strong> &mdash; Regler for normalisering av sjanger og spillmodus &mdash; legg til egendefinerte tilordninger for å standardisere skraperutdata</li>
         </ul>
 
         <h3>Tilpasning-fanen</h3>
         <ul>
-            <li><strong>Varsler</strong> &mdash; Innstillinger for varslingstidsavbrudd (suksess, info, advarsel, feil &mdash; hver kan konfigureres uavhengig)</li>
-            <li><strong>Kontrollere</strong> &mdash; Administrer kontrollerbiblioteket, angi standardkontrollere per system, legg til egendefinerte kontrollere. Standardkontrollere overstyrer scrapede/KI-verdier under metadatahenting.</li>
-            <li><strong>Logoer</strong> &mdash; Tilpasning av systemlogoer &mdash; importer systemlogoer eller last inn standardverdier på nytt</li>
+            <li><strong>Kontrollere</strong> &mdash; <strong>Åpne kontrollere</strong> går til Kontrollere-siden. Der setter du standardkontrollerne for hvert system, legger til dine egne og redigerer kontrollerbiblioteket. Standardkontrollere overstyrer skrapede/KI-verdier ved henting av metadata.</li>
+            <li><strong>Logoer</strong> &mdash; <strong>Oppdater systemlogoer</strong> kopierer nye logoer fra ES-DE-mappen din og viser deretter hvilke systemer som fortsatt mangler logo</li>
         </ul>
 
         <h3>System-fanen</h3>
         <ul>
-            <li><strong>Vedlikehold</strong> &mdash; Rydd opp manglende ROM-er, tøm CLZ-importer eller skrapede data, slett mediefiler som ingen spill bruker, fjern lenker til mediefiler som er borte, og optimaliser databasen</li>
+            <li><strong>Vedlikehold</strong> &mdash; Rydd opp manglende ROM-er, tøm CLZ-importer eller skrapede data, slett mediefiler som ingen spill bruker, fjern lenker til mediefiler som er borte, optimaliser databasen og beregn filstørrelser</li>
             <li><strong>Oppdateringer</strong> &mdash; Se etter, last ned og installer en ny versjon</li>
-            <li><strong>Server</strong> &mdash; Start RetroDB på nytt eller slå den av</li>
+            <li><strong>Server</strong> &mdash; Start RetroDB på nytt eller avslutt det, porten det bruker (adressen endres etter omstart) og hvor databasen ligger</li>
             <li><strong>Logging</strong> &mdash; Loggnivåinnstillinger for ulike kategorier, og loggfilene</li>
         </ul>
 
@@ -1664,7 +1661,7 @@
         <ul>
             <li><strong>Clean Missing ROMs</strong> &mdash; Fjern databaseoppføringer for spill hvis ROM-filer ikke lenger finnes på disk. Nyttig etter omorganisering eller sletting av ROM-filer.</li>
             <li><strong>Opprydding av foreldreløse medier</strong> &mdash; Finn og slett bildefiler på disk (boksbilde, skjermbilder, fanart) som ikke har noen tilsvarende databasetilkobling. Forhåndsvis før sletting for å bekrefte.</li>
-            <li><strong>Tøm scrapede data</strong> &mdash; Fjern all scrapet metadata fra spill, mens ROM-filoppføringene beholdes. Nyttig for å starte fra bunnen med scraping. Forhåndsvisning viser berørte spill før utførelse.</li>
+            <li><strong>Fjern skrapede data</strong> &mdash; Fjerner det skraping har fylt ut på skrapede spill, med lenkene til bildene og videoene deres, så du kan skrape helt på nytt. Spillene dine blir, og titlene går tilbake til filnavnene (en låst tittel blir). Bilde- og videofilene blir liggende på disken med mindre du huker av for <strong>Slett også bilde- og videofilene</strong>. Forhåndsvisningen viser hvor mange spill det gjelder.</li>
             <li><strong>Tøm CLZ-import</strong> &mdash; Fjern alle CLZ Games-importoppføringer (kun metadata-oppføringer uten ROM-filer).</li>
         </ul>
 
@@ -1828,7 +1825,7 @@
         <ul>
             <li>En masseskraping søker etter ROM-ens filnavn, så en fil med dårlig navn finner feil spill. Gi filen nytt navn, eller skrap spillet alene på siden sin med en bedre søketittel og velg riktig treff.</li>
             <li>Kryss av for <strong>Behold denne tittelen ved skraping</strong> i vinduet Rediger spill, så lar senere skrapinger navnet være.</li>
-            <li>For mange spill: øk <strong>Laveste treffpoeng</strong> under Innstillinger &rarr; Skraper &rarr; Skraper &rarr; Treffilter for masseskraping.</li>
+            <li>For mange spill: velg <strong>Streng</strong> under Innstillinger &rarr; Skraper &rarr; Skraper &rarr; Treffilter for masseskraping.</li>
         </ul>
 
         <h4>En skraping bytter ikke ut et dårlig bilde</h4>
@@ -1853,7 +1850,7 @@
         </ul>
 
         <h4>Mange spill "Feilet"</h4>
-        <p>Feilet betyr vanligvis at ingen treff lå nær nok til å lagres. Senk <strong>Laveste treffpoeng</strong> eller <strong>Laveste tittelkvalitet</strong> under Innstillinger &rarr; Skraper &rarr; Skraper &rarr; Treffilter for masseskraping, og sjekk filnavnene. Loggviser lister hvert spill som ikke fant noe treff.</p>
+        <p>Feilet betyr vanligvis at ingen treff lå nær nok til å lagres. Velg <strong>Løs</strong> under Innstillinger &rarr; Skraper &rarr; Skraper &rarr; Treffilter for masseskraping, og sjekk filnavnene. Loggviser lister hvert spill som ikke fant noe treff.</p>
 
         <h4>"A scrape for &hellip; is already running"</h4>
         <p>Det systemet skrapes allerede i samme modus. Vent på den, eller avbryt den. En skraping av et annet system venter i kø og starter av seg selv.</p>
@@ -1887,7 +1884,7 @@
         <p><strong>Spill</strong> starter emulatoren på datamaskinen der RetroDB kjører, ikke på enheten du trykket på den.</p>
 
         <h4>«Fant ikke emulatorprogrammet i PATH»</h4>
-        <p>På siden Emulatorer, under <strong>Registrerte emulatorer</strong>, redigerer du emulatoren og fyller <strong>Overstyrt programsti</strong> med programmets plassering. Eller legg mappen som inneholder det, til under <strong>Emulatormapper</strong>. For RetroArch bruker du <strong>Oppdag automatisk</strong> på RetroArch-kortet, og deretter <strong>Lagre</strong>.</p>
+        <p>På siden Emulatorer, under <strong>Registrerte emulatorer</strong>, redigerer du emulatoren og fyller <strong>Programplassering</strong> med programmets plassering. Eller legg mappen som inneholder det, til under <strong>Emulatormapper</strong>. For RetroArch bruker du <strong>Oppdag automatisk</strong> på RetroArch-kortet, og deretter <strong>Lagre</strong>.</p>
 
         <h4>«Ingen emulator er satt opp for systemet &hellip;» eller «Emulatoren &hellip; er slått av»</h4>
         <p>Velg en emulator for systemet under <strong>Tilordning per system</strong> på siden Emulatorer, eller slå på emulatoren under <strong>Registrerte emulatorer</strong>. Et spill som er satt til en emulator som ikke finnes lenger: fjern det valget i spillets vindu Rediger spill.</p>
@@ -1937,7 +1934,7 @@
 
         <h4>«PSN-autentisering mislyktes»</h4>
         <ul>
-            <li>Sony godtar ikke lenger NPSSO-tokenet du har lagret. Få et nytt med trinnene under Innstillinger &rarr; Konto &rarr; Min profil &rarr; PlayStation Network, og trykk deretter <strong>Lagre &amp; test tilkobling</strong>.</li>
+            <li>Sony godtar ikke lenger NPSSO-tokenet du har lagret. Få et nytt med trinnene under Innstillinger &rarr; Konto &rarr; Min profil &rarr; PlayStation Network, og trykk deretter <strong>Lagre min profil</strong>.</li>
             <li>RetroDB holder påloggingen i gang av seg selv så lenge Sony godtar tokenet. For å bytte ut et token som fortsatt virker, logg først ut av PlayStation.</li>
         </ul>
 

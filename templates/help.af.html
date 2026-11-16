@@ -443,9 +443,9 @@
         <ol>
             <li>Gaan na <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a></li>
             <li>Versoek API-sleutels (gratis, met hande goedgekeur) &mdash; jy sal 'n <strong>Publieke</strong> en <strong>Private</strong> sleutel ontvang</li>
-            <li>Voer albei sleutels in by Instellings &rarr; API-sleutels &rarr; TheGamesDB</li>
-            <li>Die <strong>Publieke sleutel</strong> (tempolimiet per IP) word as die primêre sleutel vir ontginning gebruik</li>
-            <li>Die <strong>Private sleutel</strong> ('n gedeelde maandelikse pool) word as terugval gebruik as die publieke sleutel misluk</li>
+            <li>Sit by Instellings &rarr; Skraap &rarr; API-sleutels die publieke sleutel in <strong>TheGamesDB &mdash; Hoofsleutel</strong> en die private sleutel in <strong>TheGamesDB &mdash; Rugsteunsleutel</strong></li>
+            <li>Die hoofsleutel word eerste gebruik; elke internetverbinding kry sy eie toelae</li>
+            <li>Die rugsteunsleutel word gebruik wanneer die hoofsleutel opraak; dit laat ongeveer 6 000 versoeke per maand toe</li>
         </ol>
 
         <h4>IGDB (via Twitch)</h4>
@@ -492,7 +492,7 @@
         <p><em>Word gebruik vir Steam-biblioteek-invoer en prestasie-opsporing.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox bereik RetroDB deur OpenXBL, 'n gratis diens. Elke persoon gebruik hul eie sleutel: meld aan by <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> met jou Xbox-rekening, kopieer jou API-sleutel en plak dit in Instellings &rarr; My Profiel &rarr; Xbox. <strong>Stoor &amp; Toets Koppeling</strong> toets die sleutel en wys jou gamertag. Die gratis sleutel laat 150 versoeke per uur toe.</p>
+        <p>Xbox bereik RetroDB deur OpenXBL, 'n gratis diens. Elke persoon gebruik hul eie sleutel: meld aan by <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> met jou Xbox-rekening, kopieer jou API-sleutel en plak dit in Instellings &rarr; Rekening &rarr; My Profiel &rarr; Xbox. <strong>Stoor My Profiel</strong> toets die sleutel en wys jou gamertag. Die gratis sleutel laat 150 versoeke per uur toe.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN gebruik NPSSO-koekie-verifikasie. Sien die <a href="#trophies">Trofeë</a>-afdeling vir gedetailleerde opstelinstruksies.</p>
@@ -502,15 +502,15 @@
 
         <table class="data-table">
             <thead>
-                <tr><th>Verskaffer</th><th>Verstekmodel</th><th>Prys (Invoer / Uitvoer per 1M tokens)</th></tr>
+                <tr><th>Verskaffer</th><th>Verstekmodel</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0.10 / $0.40</td></tr>
-                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0.15 / $0.60</td></tr>
-                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td><td>$0.10 / $0.50</td></tr>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td></tr>
             </tbody>
         </table>
-        <p>Elke verskaffer bied verskeie modelvlakke. Die goedkoopste modelle werk goed vir metadata en museuminhoud. Stel jou voorkeurverskaffer en API-sleutel op by <strong>Instellings &rarr; Ontginning &rarr; API-sleutels</strong>.</p>
+        <p>Elke verskaffer bied verskeie modelle. Die een wat as Aanbeveel gemerk is, werk goed vir metadata en museuminhoud; elke verskaffer se eie webwerf wys sy huidige pryse. Stel jou voorkeurverskaffer en API-sleutel op by <strong>Instellings &rarr; Skraap &rarr; API-sleutels</strong>.</p>
         <p>Gemini en OpenAI deursoek altyd die web. Claude soek net wanneer jy <strong>Laat Claude die web deursoek</strong> onder sy model aanskakel. Sonder soek laat Claude enigiets wat 'n gepubliseerde syfer nodig het leeg, soos kopieë verkoop. Anthropic vra geld vir elke soektog: hoogstens 5 soektogte per speletjie, tot 5 VS-sente.</p>
     </div>
 </section>
@@ -520,52 +520,49 @@
     <h2 class="card-title">Instellings</h2>
     <div class="card-body">
         <p>Instellings is georganiseer in oortjies, elk met subafdelings. Administrateurs sien ook 'n Emulators-oortjie, wat sy eie bladsy oopmaak.</p>
-        <p>Elke persoon sien net die instellings wat hul rol kan verander. 'n Bekyker of speler sien My Profiel, Tydsone, Tema, Taal, biblioteekstatistieke, trofeë en Ondersteuning. 'n Redigeerder sien ook Bonusskywe en Beheerders. Alles anders is vir administrateurs.</p>
+        <p>Elke persoon sien net die instellings wat hul rol kan verander. 'n Bekyker of speler sien die Rekening-oortjie. 'n Redigeerder sien ook Bonusskywe en Beheerders. Alles anders is vir administrateurs.</p>
 
         <h3>Rekening-oortjie</h3>
         <ul>
-            <li><strong>My Profiel</strong> &mdash; Avatar-oplaai/verwydering, vertoonnaam, rolinligting, wagwoordverandering</li>
-            <li><strong>RetroAchievements</strong> &mdash; Gebruikersnaam en API-sleutel vir RA-integrasie</li>
-            <li><strong>PSN</strong> &mdash; NPSSO-koekie vir PlayStation Network-trofeësinkronisasie</li>
+            <li><strong>My Profiel</strong> &mdash; Jou avatar, jou RPCS3-trofeegids en jou eie RetroAchievements-, PlayStation Network-, Xbox- en Steam-rekeninge. Jou RetroAchievements-gebruikersnaam en web-API-sleutel wys jou prestasies; as jy met jou wagwoord aanmeld, ontsluit dit prestasies terwyl jy speel. Een <strong>Stoor My Profiel</strong>-knoppie stoor die kaart en toets 'n nuwe PlayStation-teken of Xbox-sleutel. <strong>Verander Wagwoord</strong> vra twee keer vir die nuwe wagwoord; dit moet minstens 12 karakters hê.</li>
+            <li><strong>Tema en Taal</strong> &mdash; Jou tema, jou taal en die bewegende agtergrond</li>
+            <li><strong>Kennisgewings</strong> &mdash; Hoe lank elke soort boodskap op die skerm bly, net vir jou</li>
             <li><strong>Tydsone</strong> &mdash; Stel jou tydsone vir datumvertoning regdeur die toepassing</li>
             <li><strong>Gebruikers</strong> &mdash; Gebruikerbestuur: voeg by, redigeer, verwyder gebruikers en ken rolle toe (slegs admin)</li>
         </ul>
 
         <h3>Biblioteek-oortjie</h3>
         <ul>
-            <li><strong>Paaie</strong> &mdash; ROM-biblioteekpad, databasisligging</li>
-            <li><strong>Vertoning</strong> &mdash; Temakeuse, boekskyfstyl (2D/3D), voorkeur-ouderdomsgraderingstelsel, items per bladsy</li>
+            <li><strong>Paaie</strong> &mdash; Die ROM-biblioteekgids, die ES-DE-gamelist- en mediagidse, en die huishouding se RPCS3-trofeegids, onder een Stoor</li>
+            <li><strong>Vertoon</strong> &mdash; Boxart-styl (2D/3D) en voorkeur-ouderdomsgraderingstelsel, vir almal</li>
             <li><strong>ROM-naamgewing</strong> &mdash; Artikelplasing (voorafgaande/agternagaande "The"), streeklys, verstekstreek, naamgewingskonvensies</li>
+            <li><strong>Bonusskywe</strong> &mdash; Vind bonusskywe en koppel dit aan hul speletjies</li>
             <li><strong>Rugsteun</strong> &mdash; Skep en herstel databasis-rugsteune</li>
         </ul>
 
         <h3>Ontginning-oortjie</h3>
         <ul>
-            <li><strong>ES-DE</strong> &mdash; ES-DE speletjielys- en media-paaie vir plaaslike data-invoer</li>
-            <li><strong>Ontginner</strong> &mdash; Skakel individuele ontginners aan/af, sleep-en-los-prioriteitsvolgorde, tempolimietinstellings per ontginner</li>
-            <li><strong>API-sleutels</strong> &mdash; Alle ontginner-geloofsbriewe (TGDB, IGDB, RAWG, ScreenScraper), KI-verskaffer-keuse en modelkeuse (Gemini, OpenAI, Claude)</li>
+            <li><strong>Skraper</strong> &mdash; Skakel skrapers aan of af en sleep hulle in die volgorde waarin hulle probeer word. <strong>Grootmaat-skraap-passingsfilter</strong> bepaal hoe goed 'n resultaat moet pas: <strong>Streng</strong> neem net presiese titels, <strong>Normaal</strong> (die verstek) 'n naby titel op die regte stelsel, en <strong>Los</strong> ook gedeeltelike titels. 'n Instelling wat in 'n vroeër weergawe gemaak is, wys as <strong>Eie keuse</strong> totdat jy 'n ander een kies.</li>
+            <li><strong>API-sleutels</strong> &mdash; Alle skraper-geloofsbriewe (TheGamesDB, IGDB, RAWG, ScreenScraper), keuse van KI-verskaffer en model (Gemini, OpenAI, Claude), en die huishouding se RetroAchievements- en Steam-sleutels. 'n Persoon se eie RetroAchievements-sleutel in My Profiel word eerste gebruik, en die huishouding s'n net vir iemand sonder een. Die huishouding se Steam-sleutel dien net 'n administrateur sonder 'n eie sleutel.</li>
         </ul>
 
         <h3>Data-oortjie</h3>
         <ul>
-            <li><strong>Statistieke</strong> &mdash; Biblioteekstatistiekoorsig (totale speletjies, stelsels, bergingsgebruik)</li>
-            <li><strong>Trofeë</strong> &mdash; RPCS3-trofeëpad-konfigurasie vir plaaslike PS3-trofeeskandering</li>
-            <li><strong>Aftreklyste</strong> &mdash; Pas streekopsies en ander aftreklys-waardes wat regdeur die toepassing gebruik word, aan</li>
+            <li><strong>Aftreklyste</strong> &mdash; Pas die waardes aan wat in lyste soos genre, perspektief en stoortipe aangebied word</li>
             <li><strong>Normalisering</strong> &mdash; Genre- en modus-normaliseringsreëls &mdash; voeg pasgemaakte afbeeldings by om ontginner-uitvoer te standaardiseer</li>
         </ul>
 
         <h3>Aanpassing-oortjie</h3>
         <ul>
-            <li><strong>Kennisgewings</strong> &mdash; Kennisgewing-uittelvoorkeure (sukses, inligting, waarskuwing, fout &mdash; elk onafhanklik instelbaar)</li>
-            <li><strong>Beheerders</strong> &mdash; Bestuur die beheerderbiblioteek, stel verstekbeheerders per stelsel, voeg pasgemaakte beheerders by. Verstekbeheerders oorskryf ontginde/KI-waardes tydens metadata-ophaal.</li>
-            <li><strong>Logo's</strong> &mdash; Stelsellogo-aanpassing &mdash; voer stelsellogo's in of verfris vanaf verstekwaardes</li>
+            <li><strong>Beheerders</strong> &mdash; <strong>Maak Beheerders oop</strong> gaan na die Beheerders-bladsy. Daar stel jy elke stelsel se verstekbeheerders, voeg jou eie by en wysig die beheerderbiblioteek. Verstekbeheerders oorskryf geskraapte/KI-waardes tydens metadata-haal.</li>
+            <li><strong>Logo's</strong> &mdash; <strong>Verfris Stelsellogo's</strong> kopieer enige nuwe logo's uit jou ES-DE-gids en wys dan watter stelsels nog geen het nie</li>
         </ul>
 
         <h3>Stelsel-oortjie</h3>
         <ul>
-            <li><strong>Onderhoud</strong> &mdash; Maak ontbrekende ROM's skoon, verwyder CLZ-invoere of geskraapte data, vee medialêers uit wat geen speletjie gebruik nie, verwyder skakels na medialêers wat weg is, en optimeer die databasis</li>
+            <li><strong>Onderhoud</strong> &mdash; Maak ontbrekende ROM's skoon, verwyder CLZ-invoere of geskraapte data, vee medialêers uit wat geen speletjie gebruik nie, verwyder skakels na medialêers wat weg is, optimeer die databasis en bereken lêergroottes</li>
             <li><strong>Opdaterings</strong> &mdash; Kyk vir, laai af en installeer 'n nuwe weergawe</li>
-            <li><strong>Bediener</strong> &mdash; Herbegin of sit RetroDB af</li>
+            <li><strong>Bediener</strong> &mdash; Herbegin of sluit RetroDB af, die poort wat dit gebruik (die adres verander ná Herbegin) en waar sy databasis is</li>
             <li><strong>Logboek</strong> &mdash; Loguitvoervlak-instellings vir verskillende kategorieë, en die loglêers</li>
         </ul>
 
@@ -1670,7 +1667,7 @@
         <ul>
             <li><strong>Maak Ontbrekende ROM's Skoon</strong> &mdash; Verwyder databasisinskrywings vir speletjies waarvan die ROM-lêers nie meer op skyf bestaan nie. Nuttig na die herorganisering of verwydering van ROM-lêers.</li>
             <li><strong>Skoonmaak van Weesmedia</strong> &mdash; Vind en verwyder beeldlêers op skyf (boekskyf, skermkiekies, agtergrondkuns) wat geen ooreenstemmende databasisverwysing het nie. Voorskou voor verwydering ter bevestiging.</li>
-            <li><strong>Verwyder Ontginde Data</strong> &mdash; Verwyder alle ontginde metadata van speletjies terwyl ROM-lêerinskrywings behou word. Nuttig om vars met ontginning te begin. Voorskou wys geraakte speletjies voor uitvoering.</li>
+            <li><strong>Maak geskraapte data skoon</strong> &mdash; Verwyder wat skraap by geskraapte speletjies ingevul het, insluitend die skakels na hul prente en video's, sodat jy van voor af kan skraap. Jou speletjies bly, en hul titels gaan terug na die lêernaam ('n gesluite titel bly). Die prent- en videolêers bly op die skyf tensy jy <strong>Vee ook die prent- en videolêers uit</strong> aanmerk. Voorskou wys hoeveel speletjies geraak word.</li>
             <li><strong>Verwyder CLZ-invoere</strong> &mdash; Verwyder alle CLZ Games-invoerrekords (metadata-slegs-inskrywings sonder ROM-lêers).</li>
         </ul>
 
@@ -1834,7 +1831,7 @@
         <ul>
             <li>'n Grootmaat-skraap soek volgens die ROM se lêernaam, so 'n swak benoemde lêer vind die verkeerde speletjie. Hernoem die lêer, of skraap die speletjie op sy eie bladsy met 'n beter soektitel en kies die regte resultaat.</li>
             <li>Merk in die Wysig speletjie-venster <strong>Behou hierdie titel wanneer geskraap word</strong> sodat latere skrape die naam met rus laat.</li>
-            <li>Vir baie speletjies, verhoog <strong>Minimum passingtelling</strong> by Instellings &rarr; Skraap &rarr; Skraper &rarr; Grootmaat-skraap-passingsfilter.</li>
+            <li>Kies vir baie speletjies <strong>Streng</strong> by Instellings &rarr; Skraap &rarr; Skraper &rarr; Grootmaat-skraap-passingsfilter.</li>
         </ul>
 
         <h4>'n Skraap vervang nie 'n slegte prent nie</h4>
@@ -1859,7 +1856,7 @@
         </ul>
 
         <h4>Baie speletjies "Misluk"</h4>
-        <p>Misluk beteken gewoonlik dat geen resultaat naby genoeg was om te stoor nie. Verlaag <strong>Minimum passingtelling</strong> of <strong>Minimum titelgehalte</strong> by Instellings &rarr; Skraap &rarr; Skraper &rarr; Grootmaat-skraap-passingsfilter, en kyk die lêernaam na. Die Logbekyker lys elke speletjie waarvoor geen passing gevind is nie.</p>
+        <p>Misluk beteken gewoonlik dat geen resultaat naby genoeg was om te stoor nie. Kies <strong>Los</strong> by Instellings &rarr; Skraap &rarr; Skraper &rarr; Grootmaat-skraap-passingsfilter, en kyk die lêernaam na. Die Logbekyker lys elke speletjie waarvoor geen passing gevind is nie.</p>
 
         <h4>"'n Skraap vir &hellip; loop reeds"</h4>
         <p>Daardie stelsel word reeds in dieselfde modus geskraap. Wag daarvoor, of kanselleer dit. 'n Skraap van 'n ander stelsel wag in die ry en begin vanself.</p>
@@ -1893,7 +1890,7 @@
         <p><strong>Speel</strong> begin die emulator op die rekenaar waarop RetroDB loop, nie op die toestel waarop jy dit gedruk het nie.</p>
 
         <h4>"Emulatorprogram nie op PATH gevind nie"</h4>
-        <p>Wysig op die Emulators-bladsy, onder <strong>Geregistreerde emulators</strong>, die emulator en vul <strong>Programpad-oorskrywing</strong> met die program se ligging in. Of voeg die gids wat dit bevat by <strong>Emulatorvouers</strong> by. Vir RetroArch, gebruik <strong>Bespeur outomaties</strong> op die RetroArch-kaart, en dan <strong>Stoor</strong>.</p>
+        <p>Wysig op die Emulators-bladsy, onder <strong>Geregistreerde emulators</strong>, die emulator en vul <strong>Programligging</strong> met die program se ligging in. Of voeg die gids wat dit bevat by <strong>Emulatorvouers</strong> by. Vir RetroArch, gebruik <strong>Bespeur outomaties</strong> op die RetroArch-kaart, en dan <strong>Stoor</strong>.</p>
 
         <h4>"Geen emulator opgestel vir stelsel &hellip; nie" of "Die emulator &hellip; is afgeskakel"</h4>
         <p>Kies 'n emulator vir die stelsel onder <strong>Toewysing per stelsel</strong> op die Emulators-bladsy, of skakel die emulator aan onder <strong>Geregistreerde emulators</strong>. 'n Speletjie wat op 'n emulator gestel is wat nie meer bestaan nie: maak daardie keuse leeg in sy Wysig speletjie-venster.</p>
@@ -1943,7 +1940,7 @@
 
         <h4>"PSN-verifikasie het misluk"</h4>
         <ul>
-            <li>Sony aanvaar nie meer jou gestoorde NPSSO-teken nie. Kry 'n nuwe een met die stappe by Instellings &rarr; Rekening &rarr; My Profiel &rarr; PlayStation Network, en druk dan <strong>Stoor &amp; Toets Koppeling</strong>.</li>
+            <li>Sony aanvaar nie meer jou gestoorde NPSSO-teken nie. Kry 'n nuwe een met die stappe by Instellings &rarr; Rekening &rarr; My Profiel &rarr; PlayStation Network, en druk dan <strong>Stoor My Profiel</strong>.</li>
             <li>RetroDB hou die aanmelding vanself aan solank Sony die teken aanvaar. Om 'n teken te vervang wat nog werk, meld eers by PlayStation af.</li>
         </ul>
 

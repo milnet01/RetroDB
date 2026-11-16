@@ -628,12 +628,14 @@ class TestPass45_4XssSinks:
 
     def test_settings_html_callers_with_html_opt_in(self):
         """The two showConfirm callers that genuinely need formatted
-        HTML (clearScrapedData, deleteController) must opt in via
+        HTML (clearScrapedData in settings.html, deleteController in
+        controllers.html since PASS-59-311) must opt in via
         {allowHtml: true} and escape user-controlled values they
         interpolate into the template."""
         body = self._read('templates/settings.html')
+        controllers = self._read('templates/controllers.html')
         # User-controlled fields must be escaped.
-        assert 'escapeHtml(controllerName)' in body, (
+        assert 'escapeHtml(controllerName)' in controllers, (
             "deleteController must escape controllerName before injecting "
             "into the confirm template (Pass 45.4)"
         )
@@ -642,10 +644,10 @@ class TestPass45_4XssSinks:
             "into the confirm template (Pass 45.4)"
         )
         # Both callers opt in to HTML.
-        assert body.count('{allowHtml: true}') >= 2, (
-            "settings.html must opt in to HTML on the two formatted-confirm "
-            "callers (Pass 45.4)"
-        )
+        for name, page in (('settings.html', body), ('controllers.html', controllers)):
+            assert page.count('{allowHtml: true}') >= 1, (
+                f"{name} must opt in to HTML on its formatted confirm (Pass 45.4)"
+            )
 
 
 # -----------------------------------------------------------------------------
@@ -2318,7 +2320,8 @@ class TestPass45_17ModalFocusTrapRollout:
         'reports.html': ['id="batchRenameModal"'],
     }
     _HAND_TRAPPED = {
-        'settings': ['userModal', 'editControllerModal'],
+        'settings': ['userModal'],
+        'controllers.html': ['editControllerModal'],
         'tags.html': ['tagModal'],
         'wishlist.html': ['wishlistModal'],
         'lists.html': ['listModal'],

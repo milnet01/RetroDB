@@ -1,10 +1,22 @@
 - version: 4.0.0
-  date: '2026-11-15'
+  date: '2026-11-16'
   tags:
+  - type: enhancement
+    label: 'Ajustes está más ordenado. Tus propias elecciones están juntas en Ajustes → Cuenta: Tema e idioma (con el fondo en movimiento) y cuánto tiempo se quedan los mensajes en pantalla, que ahora es propio de cada persona. Biblioteca → Rutas reúne las cuatro carpetas con un solo Guardar. Sistema → Servidor muestra el puerto y dónde está la base de datos. Apoyar el desarrollo pasó al final de la página Ayuda'
+  - type: enhancement
+    label: 'Los mandos tienen su propia página. Ajustes → Personalización → Abrir Mandos lleva allí: define los mandos predeterminados de cada sistema, añade los tuyos y edita la biblioteca de mandos'
+  - type: enhancement
+    label: 'El Filtro de coincidencias en el scrapeo masivo ofrece tres opciones sencillas en lugar de un número de puntuación y su tabla: Estricto, Normal y Flexible. Normal es el antiguo valor predeterminado. Un ajuste que hiciste tú antes aparece como Personalizado hasta que elijas otro'
+  - type: enhancement
+    label: 'Mi perfil tiene un solo botón Guardar mi perfil en lugar de tres. Comprueba un token de PlayStation o una clave de Xbox nuevos al guardar, y conserva tu token de PlayStation que funciona si Sony rechaza el nuevo. Cambiar contraseña ahora dice que necesita al menos 12 caracteres y pide la contraseña nueva dos veces'
+  - type: fix
+    label: 'Palabras más claras en Ajustes. Mi perfil explica qué hace cada cosa: la clave de RetroAchievements y el inicio de sesión con contraseña. Claves de API dice que la clave propia de RetroAchievements o de Steam de una persona se usa primero. Las claves de TheGamesDB se llaman Clave principal y Clave de reserva. La ventana Editar emulador dice Ubicación del programa y Opciones de línea de comandos. Borrar datos scrapeados dice que los archivos de imágenes y vídeos se quedan en el disco salvo que marques la casilla. Las listas de modelos de IA ya no muestran precios, que se habían quedado anticuados'
+  - type: fix
+    label: 'Ajustes quita lo que estaba dos veces o no hacía nada: la tarjeta de estadísticas de la biblioteca (el Panel la tiene), la copia en Ajustes de Escanear trofeos (la tiene la página de trofeos de PS3), el botón aparte para importar logotipos del sistema (Actualizar logotipos del sistema ahora copia primero los logotipos de ES-DE) y seis ajustes guardados que nada usaba. Un tiempo de mensaje de 0 segundos se rechaza en vez de guardarse sin avisar, y guardar una carpeta de ROMs nueva ya no dice que RetroDB debe reiniciarse'
   - type: performance
     label: 'RetroDB es mucho más ligero para tu ordenador. La niebla en movimiento del tema Cyberpunk mantenía un núcleo del procesador totalmente ocupado mientras hubiera cualquier página de RetroDB abierta; ahora la dibuja la tarjeta gráfica y el procesador apenas lo nota. Además dibuja la mitad de fotogramas, lo que se ve igual porque la niebla se desplaza despacio'
   - type: feature
-    label: 'Los fondos en movimiento (niebla, lluvia, estrellas, polvo) ahora se pausan cuando no usas RetroDB: cuando su ventana no está al frente, su pestaña está oculta o pasa un minuto sin usar el ratón ni el teclado. Se reanudan en cuanto vuelves. Un nuevo interruptor Fondo en movimiento en Ajustes → Biblioteca → Visualización los mantiene quietos en ese ordenador'
+    label: 'Los fondos en movimiento (niebla, lluvia, estrellas, polvo) ahora se pausan cuando no usas RetroDB: cuando su ventana no está al frente, su pestaña está oculta o pasa un minuto sin usar el ratón ni el teclado. Se reanudan en cuanto vuelves. Un nuevo interruptor Fondo en movimiento en Ajustes → Cuenta → Tema e idioma los mantiene quietos en ese ordenador'
   - type: performance
     label: 'Los títulos de página conservan su brillo, pero ya no palpitan todo el tiempo, y los títulos «glitch» parpadeantes de las listas de consolas y de juegos solo parpadean mientras el ratón está encima'
   - type: feature
@@ -16,13 +28,11 @@
   - type: fix
     label: 'Añadir usuario ahora pide la primera contraseña de la persona nueva (12 caracteres o más), y cada una elige la suya la primera vez que inicia sesión. Antes, toda cuenta nueva recibía en silencio la misma contraseña, "changeme", que cualquiera podía usar hasta que su dueño iniciaba sesión'
   - type: fix
-    label: 'Ajustes muestra a cada persona solo lo que su rol puede cambiar. Los espectadores y jugadores ven su perfil, zona horaria, tema, idioma, estadísticas y trofeos; los editores ven además Discos extra y Mandos. Antes veían ajustes de administrador cuyo botón de guardar se rechazaba después, algunos con valores erróneos'
+    label: 'Ajustes muestra a cada persona solo lo que su rol puede cambiar. Los espectadores y jugadores ven la pestaña Cuenta; los editores ven además Discos extra y Mandos. Antes veían ajustes de administrador cuyo botón de guardar se rechazaba después, algunos con valores erróneos'
   - type: fix
     label: 'Ajustes → Sistema ya no tiene el botón Clear Stuck RA Sync. Decía haber limpiado la sincronización aunque no fuera así; detén una sincronización de RetroAchievements con los botones de su aviso de progreso'
   - type: fix
-    label: 'Ajustes → Datos ahora muestra y escanea tu propia carpeta de trofeos de RPCS3 cuando has indicado una, en vez de dejar Escanear trofeos en gris'
-  - type: fix
-    label: 'Pequeñas correcciones en Ajustes: Restablecer valores predeterminados en la lista de scrapers indica que pulses Guardar ajustes para conservarlo; una instalación nueva muestra ScreenScraper activado, como está en realidad; la ayuda del ID de Steam pide el número de 17 dígitos; la página Emuladores ya no menciona un botón Añadir que no tiene; el Asistente de configuración oculta tus claves de API mientras las escribes'
+    label: 'Pequeñas correcciones en Ajustes: Restablecer valores predeterminados en la lista de scrapers indica que pulses Guardar ajustes del scraper para conservarlo; una instalación nueva muestra ScreenScraper activado, como está en realidad; la ayuda del ID de Steam pide el número de 17 dígitos; la página Emuladores ya no menciona un botón Añadir que no tiene; el Asistente de configuración oculta tus claves de API mientras las escribes'
   - type: enhancement
     label: 'El manual ahora tiene un cuadro de búsqueda. Escribe una palabra para ver solo las partes del manual que la mencionan, con la palabra resaltada. Ignora los acentos y funciona en todos los idiomas'
   - type: fix
@@ -64,7 +74,7 @@
   - type: fix
     label: 'Los filtros de la Biblioteca ahora coinciden con valores completos. Elegir el género «Acción» ya no muestra también juegos de «Acción-Aventura», así que el resultado coincide con el número que aparece al lado. Las listas de etiquetas de la página de un juego y Juegos similares funcionan igual'
   - type: security
-    label: 'Ajustes → Mi perfil ya no envía a la página tu clave de RetroAchievements, tu token de PSN ni tu clave de Steam guardados. Cada campo muestra solo sus últimos cuatro caracteres, como ya hacían las claves de la pestaña Scrapeo. Guardar sin volver a escribirla conserva la clave guardada, y el botón "Guardar & Probar conexión" de PSN prueba el token guardado'
+    label: 'Ajustes → Mi perfil ya no envía a la página tu clave de RetroAchievements, tu token de PSN ni tu clave de Steam guardados. Cada campo muestra solo sus últimos cuatro caracteres, como ya hacían las claves de la pestaña Scrapeo. Guardar sin volver a escribirla conserva la clave guardada'
   - type: fix
     label: 'La página Visor de registros ya no se abre con "Archivo de registro no válido". Mostraba registros auxiliares que no iba a abrir y abría uno de ellos primero; ahora solo muestra los registros que puede abrir'
   - type: fix

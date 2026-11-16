@@ -1,10 +1,22 @@
 - version: 4.0.0
-  date: '2026-11-15'
+  date: '2026-11-16'
   tags:
+  - type: enhancement
+    label: 'Die Einstellungen sind aufgeräumter. Ihre eigenen Entscheidungen stehen zusammen unter Einstellungen → Konto: Design und Sprache (mit dem bewegten Hintergrund) und wie lange Meldungen auf dem Bildschirm bleiben, was jetzt für jede Person einzeln gilt. Bibliothek → Pfade fasst alle vier Ordner unter einem Speichern zusammen. System → Server zeigt den Port und den Speicherort der Datenbank. Entwicklung unterstützen ist ans Ende der Hilfe-Seite gewandert'
+  - type: enhancement
+    label: 'Controller haben eine eigene Seite. Einstellungen → Anpassung → Controller öffnen führt dorthin: Standard-Controller jedes Systems festlegen, eigene hinzufügen und die Controller-Bibliothek bearbeiten'
+  - type: enhancement
+    label: 'Der Treffer-Filter beim Massen-Scraping bietet drei einfache Auswahlmöglichkeiten statt einer Punktzahl und ihrer Tabelle: Streng, Normal und Locker. Normal ist die frühere Vorgabe. Eine Einstellung, die Sie früher selbst vorgenommen haben, erscheint als Benutzerdefiniert, bis Sie eine andere wählen'
+  - type: enhancement
+    label: 'Mein Profil hat eine einzige Schaltfläche Mein Profil speichern statt dreier. Sie prüft beim Speichern ein neues PlayStation-Token oder einen neuen Xbox-Schlüssel und behält Ihr funktionierendes PlayStation-Token, falls Sony das neue ablehnt. Passwort ändern sagt jetzt, dass mindestens 12 Zeichen nötig sind, und fragt zweimal nach dem neuen Passwort'
+  - type: fix
+    label: 'Klarere Wörter in den Einstellungen. Mein Profil sagt, was der RetroAchievements-Schlüssel und die Anmeldung mit dem Passwort jeweils bewirken. API-Schlüssel sagt, dass der eigene RetroAchievements- oder Steam-Schlüssel einer Person zuerst benutzt wird. Die Schlüssel von TheGamesDB heißen Hauptschlüssel und Ersatzschlüssel. Das Fenster zum Bearbeiten eines Emulators sagt Speicherort des Programms und Befehlszeilenoptionen. Gescrapte Daten löschen sagt, dass die Bild- und Videodateien auf dem Datenträger bleiben, solange Sie das Kästchen nicht anhaken. Die KI-Modelllisten zeigen keine Preise mehr, die veraltet waren'
+  - type: fix
+    label: 'Die Einstellungen verzichten auf das, was doppelt da war oder nichts tat: die Karte Bibliotheksstatistik (das Dashboard hat sie), die Kopie von Trophäen scannen in den Einstellungen (die Seite der PS3-Trophäen hat sie), die eigene Schaltfläche zum Importieren von Systemlogos (System-Logos aktualisieren kopiert jetzt zuerst die Logos aus ES-DE) und sechs gespeicherte Einstellungen, die nichts nutzte. Eine Meldedauer von 0 Sekunden wird abgelehnt statt stillschweigend gespeichert, und beim Speichern eines neuen ROM-Ordners heißt es nicht mehr, RetroDB müsse neu starten'
   - type: performance
     label: 'RetroDB schont Ihren Computer jetzt deutlich. Der bewegte Nebel des Cyberpunk-Designs hielt einen Prozessorkern voll beschäftigt, solange irgendeine RetroDB-Seite offen war; jetzt zeichnet ihn die Grafikkarte, und der Prozessor merkt es kaum. Außerdem zeichnet sie halb so viele Bilder, was gleich aussieht, weil der Nebel langsam treibt'
   - type: feature
-    label: 'Bewegte Hintergründe (Nebel, Regen, Sterne, Staub) pausieren jetzt, wenn Sie RetroDB nicht benutzen: wenn sein Fenster nicht im Vordergrund ist, sein Tab verborgen ist oder eine Minute lang weder Maus noch Tastatur benutzt wird. Sie starten wieder, sobald Sie zurückkommen. Ein neuer Schalter Bewegter Hintergrund unter Einstellungen → Bibliothek → Anzeige hält sie auf diesem Computer still'
+    label: 'Bewegte Hintergründe (Nebel, Regen, Sterne, Staub) pausieren jetzt, wenn Sie RetroDB nicht benutzen: wenn sein Fenster nicht im Vordergrund ist, sein Tab verborgen ist oder eine Minute lang weder Maus noch Tastatur benutzt wird. Sie starten wieder, sobald Sie zurückkommen. Ein neuer Schalter Bewegter Hintergrund unter Einstellungen → Konto → Design und Sprache hält sie auf diesem Computer still'
   - type: performance
     label: 'Seitentitel behalten ihr Leuchten, pulsieren aber nicht mehr dauernd, und die flackernden „Glitch“-Titel auf den Konsolen- und Spiellisten flackern nur noch, solange die Maus darüber ist'
   - type: feature
@@ -16,13 +28,11 @@
   - type: fix
     label: 'Benutzer hinzufügen fragt jetzt nach dem ersten Passwort der neuen Person (12 Zeichen oder mehr); beim ersten Anmelden wählt sie ihr eigenes. Zuvor bekam jedes neue Konto stillschweigend dasselbe Passwort, „changeme“, das jeder nutzen konnte, bis sein Besitzer sich anmeldete'
   - type: fix
-    label: 'Die Einstellungen zeigen jeder Person nur, was ihre Rolle ändern kann. Betrachter und Spieler sehen ihr Profil, die Zeitzone, das Design, die Sprache, Statistiken und Trophäen; Bearbeiter sehen zusätzlich Bonus-Discs und Controller. Früher sahen sie Admin-Einstellungen, deren Schaltfläche zum Speichern dann abgelehnt wurde, einige mit falschen Werten'
+    label: 'Die Einstellungen zeigen jeder Person nur, was ihre Rolle ändern kann. Betrachter und Spieler sehen die Registerkarte Konto; Bearbeiter sehen zusätzlich Bonus-Discs und Controller. Früher sahen sie Admin-Einstellungen, deren Schaltfläche zum Speichern dann abgelehnt wurde, einige mit falschen Werten'
   - type: fix
     label: 'Einstellungen → System hat die Schaltfläche Clear Stuck RA Sync nicht mehr. Sie behauptete, die Synchronisierung gelöscht zu haben, auch wenn das nicht stimmte; beenden Sie eine RetroAchievements-Synchronisierung mit den Schaltflächen in ihrer Fortschrittsmeldung'
   - type: fix
-    label: 'Einstellungen → Daten zeigt und scannt jetzt Ihren eigenen RPCS3-Trophäenordner, wenn Sie einen festgelegt haben, statt Trophäen scannen auszugrauen'
-  - type: fix
-    label: 'Kleine Korrekturen an den Einstellungen: Auf Standard zurücksetzen bei der Scraper-Liste sagt, dass Sie Einstellungen speichern drücken müssen, um es zu behalten; eine neue Installation zeigt ScreenScraper eingeschaltet, wie es tatsächlich ist; die Steam-ID-Hilfe verlangt die 17-stellige Nummer; die Emulatoren-Seite erwähnt keine Hinzufügen-Schaltfläche mehr, die sie nicht hat; der Einrichtungsassistent verbirgt Ihre API-Schlüssel beim Eintippen'
+    label: 'Kleine Korrekturen an den Einstellungen: Auf Standard zurücksetzen bei der Scraper-Liste sagt, dass Sie Scraper-Einstellungen speichern drücken müssen, um es zu behalten; eine neue Installation zeigt ScreenScraper eingeschaltet, wie es tatsächlich ist; die Steam-ID-Hilfe verlangt die 17-stellige Nummer; die Emulatoren-Seite erwähnt keine Hinzufügen-Schaltfläche mehr, die sie nicht hat; der Einrichtungsassistent verbirgt Ihre API-Schlüssel beim Eintippen'
   - type: enhancement
     label: 'Das Handbuch hat jetzt ein Suchfeld. Geben Sie ein Wort ein, um nur die Teile des Handbuchs zu sehen, die es erwähnen, mit dem markierten Wort. Es ignoriert Akzente und funktioniert in jeder Sprache'
   - type: fix
@@ -64,7 +74,7 @@
   - type: fix
     label: 'Die Filter der Bibliothek vergleichen jetzt ganze Werte. Das Genre „Action“ zeigt nicht mehr auch „Action-Adventure“-Spiele, sodass das Ergebnis zur Zahl daneben passt. Die Tag-Listen einer Spielseite und „Ähnliche Spiele“ vergleichen genauso'
   - type: security
-    label: 'Einstellungen → Mein Profil sendet deinen gespeicherten RetroAchievements-Schlüssel, dein PSN-Token oder deinen Steam-Schlüssel nicht mehr an die Seite. Jedes Feld zeigt nur die letzten vier Zeichen, wie es die Schlüssel im Tab Scraping schon taten. Speichern ohne neue Eingabe behält den gespeicherten Schlüssel, und die PSN-Schaltfläche „Speichern & Verbindung testen“ testet das gespeicherte Token'
+    label: 'Einstellungen → Mein Profil sendet deinen gespeicherten RetroAchievements-Schlüssel, dein PSN-Token oder deinen Steam-Schlüssel nicht mehr an die Seite. Jedes Feld zeigt nur die letzten vier Zeichen, wie es die Schlüssel im Tab Scraping schon taten. Speichern ohne neue Eingabe behält den gespeicherten Schlüssel'
   - type: fix
     label: 'Die Protokoll-Anzeige öffnet nicht mehr mit „Ungültige Protokolldatei“. Sie listete Hilfsprotokolle auf, die sie nicht anzeigen würde, und öffnete eines davon zuerst; jetzt listet sie nur Protokolle, die sie öffnen kann'
   - type: fix

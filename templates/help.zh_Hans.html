@@ -443,9 +443,9 @@
         <ol>
             <li>前往 <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a></li>
             <li>申请 API 密钥（免费，人工审核）&mdash; 你将收到一个 <strong>公钥（Public）</strong> 和一个 <strong>私钥（Private）</strong></li>
-            <li>在 设置 &rarr; API 密钥 &rarr; TheGamesDB 中输入这两个密钥</li>
-            <li><strong>公钥</strong>（按 IP 限速）用作抓取的主密钥</li>
-            <li><strong>私钥</strong>（共享月度额度池）在公钥失败时用作后备</li>
+            <li>在 设置 &rarr; 抓取 &rarr; API 密钥 中，把公钥填入 <strong>TheGamesDB — 主密钥</strong>，把私钥填入 <strong>TheGamesDB — 备用密钥</strong></li>
+            <li>先使用主密钥；每个网络连接都有自己的额度</li>
+            <li>主密钥用完时会使用备用密钥；它每月大约允许 6000 次请求</li>
         </ol>
 
         <h4>IGDB（通过 Twitch）</h4>
@@ -492,7 +492,7 @@
         <p><em>用于 Steam 游戏库导入和成就追踪。</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox 通过免费服务 OpenXBL 连接到 RetroDB。每个人使用自己的密钥：用你的 Xbox 账户登录 <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a>，复制你的 API 密钥，然后粘贴到 设置 &rarr; 我的资料 &rarr; Xbox 中。<strong>保存&amp;测试连接</strong>会检查密钥并显示你的玩家代号（gamertag）。免费密钥每小时允许 150 次请求。</p>
+        <p>Xbox 通过免费服务 OpenXBL 连接到 RetroDB。每个人使用自己的密钥：用你的 Xbox 账户登录 <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a>，复制你的 API 密钥，然后粘贴到 设置 &rarr; 账户 &rarr; 我的资料 &rarr; Xbox 中。<strong>保存我的资料</strong>会检查密钥并显示你的玩家代号（gamertag）。免费密钥每小时允许 150 次请求。</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN 使用 NPSSO cookie 认证。详细设置说明请参见 <a href="#trophies">奖杯</a> 部分。</p>
@@ -502,15 +502,15 @@
 
         <table class="data-table">
             <thead>
-                <tr><th>提供商</th><th>默认模型</th><th>价格（输入／输出，每 100 万 tokens）</th></tr>
+                <tr><th>提供商</th><th>默认模型</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0.10 / $0.40</td></tr>
-                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0.15 / $0.60</td></tr>
-                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td><td>$0.10 / $0.50</td></tr>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td></tr>
             </tbody>
         </table>
-        <p>每家提供商都提供多个模型层级。最便宜的模型对元数据和博物馆内容都表现良好。在 <strong>设置 &rarr; 抓取 &rarr; API 密钥</strong> 中配置你偏好的提供商和 API 密钥。</p>
+        <p>每家提供商都提供多个模型。标有“推荐”的那个对元数据和博物馆内容表现良好；最新价格请看各提供商自己的网站。在 <strong>设置 &rarr; 抓取 &rarr; API 密钥</strong> 中配置你偏好的提供商和 API 密钥。</p>
         <p>Gemini 和 OpenAI 总是联网搜索。只有在 Claude 的模型下方开启 <strong>允许 Claude 联网搜索</strong> 时，Claude 才会搜索。不搜索时，Claude 会将需要公开数据的内容（如销量）留空。Anthropic 按每次搜索收费：每个游戏最多搜索 5 次，最多 5 美分。</p>
     </div>
 </section>
@@ -520,52 +520,49 @@
     <h2 class="card-title">设置</h2>
     <div class="card-body">
         <p>设置分为多个标签页，每个标签页都有子部分。管理员还会看到“模拟器”标签页，它会打开单独的页面。</p>
-        <p>每个人只会看到自己的角色可以更改的设置。查看者或玩家能看到“我的资料”、“时区”、“主题”、“语言”、游戏库统计、奖杯和“支持”。编辑者还能看到“附赠光盘”和“手柄”。其余设置仅限管理员。</p>
+        <p>每个人只会看到自己的角色可以更改的设置。查看者或玩家能看到“账户”标签页。编辑者还能看到“附赠光盘”和“手柄”。其余设置仅限管理员。</p>
 
         <h3>账户标签页</h3>
         <ul>
-            <li><strong>我的资料</strong> &mdash; 头像上传／移除、显示名称、角色信息、修改密码</li>
-            <li><strong>RetroAchievements</strong> &mdash; 用于 RA 集成的用户名和 API 密钥</li>
-            <li><strong>PSN</strong> &mdash; 用于 PlayStation Network 奖杯同步的 NPSSO cookie</li>
+            <li><strong>我的资料</strong> &mdash; 你的头像、你自己的 RPCS3 奖杯文件夹，以及你自己的 RetroAchievements、PlayStation Network、Xbox 和 Steam 账户。填写 RetroAchievements 用户名和网页 API 密钥后，就能显示你的成就；用密码登录后，玩游戏时才能解锁成就。一个<strong>保存我的资料</strong>按钮就能保存整张卡片，并检查新的 PlayStation 令牌或 Xbox 密钥。<strong>更改密码</strong>需要把新密码输入两次，至少 12 个字符。</li>
+            <li><strong>主题和语言</strong> &mdash; 你的主题、你的语言和动态背景</li>
+            <li><strong>通知</strong> &mdash; 每种消息在屏幕上停留多久，只对你自己有效</li>
             <li><strong>时区</strong> &mdash; 设置你的时区，用于整个应用中的日期显示</li>
             <li><strong>用户</strong> &mdash; 用户管理：添加、编辑、删除用户并分配角色（仅限管理员）</li>
         </ul>
 
         <h3>游戏库标签页</h3>
         <ul>
-            <li><strong>路径</strong> &mdash; ROM 游戏库路径、数据库位置</li>
-            <li><strong>显示</strong> &mdash; 主题选择、封面样式（2D/3D）、偏好的年龄分级系统、每页项目数</li>
+            <li><strong>路径</strong> &mdash; ROM 游戏库文件夹、ES-DE 的游戏列表和媒体文件夹，以及全家共用的 RPCS3 奖杯文件夹，共用一个保存按钮</li>
+            <li><strong>显示</strong> &mdash; 封面样式（2D/3D）和偏好的年龄分级系统，对所有人生效</li>
             <li><strong>ROM 命名</strong> &mdash; 冠词位置（前置／后置的 “The”）、地区选项列表、默认地区、命名规范</li>
+            <li><strong>附赠光盘</strong> &mdash; 查找附赠光盘，并把它们关联到对应的游戏</li>
             <li><strong>备份</strong> &mdash; 创建和恢复数据库备份</li>
         </ul>
 
         <h3>抓取标签页</h3>
         <ul>
-            <li><strong>ES-DE</strong> &mdash; 用于本地数据导入的 ES-DE 游戏列表和媒体路径</li>
-            <li><strong>抓取器</strong> &mdash; 启用／禁用单个抓取器、拖放优先级排序、每个抓取器的限速设置</li>
-            <li><strong>API 密钥</strong> &mdash; 所有抓取器凭据（TGDB、IGDB、RAWG、ScreenScraper）、AI 提供商选择和模型选择（Gemini、OpenAI、Claude）</li>
+            <li><strong>抓取器</strong> &mdash; 开启或关闭抓取器，并拖动它们来调整尝试的顺序。<strong>批量抓取匹配筛选</strong>决定结果要多接近才会被采用：<strong>严格</strong>只接受完全相同的标题，<strong>普通（推荐）</strong>（默认）接受同一系统上相近的标题，<strong>宽松</strong>连部分匹配的标题也接受。你在旧版本中做的设置会显示为<strong>自定义</strong>，直到你另选一项。</li>
+            <li><strong>API 密钥</strong> &mdash; 所有抓取器凭据（TheGamesDB、IGDB、RAWG、ScreenScraper）、AI 提供商选择和模型选择（Gemini、OpenAI、Claude），以及全家共用的 RetroAchievements 和 Steam 密钥。优先使用“我的资料”里你自己的 RetroAchievements 密钥，没有密钥的人才会用全家共用的。全家共用的 Steam 密钥只供没有自己密钥的管理员使用。</li>
         </ul>
 
         <h3>数据标签页</h3>
         <ul>
-            <li><strong>统计</strong> &mdash; 游戏库统计概览（游戏总数、系统数、存储占用）</li>
-            <li><strong>奖杯</strong> &mdash; 用于本地 PS3 奖杯扫描的 RPCS3 奖杯路径配置</li>
-            <li><strong>下拉选项</strong> &mdash; 自定义地区选项和整个应用中使用的其他下拉值</li>
+            <li><strong>下拉选项</strong> &mdash; 自定义类型、视角和存档类型等列表中提供的值</li>
             <li><strong>规范化</strong> &mdash; 类型和模式的规范化规则 &mdash; 添加自定义映射以统一抓取器输出</li>
         </ul>
 
         <h3>自定义标签页</h3>
         <ul>
-            <li><strong>通知</strong> &mdash; 通知超时偏好（成功、信息、警告、错误 &mdash; 每种均可独立配置）</li>
-            <li><strong>手柄</strong> &mdash; 管理手柄库、为每个系统设置默认手柄、添加自定义手柄。在元数据获取期间，默认手柄会覆盖抓取／AI 的值。</li>
-            <li><strong>徽标</strong> &mdash; 系统徽标自定义 &mdash; 导入系统徽标或从默认恢复</li>
+            <li><strong>手柄</strong> &mdash; <strong>打开手柄页面</strong>会进入手柄页面。你可以在那里设置每个系统的默认手柄、添加自己的手柄，并编辑手柄库。默认手柄会在获取元数据时覆盖抓取/AI 的值。</li>
+            <li><strong>徽标</strong> &mdash; <strong>刷新系统徽标</strong>会从你的 ES-DE 文件夹复制新的徽标，然后显示哪些系统还没有徽标</li>
         </ul>
 
         <h3>系统标签页</h3>
         <ul>
-            <li><strong>维护</strong> &mdash; 清理缺失的 ROM，清除 CLZ 导入或抓取的数据，删除没有游戏使用的媒体文件，清除指向已不存在的媒体文件的链接，以及优化数据库</li>
+            <li><strong>维护</strong> &mdash; 清理缺失的 ROM、清除 CLZ 导入或已抓取的数据、删除没有游戏使用的媒体文件、清除指向已不存在媒体文件的链接、优化数据库，以及计算文件大小</li>
             <li><strong>更新</strong> &mdash; 检查、下载并安装新版本</li>
-            <li><strong>服务器</strong> &mdash; 重启或关闭 RetroDB</li>
+            <li><strong>服务器</strong> &mdash; 重启或关闭 RetroDB、它使用的端口（重启后地址会改变），以及数据库的位置</li>
             <li><strong>日志</strong> &mdash; 各类别的日志级别设置，以及日志文件</li>
         </ul>
 
@@ -1670,7 +1667,7 @@
         <ul>
             <li><strong>清理缺失的 ROM</strong> &mdash; 删除磁盘上 ROM 文件已不存在的游戏的数据库条目。在重新整理或删除 ROM 文件后很有用。</li>
             <li><strong>孤立媒体清理</strong> &mdash; 查找并删除磁盘上没有对应数据库引用的图片文件（封面、截图、同人图）。删除前可先预览以确认。</li>
-            <li><strong>清除已抓取数据</strong> &mdash; 删除游戏的所有已抓取元数据，同时保留 ROM 文件条目。适合重新开始抓取。预览会在执行前显示受影响的游戏。</li>
+            <li><strong>清除抓取的数据</strong> &mdash; 清除抓取为已抓取游戏填入的内容，包括指向它们的图片和视频的链接，这样你就可以从头重新抓取。游戏会保留，标题会变回文件名（锁定的标题除外）。图片和视频文件会留在磁盘上，除非你勾选<strong>同时删除图片和视频文件</strong>。预览会显示受影响的游戏数量。</li>
             <li><strong>清除 CLZ 导入</strong> &mdash; 删除所有 CLZ Games 导入记录（仅含元数据、无 ROM 文件的条目）。</li>
         </ul>
 
@@ -1834,7 +1831,7 @@
         <ul>
             <li>批量抓取按 ROM 的文件名搜索，所以命名不当的文件会找到错误的游戏。请重命名文件，或在该游戏自己的页面用更好的搜索标题抓取，并选择正确的结果。</li>
             <li>在“编辑游戏”窗口中勾选<strong>抓取时保留此标题</strong>，以后的抓取就不会改动名称。</li>
-            <li>对于很多游戏，请在 设置 &rarr; 抓取 &rarr; 抓取器 &rarr; 批量抓取匹配筛选 中调高<strong>最低匹配分数</strong>。</li>
+            <li>对于很多游戏，请在 设置 &rarr; 抓取 &rarr; 抓取器 &rarr; 批量抓取匹配筛选 中选择<strong>严格</strong>。</li>
         </ul>
 
         <h4>抓取没有替换掉错误的图片</h4>
@@ -1859,7 +1856,7 @@
         </ul>
 
         <h4>很多游戏显示“失败”</h4>
-        <p>“失败”通常表示没有足够接近的结果可以保存。请在 设置 &rarr; 抓取 &rarr; 抓取器 &rarr; 批量抓取匹配筛选 中调低<strong>最低匹配分数</strong>或<strong>最低标题质量</strong>，并检查文件名。日志查看器会列出每个没有找到匹配的游戏。</p>
+        <p>“失败”通常表示没有足够接近的结果可以保存。请在 设置 &rarr; 抓取 &rarr; 抓取器 &rarr; 批量抓取匹配筛选 中选择<strong>宽松</strong>，并检查文件名。日志查看器会列出每个没有找到匹配的游戏。</p>
 
         <h4>“&hellip; 的抓取已在运行”</h4>
         <p>该系统已在以相同模式抓取。请等待它完成，或取消它。另一个系统的抓取会排队等待，并自动开始。</p>
@@ -1893,7 +1890,7 @@
         <p><strong>游玩</strong>会在运行 RetroDB 的电脑上启动模拟器，而不是在你点击按钮的设备上。</p>
 
         <h4>“在 PATH 中找不到模拟器程序”</h4>
-        <p>在“模拟器”页面的<strong>已注册的模拟器</strong>下，编辑该模拟器，并在<strong>程序路径覆盖</strong>中填入程序的位置。或者把存放它的文件夹添加到<strong>模拟器文件夹</strong>。对于 RetroArch，请在 RetroArch 卡片上点击<strong>自动检测</strong>，然后点击<strong>保存</strong>。</p>
+        <p>在“模拟器”页面的<strong>已注册的模拟器</strong>下，编辑该模拟器，并在<strong>程序位置</strong>中填入程序所在的位置。或者把存放它的文件夹添加到<strong>模拟器文件夹</strong>。对于 RetroArch，请在 RetroArch 卡片上点击<strong>自动检测</strong>，然后点击<strong>保存</strong>。</p>
 
         <h4>“系统 &hellip; 未配置模拟器”或“模拟器 &hellip; 已关闭”</h4>
         <p>在“模拟器”页面的<strong>按系统映射</strong>下为该系统选择模拟器，或在<strong>已注册的模拟器</strong>下打开该模拟器。如果某个游戏指定的模拟器已不存在：请在它的“编辑游戏”窗口中清除该选择。</p>
@@ -1943,7 +1940,7 @@
 
         <h4>“PSN 身份验证失败”</h4>
         <ul>
-            <li>Sony 不再接受你保存的 NPSSO 令牌。请按 设置 &rarr; 账户 &rarr; 我的资料 &rarr; PlayStation Network 中的步骤获取新的，然后点击<strong>保存&amp;测试连接</strong>。</li>
+            <li>Sony 不再接受你保存的 NPSSO 令牌。请按 设置 &rarr; 账户 &rarr; 我的资料 &rarr; PlayStation Network 中的步骤获取新的，然后点击<strong>保存我的资料</strong>。</li>
             <li>只要 Sony 接受令牌，RetroDB 会自行保持登录。要替换仍然有效的令牌，请先退出 PlayStation 登录。</li>
         </ul>
 

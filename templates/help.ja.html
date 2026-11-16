@@ -443,9 +443,9 @@
         <ol>
             <li><a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a> にアクセスします</li>
             <li>API キーをリクエストします（無料、手動承認）&mdash; <strong>Public</strong> キーと <strong>Private</strong> キーが発行されます</li>
-            <li>両方のキーを「設定 &rarr; API キー &rarr; TheGamesDB」に入力します</li>
-            <li><strong>Public キー</strong>（IP ごとのレート制限）がスクレイピングの主キーとして使われます</li>
-            <li><strong>Private キー</strong>（共有の月間プール）は Public キーが失敗した場合のフォールバックとして使われます</li>
+            <li>「設定 &rarr; 取得 &rarr; API キー」で、Public キーを <strong>TheGamesDB — メインキー</strong>に、Private キーを <strong>TheGamesDB — バックアップキー</strong>に入力します</li>
+            <li>メインキーが先に使われます。インターネット接続ごとに別々の利用枠があります</li>
+            <li>バックアップキーは、メインキーが上限に達したときに使われます。1 か月に約 6,000 リクエストまで使えます</li>
         </ol>
 
         <h4>IGDB（Twitch 経由）</h4>
@@ -492,7 +492,7 @@
         <p><em>Steam ライブラリのインポートと実績トラッキングに使用します。</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox は無料サービスの OpenXBL を通じて RetroDB とつながります。キーは各ユーザーが自分のものを使います。<a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> に Xbox アカウントでサインインし、API キーをコピーして、設定 &rarr; マイプロフィール &rarr; Xbox に貼り付けてください。<strong>保存 &amp; 接続テスト</strong> でキーを確認し、ゲーマータグが表示されます。無料キーで送れるリクエストは1時間に150件までです。</p>
+        <p>Xbox は無料サービスの OpenXBL を通じて RetroDB とつながります。キーは各ユーザーが自分のものを使います。<a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> に Xbox アカウントでサインインし、API キーをコピーして、設定 &rarr; アカウント &rarr; マイプロフィール &rarr; Xbox に貼り付けてください。<strong>マイプロフィールを保存</strong> でキーを確認し、ゲーマータグが表示されます。無料キーで送れるリクエストは1時間に150件までです。</p>
 
         <h4>PlayStation Network（PSN）</h4>
         <p>PSN は NPSSO クッキー認証を使用します。詳細な設定手順は<a href="#trophies">トロフィー</a>セクションを参照してください。</p>
@@ -502,15 +502,15 @@
 
         <table class="data-table">
             <thead>
-                <tr><th>プロバイダー</th><th>デフォルトモデル</th><th>料金（入力／出力、100 万トークンあたり）</th></tr>
+                <tr><th>プロバイダー</th><th>デフォルトモデル</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0.10 / $0.40</td></tr>
-                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0.15 / $0.60</td></tr>
-                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td><td>$0.10 / $0.50</td></tr>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td></tr>
             </tbody>
         </table>
-        <p>各プロバイダーは複数のモデルティアを提供します。最も安価なモデルでもメタデータやミュージアムのコンテンツには十分機能します。お好みのプロバイダーと API キーを<strong>「設定 &rarr; スクレイピング &rarr; API キー」</strong>で設定します。</p>
+        <p>各プロバイダーは複数のモデルを提供します。「おすすめ」と表示されたモデルは、メタデータやミュージアムのコンテンツに十分機能します。最新の料金は各プロバイダーのサイトで確認してください。お好みのプロバイダーと API キーを<strong>「設定 &rarr; スクレイピング &rarr; API キー」</strong>で設定します。</p>
         <p>Gemini と OpenAI は常にウェブを検索します。Claude は、モデルの下にある<strong>「Claude にウェブ検索を許可」</strong>をオンにしたときだけ検索します。検索なしでは、Claude は販売本数のように公表された数値が必要な項目を空欄のままにします。Anthropic は検索ごとに料金を請求します。1 ゲームにつき最大 5 回の検索、最大 5 米セントです。</p>
     </div>
 </section>
@@ -520,52 +520,49 @@
     <h2 class="card-title">設定</h2>
     <div class="card-body">
         <p>設定はタブに整理されており、それぞれサブセクションを持ちます。管理者には、専用のページが開くエミュレータータブも表示されます。</p>
-        <p>設定には、各自のロールで変更できるものだけが表示されます。閲覧者やプレイヤーには、マイプロフィール、タイムゾーン、テーマ、言語、ライブラリ統計、トロフィー、サポートが表示されます。編集者にはさらにボーナスディスクとコントローラーが表示されます。それ以外は管理者用です。</p>
+        <p>設定には、各自のロールで変更できるものだけが表示されます。閲覧者やプレイヤーには、アカウントタブが表示されます。編集者にはさらにボーナスディスクとコントローラーが表示されます。それ以外は管理者用です。</p>
 
         <h3>アカウントタブ</h3>
         <ul>
-            <li><strong>マイプロフィール</strong> &mdash; アバターのアップロード／削除、表示名、ロール情報、パスワード変更</li>
-            <li><strong>RetroAchievements</strong> &mdash; RA 連携用のユーザー名と API キー</li>
-            <li><strong>PSN</strong> &mdash; PlayStation Network トロフィー同期用の NPSSO クッキー</li>
+            <li><strong>マイプロフィール</strong> &mdash; アバター、自分の RPCS3 トロフィーフォルダー、自分の RetroAchievements、PlayStation Network、Xbox、Steam のアカウント。RetroAchievements のユーザー名とウェブ API キーで、実績が表示されます。パスワードでサインインすると、プレイ中に実績が解除されます。<strong>マイプロフィールを保存</strong>ボタン 1 つでカード全体を保存し、新しい PlayStation トークンや Xbox キーも確認します。<strong>パスワードを変更</strong>では、新しいパスワードを 2 回入力します。12 文字以上が必要です。</li>
+            <li><strong>テーマと言語</strong> &mdash; テーマ、言語、動く背景</li>
+            <li><strong>通知</strong> &mdash; それぞれの種類のメッセージが画面に出ている時間。自分だけの設定です</li>
             <li><strong>タイムゾーン</strong> &mdash; アプリ全体の日付表示に使うタイムゾーンを設定</li>
             <li><strong>ユーザー</strong> &mdash; ユーザー管理: ユーザーの追加、編集、削除、ロールの割り当て（管理者のみ）</li>
         </ul>
 
         <h3>ライブラリタブ</h3>
         <ul>
-            <li><strong>パス</strong> &mdash; ROM ライブラリのパス、データベースの場所</li>
-            <li><strong>表示</strong> &mdash; テーマ選択、ボックスアートのスタイル（2D/3D）、優先する年齢レーティングシステム、1 ページあたりの件数</li>
+            <li><strong>パス</strong> &mdash; ROM ライブラリのフォルダー、ES-DE のゲームリストとメディアのフォルダー、家庭共通の RPCS3 トロフィーフォルダー。保存ボタンは 1 つです</li>
+            <li><strong>表示</strong> &mdash; ボックスアートのスタイル（2D/3D）と、優先する年齢レーティングシステム。全員に適用されます</li>
             <li><strong>ROM 命名</strong> &mdash; 冠詞の配置（先頭／末尾の「The」）、地域オプション一覧、デフォルト地域、命名規則</li>
+            <li><strong>ボーナスディスク</strong> &mdash; ボーナスディスクを探して、ゲームに結び付けます</li>
             <li><strong>バックアップ</strong> &mdash; データベースバックアップの作成と復元</li>
         </ul>
 
         <h3>スクレイピングタブ</h3>
         <ul>
-            <li><strong>ES-DE</strong> &mdash; ローカルデータインポート用の ES-DE ゲームリストとメディアのパス</li>
-            <li><strong>スクレイパー</strong> &mdash; 各スクレイパーの有効化／無効化、ドラッグ＆ドロップによる優先順位付け、スクレイパーごとのレート制限設定</li>
-            <li><strong>API キー</strong> &mdash; すべてのスクレイパー資格情報（TGDB、IGDB、RAWG、ScreenScraper）、AI プロバイダーの選択とモデルの選択（Gemini、OpenAI、Claude）</li>
+            <li><strong>スクレイパー</strong> &mdash; スクレイパーのオン／オフと、試す順番のドラッグ。<strong>一括スクレイピングの一致フィルター</strong>では、結果がどれだけ近ければ採用するかを決めます。<strong>厳しい</strong>は完全に同じタイトルだけ、<strong>ふつう（おすすめ）</strong>（初期設定）は正しいシステムの近いタイトル、<strong>ゆるい</strong>は一部だけ合うタイトルも採用します。以前のバージョンで行った設定は、別の項目を選ぶまで<strong>カスタム</strong>と表示されます。</li>
+            <li><strong>API キー</strong> &mdash; すべてのスクレイパー資格情報（TheGamesDB、IGDB、RAWG、ScreenScraper）、AI プロバイダーの選択とモデルの選択（Gemini、OpenAI、Claude）、そして家庭共通の RetroAchievements と Steam のキー。マイプロフィールにある自分の RetroAchievements キーが先に使われ、家庭共通のキーはキーを持たない人にだけ使われます。家庭共通の Steam キーを使うのは、自分のキーを持たない管理者だけです。</li>
         </ul>
 
         <h3>データタブ</h3>
         <ul>
-            <li><strong>統計</strong> &mdash; ライブラリ統計の概要（総ゲーム数、システム数、ストレージ使用量）</li>
-            <li><strong>トロフィー</strong> &mdash; ローカル PS3 トロフィースキャン用の RPCS3 トロフィーパス設定</li>
-            <li><strong>ドロップダウン</strong> &mdash; 地域オプションやアプリ全体で使われるその他のドロップダウン値をカスタマイズ</li>
+            <li><strong>ドロップダウン</strong> &mdash; ジャンル、視点、セーブタイプなどのリストに出る値をカスタマイズ</li>
             <li><strong>正規化</strong> &mdash; ジャンルとモードの正規化ルール &mdash; カスタムマッピングを追加してスクレイパー出力を標準化</li>
         </ul>
 
         <h3>カスタマイズタブ</h3>
         <ul>
-            <li><strong>通知</strong> &mdash; 通知のタイムアウト設定（成功、情報、警告、エラー &mdash; それぞれ独立して設定可能）</li>
-            <li><strong>コントローラー</strong> &mdash; コントローラーライブラリの管理、システムごとのデフォルトコントローラー設定、カスタムコントローラーの追加。デフォルトコントローラーはメタデータ取得時にスクレイプ／AI 値を上書きします。</li>
-            <li><strong>ロゴ</strong> &mdash; システムロゴのカスタマイズ &mdash; システムロゴのインポートまたはデフォルトからの更新</li>
+            <li><strong>コントローラー</strong> &mdash; <strong>コントローラーを開く</strong>でコントローラーのページに移ります。そこで、システムごとのデフォルトコントローラーの設定、自分のコントローラーの追加、コントローラーライブラリの編集ができます。デフォルトコントローラーはメタデータ取得時にスクレイプ／AI 値を上書きします。</li>
+            <li><strong>ロゴ</strong> &mdash; <strong>機種ロゴを更新</strong>は、ES-DE フォルダーにある新しいロゴをコピーし、まだロゴがないシステムを表示します</li>
         </ul>
 
         <h3>システムタブ</h3>
         <ul>
-            <li><strong>メンテナンス</strong> &mdash; 欠落 ROM のクリーンアップ、CLZ インポートや取得データの消去、どのゲームも使っていないメディアファイルの削除、なくなったメディアファイルへのリンクの解除、データベースの最適化</li>
+            <li><strong>メンテナンス</strong> &mdash; 欠落 ROM のクリーンアップ、CLZ インポートや取得データの消去、どのゲームも使っていないメディアファイルの削除、なくなったメディアファイルへのリンクの解除、データベースの最適化、ファイルサイズの計算</li>
             <li><strong>更新</strong> &mdash; 新しいバージョンの確認、ダウンロード、インストール</li>
-            <li><strong>サーバー</strong> &mdash; RetroDB の再起動またはシャットダウン</li>
+            <li><strong>サーバー</strong> &mdash; RetroDB の再起動またはシャットダウン、使うポート（再起動後にアドレスが変わります）、データベースの場所</li>
             <li><strong>ログ</strong> &mdash; カテゴリごとのログレベル設定と、ログファイル</li>
         </ul>
 
@@ -1670,7 +1667,7 @@
         <ul>
             <li><strong>欠落 ROM のクリーン</strong> &mdash; ROM ファイルがディスク上に存在しなくなったゲームのデータベースエントリを削除します。ROM ファイルを再整理または削除した後に便利です。</li>
             <li><strong>孤立メディアのクリーンアップ</strong> &mdash; 対応するデータベース参照のないディスク上の画像ファイル（ボックスアート、スクリーンショット、ファンアート）を見つけて削除します。削除前にプレビューで確認できます。</li>
-            <li><strong>スクレイプデータのクリア</strong> &mdash; ROM ファイルエントリを保持したまま、ゲームからすべてのスクレイプ済みメタデータを削除します。スクレイピングをやり直すときに便利です。実行前にプレビューで影響を受けるゲームを表示します。</li>
+            <li><strong>取得データを消去</strong> &mdash; スクレイピングで埋めた内容を、取得済みのゲームから消去します。画像や動画へのリンクも含まれます。最初からスクレイピングをやり直せます。ゲームは残り、タイトルはファイル名に戻ります（固定したタイトルは残ります）。画像と動画のファイルは、<strong>画像と動画のファイルも削除する</strong>にチェックを入れない限りディスクに残ります。プレビューで、影響を受けるゲームの数がわかります。</li>
             <li><strong>CLZ インポートのクリア</strong> &mdash; すべての CLZ Games インポート記録（ROM ファイルのないメタデータのみのエントリ）を削除します。</li>
         </ul>
 
@@ -1834,7 +1831,7 @@
         <ul>
             <li>一括取得は ROM のファイル名で検索するため、名前が不適切なファイルでは別のゲームが見つかります。ファイル名を直すか、そのゲームのページでより良い検索タイトルを使って単独で取得し、正しい結果を選んでください。</li>
             <li>「ゲームを編集」ウィンドウで<strong>「取得時にこのタイトルを保持」</strong>にチェックを入れると、以後の取得で名前が変わりません。</li>
-            <li>多くのゲームに当てはまる場合は、「設定」&rarr;「取得」&rarr;「スクレイパー」&rarr;「一括スクレイピングの一致フィルター」で<strong>「最低一致スコア」</strong>を上げてください。</li>
+            <li>多くのゲームに当てはまる場合は、「設定」&rarr;「取得」&rarr;「スクレイパー」&rarr;「一括スクレイピングの一致フィルター」で<strong>厳しい</strong>を選んでください。</li>
         </ul>
 
         <h4>取得しても不適切な画像が置き換わらない</h4>
@@ -1859,7 +1856,7 @@
         </ul>
 
         <h4>多くのゲームが「失敗」になる</h4>
-        <p>失敗は、保存できるほど近い結果がなかったことを意味するのが普通です。「設定」&rarr;「取得」&rarr;「スクレイパー」&rarr;「一括スクレイピングの一致フィルター」で<strong>「最低一致スコア」</strong>または<strong>「タイトルの最低品質」</strong>を下げ、ファイル名も確認してください。一致が見つからなかったゲームは、ログビューアにすべて一覧表示されます。</p>
+        <p>失敗は、保存できるほど近い結果がなかったことを意味するのが普通です。「設定」&rarr;「取得」&rarr;「スクレイパー」&rarr;「一括スクレイピングの一致フィルター」で<strong>ゆるい</strong>を選び、ファイル名も確認してください。一致が見つからなかったゲームは、ログビューアにすべて一覧表示されます。</p>
 
         <h4>「A scrape for &hellip; is already running」</h4>
         <p>そのシステムは、同じモードですでに取得中です。終わるのを待つか、キャンセルしてください。別のシステムの取得は待機列に並び、自動的に始まります。</p>
@@ -1893,7 +1890,7 @@
         <p><strong>プレイ</strong>は、押したデバイスではなく、RetroDB が動いているコンピューターでエミュレーターを起動します。</p>
 
         <h4>「PATH 上にエミュレーターのプログラムが見つかりません」</h4>
-        <p>「エミュレーター」ページの<strong>「登録済みエミュレーター」</strong>で、そのエミュレーターを編集し、<strong>「実行ファイルパスの上書き」</strong>にプログラムの場所を入力してください。または、プログラムが入っているフォルダーを<strong>「エミュレーターフォルダー」</strong>に追加してください。RetroArch の場合は、RetroArch カードの<strong>「自動検出」</strong>を使ってから<strong>「保存」</strong>を押します。</p>
+        <p>「エミュレーター」ページの<strong>「登録済みエミュレーター」</strong>で、そのエミュレーターを編集し、<strong>プログラムの場所</strong>にプログラムのある場所を入力してください。または、プログラムが入っているフォルダーを<strong>「エミュレーターフォルダー」</strong>に追加してください。RetroArch の場合は、RetroArch カードの<strong>「自動検出」</strong>を使ってから<strong>「保存」</strong>を押します。</p>
 
         <h4>「システム &hellip; にエミュレーターが設定されていません」または「エミュレーター &hellip; はオフになっています」</h4>
         <p>「エミュレーター」ページの<strong>「システムごとの割り当て」</strong>でそのシステムのエミュレーターを選ぶか、<strong>「登録済みエミュレーター」</strong>でそのエミュレーターをオンにしてください。存在しないエミュレーターが設定されているゲームは、「ゲームを編集」ウィンドウでその選択を消してください。</p>
@@ -1943,7 +1940,7 @@
 
         <h4>「PSN認証に失敗しました」</h4>
         <ul>
-            <li>Sony が、保存してある NPSSO トークンを受け付けなくなりました。「設定」&rarr;「アカウント」&rarr;「マイプロフィール」&rarr;「PlayStation Network」の手順で新しいトークンを取得し、<strong>「保存して接続をテスト」</strong>を押してください。</li>
+            <li>Sony が、保存してある NPSSO トークンを受け付けなくなりました。「設定」&rarr;「アカウント」&rarr;「マイプロフィール」&rarr;「PlayStation Network」の手順で新しいトークンを取得し、<strong>マイプロフィールを保存</strong>を押してください。</li>
             <li>Sony がトークンを受け付けている間は、RetroDB が自動でサインインを維持します。まだ使えるトークンを入れ替えるときは、先に PlayStation からサインアウトしてください。</li>
         </ul>
 

@@ -443,9 +443,9 @@
         <ol>
             <li>Go to <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a></li>
             <li>Request API keys (free, approved manually) &mdash; you'll receive a <strong>Public</strong> and <strong>Private</strong> key</li>
-            <li>Enter both keys in Settings &rarr; API Keys &rarr; TheGamesDB</li>
-            <li>The <strong>Public key</strong> (per-IP rate limit) is used as the primary key for scraping</li>
-            <li>The <strong>Private key</strong> (shared monthly pool) is used as a fallback if the public key fails</li>
+            <li>In Settings &rarr; Scraping &rarr; API Keys, put the public key in <strong>TheGamesDB &mdash; Main key</strong> and the private key in <strong>TheGamesDB &mdash; Backup key</strong></li>
+            <li>The main key is used first; each internet connection gets its own allowance</li>
+            <li>The backup key is used when the main key runs out; it allows about 6,000 requests a month</li>
         </ol>
 
         <h4>IGDB (via Twitch)</h4>
@@ -492,7 +492,7 @@
         <p><em>Used for Steam library import and achievement tracking.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox reaches RetroDB through OpenXBL, a free service. Each person uses their own key: sign in at <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> with your Xbox account, copy your API key, and paste it in Settings &rarr; My Profile &rarr; Xbox. <strong>Save &amp; Test Connection</strong> checks the key and shows your gamertag. The free key allows 150 requests an hour.</p>
+        <p>Xbox reaches RetroDB through OpenXBL, a free service. Each person uses their own key: sign in at <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> with your Xbox account, copy your API key, and paste it in Settings &rarr; Account &rarr; My Profile &rarr; Xbox. <strong>Save My Profile</strong> checks the key and shows your gamertag. The free key allows 150 requests an hour.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN uses NPSSO cookie authentication. See the <a href="#trophies">Trophies</a> section for detailed setup instructions.</p>
@@ -502,15 +502,15 @@
 
         <table class="data-table">
             <thead>
-                <tr><th>Provider</th><th>Default Model</th><th>Price (Input / Output per 1M tokens)</th></tr>
+                <tr><th>Provider</th><th>Default Model</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0.10 / $0.40</td></tr>
-                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0.15 / $0.60</td></tr>
-                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td><td>$0.10 / $0.50</td></tr>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td></tr>
             </tbody>
         </table>
-        <p>Each provider offers multiple model tiers. The cheapest models work well for metadata and museum content. Configure your preferred provider and API key in <strong>Settings &rarr; Scraping &rarr; API Keys</strong>.</p>
+        <p>Each provider offers several models. The one marked Recommended works well for metadata and museum content; each provider's own site has its current prices. Configure your preferred provider and API key in <strong>Settings &rarr; Scraping &rarr; API Keys</strong>.</p>
         <p>Gemini and OpenAI always search the web. Claude searches only when you turn on <strong>Let Claude search the web</strong> under its model. Without search, Claude leaves blank anything that needs a published figure, such as copies sold. Anthropic charges for each search: at most 5 searches a game, up to 5 US cents.</p>
     </div>
 </section>
@@ -520,52 +520,49 @@
     <h2 class="card-title">Settings</h2>
     <div class="card-body">
         <p>Settings are organized into tabs, each with subsections. Admins also see an Emulators tab, which opens its own page.</p>
-        <p>Each person sees only the settings their role can change. A viewer or player sees My Profile, Timezone, Theme, Language, library statistics, trophies and Support. An editor also sees Bonus Discs and Controllers. Everything else is for admins.</p>
+        <p>Each person sees only the settings their role can change. A viewer or player sees the Account tab. An editor also sees Bonus Discs and Controllers. Everything else is for admins.</p>
 
         <h3>Account Tab</h3>
         <ul>
-            <li><strong>My Profile</strong> &mdash; Avatar upload/remove, display name, role info, password change</li>
-            <li><strong>RetroAchievements</strong> &mdash; Username and API key for RA integration</li>
-            <li><strong>PSN</strong> &mdash; NPSSO cookie for PlayStation Network trophy sync</li>
+            <li><strong>My Profile</strong> &mdash; Your avatar, your RPCS3 trophy folder, and your own RetroAchievements, PlayStation Network, Xbox and Steam accounts. Your RetroAchievements username and web API key show your achievements; signing in with your password unlocks achievements while you play. One <strong>Save My Profile</strong> button saves the card, and checks a new PlayStation token or Xbox key. <strong>Change Password</strong> asks for the new password twice; it needs at least 12 characters.</li>
+            <li><strong>Theme and Language</strong> &mdash; Your theme, your language and the moving background</li>
+            <li><strong>Notifications</strong> &mdash; How long each kind of message stays on screen, for you alone</li>
             <li><strong>Timezone</strong> &mdash; Set your timezone for date display throughout the app</li>
             <li><strong>Users</strong> &mdash; User management: add, edit, delete users and assign roles (admin only)</li>
         </ul>
 
         <h3>Library Tab</h3>
         <ul>
-            <li><strong>Paths</strong> &mdash; ROM library path, database location</li>
-            <li><strong>Display</strong> &mdash; Theme selection, boxart style (2D/3D), preferred age rating system, items per page</li>
+            <li><strong>Paths</strong> &mdash; The ROM library folder, the ES-DE gamelist and media folders, and the household RPCS3 trophy folder, under one Save</li>
+            <li><strong>Display</strong> &mdash; Boxart style (2D/3D) and preferred age rating system, for everyone</li>
             <li><strong>ROM Naming</strong> &mdash; Article placement (leading/trailing "The"), region options list, default region, naming conventions</li>
+            <li><strong>Bonus Discs</strong> &mdash; Find and link bonus discs to their games</li>
             <li><strong>Backup</strong> &mdash; Create and restore database backups</li>
         </ul>
 
         <h3>Scraping Tab</h3>
         <ul>
-            <li><strong>ES-DE</strong> &mdash; ES-DE gamelist and media paths for local data import</li>
-            <li><strong>Scraper</strong> &mdash; Enable/disable individual scrapers, drag-and-drop priority ordering, rate limit settings per scraper</li>
-            <li><strong>API Keys</strong> &mdash; All scraper credentials (TGDB, IGDB, RAWG, ScreenScraper), AI provider selection and model choice (Gemini, OpenAI, Claude)</li>
+            <li><strong>Scraper</strong> &mdash; Turn scrapers on or off and drag them into the order they are tried. <strong>Bulk Scrape Match Filtering</strong> sets how closely a result must match: <strong>Strict</strong> takes only exact titles, <strong>Normal</strong> (the default) a close title on the right system, and <strong>Loose</strong> partial titles too. A setting made in an earlier version shows as <strong>Custom</strong> until you choose another.</li>
+            <li><strong>API Keys</strong> &mdash; All scraper credentials (TheGamesDB, IGDB, RAWG, ScreenScraper), AI provider selection and model choice (Gemini, OpenAI, Claude), and the household RetroAchievements and Steam keys. A person's own RetroAchievements key in My Profile is used first, and the household's only for someone with none. The household Steam key serves only an admin with no key of their own.</li>
         </ul>
 
         <h3>Data Tab</h3>
         <ul>
-            <li><strong>Stats</strong> &mdash; Library statistics overview (total games, systems, storage usage)</li>
-            <li><strong>Trophies</strong> &mdash; RPCS3 trophy path configuration for local PS3 trophy scanning</li>
-            <li><strong>Dropdowns</strong> &mdash; Customize region options and other dropdown values used across the app</li>
+            <li><strong>Dropdowns</strong> &mdash; Customize the values offered in lists such as genre, perspective and save type</li>
             <li><strong>Normalization</strong> &mdash; Genre and modes normalization rules &mdash; add custom mappings to standardize scraper output</li>
         </ul>
 
         <h3>Customization Tab</h3>
         <ul>
-            <li><strong>Notifications</strong> &mdash; Notification timeout preferences (success, info, warning, error &mdash; each configurable independently)</li>
-            <li><strong>Controllers</strong> &mdash; Manage the controller library, set default controllers per system, add custom controllers. Default controllers override scraped/AI values during metadata fetch.</li>
-            <li><strong>Logos</strong> &mdash; System logo customization &mdash; import system logos or refresh from defaults</li>
+            <li><strong>Controllers</strong> &mdash; <strong>Open Controllers</strong> goes to the Controllers page. There you set each system's default controllers, add your own and edit the controller library. Default controllers override scraped/AI values during metadata fetch.</li>
+            <li><strong>Logos</strong> &mdash; <strong>Refresh System Logos</strong> copies any new logos from your ES-DE folder, then shows which systems still have none</li>
         </ul>
 
         <h3>System Tab</h3>
         <ul>
-            <li><strong>Maintenance</strong> &mdash; Clean missing ROMs, clear CLZ imports or scraped data, delete media files no game uses, clear links to media files that are gone, and optimize the database</li>
+            <li><strong>Maintenance</strong> &mdash; Clean missing ROMs, clear CLZ imports or scraped data, delete media files no game uses, clear links to media files that are gone, optimize the database, and calculate file sizes</li>
             <li><strong>Updates</strong> &mdash; Check for, download and install a new version</li>
-            <li><strong>Server</strong> &mdash; Restart or shut down RetroDB</li>
+            <li><strong>Server</strong> &mdash; Restart or shut down RetroDB, the port it uses (the address changes after Restart), and where its database is</li>
             <li><strong>Logging</strong> &mdash; Log level settings for different categories, and the log files</li>
         </ul>
 
@@ -1670,7 +1667,7 @@
         <ul>
             <li><strong>Clean Missing ROMs</strong> &mdash; Remove database entries for games whose ROM files no longer exist on disk. Useful after reorganizing or deleting ROM files.</li>
             <li><strong>Orphan Media Cleanup</strong> &mdash; Find and delete image files on disk (boxart, screenshots, fanart) that have no corresponding database reference. Preview before deleting to confirm.</li>
-            <li><strong>Clear Scraped Data</strong> &mdash; Remove all scraped metadata from games while keeping ROM file entries. Useful for starting fresh with scraping. Preview shows affected games before execution.</li>
+            <li><strong>Clear Scraped Data</strong> &mdash; Removes what scraping filled in on scraped games, including the links to their pictures and videos, so you can scrape again from scratch. Your games stay, and their titles go back to the file names (a locked title stays). The picture and video files stay on disk unless you tick <strong>Also delete the picture and video files</strong>. Preview shows how many games it affects.</li>
             <li><strong>Clear CLZ Imports</strong> &mdash; Remove all CLZ Games import records (metadata-only entries without ROM files).</li>
         </ul>
 
@@ -1834,7 +1831,7 @@
         <ul>
             <li>A bulk scrape searches by the ROM's file name, so a badly named file finds the wrong game. Rename the file, or scrape the game on its own page with a better search title and pick the right result.</li>
             <li>In the Edit Game window, tick <strong>Keep this title when scraping</strong> so later scrapes leave the name alone.</li>
-            <li>For many games, raise <strong>Minimum Match Score</strong> in Settings &rarr; Scraping &rarr; Scraper &rarr; Bulk Scrape Match Filtering.</li>
+            <li>For many games, choose <strong>Strict</strong> in Settings &rarr; Scraping &rarr; Scraper &rarr; Bulk Scrape Match Filtering.</li>
         </ul>
 
         <h4>A scrape does not replace a bad picture</h4>
@@ -1859,7 +1856,7 @@
         </ul>
 
         <h4>Many games "Failed"</h4>
-        <p>Failed usually means no result was close enough to save. Lower <strong>Minimum Match Score</strong> or <strong>Minimum Title Quality</strong> in Settings &rarr; Scraping &rarr; Scraper &rarr; Bulk Scrape Match Filtering, and check the file names. The Log Viewer lists each game that found no match.</p>
+        <p>Failed usually means no result was close enough to save. Choose <strong>Loose</strong> in Settings &rarr; Scraping &rarr; Scraper &rarr; Bulk Scrape Match Filtering, and check the file names. The Log Viewer lists each game that found no match.</p>
 
         <h4>"A scrape for &hellip; is already running"</h4>
         <p>That system is already being scraped in the same mode. Wait for it, or cancel it. A scrape of another system waits in line and starts by itself.</p>
@@ -1893,7 +1890,7 @@
         <p><strong>Play</strong> starts the emulator on the computer running RetroDB, not on the device you pressed it on.</p>
 
         <h4>"Emulator program not found on PATH"</h4>
-        <p>On the Emulators page, under <strong>Registered emulators</strong>, edit the emulator and fill <strong>Binary path override</strong> with the program's location. Or add the folder that holds it under <strong>Emulator folders</strong>. For RetroArch, use <strong>Auto-detect</strong> on the RetroArch card, then <strong>Save</strong>.</p>
+        <p>On the Emulators page, under <strong>Registered emulators</strong>, edit the emulator and fill <strong>Program location</strong> with where the program is. Or add the folder that holds it under <strong>Emulator folders</strong>. For RetroArch, use <strong>Auto-detect</strong> on the RetroArch card, then <strong>Save</strong>.</p>
 
         <h4>"No emulator configured for system &hellip;" or "The emulator &hellip; is turned off"</h4>
         <p>Choose an emulator for the system under <strong>Per-system mapping</strong> on the Emulators page, or switch the emulator on under <strong>Registered emulators</strong>. A game set to an emulator that no longer exists: clear that choice in its Edit Game window.</p>
@@ -1943,7 +1940,7 @@
 
         <h4>"PSN authentication failed"</h4>
         <ul>
-            <li>Sony no longer accepts your saved NPSSO token. Get a new one with the steps in Settings &rarr; Account &rarr; My Profile &rarr; PlayStation Network, then press <strong>Save &amp; Test Connection</strong>.</li>
+            <li>Sony no longer accepts your saved NPSSO token. Get a new one with the steps in Settings &rarr; Account &rarr; My Profile &rarr; PlayStation Network, then press <strong>Save My Profile</strong>.</li>
             <li>RetroDB keeps the sign-in going by itself while Sony accepts the token. To replace a token that still works, sign out of PlayStation first.</li>
         </ul>
 

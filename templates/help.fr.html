@@ -443,9 +443,9 @@
         <ol>
             <li>Rendez-vous sur <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a></li>
             <li>Demandez des clés API (gratuites, approuvées manuellement) &mdash; vous recevrez une clé <strong>publique</strong> et une clé <strong>privée</strong></li>
-            <li>Saisissez les deux clés dans Paramètres &rarr; Clés API &rarr; TheGamesDB</li>
-            <li>La <strong>clé publique</strong> (limite de débit par IP) est utilisée comme clé principale pour la récupération</li>
-            <li>La <strong>clé privée</strong> (pool mensuel partagé) sert de solution de repli si la clé publique échoue</li>
+            <li>Dans Paramètres &rarr; Récupération &rarr; Clés API, mettez la clé publique dans <strong>TheGamesDB &mdash; Clé principale</strong> et la clé privée dans <strong>TheGamesDB &mdash; Clé de secours</strong></li>
+            <li>La clé principale est utilisée en premier ; chaque connexion internet a son propre quota</li>
+            <li>La clé de secours sert quand la clé principale est épuisée ; elle autorise environ 6 000 requêtes par mois</li>
         </ol>
 
         <h4>IGDB (via Twitch)</h4>
@@ -492,7 +492,7 @@
         <p><em>Utilisée pour l'import de la bibliothèque Steam et le suivi des succès.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox communique avec RetroDB via OpenXBL, un service gratuit. Chaque personne utilise sa propre clé : connectez-vous sur <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> avec votre compte Xbox, copiez votre clé API et collez-la dans Paramètres &rarr; Mon profil &rarr; Xbox. <strong>Enregistrer &amp; Tester la connexion</strong> vérifie la clé et affiche votre gamertag. La clé gratuite autorise 150 requêtes par heure.</p>
+        <p>Xbox communique avec RetroDB via OpenXBL, un service gratuit. Chaque personne utilise sa propre clé : connectez-vous sur <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> avec votre compte Xbox, copiez votre clé API et collez-la dans Paramètres &rarr; Compte &rarr; Mon profil &rarr; Xbox. <strong>Enregistrer mon profil</strong> vérifie la clé et affiche votre gamertag. La clé gratuite autorise 150 requêtes par heure.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN utilise l'authentification par cookie NPSSO. Consultez la section <a href="#trophies">Trophées</a> pour les instructions de configuration détaillées.</p>
@@ -502,15 +502,15 @@
 
         <table class="data-table">
             <thead>
-                <tr><th>Fournisseur</th><th>Modèle par défaut</th><th>Prix (entrée / sortie par million de jetons)</th></tr>
+                <tr><th>Fournisseur</th><th>Modèle par défaut</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>0,10 $ / 0,40 $</td></tr>
-                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>0,15 $ / 0,60 $</td></tr>
-                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td><td>0,10 $ / 0,50 $</td></tr>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td></tr>
             </tbody>
         </table>
-        <p>Chaque fournisseur propose plusieurs niveaux de modèles. Les modèles les moins chers fonctionnent bien pour les métadonnées et le contenu du musée. Configurez votre fournisseur préféré et votre clé API dans <strong>Paramètres &rarr; Récupération &rarr; Clés API</strong>.</p>
+        <p>Chaque fournisseur propose plusieurs modèles. Celui marqué Recommandé fonctionne bien pour les métadonnées et le contenu du musée ; le site de chaque fournisseur indique ses prix actuels. Configurez votre fournisseur préféré et votre clé API dans <strong>Paramètres &rarr; Récupération &rarr; Clés API</strong>.</p>
         <p>Gemini et OpenAI cherchent toujours sur le web. Claude ne cherche que si vous activez <strong>Laisser Claude chercher sur le web</strong> sous son modèle. Sans recherche, Claude laisse vide tout ce qui demande un chiffre publié, comme les exemplaires vendus. Anthropic facture chaque recherche : au plus 5 recherches par jeu, jusqu'à 5 cents US.</p>
     </div>
 </section>
@@ -520,52 +520,49 @@
     <h2 class="card-title">Paramètres</h2>
     <div class="card-body">
         <p>Les paramètres sont organisés en onglets, chacun comportant des sous-sections. Les administrateurs voient aussi un onglet Émulateurs, qui ouvre sa propre page.</p>
-        <p>Chaque personne ne voit que les réglages que son rôle peut modifier. Un lecteur ou un joueur voit Mon profil, Fuseau horaire, Thème, Langue, les statistiques de la bibliothèque, les trophées et Soutien. Un éditeur voit aussi Disques bonus et Manettes. Tout le reste est réservé aux administrateurs.</p>
+        <p>Chaque personne ne voit que les réglages que son rôle peut modifier. Un lecteur ou un joueur voit l'onglet Compte. Un éditeur voit aussi Disques bonus et Manettes. Tout le reste est réservé aux administrateurs.</p>
 
         <h3>Onglet Compte</h3>
         <ul>
-            <li><strong>Mon profil</strong> &mdash; Téléversement/suppression d'avatar, nom d'affichage, infos sur le rôle, changement de mot de passe</li>
-            <li><strong>RetroAchievements</strong> &mdash; Nom d'utilisateur et clé API pour l'intégration RA</li>
-            <li><strong>PSN</strong> &mdash; Cookie NPSSO pour la synchronisation des trophées PlayStation Network</li>
+            <li><strong>Mon profil</strong> &mdash; Votre avatar, votre dossier de trophées RPCS3 et vos propres comptes RetroAchievements, PlayStation Network, Xbox et Steam. Votre nom d'utilisateur et votre clé API web RetroAchievements affichent vos succès ; se connecter avec votre mot de passe débloque les succès pendant que vous jouez. Un seul bouton <strong>Enregistrer mon profil</strong> enregistre la carte et vérifie un nouveau jeton PlayStation ou une nouvelle clé Xbox. <strong>Changer le mot de passe</strong> demande le nouveau mot de passe deux fois ; il faut au moins 12 caractères.</li>
+            <li><strong>Thème et langue</strong> &mdash; Votre thème, votre langue et l'arrière-plan animé</li>
+            <li><strong>Notifications</strong> &mdash; Combien de temps chaque type de message reste à l'écran, pour vous seul</li>
             <li><strong>Fuseau horaire</strong> &mdash; Définissez votre fuseau horaire pour l'affichage des dates dans toute l'application</li>
             <li><strong>Utilisateurs</strong> &mdash; Gestion des utilisateurs : ajouter, modifier, supprimer des utilisateurs et attribuer des rôles (administrateur uniquement)</li>
         </ul>
 
         <h3>Onglet Bibliothèque</h3>
         <ul>
-            <li><strong>Chemins</strong> &mdash; Chemin de la bibliothèque de ROM, emplacement de la base de données</li>
-            <li><strong>Affichage</strong> &mdash; Sélection du thème, style de jaquette (2D/3D), système de classification d'âge préféré, éléments par page</li>
+            <li><strong>Chemins</strong> &mdash; Le dossier de la bibliothèque de ROM, les dossiers de gamelist et de médias d'ES-DE, et le dossier de trophées RPCS3 du foyer, avec un seul Enregistrer</li>
+            <li><strong>Affichage</strong> &mdash; Style de jaquette (2D/3D) et système de classification par âge préféré, pour tout le monde</li>
             <li><strong>Nommage des ROM</strong> &mdash; Placement de l'article (« The » au début/à la fin), liste des options de région, région par défaut, conventions de nommage</li>
+            <li><strong>Disques bonus</strong> &mdash; Trouvez les disques bonus et liez-les à leurs jeux</li>
             <li><strong>Sauvegarde</strong> &mdash; Créer et restaurer des sauvegardes de la base de données</li>
         </ul>
 
         <h3>Onglet Récupération</h3>
         <ul>
-            <li><strong>ES-DE</strong> &mdash; Chemins des gamelists et médias ES-DE pour l'import de données locales</li>
-            <li><strong>Scraper</strong> &mdash; Activer/désactiver les scrapers individuels, classement par priorité en glisser-déposer, réglages de limite de débit par scraper</li>
-            <li><strong>Clés API</strong> &mdash; Tous les identifiants de scrapers (TGDB, IGDB, RAWG, ScreenScraper), sélection du fournisseur d'IA et choix du modèle (Gemini, OpenAI, Claude)</li>
+            <li><strong>Scraper</strong> &mdash; Activez ou désactivez les scrapers et faites-les glisser dans l'ordre où ils sont essayés. <strong>Filtrage des correspondances en récupération en masse</strong> règle à quel point un résultat doit correspondre : <strong>Strict</strong> n'accepte que les titres exacts, <strong>Normal</strong> (par défaut) un titre proche sur le bon système, et <strong>Souple</strong> aussi les titres partiels. Un réglage fait dans une version antérieure s'affiche comme <strong>Personnalisé</strong> jusqu'à ce que vous en choisissiez un autre.</li>
+            <li><strong>Clés API</strong> &mdash; Tous les identifiants des scrapers (TheGamesDB, IGDB, RAWG, ScreenScraper), choix du fournisseur d'IA et du modèle (Gemini, OpenAI, Claude), et les clés RetroAchievements et Steam du foyer. La clé RetroAchievements personnelle d'une personne dans Mon profil est utilisée en premier, et celle du foyer seulement pour qui n'en a pas. La clé Steam du foyer ne sert qu'à un administrateur sans clé personnelle.</li>
         </ul>
 
         <h3>Onglet Données</h3>
         <ul>
-            <li><strong>Statistiques</strong> &mdash; Aperçu des statistiques de la bibliothèque (total des jeux, systèmes, utilisation du stockage)</li>
-            <li><strong>Trophées</strong> &mdash; Configuration du chemin des trophées RPCS3 pour l'analyse des trophées PS3 locaux</li>
-            <li><strong>Listes déroulantes</strong> &mdash; Personnalisez les options de région et autres valeurs de listes déroulantes utilisées dans l'application</li>
+            <li><strong>Menus déroulants</strong> &mdash; Personnalisez les valeurs proposées dans des listes comme le genre, la perspective et le type de sauvegarde</li>
             <li><strong>Normalisation</strong> &mdash; Règles de normalisation des genres et des modes &mdash; ajoutez des correspondances personnalisées pour standardiser la sortie des scrapers</li>
         </ul>
 
         <h3>Onglet Personnalisation</h3>
         <ul>
-            <li><strong>Notifications</strong> &mdash; Préférences de délai des notifications (succès, info, avertissement, erreur &mdash; chacune configurable indépendamment)</li>
-            <li><strong>Manettes</strong> &mdash; Gérez la bibliothèque de manettes, définissez les manettes par défaut par système, ajoutez des manettes personnalisées. Les manettes par défaut remplacent les valeurs récupérées/IA lors de la récupération des métadonnées.</li>
-            <li><strong>Logos</strong> &mdash; Personnalisation des logos de systèmes &mdash; importez des logos de systèmes ou réinitialisez-les aux valeurs par défaut</li>
+            <li><strong>Manettes</strong> &mdash; <strong>Ouvrir les manettes</strong> mène à la page Manettes. Vous y réglez les manettes par défaut de chaque système, ajoutez les vôtres et modifiez la bibliothèque de manettes. Les manettes par défaut remplacent les valeurs récupérées/IA lors de la récupération des métadonnées.</li>
+            <li><strong>Logos</strong> &mdash; <strong>Actualiser les logos de systèmes</strong> copie les nouveaux logos depuis votre dossier ES-DE, puis montre quels systèmes n'en ont encore aucun</li>
         </ul>
 
         <h3>Onglet Système</h3>
         <ul>
-            <li><strong>Maintenance</strong> &mdash; Nettoyer les ROMs manquantes, effacer les imports CLZ ou les données récupérées, supprimer les fichiers de médias qu'aucun jeu n'utilise, supprimer les liens vers des fichiers de médias disparus et optimiser la base de données</li>
+            <li><strong>Maintenance</strong> &mdash; Nettoyer les ROM manquantes, effacer les imports CLZ ou les données récupérées, supprimer les fichiers de médias qu'aucun jeu n'utilise, effacer les liens vers des fichiers de médias disparus, optimiser la base de données et calculer les tailles de fichier</li>
             <li><strong>Mises à jour</strong> &mdash; Rechercher, télécharger et installer une nouvelle version</li>
-            <li><strong>Serveur</strong> &mdash; Redémarrer ou arrêter RetroDB</li>
+            <li><strong>Serveur</strong> &mdash; Redémarrer ou arrêter RetroDB, le port qu'il utilise (l'adresse change après Redémarrer) et l'emplacement de sa base de données</li>
             <li><strong>Journalisation</strong> &mdash; Réglages du niveau de journal pour différentes catégories, et les fichiers de journal</li>
         </ul>
 
@@ -1670,7 +1667,7 @@
         <ul>
             <li><strong>Nettoyer les ROM manquantes</strong> &mdash; Supprimez les entrées de base de données des jeux dont les fichiers ROM n'existent plus sur le disque. Utile après réorganisation ou suppression de fichiers ROM.</li>
             <li><strong>Nettoyage des médias orphelins</strong> &mdash; Trouvez et supprimez les fichiers image sur le disque (jaquettes, captures d'écran, fanart) qui n'ont aucune référence correspondante en base de données. Prévisualisez avant de supprimer pour confirmer.</li>
-            <li><strong>Effacer les données récupérées</strong> &mdash; Supprimez toutes les métadonnées récupérées des jeux tout en conservant les entrées de fichiers ROM. Utile pour repartir de zéro avec la récupération. L'aperçu montre les jeux affectés avant l'exécution.</li>
+            <li><strong>Effacer les données récupérées</strong> &mdash; Retire ce que la récupération a rempli sur les jeux récupérés, y compris les liens vers leurs images et vidéos, pour que vous puissiez tout récupérer de nouveau. Vos jeux restent, et leurs titres reviennent aux noms de fichier (un titre verrouillé reste). Les fichiers d'images et de vidéos restent sur le disque, sauf si vous cochez <strong>Supprimer aussi les fichiers d'images et de vidéos</strong>. L'aperçu montre combien de jeux sont touchés.</li>
             <li><strong>Effacer les imports CLZ</strong> &mdash; Supprimez tous les enregistrements d'import CLZ Games (entrées de métadonnées uniquement, sans fichiers ROM).</li>
         </ul>
 
@@ -1834,7 +1831,7 @@
         <ul>
             <li>Une récupération en masse cherche d'après le nom de fichier de la ROM, donc un fichier mal nommé trouve le mauvais jeu. Renommez le fichier, ou récupérez le jeu sur sa propre page avec un meilleur titre de recherche et choisissez le bon résultat.</li>
             <li>Dans la fenêtre Modifier le jeu, cochez <strong>Conserver ce titre lors de la récupération</strong> pour que les récupérations suivantes laissent le nom tranquille.</li>
-            <li>Pour de nombreux jeux, augmentez le <strong>Score minimal de correspondance</strong> dans Paramètres &rarr; Récupération &rarr; Scraper &rarr; Filtrage des correspondances en récupération en masse.</li>
+            <li>Pour de nombreux jeux, choisissez <strong>Strict</strong> dans Paramètres &rarr; Récupération &rarr; Scraper &rarr; Filtrage des correspondances en récupération en masse.</li>
         </ul>
 
         <h4>Une récupération ne remplace pas une mauvaise image</h4>
@@ -1859,7 +1856,7 @@
         </ul>
 
         <h4>Beaucoup de jeux « Échoué »</h4>
-        <p>Échoué signifie généralement qu'aucun résultat n'était assez proche pour être enregistré. Baissez le <strong>Score minimal de correspondance</strong> ou la <strong>Qualité minimale du titre</strong> dans Paramètres &rarr; Récupération &rarr; Scraper &rarr; Filtrage des correspondances en récupération en masse, et vérifiez les noms de fichier. La Visionneuse de journaux liste chaque jeu pour lequel aucune correspondance n'a été trouvée.</p>
+        <p>Échoué signifie généralement qu'aucun résultat n'était assez proche pour être enregistré. Choisissez <strong>Souple</strong> dans Paramètres &rarr; Récupération &rarr; Scraper &rarr; Filtrage des correspondances en récupération en masse, et vérifiez les noms de fichier. La Visionneuse de journaux liste chaque jeu pour lequel aucune correspondance n'a été trouvée.</p>
 
         <h4>« Une récupération pour &hellip; est déjà en cours »</h4>
         <p>Ce système est déjà en cours de récupération dans le même mode. Attendez-la, ou annulez-la. Une récupération d'un autre système attend dans la file et démarre toute seule.</p>
@@ -1893,7 +1890,7 @@
         <p><strong>Jouer</strong> lance l'émulateur sur l'ordinateur où tourne RetroDB, pas sur l'appareil sur lequel vous avez appuyé.</p>
 
         <h4>« Programme de l'émulateur introuvable dans le PATH »</h4>
-        <p>Dans la page Émulateurs, sous <strong>Émulateurs enregistrés</strong>, modifiez l'émulateur et indiquez l'emplacement du programme dans <strong>Chemin personnalisé de l'exécutable</strong>. Ou ajoutez le dossier qui le contient sous <strong>Dossiers d'émulateurs</strong>. Pour RetroArch, utilisez <strong>Détection automatique</strong> sur la carte RetroArch, puis <strong>Enregistrer</strong>.</p>
+        <p>Dans la page Émulateurs, sous <strong>Émulateurs enregistrés</strong>, modifiez l'émulateur et indiquez où se trouve le programme dans <strong>Emplacement du programme</strong>. Ou ajoutez le dossier qui le contient sous <strong>Dossiers d'émulateurs</strong>. Pour RetroArch, utilisez <strong>Détection automatique</strong> sur la carte RetroArch, puis <strong>Enregistrer</strong>.</p>
 
         <h4>« Aucun émulateur configuré pour le système &hellip; » ou « L'émulateur &hellip; est désactivé »</h4>
         <p>Choisissez un émulateur pour le système sous <strong>Association par système</strong> dans la page Émulateurs, ou activez l'émulateur sous <strong>Émulateurs enregistrés</strong>. Si un jeu est réglé sur un émulateur qui n'existe plus, effacez ce choix dans sa fenêtre Modifier le jeu.</p>
@@ -1943,7 +1940,7 @@
 
         <h4>« Échec de l'authentification PSN »</h4>
         <ul>
-            <li>Sony n'accepte plus votre jeton NPSSO enregistré. Obtenez-en un nouveau avec les étapes de Paramètres &rarr; Compte &rarr; Mon profil &rarr; PlayStation Network, puis appuyez sur <strong>Enregistrer &amp; Tester la connexion</strong>.</li>
+            <li>Sony n'accepte plus votre jeton NPSSO enregistré. Obtenez-en un nouveau avec les étapes de Paramètres &rarr; Compte &rarr; Mon profil &rarr; PlayStation Network, puis appuyez sur <strong>Enregistrer mon profil</strong>.</li>
             <li>RetroDB maintient la connexion tout seul tant que Sony accepte le jeton. Pour remplacer un jeton qui fonctionne encore, déconnectez-vous d'abord de PlayStation.</li>
         </ul>
 

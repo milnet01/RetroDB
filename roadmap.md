@@ -2917,7 +2917,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: fix.
   Source: PASS-59-308 translation and Settings inventory 2026-11-15.
 
-- 📋 [PASS-59-311] **Settings page review: remove, move and reword what makes it hard to use (ux, L).**
+- ✅ [PASS-59-311] **Settings page review: remove, move and reword what makes it hard to use (ux, L).**
   - **Review**: /mnt/Emulators/.claude/Scratchpad/RetroDB/settings-review/review.md
     (evidence: inventory.md beside it). Section A lists ten bugs to fix
     whatever is chosen: Add User silently sets the password "changeme";
@@ -2947,6 +2947,16 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   sections and the 20 locale manuals; the 4.0.0 changelog and its 20
   locale copies; catalogs; push. Found: the live server gets PORT=5000
   from outside RetroDB, so the new port box shows read-only there.
+  **Rest of C and all of D done 2026-11-16**: Controllers on
+  /controllers (linked from Customization); Strict/Normal/Loose with
+  Custom; one Save My Profile (a new PSN token goes through save-npsso,
+  so a refused one keeps the working token); Change Password confirm box
+  and 12-character note; AI prices gone; RetroAchievements words and
+  whose-key-wins notes; plain words on Scraping, Maintenance and
+  Emulators. help.html Settings section rewritten to the page as it is,
+  mirrored into the 20 manuals; 4.0.0 changelog and its 20 copies; the
+  names the manual quotes translated in each catalog. Tests:
+  tests/test_pass59_311_settings_fixes.py.
   **Layman:** A review of every setting found broken buttons, settings in the wrong place and confusing words; the user chooses which changes to make.
   Kind: ux.
   Source: user-request-2026-11-15.
@@ -3032,6 +3042,12 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - Noted by the 2026-11-15 session (handoff); not yet measured or
     located. Check what requests the admin Settings page makes on load
     and whether they can wait until the section that needs them opens.
+  Measured 2026-11-16 on :5001: the admin Settings page sends ~540 logo
+  and hardware picture requests on load (loadSystems →
+  loadLogoReference, on DOMContentLoaded whatever tab shows). A Save
+  pressed meanwhile waits behind them: Save My Profile's reply came ~3 s
+  late. The Customization tab's reloadLogoReference already loads the
+  table when the tab opens, so the load-time call looks redundant.
   **Layman:** Makes the admin Settings page lighter to open.
   Kind: perf.
   Source: user-request-2026-11-15.
@@ -3043,6 +3059,12 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - The Display tab is named differently in the manual and the catalog:
     af (Vertoning / Vertoon), es (Pantalla / Visualización),
     ko (디스플레이 / 표시), tr (Görünüm / Görüntü).
+  Found 2026-11-16 (PASS-59-311 D mirroring): in many locales the manual
+  names Clear Scraped Data differently from the catalog (e.g. ja, zh,
+  it, pt_BR, pl); the rewritten Settings lines now use the catalog name,
+  older lines elsewhere do not. id keeps English tab headings ("Tab
+  Account"). The af catalog translates Controllers as "Beheerders",
+  which reads as "administrators".
   **Layman:** Tidies small differences between the translated help pages and the English one.
   Kind: doc-fix.
   Source: PASS-59-315 locale mirroring 2026-11-15.

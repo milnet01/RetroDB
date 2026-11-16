@@ -443,9 +443,9 @@
         <ol>
             <li>Ga naar <a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a></li>
             <li>Vraag API-sleutels aan (gratis, handmatig goedgekeurd) &mdash; u ontvangt een <strong>publieke</strong> en <strong>privé</strong>sleutel</li>
-            <li>Voer beide sleutels in bij Instellingen &rarr; API-sleutels &rarr; TheGamesDB</li>
-            <li>De <strong>publieke sleutel</strong> (limiet per IP-adres) wordt gebruikt als primaire sleutel voor het scrapen</li>
-            <li>De <strong>privésleutel</strong> (gedeelde maandelijkse pool) wordt gebruikt als terugvaloptie als de publieke sleutel faalt</li>
+            <li>Zet bij Instellingen &rarr; Scrapen &rarr; API-sleutels de publieke sleutel in <strong>TheGamesDB &mdash; Hoofdsleutel</strong> en de privésleutel in <strong>TheGamesDB &mdash; Reservesleutel</strong></li>
+            <li>De hoofdsleutel wordt eerst gebruikt; elke internetverbinding krijgt een eigen limiet</li>
+            <li>De reservesleutel wordt gebruikt als de hoofdsleutel op is; hij staat ongeveer 6.000 verzoeken per maand toe</li>
         </ol>
 
         <h4>IGDB (via Twitch)</h4>
@@ -492,7 +492,7 @@
         <p><em>Gebruikt voor het importeren van de Steam-bibliotheek en prestatieregistratie.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox bereikt RetroDB via OpenXBL, een gratis dienst. Iedereen gebruikt een eigen sleutel: meld u aan op <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> met uw Xbox-account, kopieer uw API-sleutel en plak die in Instellingen &rarr; Mijn profiel &rarr; Xbox. <strong>Opslaan &amp; verbinding testen</strong> controleert de sleutel en toont uw gamertag. Met de gratis sleutel kunt u 150 verzoeken per uur doen.</p>
+        <p>Xbox bereikt RetroDB via OpenXBL, een gratis dienst. Iedereen gebruikt een eigen sleutel: meld u aan op <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> met uw Xbox-account, kopieer uw API-sleutel en plak die in Instellingen &rarr; Account &rarr; Mijn profiel &rarr; Xbox. <strong>Mijn profiel opslaan</strong> controleert de sleutel en toont uw gamertag. Met de gratis sleutel kunt u 150 verzoeken per uur doen.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN gebruikt authenticatie via een NPSSO-cookie. Zie de sectie <a href="#trophies">Trofeeën</a> voor gedetailleerde instructies.</p>
@@ -502,15 +502,15 @@
 
         <table class="data-table">
             <thead>
-                <tr><th>Aanbieder</th><th>Standaardmodel</th><th>Prijs (invoer / uitvoer per 1M tokens)</th></tr>
+                <tr><th>Aanbieder</th><th>Standaardmodel</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0,10 / $0,40</td></tr>
-                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0,15 / $0,60</td></tr>
-                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td><td>$0,10 / $0,50</td></tr>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td></tr>
             </tbody>
         </table>
-        <p>Elke aanbieder biedt meerdere modelniveaus. De goedkoopste modellen werken prima voor metadata en museuminhoud. Configureer uw voorkeursaanbieder en API-sleutel in <strong>Instellingen &rarr; Scrapen &rarr; API-sleutels</strong>.</p>
+        <p>Elke aanbieder biedt meerdere modellen. Het model met de aanduiding Aanbevolen werkt goed voor metadata en museuminhoud; op de website van elke aanbieder staan de actuele prijzen. Configureer uw voorkeursaanbieder en API-sleutel in <strong>Instellingen &rarr; Scrapen &rarr; API-sleutels</strong>.</p>
         <p>Gemini en OpenAI zoeken altijd op het web. Claude zoekt alleen als u <strong>Laat Claude op het web zoeken</strong> onder het model aanzet. Zonder zoeken laat Claude alles leeg wat een gepubliceerd cijfer nodig heeft, zoals verkochte exemplaren. Anthropic rekent voor elke zoekopdracht: hoogstens 5 zoekopdrachten per spel, tot 5 Amerikaanse cent.</p>
     </div>
 </section>
@@ -520,52 +520,49 @@
     <h2 class="card-title">Instellingen</h2>
     <div class="card-body">
         <p>Instellingen zijn georganiseerd in tabbladen, elk met subsecties. Beheerders zien ook een tabblad Emulators, dat een eigen pagina opent.</p>
-        <p>Elke persoon ziet alleen de instellingen die zijn of haar rol mag wijzigen. Een kijker of speler ziet Mijn profiel, Tijdzone, Thema, Taal, bibliotheekstatistieken, trofeeën en Steunen. Een editor ziet ook Bonusschijven en Controllers. Al het andere is voor beheerders.</p>
+        <p>Elke persoon ziet alleen de instellingen die zijn of haar rol mag wijzigen. Een kijker of speler ziet het tabblad Account. Een editor ziet ook Bonusschijven en Controllers. Al het andere is voor beheerders.</p>
 
         <h3>Tabblad Account</h3>
         <ul>
-            <li><strong>Mijn profiel</strong> &mdash; Avatar uploaden/verwijderen, weergavenaam, rolinformatie, wachtwoord wijzigen</li>
-            <li><strong>RetroAchievements</strong> &mdash; Gebruikersnaam en API-sleutel voor RA-integratie</li>
-            <li><strong>PSN</strong> &mdash; NPSSO-cookie voor synchronisatie van PlayStation Network-trofeeën</li>
+            <li><strong>Mijn profiel</strong> &mdash; Uw avatar, uw RPCS3-trofeemap en uw eigen RetroAchievements-, PlayStation Network-, Xbox- en Steam-accounts. Uw RetroAchievements-gebruikersnaam en web-API-sleutel tonen uw prestaties; inloggen met uw wachtwoord ontgrendelt prestaties terwijl u speelt. Eén knop <strong>Mijn profiel opslaan</strong> slaat de kaart op en controleert een nieuw PlayStation-token of een nieuwe Xbox-sleutel. <strong>Wachtwoord wijzigen</strong> vraagt twee keer om het nieuwe wachtwoord; het moet minstens 12 tekens hebben.</li>
+            <li><strong>Thema en taal</strong> &mdash; Uw thema, uw taal en de bewegende achtergrond</li>
+            <li><strong>Meldingen</strong> &mdash; Hoe lang elke soort bericht in beeld blijft, alleen voor u</li>
             <li><strong>Tijdzone</strong> &mdash; Stel uw tijdzone in voor datumweergave in de hele app</li>
             <li><strong>Gebruikers</strong> &mdash; Gebruikersbeheer: gebruikers toevoegen, bewerken, verwijderen en rollen toewijzen (alleen beheerder)</li>
         </ul>
 
         <h3>Tabblad Bibliotheek</h3>
         <ul>
-            <li><strong>Paden</strong> &mdash; Pad naar de ROM-bibliotheek, locatie van de database</li>
-            <li><strong>Weergave</strong> &mdash; Themakeuze, boxart-stijl (2D/3D), voorkeurssysteem voor leeftijdsclassificatie, aantal items per pagina</li>
+            <li><strong>Paden</strong> &mdash; De ROM-bibliotheekmap, de ES-DE-gamelist- en mediamappen en de gedeelde RPCS3-trofeemap van het huishouden, onder één keer Opslaan</li>
+            <li><strong>Weergave</strong> &mdash; Boxart-stijl (2D/3D) en voorkeurssysteem voor leeftijdsclassificatie, voor iedereen</li>
             <li><strong>ROM-naamgeving</strong> &mdash; Plaatsing van lidwoorden (voorop/achteraan "The"), lijst met regio-opties, standaardregio, naamgevingsconventies</li>
+            <li><strong>Bonusschijven</strong> &mdash; Zoek bonusschijven en koppel ze aan hun games</li>
             <li><strong>Back-up</strong> &mdash; Databaseback-ups maken en herstellen</li>
         </ul>
 
         <h3>Tabblad Scrapen</h3>
         <ul>
-            <li><strong>ES-DE</strong> &mdash; Paden naar ES-DE-gamelists en -media voor lokale gegevensimport</li>
-            <li><strong>Scraper</strong> &mdash; Afzonderlijke scrapers in-/uitschakelen, prioriteitsvolgorde via slepen en neerzetten, instellingen voor snelheidslimieten per scraper</li>
-            <li><strong>API-sleutels</strong> &mdash; Alle scraper-inloggegevens (TGDB, IGDB, RAWG, ScreenScraper), keuze van AI-aanbieder en model (Gemini, OpenAI, Claude)</li>
+            <li><strong>Scraper</strong> &mdash; Zet scrapers aan of uit en sleep ze in de volgorde waarin ze worden geprobeerd. <strong>Overeenkomstfilter bij bulkscrapen</strong> bepaalt hoe goed een resultaat moet passen: <strong>Strikt</strong> neemt alleen exacte titels, <strong>Normaal</strong> (de standaard) een bijna gelijke titel op het juiste systeem en <strong>Los</strong> ook gedeeltelijke titels. Een instelling uit een eerdere versie staat als <strong>Aangepast</strong> totdat u een andere kiest.</li>
+            <li><strong>API-sleutels</strong> &mdash; Alle scrapergegevens (TheGamesDB, IGDB, RAWG, ScreenScraper), keuze van AI-aanbieder en model (Gemini, OpenAI, Claude) en de RetroAchievements- en Steam-sleutels van het huishouden. De eigen RetroAchievements-sleutel van een persoon in Mijn profiel wordt eerst gebruikt, die van het huishouden alleen voor iemand zonder eigen sleutel. De Steam-sleutel van het huishouden dient alleen een beheerder zonder eigen sleutel.</li>
         </ul>
 
         <h3>Tabblad Gegevens</h3>
         <ul>
-            <li><strong>Statistieken</strong> &mdash; Overzicht van bibliotheekstatistieken (totaal aantal spellen, systemen, opslaggebruik)</li>
-            <li><strong>Trofeeën</strong> &mdash; Configuratie van het RPCS3-trofeeënpad voor het lokaal scannen van PS3-trofeeën</li>
-            <li><strong>Vervolgkeuzelijsten</strong> &mdash; Pas regio-opties en andere vervolgkeuzewaarden aan die in de hele app worden gebruikt</li>
+            <li><strong>Vervolgkeuzelijsten</strong> &mdash; Pas de waarden aan die in lijsten als genre, perspectief en opslagtype worden aangeboden</li>
             <li><strong>Normalisatie</strong> &mdash; Normalisatieregels voor genre en spelmodi &mdash; voeg aangepaste toewijzingen toe om de scraper-uitvoer te standaardiseren</li>
         </ul>
 
         <h3>Tabblad Aanpassing</h3>
         <ul>
-            <li><strong>Meldingen</strong> &mdash; Time-outvoorkeuren voor meldingen (succes, info, waarschuwing, fout &mdash; elk afzonderlijk instelbaar)</li>
-            <li><strong>Controllers</strong> &mdash; Beheer de controllerbibliotheek, stel standaardcontrollers per systeem in, voeg aangepaste controllers toe. Standaardcontrollers overschrijven gescrapete/AI-waarden tijdens het ophalen van metadata.</li>
-            <li><strong>Logo's</strong> &mdash; Aanpassing van systeemlogo's &mdash; importeer systeemlogo's of ververs vanaf de standaardwaarden</li>
+            <li><strong>Controllers</strong> &mdash; <strong>Controllers openen</strong> gaat naar de pagina Controllers. Daar stelt u de standaardcontrollers van elk systeem in, voegt u eigen controllers toe en bewerkt u de controllerbibliotheek. Standaardcontrollers overschrijven gescrapete/AI-waarden bij het ophalen van metadata.</li>
+            <li><strong>Logo's</strong> &mdash; <strong>Systeemlogo's vernieuwen</strong> kopieert nieuwe logo's uit uw ES-DE-map en toont daarna welke systemen er nog geen hebben</li>
         </ul>
 
         <h3>Tabblad Systeem</h3>
         <ul>
-            <li><strong>Onderhoud</strong> &mdash; Ontbrekende ROM's opschonen, CLZ-imports of gescrapete gegevens wissen, mediabestanden verwijderen die geen enkele game gebruikt, koppelingen naar verdwenen mediabestanden wissen en de database optimaliseren</li>
+            <li><strong>Onderhoud</strong> &mdash; Ontbrekende ROM's opschonen, CLZ-imports of gescrapete gegevens wissen, mediabestanden verwijderen die geen enkele game gebruikt, koppelingen naar verdwenen mediabestanden wissen, de database optimaliseren en bestandsgroottes berekenen</li>
             <li><strong>Updates</strong> &mdash; Een nieuwe versie zoeken, downloaden en installeren</li>
-            <li><strong>Server</strong> &mdash; RetroDB opnieuw starten of afsluiten</li>
+            <li><strong>Server</strong> &mdash; RetroDB herstarten of afsluiten, de poort die het gebruikt (het adres verandert na het herstarten) en waar de database staat</li>
             <li><strong>Logboek</strong> &mdash; Logniveau-instellingen voor verschillende categorieën, en de logbestanden</li>
         </ul>
 
@@ -1670,7 +1667,7 @@
         <ul>
             <li><strong>Ontbrekende ROMs opschonen</strong> &mdash; Verwijder databasevermeldingen voor spellen waarvan de ROM-bestanden niet meer op schijf bestaan. Handig na het reorganiseren of verwijderen van ROM-bestanden.</li>
             <li><strong>Verweesde media opruimen</strong> &mdash; Zoek en verwijder afbeeldingsbestanden op schijf (boxart, screenshots, fanart) die geen bijbehorende databaseverwijzing hebben. Bekijk een voorbeeld voordat u bevestigt.</li>
-            <li><strong>Gescrapete gegevens wissen</strong> &mdash; Verwijder alle gescrapete metadata van spellen, terwijl de ROM-bestandsvermeldingen behouden blijven. Handig om opnieuw te beginnen met scrapen. Het voorbeeld toont de betrokken spellen vóór uitvoering.</li>
+            <li><strong>Gescrapete gegevens wissen</strong> &mdash; Verwijdert wat het scrapen heeft ingevuld bij gescrapete games, inclusief de koppelingen naar hun afbeeldingen en video's, zodat u helemaal opnieuw kunt scrapen. Uw games blijven staan en hun titels gaan terug naar de bestandsnamen (een vergrendelde titel blijft). De afbeeldings- en videobestanden blijven op schijf, tenzij u <strong>Verwijder ook de afbeeldings- en videobestanden</strong> aanvinkt. Voorbeeld toont hoeveel games erdoor worden geraakt.</li>
             <li><strong>CLZ-importen wissen</strong> &mdash; Verwijder alle CLZ Games-importvermeldingen (alleen-metadatavermeldingen zonder ROM-bestanden).</li>
         </ul>
 
@@ -1834,7 +1831,7 @@
         <ul>
             <li>Een bulkscrape zoekt op de bestandsnaam van de ROM, dus een slecht benoemd bestand vindt de verkeerde game. Hernoem het bestand, of scrape de game op zijn eigen pagina met een betere zoektitel en kies het juiste resultaat.</li>
             <li>Vink in het venster Game bewerken <strong>Deze titel behouden bij scrapen</strong> aan, zodat latere scrapes de naam met rust laten.</li>
-            <li>Verhoog voor veel games de <strong>Minimale overeenkomstscore</strong> bij Instellingen &rarr; Scrapen &rarr; Scraper &rarr; Overeenkomstfilter bij bulkscrapen.</li>
+            <li>Kies voor veel games <strong>Strikt</strong> bij Instellingen &rarr; Scrapen &rarr; Scraper &rarr; Overeenkomstfilter bij bulkscrapen.</li>
         </ul>
 
         <h4>Een scrape vervangt een slechte afbeelding niet</h4>
@@ -1859,7 +1856,7 @@
         </ul>
 
         <h4>Veel games "Mislukt"</h4>
-        <p>Mislukt betekent meestal dat geen enkel resultaat dichtbij genoeg was om op te slaan. Verlaag de <strong>Minimale overeenkomstscore</strong> of <strong>Minimale titelkwaliteit</strong> bij Instellingen &rarr; Scrapen &rarr; Scraper &rarr; Overeenkomstfilter bij bulkscrapen, en controleer de bestandsnamen. De Logviewer toont elke game waarvoor geen overeenkomst werd gevonden.</p>
+        <p>Mislukt betekent meestal dat geen enkel resultaat dichtbij genoeg was om op te slaan. Kies <strong>Los</strong> bij Instellingen &rarr; Scrapen &rarr; Scraper &rarr; Overeenkomstfilter bij bulkscrapen en controleer de bestandsnamen. De Logviewer toont elke game waarvoor geen overeenkomst werd gevonden.</p>
 
         <h4>"A scrape for &hellip; is already running"</h4>
         <p>Dat systeem wordt al in dezelfde modus gescrapet. Wacht erop, of annuleer het. Een scrape van een ander systeem wacht in de rij en start vanzelf.</p>
@@ -1893,7 +1890,7 @@
         <p><strong>Spelen</strong> start de emulator op de computer waarop RetroDB draait, niet op het apparaat waarop je erop drukte.</p>
 
         <h4>"Emulatorprogramma niet gevonden in het PATH"</h4>
-        <p>Bewerk op de pagina Emulators, onder <strong>Geregistreerde emulators</strong>, de emulator en vul <strong>Eigen programmapad</strong> in met de locatie van het programma. Of voeg de map waarin het staat toe onder <strong>Emulatormappen</strong>. Gebruik voor RetroArch <strong>Automatisch detecteren</strong> op de RetroArch-kaart en daarna <strong>Opslaan</strong>.</p>
+        <p>Bewerk op de pagina Emulators, onder <strong>Geregistreerde emulators</strong>, de emulator en vul <strong>Locatie van het programma</strong> in met de locatie van het programma. Of voeg de map waarin het staat toe onder <strong>Emulatormappen</strong>. Gebruik voor RetroArch <strong>Automatisch detecteren</strong> op de RetroArch-kaart en daarna <strong>Opslaan</strong>.</p>
 
         <h4>"Geen emulator ingesteld voor systeem &hellip;" of "De emulator &hellip; staat uit"</h4>
         <p>Kies onder <strong>Koppeling per systeem</strong> op de pagina Emulators een emulator voor het systeem, of zet de emulator aan onder <strong>Geregistreerde emulators</strong>. Staat een game op een emulator die niet meer bestaat, wis die keuze dan in het venster Game bewerken.</p>
@@ -1943,7 +1940,7 @@
 
         <h4>"PSN-authenticatie is mislukt"</h4>
         <ul>
-            <li>Sony accepteert je opgeslagen NPSSO-token niet meer. Haal een nieuwe op met de stappen bij Instellingen &rarr; Account &rarr; Mijn profiel &rarr; PlayStation Network en druk dan op <strong>Opslaan &amp; verbinding testen</strong>.</li>
+            <li>Sony accepteert je opgeslagen NPSSO-token niet meer. Haal een nieuwe op met de stappen bij Instellingen &rarr; Account &rarr; Mijn profiel &rarr; PlayStation Network en druk dan op <strong>Mijn profiel opslaan</strong>.</li>
             <li>RetroDB houdt de aanmelding zelf in stand zolang Sony het token accepteert. Wil je een token vervangen dat nog werkt, meld je dan eerst af bij PlayStation.</li>
         </ul>
 

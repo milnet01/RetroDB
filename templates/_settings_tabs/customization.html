@@ -3,191 +3,21 @@
     {% call tab_subnav('customization') %}
         {% set _is_admin = has_perm('manage_settings') %}
         {{ subnav_link('controllers', '🎮 ' ~ _('Controllers'), active=True) }}
-        {{ subnav_link('controllers-defaults', '⚙️ ' ~ _('System Defaults')) }}
-        {{ subnav_link('controllers-add', '➕ ' ~ _('Add Controller')) }}
-        {{ subnav_link('controllers-library', '📚 ' ~ _('Library')) }}
         {% if _is_admin %}{{ subnav_link('logos', '🖼️ ' ~ _('Logos')) }}{% endif %}
     {% endcall %}
 
-    <!-- Controller Management -->
+    <!-- Controllers: their own page (PASS-59-311) -->
     <section class="card mb-xl" id="controllers">
     <div class="card-header">
-        <h2 class="card-title">🎮 {{ _('Controller Management') }}</h2>
+        <h2 class="card-title">🎮 {{ _('Controllers') }}</h2>
     </div>
     <div class="card-body">
-        <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
-            {{ _('Manage controllers and assign default controllers to each system. The default controller will automatically appear for all games in that system.') }}
-        </p>
-        
-        <!-- System Default Controllers Section -->
-        <div id="controllers-defaults"></div>
-        <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
-            <span>⚙️</span> {{ _('System Default Controllers') }}
-        </h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-            {{ _('Assign a default controller to each system. Games will inherit this controller unless manually changed.') }}
+            {{ _('Choose the controller each system shows by default, add your own controllers and edit the controller library.') }}
         </p>
-        <div style="margin-bottom: var(--spacing-lg); display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
-            <button type="button" data-on-click="autoAssignDefaultControllers" class="btn btn-primary" id="autoAssignBtn">
-                <span class="btn-icon">🎯</span>
-                {{ _('Auto-Assign Defaults') }}
-            </button>
-            <span class="text-muted" style="font-size: 0.85rem; align-self: center;">
-                {{ _('Automatically assigns appropriate controllers to all systems based on hardware type') }}
-            </span>
-        </div>
-        <div id="autoAssignResult" style="margin-bottom: var(--spacing-lg); display: none;"></div>
-        
-        <!-- System Controller Assignments - Wrapped with sticky nav -->
-        <div class="system-controllers-wrapper" id="systemControllersWrapper">
-            <!-- Sticky Navigation -->
-            <div class="system-controllers-sticky-nav" id="systemControllersStickyNav" data-sticky-nav data-sticky-scope="systemControllersWrapper">
-                <span class="sticky-nav-label">{{ _('Jump to:') }}</span>
-                <div class="sticky-nav-letters" id="systemControllersNavLetters">
-                    <!-- Letters populated by JavaScript -->
-                </div>
-            </div>
-            
-            <!-- System Controller Grid -->
-            <div class="system-controller-grid" id="systemControllersGrid">
-                <!-- Populated by JavaScript -->
-            </div>
-        </div>
-        
-        <!-- Add New Controller Section -->
-        <div id="controllers-add"></div>
-        <h3 class="section-title" style="margin-bottom: var(--spacing-md); margin-top: var(--spacing-xl);">
-            <span>➕</span> {{ _('Add New Controller') }}
-        </h3>
-        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-            {{ _('Add a custom controller to the library. Select one or more systems, or leave empty for "Universal" controllers.') }}
-        </p>
-        <div class="add-controller-form glass-panel" style="padding: var(--spacing-lg); margin-bottom: var(--spacing-xl);">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md);">
-                <div class="form-group">
-                    <label class="form-label" for="newControllerName">{{ _('Controller Name') }} <span style="color: var(--neon-red);">*</span></label>
-                    <input type="text" class="form-input" id="newControllerName" placeholder="{{ _('e.g., SNES Mouse') }}">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="newControllerSystemSelect">{{ _('Systems') }}</label>
-                    <div class="system-tags-container" id="newControllerSystemTags" style="display: flex; flex-wrap: wrap; gap: 6px; min-height: 38px; padding: 6px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-md); margin-bottom: 6px;">
-                        <!-- Tags added here -->
-                    </div>
-                    <select class="form-select" id="newControllerSystemSelect" data-on-change="addSystemToController" data-args='["new"]'>
-                        <option value="">{{ _('+ Add system...') }}</option>
-                        <!-- Populated by JavaScript -->
-                    </select>
-                    <span class="field-tip">{{ _('Leave empty for Universal controllers. Select multiple systems for shared controllers.') }}</span>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="newControllerManufacturer">{{ _('Manufacturer') }}</label>
-                    <input type="text" class="form-input" id="newControllerManufacturer"
-                           list="manufacturerSuggestions" placeholder="{{ _('e.g., Nintendo, Sony, or custom...') }}">
-                    <datalist id="manufacturerSuggestions">
-                        <option value="Nintendo">
-                        <option value="Sega">
-                        <option value="Sony">
-                        <option value="Atari">
-                        <option value="NEC">
-                        <option value="SNK">
-                        <option value="Microsoft">
-                        <option value="Commodore">
-                        <option value="Mattel">
-                        <option value="Coleco">
-                        <option value="Bandai">
-                        <option value="Third Party">
-                        <option value="Other">
-                    </datalist>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="newControllerYear">{{ _('Release Year') }}</label>
-                    <input type="number" class="form-input" id="newControllerYear" placeholder="{{ _('e.g., 1992') }}" min="1970" max="2030">
-                </div>
-            </div>
-            <div class="form-group" style="margin-top: var(--spacing-md);">
-                <label class="form-label" for="newControllerButtons">{{ _('Button Layout') }}</label>
-                <input type="text" class="form-input" id="newControllerButtons" placeholder="{{ _('e.g., D-Pad, A, B, Start, Select') }}">
-            </div>
-            <div class="form-group" style="margin-top: var(--spacing-md);">
-                <label class="form-label" for="newControllerDescription">{{ _('Description') }}</label>
-                <textarea class="form-input" id="newControllerDescription" rows="2" placeholder="{{ _('Brief description of the controller...') }}"></textarea>
-            </div>
-            <div style="margin-top: var(--spacing-lg);">
-                <button type="button" data-on-click="addNewController" class="btn btn-success">
-                    <span class="btn-icon">➕</span>
-                    {{ _('Add Controller') }}
-                </button>
-            </div>
-        </div>
-        
-        <!-- Controller Library Section -->
-        <div id="controllers-library"></div>
-        <h3 class="section-title" style="margin-bottom: var(--spacing-md);">
-            <span>📚</span> {{ _('Controller Library') }}
-        </h3>
-        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-            {{ _('All controllers in the database, sorted alphabetically by manufacturer. Click to expand details. You can delete custom controllers.') }}
-        </p>
-        
-        <div class="controller-library" id="controllerLibrary">
-            <!-- Populated by JavaScript -->
-        </div>
+        <a href="/controllers" class="btn btn-primary">🎮 {{ _('Open Controllers') }}</a>
     </div>
-</section>
-
-<!-- Edit Controller Modal -->
-<div class="modal-overlay" id="editControllerModal">
-    <div class="modal-content" style="max-width: 600px;" role="dialog" aria-modal="true" aria-labelledby="editControllerTitle">
-        <div class="modal-header">
-            <h2 id="editControllerTitle">✏️ {{ _('Edit Controller') }}</h2>
-            <button type="button" class="modal-close" data-on-click="closeEditControllerModal" aria-label="{{ _('Close') }}">×</button>
-        </div>
-        <div class="modal-body">
-            <input type="hidden" id="editControllerId">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-md);">
-                <div class="form-group">
-                    <label class="form-label" for="editControllerName">{{ _('Controller Name') }} <span style="color: var(--neon-red);">*</span></label>
-                    <input type="text" class="form-input" id="editControllerName" placeholder="{{ _('e.g., SNES Mouse') }}">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="editControllerSystemSelect">{{ _('Systems') }}</label>
-                    <div class="system-tags-container" id="editControllerSystemTags" style="display: flex; flex-wrap: wrap; gap: 6px; min-height: 38px; padding: 6px; background: var(--bg-darker); border: 1px solid var(--card-border); border-radius: var(--radius-md); margin-bottom: 6px;">
-                        <!-- Tags added here -->
-                    </div>
-                    <select class="form-select" id="editControllerSystemSelect" data-on-change="addSystemToController" data-args='["edit"]'>
-                        <option value="">{{ _('+ Add system...') }}</option>
-                        <!-- Populated by JavaScript -->
-                    </select>
-                    <span class="field-tip">{{ _('Leave empty for Universal controllers.') }}</span>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="editControllerManufacturer">{{ _('Manufacturer') }}</label>
-                    <input type="text" class="form-input" id="editControllerManufacturer"
-                           list="manufacturerSuggestions" placeholder="{{ _('e.g., Nintendo, Sony, or custom...') }}">
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="editControllerYear">{{ _('Release Year') }}</label>
-                    <input type="number" class="form-input" id="editControllerYear" placeholder="{{ _('e.g., 1992') }}" min="1970" max="2030">
-                </div>
-            </div>
-            <div class="form-group" style="margin-top: var(--spacing-md);">
-                <label class="form-label" for="editControllerButtons">{{ _('Button Layout') }}</label>
-                <input type="text" class="form-input" id="editControllerButtons" placeholder="{{ _('e.g., D-Pad, A, B, Start, Select') }}">
-            </div>
-            <div class="form-group" style="margin-top: var(--spacing-md);">
-                <label class="form-label" for="editControllerDescription">{{ _('Description') }}</label>
-                <textarea class="form-input" id="editControllerDescription" rows="2" placeholder="{{ _('Brief description of the controller...') }}"></textarea>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-on-click="closeEditControllerModal">{{ _('Cancel') }}</button>
-            <button type="button" class="btn btn-primary" data-on-click="saveControllerChanges">
-                <span class="btn-icon">💾</span>
-                {{ _('Save Changes') }}
-            </button>
-        </div>
-    </div>
-</div>
+    </section>
 
 <!-- System Logo Reference -->
 {% if has_perm('manage_settings') %}

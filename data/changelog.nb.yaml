@@ -1,10 +1,22 @@
 - version: 4.0.0
-  date: '2026-11-15'
+  date: '2026-11-16'
   tags:
+  - type: enhancement
+    label: 'Innstillinger er ryddigere. Dine egne valg står samlet under Innstillinger → Konto: Tema og språk (med den bevegelige bakgrunnen) og hvor lenge meldinger blir stående på skjermen, som nå gjelder hver person for seg. Bibliotek → Stier samler alle fire mappene under én Lagre. System → Server viser porten og hvor databasen ligger. Støtt utviklingen er flyttet til slutten av Hjelp-siden'
+  - type: enhancement
+    label: 'Kontrollere har fått en egen side. Innstillinger → Tilpasning → Åpne kontrollere går dit: sett standardkontrollerne for hvert system, legg til dine egne og rediger kontrollerbiblioteket'
+  - type: enhancement
+    label: 'Treffilter for masseskraping har tre enkle valg i stedet for et poengtall og tabellen for det: Streng, Normal og Løs. Normal er den gamle standarden. En innstilling du har laget selv tidligere, vises som Egendefinert til du velger en annen'
+  - type: enhancement
+    label: 'Min profil har én Lagre min profil-knapp i stedet for tre. Den sjekker et nytt PlayStation-token eller en ny Xbox-nøkkel mens den lagrer, og beholder PlayStation-tokenet ditt som fungerer hvis Sony avviser det nye. Endre passord sier nå at det må ha minst 12 tegn og ber om det nye passordet to ganger'
+  - type: fix
+    label: 'Enklere ord i Innstillinger. Min profil sier hva RetroAchievements-nøkkelen og passordinnloggingen hver gjør. API-nøkler sier at en persons egen RetroAchievements- eller Steam-nøkkel brukes først. TheGamesDBs nøkler heter Hovednøkkel og Reservenøkkel. Vinduet for å redigere en emulator sier Programplassering og Kommandolinjealternativer. Fjern skrapede data sier at bilde- og videofilene blir liggende på disken med mindre du huker av i ruten. KI-modelllistene viser ikke lenger priser, som var utdaterte'
+  - type: fix
+    label: 'Innstillinger kvitter seg med det som sto der to ganger eller ikke gjorde noe: Bibliotekstatistikk-kortet (Oversikt har det), Innstillinger-kopien av Skann trofeer (PS3-trofésiden har det), den egne knappen Importer systemlogoer (Oppdater systemlogoer kopierer nå ES-DEs logoer først) og seks lagrede innstillinger som ingenting brukte. En meldingstid på 0 sekunder avvises i stedet for å bli lagret i stillhet, og når du lagrer en ny ROM-mappe, står det ikke lenger at RetroDB må starte på nytt'
   - type: performance
     label: 'RetroDB er langt lettere for datamaskinen din. Cyberpunk-temaets bevegelige tåke holdt én prosessorkjerne helt opptatt så lenge en RetroDB-side var åpen; nå tegnes den av skjermkortet, og prosessoren merker det knapt. Den tegner også halvparten så mange bilder, noe som ser likt ut fordi tåken driver sakte'
   - type: feature
-    label: 'Bevegelige bakgrunner (tåke, regn, stjerner, støv) stopper nå når du ikke bruker RetroDB: når vinduet ikke er øverst, fanen er skjult eller det går ett minutt uten mus eller tastatur. De starter igjen i det du kommer tilbake. En ny bryter, Bevegelig bakgrunn, under Innstillinger → Bibliotek → Visning holder dem i ro på den datamaskinen'
+    label: 'Bevegelige bakgrunner (tåke, regn, stjerner, støv) stopper nå når du ikke bruker RetroDB: når vinduet ikke er øverst, fanen er skjult eller det går ett minutt uten mus eller tastatur. De starter igjen i det du kommer tilbake. En ny bryter, Bevegelig bakgrunn, under Innstillinger → Konto → Tema og språk holder dem i ro på den datamaskinen'
   - type: performance
     label: 'Sidetitler beholder gløden, men pulserer ikke lenger hele tiden, og de flimrende «glitch»-titlene i konsoll- og spilllistene flimrer bare mens musen er over dem'
   - type: feature
@@ -16,13 +28,11 @@
   - type: fix
     label: 'Legg til bruker ber nå om den nye personens første passord (12 tegn eller mer), og personen velger sitt eget første gang vedkommende logger inn. Før fikk hver nye konto i det stille det samme passordet, «changeme», som hvem som helst kunne bruke til eieren logget inn'
   - type: fix
-    label: 'Innstillinger viser hver person bare det rollen deres kan endre. Viewere og spillere ser profilen sin, tidssone, tema, språk, statistikk og trofeer; editorer ser også Bonusplater og Kontrollere. Før så de administratorinnstillinger der Lagre-knappen ble avvist, og noen viste feil verdier'
+    label: 'Innstillinger viser hver person bare det rollen deres kan endre. Viewere og spillere ser Konto-fanen; editorer ser også Bonusplater og Kontrollere. Før så de administratorinnstillinger der Lagre-knappen ble avvist, og noen viste feil verdier'
   - type: fix
     label: 'Innstillinger → System har ikke lenger knappen Clear Stuck RA Sync. Den sa at den hadde fjernet synkroniseringen selv når den ikke hadde det; stopp en RetroAchievements-synkronisering med knappene på fremdriftsmeldingen'
   - type: fix
-    label: 'Innstillinger → Data viser og skanner nå din egen RPCS3-trofémappe når du har satt en, i stedet for å gråe ut Skann trofeer'
-  - type: fix
-    label: 'Små rettelser i Innstillinger: Tilbakestill til standard i scraperlisten sier at du må trykke Lagre innstillinger for å beholde det; en ny installasjon viser ScreenScraper som påslått, slik den faktisk er; hjelpeteksten for Steam ID ber om det 17-sifrede tallet; Emulatorer-siden nevner ikke lenger en Legg til-knapp som den ikke har; Oppsettsveiviseren skjuler API-nøklene dine mens du skriver dem'
+    label: 'Små rettelser i Innstillinger: Tilbakestill til standard i scraperlisten sier at du må trykke Lagre skraper-innstillinger for å beholde det; en ny installasjon viser ScreenScraper som påslått, slik den faktisk er; hjelpeteksten for Steam ID ber om det 17-sifrede tallet; Emulatorer-siden nevner ikke lenger en Legg til-knapp som den ikke har; Oppsettsveiviseren skjuler API-nøklene dine mens du skriver dem'
   - type: enhancement
     label: 'Hjelpehåndboken har nå et søkefelt. Skriv et ord for å se bare de delene av håndboken som nevner det, med ordet markert. Det ser bort fra aksenter og virker på alle språk'
   - type: fix
@@ -64,7 +74,7 @@
   - type: fix
     label: 'Bibliotekets filtre samsvarer nå med hele verdier. Velger du sjangeren «Action», vises ikke lenger også «Action-eventyr»-spill, så resultatet stemmer med tallet ved siden av. Taggelistene på en spillside og Lignende spill samsvarer på samme måte'
   - type: security
-    label: 'Innstillinger → Min profil sender ikke lenger den lagrede RetroAchievements-nøkkelen, PSN-tokenet eller Steam-nøkkelen din til siden. Hver boks viser bare de fire siste tegnene, slik nøklene i Skraping-fanen allerede gjorde. Lagrer du uten å skrive inn på nytt, beholdes den lagrede nøkkelen, og PSN-knappen «Lagre & test tilkobling» tester det lagrede tokenet'
+    label: 'Innstillinger → Min profil sender ikke lenger den lagrede RetroAchievements-nøkkelen, PSN-tokenet eller Steam-nøkkelen din til siden. Hver boks viser bare de fire siste tegnene, slik nøklene i Skraping-fanen allerede gjorde. Lagrer du uten å skrive inn på nytt, beholdes den lagrede nøkkelen'
   - type: fix
     label: 'Loggviser-siden åpner ikke lenger med «Ugyldig loggfil». Den listet hjelpelogger den ikke ville vise, og åpnet en av dem først; nå lister den bare logger den kan åpne'
   - type: fix

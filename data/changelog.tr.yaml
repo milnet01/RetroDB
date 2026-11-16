@@ -1,10 +1,22 @@
 - version: 4.0.0
-  date: '2026-11-15'
+  date: '2026-11-16'
   tags:
+  - type: enhancement
+    label: 'Ayarlar daha derli toplu. Kendi seçimleriniz artık Ayarlar → Hesap altında bir arada: Tema ve Dil (hareketli arka planla birlikte) ve mesajların ekranda ne kadar kalacağı, ki bu artık herkese özel. Kütüphane → Yollar dört klasörün hepsini tek bir Kaydet düğmesi altında tutar. Sistem → Sunucu bağlantı noktasını ve veritabanının yerini gösterir. Geliştirmeyi Destekle, Yardım sayfasının sonuna taşındı'
+  - type: enhancement
+    label: 'Kontrolcülerin artık kendi sayfası var. Ayarlar → Özelleştirme → Kontrolcüleri Aç oraya gider: her sistemin varsayılan kontrolcülerini ayarlayın, kendi kontrolcülerinizi ekleyin ve kontrolcü kütüphanesini düzenleyin'
+  - type: enhancement
+    label: 'Toplu Kazıma Eşleşme Filtresi, bir puan sayısı ve tablosu yerine üç sade seçenek sunuyor: Katı, Normal ve Esnek. Normal eski varsayılandır. Daha önce kendi yaptığınız bir ayar, başka bir seçim yapana kadar Özel olarak görünür'
+  - type: enhancement
+    label: 'Profilim''de üç yerine tek bir Profilimi Kaydet düğmesi var. Kaydederken yeni bir PlayStation belirtecini veya Xbox anahtarını denetler, Sony yenisini reddederse çalışan PlayStation belirtecinizi korur. Şifreyi Değiştir artık en az 12 karakter gerektiğini söylüyor ve yeni şifreyi iki kez istiyor'
+  - type: fix
+    label: 'Ayarlarda daha sade sözler. Profilim, RetroAchievements anahtarının ve şifreyle girişin ayrı ayrı ne işe yaradığını anlatıyor. API Anahtarları, kişinin kendi RetroAchievements veya Steam anahtarının önce kullanıldığını söylüyor. TheGamesDB anahtarlarının adı Ana anahtar ve Yedek anahtar oldu. Emülatörü düzenle penceresi Program konumu ve Komut satırı seçenekleri diyor. Kazınan Verileri Temizle, kutuyu işaretlemedikçe resim ve video dosyalarının diskte kaldığını söylüyor. Yapay zekâ model listeleri artık eskimiş fiyatları göstermiyor'
+  - type: fix
+    label: 'Ayarlar, iki kez bulunan ya da hiçbir işe yaramayan şeylerden kurtuldu: Kütüphane İstatistikleri kartı (Kontrol Paneli''nde var), Ayarlar''daki Kupaları Tara kopyası (PS3 kupaları sayfasında var), ayrı Sistem Logolarını İçe Aktar düğmesi (Sistem Logolarını Yenile artık önce ES-DE''nin logolarını kopyalıyor) ve hiçbir şeyin kullanmadığı altı kayıtlı ayar. 0 saniyelik mesaj süresi sessizce kaydedilmek yerine reddediliyor ve yeni bir ROM klasörünü kaydetmek artık RetroDB''nin yeniden başlatılması gerektiğini söylemiyor'
   - type: performance
     label: 'RetroDB bilgisayarınızı artık çok daha az yoruyor. Cyberpunk temasının hareketli sisi, herhangi bir RetroDB sayfası açık olduğu sürece bir işlemci çekirdeğini tamamen meşgul ediyordu; artık onu ekran kartı çiziyor ve işlemci neredeyse hiç fark etmiyor. Ayrıca yarı sayıda kare çiziyor; sis yavaş aktığı için bu aynı görünüyor'
   - type: feature
-    label: 'Hareketli arka planlar (sis, yağmur, yıldızlar, toz) artık RetroDB''yi kullanmadığınızda duruyor: penceresi önde olmadığında, sekmesi gizli olduğunda ya da fare veya klavye kullanılmadan bir dakika geçtiğinde. Geri döndüğünüz anda yeniden başlıyorlar. Ayarlar → Kütüphane → Görüntü altındaki yeni Hareketli arka plan anahtarı onları o bilgisayarda hareketsiz tutar'
+    label: 'Hareketli arka planlar (sis, yağmur, yıldızlar, toz) artık RetroDB''yi kullanmadığınızda duruyor: penceresi önde olmadığında, sekmesi gizli olduğunda ya da fare veya klavye kullanılmadan bir dakika geçtiğinde. Geri döndüğünüz anda yeniden başlıyorlar. Ayarlar → Hesap → Tema ve Dil altındaki yeni Hareketli arka plan anahtarı onları o bilgisayarda hareketsiz tutar'
   - type: performance
     label: 'Sayfa başlıkları parıltısını korur ama artık sürekli atmaz; konsol ve oyun listelerindeki titreyen "glitch" başlıkları yalnızca fare üzerlerindeyken titrer'
   - type: feature
@@ -16,13 +28,11 @@
   - type: fix
     label: 'Kullanıcı Ekle artık yeni kişinin ilk şifresini soruyor (12 karakter veya daha uzun) ve kişi ilk girişte kendi şifresini seçiyor. Önceden her yeni hesaba sessizce aynı şifre, "changeme", veriliyordu ve sahibi giriş yapana kadar herkes onu kullanabiliyordu'
   - type: fix
-    label: 'Ayarlar herkese yalnızca rolünün değiştirebildiklerini gösterir. Görüntüleyiciler ve oyuncular profillerini, saat dilimini, temayı, dili, istatistikleri ve kupaları görür; düzenleyiciler ayrıca Bonus Diskler ve Kontrolcüler''i görür. Önceden Kaydet düğmesi reddedilen yönetici ayarlarını görüyorlardı ve bazıları yanlış değerler gösteriyordu'
+    label: 'Ayarlar herkese yalnızca rolünün değiştirebildiklerini gösterir. Görüntüleyiciler ve oyuncular Hesap sekmesini görür; düzenleyiciler ayrıca Bonus Diskler ve Kontrolcüler''i görür. Önceden Kaydet düğmesi reddedilen yönetici ayarlarını görüyorlardı ve bazıları yanlış değerler gösteriyordu'
   - type: fix
     label: 'Ayarlar → Sistem artık takılmış RA senkronizasyonunu temizleme düğmesini içermiyor. Düğme, temizlenmediği hâlde senkronizasyonu temizlediğini söylüyordu; bir RetroAchievements senkronizasyonunu ilerleme bildirimindeki düğmelerle durdurun'
   - type: fix
-    label: 'Ayarlar → Veri artık kendi RPCS3 kupa klasörünüzü ayarladıysanız onu gösterir ve tarar; Kupaları Tara düğmesini gri bırakmaz'
-  - type: fix
-    label: 'Küçük Ayarlar düzeltmeleri: Kazıyıcı listesindeki Varsayılana Sıfırla, saklamak için Ayarları Kaydet''e basmanızı söyler; yeni bir kurulum ScreenScraper''ı gerçekte olduğu gibi açık gösterir; Steam Kimliği yardımı 17 haneli sayıyı ister; Emülatörler sayfası artık sahip olmadığı bir Ekle düğmesinden söz etmez; Kurulum Sihirbazı API anahtarlarınızı yazarken gizler'
+    label: 'Küçük Ayarlar düzeltmeleri: Kazıyıcı listesindeki Varsayılana Sıfırla, saklamak için Kazıyıcı Ayarlarını Kaydet''e basmanızı söyler; yeni bir kurulum ScreenScraper''ı gerçekte olduğu gibi açık gösterir; Steam Kimliği yardımı 17 haneli sayıyı ister; Emülatörler sayfası artık sahip olmadığı bir Ekle düğmesinden söz etmez; Kurulum Sihirbazı API anahtarlarınızı yazarken gizler'
   - type: enhancement
     label: 'Yardım kılavuzunda artık bir arama kutusu var. Bir sözcük yazın; kılavuzun yalnızca o sözcüğü geçen bölümleri, sözcük işaretli olarak görünür. Vurguları yok sayar ve her dilde çalışır'
   - type: fix
@@ -64,7 +74,7 @@
   - type: fix
     label: 'Kütüphane filtreleri artık değerlerin tamamını eşleştiriyor. "Aksiyon" türünü seçmek artık "Aksiyon-Macera" oyunlarını da göstermiyor, böylece sonuç yanındaki sayıyla aynı oluyor. Bir oyun sayfasındaki etiket listeleri ve Benzer Oyunlar da aynı şekilde eşleşiyor'
   - type: security
-    label: 'Ayarlar → Profilim artık kayıtlı RetroAchievements anahtarınızı, PSN belirtecinizi veya Steam anahtarınızı sayfaya göndermiyor. Her kutu, Kazıma sekmesindeki anahtarlarda olduğu gibi yalnızca son dört karakteri gösteriyor. Yeniden yazmadan kaydetmek kayıtlı anahtarı korur ve PSN "Kaydet ve Bağlantıyı Test Et" düğmesi kayıtlı belirteci test eder'
+    label: 'Ayarlar → Profilim artık kayıtlı RetroAchievements anahtarınızı, PSN belirtecinizi veya Steam anahtarınızı sayfaya göndermiyor. Her kutu, Kazıma sekmesindeki anahtarlarda olduğu gibi yalnızca son dört karakteri gösteriyor. Yeniden yazmadan kaydetmek kayıtlı anahtarı korur'
   - type: fix
     label: 'Günlük Görüntüleyici artık "Geçersiz günlük dosyası" ile açılmıyor. Göstermeyeceği yardımcı günlükleri listeliyor ve önce bunlardan birini açıyordu; artık yalnızca açabildiği günlükleri listeliyor'
   - type: fix

@@ -1,10 +1,22 @@
 - version: 4.0.0
-  date: '2026-11-15'
+  date: '2026-11-16'
   tags:
+  - type: enhancement
+    label: 'Les Paramètres sont mieux rangés. Vos choix personnels sont réunis sous Paramètres → Compte : Thème et langue (avec l''arrière-plan animé) et la durée d''affichage des messages, qui est maintenant propre à chaque personne. Bibliothèque → Chemins réunit les quatre dossiers sous un seul Enregistrer. Système → Serveur affiche le port et l''emplacement de la base de données. Soutenir le développement est passé à la fin de la page Aide'
+  - type: enhancement
+    label: 'Les manettes ont leur propre page. Paramètres → Personnalisation → Ouvrir les manettes y mène : réglez les manettes par défaut de chaque système, ajoutez les vôtres et modifiez la bibliothèque de manettes'
+  - type: enhancement
+    label: 'Le Filtrage des correspondances en récupération en masse propose trois choix simples au lieu d''un nombre de score et de son tableau : Strict, Normal et Souple. Normal est l''ancienne valeur par défaut. Un réglage que vous aviez fait vous-même s''affiche comme Personnalisé jusqu''à ce que vous en choisissiez un autre'
+  - type: enhancement
+    label: 'Mon profil a un seul bouton Enregistrer mon profil au lieu de trois. Il vérifie un nouveau jeton PlayStation ou une nouvelle clé Xbox à l''enregistrement, et garde votre jeton PlayStation qui fonctionne si Sony refuse le nouveau. Changer le mot de passe indique maintenant qu''il faut au moins 12 caractères et demande le nouveau mot de passe deux fois'
+  - type: fix
+    label: 'Des mots plus simples dans les Paramètres. Mon profil dit à quoi servent la clé RetroAchievements et la connexion par mot de passe. Clés API indique que la clé RetroAchievements ou Steam personnelle d''une personne est utilisée en premier. Les clés TheGamesDB s''appellent Clé principale et Clé de secours. La fenêtre Modifier l''émulateur dit Emplacement du programme et Options de ligne de commande. Effacer les données récupérées indique que les fichiers d''images et de vidéos restent sur le disque, sauf si vous cochez la case. Les listes de modèles d''IA n''affichent plus de prix, qui étaient dépassés'
+  - type: fix
+    label: 'Les Paramètres retirent ce qui était en double ou ne faisait rien : la carte des statistiques de la bibliothèque (le Tableau de bord l''a), la copie dans les Paramètres d''Analyser les trophées (la page des trophées PS3 l''a), le bouton séparé d''import des logos de systèmes (Actualiser les logos de systèmes copie maintenant d''abord les logos d''ES-DE) et six réglages enregistrés que rien n''utilisait. Une durée de message de 0 seconde est refusée au lieu d''être enregistrée sans rien dire, et enregistrer un nouveau dossier de ROM ne dit plus que RetroDB doit redémarrer'
   - type: performance
     label: 'RetroDB est beaucoup plus léger pour votre ordinateur. La brume animée du thème Cyberpunk occupait entièrement un cœur du processeur tant qu''une page de RetroDB restait ouverte ; c''est maintenant la carte graphique qui la dessine, et le processeur s''en aperçoit à peine. Elle dessine aussi deux fois moins d''images, ce qui a le même aspect car la brume dérive lentement'
   - type: feature
-    label: 'Les arrière-plans animés (brume, pluie, étoiles, poussière) se mettent maintenant en pause quand vous n''utilisez pas RetroDB : quand sa fenêtre n''est pas au premier plan, que son onglet est masqué, ou qu''une minute passe sans souris ni clavier. Ils repartent dès votre retour. Un nouvel interrupteur Arrière-plan animé sous Paramètres → Bibliothèque → Affichage les garde immobiles sur cet ordinateur'
+    label: 'Les arrière-plans animés (brume, pluie, étoiles, poussière) se mettent maintenant en pause quand vous n''utilisez pas RetroDB : quand sa fenêtre n''est pas au premier plan, que son onglet est masqué, ou qu''une minute passe sans souris ni clavier. Ils repartent dès votre retour. Un nouvel interrupteur Arrière-plan animé sous Paramètres → Compte → Thème et langue les garde immobiles sur cet ordinateur'
   - type: performance
     label: 'Les titres de page gardent leur halo mais ne pulsent plus en permanence, et les titres « glitch » clignotants des listes de consoles et de jeux ne clignotent que lorsque la souris les survole'
   - type: feature
@@ -16,13 +28,11 @@
   - type: fix
     label: 'Ajouter un utilisateur demande maintenant le premier mot de passe de la nouvelle personne (12 caractères ou plus), et elle choisit le sien à sa première connexion. Avant, chaque nouveau compte recevait discrètement le même mot de passe, « changeme », que n''importe qui pouvait utiliser jusqu''à la première connexion de son titulaire'
   - type: fix
-    label: 'Les Paramètres ne montrent à chacun que ce que son rôle peut modifier. Les lecteurs et les joueurs voient leur profil, le fuseau horaire, le thème, la langue, les statistiques et les trophées ; les éditeurs voient aussi Disques bonus et Manettes. Avant, ils voyaient des réglages d''administrateur dont le bouton d''enregistrement était ensuite refusé, certains avec de fausses valeurs'
+    label: 'Les Paramètres ne montrent à chacun que ce que son rôle peut modifier. Les lecteurs et les joueurs voient l''onglet Compte ; les éditeurs voient aussi Disques bonus et Manettes. Avant, ils voyaient des réglages d''administrateur dont le bouton d''enregistrement était ensuite refusé, certains avec de fausses valeurs'
   - type: fix
     label: 'Paramètres → Système n''a plus le bouton Clear Stuck RA Sync. Il disait avoir débloqué la synchronisation même quand ce n''était pas le cas ; arrêtez une synchronisation RetroAchievements avec les boutons de sa notification de progression'
   - type: fix
-    label: 'Paramètres → Données affiche et analyse maintenant votre propre dossier de trophées RPCS3 si vous en avez défini un, au lieu de griser Analyser les trophées'
-  - type: fix
-    label: 'Petites corrections des Paramètres : Rétablir les valeurs par défaut sur la liste des scrapers indique d''appuyer sur Enregistrer les paramètres pour le garder ; une nouvelle installation montre ScreenScraper activé, comme il l''est vraiment ; l''aide de l''ID Steam demande le numéro à 17 chiffres ; la page Émulateurs ne mentionne plus un bouton Ajouter qu''elle n''a pas ; l''Assistant de configuration masque vos clés d''API pendant que vous les saisissez'
+    label: 'Petites corrections des Paramètres : Rétablir les valeurs par défaut sur la liste des scrapers indique d''appuyer sur Enregistrer les paramètres du scraper pour le garder ; une nouvelle installation montre ScreenScraper activé, comme il l''est vraiment ; l''aide de l''ID Steam demande le numéro à 17 chiffres ; la page Émulateurs ne mentionne plus un bouton Ajouter qu''elle n''a pas ; l''Assistant de configuration masque vos clés d''API pendant que vous les saisissez'
   - type: enhancement
     label: 'Le manuel a maintenant une zone de recherche. Saisissez un mot pour ne voir que les parties du manuel qui le mentionnent, avec le mot surligné. Elle ignore les accents et fonctionne dans toutes les langues'
   - type: fix
@@ -64,7 +74,7 @@
   - type: fix
     label: 'Les filtres de la Bibliothèque comparent désormais des valeurs entières. Choisir le genre « Action » n''affiche plus aussi les jeux « Action-Aventure », donc le résultat correspond au nombre affiché à côté. Les listes d''étiquettes de la page d''un jeu et Jeux similaires fonctionnent de la même façon'
   - type: security
-    label: 'Paramètres → Mon profil n''envoie plus à la page votre clé RetroAchievements, votre jeton PSN ou votre clé Steam enregistrés. Chaque champ n''affiche que ses quatre derniers caractères, comme le faisaient déjà les clés de l''onglet Récupération. Enregistrer sans retaper conserve la clé enregistrée, et le bouton PSN « Enregistrer & Tester la connexion » teste le jeton enregistré'
+    label: 'Paramètres → Mon profil n''envoie plus à la page votre clé RetroAchievements, votre jeton PSN ou votre clé Steam enregistrés. Chaque champ n''affiche que ses quatre derniers caractères, comme le faisaient déjà les clés de l''onglet Récupération. Enregistrer sans retaper conserve la clé enregistrée,'
   - type: fix
     label: 'La Visionneuse de journaux ne s''ouvre plus sur « Fichier journal invalide ». Elle listait des journaux auxiliaires qu''elle n''affichait pas, et ouvrait l''un d''eux en premier ; elle ne liste plus que les journaux qu''elle peut ouvrir'
   - type: fix

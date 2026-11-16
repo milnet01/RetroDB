@@ -443,9 +443,9 @@
         <ol>
             <li><a href="https://api.thegamesdb.net/key.php" target="_blank" rel="noopener noreferrer">api.thegamesdb.net/key.php</a> adresine gidin</li>
             <li>API anahtarları isteyin (ücretsiz, manuel olarak onaylanır) &mdash; bir <strong>Public</strong> ve <strong>Private</strong> anahtar alacaksınız</li>
-            <li>Her iki anahtarı da Ayarlar &rarr; API Anahtarları &rarr; TheGamesDB bölümüne girin</li>
-            <li><strong>Public anahtar</strong> (IP başına hız sınırı), veri çekme için birincil anahtar olarak kullanılır</li>
-            <li><strong>Private anahtar</strong> (paylaşılan aylık havuz), public anahtar başarısız olursa yedek olarak kullanılır</li>
+            <li>Ayarlar &rarr; Kazınıyor &rarr; API Anahtarları bölümünde, public anahtarı <strong>TheGamesDB &mdash; Ana anahtar</strong> kutusuna, private anahtarı <strong>TheGamesDB &mdash; Yedek anahtar</strong> kutusuna yazın</li>
+            <li>Ana anahtar ilk olarak kullanılır; her internet bağlantısının kendi hakkı vardır</li>
+            <li>Ana anahtar tükenince yedek anahtar kullanılır; ayda yaklaşık 6.000 isteğe izin verir</li>
         </ol>
 
         <h4>IGDB (Twitch üzerinden)</h4>
@@ -492,7 +492,7 @@
         <p><em>Steam kütüphanesi içe aktarma ve başarım takibi için kullanılır.</em></p>
 
         <h4>Xbox Live</h4>
-        <p>Xbox, RetroDB'ye ücretsiz bir hizmet olan OpenXBL üzerinden ulaşır. Herkes kendi anahtarını kullanır: <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> adresinde Xbox hesabınızla oturum açın, API anahtarınızı kopyalayın ve Ayarlar &rarr; Profilim &rarr; Xbox bölümüne yapıştırın. <strong>Kaydet ve Bağlantıyı Test Et</strong> anahtarı denetler ve gamertag'inizi gösterir. Ücretsiz anahtar saatte 150 isteğe izin verir.</p>
+        <p>Xbox, RetroDB'ye ücretsiz bir hizmet olan OpenXBL üzerinden ulaşır. Herkes kendi anahtarını kullanır: <a href="https://xbl.io" target="_blank" rel="noopener noreferrer">xbl.io</a> adresinde Xbox hesabınızla oturum açın, API anahtarınızı kopyalayın ve Ayarlar &rarr; Hesap &rarr; Profilim &rarr; Xbox bölümüne yapıştırın. <strong>Profilimi Kaydet</strong> anahtarı denetler ve gamertag'inizi gösterir. Ücretsiz anahtar saatte 150 isteğe izin verir.</p>
 
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN, NPSSO çerez kimlik doğrulaması kullanır. Ayrıntılı kurulum talimatları için <a href="#trophies">Kupalar</a> bölümüne bakın.</p>
@@ -502,15 +502,15 @@
 
         <table class="data-table">
             <thead>
-                <tr><th>Sağlayıcı</th><th>Varsayılan Model</th><th>Fiyat (1M token başına Giriş / Çıkış)</th></tr>
+                <tr><th>Sağlayıcı</th><th>Varsayılan Model</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td><td>$0,10 / $0,40</td></tr>
-                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td><td>$0,15 / $0,60</td></tr>
-                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td><td>$0,10 / $0,50</td></tr>
+                <tr><td><strong>Google Gemini</strong></td><td>Gemini 2.5 Flash Lite</td></tr>
+                <tr><td><strong>OpenAI</strong></td><td>GPT-4o Mini</td></tr>
+                <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td></tr>
             </tbody>
         </table>
-        <p>Her sağlayıcı birden fazla model seviyesi sunar. En ucuz modeller, metadata ve müze içeriği için iyi çalışır. Tercih ettiğiniz sağlayıcıyı ve API anahtarını <strong>Ayarlar &rarr; Veri Çekme &rarr; API Anahtarları</strong> bölümünde yapılandırın.</p>
+        <p>Her sağlayıcı birkaç model sunar. Önerilen işaretli model, metadata ve müze içeriği için iyi çalışır; güncel fiyatlar için her sağlayıcının kendi sitesine bakın. Tercih ettiğiniz sağlayıcıyı ve API anahtarını <strong>Ayarlar &rarr; Kazınıyor &rarr; API Anahtarları</strong> bölümünde yapılandırın.</p>
         <p>Gemini ve OpenAI her zaman web'de arama yapar. Claude yalnızca modelinin altındaki <strong>Claude web'de arama yapsın</strong> seçeneğini açtığınızda arama yapar. Arama olmadan Claude, satılan kopya gibi yayımlanmış bir rakam gerektiren her şeyi boş bırakır. Anthropic her arama için ücret alır: oyun başına en fazla 5 arama, en fazla 5 ABD senti.</p>
     </div>
 </section>
@@ -520,52 +520,49 @@
     <h2 class="card-title">Ayarlar</h2>
     <div class="card-body">
         <p>Ayarlar, her biri alt bölümler içeren sekmelerde düzenlenmiştir. Yöneticiler ayrıca kendi sayfasını açan bir Emülatörler sekmesi görür.</p>
-        <p>Herkes yalnızca rolünün değiştirebildiği ayarları görür. Bir görüntüleyici veya oyuncu Profilim, Saat Dilimi, Tema, Dil, kütüphane istatistikleri, kupalar ve Destek bölümlerini görür. Bir düzenleyici ayrıca Bonus Diskler ve Kontrolcüler bölümlerini görür. Geri kalan her şey yöneticiler içindir.</p>
+        <p>Herkes yalnızca rolünün değiştirebildiği ayarları görür. Bir görüntüleyici veya oyuncu Hesap sekmesini görür. Bir düzenleyici ayrıca Bonus Diskler ve Kontrolcüler bölümlerini görür. Geri kalan her şey yöneticiler içindir.</p>
 
         <h3>Hesap Sekmesi</h3>
         <ul>
-            <li><strong>Profilim</strong> &mdash; Avatar yükleme/kaldırma, görünen ad, rol bilgisi, şifre değiştirme</li>
-            <li><strong>RetroAchievements</strong> &mdash; RA entegrasyonu için kullanıcı adı ve API anahtarı</li>
-            <li><strong>PSN</strong> &mdash; PlayStation Network kupa senkronizasyonu için NPSSO çerezi</li>
+            <li><strong>Profilim</strong> &mdash; Avatarınız, RPCS3 kupa klasörünüz ve kendi RetroAchievements, PlayStation Network, Xbox ve Steam hesaplarınız. RetroAchievements kullanıcı adınız ve web API anahtarınız başarımlarınızı gösterir; şifrenizle oturum açmak oyun oynarken başarımları açar. Tek bir <strong>Profilimi Kaydet</strong> düğmesi kartı kaydeder ve yeni bir PlayStation belirtecini veya Xbox anahtarını denetler. <strong>Şifreyi Değiştir</strong> yeni şifreyi iki kez ister; en az 12 karakter gerekir.</li>
+            <li><strong>Tema ve Dil</strong> &mdash; Temanız, diliniz ve hareketli arka plan</li>
+            <li><strong>Bildirimler</strong> &mdash; Her tür mesajın ekranda ne kadar kalacağı, yalnızca sizin için</li>
             <li><strong>Saat Dilimi</strong> &mdash; Uygulama genelinde tarih görüntüleme için saat diliminizi ayarlayın</li>
             <li><strong>Kullanıcılar</strong> &mdash; Kullanıcı yönetimi: kullanıcı ekleme, düzenleme, silme ve rol atama (yalnızca yönetici)</li>
         </ul>
 
         <h3>Kütüphane Sekmesi</h3>
         <ul>
-            <li><strong>Yollar</strong> &mdash; ROM kütüphane yolu, veritabanı konumu</li>
-            <li><strong>Görünüm</strong> &mdash; Tema seçimi, kutu resmi stili (2D/3D), tercih edilen yaş derecelendirme sistemi, sayfa başına öğe sayısı</li>
+            <li><strong>Yollar</strong> &mdash; ROM kütüphane klasörü, ES-DE oyun listesi ve medya klasörleri ve hane genelindeki RPCS3 kupa klasörü, tek bir Kaydet düğmesi altında</li>
+            <li><strong>Görünüm</strong> &mdash; Kutu resmi stili (2D/3D) ve tercih edilen yaş derecelendirme sistemi, herkes için</li>
             <li><strong>ROM Adlandırma</strong> &mdash; Makale yerleşimi (başta/sonda "The"), bölge seçenekleri listesi, varsayılan bölge, adlandırma kuralları</li>
+            <li><strong>Bonus Diskler</strong> &mdash; Bonus diskleri bulun ve oyunlarına bağlayın</li>
             <li><strong>Yedekleme</strong> &mdash; Veritabanı yedekleri oluşturma ve geri yükleme</li>
         </ul>
 
         <h3>Veri Çekme Sekmesi</h3>
         <ul>
-            <li><strong>ES-DE</strong> &mdash; Yerel veri içe aktarma için ES-DE oyun listesi ve medya yolları</li>
-            <li><strong>Veri Çekici</strong> &mdash; Tek tek veri çekicileri etkinleştirme/devre dışı bırakma, sürükle-bırak öncelik sıralaması, veri çekici başına hız sınırı ayarları</li>
-            <li><strong>API Anahtarları</strong> &mdash; Tüm veri çekici kimlik bilgileri (TGDB, IGDB, RAWG, ScreenScraper), AI sağlayıcı seçimi ve model seçimi (Gemini, OpenAI, Claude)</li>
+            <li><strong>Kazıyıcı</strong> &mdash; Kazıyıcıları açın veya kapatın ve denendikleri sıraya sürükleyin. <strong>Toplu Kazıma Eşleşme Filtresi</strong> bir sonucun ne kadar yakın eşleşmesi gerektiğini belirler: <strong>Katı</strong> yalnızca tam başlıkları, <strong>Normal</strong> (varsayılan) doğru sistemde yakın bir başlığı, <strong>Esnek</strong> ise kısmi başlıkları da kabul eder. Önceki bir sürümde yaptığınız ayar, başka bir seçim yapana kadar <strong>Özel</strong> olarak görünür.</li>
+            <li><strong>API Anahtarları</strong> &mdash; Tüm kazıyıcı kimlik bilgileri (TheGamesDB, IGDB, RAWG, ScreenScraper), AI sağlayıcı seçimi ve model seçimi (Gemini, OpenAI, Claude) ve hane genelindeki RetroAchievements ile Steam anahtarları. Profilim bölümündeki kendi RetroAchievements anahtarınız önce kullanılır; hane anahtarı yalnızca anahtarı olmayan biri için kullanılır. Hane Steam anahtarı yalnızca kendi anahtarı olmayan bir yöneticiye hizmet eder.</li>
         </ul>
 
         <h3>Veri Sekmesi</h3>
         <ul>
-            <li><strong>İstatistikler</strong> &mdash; Kütüphane istatistikleri özeti (toplam oyun, sistem, depolama kullanımı)</li>
-            <li><strong>Kupalar</strong> &mdash; Yerel PS3 kupa taraması için RPCS3 kupa yolu yapılandırması</li>
-            <li><strong>Açılır Menüler</strong> &mdash; Bölge seçeneklerini ve uygulama genelinde kullanılan diğer açılır menü değerlerini özelleştirin</li>
+            <li><strong>Açılır Menüler</strong> &mdash; Tür, bakış açısı ve kayıt türü gibi listelerde sunulan değerleri özelleştirin</li>
             <li><strong>Normalleştirme</strong> &mdash; Tür ve mod normalleştirme kuralları &mdash; veri çekici çıktısını standartlaştırmak için özel eşlemeler ekleyin</li>
         </ul>
 
         <h3>Özelleştirme Sekmesi</h3>
         <ul>
-            <li><strong>Bildirimler</strong> &mdash; Bildirim zaman aşımı tercihleri (başarı, bilgi, uyarı, hata &mdash; her biri bağımsız olarak yapılandırılabilir)</li>
-            <li><strong>Kontrolcüler</strong> &mdash; Kontrolcü kütüphanesini yönetin, sistem başına varsayılan kontrolcüleri ayarlayın, özel kontrolcüler ekleyin. Varsayılan kontrolcüler, metadata çekimi sırasında veri çekilen/AI değerlerini geçersiz kılar.</li>
-            <li><strong>Logolar</strong> &mdash; Sistem logosu özelleştirme &mdash; sistem logolarını içe aktarın veya varsayılanlardan yenileyin</li>
+            <li><strong>Kontrolcüler</strong> &mdash; <strong>Kontrolcüleri Aç</strong> Kontrolcüler sayfasına gider. Orada her sistemin varsayılan kontrolcülerini ayarlar, kendi kontrolcülerinizi ekler ve kontrolcü kütüphanesini düzenlersiniz. Varsayılan kontrolcüler, metadata çekimi sırasında veri çekilen/AI değerlerini geçersiz kılar.</li>
+            <li><strong>Logolar</strong> &mdash; <strong>Sistem Logolarını Yenile</strong> ES-DE klasörünüzdeki yeni logoları kopyalar, sonra hangi sistemlerin hâlâ logosu olmadığını gösterir</li>
         </ul>
 
         <h3>Sistem Sekmesi</h3>
         <ul>
-            <li><strong>Bakım</strong> &mdash; Eksik ROM'ları temizleme, CLZ içe aktarmalarını veya kazınan verileri temizleme, hiçbir oyunun kullanmadığı medya dosyalarını silme, artık var olmayan medya dosyalarına bağlantıları temizleme ve veritabanını en iyileştirme</li>
+            <li><strong>Bakım</strong> &mdash; Eksik ROM'ları temizleme, CLZ içe aktarmalarını veya kazınan verileri temizleme, hiçbir oyunun kullanmadığı medya dosyalarını silme, artık var olmayan medya dosyalarına bağlantıları temizleme, veritabanını en iyileştirme ve dosya boyutlarını hesaplama</li>
             <li><strong>Güncellemeler</strong> &mdash; Yeni bir sürümü denetleme, indirme ve kurma</li>
-            <li><strong>Sunucu</strong> &mdash; RetroDB'yi yeniden başlatma veya kapatma</li>
+            <li><strong>Sunucu</strong> &mdash; RetroDB'yi yeniden başlatma veya kapatma, kullandığı bağlantı noktası (yeniden başlatınca adres değişir) ve veritabanının yeri</li>
             <li><strong>Günlükleme</strong> &mdash; Farklı kategoriler için günlük düzeyi ayarları ve günlük dosyaları</li>
         </ul>
 
@@ -1670,7 +1667,7 @@
         <ul>
             <li><strong>Eksik ROM'ları Temizle</strong> &mdash; ROM dosyaları artık diskte bulunmayan oyunlar için veritabanı girişlerini kaldırır. ROM dosyalarını yeniden düzenledikten veya sildikten sonra kullanışlıdır.</li>
             <li><strong>Sahipsiz Medya Temizliği</strong> &mdash; Diskte, veritabanında karşılık gelen bir referansı olmayan görsel dosyalarını (kutu resmi, ekran görüntüleri, fanart) bulur ve siler. Onaylamak için silmeden önce önizleyin.</li>
-            <li><strong>Veri Çekilen Verileri Temizle</strong> &mdash; ROM dosya girişlerini korurken oyunlardan tüm veri çekilen metadata'yı kaldırır. Veri çekmeye yeniden baştan başlamak için kullanışlıdır. Önizleme, çalıştırmadan önce etkilenen oyunları gösterir.</li>
+            <li><strong>Kazınan Verileri Temizle</strong> &mdash; Kazınan oyunlarda kazımanın doldurduğu her şeyi, resimlerine ve videolarına giden bağlantılar dahil, kaldırır; böylece sıfırdan yeniden kazıyabilirsiniz. Oyunlarınız kalır ve başlıkları dosya adlarına döner (kilitli bir başlık kalır). <strong>Resim ve video dosyalarını da sil</strong> kutusunu işaretlemezseniz resim ve video dosyaları diskte kalır. Önizleme kaç oyunu etkilediğini gösterir.</li>
             <li><strong>CLZ İçe Aktarmalarını Temizle</strong> &mdash; Tüm CLZ Games içe aktarma kayıtlarını kaldırır (ROM dosyası olmayan yalnızca metadata girişleri).</li>
         </ul>
 
@@ -1834,7 +1831,7 @@
         <ul>
             <li>Toplu kazıma ROM'un dosya adıyla arar; bu yüzden kötü adlandırılmış bir dosya yanlış oyunu bulur. Dosyayı yeniden adlandırın veya oyunu kendi sayfasında daha iyi bir arama başlığıyla kazıyıp doğru sonucu seçin.</li>
             <li>Oyunu Düzenle penceresinde <strong>Kazırken bu başlığı koru</strong> kutusunu işaretleyin; sonraki kazımalar adı olduğu gibi bırakır.</li>
-            <li>Çok sayıda oyun için Ayarlar &rarr; Kazıma &rarr; Kazıyıcı &rarr; Toplu Kazıma Eşleşme Filtresi altındaki <strong>En Düşük Eşleşme Puanı</strong>'nı yükseltin.</li>
+            <li>Çok sayıda oyun için Ayarlar &rarr; Kazınıyor &rarr; Kazıyıcı &rarr; Toplu Kazıma Eşleşme Filtresi altında <strong>Katı</strong>'yı seçin.</li>
         </ul>
 
         <h4>Kazıma kötü bir görseli değiştirmiyor</h4>
@@ -1859,7 +1856,7 @@
         </ul>
 
         <h4>Çok sayıda oyun "Başarısız"</h4>
-        <p>Başarısız genellikle hiçbir sonucun kaydedilecek kadar yakın olmadığı anlamına gelir. Ayarlar &rarr; Kazıma &rarr; Kazıyıcı &rarr; Toplu Kazıma Eşleşme Filtresi altındaki <strong>En Düşük Eşleşme Puanı</strong>'nı veya <strong>En Düşük Başlık Kalitesi</strong>'ni düşürün ve dosya adlarını kontrol edin. Günlük Görüntüleyici eşleşme bulunamayan her oyunu listeler.</p>
+        <p>Başarısız genellikle hiçbir sonucun kaydedilecek kadar yakın olmadığı anlamına gelir. Ayarlar &rarr; Kazınıyor &rarr; Kazıyıcı &rarr; Toplu Kazıma Eşleşme Filtresi altında <strong>Esnek</strong>'i seçin ve dosya adlarını kontrol edin. Günlük Görüntüleyici eşleşme bulunamayan her oyunu listeler.</p>
 
         <h4>"A scrape for &hellip; is already running"</h4>
         <p>O sistem zaten aynı kipte kazınıyor. Bitmesini bekleyin veya iptal edin. Başka bir sistemin kazıması sırada bekler ve kendiliğinden başlar.</p>
@@ -1893,7 +1890,7 @@
         <p><strong>Oyna</strong>, emülatörü düğmeye bastığınız cihazda değil, RetroDB'nin çalıştığı bilgisayarda başlatır.</p>
 
         <h4>"Emülatör programı PATH üzerinde bulunamadı"</h4>
-        <p>Emülatörler sayfasında <strong>Kayıtlı emülatörler</strong> altında emülatörü düzenleyin ve <strong>Özel çalıştırılabilir dosya yolu</strong> alanına programın konumunu yazın. Veya programın bulunduğu klasörü <strong>Emülatör klasörleri</strong> altına ekleyin. RetroArch için RetroArch kartında <strong>Otomatik algıla</strong>'yı, ardından <strong>Kaydet</strong>'i kullanın.</p>
+        <p>Emülatörler sayfasında <strong>Kayıtlı emülatörler</strong> altında emülatörü düzenleyin ve programın nerede olduğunu <strong>Program konumu</strong> alanına yazın. Veya programın bulunduğu klasörü <strong>Emülatör klasörleri</strong> altına ekleyin. RetroArch için RetroArch kartında <strong>Otomatik algıla</strong>'yı, ardından <strong>Kaydet</strong>'i kullanın.</p>
 
         <h4>"&hellip; sistemi için yapılandırılmış emülatör yok" veya "&hellip; emülatörü kapalı"</h4>
         <p>Emülatörler sayfasında <strong>Sistem başına eşleme</strong> altında sistem için bir emülatör seçin veya emülatörü <strong>Kayıtlı emülatörler</strong> altında açın. Artık var olmayan bir emülatöre ayarlanmış oyun için: o seçimi oyunun Oyunu Düzenle penceresinde temizleyin.</p>
@@ -1943,7 +1940,7 @@
 
         <h4>"PSN kimlik doğrulaması başarısız oldu"</h4>
         <ul>
-            <li>Sony artık kayıtlı NPSSO belirtecinizi kabul etmiyor. Ayarlar &rarr; Hesap &rarr; Profilim &rarr; PlayStation Network bölümündeki adımlarla yenisini alın, sonra <strong>Kaydet ve Bağlantıyı Test Et</strong>'e basın.</li>
+            <li>Sony artık kayıtlı NPSSO belirtecinizi kabul etmiyor. Ayarlar &rarr; Hesap &rarr; Profilim &rarr; PlayStation Network bölümündeki adımlarla yenisini alın, sonra <strong>Profilimi Kaydet</strong>'e basın.</li>
             <li>Sony belirteci kabul ettiği sürece RetroDB oturumu kendiliğinden sürdürür. Hâlâ çalışan bir belirteci değiştirmek için önce PlayStation'dan çıkış yapın.</li>
         </ul>
 
