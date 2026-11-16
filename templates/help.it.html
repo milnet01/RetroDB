@@ -38,14 +38,14 @@
     <a href="#settings" class="help-nav-item">Impostazioni</a>
     <a href="#emulators-play" class="help-nav-item">Emulatori e Gioco</a>
     <a href="#scraping" class="help-nav-item">Scraping</a>
-    <a href="#bulk-scrape" class="help-nav-item">Scraping in blocco</a>
-    <a href="#ai-fill" class="help-nav-item">Compilazione AI</a>
+    <a href="#bulk-scrape" class="help-nav-item">Scansione in blocco</a>
+    <a href="#ai-fill" class="help-nav-item">Riempimento AI</a>
     <a href="#filtering" class="help-nav-item">Filtri</a>
     <a href="#game-detail" class="help-nav-item">Dettagli gioco</a>
     <a href="#bulk-edit" class="help-nav-item">Modifica in blocco</a>
     <a href="#compare" class="help-nav-item">Confronto</a>
     <a href="#collections" class="help-nav-item">Collezioni</a>
-    <a href="#game-imports" class="help-nav-item">Importazione giochi</a>
+    <a href="#game-imports" class="help-nav-item">Importazioni giochi</a>
     <a href="#retroachievements" class="help-nav-item">RetroAchievements</a>
     <a href="#steam-achievements" class="help-nav-item">Steam</a>
     <a href="#xbox-achievements" class="help-nav-item">Xbox</a>
@@ -127,7 +127,7 @@
     <h2 class="card-title">Per iniziare</h2>
     <div class="card-body">
         <h3>Configurazione iniziale</h3>
-        <p>Al primo avvio, RetroDB mostra una <strong>Procedura guidata di configurazione</strong> che ti guida attraverso:</p>
+        <p>Al primo avvio, RetroDB mostra una <strong>Configurazione guidata</strong> che ti guida attraverso:</p>
         <ol>
             <li><strong>Account amministratore</strong> &mdash; Crea il tuo nome utente e password</li>
             <li><strong>Percorso della libreria</strong> &mdash; Imposta la cartella delle ROM</li>
@@ -225,9 +225,9 @@
             <li><strong>Analisi</strong> &mdash; Grafici e statistiche della collezione su 12 schede con opzioni di esportazione</li>
         </ul>
 
-        <h4>La mia collezione</h4>
+        <h4>La mia raccolta</h4>
         <ul>
-            <li><strong>Tag</strong> &mdash; Tag di gioco personalizzati con codifica a colori</li>
+            <li><strong>Etichette</strong> &mdash; Tag di gioco personalizzati con codifica a colori</li>
             <li><strong>Liste</strong> &mdash; Liste di giochi curate e con nome, ordinabili tramite trascinamento</li>
             <li><strong>Lista dei desideri</strong> &mdash; Tieni traccia dei giochi che vuoi acquisire con livelli di priorità</li>
             <li><strong>Trofei del collezionista</strong> &mdash; Traguardi di gamification per la tua collezione</li>
@@ -236,19 +236,19 @@
         <h4>Strumenti</h4>
         <ul>
             <li><strong>Strumenti ROM</strong> &mdash; Scanner di archivi, convertitore/verifica CHD, ricerca duplicati, organizzatore multi-disco, deduplicazione screenshot, ridimensionatore immagini, Report ROM</li>
-            <li><strong>Importazione giochi</strong> &mdash; Importa da CLZ, Steam, Xbox e PSN</li>
+            <li><strong>Importazioni giochi</strong> &mdash; Importa da CLZ, Steam, Xbox e PSN</li>
         </ul>
 
         <h4>Configurazione</h4>
         <ul>
             <li><strong>Impostazioni</strong> &mdash; Tutta la configurazione dell'app, in schede con sottosezioni</li>
-            <li><strong>Visualizzatore log</strong> &mdash; Sfoglia i log dell'applicazione in tutte le categorie</li>
+            <li><strong>Visualizzatore di log</strong> &mdash; Sfoglia i log dell'applicazione in tutte le categorie</li>
         </ul>
 
         <h4>Informazioni</h4>
         <ul>
             <li><strong>Museo</strong> &mdash; Enciclopedia interattiva dei sistemi di gioco con contenuti generati dall'AI</li>
-            <li><strong>Guida</strong> &mdash; Questa pagina di documentazione</li>
+            <li><strong>Aiuto</strong> &mdash; Questa pagina di documentazione</li>
             <li><strong>Changelog</strong> &mdash; Cronologia delle versioni</li>
         </ul>
 
@@ -362,7 +362,7 @@
             <li><strong>Sistemi totali</strong> &mdash; Numero di piattaforme nella tua libreria</li>
             <li><strong>Giochi totali</strong> &mdash; Conteggio totale dei giochi (esclusi i dischi bonus)</li>
             <li><strong>Metadati mancanti</strong> &mdash; Giochi di cui non è ancora stato eseguito lo scraping</li>
-            <li><strong>Completi</strong> &mdash; Giochi con metadati scrapati</li>
+            <li><strong>Completato</strong> &mdash; Giochi con metadati scrapati</li>
         </ul>
 
         <h3>Sezioni attività recente</h3>
@@ -371,7 +371,7 @@
             <li><strong>Continua a giocare</strong> &mdash; Giochi contrassegnati come "In corso"</li>
             <li><strong>Aggiunti di recente</strong> &mdash; Ultimi giochi aggiunti alla tua libreria</li>
             <li><strong>Visualizzati di recente</strong> &mdash; Giochi che hai aperto di recente</li>
-            <li><strong>Scrapati di recente</strong> &mdash; Giochi con metadati recuperati di recente</li>
+            <li><strong>Scansionati di recente</strong> &mdash; Giochi con metadati recuperati di recente</li>
         </ul>
 
         <h3>Azioni rapide</h3>
@@ -387,9 +387,9 @@
         <p>Se RetroDB si riavvia mentre dei processi in background sono in esecuzione (scraping in blocco, sincronizzazione RA, ridimensionamento immagini, ecc.), i processi interrotti appaiono in un banner di ripristino. Opzioni:</p>
         <ul>
             <li><strong>Riprendi</strong> &mdash; Riavvia un singolo processo interrotto</li>
-            <li><strong>Riprendi tutti</strong> &mdash; Riavvia tutti i processi interrotti</li>
+            <li><strong>Riprendi tutto</strong> &mdash; Riavvia tutti i processi interrotti</li>
             <li><strong>Ignora</strong> &mdash; Rimuovi un singolo processo dall'elenco di ripristino</li>
-            <li><strong>Ignora tutti</strong> &mdash; Rimuovi tutti i processi interrotti</li>
+            <li><strong>Ignora tutto</strong> &mdash; Rimuovi tutti i processi interrotti</li>
         </ul>
     </div>
 </section>
@@ -435,7 +435,7 @@
 <section id="api-keys" class="help-section card">
     <h2 class="card-title">Guida alla configurazione delle chiavi API</h2>
     <div class="card-body">
-        <p>Le chiavi API sono facoltative ma abilitano lo scraping di metadati ricchi e funzionalità aggiuntive. Configurale in <strong>Impostazioni &rarr; Scraping &rarr; Chiavi API</strong>.</p>
+        <p>Le chiavi API sono facoltative ma abilitano lo scraping di metadati ricchi e funzionalità aggiuntive. Configurale in <strong>Impostazioni &rarr; Scansione &rarr; Chiavi API</strong>.</p>
 
         <h3>Scraper di metadati</h3>
 
@@ -497,8 +497,8 @@
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN usa l'autenticazione tramite cookie NPSSO. Consulta la sezione <a href="#trophies">Trofei</a> per le istruzioni di configurazione dettagliate.</p>
 
-        <h3>Provider AI (per Compilazione AI e Museo)</h3>
-        <p>È necessario un provider AI per i metadati della Compilazione AI e la generazione dei contenuti del Museo. Scegli tra:</p>
+        <h3>Provider AI (per Riempimento AI e Museo)</h3>
+        <p>È necessario un provider AI per i metadati della Riempimento AI e la generazione dei contenuti del Museo. Scegli tra:</p>
 
         <table class="data-table">
             <thead>
@@ -510,7 +510,7 @@
                 <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td></tr>
             </tbody>
         </table>
-        <p>Ogni provider offre più modelli. Quello contrassegnato come Consigliato funziona bene per i metadati e i contenuti del museo; il sito di ogni provider riporta i prezzi attuali. Configura il tuo provider preferito e la chiave API in <strong>Impostazioni &rarr; Scraping &rarr; Chiavi API</strong>.</p>
+        <p>Ogni provider offre più modelli. Quello contrassegnato come Consigliato funziona bene per i metadati e i contenuti del museo; il sito di ogni provider riporta i prezzi attuali. Configura il tuo provider preferito e la chiave API in <strong>Impostazioni &rarr; Scansione &rarr; Chiavi API</strong>.</p>
         <p>Gemini e OpenAI cercano sempre sul web. Claude cerca solo quando attivi <strong>Lascia che Claude cerchi sul web</strong> sotto il suo modello. Senza ricerca, Claude lascia vuoto tutto ciò che richiede un dato pubblicato, come le copie vendute. Anthropic fa pagare ogni ricerca: al massimo 5 ricerche per gioco, fino a 5 centesimi di dollaro.</p>
     </div>
 </section>
@@ -535,12 +535,12 @@
         <ul>
             <li><strong>Percorsi</strong> &mdash; La cartella della libreria ROM, le cartelle gamelist e media di ES-DE e la cartella dei trofei RPCS3 della famiglia, con un solo Salva</li>
             <li><strong>Visualizzazione</strong> &mdash; Stile della copertina (2D/3D) e sistema di classificazione per età preferito, per tutti</li>
-            <li><strong>Nomenclatura ROM</strong> &mdash; Posizione dell'articolo ("The" iniziale/finale), elenco delle opzioni di regione, regione predefinita, convenzioni di nomenclatura</li>
+            <li><strong>Denominazione ROM</strong> &mdash; Posizione dell'articolo ("The" iniziale/finale), elenco delle opzioni di regione, regione predefinita, convenzioni di nomenclatura</li>
             <li><strong>Dischi bonus</strong> &mdash; Trova i dischi bonus e collegali ai loro giochi</li>
             <li><strong>Backup</strong> &mdash; Crea e ripristina i backup del database</li>
         </ul>
 
-        <h3>Scheda Scraping</h3>
+        <h3>Scheda Scansione</h3>
         <ul>
             <li><strong>Scraper</strong> &mdash; Attiva o disattiva gli scraper e trascinali nell'ordine in cui vengono provati. <strong>Filtro delle corrispondenze nello scraping di massa</strong> stabilisce quanto un risultato deve somigliare: <strong>Rigoroso</strong> accetta solo titoli esatti, <strong>Normale</strong> (predefinito) un titolo simile sul sistema giusto, e <strong>Flessibile</strong> anche titoli parziali. Un'impostazione fatta in una versione precedente appare come <strong>Personalizzato</strong> finché non ne scegli un'altra.</li>
             <li><strong>Chiavi API</strong> &mdash; Tutte le credenziali degli scraper (TheGamesDB, IGDB, RAWG, ScreenScraper), scelta del provider IA e del modello (Gemini, OpenAI, Claude), e le chiavi RetroAchievements e Steam della famiglia. La chiave RetroAchievements personale di una persona in Il mio profilo viene usata per prima, e quella della famiglia solo per chi non ne ha una. La chiave Steam della famiglia serve solo a un amministratore senza una chiave propria.</li>
@@ -596,7 +596,7 @@
         <p>I giochi per home computer (Commodore 64, Amiga, ZX Spectrum e ZX81, MSX, DOS, Atari 8-bit e ST, Amstrad CPC, PC-98 e X68000) richiedono l'intera tastiera, quindi RetroDB li avvia con tutti i tasti diretti al gioco e i tasti sopra disattivati. Premi <kbd>Scroll Lock</kbd> per riattivare i tasti sopra, e premilo di nuovo per restituire la tastiera al gioco. La pagina del gioco mostra un promemoria accanto a <strong>Gioca</strong> per questi giochi. Sulla maggior parte dei controller PlayStation e Xbox, anche il tasto PS o Xbox apre il menu.</p>
 
         <div class="help-tip">
-            <strong>Suggerimento:</strong> Gli scraper disabilitati non attivano gli avvisi "API offline" nella Dashboard. Se non usi uno scraper, disabilitalo in Impostazioni &rarr; Scraping &rarr; Scraper invece di eliminare la chiave API.
+            <strong>Suggerimento:</strong> Gli scraper disabilitati non attivano gli avvisi "API offline" nella Dashboard. Se non usi uno scraper, disabilitalo in Impostazioni &rarr; Scansione &rarr; Scraper invece di eliminare la chiave API.
         </div>
     </div>
 </section>
@@ -608,7 +608,7 @@
         <h3>Scraping di un singolo gioco</h3>
         <ol>
             <li>Apri la finestra modale dei dettagli di un gioco (fai clic sulla scheda del gioco)</li>
-            <li>Fai clic su <strong>"Scraping"</strong></li>
+            <li>Fai clic su <strong>"Scansiona"</strong></li>
             <li>Modifica il titolo di ricerca se necessario</li>
             <li>Seleziona il risultato corretto tra le corrispondenze</li>
             <li>Fai clic su <strong>"Applica"</strong></li>
@@ -636,7 +636,7 @@
             <li>Riempimento automatico delle lacune tra gli scraper per la massima copertura</li>
             <li>Il titolo di ordinamento viene generato automaticamente dal titolo del gioco durante lo scraping</li>
             <li>Una fonte viene interrogata solo se elenca il sistema del gioco, e solo per quel sistema: RAWG non ha Intellivision, quindi i giochi Intellivision non vengono cercati su RAWG, dove corrisponderebbero solo a giochi di altre piattaforme</li>
-            <li>Quando l'AI è attiva, fornisce anche il titolo ufficiale del gioco come pubblicato nella regione della sua ROM, e il gioco viene rinominato con quel titolo, sia nello scraping di un singolo gioco sia nello Scraping in blocco (vedi <a href="#ai-fill">Compilazione AI</a>)</li>
+            <li>Quando l'AI è attiva, fornisce anche il titolo ufficiale del gioco come pubblicato nella regione della sua ROM, e il gioco viene rinominato con quel titolo, sia nello scraping di un singolo gioco sia nello Scansione in blocco (vedi <a href="#ai-fill">Riempimento AI</a>)</li>
         </ul>
 
         <h3>Gestione dei media</h3>
@@ -644,16 +644,16 @@
             <li>I campi media (boxart, boxart 3D, retro della confezione, screenshot, fanart, logo, video, manuale) <strong>non vengono mai sostituiti</strong> durante lo scraping normale &mdash; vengono solo riempiti quando vuoti</li>
             <li>Gli screenshot vengono sempre <strong>aggiunti</strong>, mai sostituiti</li>
             <li>Per riscaricare i media, cancella prima l'immagine esistente nella finestra modale di modifica, poi riesegui lo scraping</li>
-            <li>La modalità <strong>Riscraping completo</strong> sovrascrive questo comportamento e sostituisce tutto</li>
+            <li>La modalità <strong>Riscansione completa</strong> sovrascrive questo comportamento e sostituisce tutto</li>
             <li>I riferimenti media obsoleti (file eliminato ma nome file ancora nel DB) vengono cancellati automaticamente prima dello scraping in modo che i nuovi media possano essere scaricati</li>
             <li>Le immagini scaricate vengono standardizzate automaticamente alle dimensioni target (vedi <a href="#image-standardization">Standardizzazione delle immagini</a>)</li>
         </ul>
 
         <h3>Mantenere un titolo</h3>
-        <p>Quando scrivi un nuovo titolo nella finestra di modifica e salvi, lo scraping non lo cambia più, Riscraping completo incluso. La casella <strong>Mantieni questo titolo durante la scansione</strong> della finestra di modifica mostra se un titolo viene mantenuto; togli la spunta per permettere di nuovo agli scraper di rinominare il gioco. Anche <strong>Reimposta</strong> nella pagina di un gioco permette agli scraper di rinominarlo, mentre <strong>Cancella dati scrapati</strong> in Manutenzione lascia i titoli mantenuti come sono.</p>
+        <p>Quando scrivi un nuovo titolo nella finestra di modifica e salvi, lo scraping non lo cambia più, Riscansione completa incluso. La casella <strong>Mantieni questo titolo durante la scansione</strong> della finestra di modifica mostra se un titolo viene mantenuto; togli la spunta per permettere di nuovo agli scraper di rinominare il gioco. Anche <strong>Reimposta</strong> nella pagina di un gioco permette agli scraper di rinominarlo, mentre <strong>Cancella dati scrapati</strong> in Manutenzione lascia i titoli mantenuti come sono.</p>
 
         <h3>Priorità degli scraper</h3>
-        <p>Configura quali scraper vengono eseguiti per primi e quali sono abilitati/disabilitati in <strong>Impostazioni &rarr; Scraping &rarr; Scraper</strong>. Trascina per riordinare la priorità. Gli scraper disabilitati non verranno provati durante lo scraping e non attiveranno avvisi sullo stato delle API nella Dashboard.</p>
+        <p>Configura quali scraper vengono eseguiti per primi e quali sono abilitati/disabilitati in <strong>Impostazioni &rarr; Scansione &rarr; Scraper</strong>. Trascina per riordinare la priorità. Gli scraper disabilitati non verranno provati durante lo scraping e non attiveranno avvisi sullo stato delle API nella Dashboard.</p>
 
         <h3>Limiti di frequenza</h3>
         <p>RetroDB distanzia da solo le sue richieste a ogni servizio; non c'è nulla da impostare. Quando un servizio dice di aver raggiunto il limite, RetroDB smette di interrogarlo fino all'ora indicata dal servizio e te lo segnala (vedi <a href="#ts-scraping">Risoluzione dei problemi</a>).</p>
@@ -662,7 +662,7 @@
 
 <!-- Bulk Scraping -->
 <section id="bulk-scrape" class="help-section card">
-    <h2 class="card-title">Scraping in blocco</h2>
+    <h2 class="card-title">Scansione in blocco</h2>
     <div class="card-body">
         <h3>Avviare uno scraping in blocco</h3>
         <ol>
@@ -670,12 +670,12 @@
             <li>Fai clic su <strong>"Seleziona"</strong> per entrare in modalità di selezione. Gli strumenti di selezione compaiono in una barra lungo il fondo della finestra.</li>
             <li>Seleziona i giochi singolarmente o usa la selezione rapida:
                 <ul>
-                    <li><strong>Seleziona tutti</strong> &mdash; Tutti i giochi visibili</li>
-                    <li><strong>Seleziona non scrapati</strong> &mdash; Solo i giochi senza metadati</li>
+                    <li><strong>Seleziona tutto</strong> &mdash; Tutti i giochi visibili</li>
+                    <li><strong>Seleziona non scansionati</strong> &mdash; Solo i giochi senza metadati</li>
                 </ul>
             </li>
-            <li>Scegli la modalità: <strong>Riempi mancanti</strong> o <strong>Riscraping completo</strong></li>
-            <li>Fai clic su <strong>"Esegui lo scraping dei selezionati"</strong></li>
+            <li>Scegli la modalità: <strong>Riempi mancanti</strong> o <strong>Riscansione completa</strong></li>
+            <li>Fai clic su <strong>"Scansiona selezionati"</strong></li>
             <li>Fai clic su <strong>"Fatto"</strong> per uscire dalla modalità di selezione</li>
         </ol>
 
@@ -706,27 +706,27 @@
         <h3>Opzioni di scraping</h3>
         <ul>
             <li><strong>Riempi solo i mancanti</strong> &mdash; Riempi solo i campi di metadati vuoti, preservando i dati esistenti</li>
-            <li><strong>Riscraping completo</strong> &mdash; Sostituisci tutti i campi inclusi i media (scarica immagini e video nuovi)</li>
+            <li><strong>Riscansione completa</strong> &mdash; Sostituisci tutti i campi inclusi i media (scarica immagini e video nuovi)</li>
             <li><strong>Mantieni i media esistenti</strong> &mdash; Con la Riscansione completa, mantieni le immagini, i video e i manuali già presenti sul disco invece di scaricarli di nuovo. Gli screenshot nuovi vengono comunque aggiunti.</li>
             <li><strong>Controlla RetroAchievements</strong> &mdash; Controlla anche la presenza di set di obiettivi RetroAchievements durante lo scraping</li>
         </ul>
 
         <h3>Ripristino dei processi</h3>
-        <p>Se RetroDB viene riavviato mentre un processo è in esecuzione, i processi interrotti appaiono in un banner di ripristino nella Dashboard. Fai clic su <strong>"Riprendi"</strong> sui singoli processi o su <strong>"Riprendi tutti"</strong> per riavviarli. Il toast di avanzamento appare immediatamente dopo aver ripreso.</p>
+        <p>Se RetroDB viene riavviato mentre un processo è in esecuzione, i processi interrotti appaiono in un banner di ripristino nella Dashboard. Fai clic su <strong>"Riprendi"</strong> sui singoli processi o su <strong>"Riprendi tutto"</strong> per riavviarli. Il toast di avanzamento appare immediatamente dopo aver ripreso.</p>
     </div>
 </section>
 
 <!-- AI Fill -->
 <section id="ai-fill" class="help-section card">
-    <h2 class="card-title">Compilazione AI</h2>
+    <h2 class="card-title">Riempimento AI</h2>
     <div class="card-body">
         <h3>Cosa fa</h3>
-        <p>La Compilazione AI usa un modello linguistico di grandi dimensioni (Gemini, OpenAI o Claude) per riempire in modo intelligente i metadati dei giochi mancanti o incompleti. È più intelligente dello scraping normale perché usa la conoscenza contestuale del gioco per fornire dati accurati che gli scraper potrebbero non avere.</p>
+        <p>La Riempimento AI usa un modello linguistico di grandi dimensioni (Gemini, OpenAI o Claude) per riempire in modo intelligente i metadati dei giochi mancanti o incompleti. È più intelligente dello scraping normale perché usa la conoscenza contestuale del gioco per fornire dati accurati che gli scraper potrebbero non avere.</p>
 
         <h3>Come usarla</h3>
         <ol>
             <li>Apri la finestra modale dei dettagli di un gioco (o la pagina dei dettagli completa)</li>
-            <li>Fai clic su <strong>"Compilazione AI"</strong> (richiede una chiave API AI configurata nelle Impostazioni)</li>
+            <li>Fai clic su <strong>"Riempimento AI"</strong> (richiede una chiave API AI configurata nelle Impostazioni)</li>
             <li>L'AI analizza il titolo del gioco e il sistema, poi riempie i campi mancanti</li>
             <li>Esamina i risultati &mdash; le modifiche vengono salvate automaticamente</li>
         </ol>
@@ -734,7 +734,7 @@
         <h3>Molti giochi insieme</h3>
         <p>Per riempire un intero sistema, apri <strong>Strumenti ROM &rarr; Riempimento AI in blocco</strong> e usa la scheda <strong>Riempi i campi vuoti con l'IA</strong>. Attiva i campi che vuoi riempire; vengono contati solo i giochi con uno di essi vuoto, e meno campi costano meno. Scegli un sistema, o Tutti i sistemi, e premi <strong>Riempi con l'IA</strong>. Esegue il Riempimento AI su ogni gioco e salva le risposte direttamente nel gioco. Una barra di avanzamento sulla scheda e un riquadro di notifica del Riempimento AI mostrano a che punto è, e puoi lasciare la pagina mentre procede. I giochi già trattati dal Riempimento AI vengono saltati, quindi un secondo passaggio fa solo il resto; attiva <strong>Includi i giochi già trattati dal Riempimento AI</strong> per riempire un campo anche in essi, come le copie vendute. Il passaggio si ferma da solo se l'IA smette di rispondere, per esempio quando la chiave viene rifiutata o l'account non ha credito. Il tuo fornitore di IA addebita ogni gioco.</p>
 
-        <h3>Cosa può fornire la Compilazione AI</h3>
+        <h3>Cosa può fornire la Riempimento AI</h3>
         <ul>
             <li>Genere, descrizione, sviluppatore, editore, data di uscita</li>
             <li>Giocatori, modalità di gioco (Single-Player, Multi-Player, Co-op, ecc.)</li>
@@ -753,19 +753,19 @@
             <li>I <strong>giochi simili</strong> vengono sempre aggiornati (i dati AI sono più affidabili per questo campo)</li>
             <li><strong>Valutazioni mappate in modo incrociato</strong> &mdash; Se è nota una classificazione, le classificazioni vuote negli altri sistemi vengono riempite automaticamente usando la mappatura incrociata dei livelli di maturità</li>
             <li>Il <strong>titolo di ordinamento</strong> viene generato automaticamente quando riempito</li>
-            <li><strong>Titolo ufficiale</strong> &mdash; l'AI indica anche il titolo ufficiale del gioco come pubblicato nella regione della sua ROM, e il gioco viene rinominato con quel titolo, nella Compilazione AI e ogni volta che l'AI riempie le lacune durante lo scraping. Il vecchio nome viene mantenuto come titolo alternativo. Un titolo che hai scritto tu, o mantenuto con <strong>Mantieni questo titolo durante la scansione</strong>, non viene mai rinominato</li>
+            <li><strong>Titolo ufficiale</strong> &mdash; l'AI indica anche il titolo ufficiale del gioco come pubblicato nella regione della sua ROM, e il gioco viene rinominato con quel titolo, nella Riempimento AI e ogni volta che l'AI riempie le lacune durante lo scraping. Il vecchio nome viene mantenuto come titolo alternativo. Un titolo che hai scritto tu, o mantenuto con <strong>Mantieni questo titolo durante la scansione</strong>, non viene mai rinominato</li>
             <li>Il campo <strong>Giocatori</strong> normalizza gli intervalli (es. "1-4" diventa 4)</li>
         </ul>
 
         <h3>Normalizzazione dei generi</h3>
-        <p>La Compilazione AI usa forme canoniche dei generi con nomi separati da trattini:</p>
+        <p>La Riempimento AI usa forme canoniche dei generi con nomi separati da trattini:</p>
         <ul>
             <li><code>First-Person-Shooter</code>, <code>Shoot-em-up</code>, <code>Beat-em-up</code></li>
             <li><code>Hack-n-Slash</code>, <code>Board-Card</code>, <code>Real-Time Strategy</code></li>
         </ul>
 
         <h3>Requisiti</h3>
-        <p>Deve essere configurata almeno una chiave API di un provider AI in <strong>Impostazioni &rarr; Scraping &rarr; Chiavi API</strong>. Il livello di modello più economico (Gemini Flash Lite, GPT-4o Mini o Claude Haiku) funziona bene per i metadati.</p>
+        <p>Deve essere configurata almeno una chiave API di un provider AI in <strong>Impostazioni &rarr; Scansione &rarr; Chiavi API</strong>. Il livello di modello più economico (Gemini Flash Lite, GPT-4o Mini o Claude Haiku) funziona bene per i metadati.</p>
     </div>
 </section>
 
@@ -877,7 +877,7 @@
         <p>Fai clic su <strong>Modifica</strong> (o premi <kbd>e</kbd>) per aprire la finestra modale di modifica, organizzata in sezioni:</p>
         <ul>
             <li><strong>Identità</strong> &mdash; Titolo, titolo di ordinamento (generato automaticamente ma modificabile), franchise, edizione</li>
-            <li><strong>Info sull'uscita</strong> &mdash; Data di uscita, regione (dal menu a tendina configurabile)</li>
+            <li><strong>Informazioni sull'uscita</strong> &mdash; Data di uscita, regione (dal menu a tendina configurabile)</li>
             <li><strong>Gameplay</strong> &mdash; Genere (tag a selezione multipla), modalità, struttura del gioco, giocatori, sviluppatore, editore</li>
             <li><strong>Tecnico</strong> &mdash; Controller (selezione multipla), tipo di salvataggio, prospettiva (multivalore), dimensione (multivalore)</li>
             <li><strong>Classificazioni per età</strong> &mdash; Tutti i sistemi di classificazione con immagini ufficiali e mappatura incrociata automatica. Modificando una classificazione si riempiono automaticamente le classificazioni vuote negli altri sistemi.</li>
@@ -891,8 +891,8 @@
         <h3>Azioni rapide</h3>
         <ul>
             <li><strong>Modifica</strong> &mdash; Apri la finestra modale di modifica (<kbd>e</kbd>)</li>
-            <li><strong>Scraping</strong> &mdash; Recupera i metadati dalle fonti degli scraper (<kbd>s</kbd>)</li>
-            <li><strong>Compilazione AI</strong> &mdash; Riempi i campi mancanti con l'AI (richiede una chiave API AI)</li>
+            <li><strong>Scansiona</strong> &mdash; Recupera i metadati dalle fonti degli scraper (<kbd>s</kbd>)</li>
+            <li><strong>Riempimento AI</strong> &mdash; Riempi i campi mancanti con l'AI (richiede una chiave API AI)</li>
             <li><strong>Controlla RA</strong> &mdash; Cerca un set di obiettivi RetroAchievements</li>
             <li><strong>Ricerca HLTB</strong> &mdash; Trova le stime del tempo di gioco da HowLongToBeat</li>
         </ul>
@@ -925,7 +925,7 @@
                 <tr><td><strong>CADPA</strong></td><td>Cina</td></tr>
             </tbody>
         </table>
-        <p>Imposta il tuo sistema preferito in <strong>Impostazioni &rarr; Libreria &rarr; Visualizzazione</strong>. Le immagini ufficiali delle classificazioni sono mostrate sulle schede dei giochi, nelle finestre modali dei dettagli e nelle pagine dei dettagli. Le classificazioni vuote vengono riempite automaticamente da qualsiasi classificazione disponibile tramite la mappatura incrociata dei livelli di maturità durante lo scraping, la Compilazione AI e la modifica manuale.</p>
+        <p>Imposta il tuo sistema preferito in <strong>Impostazioni &rarr; Libreria &rarr; Visualizzazione</strong>. Le immagini ufficiali delle classificazioni sono mostrate sulle schede dei giochi, nelle finestre modali dei dettagli e nelle pagine dei dettagli. Le classificazioni vuote vengono riempite automaticamente da qualsiasi classificazione disponibile tramite la mappatura incrociata dei livelli di maturità durante lo scraping, la Riempimento AI e la modifica manuale.</p>
 
         <h3>Dischi bonus</h3>
         <p>RetroDB rileva automaticamente i dischi bonus/extra (es. CD di colonne sonore, dischi di contenuti extra) e li collega al gioco principale. I dischi bonus sono nascosti per impostazione predefinita nella libreria &mdash; attiva <strong>"Dischi bonus"</strong> nei filtri per visualizzarli. I dischi bonus collegati appaiono nella finestra modale dei dettagli del gioco principale.</p>
@@ -950,14 +950,14 @@
             <li>Seleziona i giochi che vuoi modificare (singolarmente, Seleziona tutti o Seleziona non scrapati)</li>
             <li>Fai clic su <strong>"Modifica in blocco"</strong></li>
             <li>Scegli il campo da modificare e imposta il nuovo valore</li>
-            <li>Scegli la modalità <strong>Sostituisci</strong> o <strong>Aggiungi</strong></li>
+            <li>Scegli la modalità <strong>Sostituisci</strong> o <strong>Aggiungi in coda</strong></li>
             <li>Fai clic su <strong>"Applica"</strong> per aggiornare tutti i giochi selezionati</li>
         </ol>
 
         <h3>Sostituisci vs Aggiungi</h3>
         <ul>
             <li><strong>Sostituisci</strong> &mdash; Sovrascrive il valore esistente con quello nuovo</li>
-            <li><strong>Aggiungi</strong> &mdash; Aggiunge il nuovo valore ai valori esistenti (per i campi multivalore)</li>
+            <li><strong>Aggiungi in coda</strong> &mdash; Aggiunge il nuovo valore ai valori esistenti (per i campi multivalore)</li>
         </ul>
 
         <h3>Campi supportati</h3>
@@ -971,7 +971,7 @@
                 <tr><td>Sviluppatore</td><td>Sì</td></tr>
                 <tr><td>Franchise</td><td>Sì</td></tr>
                 <tr><td>Regione</td><td>Sì</td></tr>
-                <tr><td>Struttura del gioco</td><td>Sì</td></tr>
+                <tr><td>Struttura di gioco</td><td>Sì</td></tr>
                 <tr><td>Prospettiva</td><td>Sì</td></tr>
                 <tr><td>Dimensione</td><td>Sì</td></tr>
                 <tr><td>Stato di completamento</td><td>No (solo sostituzione)</td></tr>
@@ -983,7 +983,7 @@
 
 <!-- Compare Games -->
 <section id="compare" class="help-section card">
-    <h2 class="card-title">Confronto giochi</h2>
+    <h2 class="card-title">Confronta giochi</h2>
     <div class="card-body">
         <h3>Cosa fa</h3>
         <p>Confronto affiancato dei metadati di due giochi in una vista a tabella. Utile per verificare la qualità dei metadati, individuare duplicati o confrontare versioni dello stesso gioco su sistemi diversi.</p>
@@ -1005,10 +1005,10 @@
 <section id="collections" class="help-section card">
     <h2 class="card-title">Collezioni (Tag, Liste, Lista dei desideri)</h2>
     <div class="card-body">
-        <h3>Tag</h3>
+        <h3>Etichette</h3>
         <p>Crea tag personalizzati con codifica a colori per organizzare i tuoi giochi. I tag funzionano come etichette &mdash; ogni gioco può avere più tag e ogni tag può contenere più giochi.</p>
         <ul>
-            <li>Crea tag con nomi e colori personalizzati dalla pagina <strong>Tag</strong></li>
+            <li>Crea tag con nomi e colori personalizzati dalla pagina <strong>Etichette</strong></li>
             <li>Assegna i tag ai giochi tramite la finestra modale dei dettagli del gioco</li>
             <li>Fai clic su qualsiasi tag per sfogliare tutti i giochi con quel tag</li>
             <li>Modifica o elimina i tag dalla pagina di gestione Tag</li>
@@ -1039,15 +1039,15 @@
 
 <!-- Game Imports -->
 <section id="game-imports" class="help-section card">
-    <h2 class="card-title">Importazione giochi</h2>
+    <h2 class="card-title">Importazioni giochi</h2>
     <div class="card-body">
-        <p>Importa collezioni di giochi da fonti esterne. Accedi tramite <strong>Importazione giochi</strong> nella barra laterale. Tutti i tipi di importazione sono consolidati in un'unica pagina a schede.</p>
+        <p>Importa collezioni di giochi da fonti esterne. Accedi tramite <strong>Importazioni giochi</strong> nella barra laterale. Tutti i tipi di importazione sono consolidati in un'unica pagina a schede.</p>
 
         <h3>Importazione CLZ Games</h3>
         <p>Importa la tua collezione di giochi fisici da CLZ Games.</p>
         <ol>
             <li>Esporta la tua collezione CLZ Games come PDF</li>
-            <li>Vai su Importazione giochi &rarr; scheda <strong>CLZ</strong></li>
+            <li>Vai su Importazioni giochi &rarr; scheda <strong>CLZ</strong></li>
             <li>Carica il file PDF</li>
             <li>Esamina i giochi analizzati</li>
             <li>Seleziona quali giochi importare</li>
@@ -1058,7 +1058,7 @@
         <p>Importa la tua libreria di giochi Steam e monitora gli obiettivi.</p>
         <ol>
             <li>Configura la tua chiave Steam Web API e l'ID Steam nelle Impostazioni</li>
-            <li>Vai su Importazione giochi &rarr; scheda <strong>Steam</strong></li>
+            <li>Vai su Importazioni giochi &rarr; scheda <strong>Steam</strong></li>
             <li>Fai clic su <strong>"Recupera libreria"</strong> per recuperare i tuoi giochi Steam</li>
             <li>Seleziona i giochi da importare. Un gioco già presente nel tuo elenco Windows con lo stesso nome viene collegato a Steam invece di essere aggiunto due volte</li>
             <li>I giochi importati vengono contrassegnati con il loro Steam App ID per il monitoraggio degli obiettivi</li>
@@ -1069,7 +1069,7 @@
         <p>Importa i giochi Xbox a cui hai giocato, usando la tua chiave OpenXBL.</p>
         <ol>
             <li>Salva la tua chiave OpenXBL in Impostazioni &rarr; Il mio profilo &rarr; Xbox (vedi la guida alle chiavi API qui sopra)</li>
-            <li>Vai su Importazione giochi &rarr; scheda <strong>Xbox</strong> e fai clic su <strong>Recupera libreria</strong></li>
+            <li>Vai su Importazioni giochi &rarr; scheda <strong>Xbox</strong> e fai clic su <strong>Recupera libreria</strong></li>
             <li>Seleziona i giochi da importare con rilevamento dei duplicati. Le app e i giochi solo per telefono vengono esclusi.</li>
             <li>I giochi importati vengono contrassegnati con il loro Xbox Title ID per il monitoraggio degli obiettivi</li>
         </ol>
@@ -1077,7 +1077,7 @@
         <h3>Importazione PSN</h3>
         <p>Importa la tua libreria di giochi del PlayStation Network.</p>
         <ol>
-            <li>Vai su Importazione giochi &rarr; scheda <strong>PSN</strong></li>
+            <li>Vai su Importazioni giochi &rarr; scheda <strong>PSN</strong></li>
             <li>Inserisci il tuo cookie NPSSO (vedi <a href="#trophies">Trofei &rarr; Autenticazione PSN</a> per come ottenerlo)</li>
             <li>Fai clic su <strong>"Recupera libreria"</strong> per recuperare i tuoi giochi PSN</li>
             <li>Seleziona i giochi da importare</li>
@@ -1113,7 +1113,7 @@
         <ul>
             <li><strong>Schede dei sistemi</strong> &mdash; Sfoglia gli obiettivi per piattaforma (ricorda l'ultima scheda visualizzata)</li>
             <li><strong>Navigazione alfabetica</strong> &mdash; Salta ai giochi per prima lettera all'interno di ogni scheda di sistema</li>
-            <li><strong>Aggiorna progressi</strong> &mdash; Sincronizza i tuoi progressi degli obiettivi da RetroAchievements</li>
+            <li><strong>Aggiorna avanzamento</strong> &mdash; Sincronizza i tuoi progressi degli obiettivi da RetroAchievements</li>
             <li><strong>Statistiche complessive</strong> &mdash; Obiettivi guadagnati e punti su tutti i sistemi</li>
             <li><strong>Progressi per gioco</strong> &mdash; Visualizza la percentuale di completamento per ogni gioco con barre di avanzamento</li>
         </ul>
@@ -1131,7 +1131,7 @@
         <ul>
             <li><strong>Filtro della Libreria</strong> &mdash; Usa il filtro "Ha RA" per mostrare solo i giochi con obiettivi</li>
             <li><strong>Controlla RA</strong> &mdash; Nelle finestre modali dei dettagli del gioco, fai clic per cercare un set di obiettivi</li>
-            <li><strong>Scraping in blocco</strong> &mdash; Abilita l'opzione "Controlla RA" per trovare gli obiettivi durante lo scraping</li>
+            <li><strong>Scansione in blocco</strong> &mdash; Abilita l'opzione "Controlla RA" per trovare gli obiettivi durante lo scraping</li>
             <li><strong>Processo di aggiornamento RA</strong> &mdash; Scansiona tutti i giochi di un sistema per identificare quali hanno supporto RA</li>
         </ul>
 
@@ -1151,7 +1151,7 @@
     <div class="card-body">
         <h3>Configurazione</h3>
         <ol>
-            <li>Importa i giochi Steam tramite <strong>Importazione giochi &rarr; Steam</strong></li>
+            <li>Importa i giochi Steam tramite <strong>Importazioni giochi &rarr; Steam</strong></li>
             <li>Assicurati che la tua chiave Steam Web API sia configurata nelle Impostazioni</li>
         </ol>
 
@@ -1185,7 +1185,7 @@
     <div class="card-body">
         <h3>Configurazione</h3>
         <ol>
-            <li>Importa i giochi Xbox tramite <strong>Importazione giochi &rarr; Xbox</strong></li>
+            <li>Importa i giochi Xbox tramite <strong>Importazioni giochi &rarr; Xbox</strong></li>
             <li>Salva la tua chiave OpenXBL in Impostazioni &rarr; Il mio profilo &rarr; Xbox</li>
         </ol>
 
@@ -1238,7 +1238,7 @@
             <li><strong>Finestra modale dei dettagli del gioco</strong> &mdash; Stime del tempo di gioco mostrate nelle info del gioco</li>
             <li><strong>Pagina completa dei dettagli del gioco</strong> &mdash; Stesse info sul tempo di gioco</li>
             <li><strong>Analisi &rarr; scheda Tempo di gioco</strong> &mdash; Analisi del tempo di gioco sull'intera collezione</li>
-            <li><strong>Confronto giochi</strong> &mdash; Confronto affiancato del tempo di gioco</li>
+            <li><strong>Confronta giochi</strong> &mdash; Confronto affiancato del tempo di gioco</li>
         </ul>
 
         <div class="help-tip">
@@ -1363,7 +1363,7 @@
         <p>Tutte le immagini dei controller vengono standardizzate alle dimensioni target e salvate in formato WebP.</p>
 
         <div class="help-tip">
-            <strong>Suggerimento:</strong> Per la generazione di contenuti è necessaria una chiave API AI. Il Museo usa lo stesso provider AI configurato in Impostazioni &rarr; Scraping &rarr; Chiavi API.
+            <strong>Suggerimento:</strong> Per la generazione di contenuti è necessaria una chiave API AI. Il Museo usa lo stesso provider AI configurato in Impostazioni &rarr; Scansione &rarr; Chiavi API.
         </div>
     </div>
 </section>
@@ -1419,7 +1419,7 @@
             </thead>
             <tbody>
                 <tr><td><strong>Nomi non standard</strong></td><td>ROM con nomi di file che non corrispondono alle convenzioni di nomenclatura. Mostra il nome file corrente, i problemi rilevati e il nome corretto suggerito.</td></tr>
-                <tr><td><strong>Discrepanze di nome</strong></td><td>ROM in cui il nome del file non corrisponde al titolo dei metadati scrapati. Mostra il nome file corrente rispetto al titolo scrapato, regione, anno e sviluppatore.</td></tr>
+                <tr><td><strong>Discordanze di nome</strong></td><td>ROM in cui il nome del file non corrisponde al titolo dei metadati scrapati. Mostra il nome file corrente rispetto al titolo scrapato, regione, anno e sviluppatore.</td></tr>
             </tbody>
         </table>
 
@@ -1471,7 +1471,7 @@
         <p><em>Richiede: un file di elenco MAME</em></p>
 
         <h3>Riempimento AI in blocco</h3>
-        <p>Solo per gli editor. Questa scheda esegue il Riempimento AI su un intero sistema, per i campi che attivi (vedi Compilazione AI &rarr; Molti giochi insieme).</p>
+        <p>Solo per gli editor. Questa scheda esegue il Riempimento AI su un intero sistema, per i campi che attivi (vedi Riempimento AI &rarr; Molti giochi insieme).</p>
         <p><em>Richiede: un fornitore di IA in <strong>Impostazioni &rarr; Scansione</strong></em></p>
 
         <h3>Organizzatore multi-disco</h3>
@@ -1487,11 +1487,11 @@
         <p>Scansiona progressivamente con statistiche in tempo reale che mostrano i giochi scansionati, il conteggio dei duplicati e lo spazio recuperabile. I risultati sono raggruppati per gioco e sistema. Puoi selezionare quale file mantenere in ogni gruppo di duplicati, oppure usare <strong>"Seleziona il più grande"</strong> per mantenere automaticamente la versione a risoluzione più alta.</p>
         <p><em>Nessuna dipendenza esterna</em></p>
 
-        <h3>Ridimensionatore immagini</h3>
+        <h3>Ridimensionatore di immagini</h3>
         <p>Standardizza i media dei giochi a dimensioni target coerenti. Vedi <a href="#image-standardization">Standardizzazione delle immagini</a> per tutti i dettagli.</p>
         <p><em>Nessuna dipendenza esterna (upscaling AI basato su Python)</em></p>
 
-        <h3>Recupero titoli alternativi</h3>
+        <h3>Recupera titoli alternativi</h3>
         <p>Esamina ogni gioco già scrapato e recupera i suoi <strong>titoli alternativi</strong> da IGDB / TGDB / ScreenScraper, contrassegnati con la regione da cui proviene ogni nome. I nomi che hai già ricevono la loro regione. Utile dopo aver importato un grande catalogo o dopo la migrazione da un altro strumento che non memorizzava i titoli regionali / giapponesi / secondari. Viene eseguito in background; l'avanzamento è mostrato sulla scheda dello strumento.</p>
         <p><em>Richiede almeno una chiave API di uno scraper (IGDB / TGDB / ScreenScraper)</em></p>
 
@@ -1523,7 +1523,7 @@
         <p>Esegui una ricerca HowLongToBeat per ogni gioco privo di una stima del tempo di gioco. Ogni corrispondenza viene valutata per titolo + piattaforma + anno di uscita; le corrispondenze ad alta confidenza vengono salvate automaticamente. Tutto ciò che è al di sotto della soglia di confidenza (o con piattaforme in conflitto) viene messo da parte per la revisione umana.</p>
         <p><em>Cerca ogni gioco sul sito di HowLongToBeat, quindi serve l'accesso a Internet</em></p>
 
-        <h3>Revisione HLTB in sospeso</h3>
+        <h3>Revisione HLTB in attesa</h3>
         <p>Coda di revisione per le corrispondenze ambigue emerse dalla Ricerca HLTB in blocco. Ogni riga in sospeso mostra il gioco di origine insieme al candidato HLTB (titolo, piattaforma, anno di uscita, confidenza). Approva, rifiuta o scegli una corrispondenza diversa per ogni riga. La scheda dello strumento di revisione appare nell'hub degli Strumenti ROM solo quando c'è almeno una corrispondenza in sospeso.</p>
         <ul>
             <li><strong>Schede di filtro</strong> per corrispondenze a bassa confidenza, con titolo alternativo e con discrepanza di piattaforma.</li>
@@ -1534,7 +1534,7 @@
         <p>Configura percorsi, posizioni degli strumenti, tipi di archivio e preferenze condivise tra tutti gli strumenti ROM.</p>
 
         <div class="help-tip">
-            <strong>Suggerimento:</strong> Tutti gli strumenti ROM supportano pausa/ripresa e vengono eseguiti in background. L'avanzamento e i risultati vengono registrati e visualizzabili nel Visualizzatore log. Lo stato dello strumento (disponibile vs richiede installazione) è mostrato su ogni scheda dello strumento.
+            <strong>Suggerimento:</strong> Tutti gli strumenti ROM supportano pausa/ripresa e vengono eseguiti in background. L'avanzamento e i risultati vengono registrati e visualizzabili nel Visualizzatore di log. Lo stato dello strumento (disponibile vs richiede installazione) è mostrato su ogni scheda dello strumento.
         </div>
     </div>
 </section>
@@ -1544,7 +1544,7 @@
     <h2 class="card-title">Normalizzazione</h2>
     <div class="card-body">
         <h3>Cosa fa</h3>
-        <p>Normalizza i valori di genere e modalità di gioco in forme canoniche coerenti. Questo avviene automaticamente durante lo scraping e la Compilazione AI, e può anche essere applicato manualmente alla tua libreria esistente.</p>
+        <p>Normalizza i valori di genere e modalità di gioco in forme canoniche coerenti. Questo avviene automaticamente durante lo scraping e la Riempimento AI, e può anche essere applicato manualmente alla tua libreria esistente.</p>
 
         <h3>Perché è importante</h3>
         <p>Scraper diversi usano nomi diversi per la stessa cosa. La normalizzazione garantisce coerenza in tutta la tua libreria:</p>
@@ -1590,7 +1590,7 @@
                 <tr><th>Tipo di media</th><th>Target</th><th>Metodo</th></tr>
             </thead>
             <tbody>
-                <tr><td>Boxart</td><td>1080px di altezza</td><td>La larghezza si adatta proporzionalmente</td></tr>
+                <tr><td>Copertina</td><td>1080px di altezza</td><td>La larghezza si adatta proporzionalmente</td></tr>
                 <tr><td>Boxart 3D</td><td>1080px di altezza</td><td>La larghezza si adatta proporzionalmente (preserva la trasparenza)</td></tr>
                 <tr><td>Screenshot</td><td>1080px di altezza</td><td>La larghezza si adatta proporzionalmente</td></tr>
                 <tr><td>Controller</td><td>1280px sul lato più lungo</td><td>Preserva la trasparenza (RGBA)</td></tr>
@@ -1602,7 +1602,7 @@
 
         <h3>Come eseguirlo</h3>
         <ol>
-            <li>Vai su <strong>Impostazioni &rarr; Sistema &rarr; Manutenzione</strong> o <strong>Strumenti ROM &rarr; Ridimensionatore immagini</strong></li>
+            <li>Vai su <strong>Impostazioni &rarr; Sistema &rarr; Manutenzione</strong> o <strong>Strumenti ROM &rarr; Ridimensionatore di immagini</strong></li>
             <li>Fai clic su <strong>"Avvia"</strong> per iniziare la standardizzazione in blocco</li>
             <li>Il processo viene eseguito in background con avanzamento toast che mostra il file corrente e le statistiche</li>
             <li>Le immagini vengono anche standardizzate automaticamente durante lo scraping (i nuovi download vengono standardizzati immediatamente)</li>
@@ -1622,10 +1622,10 @@
 
 <!-- Logs -->
 <section id="logs" class="help-section card">
-    <h2 class="card-title">Visualizzatore log</h2>
+    <h2 class="card-title">Visualizzatore di log</h2>
     <div class="card-body">
         <h3>Cosa fa</h3>
-        <p>Un visualizzatore unificato per tutti i log dell'applicazione. Accedi tramite <strong>Visualizzatore log</strong> nella barra laterale.</p>
+        <p>Un visualizzatore unificato per tutti i log dell'applicazione. Accedi tramite <strong>Visualizzatore di log</strong> nella barra laterale.</p>
 
         <h3>Categorie di log</h3>
         <table class="data-table">
@@ -1633,7 +1633,7 @@
                 <tr><th>Categoria</th><th>Contenuti</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>Scraping</strong></td><td>Attività degli scraper, chiamate API, errori e risultati per gioco</td></tr>
+                <tr><td><strong>Scansione</strong></td><td>Attività degli scraper, chiamate API, errori e risultati per gioco</td></tr>
                 <tr><td><strong>Strumenti ROM</strong></td><td>Estrazione archivi, conversione CHD, rilevamento duplicati, deduplicazione screenshot</td></tr>
                 <tr><td><strong>Report ROM</strong></td><td>Risultati della validazione della nomenclatura</td></tr>
                 <tr><td><strong>Ridimensionamento immagini</strong></td><td>Avanzamento del processo di standardizzazione delle immagini (upscale/downscale per file)</td></tr>
@@ -1754,7 +1754,7 @@
         </ol>
 
         <div class="help-tip">
-            <strong>Avviso:</strong> Il ripristino di un backup sovrascrive il tuo database corrente. Crea un nuovo backup prima di ripristinarne uno più vecchio!
+            <strong>Attenzione:</strong> Il ripristino di un backup sovrascrive il tuo database corrente. Crea un nuovo backup prima di ripristinarne uno più vecchio!
         </div>
     </div>
 </section>
@@ -1801,7 +1801,7 @@
         <h3 id="ts-jobs">Operazioni lunghe</h3>
 
         <h4>Un'operazione sembra bloccata</h4>
-        <p>Lo scraping in blocco, le sincronizzazioni degli obiettivi, gli aggiornamenti PSN, i ridimensionamenti delle immagini e le esecuzioni di Riempimento con IA mostrano un avviso di avanzamento nell'angolo. I suoi pulsanti mettono in pausa, fermano o annullano l'operazione. Uno scraping in blocco si ferma tra un gioco e l'altro, quindi il gioco in corso finisce prima; può volerci un minuto. Se continua a girare, riavvia RetroDB: Impostazioni &rarr; Sistema &rarr; Controlli del server &rarr; <strong>Riavvia server</strong>.</p>
+        <p>Lo scraping in blocco, le sincronizzazioni degli obiettivi, gli aggiornamenti PSN, i ridimensionamenti delle immagini e le esecuzioni di Riempimento AI mostrano un avviso di avanzamento nell'angolo. I suoi pulsanti mettono in pausa, fermano o annullano l'operazione. Uno scraping in blocco si ferma tra un gioco e l'altro, quindi il gioco in corso finisce prima; può volerci un minuto. Se continua a girare, riavvia RetroDB: Impostazioni &rarr; Sistema &rarr; Controlli del server &rarr; <strong>Riavvia server</strong>.</p>
 
         <h4>Banner "Operazioni interrotte" nella Dashboard</h4>
         <p>Un'operazione che era in corso o in attesa quando RetroDB si è fermato compare qui. <strong>Riprendi</strong> la continua dal punto in cui aveva salvato per ultimo. <strong>Ignora</strong> la scarta. <strong>Riprendi tutto</strong> e <strong>Ignora tutto</strong> fanno lo stesso per tutte le operazioni in elenco.</p>
@@ -1862,15 +1862,15 @@
         <h4>"A scrape for &hellip; is already running"</h4>
         <p>Quel sistema è già in scansione nella stessa modalità. Aspetta che finisca, oppure annullalo. Lo scraping di un altro sistema aspetta in coda e parte da solo.</p>
 
-        <h3 id="ts-ai-fill">Riempimento con IA</h3>
+        <h3 id="ts-ai-fill">Riempimento AI</h3>
 
         <h4>"L'AI non ha restituito dati. Controlla la tua chiave API e le impostazioni del provider."</h4>
         <p>In Impostazioni &rarr; Scansione &rarr; Chiavi API, scegli il <strong>Provider di metadati IA</strong>, inserisci la sua chiave, premi <strong>Salva chiavi API</strong>, poi <strong>Prova la chiave IA salvata</strong>. Se il servizio IA ha rifiutato, il messaggio ne indica il motivo, ad esempio credito esaurito.</p>
 
         <h4>"L'AI non ha trovato campi mancanti da riempire"</h4>
-        <p>Non è un errore: il gioco non ha niente di vuoto che il Riempimento con IA possa riempire.</p>
+        <p>Non è un errore: il gioco non ha niente di vuoto che il Riempimento AI possa riempire.</p>
 
-        <h4>Il Riempimento con IA in blocco si è fermato da solo</h4>
+        <h4>Il Riempimento AI in blocco si è fermato da solo</h4>
         <p>Si ferma dopo tre giochi di fila senza risposta. Controlla la chiave con <strong>Prova la chiave IA salvata</strong>, poi riavvialo. I giochi già riempiti mantengono quanto ricevuto.</p>
 
         <h3 id="ts-images">Immagini</h3>
@@ -1976,7 +1976,7 @@
         <h4>Password dimenticata</h4>
         <p>Non c'è un ripristino via email. Un amministratore imposta una nuova password in Impostazioni &rarr; Account &rarr; Gestione utenti. Se l'unico amministratore dimentica la sua, ripristina un backup fatto quando la password era nota.</p>
 
-        <h4>"You do not have permission to access this feature"</h4>
+        <h4>"Non hai il permesso di eseguire questa azione"</h4>
         <p>Il tuo ruolo non include quella funzione. Un amministratore può cambiare il tuo ruolo in Impostazioni &rarr; Account &rarr; Gestione utenti.</p>
 
         <h3 id="ts-data">Database, backup e aggiornamenti</h3>
@@ -2043,7 +2043,7 @@
             <li><strong>Protezione dalle bombe di decompressione immagini</strong> &mdash; Il numero massimo di pixel di un'immagine è limitato per prevenire l'esaurimento della memoria da immagini malevole</li>
         </ul>
 
-        <h3>Dichiarazione di non responsabilità</h3>
+        <h3>Esclusione di responsabilità</h3>
         <p>
             RetroDB è fornito <strong>"COSÌ COM'È"</strong>, senza garanzie di alcun tipo, espresse o implicite,
             incluse ma non limitate alle garanzie di commerciabilità, idoneità a uno scopo particolare

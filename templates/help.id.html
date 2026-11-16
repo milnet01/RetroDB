@@ -127,7 +127,7 @@
     <h2 class="card-title">Memulai</h2>
     <div class="card-body">
         <h3>Pengaturan Pertama Kali</h3>
-        <p>Saat pertama kali dijalankan, RetroDB menampilkan <strong>Wizard Pengaturan</strong> yang memandu Anda melalui:</p>
+        <p>Saat pertama kali dijalankan, RetroDB menampilkan <strong>Wizard Penyiapan</strong> yang memandu Anda melalui:</p>
         <ol>
             <li><strong>Akun Admin</strong> &mdash; Buat nama pengguna dan kata sandi Anda</li>
             <li><strong>Jalur Perpustakaan</strong> &mdash; Atur direktori ROM Anda</li>
@@ -233,7 +233,7 @@
             <li><strong>Trofi Kolektor</strong> &mdash; Pencapaian gamifikasi untuk koleksi Anda</li>
         </ul>
 
-        <h4>Perkakas</h4>
+        <h4>Alat</h4>
         <ul>
             <li><strong>Alat ROM</strong> &mdash; Pemindai arsip, konverter/verifikasi CHD, pencari duplikat, pengatur multi-disc, penghapus screenshot duplikat, pengubah ukuran gambar, Laporan ROM</li>
             <li><strong>Game Imports</strong> &mdash; Impor dari CLZ, Steam, Xbox, dan PSN</li>
@@ -284,7 +284,7 @@
             <div class="shortcut-item"><kbd>g</kbd> <kbd>h</kbd> <span>Help</span></div>
         </div>
 
-        <h3>Aksi</h3>
+        <h3>Tindakan</h3>
         <div class="shortcut-grid">
             <div class="shortcut-item"><kbd>/</kbd> <span>Fokus pencarian (kotak milik halaman itu, atau jika tidak ada, kotak di sidebar)</span></div>
             <div class="shortcut-item"><kbd>Esc</kbd> <span>Tutup modal</span></div>
@@ -362,7 +362,7 @@
             <li><strong>Total Sistem</strong> &mdash; Jumlah platform dalam perpustakaan Anda</li>
             <li><strong>Total Game</strong> &mdash; Jumlah total game (tidak termasuk disc bonus)</li>
             <li><strong>Metadata Hilang</strong> &mdash; Game yang belum diambil datanya</li>
-            <li><strong>Lengkap</strong> &mdash; Game dengan metadata yang sudah diambil</li>
+            <li><strong>Selesai</strong> &mdash; Game dengan metadata yang sudah diambil</li>
         </ul>
 
         <h3>Bagian Aktivitas Terbaru</h3>
@@ -371,7 +371,7 @@
             <li><strong>Lanjutkan Bermain</strong> &mdash; Game yang ditandai sebagai "In Progress"</li>
             <li><strong>Baru Ditambahkan</strong> &mdash; Game terbaru yang ditambahkan ke perpustakaan Anda</li>
             <li><strong>Baru Dilihat</strong> &mdash; Game yang baru saja Anda buka</li>
-            <li><strong>Baru Diambil Datanya</strong> &mdash; Game dengan metadata yang baru saja diambil</li>
+            <li><strong>Baru Di-scrape</strong> &mdash; Game dengan metadata yang baru saja diambil</li>
         </ul>
 
         <h3>Aksi Cepat</h3>
@@ -662,7 +662,7 @@
 
 <!-- Bulk Scraping -->
 <section id="bulk-scrape" class="help-section card">
-    <h2 class="card-title">Pengambilan Data Massal</h2>
+    <h2 class="card-title">Scraping Massal</h2>
     <div class="card-body">
         <h3>Memulai Pengambilan Data Massal</h3>
         <ol>
@@ -718,7 +718,7 @@
 
 <!-- AI Fill -->
 <section id="ai-fill" class="help-section card">
-    <h2 class="card-title">AI Fill</h2>
+    <h2 class="card-title">Isi dengan AI</h2>
     <div class="card-body">
         <h3>Fungsinya</h3>
         <p>AI Fill menggunakan model bahasa besar (Gemini, OpenAI, atau Claude) untuk mengisi metadata game yang hilang atau tidak lengkap secara cerdas. Fitur ini lebih pintar daripada pengambilan data biasa karena menggunakan pengetahuan kontekstual tentang game untuk memberikan data akurat yang mungkin tidak dimiliki scraper.</p>
@@ -803,11 +803,11 @@
             <tbody>
                 <tr><td><strong>Genre</strong></td><td>Action, RPG, Platformer, dll.</td><td>Ya</td></tr>
                 <tr><td><strong>Series</strong></td><td>Franchise game</td><td>Ya</td></tr>
-                <tr><td><strong>Publisher</strong></td><td>Perusahaan penerbit</td><td>Ya</td></tr>
-                <tr><td><strong>Developer</strong></td><td>Studio pengembang</td><td>Ya</td></tr>
-                <tr><td><strong>Players</strong></td><td>Jumlah pemain</td><td>Tidak</td></tr>
+                <tr><td><strong>Penerbit</strong></td><td>Perusahaan penerbit</td><td>Ya</td></tr>
+                <tr><td><strong>Pengembang</strong></td><td>Studio pengembang</td><td>Ya</td></tr>
+                <tr><td><strong>Pemain</strong></td><td>Jumlah pemain</td><td>Tidak</td></tr>
                 <tr><td><strong>Modes</strong></td><td>Single-Player, Multi-Player, Co-op</td><td>Ya</td></tr>
-                <tr><td><strong>Perspective</strong></td><td>First-Person, Top-Down, Isometric, Side-Scroller</td><td>Ya</td></tr>
+                <tr><td><strong>Perspektif</strong></td><td>First-Person, Top-Down, Isometric, Side-Scroller</td><td>Ya</td></tr>
                 <tr><td><strong>Dimension</strong></td><td>2D, 3D</td><td>Ya</td></tr>
                 <tr><td><strong>Rating</strong></td><td>Rating usia (menampilkan sistem pilihan Anda)</td><td>Tidak</td></tr>
                 <tr><td><strong>Memiliki Achievement</strong></td><td>Game dengan dukungan RetroAchievements</td><td>Tidak</td></tr>
@@ -911,7 +911,7 @@
         <p>RetroDB mendukung sistem rating usia internasional berikut:</p>
         <table class="data-table">
             <thead>
-                <tr><th>Sistem</th><th>Region</th></tr>
+                <tr><th>Sistem</th><th>Wilayah</th></tr>
             </thead>
             <tbody>
                 <tr><td><strong>ESRB</strong></td><td>Amerika Utara</td></tr>
@@ -967,15 +967,15 @@
             </thead>
             <tbody>
                 <tr><td>Genre</td><td>Ya</td></tr>
-                <tr><td>Publisher</td><td>Ya</td></tr>
-                <tr><td>Developer</td><td>Ya</td></tr>
-                <tr><td>Franchise</td><td>Ya</td></tr>
-                <tr><td>Region</td><td>Ya</td></tr>
-                <tr><td>Game Structure</td><td>Ya</td></tr>
-                <tr><td>Perspective</td><td>Ya</td></tr>
+                <tr><td>Penerbit</td><td>Ya</td></tr>
+                <tr><td>Pengembang</td><td>Ya</td></tr>
+                <tr><td>Waralaba</td><td>Ya</td></tr>
+                <tr><td>Wilayah</td><td>Ya</td></tr>
+                <tr><td>Struktur Game</td><td>Ya</td></tr>
+                <tr><td>Perspektif</td><td>Ya</td></tr>
                 <tr><td>Dimension</td><td>Ya</td></tr>
-                <tr><td>Completion Status</td><td>Tidak (replace saja)</td></tr>
-                <tr><td>Players</td><td>Tidak (replace saja)</td></tr>
+                <tr><td>Status Penyelesaian</td><td>Tidak (replace saja)</td></tr>
+                <tr><td>Pemain</td><td>Tidak (replace saja)</td></tr>
             </tbody>
         </table>
     </div>
@@ -1147,7 +1147,7 @@
 
 <!-- Steam Achievements -->
 <section id="steam-achievements" class="help-section card">
-    <h2 class="card-title">Steam Achievements</h2>
+    <h2 class="card-title">Achievement Steam</h2>
     <div class="card-body">
         <h3>Pengaturan</h3>
         <ol>
@@ -1181,7 +1181,7 @@
 
 <!-- Xbox Achievements -->
 <section id="xbox-achievements" class="help-section card">
-    <h2 class="card-title">Xbox Achievements</h2>
+    <h2 class="card-title">Achievement Xbox</h2>
     <div class="card-body">
         <h3>Pengaturan</h3>
         <ol>
@@ -1237,7 +1237,7 @@
         <ul>
             <li><strong>Modal detail game</strong> &mdash; Estimasi waktu bermain ditampilkan di info game</li>
             <li><strong>Halaman detail game penuh</strong> &mdash; Info waktu bermain yang sama</li>
-            <li><strong>Analytics &rarr; tab Playtime</strong> &mdash; Analisis waktu bermain untuk seluruh koleksi</li>
+            <li><strong>Analitik &rarr; tab Playtime</strong> &mdash; Analisis waktu bermain untuk seluruh koleksi</li>
             <li><strong>Compare Games</strong> &mdash; Perbandingan waktu bermain berdampingan</li>
         </ul>
 
@@ -1306,9 +1306,9 @@
                 <tr><th>Tingkatan</th><th>Contoh</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>Bronze</strong></td><td>Tambahkan game pertama, capai 10 game, scraping pertama, 5 sistem, penyelesaian pertama</td></tr>
-                <tr><td><strong>Silver</strong></td><td>100 game, 50 diambil datanya, 10 sistem, 10 penyelesaian, 500 game</td></tr>
-                <tr><td><strong>Gold</strong></td><td>1.000 game, cakupan metadata 100%, 20 sistem, 50 penyelesaian</td></tr>
+                <tr><td><strong>Perunggu</strong></td><td>Tambahkan game pertama, capai 10 game, scraping pertama, 5 sistem, penyelesaian pertama</td></tr>
+                <tr><td><strong>Perak</strong></td><td>100 game, 50 diambil datanya, 10 sistem, 10 penyelesaian, 500 game</td></tr>
+                <tr><td><strong>Emas</strong></td><td>1.000 game, cakupan metadata 100%, 20 sistem, 50 penyelesaian</td></tr>
                 <tr><td><strong>Platinum</strong></td><td>5.000 game, 100 penyelesaian, 30+ sistem</td></tr>
             </tbody>
         </table>
@@ -1380,18 +1380,18 @@
                 <tr><th>Tab</th><th>Isi</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>Summary</strong></td><td>Kartu ringkasan statistik (total game, sistem, tingkat penyelesaian, persentase yang diambil datanya, dll.)</td></tr>
-                <tr><td><strong>Charts</strong></td><td>Game berdasarkan platform/produsen, berdasarkan genre, garis waktu per tahun</td></tr>
-                <tr><td><strong>Developers</strong></td><td>Grafik batang 15 developer dan publisher teratas</td></tr>
+                <tr><td><strong>Ringkasan</strong></td><td>Kartu ringkasan statistik (total game, sistem, tingkat penyelesaian, persentase yang diambil datanya, dll.)</td></tr>
+                <tr><td><strong>Grafik</strong></td><td>Game berdasarkan platform/produsen, berdasarkan genre, garis waktu per tahun</td></tr>
+                <tr><td><strong>Pengembang</strong></td><td>Grafik batang 15 developer dan publisher teratas</td></tr>
                 <tr><td><strong>Gameplay</strong></td><td>Rincian genre, analisis mode permainan, distribusi struktur game</td></tr>
-                <tr><td><strong>Playtime</strong></td><td>Analisis data waktu bermain HLTB di seluruh koleksi Anda &mdash; total estimasi waktu bermain, rata-rata, distribusi</td></tr>
-                <tr><td><strong>Review Scores</strong></td><td>Distribusi dan rata-rata skor kritikus dan pengguna</td></tr>
-                <tr><td><strong>Age Ratings</strong></td><td>Distribusi rating usia di semua sistem rating</td></tr>
+                <tr><td><strong>Waktu Bermain</strong></td><td>Analisis data waktu bermain HLTB di seluruh koleksi Anda &mdash; total estimasi waktu bermain, rata-rata, distribusi</td></tr>
+                <tr><td><strong>Skor Ulasan</strong></td><td>Distribusi dan rata-rata skor kritikus dan pengguna</td></tr>
+                <tr><td><strong>Rating Usia</strong></td><td>Distribusi rating usia di semua sistem rating</td></tr>
                 <tr><td><strong>Achievements</strong></td><td>Cakupan dan penyelesaian RetroAchievements berdasarkan sistem</td></tr>
-                <tr><td><strong>Data Quality</strong></td><td>Grafik radar kelengkapan metadata (deskripsi, boxart, genre, developer, publisher, tanggal rilis, screenshot, fanart, video, manual, HLTB, rating, mode, region)</td></tr>
-                <tr><td><strong>Growth</strong></td><td>Garis waktu pertumbuhan koleksi menunjukkan kapan game ditambahkan seiring waktu</td></tr>
-                <tr><td><strong>Storage</strong></td><td>Rincian penggunaan penyimpanan berdasarkan sistem (dengan ukuran berkas yang sudah diformat)</td></tr>
-                <tr><td><strong>Leaderboards</strong></td><td>Sistem teratas berdasarkan jumlah game, game individual terbesar berdasarkan ukuran berkas</td></tr>
+                <tr><td><strong>Kualitas Data</strong></td><td>Grafik radar kelengkapan metadata (deskripsi, boxart, genre, developer, publisher, tanggal rilis, screenshot, fanart, video, manual, HLTB, rating, mode, region)</td></tr>
+                <tr><td><strong>Pertumbuhan</strong></td><td>Garis waktu pertumbuhan koleksi menunjukkan kapan game ditambahkan seiring waktu</td></tr>
+                <tr><td><strong>Penyimpanan</strong></td><td>Rincian penggunaan penyimpanan berdasarkan sistem (dengan ukuran berkas yang sudah diformat)</td></tr>
+                <tr><td><strong>Papan Peringkat</strong></td><td>Sistem teratas berdasarkan jumlah game, game individual terbesar berdasarkan ukuran berkas</td></tr>
             </tbody>
         </table>
 
@@ -1407,7 +1407,7 @@
 
 <!-- Reports -->
 <section id="reports" class="help-section card">
-    <h2 class="card-title">ROM Reports</h2>
+    <h2 class="card-title">Laporan ROM</h2>
     <div class="card-body">
         <h3>Fungsinya</h3>
         <p>Memvalidasi nama berkas ROM terhadap konvensi penamaan baku dan mengenali potensi masalah. Buka melalui <strong>Alat ROM</strong> di bilah samping, lalu tab <strong>Laporan ROM</strong>.</p>
@@ -1418,8 +1418,8 @@
                 <tr><th>Tab</th><th>Yang Diperiksa</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>Non-Standard Names</strong></td><td>ROM dengan nama berkas yang tidak sesuai konvensi penamaan. Menampilkan nama berkas saat ini, masalah yang terdeteksi, dan saran nama yang sudah dikoreksi.</td></tr>
-                <tr><td><strong>Name Mismatches</strong></td><td>ROM di mana nama berkasnya tidak cocok dengan judul metadata hasil scraping. Menampilkan nama berkas saat ini dibandingkan judul hasil scraping, region, tahun, dan developer.</td></tr>
+                <tr><td><strong>Nama Non-Standar</strong></td><td>ROM dengan nama berkas yang tidak sesuai konvensi penamaan. Menampilkan nama berkas saat ini, masalah yang terdeteksi, dan saran nama yang sudah dikoreksi.</td></tr>
+                <tr><td><strong>Ketidakcocokan Nama</strong></td><td>ROM di mana nama berkasnya tidak cocok dengan judul metadata hasil scraping. Menampilkan nama berkas saat ini dibandingkan judul hasil scraping, region, tahun, dan developer.</td></tr>
             </tbody>
         </table>
 
@@ -1437,11 +1437,11 @@
 
 <!-- ROM Tools -->
 <section id="rom-tools" class="help-section card">
-    <h2 class="card-title">Perkakas ROM</h2>
+    <h2 class="card-title">Alat ROM</h2>
     <div class="card-body">
         <p>Akses hub ROM Tools dari sidebar. Setiap perkakas berjalan sebagai job latar belakang dengan pembaruan kemajuan real-time, dukungan jeda/lanjutkan, dan pencatatan log.</p>
 
-        <h3>Archive Scanner</h3>
+        <h3>Pemindai Arsip</h3>
         <p>Ekstrak arsip ROM (ZIP, 7Z, RAR) dengan opsi untuk:</p>
         <ul>
             <li>Pemindaian rekursif subdirektori</li>
@@ -1450,15 +1450,15 @@
         </ul>
         <p><em>Memerlukan: 7z atau unzip</em></p>
 
-        <h3>CHD Converter</h3>
+        <h3>Konverter CHD</h3>
         <p>Konversi gambar disc (ISO, BIN/CUE, GDI) ke format CHD terkompresi. Menghemat penyimpanan secara signifikan sambil mempertahankan kompatibilitas penuh dengan emulator.</p>
         <p><em>Memerlukan: chdman (dari mame-tools)</em></p>
 
-        <h3>CHD Verify</h3>
+        <h3>Verifikasi CHD</h3>
         <p>Verifikasi integritas berkas CHD dengan validasi hash. Mengenali konversi yang rusak atau tidak lengkap.</p>
         <p><em>Memerlukan: chdman</em></p>
 
-        <h3>Duplicate Finder</h3>
+        <h3>Pencari Duplikat</h3>
         <p>Temukan ROM duplikat berdasarkan hash atau nama berkas, dengan opsi memprioritaskan berdasarkan tag region. Dalam mode nama berkas, versi regional yang ditautkan dari satu game tidak dilaporkan sebagai duplikat; dalam mode hash, berkas yang identik selalu dilaporkan.</p>
         <p><em>Tanpa dependensi eksternal</em></p>
 
@@ -1474,11 +1474,11 @@
         <p>Khusus editor. Menjalankan Isi dengan AI pada seluruh sistem, untuk kolom yang Anda aktifkan (lihat AI Fill &rarr; Banyak Game Sekaligus).</p>
         <p><em>Memerlukan: penyedia AI di <strong>Pengaturan &rarr; Scraping</strong></em></p>
 
-        <h3>Multi-Disc Organizer</h3>
+        <h3>Pengatur Multi-Disc</h3>
         <p>Atur game multi-disc ke dalam subdirektori dan buat playlist M3U untuk emulator yang mendukungnya. Berguna untuk sistem seperti PlayStation dan Saturn.</p>
         <p><em>Tanpa dependensi eksternal</em></p>
 
-        <h3>Screenshot Dedup</h3>
+        <h3>Dedup Screenshot</h3>
         <p>Temukan dan hapus screenshot duplikat di seluruh perpustakaan game Anda untuk membebaskan ruang penyimpanan.</p>
         <ul>
             <li><strong>Hash Persis (MD5)</strong> &mdash; Hanya mengenali berkas yang identik</li>
@@ -1487,11 +1487,11 @@
         <p>Memindai secara bertahap dengan statistik langsung yang menampilkan jumlah game dipindai, jumlah duplikat, dan ruang yang bisa dibebaskan. Hasil dikelompokkan berdasarkan game dan sistem. Anda bisa memilih berkas mana yang dipertahankan di setiap grup duplikat, atau gunakan <strong>"Select Largest"</strong> untuk otomatis mempertahankan versi dengan resolusi tertinggi.</p>
         <p><em>Tanpa dependensi eksternal</em></p>
 
-        <h3>Image Resizer</h3>
+        <h3>Pengubah Ukuran Gambar</h3>
         <p>Standardisasi media game ke ukuran target yang konsisten. Lihat <a href="#image-standardization">Image Standardization</a> untuk rincian lengkap.</p>
         <p><em>Tanpa dependensi eksternal (peningkatan skala AI berbasis Python)</em></p>
 
-        <h3>Backfill Alternate Titles</h3>
+        <h3>Isi Ulang Judul Alternatif</h3>
         <p>Menyisir setiap game yang sudah di-scrape dan mengambil <strong>judul alternatif</strong>-nya dari IGDB / TGDB / ScreenScraper, ditandai dengan wilayah asal tiap nama. Nama yang sudah Anda miliki mendapatkan wilayahnya. Berguna setelah mengimpor katalog besar atau bermigrasi dari alat lain yang tidak menyimpan judul regional/Jepang/subjudul. Berjalan di latar belakang; kemajuan ditampilkan pada kartu perkakas.</p>
         <p><em>Memerlukan setidaknya satu kunci API scraper (IGDB / TGDB / ScreenScraper)</em></p>
 
@@ -1519,18 +1519,18 @@
         <p>RAWG tidak memiliki boxart. Pengambilan data lama menyimpan gambar latarnya, yang sering kali berupa screenshot, sebagai sampul, dan karena pengambilan data hanya mengisi sampul yang kosong, gambar itu menghalangi sampul yang asli. Alat ini menghapus gambar-gambar tersebut dan membiarkan sampulnya kosong. Sampul dari sumber lain dan semua fanart tetap ada. Game tersebut tidak menampilkan sampul sampai pengambilan data menemukannya, jadi jalankan pengambilan data massal dengan <strong>Isi yang Hilang</strong> sesudahnya.</p>
         <p><em>Tidak memerlukan dependensi</em></p>
 
-        <h3>Bulk HLTB Lookup</h3>
+        <h3>Pencarian HLTB Massal</h3>
         <p>Jalankan pencarian HowLongToBeat untuk setiap game yang belum memiliki estimasi waktu bermain. Setiap kecocokan dinilai berdasarkan judul + platform + tahun rilis; kecocokan dengan keyakinan tinggi disimpan otomatis. Apa pun yang di bawah ambang keyakinan (atau dengan platform yang bertentangan) diparkir untuk ditinjau manusia.</p>
         <p><em>Mencari setiap game di situs HowLongToBeat, jadi memerlukan akses internet</em></p>
 
-        <h3>HLTB Pending Review</h3>
+        <h3>HLTB Menunggu Tinjauan</h3>
         <p>Antrean tinjauan untuk kecocokan ambigu yang ditemukan oleh Bulk HLTB Lookup. Setiap baris tertunda menampilkan game sumber berdampingan dengan kandidat HLTB (judul, platform, tahun rilis, tingkat keyakinan). Setujui, tolak, atau pilih kecocokan lain per baris. Kartu perkakas tinjauan hanya muncul di hub ROM Tools saat ada setidaknya satu kecocokan yang tertunda.</p>
         <ul>
             <li><strong>Tab filter</strong> untuk kecocokan keyakinan rendah, judul alternatif, dan ketidakcocokan platform.</li>
             <li><strong>Approve</strong> menuliskan estimasi waktu bermain; <strong>Reject</strong> membuang kandidat tersebut dan menjaga antrean pencarian tetap bersih.</li>
         </ul>
 
-        <h3>Tool Settings</h3>
+        <h3>Pengaturan Alat</h3>
         <p>Konfigurasikan jalur, lokasi perkakas, jenis arsip, dan preferensi yang digunakan bersama di semua perkakas ROM.</p>
 
         <div class="help-tip">
@@ -1622,7 +1622,7 @@
 
 <!-- Logs -->
 <section id="logs" class="help-section card">
-    <h2 class="card-title">Log Viewer</h2>
+    <h2 class="card-title">Penampil Log</h2>
     <div class="card-body">
         <h3>Fungsinya</h3>
         <p>Penampil terpadu untuk semua log aplikasi. Akses lewat <strong>Log Viewer</strong> di sidebar.</p>
@@ -1634,10 +1634,10 @@
             </thead>
             <tbody>
                 <tr><td><strong>Scraping</strong></td><td>Aktivitas scraper, panggilan API, error, dan hasil per game</td></tr>
-                <tr><td><strong>ROM Tools</strong></td><td>Ekstraksi arsip, konversi CHD, deteksi duplikat, screenshot dedup</td></tr>
-                <tr><td><strong>ROM Reports</strong></td><td>Hasil validasi penamaan</td></tr>
-                <tr><td><strong>Image Resize</strong></td><td>Kemajuan job standardisasi gambar (upscale/downscale per berkas)</td></tr>
-                <tr><td><strong>System</strong></td><td>Aktivitas aplikasi secara umum, tugas pemeliharaan, startup, operasi database</td></tr>
+                <tr><td><strong>Alat ROM</strong></td><td>Ekstraksi arsip, konversi CHD, deteksi duplikat, screenshot dedup</td></tr>
+                <tr><td><strong>Laporan ROM</strong></td><td>Hasil validasi penamaan</td></tr>
+                <tr><td><strong>Ubah Ukuran Gambar</strong></td><td>Kemajuan job standardisasi gambar (upscale/downscale per berkas)</td></tr>
+                <tr><td><strong>Sistem</strong></td><td>Aktivitas aplikasi secara umum, tugas pemeliharaan, startup, operasi database</td></tr>
             </tbody>
         </table>
 
@@ -1672,7 +1672,7 @@
             <li><strong>Clear CLZ Imports</strong> &mdash; Hapus semua catatan impor CLZ Games (entri hanya metadata tanpa berkas ROM).</li>
         </ul>
 
-        <h3>Optimasi Database</h3>
+        <h3>Optimalisasi Database</h3>
         <ul>
             <li><strong>Optimize Database</strong> &mdash; Menjalankan VACUUM dan ANALYZE SQLite untuk memulihkan ruang penyimpanan dari catatan yang dihapus dan memperbarui statistik perencana kueri. Direkomendasikan setelah penghapusan besar atau operasi pembersihan.</li>
         </ul>
@@ -1844,7 +1844,7 @@
         <h4>Sebuah sumber menampilkan alasan, bukan "Online"</h4>
         <p>Alasan itu menyebut masalahnya, misalnya "No API key" atau "Invalid API key". Masukkan atau perbaiki kuncinya di Pengaturan &rarr; Scraping &rarr; Kunci API (khusus admin) dan tekan <strong>Simpan Kunci API</strong>. Kunci yang tersimpan tampil sebagai bintang; biarkan kotaknya untuk mempertahankannya, atau kosongkan lalu ketik kunci yang baru.</p>
 
-        <h3 id="ts-bulk-scrape">Scrape Massal</h3>
+        <h3 id="ts-bulk-scrape">Scraping Massal</h3>
 
         <h4>Scrape massal macet</h4>
         <p>Tekan <strong>Batal</strong> di jendela Scraping Massal; klik notifikasi progres untuk membukanya. Game yang sedang di-scrape selesai dulu. Jika masih berjalan, lihat <a href="#ts-jobs">Sebuah job tampak macet</a>.</p>
@@ -1976,7 +1976,7 @@
         <h4>Lupa kata sandi</h4>
         <p>Tidak ada reset lewat email. Admin mengatur kata sandi baru di Pengaturan &rarr; Akun &rarr; Manajemen Pengguna. Jika satu-satunya admin lupa kata sandinya, pulihkan backup yang dibuat saat kata sandi masih diketahui.</p>
 
-        <h4>"You do not have permission to access this feature"</h4>
+        <h4>"Anda tidak memiliki izin untuk melakukan tindakan ini"</h4>
         <p>Peran Anda tidak mencakup fitur itu. Admin dapat mengubah peran Anda di Pengaturan &rarr; Akun &rarr; Manajemen Pengguna.</p>
 
         <h3 id="ts-data">Database, Backup, dan Pembaruan</h3>

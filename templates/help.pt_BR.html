@@ -37,15 +37,15 @@
     <a href="#api-keys" class="help-nav-item">Chaves de API</a>
     <a href="#settings" class="help-nav-item">Configurações</a>
     <a href="#emulators-play" class="help-nav-item">Emuladores e Jogar</a>
-    <a href="#scraping" class="help-nav-item">Coleta de Dados</a>
-    <a href="#bulk-scrape" class="help-nav-item">Coleta em Lote</a>
-    <a href="#ai-fill" class="help-nav-item">Preenchimento por IA</a>
+    <a href="#scraping" class="help-nav-item">Busca de metadados</a>
+    <a href="#bulk-scrape" class="help-nav-item">Busca em Lote</a>
+    <a href="#ai-fill" class="help-nav-item">Preencher com AI</a>
     <a href="#filtering" class="help-nav-item">Filtragem</a>
     <a href="#game-detail" class="help-nav-item">Detalhes do Jogo</a>
     <a href="#bulk-edit" class="help-nav-item">Edição em Lote</a>
     <a href="#compare" class="help-nav-item">Comparar</a>
     <a href="#collections" class="help-nav-item">Coleções</a>
-    <a href="#game-imports" class="help-nav-item">Importação de Jogos</a>
+    <a href="#game-imports" class="help-nav-item">Importações de Jogos</a>
     <a href="#retroachievements" class="help-nav-item">RetroAchievements</a>
     <a href="#steam-achievements" class="help-nav-item">Steam</a>
     <a href="#xbox-achievements" class="help-nav-item">Xbox</a>
@@ -57,7 +57,7 @@
     <a href="#reports" class="help-nav-item">Relatórios</a>
     <a href="#rom-tools" class="help-nav-item">Ferramentas de ROM</a>
     <a href="#normalization" class="help-nav-item">Normalização</a>
-    <a href="#image-standardization" class="help-nav-item">Redimensionar Imagens</a>
+    <a href="#image-standardization" class="help-nav-item">Redimensionar Imagem</a>
     <a href="#logs" class="help-nav-item">Registros</a>
     <a href="#maintenance" class="help-nav-item">Manutenção</a>
     <a href="#multi-user" class="help-nav-item">Multiusuário</a>
@@ -134,7 +134,7 @@
             <li><strong>Integração com o ES-DE</strong> &mdash; Opcionalmente vincule as gamelists e mídias do ES-DE</li>
             <li><strong>Chaves de API</strong> &mdash; Opcionalmente adicione chaves de API dos coletores de dados</li>
         </ol>
-        <p>Após concluir o assistente, clique em <strong>"Escanear Biblioteca"</strong> no Painel para descobrir seus ROMs.</p>
+        <p>Após concluir o assistente, clique em <strong>"Verificar Biblioteca"</strong> no Painel para descobrir seus ROMs.</p>
 
         <h3>Fluxo de Início Rápido</h3>
         <ol>
@@ -236,13 +236,13 @@
         <h4>Ferramentas</h4>
         <ul>
             <li><strong>Ferramentas de ROM</strong> &mdash; Escâner de arquivos compactados, conversor/verificador de CHD, localizador de duplicatas, organizador multidisco, deduplicação de capturas de tela, redimensionador de imagens, Relatórios de ROM</li>
-            <li><strong>Importação de Jogos</strong> &mdash; Importe de CLZ, Steam, Xbox e PSN</li>
+            <li><strong>Importações de Jogos</strong> &mdash; Importe de CLZ, Steam, Xbox e PSN</li>
         </ul>
 
         <h4>Configuração</h4>
         <ul>
             <li><strong>Configurações</strong> &mdash; Toda a configuração do aplicativo, em abas com subseções</li>
-            <li><strong>Visualizador de Registros</strong> &mdash; Navegue pelos registros do aplicativo em todas as categorias</li>
+            <li><strong>Visualizador de Log</strong> &mdash; Navegue pelos registros do aplicativo em todas as categorias</li>
         </ul>
 
         <h4>Informações</h4>
@@ -362,7 +362,7 @@
             <li><strong>Total de Sistemas</strong> &mdash; Número de plataformas na sua biblioteca</li>
             <li><strong>Total de Jogos</strong> &mdash; Contagem total de jogos (excluindo discos bônus)</li>
             <li><strong>Metadados Ausentes</strong> &mdash; Jogos ainda não coletados</li>
-            <li><strong>Completos</strong> &mdash; Jogos com metadados coletados</li>
+            <li><strong>Concluído</strong> &mdash; Jogos com metadados coletados</li>
         </ul>
 
         <h3>Seções de Atividade Recente</h3>
@@ -370,13 +370,13 @@
         <ul>
             <li><strong>Continuar Jogando</strong> &mdash; Jogos marcados como "Em Progresso"</li>
             <li><strong>Adicionados Recentemente</strong> &mdash; Últimos jogos adicionados à sua biblioteca</li>
-            <li><strong>Vistos Recentemente</strong> &mdash; Jogos que você abriu recentemente</li>
+            <li><strong>Visualizados Recentemente</strong> &mdash; Jogos que você abriu recentemente</li>
             <li><strong>Coletados Recentemente</strong> &mdash; Jogos com metadados obtidos recentemente</li>
         </ul>
 
         <h3>Ações Rápidas</h3>
         <ul>
-            <li><strong>Escanear Biblioteca</strong> &mdash; Escaneie seus diretórios de ROMs em busca de novos jogos</li>
+            <li><strong>Verificar Biblioteca</strong> &mdash; Escaneie seus diretórios de ROMs em busca de novos jogos</li>
             <li><strong>Jogo Aleatório</strong> &mdash; Escolha um jogo aleatório da sua biblioteca</li>
         </ul>
 
@@ -387,9 +387,9 @@
         <p>Se o RetroDB for reiniciado enquanto tarefas em segundo plano estiverem em execução (coleta em lote, sincronização de RA, redimensionamento de imagens, etc.), as tarefas interrompidas aparecem em um aviso de recuperação. Opções:</p>
         <ul>
             <li><strong>Retomar</strong> &mdash; Reinicia uma tarefa interrompida individual</li>
-            <li><strong>Retomar Todas</strong> &mdash; Reinicia todas as tarefas interrompidas</li>
+            <li><strong>Retomar Todos</strong> &mdash; Reinicia todas as tarefas interrompidas</li>
             <li><strong>Dispensar</strong> &mdash; Remove uma tarefa individual da lista de recuperação</li>
-            <li><strong>Dispensar Todas</strong> &mdash; Remove todas as tarefas interrompidas</li>
+            <li><strong>Dispensar Todos</strong> &mdash; Remove todas as tarefas interrompidas</li>
         </ul>
     </div>
 </section>
@@ -435,7 +435,7 @@
 <section id="api-keys" class="help-section card">
     <h2 class="card-title">Guia de Configuração de Chaves de API</h2>
     <div class="card-body">
-        <p>As chaves de API são opcionais, mas habilitam a coleta de metadados ricos e recursos adicionais. Configure-as em <strong>Configurações &rarr; Coleta de Dados &rarr; Chaves de API</strong>.</p>
+        <p>As chaves de API são opcionais, mas habilitam a coleta de metadados ricos e recursos adicionais. Configure-as em <strong>Configurações &rarr; Busca de metadados &rarr; Chaves de API</strong>.</p>
 
         <h3>Coletores de Metadados</h3>
 
@@ -497,8 +497,8 @@
         <h4>PlayStation Network (PSN)</h4>
         <p>A PSN usa autenticação por cookie NPSSO. Consulte a seção <a href="#trophies">Troféus</a> para instruções detalhadas de configuração.</p>
 
-        <h3>Provedores de IA (para Preenchimento por IA e Museu)</h3>
-        <p>É necessário um provedor de IA para o Preenchimento por IA de metadados e a geração de conteúdo do Museu. Escolha entre:</p>
+        <h3>Provedores de IA (para Preencher com AI e Museu)</h3>
+        <p>É necessário um provedor de IA para o Preencher com AI de metadados e a geração de conteúdo do Museu. Escolha entre:</p>
 
         <table class="data-table">
             <thead>
@@ -510,7 +510,7 @@
                 <tr><td><strong>Anthropic Claude</strong></td><td>Claude Haiku 5.5</td></tr>
             </tbody>
         </table>
-        <p>Cada provedor oferece vários modelos. O marcado como Recomendado funciona bem para metadados e conteúdo do museu; o site de cada provedor tem os preços atuais. Configure seu provedor preferido e a chave de API em <strong>Configurações &rarr; Coleta de Dados &rarr; Chaves de API</strong>.</p>
+        <p>Cada provedor oferece vários modelos. O marcado como Recomendado funciona bem para metadados e conteúdo do museu; o site de cada provedor tem os preços atuais. Configure seu provedor preferido e a chave de API em <strong>Configurações &rarr; Busca de metadados &rarr; Chaves de API</strong>.</p>
         <p>O Gemini e o OpenAI sempre pesquisam na web. O Claude só pesquisa quando você liga <strong>Deixar o Claude pesquisar na web</strong> abaixo do modelo dele. Sem pesquisa, o Claude deixa em branco tudo o que precisa de um número publicado, como cópias vendidas. A Anthropic cobra por cada pesquisa: no máximo 5 pesquisas por jogo, até 5 centavos de dólar.</p>
     </div>
 </section>
@@ -540,7 +540,7 @@
             <li><strong>Backup</strong> &mdash; Criar e restaurar backups do banco de dados</li>
         </ul>
 
-        <h3>Aba Coleta de Dados</h3>
+        <h3>Aba Busca de metadados</h3>
         <ul>
             <li><strong>Coletor</strong> &mdash; Ligue ou desligue os coletores e arraste-os na ordem em que são tentados. <strong>Filtro de correspondência na coleta em massa</strong> define o quanto um resultado precisa combinar: <strong>Rigoroso</strong> aceita só títulos exatos, <strong>Normal</strong> (o padrão) um título parecido no sistema certo, e <strong>Flexível</strong> também títulos parciais. Uma configuração feita em uma versão anterior aparece como <strong>Personalizado</strong> até você escolher outra.</li>
             <li><strong>Chaves de API</strong> &mdash; Todas as credenciais dos coletores (TheGamesDB, IGDB, RAWG, ScreenScraper), escolha do provedor de IA e do modelo (Gemini, OpenAI, Claude), e as chaves do RetroAchievements e da Steam da casa. A chave própria de uma pessoa do RetroAchievements em Meu perfil é usada primeiro, e a da casa só para quem não tem nenhuma. A chave da Steam da casa serve apenas a um administrador sem chave própria.</li>
@@ -596,7 +596,7 @@
         <p>Jogos de computadores domésticos (Commodore 64, Amiga, ZX Spectrum e ZX81, MSX, DOS, Atari 8-bit e ST, Amstrad CPC, PC-98 e X68000) precisam do teclado inteiro, então o RetroDB os inicia com todas as teclas indo para o jogo e as teclas acima desativadas. Pressione <kbd>Scroll Lock</kbd> para reativar as teclas acima e, novamente, para devolver o teclado ao jogo. A página do jogo mostra um lembrete ao lado de <strong>Jogar</strong> nesses jogos. Na maioria dos controles de PlayStation e Xbox, o botão PS ou Xbox também abre o menu.</p>
 
         <div class="help-tip">
-            <strong>Dica:</strong> Coletores desabilitados não acionam avisos de "API offline" no Painel. Se você não usa um coletor, desabilite-o em Configurações &rarr; Coleta de Dados &rarr; Coletor em vez de excluir a chave de API.
+            <strong>Dica:</strong> Coletores desabilitados não acionam avisos de "API offline" no Painel. Se você não usa um coletor, desabilite-o em Configurações &rarr; Busca de metadados &rarr; Coletor em vez de excluir a chave de API.
         </div>
     </div>
 </section>
@@ -608,7 +608,7 @@
         <h3>Coleta de Jogo Individual</h3>
         <ol>
             <li>Abra a janela de detalhes de qualquer jogo (clique no cartão do jogo)</li>
-            <li>Clique em <strong>"Coletar"</strong></li>
+            <li>Clique em <strong>"Buscar Metadados"</strong></li>
             <li>Modifique o título de busca se necessário</li>
             <li>Selecione o resultado correto entre as correspondências</li>
             <li>Clique em <strong>"Aplicar"</strong></li>
@@ -636,7 +636,7 @@
             <li>Preenchimento automático de lacunas entre coletores para máxima cobertura</li>
             <li>O título de ordenação é gerado automaticamente a partir do título do jogo durante a coleta</li>
             <li>Uma fonte só é pesquisada quando lista o sistema do jogo, e somente nesse sistema: o RAWG não tem Intellivision, então os jogos de Intellivision não são procurados no RAWG, onde só corresponderiam a jogos de outras plataformas</li>
-            <li>Quando a IA está ativada, ela também informa o título oficial do jogo como lançado na região da sua ROM, e o jogo é renomeado para ele, tanto na coleta de um único jogo quanto na Coleta em Lote (consulte <a href="#ai-fill">Preenchimento por IA</a>)</li>
+            <li>Quando a IA está ativada, ela também informa o título oficial do jogo como lançado na região da sua ROM, e o jogo é renomeado para ele, tanto na coleta de um único jogo quanto na Busca em Lote (consulte <a href="#ai-fill">Preencher com AI</a>)</li>
         </ul>
 
         <h3>Tratamento de Mídia</h3>
@@ -653,7 +653,7 @@
         <p>Quando você digita um novo título na janela de edição e salva, a coleta não o altera mais, nem mesmo a Rebusca Completa. A caixa <strong>Manter este título ao buscar metadados</strong> da janela de edição mostra se um título é mantido; desmarque-a para deixar que os coletores renomeiem o jogo de novo. <strong>Redefinir</strong> na página de um jogo também deixa os coletores renomeá-lo, e <strong>Limpar dados coletados</strong> em Manutenção deixa os títulos mantidos como estão.</p>
 
         <h3>Prioridade dos Coletores</h3>
-        <p>Configure quais coletores são executados primeiro e quais estão habilitados/desabilitados em <strong>Configurações &rarr; Coleta de Dados &rarr; Coletor</strong>. Arraste e solte para reordenar a prioridade. Coletores desabilitados não serão tentados durante a coleta e não acionarão avisos de status de API no Painel.</p>
+        <p>Configure quais coletores são executados primeiro e quais estão habilitados/desabilitados em <strong>Configurações &rarr; Busca de metadados &rarr; Coletor</strong>. Arraste e solte para reordenar a prioridade. Coletores desabilitados não serão tentados durante a coleta e não acionarão avisos de status de API no Painel.</p>
 
         <h3>Limitação de Taxa</h3>
         <p>O RetroDB espaça sozinho suas solicitações a cada serviço; não há nada para configurar. Quando um serviço informa que seu limite foi atingido, o RetroDB deixa de consultá-lo até o horário que o serviço informar e avisa isso (veja <a href="#ts-scraping">Solução de Problemas</a>).</p>
@@ -662,20 +662,20 @@
 
 <!-- Bulk Scraping -->
 <section id="bulk-scrape" class="help-section card">
-    <h2 class="card-title">Coleta em Lote</h2>
+    <h2 class="card-title">Busca em Lote</h2>
     <div class="card-body">
-        <h3>Iniciando uma Coleta em Lote</h3>
+        <h3>Iniciando uma Busca em Lote</h3>
         <ol>
             <li>Vá para qualquer página de Sistema ou da Biblioteca</li>
             <li>Clique em <strong>"Selecionar"</strong> para entrar no modo de seleção. As ferramentas de seleção aparecem em uma barra na parte de baixo da janela.</li>
             <li>Selecione os jogos individualmente ou use a seleção rápida:
                 <ul>
                     <li><strong>Selecionar Todos</strong> &mdash; Todos os jogos visíveis</li>
-                    <li><strong>Selecionar Não Coletados</strong> &mdash; Apenas jogos sem metadados</li>
+                    <li><strong>Selecionar Sem Metadados</strong> &mdash; Apenas jogos sem metadados</li>
                 </ul>
             </li>
             <li>Escolha o modo: <strong>Preencher Ausentes</strong> ou <strong>Rebusca Completa</strong></li>
-            <li>Clique em <strong>"Coletar Selecionados"</strong></li>
+            <li>Clique em <strong>"Buscar Selecionados"</strong></li>
             <li>Clique em <strong>"Concluído"</strong> para sair do modo de seleção</li>
         </ol>
 
@@ -683,7 +683,7 @@
         <ul>
             <li><strong>Pausar / Retomar</strong> &mdash; Pause ou continue a coleta</li>
             <li><strong>Cancelar</strong> &mdash; Pare completamente</li>
-            <li><strong>Segundo Plano</strong> &mdash; Minimize e continue navegando enquanto a coleta é executada</li>
+            <li><strong>Plano de fundo</strong> &mdash; Minimize e continue navegando enquanto a coleta é executada</li>
         </ul>
 
         <h3>Notificação Flutuante</h3>
@@ -712,21 +712,21 @@
         </ul>
 
         <h3>Recuperação de Tarefas</h3>
-        <p>Se o RetroDB for reiniciado enquanto uma tarefa estiver em execução, as tarefas interrompidas aparecem em um aviso de recuperação no Painel. Clique em <strong>"Retomar"</strong> em tarefas individuais ou em <strong>"Retomar Todas"</strong> para reiniciá-las. A notificação de progresso aparece imediatamente após a retomada.</p>
+        <p>Se o RetroDB for reiniciado enquanto uma tarefa estiver em execução, as tarefas interrompidas aparecem em um aviso de recuperação no Painel. Clique em <strong>"Retomar"</strong> em tarefas individuais ou em <strong>"Retomar Todos"</strong> para reiniciá-las. A notificação de progresso aparece imediatamente após a retomada.</p>
     </div>
 </section>
 
 <!-- AI Fill -->
 <section id="ai-fill" class="help-section card">
-    <h2 class="card-title">Preenchimento por IA</h2>
+    <h2 class="card-title">Preencher com AI</h2>
     <div class="card-body">
         <h3>O Que Faz</h3>
-        <p>O Preenchimento por IA usa um grande modelo de linguagem (Gemini, OpenAI ou Claude) para preencher de forma inteligente metadados de jogos ausentes ou incompletos. É mais inteligente do que a coleta comum porque usa conhecimento contextual sobre o jogo para fornecer dados precisos que os coletores podem não ter.</p>
+        <p>O Preencher com AI usa um grande modelo de linguagem (Gemini, OpenAI ou Claude) para preencher de forma inteligente metadados de jogos ausentes ou incompletos. É mais inteligente do que a coleta comum porque usa conhecimento contextual sobre o jogo para fornecer dados precisos que os coletores podem não ter.</p>
 
         <h3>Como Usar</h3>
         <ol>
             <li>Abra a janela de detalhes de um jogo (ou a página de detalhes completa)</li>
-            <li>Clique em <strong>"Preenchimento por IA"</strong> (requer uma chave de API de IA configurada nas Configurações)</li>
+            <li>Clique em <strong>"Preencher com AI"</strong> (requer uma chave de API de IA configurada nas Configurações)</li>
             <li>A IA analisa o título e o sistema do jogo e, em seguida, preenche os campos ausentes</li>
             <li>Revise os resultados &mdash; as alterações são salvas automaticamente</li>
         </ol>
@@ -734,7 +734,7 @@
         <h3>Muitos Jogos de Uma Vez</h3>
         <p>Para preencher um sistema inteiro, abra <strong>Ferramentas de ROM &rarr; Preenchimento em Lote com AI</strong> e use o cartão <strong>Preencher campos vazios com IA</strong>. Ative os campos que quer preencher; só são contados os jogos com algum deles vazio, e menos campos custam menos. Escolha um sistema, ou Todos os Sistemas, e clique em <strong>Preencher com IA</strong>. Ele roda o Preencher com AI em cada jogo e salva as respostas direto no jogo. Uma barra de progresso no cartão e um aviso do Preencher com AI mostram até onde foi, e você pode sair da página enquanto ele roda. Jogos que já passaram pelo Preencher com AI são pulados, então uma segunda execução só faz o resto; ative <strong>Incluir jogos que o Preencher com AI já fez</strong> para preencher um campo neles também, como cópias vendidas. A execução para sozinha se a IA parar de responder, por exemplo quando a chave é recusada ou a conta não tem crédito. Seu provedor de IA cobra por cada jogo.</p>
 
-        <h3>O Que o Preenchimento por IA Pode Fornecer</h3>
+        <h3>O Que o Preencher com AI Pode Fornecer</h3>
         <ul>
             <li>Gênero, descrição, desenvolvedora, distribuidora, data de lançamento</li>
             <li>Jogadores, modos de jogo (Um Jogador, Multijogador, Cooperativo, etc.)</li>
@@ -753,19 +753,19 @@
             <li><strong>Jogos similares</strong> são sempre atualizados (os dados da IA são mais confiáveis para este campo)</li>
             <li><strong>Classificações cruzadas</strong> &mdash; Se um sistema de classificação for conhecido, as classificações vazias em outros sistemas são preenchidas automaticamente usando o cruzamento por nível de maturidade</li>
             <li><strong>Título de ordenação</strong> é gerado automaticamente quando preenchido</li>
-            <li><strong>Título oficial</strong> &mdash; a IA também informa o título oficial do jogo como lançado na região da sua ROM, e o jogo é renomeado para ele, no Preenchimento por IA e sempre que a IA preenche lacunas durante a coleta. O nome antigo é mantido como título alternativo. Um título que você digitou, ou manteve com <strong>Manter este título ao buscar metadados</strong>, nunca é renomeado</li>
+            <li><strong>Título oficial</strong> &mdash; a IA também informa o título oficial do jogo como lançado na região da sua ROM, e o jogo é renomeado para ele, no Preencher com AI e sempre que a IA preenche lacunas durante a coleta. O nome antigo é mantido como título alternativo. Um título que você digitou, ou manteve com <strong>Manter este título ao buscar metadados</strong>, nunca é renomeado</li>
             <li>O campo <strong>Jogadores</strong> normaliza intervalos (por exemplo, "1-4" vira 4)</li>
         </ul>
 
         <h3>Normalização de Gênero</h3>
-        <p>O Preenchimento por IA usa formas canônicas de gênero com nomes hifenizados:</p>
+        <p>O Preencher com AI usa formas canônicas de gênero com nomes hifenizados:</p>
         <ul>
             <li><code>First-Person-Shooter</code>, <code>Shoot-em-up</code>, <code>Beat-em-up</code></li>
             <li><code>Hack-n-Slash</code>, <code>Board-Card</code>, <code>Real-Time Strategy</code></li>
         </ul>
 
         <h3>Requisitos</h3>
-        <p>Pelo menos uma chave de API de provedor de IA deve estar configurada em <strong>Configurações &rarr; Coleta de Dados &rarr; Chaves de API</strong>. O nível de modelo mais barato (Gemini Flash Lite, GPT-4o Mini ou Claude Haiku) funciona bem para metadados.</p>
+        <p>Pelo menos uma chave de API de provedor de IA deve estar configurada em <strong>Configurações &rarr; Busca de metadados &rarr; Chaves de API</strong>. O nível de modelo mais barato (Gemini Flash Lite, GPT-4o Mini ou Claude Haiku) funciona bem para metadados.</p>
     </div>
 </section>
 
@@ -779,7 +779,7 @@
         <h3>Filtro de Fonte</h3>
         <p>Filtre os jogos pela fonte de importação:</p>
         <ul>
-            <li><strong>Arquivos de ROM</strong> &mdash; Jogos da sua biblioteca de ROMs</li>
+            <li><strong>Arquivos ROM</strong> &mdash; Jogos da sua biblioteca de ROMs</li>
             <li><strong>Importações CLZ</strong> &mdash; Jogos físicos importados do CLZ</li>
             <li><strong>Importações Steam</strong> &mdash; Jogos importados da Steam</li>
             <li><strong>Importações Xbox</strong> &mdash; Jogos importados do Xbox</li>
@@ -881,7 +881,7 @@
             <li><strong>Jogabilidade</strong> &mdash; Gênero (etiquetas de seleção múltipla), modos, estrutura do jogo, jogadores, desenvolvedora, distribuidora</li>
             <li><strong>Técnico</strong> &mdash; Controles (seleção múltipla), tipo de salvamento, perspectiva (multivalor), dimensão (multivalor)</li>
             <li><strong>Classificações Etárias</strong> &mdash; Todos os sistemas de classificação com imagens oficiais de classificação e cruzamento automático. Alterar uma classificação preenche automaticamente as classificações vazias em outros sistemas.</li>
-            <li><strong>Pontuações</strong> &mdash; Pontuação da crítica, pontuação dos usuários</li>
+            <li><strong>Notas</strong> &mdash; Pontuação da crítica, pontuação dos usuários</li>
             <li><strong>Descrição</strong> &mdash; Texto de descrição do jogo</li>
             <li><strong>Imagens personalizadas</strong> &mdash; Envie capa personalizada (2D), capa 3D, o verso da caixa, fanart e um logotipo. Limpe as imagens existentes para permitir uma nova coleta.</li>
             <li><strong>Importar caixa 3D</strong> &mdash; Também em Imagens personalizadas. Isso é salvo na hora, sem Salvar Alterações. Escolha o arquivo <code>.box.json</code> que o Slipcase salvou, junto com as imagens dele (pode escolher a pasta inteira). O Slipcase 1.4.0 ou mais recente salva este arquivo ao lado de cada imagem exportada. O RetroDB guarda as faces da caixa para este jogo; clicar na capa passa a mostrar a caixa em 3D, para arrastar ou girar com as setas do teclado. A sua imagem de capa 3D não é alterada. Um jogo que já tem faces pergunta antes de substituí-las, e <strong>Remover</strong> as apaga.</li>
@@ -891,8 +891,8 @@
         <h3>Ações Rápidas</h3>
         <ul>
             <li><strong>Editar</strong> &mdash; Abre a janela de edição (<kbd>e</kbd>)</li>
-            <li><strong>Coletar</strong> &mdash; Obtém metadados das fontes de coleta (<kbd>s</kbd>)</li>
-            <li><strong>Preenchimento por IA</strong> &mdash; Preenche os campos ausentes com IA (requer chave de API de IA)</li>
+            <li><strong>Buscar Metadados</strong> &mdash; Obtém metadados das fontes de coleta (<kbd>s</kbd>)</li>
+            <li><strong>Preencher com AI</strong> &mdash; Preenche os campos ausentes com IA (requer chave de API de IA)</li>
             <li><strong>Verificar RA</strong> &mdash; Busca por um conjunto de conquistas do RetroAchievements</li>
             <li><strong>Consulta HLTB</strong> &mdash; Encontra estimativas de tempo de jogo no HowLongToBeat</li>
         </ul>
@@ -901,7 +901,7 @@
         <p>Acompanhe seu progresso com estes status (mostrados como etiquetas nos cartões de jogos):</p>
         <ul>
             <li><strong>Não Iniciado</strong> &mdash; Ainda não jogou</li>
-            <li><strong>Em Progresso</strong> &mdash; Jogando atualmente</li>
+            <li><strong>Em Andamento</strong> &mdash; Jogando atualmente</li>
             <li><strong>Jogado</strong> &mdash; Jogou mas não terminou</li>
             <li><strong>Concluído</strong> &mdash; Terminou o jogo principal</li>
             <li><strong>100%</strong> &mdash; Concluiu tudo</li>
@@ -925,7 +925,7 @@
                 <tr><td><strong>CADPA</strong></td><td>China</td></tr>
             </tbody>
         </table>
-        <p>Defina seu sistema preferido em <strong>Configurações &rarr; Biblioteca &rarr; Exibição</strong>. As imagens oficiais de classificação são exibidas nos cartões de jogos, nas janelas de detalhes e nas páginas de detalhes. As classificações vazias são preenchidas automaticamente a partir de qualquer classificação disponível por meio do cruzamento por nível de maturidade durante a coleta, o Preenchimento por IA e a edição manual.</p>
+        <p>Defina seu sistema preferido em <strong>Configurações &rarr; Biblioteca &rarr; Exibição</strong>. As imagens oficiais de classificação são exibidas nos cartões de jogos, nas janelas de detalhes e nas páginas de detalhes. As classificações vazias são preenchidas automaticamente a partir de qualquer classificação disponível por meio do cruzamento por nível de maturidade durante a coleta, o Preencher com AI e a edição manual.</p>
 
         <h3>Discos Bônus</h3>
         <p>O RetroDB detecta automaticamente discos bônus/extras (por exemplo, CDs de trilha sonora, discos de conteúdo extra) e os vincula ao jogo principal. Os discos bônus ficam ocultos por padrão na biblioteca &mdash; ative <strong>"Discos Bônus"</strong> nos filtros para exibi-los. Os discos bônus vinculados aparecem na janela de detalhes do jogo principal.</p>
@@ -947,23 +947,23 @@
         <ol>
             <li>Vá para qualquer página de Sistema ou da Biblioteca</li>
             <li>Clique em <strong>"Selecionar"</strong> para entrar no modo de seleção</li>
-            <li>Selecione os jogos que deseja editar (individualmente, Selecionar Todos ou Selecionar Não Coletados)</li>
+            <li>Selecione os jogos que deseja editar (individualmente, Selecionar Todos ou Selecionar Sem Metadados)</li>
             <li>Clique em <strong>"Edição em Lote"</strong></li>
             <li>Escolha o campo a modificar e defina o novo valor</li>
-            <li>Escolha o modo <strong>Substituir</strong> ou <strong>Acrescentar</strong></li>
+            <li>Escolha o modo <strong>Substituir</strong> ou <strong>Anexar</strong></li>
             <li>Clique em <strong>"Aplicar"</strong> para atualizar todos os jogos selecionados</li>
         </ol>
 
-        <h3>Substituir vs Acrescentar</h3>
+        <h3>Substituir vs Anexar</h3>
         <ul>
             <li><strong>Substituir</strong> &mdash; Sobrescreve o valor existente pelo novo</li>
-            <li><strong>Acrescentar</strong> &mdash; Adiciona o novo valor aos valores existentes (para campos multivalor)</li>
+            <li><strong>Anexar</strong> &mdash; Adiciona o novo valor aos valores existentes (para campos multivalor)</li>
         </ul>
 
         <h3>Campos Suportados</h3>
         <table class="data-table">
             <thead>
-                <tr><th>Campo</th><th>Suporta Acrescentar</th></tr>
+                <tr><th>Campo</th><th>Suporta Anexar</th></tr>
             </thead>
             <tbody>
                 <tr><td>Gênero</td><td>Sim</td></tr>
@@ -1032,54 +1032,54 @@
         </ul>
 
         <div class="help-tip">
-            <strong>Dica:</strong> Use etiquetas para rótulos transversais (por exemplo, "Favoritos", "Cooperativo de Sofá", "Pendentes") e listas para coleções curadas específicas (por exemplo, "Top 10 Jogos de SNES", "Jogos para Transmitir").
+            <strong>Dica:</strong> Use etiquetas para rótulos transversais (por exemplo, "Favoritos", "Cooperativo de Sofá", "Pendentes") e listas para coleções curadas específicas (por exemplo, "10 Melhores Jogos de SNES", "Jogos para Transmitir").
         </div>
     </div>
 </section>
 
 <!-- Game Imports -->
 <section id="game-imports" class="help-section card">
-    <h2 class="card-title">Importação de Jogos</h2>
+    <h2 class="card-title">Importações de Jogos</h2>
     <div class="card-body">
-        <p>Importe coleções de jogos de fontes externas. Acesse via <strong>Importação de Jogos</strong> na barra lateral. Todos os tipos de importação estão consolidados em uma única página com abas.</p>
+        <p>Importe coleções de jogos de fontes externas. Acesse via <strong>Importações de Jogos</strong> na barra lateral. Todos os tipos de importação estão consolidados em uma única página com abas.</p>
 
         <h3>Importação do CLZ Games</h3>
         <p>Importe sua coleção de jogos físicos do CLZ Games.</p>
         <ol>
             <li>Exporte sua coleção do CLZ Games como PDF</li>
-            <li>Vá para Importação de Jogos &rarr; aba <strong>CLZ</strong></li>
+            <li>Vá para Importações de Jogos &rarr; aba <strong>CLZ</strong></li>
             <li>Envie o arquivo PDF</li>
             <li>Revise os jogos analisados</li>
             <li>Selecione quais jogos importar</li>
         </ol>
         <p>As importações CLZ são acompanhadas separadamente dos jogos de ROM (usando um prefixo <code>clz_import/</code>), permitindo que você catalogue coleções físicas e digitais. As importações CLZ podem ser apagadas inteiramente em <strong>Configurações &rarr; Sistema &rarr; Manutenção</strong>.</p>
 
-        <h3>Importação da Steam</h3>
+        <h3>Importação Steam</h3>
         <p>Importe sua biblioteca de jogos da Steam e acompanhe as conquistas.</p>
         <ol>
             <li>Configure sua chave da Steam Web API e o Steam ID nas Configurações</li>
-            <li>Vá para Importação de Jogos &rarr; aba <strong>Steam</strong></li>
-            <li>Clique em <strong>"Buscar Biblioteca"</strong> para recuperar seus jogos da Steam</li>
+            <li>Vá para Importações de Jogos &rarr; aba <strong>Steam</strong></li>
+            <li>Clique em <strong>"Obter Biblioteca"</strong> para recuperar seus jogos da Steam</li>
             <li>Selecione os jogos a importar. Um jogo que já está na sua lista de Windows com o mesmo nome é vinculado à Steam em vez de ser adicionado duas vezes</li>
             <li>Os jogos importados são marcados com o App ID da Steam para o acompanhamento de conquistas</li>
             <li>Em segundo plano, cada jogo preenche os detalhes vazios a partir da sua página na loja Steam, e suas conquistas e seu tempo de jogo chegam. A página do jogo mostra o seu tempo de jogo. Colete os metadados do jogo para obter o gênero e a data de lançamento: os da Steam são amplos demais, ou são a data em que o jogo chegou à Steam</li>
         </ol>
 
-        <h3>Importação do Xbox</h3>
+        <h3>Importação Xbox</h3>
         <p>Importe os jogos do Xbox que você já jogou, usando sua própria chave OpenXBL.</p>
         <ol>
             <li>Salve sua chave OpenXBL em Configurações &rarr; Meu perfil &rarr; Xbox (veja Chaves de API acima)</li>
-            <li>Vá para Importação de Jogos &rarr; aba <strong>Xbox</strong> e clique em <strong>Obter Biblioteca</strong></li>
+            <li>Vá para Importações de Jogos &rarr; aba <strong>Xbox</strong> e clique em <strong>Obter Biblioteca</strong></li>
             <li>Selecione os jogos a importar com detecção de duplicatas. Apps e jogos só para celular ficam de fora.</li>
             <li>Os jogos importados são marcados com o Title ID do Xbox para o acompanhamento de conquistas</li>
         </ol>
 
-        <h3>Importação da PSN</h3>
+        <h3>Importação PSN</h3>
         <p>Importe sua biblioteca de jogos da PlayStation Network.</p>
         <ol>
-            <li>Vá para Importação de Jogos &rarr; aba <strong>PSN</strong></li>
+            <li>Vá para Importações de Jogos &rarr; aba <strong>PSN</strong></li>
             <li>Insira seu cookie NPSSO (consulte <a href="#trophies">Troféus &rarr; Autenticação PSN</a> para saber como obtê-lo)</li>
-            <li>Clique em <strong>"Buscar Biblioteca"</strong> para recuperar seus jogos da PSN</li>
+            <li>Clique em <strong>"Obter Biblioteca"</strong> para recuperar seus jogos da PSN</li>
             <li>Selecione os jogos a importar</li>
         </ol>
 
@@ -1131,7 +1131,7 @@
         <ul>
             <li><strong>Filtro da Biblioteca</strong> &mdash; Use o filtro "Tem RA" para mostrar apenas os jogos com conquistas</li>
             <li><strong>Verificar RA</strong> &mdash; Nas janelas de detalhes do jogo, clique para buscar um conjunto de conquistas</li>
-            <li><strong>Coleta em Lote</strong> &mdash; Habilite a opção "Verificar RA" para encontrar conquistas durante a coleta</li>
+            <li><strong>Busca em Lote</strong> &mdash; Habilite a opção "Verificar RA" para encontrar conquistas durante a coleta</li>
             <li><strong>Tarefa de Atualização de RA</strong> &mdash; Escaneie todos os jogos de um sistema para identificar quais têm suporte a RA</li>
         </ul>
 
@@ -1147,11 +1147,11 @@
 
 <!-- Steam Achievements -->
 <section id="steam-achievements" class="help-section card">
-    <h2 class="card-title">Conquistas Steam</h2>
+    <h2 class="card-title">Conquistas da Steam</h2>
     <div class="card-body">
         <h3>Configuração</h3>
         <ol>
-            <li>Importe jogos da Steam via <strong>Importação de Jogos &rarr; Steam</strong></li>
+            <li>Importe jogos da Steam via <strong>Importações de Jogos &rarr; Steam</strong></li>
             <li>Certifique-se de que sua chave da Steam Web API esteja configurada nas Configurações</li>
         </ol>
 
@@ -1181,11 +1181,11 @@
 
 <!-- Xbox Achievements -->
 <section id="xbox-achievements" class="help-section card">
-    <h2 class="card-title">Conquistas Xbox</h2>
+    <h2 class="card-title">Conquistas do Xbox</h2>
     <div class="card-body">
         <h3>Configuração</h3>
         <ol>
-            <li>Importe jogos do Xbox via <strong>Importação de Jogos &rarr; Xbox</strong></li>
+            <li>Importe jogos do Xbox via <strong>Importações de Jogos &rarr; Xbox</strong></li>
             <li>Salve sua chave OpenXBL em Configurações &rarr; Meu perfil &rarr; Xbox</li>
         </ol>
 
@@ -1255,7 +1255,7 @@
         <p>Acompanhe os troféus obtidos em jogos de PS3 pelo emulador RPCS3.</p>
         <ol>
             <li>Defina o caminho de troféus do RPCS3 em <strong>Configurações &rarr; Dados &rarr; Troféus</strong></li>
-            <li>Clique em <strong>"Escanear Troféus"</strong> para importar os troféus obtidos</li>
+            <li>Clique em <strong>"Verificar Troféus"</strong> para importar os troféus obtidos</li>
             <li>Veja as listas de troféus e os detalhes de cada troféu na aba <strong>RPCS3</strong> de <strong>Conquistas</strong></li>
         </ol>
         <p>O RPCS3 lê os dados XML de troféus do seu diretório de usuário do RPCS3 e associa os jogos à sua biblioteca automaticamente.</p>
@@ -1340,7 +1340,7 @@
             <li><strong>Imagem do Hardware</strong> &mdash; Foto do console/sistema</li>
             <li><strong>Especificações Técnicas</strong> &mdash; CPU, GPU, RAM, resolução, tipo de mídia</li>
             <li><strong>História</strong> &mdash; Narrativa gerada por IA sobre o desenvolvimento, o lançamento e o legado do sistema</li>
-            <li><strong>Top 10 Jogos</strong> &mdash; Os títulos mais notáveis do sistema (a partir de pontuações da crítica e sugestões da IA)</li>
+            <li><strong>10 Melhores Jogos</strong> &mdash; Os títulos mais notáveis do sistema (a partir de pontuações da crítica e sugestões da IA)</li>
             <li><strong>Galeria de Controles</strong> &mdash; Imagens dos controles do sistema com descrições</li>
         </ul>
 
@@ -1363,7 +1363,7 @@
         <p>Todas as imagens de controles são padronizadas para o tamanho-alvo e salvas no formato WebP.</p>
 
         <div class="help-tip">
-            <strong>Dica:</strong> Uma chave de API de IA é necessária para a geração de conteúdo. O Museu usa o mesmo provedor de IA configurado em Configurações &rarr; Coleta de Dados &rarr; Chaves de API.
+            <strong>Dica:</strong> Uma chave de API de IA é necessária para a geração de conteúdo. O Museu usa o mesmo provedor de IA configurado em Configurações &rarr; Busca de metadados &rarr; Chaves de API.
         </div>
     </div>
 </section>
@@ -1385,13 +1385,13 @@
                 <tr><td><strong>Desenvolvedoras</strong></td><td>Gráficos de barras das 15 principais desenvolvedoras e distribuidoras</td></tr>
                 <tr><td><strong>Jogabilidade</strong></td><td>Detalhamento por gênero, análise de modos de jogo, distribuição da estrutura do jogo</td></tr>
                 <tr><td><strong>Tempo de Jogo</strong></td><td>Análise dos dados de tempo de jogo do HLTB em toda a sua coleção &mdash; tempo de jogo total estimado, médias, distribuição</td></tr>
-                <tr><td><strong>Pontuações de Avaliação</strong></td><td>Distribuições e médias das pontuações da crítica e dos usuários</td></tr>
+                <tr><td><strong>Notas das Avaliações</strong></td><td>Distribuições e médias das pontuações da crítica e dos usuários</td></tr>
                 <tr><td><strong>Classificações Etárias</strong></td><td>Distribuição das classificações etárias em todos os sistemas de classificação</td></tr>
                 <tr><td><strong>Conquistas</strong></td><td>Cobertura e conclusão do RetroAchievements por sistema</td></tr>
                 <tr><td><strong>Qualidade dos Dados</strong></td><td>Gráfico de radar de completude dos metadados (descrição, capa, gênero, desenvolvedora, distribuidora, data de lançamento, capturas de tela, fanart, vídeo, manual, HLTB, classificações, modos, região)</td></tr>
                 <tr><td><strong>Crescimento</strong></td><td>Linha do tempo de crescimento da coleção mostrando quando os jogos foram adicionados ao longo do tempo</td></tr>
                 <tr><td><strong>Armazenamento</strong></td><td>Detalhamento do uso de armazenamento por sistema (com tamanhos de arquivo formatados)</td></tr>
-                <tr><td><strong>Rankings</strong></td><td>Principais sistemas por contagem de jogos, maiores jogos individuais por tamanho de arquivo</td></tr>
+                <tr><td><strong>Classificações</strong></td><td>Principais sistemas por contagem de jogos, maiores jogos individuais por tamanho de arquivo</td></tr>
             </tbody>
         </table>
 
@@ -1441,7 +1441,7 @@
     <div class="card-body">
         <p>Acesse o painel de Ferramentas de ROM pela barra lateral. Cada ferramenta é executada como uma tarefa em segundo plano com atualizações de progresso em tempo real, suporte a pausar/retomar e registro.</p>
 
-        <h3>Escâner de Arquivos Compactados</h3>
+        <h3>Verificador de Arquivos Compactados</h3>
         <p>Extraia arquivos compactados de ROM (ZIP, 7Z, RAR) com opções para:</p>
         <ul>
             <li>Escaneamento recursivo de subdiretórios</li>
@@ -1454,42 +1454,42 @@
         <p>Converta imagens de disco (ISO, BIN/CUE, GDI) para o formato comprimido CHD. Economiza armazenamento significativo mantendo a compatibilidade total com os emuladores.</p>
         <p><em>Requer: chdman (do mame-tools)</em></p>
 
-        <h3>Verificação de CHD</h3>
+        <h3>Verificar CHD</h3>
         <p>Verifique a integridade de arquivos CHD com validação por hash. Identifica conversões corrompidas ou incompletas.</p>
         <p><em>Requer: chdman</em></p>
 
         <h3>Localizador de Duplicatas</h3>
         <p>Encontre ROMs duplicados por hash ou nome de arquivo, com opções para priorizar por etiquetas de região. No modo por nome de arquivo, versões regionais vinculadas de um mesmo jogo não são relatadas como duplicatas; no modo por hash, arquivos idênticos sempre são.</p>
-        <p><em>Sem dependências externas</em></p>
+        <p><em>Nenhuma dependência necessária</em></p>
 
         <h3>Versões Regionais</h3>
         <p>Somente editores. O RetroDB sugere jogos que parecem ser um mesmo jogo de regiões diferentes: o mesmo jogo no IGDB ou no ScreenScraper, o mesmo título com uma etiqueta de região diferente ou um nome regional correspondente. Desmarque qualquer jogo que não pertença ao grupo e clique em <strong>"Vincular jogos marcados"</strong>, ou clique em <strong>"Não São Versões"</strong> para que esse grupo nunca mais seja sugerido. Nada é vinculado até você confirmar. Execute primeiro <strong>Preencher Títulos Alternativos</strong> em Manutenção: isso preenche os ids do IGDB e do ScreenScraper que as sugestões usam.</p>
-        <p><em>Sem dependências externas</em></p>
+        <p><em>Nenhuma dependência necessária</em></p>
 
         <h3>Nomes do MAME</h3>
         <p>Somente administradores. O MAME encontra um jogo pelo nome exato do arquivo, então mantenha os nomes curtos, como dyger.zip. Escolha a lista do MAME (um DAT que corresponda às suas ROMs, ou a saída de <code>mame -listxml</code>) e pressione <strong>"Nomear jogos do MAME"</strong>. Cada jogo recebe o seu nome real, ano e fabricante, e os arquivos não são alterados. Um título que você mesmo mudou é mantido. Adicione um <code>catver.ini</code> para filtrar a lista por categoria. Os conjuntos de BIOS ficam ocultos na lista, mas continuam no disco, porque outros jogos precisam deles. Faça a coleta depois disso, para que os coletores possam encontrar cada jogo.</p>
         <p><em>Requer: um arquivo de lista do MAME</em></p>
 
         <h3>Preenchimento em Lote com AI</h3>
-        <p>Somente editores. Roda o Preenchimento por IA em um sistema inteiro, para os campos que você ativar (veja Preenchimento por IA &rarr; Muitos Jogos de Uma Vez).</p>
+        <p>Somente editores. Roda o Preencher com AI em um sistema inteiro, para os campos que você ativar (veja Preencher com AI &rarr; Muitos Jogos de Uma Vez).</p>
         <p><em>Requer: um provedor de IA em <strong>Configurações &rarr; Busca de metadados</strong></em></p>
 
-        <h3>Organizador Multidisco</h3>
+        <h3>Organizador de Múltiplos Discos</h3>
         <p>Organize jogos multidisco em subdiretórios e gere playlists M3U para emuladores que as suportam. Útil para sistemas como PlayStation e Saturn.</p>
-        <p><em>Sem dependências externas</em></p>
+        <p><em>Nenhuma dependência necessária</em></p>
 
-        <h3>Deduplicação de Capturas de Tela</h3>
+        <h3>Remoção de Capturas Duplicadas</h3>
         <p>Encontre e remova capturas de tela duplicadas em toda a sua biblioteca de jogos para liberar espaço de armazenamento.</p>
         <ul>
             <li><strong>Hash Exato (MD5)</strong> &mdash; Identifica apenas arquivos idênticos</li>
             <li><strong>Similaridade Visual</strong> &mdash; Comparação por hash perceptual com limiar configurável (1&ndash;20, menor = correspondência mais rigorosa)</li>
         </ul>
         <p>Escaneia progressivamente com estatísticas ao vivo mostrando os jogos escaneados, a contagem de duplicatas e o espaço recuperável. Os resultados são agrupados por jogo e sistema. Você pode selecionar qual arquivo manter em cada grupo de duplicatas, ou usar <strong>"Selecionar Maior"</strong> para manter automaticamente a versão de maior resolução.</p>
-        <p><em>Sem dependências externas</em></p>
+        <p><em>Nenhuma dependência necessária</em></p>
 
         <h3>Redimensionador de Imagens</h3>
         <p>Padronize as mídias de jogos para tamanhos-alvo consistentes. Consulte <a href="#image-standardization">Padronização de Imagens</a> para detalhes completos.</p>
-        <p><em>Sem dependências externas (ampliação por IA baseada em Python)</em></p>
+        <p><em>Nenhuma dependência necessária (ampliação por IA baseada em Python)</em></p>
 
         <h3>Preencher Títulos Alternativos</h3>
         <p>Percorre todos os jogos coletados e busca os seus <strong>títulos alternativos</strong> no IGDB / TGDB / ScreenScraper, marcados com a região de onde cada nome vem. Os nomes que você já tem ganham a sua região. Útil após importar um catálogo grande ou migrar de outra ferramenta que não armazenava títulos regionais / japoneses / subtítulos. Executa em segundo plano; o progresso é mostrado no cartão da ferramenta.</p>
@@ -1501,40 +1501,40 @@
 
         <h3>Corrigir Regiões pelos Nomes de Arquivo</h3>
         <p>O nome do arquivo de uma ROM diz qual é a cópia, então uma etiqueta como <code>(USA)</code> agora decide a região e a IA não é consultada. Coletas antigas deixavam a IA adivinhar primeiro, então um arquivo <code>(USA)</code> podia aparecer como Japão. Esta ferramenta dá a esses jogos a região do nome do arquivo. Ela altera apenas regiões preenchidas pela IA, inclusive uma que você corrigiu à mão depois e que difere do nome do arquivo.</p>
-        <p><em>Sem dependências externas</em></p>
+        <p><em>Nenhuma dependência necessária</em></p>
 
         <h3>Organizar Datas de Lançamento</h3>
         <p>Coletas antigas guardavam uma data conhecida só pelo ano como 1º de janeiro ou 31 de dezembro, como se o dia fosse conhecido. Isto reduz essas datas ao ano ou ao mês, para que uma coleta posterior possa preencher a data real. Uma data que nenhuma coleta preencheu fica como está.</p>
-        <p><em>Sem dependências externas</em></p>
+        <p><em>Nenhuma dependência necessária</em></p>
 
         <h3>Verificar tempos de jogo salvos</h3>
         <p>Consultas antigas podiam salvar o tempo de jogo de uma continuação, ou de outro jogo com o mesmo nome em outro sistema. Isto envia essas correspondências para a página de revisão do HowLongToBeat, e nenhum jogo muda até você decidir. Lá, Aprovar mantém um tempo e Rejeitar o apaga. Algumas correspondências estão certas: o HowLongToBeat não lista todos os sistemas em que um jogo foi lançado.</p>
-        <p><em>Sem dependências externas</em></p>
+        <p><em>Nenhuma dependência necessária</em></p>
 
         <h3>Organizar Gêneros, Perspectivas e Modos</h3>
         <p>As fontes chamam a mesma coisa de formas diferentes, então um gênero podia aparecer como RPG e também como Role Playing Game, e um filtro deixava jogos de fora. As coletas agora usam um único conjunto de nomes, os das listas de filtro. Esta ferramenta converte o que as coletas antigas guardaram. Palavras sem lugar nessas listas, como Arcade ou Indie, são removidas. Palavras que pertencem a outro campo, como FPV, vão para lá se esse campo estiver vazio. Um número de jogadores que contradiz os modos de um jogo é corrigido, e as contagens antigas de 1 vindas do RAWG são apagadas para que uma contagem real possa preenchê-las. Um valor que você mesmo adicionou a uma lista suspensa fica. Depois, rode uma coleta em lote com <strong>Preencher Ausentes</strong> para preencher o que ficar vazio.</p>
-        <p><em>Sem dependências externas</em></p>
+        <p><em>Nenhuma dependência necessária</em></p>
 
         <h3>Limpar Imagens do RAWG das Capas</h3>
         <p>O RAWG não tem capas. Coletas antigas salvavam a imagem de fundo dele, muitas vezes uma captura de tela, como capa, e como as coletas só preenchem capas vazias, essa imagem bloqueava uma capa real. Esta ferramenta apaga essas imagens e deixa as capas vazias. Capas de outras origens e todo o fanart permanecem. Esses jogos não mostram capa até que uma coleta encontre uma, então execute depois uma coleta em lote com <strong>Preencher Ausentes</strong>.</p>
-        <p><em>Sem dependências externas</em></p>
+        <p><em>Nenhuma dependência necessária</em></p>
 
-        <h3>Consulta HLTB em Lote</h3>
+        <h3>Consulta de HLTB em Lote</h3>
         <p>Execute uma consulta ao HowLongToBeat para cada jogo sem uma estimativa de tempo de jogo. Cada correspondência é pontuada por título + plataforma + ano de lançamento; correspondências de alta confiança são salvas automaticamente. Qualquer coisa abaixo do limiar de confiança (ou com plataformas conflitantes) é reservada para revisão humana.</p>
         <p><em>Busca cada jogo no site do HowLongToBeat, então precisa de acesso à internet</em></p>
 
         <h3>Revisão Pendente do HLTB</h3>
-        <p>Fila de revisão para correspondências ambíguas geradas pela Consulta HLTB em Lote. Cada linha pendente mostra o jogo de origem ao lado do candidato do HLTB (título, plataforma, ano de lançamento, confiança). Aprove, rejeite ou escolha uma correspondência diferente por linha. O cartão da ferramenta de revisão só aparece no painel de Ferramentas de ROM quando há pelo menos uma correspondência pendente.</p>
+        <p>Fila de revisão para correspondências ambíguas geradas pela Consulta de HLTB em Lote. Cada linha pendente mostra o jogo de origem ao lado do candidato do HLTB (título, plataforma, ano de lançamento, confiança). Aprove, rejeite ou escolha uma correspondência diferente por linha. O cartão da ferramenta de revisão só aparece no painel de Ferramentas de ROM quando há pelo menos uma correspondência pendente.</p>
         <ul>
             <li><strong>Abas de filtro</strong> para correspondências de baixa confiança, de título alternativo e de divergência de plataforma.</li>
             <li><strong>Aprovar</strong> grava a estimativa de tempo de jogo; <strong>Rejeitar</strong> descarta o candidato e mantém a fila de consulta limpa.</li>
         </ul>
 
-        <h3>Configurações das Ferramentas</h3>
+        <h3>Configurações da Ferramenta</h3>
         <p>Configure caminhos, localizações de ferramentas, tipos de arquivos compactados e preferências compartilhadas entre todas as ferramentas de ROM.</p>
 
         <div class="help-tip">
-            <strong>Dica:</strong> Todas as ferramentas de ROM suportam pausar/retomar e são executadas em segundo plano. O progresso e os resultados são registrados e podem ser vistos no Visualizador de Registros. O status da ferramenta (disponível vs requer instalação) é mostrado em cada cartão de ferramenta.
+            <strong>Dica:</strong> Todas as ferramentas de ROM suportam pausar/retomar e são executadas em segundo plano. O progresso e os resultados são registrados e podem ser vistos no Visualizador de Log. O status da ferramenta (disponível vs requer instalação) é mostrado em cada cartão de ferramenta.
         </div>
     </div>
 </section>
@@ -1544,7 +1544,7 @@
     <h2 class="card-title">Normalização</h2>
     <div class="card-body">
         <h3>O Que Faz</h3>
-        <p>Normaliza os valores de gênero e modo de jogo para formas canônicas consistentes. Isso acontece automaticamente durante a coleta e o Preenchimento por IA, e também pode ser aplicado manualmente à sua biblioteca existente.</p>
+        <p>Normaliza os valores de gênero e modo de jogo para formas canônicas consistentes. Isso acontece automaticamente durante a coleta e o Preencher com AI, e também pode ser aplicado manualmente à sua biblioteca existente.</p>
 
         <h3>Por Que Importa</h3>
         <p>Diferentes coletores usam nomes diferentes para a mesma coisa. A normalização garante a consistência em toda a sua biblioteca:</p>
@@ -1565,8 +1565,8 @@
         <p>Antes de aplicar a normalização, você pode visualizar quais jogos serão afetados e quais alterações serão feitas. Isso permite que você revise antes de confirmar as mudanças na sua biblioteca.</p>
 
         <h3>Nomes escritos de duas maneiras</h3>
-        <p>Os botões <strong>Franquia</strong>, <strong>Distribuidora</strong> e <strong>Desenvolvedora</strong> listam nomes escritos com maiúsculas diferentes, como <code>Doom</code> e <code>DOOM</code>. Vale a grafia usada em mais jogos; escolha outra se preferir e pressione <strong>Aplicar</strong>. Se uma busca de metadados ou um Preenchimento por IA posterior trouxer o nome com outras maiúsculas, ele usa a grafia da sua biblioteca.</p>
-        <p>Em <strong>Distribuidora</strong> e <strong>Desenvolvedora</strong>, <strong>Nomes que podem ser a mesma empresa</strong> lista nomes como <code>Eidos</code> e <code>Eidos Interactive</code>. Nada vem marcado, porque nomes parecidos podem ser empresas diferentes: <code>Atari Games</code> e <code>Atari, Inc.</code> são duas. Em uma linha, escolha o nome a manter, marque os nomes que são a mesma empresa e pressione <strong>Mesclar</strong>. Os nomes marcados passam a ser o nome mantido, tanto em Distribuidora quanto em Desenvolvedora, e se uma busca de metadados ou um Preenchimento por IA posterior trouxer um nome mesclado, ele usa o nome mantido.</p>
+        <p>Os botões <strong>Franquia</strong>, <strong>Distribuidora</strong> e <strong>Desenvolvedora</strong> listam nomes escritos com maiúsculas diferentes, como <code>Doom</code> e <code>DOOM</code>. Vale a grafia usada em mais jogos; escolha outra se preferir e pressione <strong>Aplicar</strong>. Se uma busca de metadados ou um Preencher com AI posterior trouxer o nome com outras maiúsculas, ele usa a grafia da sua biblioteca.</p>
+        <p>Em <strong>Distribuidora</strong> e <strong>Desenvolvedora</strong>, <strong>Nomes que podem ser a mesma empresa</strong> lista nomes como <code>Eidos</code> e <code>Eidos Interactive</code>. Nada vem marcado, porque nomes parecidos podem ser empresas diferentes: <code>Atari Games</code> e <code>Atari, Inc.</code> são duas. Em uma linha, escolha o nome a manter, marque os nomes que são a mesma empresa e pressione <strong>Mesclar</strong>. Os nomes marcados passam a ser o nome mantido, tanto em Distribuidora quanto em Desenvolvedora, e se uma busca de metadados ou um Preencher com AI posterior trouxer um nome mesclado, ele usa o nome mantido.</p>
     </div>
 </section>
 
@@ -1595,7 +1595,7 @@
                 <tr><td>Capturas de tela</td><td>1080px de altura</td><td>A largura escala proporcionalmente</td></tr>
                 <tr><td>Controles</td><td>1280px na borda mais longa</td><td>Preserva a transparência (RGBA)</td></tr>
                 <tr><td>Hardware</td><td>1280px na borda mais longa</td><td>Preserva a transparência (RGBA)</td></tr>
-                <tr><td>Fanart</td><td>Pulado</td><td>Não padronizado (mantido no tamanho original)</td></tr>
+                <tr><td>Arte de Fãs</td><td>Pulado</td><td>Não padronizado (mantido no tamanho original)</td></tr>
                 <tr><td>Logotipo</td><td>Pulado</td><td>Mantido no tamanho original; conserva o fundo transparente (salvo como PNG quando o formato é JPEG)</td></tr>
             </tbody>
         </table>
@@ -1622,10 +1622,10 @@
 
 <!-- Logs -->
 <section id="logs" class="help-section card">
-    <h2 class="card-title">Visualizador de Registros</h2>
+    <h2 class="card-title">Visualizador de Log</h2>
     <div class="card-body">
         <h3>O Que Faz</h3>
-        <p>Um visualizador unificado para todos os registros do aplicativo. Acesse via <strong>Visualizador de Registros</strong> na barra lateral.</p>
+        <p>Um visualizador unificado para todos os registros do aplicativo. Acesse via <strong>Visualizador de Log</strong> na barra lateral.</p>
 
         <h3>Categorias de Registro</h3>
         <table class="data-table">
@@ -1633,10 +1633,10 @@
                 <tr><th>Categoria</th><th>Conteúdo</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>Coleta de Dados</strong></td><td>Atividade dos coletores, chamadas de API, erros e resultados por jogo</td></tr>
+                <tr><td><strong>Busca de metadados</strong></td><td>Atividade dos coletores, chamadas de API, erros e resultados por jogo</td></tr>
                 <tr><td><strong>Ferramentas de ROM</strong></td><td>Extração de arquivos compactados, conversão de CHD, detecção de duplicatas, deduplicação de capturas de tela</td></tr>
                 <tr><td><strong>Relatórios de ROM</strong></td><td>Resultados da validação de nomenclatura</td></tr>
-                <tr><td><strong>Redimensionar Imagens</strong></td><td>Progresso da tarefa de padronização de imagens (ampliar/reduzir por arquivo)</td></tr>
+                <tr><td><strong>Redimensionar Imagem</strong></td><td>Progresso da tarefa de padronização de imagens (ampliar/reduzir por arquivo)</td></tr>
                 <tr><td><strong>Sistema</strong></td><td>Atividade geral do aplicativo, tarefas de manutenção, inicialização, operações de banco de dados</td></tr>
             </tbody>
         </table>
@@ -1661,7 +1661,7 @@
 
         <h3>Escaneamento da Biblioteca</h3>
         <ul>
-            <li><strong>Escanear Biblioteca</strong> &mdash; Escaneia seus diretórios de ROMs em busca de novos jogos. Detecta as pastas de sistema e os tipos de arquivo suportados usando as listas de extensão do <code>systeminfo.txt</code> do ES-DE. Também disponível no Painel.</li>
+            <li><strong>Verificar Biblioteca</strong> &mdash; Escaneia seus diretórios de ROMs em busca de novos jogos. Detecta as pastas de sistema e os tipos de arquivo suportados usando as listas de extensão do <code>systeminfo.txt</code> do ES-DE. Também disponível no Painel.</li>
         </ul>
 
         <h3>Operações de Limpeza</h3>
@@ -1862,7 +1862,7 @@
         <h4>"A scrape for &hellip; is already running"</h4>
         <p>Esse sistema já está sendo buscado no mesmo modo. Espere por ele ou cancele-o. A busca de outro sistema espera na fila e começa sozinha.</p>
 
-        <h3 id="ts-ai-fill">Preenchimento por IA</h3>
+        <h3 id="ts-ai-fill">Preencher com AI</h3>
 
         <h4>"A IA não retornou dados. Verifique sua chave de API e as configurações do provedor."</h4>
         <p>Em Configurações &rarr; Busca de metadados &rarr; Chaves de API, escolha o <strong>Provedor de metadados por IA</strong>, digite a chave dele, pressione <strong>Salvar chaves de API</strong> e depois <strong>Testar a chave de IA salva</strong>. Se o serviço de IA recusou, a mensagem diz o motivo, como falta de crédito.</p>
@@ -1976,7 +1976,7 @@
         <h4>Uma senha esquecida</h4>
         <p>Não há redefinição por e-mail. Um administrador define uma senha nova em Configurações &rarr; Conta &rarr; Gerenciamento de usuários. Se o único administrador esquecer a dele, restaure um backup feito quando a senha ainda era conhecida.</p>
 
-        <h4>"You do not have permission to access this feature"</h4>
+        <h4>"Você não tem permissão para realizar esta ação"</h4>
         <p>Seu perfil de acesso não inclui esse recurso. Um administrador pode mudar seu perfil em Configurações &rarr; Conta &rarr; Gerenciamento de usuários.</p>
 
         <h3 id="ts-data">Banco de Dados, Backups e Atualizações</h3>
@@ -2021,7 +2021,7 @@
 
 <!-- Security & Disclaimer -->
 <section id="security" class="help-section card">
-    <h2 class="card-title">Segurança e Isenção de Responsabilidade</h2>
+    <h2 class="card-title">Segurança e Aviso Legal</h2>
     <div class="card-body">
         <h3>Boas Práticas de Segurança</h3>
         <ul>
@@ -2043,7 +2043,7 @@
             <li><strong>Proteção contra bomba de descompressão de imagem</strong> &mdash; A contagem máxima de pixels da imagem é limitada para evitar o esgotamento de memória por imagens maliciosas</li>
         </ul>
 
-        <h3>Isenção de Responsabilidade</h3>
+        <h3>Aviso Legal</h3>
         <p>
             O RetroDB é fornecido <strong>"NO ESTADO EM QUE SE ENCONTRA"</strong>, sem garantia de qualquer tipo, expressa ou implícita,
             incluindo, mas não se limitando a, as garantias de comercialização, adequação a um propósito específico

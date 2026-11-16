@@ -56,7 +56,7 @@
     <a href="#analytics" class="help-nav-item">分析</a>
     <a href="#reports" class="help-nav-item">報告</a>
     <a href="#rom-tools" class="help-nav-item">ROM 工具</a>
-    <a href="#normalization" class="help-nav-item">規範化</a>
+    <a href="#normalization" class="help-nav-item">標準化</a>
     <a href="#image-standardization" class="help-nav-item">圖片縮放</a>
     <a href="#logs" class="help-nav-item">日誌</a>
     <a href="#maintenance" class="help-nav-item">維護</a>
@@ -270,7 +270,7 @@
 
 <!-- Keyboard Shortcuts -->
 <section id="keyboard-shortcuts" class="help-section card">
-    <h2 class="card-title">鍵盤快捷鍵</h2>
+    <h2 class="card-title">鍵盤快速鍵</h2>
     <div class="card-body">
         <p>在任意頁面按 <kbd>?</kbd> 可顯示所有快捷鍵。當等待按鍵序列中的第二個鍵時，會出現一個待按鍵提示（例如 <code>g...</code>）。</p>
 
@@ -351,7 +351,7 @@
         <ul>
             <li><strong>綠色</strong>（80%+）&mdash; 中繼資料覆蓋極佳</li>
             <li><strong>青色</strong>（60&ndash;79%）&mdash; 覆蓋良好，但有一些空缺</li>
-            <li><strong>橙色</strong>（40&ndash;59%）&mdash; 覆蓋一般，可考慮批量抓取</li>
+            <li><strong>橙色</strong>（40&ndash;59%）&mdash; 覆蓋一般，可考慮批次抓取</li>
             <li><strong>紅色</strong>（&lt;40%）&mdash; 中繼資料空缺較多</li>
         </ul>
         <p>下方的細分小環顯示封面完整度、簡介完整度和成就覆蓋度。</p>
@@ -361,7 +361,7 @@
         <ul>
             <li><strong>系統總數</strong> &mdash; 你遊戲庫中的平台數量</li>
             <li><strong>遊戲總數</strong> &mdash; 遊戲總數（不含附贈光碟）</li>
-            <li><strong>缺失中繼資料</strong> &mdash; 尚未抓取的遊戲</li>
+            <li><strong>缺少中繼資料</strong> &mdash; 尚未抓取的遊戲</li>
             <li><strong>已完成</strong> &mdash; 已抓取中繼資料的遊戲</li>
         </ul>
 
@@ -370,7 +370,7 @@
         <ul>
             <li><strong>繼續遊玩</strong> &mdash; 標記為“進行中”的遊戲</li>
             <li><strong>最近新增</strong> &mdash; 最近新增到遊戲庫的遊戲</li>
-            <li><strong>最近檢視</strong> &mdash; 你最近開啟過的遊戲</li>
+            <li><strong>最近查看</strong> &mdash; 你最近開啟過的遊戲</li>
             <li><strong>最近抓取</strong> &mdash; 最近獲取過中繼資料的遊戲</li>
         </ul>
 
@@ -384,10 +384,10 @@
         <p>顯示所有已配置的抓取器和 API 的連接狀態。當已配置的 API 離線時，會出現一個帶有指向設定連結的警告橫幅。</p>
 
         <h3>任務恢復</h3>
-        <p>如果 RetroDB 在後台任務（批量抓取、RA 同步、圖片縮放等）運行期間重啟，被中斷的任務會出現在恢復橫幅中。選項：</p>
+        <p>如果 RetroDB 在後台任務（批次抓取、RA 同步、圖片縮放等）運行期間重啟，被中斷的任務會出現在恢復橫幅中。選項：</p>
         <ul>
-            <li><strong>恢復</strong> &mdash; 重新啟動單個被中斷的任務</li>
-            <li><strong>全部恢復</strong> &mdash; 重新啟動所有被中斷的任務</li>
+            <li><strong>繼續</strong> &mdash; 重新啟動單個被中斷的任務</li>
+            <li><strong>全部繼續</strong> &mdash; 重新啟動所有被中斷的任務</li>
             <li><strong>忽略</strong> &mdash; 從恢復列表中清除單個任務</li>
             <li><strong>全部忽略</strong> &mdash; 清除所有被中斷的任務</li>
         </ul>
@@ -548,14 +548,14 @@
 
         <h3>資料標籤頁</h3>
         <ul>
-            <li><strong>下拉選項</strong> &mdash; 自訂類型、視角和存檔類型等清單中提供的值</li>
-            <li><strong>規範化</strong> &mdash; 類型和模式的規範化規則 &mdash; 新增自訂映射以統一抓取器輸出</li>
+            <li><strong>下拉選單</strong> &mdash; 自訂類型、視角和存檔類型等清單中提供的值</li>
+            <li><strong>標準化</strong> &mdash; 類型和模式的標準化規則 &mdash; 新增自訂映射以統一抓取器輸出</li>
         </ul>
 
         <h3>自訂標籤頁</h3>
         <ul>
             <li><strong>手把</strong> &mdash; <strong>開啟手把頁面</strong>會進入手把頁面。你可以在那裡設定每個系統的預設手把、新增自己的手把，並編輯手把庫。預設手把會在取得中繼資料時覆寫抓取/AI 的值。</li>
-            <li><strong>徽標</strong> &mdash; <strong>重新整理系統徽標</strong>會從你的 ES-DE 資料夾複製新的徽標，然後顯示哪些系統還沒有徽標</li>
+            <li><strong>標誌</strong> &mdash; <strong>重新整理系統徽標</strong>會從你的 ES-DE 資料夾複製新的徽標，然後顯示哪些系統還沒有徽標</li>
         </ul>
 
         <h3>系統標籤頁</h3>
@@ -617,7 +617,7 @@
         <h3>抓取來源</h3>
         <table class="data-table">
             <thead>
-                <tr><th>來源</th><th>API 密鑰</th><th>最適合</th></tr>
+                <tr><th>來源</th><th>API 金鑰</th><th>最適合</th></tr>
             </thead>
             <tbody>
                 <tr><td>ES-DE（本機）</td><td>否</td><td>已抓取的合集 &mdash; 匯入 gamelist.xml 和已下載的媒體</td></tr>
@@ -636,12 +636,12 @@
             <li>跨抓取器自動補全空缺，以獲得最大覆蓋</li>
             <li>抓取過程中會根據遊戲標題自動生成排序標題</li>
             <li>只有當某個來源列出了該遊戲的系統時才會搜尋它，並且只在該系統中搜尋：RAWG 沒有 Intellivision，因此不會在 RAWG 上查找 Intellivision 遊戲，否則只會比對到其他平台的遊戲</li>
-            <li>開啟 AI 時，它還會給出遊戲在其 ROM 所屬地區發行時的官方標題，遊戲會被重新命名為該標題，單一遊戲抓取和批量抓取中都是如此（參見<a href="#ai-fill">AI 填充</a>）</li>
+            <li>開啟 AI 時，它還會給出遊戲在其 ROM 所屬地區發行時的官方標題，遊戲會被重新命名為該標題，單一遊戲抓取和批次抓取中都是如此（參見<a href="#ai-fill">AI 填充</a>）</li>
         </ul>
 
         <h3>媒體處理</h3>
         <ul>
-            <li>媒體欄位（封面、3D 封面、盒子背面、螢幕截圖、同人圖、標誌、影片、說明書）在正常抓取時<strong>絕不會被替換</strong> &mdash; 只在為空時填充</li>
+            <li>媒體欄位（封面、3D 封面、盒子背面、螢幕截圖、同人圖、標誌、影片、說明書）在正常抓取時<strong>絕不會被取代</strong> &mdash; 只在為空時填充</li>
             <li>螢幕截圖始終是<strong>追加</strong>，絕不替換</li>
             <li>若要重新下載媒體，請先在編輯彈窗中清除現有圖片，然後重新抓取</li>
             <li><strong>完整重新抓取</strong>模式會覆蓋此規則並替換所有內容</li>
@@ -662,16 +662,16 @@
 
 <!-- Bulk Scraping -->
 <section id="bulk-scrape" class="help-section card">
-    <h2 class="card-title">批量抓取</h2>
+    <h2 class="card-title">批次抓取</h2>
     <div class="card-body">
-        <h3>開始批量抓取</h3>
+        <h3>開始批次抓取</h3>
         <ol>
             <li>前往任意系統或遊戲庫頁面</li>
             <li>點擊 <strong>"選擇"</strong> 進入選擇模式。選擇工具會出現在視窗底部的一個列中。</li>
             <li>逐個選擇遊戲，或使用快速選擇：
                 <ul>
                     <li><strong>全選</strong> &mdash; 所有可見的遊戲</li>
-                    <li><strong>選擇未抓取</strong> &mdash; 僅無中繼資料的遊戲</li>
+                    <li><strong>選擇未抓取的</strong> &mdash; 僅無中繼資料的遊戲</li>
                 </ul>
             </li>
             <li>選擇模式：<strong>填充缺失項</strong> 或 <strong>完整重新抓取</strong></li>
@@ -695,7 +695,7 @@
         </ul>
 
         <h3>佇列系統</h3>
-        <p>多個批量抓取會自動排隊：</p>
+        <p>多個批次抓取會自動排隊：</p>
         <ul>
             <li>在一個抓取運行時啟動新的抓取 &mdash; 它會進入佇列</li>
             <li>佇列會在提示中顯示待處理任務的數量</li>
@@ -726,7 +726,7 @@
         <h3>如何使用</h3>
         <ol>
             <li>打開遊戲的詳情彈窗（或完整詳情頁）</li>
-            <li>點擊 <strong>"AI 填充"</strong>（需要在設定中配置 AI API 密鑰）</li>
+            <li>點擊 <strong>"AI 填充"</strong>（需要在設定中配置 AI API 金鑰）</li>
             <li>AI 分析遊戲標題和系統，然後填充缺失的欄位</li>
             <li>查看結果 &mdash; 更改會自動儲存</li>
         </ol>
@@ -754,10 +754,10 @@
             <li><strong>交叉映射的分級</strong> &mdash; 如果已知一個分級系統，其他系統中空的分級會使用成熟度等級交叉映射自動填充</li>
             <li>填充時會自動生成<strong>排序標題</strong></li>
             <li><strong>官方標題</strong> &mdash; AI 還會給出遊戲在其 ROM 所屬地區發行時的官方標題，遊戲會被重新命名為該標題，在 AI 填充中以及抓取時 AI 填補空缺時都是如此。舊名稱會保留為備用標題。你自己輸入的標題，或用<strong>抓取時保留此標題</strong>保留的標題，絕不會被重新命名</li>
-            <li><strong>玩家人數</strong>欄位會規範化範圍（例如 "1-4" 變為 4）</li>
+            <li><strong>玩家人數</strong>欄位會標準化範圍（例如 "1-4" 變為 4）</li>
         </ul>
 
-        <h3>類型規範化</h3>
+        <h3>類型標準化</h3>
         <p>AI 填充使用帶連字符名稱的規範類型形式：</p>
         <ul>
             <li><code>First-Person-Shooter</code>、<code>Shoot-em-up</code>、<code>Beat-em-up</code></li>
@@ -765,7 +765,7 @@
         </ul>
 
         <h3>要求</h3>
-        <p>必須在 <strong>設定 &rarr; 抓取 &rarr; API 密鑰</strong> 中配置至少一個 AI 提供商的 API 密鑰。最便宜的模型層級（Gemini Flash Lite、GPT-4o Mini 或 Claude Haiku）對中繼資料的效果就很好。</p>
+        <p>必須在 <strong>設定 &rarr; 抓取 &rarr; API 金鑰</strong> 中配置至少一個 AI 提供商的 API 金鑰。最便宜的模型層級（Gemini Flash Lite、GPT-4o Mini 或 Claude Haiku）對中繼資料的效果就很好。</p>
     </div>
 </section>
 
@@ -865,7 +865,7 @@
         <p>點擊遊戲標題連結或從麵包屑導航進入，即可查看完整遊戲詳情頁。完整頁面上的附加功能包括：</p>
         <ul>
             <li><strong>同人圖背景頁頭</strong>，帶麵包屑導航</li>
-            <li><strong>遊戲標誌</strong> &mdash; 遊戲的標誌顯示在標題上方，標題仍以文字顯示。沒有封面的遊戲會在封面的位置顯示其標誌。抓取會從 ES-DE、ScreenScraper、TheGamesDB、IGDB 和 Steam 填充標誌；使用<strong>填充缺失項</strong>的批量抓取會為之前抓取過的遊戲填充標誌</li>
+            <li><strong>遊戲標誌</strong> &mdash; 遊戲的標誌顯示在標題上方，標題仍以文字顯示。沒有封面的遊戲會在封面的位置顯示其標誌。抓取會從 ES-DE、ScreenScraper、TheGamesDB、IGDB 和 Steam 填充標誌；使用<strong>填充缺失項</strong>的批次抓取會為之前抓取過的遊戲填充標誌</li>
             <li><strong>盒子背面</strong> &mdash; 當遊戲有盒子背面時，封面上會有一個<strong>背面</strong>按鈕。按下它可查看背面，按<strong>正面</strong>可返回。點擊背面可放大。每次抓取遊戲時，都會從 ES-DE、ScreenScraper 和 TheGamesDB 填充背面</li>
             <li><strong>平台匯入徽章</strong> &mdash; 適用時顯示 CLZ 匯入、Steam 匯入、Xbox 匯入或 PSN 匯入，並帶平台標誌</li>
             <li><strong>附贈光碟指示</strong> &mdash; 顯示徽章和帶縮圖的 "所屬：" 連結，指向父遊戲</li>
@@ -876,23 +876,23 @@
         <h3>編輯彈窗</h3>
         <p>點擊 <strong>編輯</strong>（或按 <kbd>e</kbd>）打開編輯彈窗，其分為以下幾個部分：</p>
         <ul>
-            <li><strong>標識</strong> &mdash; 標題、排序標題（自動生成但可編輯）、系列、版本</li>
+            <li><strong>身分</strong> &mdash; 標題、排序標題（自動生成但可編輯）、系列、版本</li>
             <li><strong>發行資訊</strong> &mdash; 發行日期、地區（來自可配置的下拉選單）</li>
             <li><strong>玩法</strong> &mdash; 類型（多選標籤）、模式、遊戲結構、玩家人數、開發商、發行商</li>
-            <li><strong>技術</strong> &mdash; 手把（多選）、存檔類型、視角（多值）、維度（多值）</li>
+            <li><strong>技術資訊</strong> &mdash; 手把（多選）、存檔類型、視角（多值）、維度（多值）</li>
             <li><strong>年齡分級</strong> &mdash; 全部分級系統，帶官方分級圖片和自動交叉映射。更改一個分級會自動填充其他系統中空的分級。</li>
             <li><strong>評分</strong> &mdash; 媒體評分、使用者評分</li>
             <li><strong>簡介</strong> &mdash; 遊戲簡介文字</li>
             <li><strong>自訂圖片</strong> &mdash; 上傳自訂封面（2D）、3D 封面、盒子背面、同人圖和標誌。清除現有圖片以允許重新抓取。</li>
             <li><strong>匯入 3D 包裝盒</strong> &mdash; 也在「自訂圖片」中。無需按「儲存變更」，會立即儲存。選擇 Slipcase 儲存的 <code>.box.json</code> 檔案以及它的圖片（選擇整個資料夾也可以）。Slipcase 1.4.0 或更新版本會在每張匯出的圖片旁儲存此檔案。RetroDB 會為這個遊戲保存包裝盒的各面；之後點擊封面就會以 3D 顯示包裝盒，可以拖曳或用方向鍵轉動。你的 3D 封面圖片不會被改動。已經有各面圖片的遊戲會在取代前先詢問，<strong>移除</strong>會刪除它們。</li>
-            <li><strong>影片 / 預告</strong> &mdash; 上傳或連結影片預告</li>
+            <li><strong>影片 / 預告片</strong> &mdash; 上傳或連結影片預告</li>
         </ul>
 
         <h3>快捷操作</h3>
         <ul>
             <li><strong>編輯</strong> &mdash; 打開編輯彈窗（<kbd>e</kbd>）</li>
             <li><strong>抓取</strong> &mdash; 從抓取來源獲取中繼資料（<kbd>s</kbd>）</li>
-            <li><strong>AI 填充</strong> &mdash; 用 AI 填充缺失的欄位（需要 AI API 密鑰）</li>
+            <li><strong>AI 填充</strong> &mdash; 用 AI 填充缺失的欄位（需要 AI API 金鑰）</li>
             <li><strong>檢查 RA</strong> &mdash; 搜尋 RetroAchievements 成就集</li>
             <li><strong>HLTB 查詢</strong> &mdash; 從 HowLongToBeat 查找遊玩時長估算</li>
         </ul>
@@ -950,13 +950,13 @@
             <li>選擇你想編輯的遊戲（逐個選擇、全選，或選擇未抓取）</li>
             <li>點擊 <strong>"批量編輯"</strong></li>
             <li>選擇要修改的欄位並設定新值</li>
-            <li>選擇 <strong>替換</strong> 或 <strong>追加</strong> 模式</li>
+            <li>選擇 <strong>取代</strong> 或 <strong>追加</strong> 模式</li>
             <li>點擊 <strong>"套用"</strong> 以更新所有所選遊戲</li>
         </ol>
 
         <h3>替換與追加</h3>
         <ul>
-            <li><strong>替換</strong> &mdash; 用新值覆蓋現有值</li>
+            <li><strong>取代</strong> &mdash; 用新值覆蓋現有值</li>
             <li><strong>追加</strong> &mdash; 將新值添加到現有值中（用於多值欄位）</li>
         </ul>
 
@@ -983,7 +983,7 @@
 
 <!-- Compare Games -->
 <section id="compare" class="help-section card">
-    <h2 class="card-title">比較遊戲</h2>
+    <h2 class="card-title">對比遊戲</h2>
     <div class="card-body">
         <h3>功能說明</h3>
         <p>在表格檢視中並排比較兩款遊戲的中繼資料。可用於檢查中繼資料品質、發現重複項，或比較同一遊戲在不同系統上的版本。</p>
@@ -1003,7 +1003,7 @@
 
 <!-- Collections -->
 <section id="collections" class="help-section card">
-    <h2 class="card-title">合集（標籤、列表、願望清單）</h2>
+    <h2 class="card-title">合集（標籤、列表、願望單）</h2>
     <div class="card-body">
         <h3>標籤</h3>
         <p>建立自訂顏色的標籤來整理你的遊戲。標籤的作用類似於標記 &mdash; 每款遊戲可擁有多個標籤，每個標籤也可包含多款遊戲。</p>
@@ -1023,11 +1023,11 @@
             <li>按自訂順序或字母順序排序</li>
         </ul>
 
-        <h3>願望清單</h3>
+        <h3>願望單</h3>
         <p>追蹤你想要獲取的遊戲，無論是實體版還是數位版。</p>
         <ul>
             <li>手動加入遊戲，包含標題、系統、備註和優先級（1&ndash;5）</li>
-            <li>願望清單項目可在找到時連結到現有遊戲庫中的遊戲</li>
+            <li>願望單項目可在找到時連結到現有遊戲庫中的遊戲</li>
             <li>按優先級（從高到低）排序，然後按加入日期排序</li>
         </ul>
 
@@ -1057,9 +1057,9 @@
         <h3>Steam 匯入</h3>
         <p>匯入你的 Steam 遊戲庫並追蹤成就。</p>
         <ol>
-            <li>在設定中配置你的 Steam Web API 密鑰和 Steam ID</li>
+            <li>在設定中配置你的 Steam Web API 金鑰和 Steam ID</li>
             <li>進入遊戲匯入 &rarr; <strong>Steam</strong> 標籤頁</li>
-            <li>點擊<strong>「獲取遊戲庫」</strong>以檢索你的 Steam 遊戲</li>
+            <li>點擊<strong>「取得遊戲庫」</strong>以檢索你的 Steam 遊戲</li>
             <li>選擇要匯入的遊戲。已在你的 Windows 清單中、名稱相同的遊戲會連結到 Steam，而不會重複新增</li>
             <li>匯入的遊戲會標記其 Steam App ID 以便追蹤成就</li>
             <li>每個遊戲會在背景從其 Steam 商店頁面填充空白的詳細資訊，你的成就和遊玩時間也會隨之同步。遊戲頁面會顯示你的遊玩時間。請抓取該遊戲以取得其類型和發行日期：Steam 的類型過於寬泛，日期則是遊戲登上 Steam 的日期</li>
@@ -1079,20 +1079,20 @@
         <ol>
             <li>進入遊戲匯入 &rarr; <strong>PSN</strong> 標籤頁</li>
             <li>輸入你的 NPSSO cookie（獲取方法請參閱 <a href="#trophies">獎盃 &rarr; PSN 身分驗證</a>）</li>
-            <li>點擊<strong>「獲取遊戲庫」</strong>以檢索你的 PSN 遊戲</li>
+            <li>點擊<strong>「取得遊戲庫」</strong>以檢索你的 PSN 遊戲</li>
             <li>選擇要匯入的遊戲</li>
         </ol>
 
         <h3>匯入之後</h3>
         <ul>
             <li>匯入的遊戲會帶著平台專屬的徽章出現在你的遊戲庫中</li>
-            <li>使用批量抓取為匯入的遊戲獲取中繼資料</li>
+            <li>使用批次抓取為匯入的遊戲獲取中繼資料</li>
             <li>成就/獎盃追蹤會自動連結到來源平台</li>
             <li>在遊戲庫中可使用來源篩選器篩選匯入的遊戲</li>
         </ul>
 
         <div class="help-tip">
-            <strong>提示：</strong>從任意平台匯入遊戲後，你可以像 ROM 遊戲一樣使用批量抓取為它們抓取中繼資料。匯入的遊戲也可以追蹤各自平台的成就。
+            <strong>提示：</strong>從任意平台匯入遊戲後，你可以像 ROM 遊戲一樣使用批次抓取為它們抓取中繼資料。匯入的遊戲也可以追蹤各自平台的成就。
         </div>
     </div>
 </section>
@@ -1104,8 +1104,8 @@
         <h3>設定</h3>
         <ol>
             <li>在 <a href="https://retroachievements.org" target="_blank" rel="noopener noreferrer">retroachievements.org</a> 建立帳戶</li>
-            <li>在你的個人資料設定中產生 API 密鑰</li>
-            <li>在設定 &rarr; 帳戶 &rarr; RetroAchievements 中輸入你的使用者名稱和 API 密鑰</li>
+            <li>在你的個人資料設定中產生 API 金鑰</li>
+            <li>在設定 &rarr; 帳戶 &rarr; RetroAchievements 中輸入你的使用者名稱和 API 金鑰</li>
         </ol>
         <p>要在 RetroDB 的 RetroArch、DuckStation 或 PCSX2 中遊玩時贏取成就，請在同一頁面的<strong>在 RetroArch、DuckStation 和 PCSX2 中贏取成就</strong>下輸入一次你的 RetroAchievements 密碼。密碼只傳送給 RetroAchievements，不會被保留；RetroDB 儲存其傳回的登入權杖，每個 RetroDB 使用者一個。如有需要，可在此勾選<strong>硬核模式</strong>。如果成就無法再登入（例如你在 RetroAchievements 網站上重設了密鑰之後），請登出後重新登入。當你在 DuckStation 或 PCSX2 中按下「遊玩」時，RetroDB 會把你的登入資訊寫入該模擬器自己的設定檔，並一直保留到你登出或其他 RetroDB 使用者開始遊玩。你在模擬器自身選單中完成的登入不會被改動。RetroDB 無法在 Mac 上讓 DuckStation 登入。</p>
 
@@ -1131,7 +1131,7 @@
         <ul>
             <li><strong>遊戲庫篩選器</strong> &mdash; 使用「含 RA」篩選器僅顯示帶有成就的遊戲</li>
             <li><strong>檢查 RA</strong> &mdash; 在遊戲詳情彈窗中點擊以搜尋成就集</li>
-            <li><strong>批量抓取</strong> &mdash; 啟用「檢查 RA」選項以在抓取過程中查找成就</li>
+            <li><strong>批次抓取</strong> &mdash; 啟用「檢查 RA」選項以在抓取過程中查找成就</li>
             <li><strong>RA 重新整理任務</strong> &mdash; 掃描系統中的所有遊戲以確定哪些支援 RA</li>
         </ul>
 
@@ -1140,7 +1140,7 @@
 
         <div class="help-tip">
             <strong>注意：</strong>「重新整理進度」會為已連結 RetroAchievements 的遊戲同步你的進度。
-            要查找新的成就集，請在遊戲詳情彈窗中使用「檢查 RA」，或在批量抓取過程中啟用它。
+            要查找新的成就集，請在遊戲詳情彈窗中使用「檢查 RA」，或在批次抓取過程中啟用它。
         </div>
     </div>
 </section>
@@ -1152,7 +1152,7 @@
         <h3>設定</h3>
         <ol>
             <li>透過<strong>遊戲匯入 &rarr; Steam</strong> 匯入 Steam 遊戲</li>
-            <li>確保已在設定中配置你的 Steam Web API 密鑰</li>
+            <li>確保已在設定中配置你的 Steam Web API 金鑰</li>
         </ol>
 
         <h3>成就著陸頁</h3>
@@ -1215,7 +1215,7 @@
 
 <!-- HLTB -->
 <section id="hltb" class="help-section card">
-    <h2 class="card-title">How Long to Beat</h2>
+    <h2 class="card-title">通關時長</h2>
     <div class="card-body">
         <h3>用法</h3>
         <ol>
@@ -1230,7 +1230,7 @@
         <ul>
             <li><strong>主線劇情</strong> &mdash; 核心通關時長</li>
             <li><strong>主線 + 額外內容</strong> &mdash; 包含支線內容</li>
-            <li><strong>完美通關</strong> &mdash; 100% 完成所有內容</li>
+            <li><strong>全成就達成者</strong> &mdash; 100% 完成所有內容</li>
         </ul>
 
         <h3>HLTB 資料顯示位置</h3>
@@ -1238,7 +1238,7 @@
             <li><strong>遊戲詳情彈窗</strong> &mdash; 遊戲資訊中顯示遊玩時長估算</li>
             <li><strong>完整遊戲詳情頁面</strong> &mdash; 相同的遊玩時長資訊</li>
             <li><strong>分析 &rarr; 遊玩時長標籤頁</strong> &mdash; 整個合集的遊玩時長分析</li>
-            <li><strong>比較遊戲</strong> &mdash; 並排比較遊玩時長</li>
+            <li><strong>對比遊戲</strong> &mdash; 並排比較遊玩時長</li>
         </ul>
 
         <div class="help-tip">
@@ -1306,10 +1306,10 @@
                 <tr><th>等級</th><th>示例</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>銅杯</strong></td><td>加入第一款遊戲、達到 10 款遊戲、首次抓取、5 個系統、首次完成</td></tr>
-                <tr><td><strong>銀杯</strong></td><td>100 款遊戲、抓取 50 款、10 個系統、10 次完成、500 款遊戲</td></tr>
-                <tr><td><strong>金杯</strong></td><td>1,000 款遊戲、100% 中繼資料覆蓋率、20 個系統、50 次完成</td></tr>
-                <tr><td><strong>白金杯</strong></td><td>5,000 款遊戲、100 次完成、30 個以上系統</td></tr>
+                <tr><td><strong>青銅</strong></td><td>加入第一款遊戲、達到 10 款遊戲、首次抓取、5 個系統、首次完成</td></tr>
+                <tr><td><strong>銀</strong></td><td>100 款遊戲、抓取 50 款、10 個系統、10 次完成、500 款遊戲</td></tr>
+                <tr><td><strong>金</strong></td><td>1,000 款遊戲、100% 中繼資料覆蓋率、20 個系統、50 次完成</td></tr>
+                <tr><td><strong>白金</strong></td><td>5,000 款遊戲、100 次完成、30 個以上系統</td></tr>
             </tbody>
         </table>
 
@@ -1340,7 +1340,7 @@
             <li><strong>硬體圖片</strong> &mdash; 主機/系統的照片</li>
             <li><strong>技術規格</strong> &mdash; CPU、GPU、記憶體、解析度、媒體類型</li>
             <li><strong>歷史</strong> &mdash; 關於該系統開發、發布和影響的 AI 生成敘述</li>
-            <li><strong>十大遊戲</strong> &mdash; 該系統最知名的作品（根據媒體評分和 AI 建議）</li>
+            <li><strong>遊戲 Top 10</strong> &mdash; 該系統最知名的作品（根據媒體評分和 AI 建議）</li>
             <li><strong>手把圖庫</strong> &mdash; 附帶描述的該系統手把圖片</li>
         </ul>
 
@@ -1363,7 +1363,7 @@
         <p>所有手把圖片都會標準化為目標尺寸並以 WebP 格式儲存。</p>
 
         <div class="help-tip">
-            <strong>提示：</strong>內容生成需要 AI API 密鑰。博物館使用在設定 &rarr; 抓取 &rarr; API 密鑰中配置的同一 AI 提供商。
+            <strong>提示：</strong>內容生成需要 AI API 金鑰。博物館使用在設定 &rarr; 抓取 &rarr; API 金鑰中配置的同一 AI 提供商。
         </div>
     </div>
 </section>
@@ -1390,7 +1390,7 @@
                 <tr><td><strong>成就</strong></td><td>按系統統計的 RetroAchievements 覆蓋率和完成度</td></tr>
                 <tr><td><strong>資料品質</strong></td><td>中繼資料完整度雷達圖（簡介、封面、類型、開發商、發行商、發行日期、螢幕截圖、同人圖、影片、說明書、HLTB、分級、模式、地區）</td></tr>
                 <tr><td><strong>增長</strong></td><td>合集增長時間軸，顯示遊戲隨時間的加入情況</td></tr>
-                <tr><td><strong>儲存</strong></td><td>按系統統計的儲存用量細分（附格式化的檔案大小）</td></tr>
+                <tr><td><strong>儲存空間</strong></td><td>按系統統計的儲存用量細分（附格式化的檔案大小）</td></tr>
                 <tr><td><strong>排行榜</strong></td><td>按遊戲數量排名的頂級系統、按檔案大小排名的最大單款遊戲</td></tr>
             </tbody>
         </table>
@@ -1419,7 +1419,7 @@
             </thead>
             <tbody>
                 <tr><td><strong>非標準名稱</strong></td><td>檔案名不符合命名規範的 ROM。顯示當前檔案名、偵測到的問題，以及建議的更正名稱。</td></tr>
-                <tr><td><strong>名稱不匹配</strong></td><td>檔案名與抓取的中繼資料標題不匹配的 ROM。顯示當前檔案名與抓取的標題、地區、年份和開發商。</td></tr>
+                <tr><td><strong>名稱不符</strong></td><td>檔案名與抓取的中繼資料標題不匹配的 ROM。顯示當前檔案名與抓取的標題、地區、年份和開發商。</td></tr>
             </tbody>
         </table>
 
@@ -1441,7 +1441,7 @@
     <div class="card-body">
         <p>從側邊欄進入 ROM 工具中心。每個工具都作為後台任務執行，支援即時進度更新、暫停/恢復以及日誌記錄。</p>
 
-        <h3>壓縮包掃描器</h3>
+        <h3>壓縮檔掃描器</h3>
         <p>解壓 ROM 壓縮包（ZIP、7Z、RAR），可選項包括：</p>
         <ul>
             <li>遞迴掃描子資料夾</li>
@@ -1458,7 +1458,7 @@
         <p>透過雜湊驗證檢查 CHD 檔案的完整性。識別損壞或不完整的轉換結果。</p>
         <p><em>需要：chdman</em></p>
 
-        <h3>重複檔案查找器</h3>
+        <h3>重複查找器</h3>
         <p>按雜湊或檔案名查找重複的 ROM，並可選擇按地區標籤設定優先級。 在檔名模式下，同一遊戲已連結的地區版本不會被回報為重複項；在雜湊模式下，相同的檔案一律會被回報。</p>
         <p><em>無外部依賴</em></p>
 
@@ -1487,13 +1487,13 @@
         <p>漸進式掃描並即時顯示統計資訊，包括已掃描遊戲數、重複數量和可回收空間。結果按遊戲和系統分組。你可以在每個重複組中選擇保留哪個檔案，或使用 <strong>“選擇最大”</strong> 自動保留解析度最高的版本。</p>
         <p><em>無外部依賴</em></p>
 
-        <h3>圖片調整器</h3>
+        <h3>圖片尺寸調整</h3>
         <p>將遊戲媒體標準化為統一的目標尺寸。詳情請參閱 <a href="#image-standardization">圖片標準化</a>。</p>
         <p><em>無外部依賴（基於 Python 的 AI 放大）</em></p>
 
-        <h3>補全備用標題</h3>
+        <h3>回填別名標題</h3>
         <p>遍歷每個已抓取的遊戲，從 IGDB / TGDB / ScreenScraper 取得其<strong>備用標題</strong>，並標註每個名稱所屬的地區。你已有的名稱也會獲得其地區。在匯入大型目錄，或從另一款不儲存地區/日文/副標題的工具遷移後特別有用。在後台執行，進度顯示在工具卡片上。</p>
-        <p><em>至少需要一個抓取源 API 密鑰（IGDB / TGDB / ScreenScraper）</em></p>
+        <p><em>至少需要一個抓取源 API 金鑰（IGDB / TGDB / ScreenScraper）</em></p>
 
         <h3>修復包裝盒與說明書地區</h3>
         <p>舊版 ScreenScraper 抓取會從按字母排序的地區清單中取第一個包裝盒、3D 包裝盒和說明書，因此美國版遊戲可能顯示歐洲版包裝盒，或帶有葡萄牙語說明書。此工具會重新查詢每個這類遊戲。如果其他地區更適合該遊戲，它會下載該檔案並刪除舊檔案。來自其他地區的包裝盒和說明書不會被改動，檔案已經合適的遊戲也一樣。再次點擊卡片可停止；之後再次執行時會繼續處理其餘部分。</p>
@@ -1501,30 +1501,30 @@
 
         <h3>依檔名修復地區</h3>
         <p>ROM 的檔名說明了它是哪個版本，因此 <code>(USA)</code> 這樣的標記現在會決定其地區，不再詢問 AI。舊版抓取讓 AI 先猜測，因此 <code>(USA)</code> 檔案可能被標為日本。此工具會把這些遊戲的地區改為檔名中的地區。它只更改由 AI 填寫的地區，包括你之後手動修正、與檔名不同的地區。</p>
-        <p><em>無需依賴</em></p>
+        <p><em>無需相依項</em></p>
 
         <h3>整理發行日期</h3>
         <p>舊版抓取會把只知道年份的日期存為 1 月 1 日或 12 月 31 日，就像知道具體日期一樣。此工具會把這些日期縮減為年份或月份，以便之後的抓取可以填入真實日期。不是由抓取填入的日期保持不變。</p>
-        <p><em>無需依賴</em></p>
+        <p><em>無需相依項</em></p>
 
         <h3>檢查已儲存的遊玩時間</h3>
         <p>舊版查詢可能儲存了續作的遊玩時間，或另一個系統上同名遊戲的遊玩時間。此工具會把這些比對結果送到 HowLongToBeat 審核頁面，在你做出決定之前，不會更改任何遊戲。在那裡，批准會保留時間，拒絕會清除它。有些比對結果是正確的：HowLongToBeat 並未列出遊戲發行過的每個系統。</p>
-        <p><em>無需依賴</em></p>
+        <p><em>無需相依項</em></p>
 
         <h3>整理類型、視角與模式</h3>
         <p>各來源對同一事物的叫法不同，因此一個類型可能同時顯示為 RPG 和 Role Playing Game，篩選器就會漏掉遊戲。現在抓取使用同一套名稱，即篩選清單中的名稱。此工具會轉換舊版抓取儲存的內容。在這些清單中沒有位置的詞（如 Arcade 或 Indie）會被刪除。屬於其他欄位的詞（如 FPV）會在該欄位為空時移到那裡。與遊戲模式矛盾的玩家人數會被修正，來自 RAWG 的舊玩家人數 1 會被清除，以便填入真實人數。你自己加入下拉選單中的值會保留。之後請使用<strong>填充缺失項</strong>執行一次批次抓取，以填充仍為空的內容。</p>
-        <p><em>無需依賴</em></p>
+        <p><em>無需相依項</em></p>
 
         <h3>清除包裝盒封面中的 RAWG 圖片</h3>
         <p>RAWG 沒有包裝盒封面。舊版抓取會把它的背景圖片（通常是螢幕截圖）儲存為封面，而抓取只填充空封面，所以這張圖片擋住了真正的封面。此工具會刪除這些圖片並讓封面留空。來自其他來源的封面和所有同人圖都會保留。在抓取找到封面之前，這些遊戲不會顯示封面，因此之後請使用<strong>填充缺失項</strong>執行一次批次抓取。</p>
-        <p><em>無需依賴</em></p>
+        <p><em>無需相依項</em></p>
 
-        <h3>批量 HLTB 查詢</h3>
+        <h3>批次 HLTB 查詢</h3>
         <p>為每個缺少遊玩時長估算的遊戲執行 HowLongToBeat 查詢。每次匹配都按標題 + 平台 + 發行年份評分；高置信度的匹配會自動儲存。低於置信度閾值（或平台存在衝突）的結果會被擱置，等待人工審核。</p>
         <p><em>在 HowLongToBeat 網站上查詢每個遊戲，因此需要連上網路</em></p>
 
         <h3>HLTB 待審核</h3>
-        <p>用於審核批量 HLTB 查詢產生的模糊匹配的隊列。每一行待處理項都會顯示源遊戲及其對應的 HLTB 候選項（標題、平台、發行年份、置信度）。可逐行批准、拒絕或選擇其他匹配。僅當至少存在一個待處理匹配時，該審核工具卡片才會出現在 ROM 工具中心。</p>
+        <p>用於審核批次 HLTB 查詢產生的模糊匹配的隊列。每一行待處理項都會顯示源遊戲及其對應的 HLTB 候選項（標題、平台、發行年份、置信度）。可逐行批准、拒絕或選擇其他匹配。僅當至少存在一個待處理匹配時，該審核工具卡片才會出現在 ROM 工具中心。</p>
         <ul>
             <li>針對低置信度、備用標題和平台不匹配等匹配的 <strong>篩選標籤頁</strong>。</li>
             <li><strong>批准</strong> 會寫入遊玩時長估算；<strong>拒絕</strong> 會丟棄該候選項並保持查詢隊列整潔。</li>
@@ -1541,13 +1541,13 @@
 
 <!-- Normalization -->
 <section id="normalization" class="help-section card">
-    <h2 class="card-title">規範化</h2>
+    <h2 class="card-title">標準化</h2>
     <div class="card-body">
         <h3>它的作用</h3>
-        <p>將類型和遊戲模式的值規範化為統一的標準形式。此過程在抓取和 AI 填充時自動進行，也可以手動應用到你現有的遊戲庫。</p>
+        <p>將類型和遊戲模式的值標準化為統一的標準形式。此過程在抓取和 AI 填充時自動進行，也可以手動應用到你現有的遊戲庫。</p>
 
         <h3>為何重要</h3>
-        <p>不同的抓取源對同一事物使用不同的名稱。規範化可確保整個遊戲庫的一致性：</p>
+        <p>不同的抓取源對同一事物使用不同的名稱。標準化可確保整個遊戲庫的一致性：</p>
         <ul>
             <li><code>platform</code> &rarr; <code>Platformer</code></li>
             <li><code>fps</code>, <code>first person shooter</code> &rarr; <code>First-Person-Shooter</code></li>
@@ -1559,10 +1559,10 @@
         </ul>
 
         <h3>自訂規則</h3>
-        <p>你可以在 <strong>設定 &rarr; 資料 &rarr; 規範化</strong> 中添加自訂規範化規則。自訂規則會覆蓋內建映射，讓你定義自己偏好的類型和模式名稱。規則儲存在資料庫中。</p>
+        <p>你可以在 <strong>設定 &rarr; 資料 &rarr; 標準化</strong> 中添加自訂標準化規則。自訂規則會覆蓋內建映射，讓你定義自己偏好的類型和模式名稱。規則儲存在資料庫中。</p>
 
         <h3>預覽與應用</h3>
-        <p>在應用規範化之前，你可以預覽哪些遊戲會受到影響以及將做出哪些更改。這讓你可以在向遊戲庫提交更改之前進行審核。</p>
+        <p>在應用標準化之前，你可以預覽哪些遊戲會受到影響以及將做出哪些更改。這讓你可以在向遊戲庫提交更改之前進行審核。</p>
 
         <h3>名稱的兩種寫法</h3>
         <p><strong>系列</strong>、<strong>發行商</strong>和<strong>開發商</strong>按鈕會列出大小寫不同的名稱，例如 <code>Doom</code> 和 <code>DOOM</code>。系統會選用遊戲最多的寫法；如果你喜歡別的，可以另選，然後按<strong>套用</strong>。之後的抓取或 AI 填充若帶來大小寫不同的名稱，會採用你遊戲庫中的寫法。</p>
@@ -1602,7 +1602,7 @@
 
         <h3>如何執行</h3>
         <ol>
-            <li>前往 <strong>設定 &rarr; 系統 &rarr; 維護</strong> 或 <strong>ROM 工具 &rarr; 圖片調整器</strong></li>
+            <li>前往 <strong>設定 &rarr; 系統 &rarr; 維護</strong> 或 <strong>ROM 工具 &rarr; 圖片尺寸調整</strong></li>
             <li>點擊 <strong>“開始”</strong> 以啟動批量標準化</li>
             <li>任務在後台執行，透過彈出通知顯示當前檔案和統計資訊</li>
             <li>圖片在抓取過程中也會自動標準化（新下載的內容會立即標準化）</li>
@@ -1636,7 +1636,7 @@
                 <tr><td><strong>抓取</strong></td><td>抓取源活動、API 呼叫、錯誤以及每個遊戲的結果</td></tr>
                 <tr><td><strong>ROM 工具</strong></td><td>壓縮包解壓、CHD 轉換、重複檔案偵測、螢幕截圖去重</td></tr>
                 <tr><td><strong>ROM 報告</strong></td><td>命名驗證結果</td></tr>
-                <tr><td><strong>圖片調整</strong></td><td>圖片標準化任務進度（每個檔案的放大/縮小）</td></tr>
+                <tr><td><strong>圖片縮放</strong></td><td>圖片標準化任務進度（每個檔案的放大/縮小）</td></tr>
                 <tr><td><strong>系統</strong></td><td>常規應用活動、維護任務、啟動、資料庫操作</td></tr>
             </tbody>
         </table>
@@ -1672,9 +1672,9 @@
             <li><strong>清除 CLZ 匯入</strong> &mdash; 刪除所有 CLZ Games 匯入記錄（僅含中繼資料、無 ROM 檔案的條目）。</li>
         </ul>
 
-        <h3>資料庫優化</h3>
+        <h3>資料庫最佳化</h3>
         <ul>
-            <li><strong>優化資料庫</strong> &mdash; 執行 SQLite VACUUM 和 ANALYZE，從已刪除記錄中回收儲存空間並更新查詢規劃器統計資訊。建議在大量刪除或清理操作後執行。</li>
+            <li><strong>最佳化資料庫</strong> &mdash; 執行 SQLite VACUUM 和 ANALYZE，從已刪除記錄中回收儲存空間並更新查詢規劃器統計資訊。建議在大量刪除或清理操作後執行。</li>
         </ul>
 
         <h3>批量圖片標準化</h3>
@@ -1682,40 +1682,40 @@
 
         <h3>伺服器管理</h3>
         <ul>
-            <li><strong>重啟伺服器</strong> &mdash; 優雅地重啟應用程式（清理並退出）。位於 設定 &rarr; 系統 &rarr; 故障排除。</li>
+            <li><strong>重新啟動伺服器</strong> &mdash; 優雅地重啟應用程式（清理並退出）。位於 設定 &rarr; 系統 &rarr; 故障排除。</li>
         </ul>
     </div>
 </section>
 
 <!-- Multi-User Access -->
 <section id="multi-user" class="help-section card">
-    <h2 class="card-title">多用戶存取</h2>
+    <h2 class="card-title">多使用者存取</h2>
     <div class="card-body">
-        <h3>用戶角色</h3>
+        <h3>使用者角色</h3>
         <table class="data-table">
             <thead>
                 <tr><th>角色</th><th>存取權限</th><th>密碼</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>管理員</strong></td><td>完全存取：設定、用戶管理、維護、所有功能</td><td>必需</td></tr>
+                <tr><td><strong>管理員</strong></td><td>完全存取：設定、使用者管理、維護、所有功能</td><td>必需</td></tr>
                 <tr><td><strong>編輯者</strong></td><td>可編輯遊戲、抓取、使用 ROM 工具、管理合集</td><td>必需</td></tr>
                 <tr><td><strong>檢視者</strong></td><td>只讀：瀏覽遊戲庫、查看詳情、查看成就/獎盃</td><td>必需</td></tr>
             </tbody>
         </table>
 
-        <h3>管理用戶</h3>
+        <h3>管理使用者</h3>
         <ol>
-            <li>前往 <strong>設定 &rarr; 帳戶 &rarr; 用戶</strong>（僅限管理員）</li>
-            <li>點擊 <strong>“添加用戶”</strong> 以創建新帳戶</li>
-            <li>設定用戶名、顯示名稱、角色和至少 12 個字元的初始密碼</li>
+            <li>前往 <strong>設定 &rarr; 帳戶 &rarr; 使用者</strong>（僅限管理員）</li>
+            <li>點擊 <strong>“新增使用者”</strong> 以創建新帳戶</li>
+            <li>設定使用者名、顯示名稱、角色和至少 12 個字元的初始密碼</li>
             <li>把這個密碼交給對方；對方首次登入時自己選擇密碼</li>
         </ol>
 
         <h3>身份驗證</h3>
-        <p>登入頁面會顯示所有活躍用戶。點擊自己的名字，然後輸入密碼；每個角色都需要密碼。會話會一直保持，直到登出。</p>
+        <p>登入頁面會顯示所有活躍使用者。點擊自己的名字，然後輸入密碼；每個角色都需要密碼。會話會一直保持，直到登出。</p>
 
-        <h3>每用戶設定</h3>
-        <p>每個用戶都可以配置自己的：</p>
+        <h3>每使用者設定</h3>
+        <p>每個使用者都可以配置自己的：</p>
         <ul>
             <li>頭像（上傳自訂圖片）</li>
             <li>顯示名稱</li>
@@ -1723,7 +1723,7 @@
             <li>每頁項目數</li>
             <li>時區</li>
             <li>RPCS3 獎盃路徑</li>
-            <li>RetroAchievements 憑據（用戶名 + API 密鑰）</li>
+            <li>RetroAchievements 憑據（使用者名 + API 金鑰）</li>
             <li>PSN 憑據（NPSSO cookie）</li>
         </ul>
     </div>
@@ -1741,7 +1741,7 @@
         </ol>
 
         <h3>備份內容</h3>
-        <p>備份包含整個 SQLite 資料庫（<code>roms.db</code>），其中含有所有遊戲中繼資料、用戶帳戶、設定、獎盃資料、成就進度、標籤、列表和心願單項目。</p>
+        <p>備份包含整個 SQLite 資料庫（<code>roms.db</code>），其中含有所有遊戲中繼資料、使用者帳戶、設定、獎盃資料、成就進度、標籤、列表和心願單項目。</p>
 
         <h3>未備份的內容</h3>
         <p>媒體檔案（封面、螢幕截圖、同人圖、影片、說明書）不包含在資料庫備份中，因為它們可以透過抓取重新下載。如果你有自訂上傳內容，可考慮單獨備份你的 <code>static/images/</code> 目錄。</p>
@@ -1769,7 +1769,7 @@
             <li>下載新的 RetroDB 版本</li>
             <li>備份以下檔案（它們包含你的個人資料）：
                 <ul>
-                    <li><code>config.py</code>（你的路徑和 API 密鑰）</li>
+                    <li><code>config.py</code>（你的路徑和 API 金鑰）</li>
                     <li><code>data/settings.json</code>（你的 UI 偏好設定）</li>
                     <li><code>data/scraper_settings.json</code>（你的抓取源配置）</li>
                     <li><code>data/rom_tools_config.json</code>（你的 ROM 工具偏好設定）</li>
@@ -1778,7 +1778,7 @@
             </li>
             <li>將新版本解壓覆蓋到現有安裝之上</li>
             <li>執行 <code>python install.py</code> 以安裝任何新的依賴項</li>
-            <li>重啟伺服器</li>
+            <li>重新啟動伺服器</li>
         </ol>
 
         <h3>可安全覆蓋的檔案</h3>
@@ -1891,7 +1891,7 @@
         <p><strong>遊玩</strong>會在執行 RetroDB 的電腦上啟動模擬器，而不是在你按下按鈕的裝置上。</p>
 
         <h4>「在 PATH 中找不到模擬器程式」</h4>
-        <p>在「模擬器」頁面的<strong>已登錄的模擬器</strong>下，編輯該模擬器，並在<strong>程式位置</strong>中填入程式所在的位置。或者把存放它的資料夾加到<strong>模擬器資料夾</strong>。對於 RetroArch，請在 RetroArch 卡片上按下<strong>自動偵測</strong>，然後按下<strong>儲存</strong>。</p>
+        <p>在「模擬器」頁面的<strong>已登錄的模擬器</strong>下，編輯該模擬器，並在<strong>程式位置</strong>中填入程式所在的位置。或者把存放它的資料夾加到<strong>模擬器資料夾</strong>。對於 RetroArch，請在 RetroArch 卡片上按下<strong>自動偵測</strong>，然後按下<strong>儲存空間</strong>。</p>
 
         <h4>「系統 &hellip; 未設定模擬器」或「模擬器 &hellip; 已關閉」</h4>
         <p>在「模擬器」頁面的<strong>各系統對應</strong>下為該系統選擇模擬器，或在<strong>已登錄的模擬器</strong>下開啟該模擬器。如果某個遊戲指定的模擬器已不存在：請在它的「編輯遊戲」視窗中清除該選擇。</p>
@@ -1976,7 +1976,7 @@
         <h4>忘記密碼</h4>
         <p>無法透過電子郵件重設。管理員可在 設定 &rarr; 帳戶 &rarr; 使用者管理 中設定新密碼。如果唯一的管理員忘了密碼，請還原一份在知道密碼時做的備份。</p>
 
-        <h4>"You do not have permission to access this feature"</h4>
+        <h4>"你沒有執行此操作的權限"</h4>
         <p>你的角色不包含該功能。管理員可以在 設定 &rarr; 帳戶 &rarr; 使用者管理 中更改你的角色。</p>
 
         <h3 id="ts-data">資料庫、備份與更新</h3>
@@ -2030,7 +2030,7 @@
             <li><strong>限制網路存取</strong> &mdash; 避免將 RetroDB 直接暴露到公共互聯網。請使用 VPN 或將存取限制在你的本地網路內。如果需要遠端存取，請使用帶身份驗證的反向代理。</li>
             <li><strong>保持定期備份</strong> &mdash; 使用設定中內建的備份功能定期創建資料庫備份。將備份存放在與應用程式不同的位置。</li>
             <li><strong>保持 RetroDB 更新</strong> &mdash; 定期檢查新版本。更新中包含安全修復和改進。</li>
-            <li><strong>保護你的 API 密鑰</strong> &mdash; API 密鑰儲存在 <code>data/scraper_settings.json</code> 中。請確保該檔案不會被公開存取。切勿分享你的 <code>config.py</code> 或令牌檔案。</li>
+            <li><strong>保護你的 API 金鑰</strong> &mdash; API 金鑰儲存在 <code>data/scraper_settings.json</code> 中。請確保該檔案不會被公開存取。切勿分享你的 <code>config.py</code> 或令牌檔案。</li>
         </ul>
 
         <h3>內建安全功能</h3>
@@ -2039,7 +2039,7 @@
             <li><strong>登入速率限制</strong> &mdash; 對登入端點的暴力破解防護</li>
             <li><strong>路徑驗證</strong> &mdash; 所有檔案操作都使用 <code>safe_path</code> 和 <code>safe_filename</code> 輔助函數以防止目錄遍歷攻擊</li>
             <li><strong>參數化查詢</strong> &mdash; 所有資料庫查詢都使用參數化語句以防止 SQL 注入</li>
-            <li><strong>XSS 防護</strong> &mdash; 模態對話框使用安全的 DOM 構造；用戶輸入會被轉義</li>
+            <li><strong>XSS 防護</strong> &mdash; 模態對話框使用安全的 DOM 構造；使用者輸入會被轉義</li>
             <li><strong>圖片解壓炸彈防護</strong> &mdash; 圖片的最大像素數受到限制，以防止惡意圖片耗盡記憶體</li>
         </ul>
 

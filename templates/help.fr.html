@@ -38,11 +38,11 @@
     <a href="#settings" class="help-nav-item">Paramètres</a>
     <a href="#emulators-play" class="help-nav-item">Émulateurs et Jouer</a>
     <a href="#scraping" class="help-nav-item">Récupération</a>
-    <a href="#bulk-scrape" class="help-nav-item">Récupération en masse</a>
+    <a href="#bulk-scrape" class="help-nav-item">Récupération groupée</a>
     <a href="#ai-fill" class="help-nav-item">Remplissage IA</a>
     <a href="#filtering" class="help-nav-item">Filtrage</a>
     <a href="#game-detail" class="help-nav-item">Détails du jeu</a>
-    <a href="#bulk-edit" class="help-nav-item">Édition en masse</a>
+    <a href="#bulk-edit" class="help-nav-item">Modification groupée</a>
     <a href="#compare" class="help-nav-item">Comparer</a>
     <a href="#collections" class="help-nav-item">Collections</a>
     <a href="#game-imports" class="help-nav-item">Imports de jeux</a>
@@ -53,7 +53,7 @@
     <a href="#trophies" class="help-nav-item">Trophées</a>
     <a href="#collector-trophies" class="help-nav-item">Trophées de collectionneur</a>
     <a href="#museum" class="help-nav-item">Musée</a>
-    <a href="#analytics" class="help-nav-item">Statistiques</a>
+    <a href="#analytics" class="help-nav-item">Analyses</a>
     <a href="#reports" class="help-nav-item">Rapports</a>
     <a href="#rom-tools" class="help-nav-item">Outils ROM</a>
     <a href="#normalization" class="help-nav-item">Normalisation</a>
@@ -222,7 +222,7 @@
             <li><strong>Bibliothèque</strong> &mdash; Tous les jeux avec défilement infini, filtrage avancé (inclure/exclure), recherche et tri</li>
             <li><strong>Systèmes</strong> &mdash; Parcourez les plateformes avec le nombre de jeux, les images de systèmes, les caractéristiques, le filtrage par type et fonctionnalités</li>
             <li><strong>Succès</strong> &mdash; Une seule page pour tous vos trophées et succès, avec un onglet pour chacun : RetroAchievements, RPCS3, PSN, Steam et Xbox. Elle s'ouvre sur le dernier onglet utilisé.</li>
-            <li><strong>Statistiques</strong> &mdash; Graphiques et statistiques de collection répartis sur 12 onglets avec options d'exportation</li>
+            <li><strong>Analyses</strong> &mdash; Graphiques et statistiques de collection répartis sur 12 onglets avec options d'exportation</li>
         </ul>
 
         <h4>Ma collection</h4>
@@ -235,7 +235,7 @@
 
         <h4>Outils</h4>
         <ul>
-            <li><strong>Outils ROM</strong> &mdash; Scanner d'archives, convertisseur/vérificateur CHD, détecteur de doublons, organisateur multi-disques, déduplication de captures d'écran, redimensionneur d'images, Rapports ROM</li>
+            <li><strong>Outils ROM</strong> &mdash; Analyseur d'archives, convertisseur/vérificateur CHD, détecteur de doublons, organisateur multi-disques, déduplication de captures d'écran, redimensionneur d'images, Rapports ROM</li>
             <li><strong>Imports de jeux</strong> &mdash; Importer depuis CLZ, Steam, Xbox et PSN</li>
         </ul>
 
@@ -264,7 +264,7 @@
         </ul>
 
         <h3>Onglets</h3>
-        <p>De nombreuses pages utilisent des onglets pour l'organisation (Paramètres, Statistiques, Rapports, Outils ROM, Succès). Les onglets s'étirent pour remplir la largeur du contenu et mémorisent votre dernière sélection le cas échéant.</p>
+        <p>De nombreuses pages utilisent des onglets pour l'organisation (Paramètres, Analyses, Rapports, Outils ROM, Succès). Les onglets s'étirent pour remplir la largeur du contenu et mémorisent votre dernière sélection le cas échéant.</p>
     </div>
 </section>
 
@@ -279,7 +279,7 @@
             <div class="shortcut-item"><kbd>g</kbd> <kbd>d</kbd> <span>Tableau de bord</span></div>
             <div class="shortcut-item"><kbd>g</kbd> <kbd>s</kbd> <span>Systèmes</span></div>
             <div class="shortcut-item"><kbd>g</kbd> <kbd>l</kbd> <span>Bibliothèque</span></div>
-            <div class="shortcut-item"><kbd>g</kbd> <kbd>a</kbd> <span>Statistiques</span></div>
+            <div class="shortcut-item"><kbd>g</kbd> <kbd>a</kbd> <span>Analyses</span></div>
             <div class="shortcut-item"><kbd>g</kbd> <kbd>t</kbd> <span>Paramètres</span></div>
             <div class="shortcut-item"><kbd>g</kbd> <kbd>h</kbd> <span>Aide</span></div>
         </div>
@@ -362,7 +362,7 @@
             <li><strong>Total des systèmes</strong> &mdash; Nombre de plateformes dans votre bibliothèque</li>
             <li><strong>Total des jeux</strong> &mdash; Nombre total de jeux (hors disques bonus)</li>
             <li><strong>Métadonnées manquantes</strong> &mdash; Jeux non encore récupérés</li>
-            <li><strong>Complets</strong> &mdash; Jeux avec métadonnées récupérées</li>
+            <li><strong>Terminé</strong> &mdash; Jeux avec métadonnées récupérées</li>
         </ul>
 
         <h3>Sections d'activité récente</h3>
@@ -560,7 +560,7 @@
 
         <h3>Onglet Système</h3>
         <ul>
-            <li><strong>Maintenance</strong> &mdash; Nettoyer les ROM manquantes, effacer les imports CLZ ou les données récupérées, supprimer les fichiers de médias qu'aucun jeu n'utilise, effacer les liens vers des fichiers de médias disparus, optimiser la base de données et calculer les tailles de fichier</li>
+            <li><strong>Maintenance</strong> &mdash; Nettoyer les ROMs manquantes, effacer les imports CLZ ou les données récupérées, supprimer les fichiers de médias qu'aucun jeu n'utilise, effacer les liens vers des fichiers de médias disparus, optimiser la base de données et calculer les tailles de fichier</li>
             <li><strong>Mises à jour</strong> &mdash; Rechercher, télécharger et installer une nouvelle version</li>
             <li><strong>Serveur</strong> &mdash; Redémarrer ou arrêter RetroDB, le port qu'il utilise (l'adresse change après Redémarrer) et l'emplacement de sa base de données</li>
             <li><strong>Journalisation</strong> &mdash; Réglages du niveau de journal pour différentes catégories, et les fichiers de journal</li>
@@ -662,7 +662,7 @@
 
 <!-- Bulk Scraping -->
 <section id="bulk-scrape" class="help-section card">
-    <h2 class="card-title">Récupération en masse</h2>
+    <h2 class="card-title">Récupération groupée</h2>
     <div class="card-body">
         <h3>Démarrer une récupération en masse</h3>
         <ol>
@@ -853,7 +853,7 @@
             <li>Image de classification d'âge (de votre système préféré, avec repli par correspondance croisée)</li>
             <li>Galerie de captures d'écran avec navigation au clavier (<kbd>&larr;</kbd> <kbd>&rarr;</kbd>)</li>
             <li>Bande-annonce vidéo (si disponible)</li>
-            <li>Estimations de durée HLTB (Histoire principale, Principale + extras, Complétiste)</li>
+            <li>Estimations de durée HLTB (Histoire principale, Principal + extras, Complétiste)</li>
             <li>État et progression RetroAchievements</li>
             <li>Jeux similaires (liens cliquables)</li>
             <li>Détails de prise en charge des manettes</li>
@@ -941,14 +941,14 @@
 
 <!-- Bulk Edit -->
 <section id="bulk-edit" class="help-section card">
-    <h2 class="card-title">Édition en masse</h2>
+    <h2 class="card-title">Modification groupée</h2>
     <div class="card-body">
         <h3>Comment l'utiliser</h3>
         <ol>
             <li>Rendez-vous sur n'importe quelle page Système ou Bibliothèque</li>
             <li>Cliquez sur <strong>« Sélectionner »</strong> pour entrer en mode sélection</li>
             <li>Sélectionnez les jeux que vous souhaitez modifier (individuellement, Tout sélectionner ou Sélectionner les non récupérés)</li>
-            <li>Cliquez sur <strong>« Édition en masse »</strong></li>
+            <li>Cliquez sur <strong>« Modification groupée »</strong></li>
             <li>Choisissez le champ à modifier et définissez la nouvelle valeur</li>
             <li>Choisissez le mode <strong>Remplacer</strong> ou <strong>Ajouter</strong></li>
             <li>Cliquez sur <strong>« Appliquer »</strong> pour mettre à jour tous les jeux sélectionnés</li>
@@ -1131,7 +1131,7 @@
         <ul>
             <li><strong>Filtre de bibliothèque</strong> &mdash; Utilisez le filtre « A des RA » pour n'afficher que les jeux avec des succès</li>
             <li><strong>Vérifier les RA</strong> &mdash; Sur les fenêtres de détails de jeu, cliquez pour rechercher un jeu de succès</li>
-            <li><strong>Récupération en masse</strong> &mdash; Activez l'option « Vérifier RA » pour trouver des succès lors de la récupération</li>
+            <li><strong>Récupération groupée</strong> &mdash; Activez l'option « Vérifier RA » pour trouver des succès lors de la récupération</li>
             <li><strong>Tâche d'actualisation RA</strong> &mdash; Analysez tous les jeux d'un système pour identifier ceux qui prennent en charge les RA</li>
         </ul>
 
@@ -1229,7 +1229,7 @@
         <h3>Catégories de durée</h3>
         <ul>
             <li><strong>Histoire principale</strong> &mdash; Durée d'achèvement de base</li>
-            <li><strong>Principale + extras</strong> &mdash; Avec le contenu annexe</li>
+            <li><strong>Principal + extras</strong> &mdash; Avec le contenu annexe</li>
             <li><strong>Complétiste</strong> &mdash; 100 % de tout</li>
         </ul>
 
@@ -1237,12 +1237,12 @@
         <ul>
             <li><strong>Fenêtre de détails du jeu</strong> &mdash; Estimations de durée affichées dans les informations du jeu</li>
             <li><strong>Page de détails complète du jeu</strong> &mdash; Les mêmes informations de durée</li>
-            <li><strong>Statistiques &rarr; onglet Durée de jeu</strong> &mdash; Analyse de la durée à l'échelle de la collection</li>
+            <li><strong>Analyses &rarr; onglet Temps de jeu</strong> &mdash; Analyse de la durée à l'échelle de la collection</li>
             <li><strong>Comparer les jeux</strong> &mdash; Comparaison de durée côte à côte</li>
         </ul>
 
         <div class="help-tip">
-            <strong>Astuce :</strong> Les données HLTB sont également affichées dans Statistiques sous l'onglet Durée de jeu, vous donnant des estimations pour l'ensemble de votre collection.
+            <strong>Astuce :</strong> Les données HLTB sont également affichées dans Analyses sous l'onglet Temps de jeu, vous donnant des estimations pour l'ensemble de votre collection.
         </div>
     </div>
 </section>
@@ -1338,7 +1338,7 @@
         <p>Cliquez sur n'importe quel système pour afficher sa page de musée, qui comprend :</p>
         <ul>
             <li><strong>Image du matériel</strong> &mdash; Photo de la console/du système</li>
-            <li><strong>Spécifications techniques</strong> &mdash; Processeur, GPU, RAM, résolution, type de support</li>
+            <li><strong>Caractéristiques techniques</strong> &mdash; Processeur, GPU, RAM, résolution, type de support</li>
             <li><strong>Histoire</strong> &mdash; Récit généré par IA sur le développement, le lancement et l'héritage du système</li>
             <li><strong>Top 10 des jeux</strong> &mdash; Les titres les plus notables du système (issus des notes de la critique et des suggestions de l'IA)</li>
             <li><strong>Galerie de manettes</strong> &mdash; Images des manettes du système avec descriptions</li>
@@ -1358,7 +1358,7 @@
             <li><strong>Téléversement manuel</strong> &mdash; Téléversez vos propres images de manettes</li>
             <li><strong>Suppression de l'arrière-plan</strong> &mdash; Supprimez automatiquement les arrière-plans à l'aide d'une IA locale (bibliothèque rembg) pour des images de manettes transparentes sur n'importe quel fond</li>
             <li><strong>Propagation d'image</strong> &mdash; Lorsqu'une image de manette est trouvée, elle est automatiquement partagée avec la même manette sur d'autres systèmes (manettes sœurs)</li>
-            <li><strong>Récupération en masse</strong> &mdash; Récupérez les images de toutes les manettes d'un système en une fois</li>
+            <li><strong>Récupération groupée</strong> &mdash; Récupérez les images de toutes les manettes d'un système en une fois</li>
         </ul>
         <p>Toutes les images de manettes sont standardisées à la taille cible et enregistrées au format WebP.</p>
 
@@ -1370,9 +1370,9 @@
 
 <!-- Analytics -->
 <section id="analytics" class="help-section card">
-    <h2 class="card-title">Statistiques</h2>
+    <h2 class="card-title">Analyses</h2>
     <div class="card-body">
-        <p>Les Statistiques fournissent des données et des visualisations complètes réparties sur 12 onglets. Tous les graphiques sont interactifs et peuvent être exportés en PNG, copiés dans le presse-papiers ou téléchargés au format CSV.</p>
+        <p>Les Analyses fournissent des données et des visualisations complètes réparties sur 12 onglets. Tous les graphiques sont interactifs et peuvent être exportés en PNG, copiés dans le presse-papiers ou téléchargés au format CSV.</p>
 
         <h3>Onglets des statistiques</h3>
         <table class="data-table">
@@ -1384,8 +1384,8 @@
                 <tr><td><strong>Graphiques</strong></td><td>Jeux par plateforme/fabricant, par genre, chronologie année par année</td></tr>
                 <tr><td><strong>Développeurs</strong></td><td>Graphiques à barres des 15 meilleurs développeurs et éditeurs</td></tr>
                 <tr><td><strong>Gameplay</strong></td><td>Répartition par genre, analyse des modes de jeu, distribution de la structure du jeu</td></tr>
-                <tr><td><strong>Durée de jeu</strong></td><td>Analyse des données de durée HLTB sur votre collection &mdash; durée totale estimée, moyennes, distribution</td></tr>
-                <tr><td><strong>Notes des tests</strong></td><td>Distributions et moyennes des notes de la critique et des utilisateurs</td></tr>
+                <tr><td><strong>Temps de jeu</strong></td><td>Analyse des données de durée HLTB sur votre collection &mdash; durée totale estimée, moyennes, distribution</td></tr>
+                <tr><td><strong>Notes de critique</strong></td><td>Distributions et moyennes des notes de la critique et des utilisateurs</td></tr>
                 <tr><td><strong>Classifications d'âge</strong></td><td>Distribution des classifications d'âge sur tous les systèmes de classification</td></tr>
                 <tr><td><strong>Succès</strong></td><td>Couverture et achèvement RetroAchievements par système</td></tr>
                 <tr><td><strong>Qualité des données</strong></td><td>Graphique radar de complétude des métadonnées (description, jaquette, genre, développeur, éditeur, date de sortie, captures d'écran, fanart, vidéo, manuel, HLTB, classifications, modes, région)</td></tr>
@@ -1441,7 +1441,7 @@
     <div class="card-body">
         <p>Accédez au pôle Outils ROM depuis la barre latérale. Chaque outil s'exécute comme une tâche en arrière-plan avec mises à jour de progression en temps réel, prise en charge de la pause/reprise et journalisation.</p>
 
-        <h3>Scanner d'archives</h3>
+        <h3>Analyseur d'archives</h3>
         <p>Extrayez les archives de ROM (ZIP, 7Z, RAR) avec des options pour :</p>
         <ul>
             <li>Analyse récursive des sous-répertoires</li>
@@ -1474,7 +1474,7 @@
         <p>Réservé aux éditeurs. Cette carte lance le Remplissage IA sur un système entier, pour les champs que vous activez (voir Remplissage IA &rarr; Plusieurs jeux à la fois).</p>
         <p><em>Requiert : un fournisseur d'IA dans <strong>Paramètres &rarr; Récupération</strong></em></p>
 
-        <h3>Organisateur multi-disques</h3>
+        <h3>Organiseur multi-disques</h3>
         <p>Organisez les jeux multi-disques en sous-répertoires et générez des playlists M3U pour les émulateurs qui les prennent en charge. Utile pour des systèmes comme la PlayStation et la Saturn.</p>
         <p><em>Aucune dépendance externe</em></p>
 
@@ -1519,18 +1519,18 @@
         <p>RAWG n'a pas de jaquettes. Les anciennes récupérations enregistraient son image de fond, souvent une capture d'écran, comme jaquette, et comme les récupérations ne remplissent que les jaquettes vides, cette image en bloquait une vraie. Cet outil supprime ces images et laisse les jaquettes vides. Les jaquettes d'autres sources et tous les fanarts restent. Ces jeux n'affichent aucune jaquette jusqu'à ce qu'une récupération en trouve une, lancez donc ensuite une récupération en masse avec <strong>Remplir les manquants</strong>.</p>
         <p><em>Aucune dépendance requise</em></p>
 
-        <h3>Recherche HLTB en masse</h3>
+        <h3>Recherche HLTB groupée</h3>
         <p>Lancez une recherche HowLongToBeat pour chaque jeu sans estimation de durée. Chaque correspondance est notée selon le titre + la plateforme + l'année de sortie ; les correspondances de haute confiance sont enregistrées automatiquement. Tout ce qui se situe sous le seuil de confiance (ou avec des plateformes conflictuelles) est mis de côté pour révision humaine.</p>
         <p><em>Recherche chaque jeu sur le site web de HowLongToBeat, il faut donc un accès à Internet</em></p>
 
-        <h3>Révision HLTB en attente</h3>
-        <p>File de révision pour les correspondances ambiguës soulevées par la Recherche HLTB en masse. Chaque ligne en attente affiche le jeu source aux côtés du candidat HLTB (titre, plateforme, année de sortie, confiance). Approuvez, rejetez ou choisissez une correspondance différente par ligne. La carte de l'outil de révision n'apparaît dans le pôle Outils ROM que lorsqu'il y a au moins une correspondance en attente.</p>
+        <h3>Examen HLTB en attente</h3>
+        <p>File de révision pour les correspondances ambiguës soulevées par la Recherche HLTB groupée. Chaque ligne en attente affiche le jeu source aux côtés du candidat HLTB (titre, plateforme, année de sortie, confiance). Approuvez, rejetez ou choisissez une correspondance différente par ligne. La carte de l'outil de révision n'apparaît dans le pôle Outils ROM que lorsqu'il y a au moins une correspondance en attente.</p>
         <ul>
             <li><strong>Onglets de filtre</strong> pour les correspondances à faible confiance, à titre alternatif et à incohérence de plateforme.</li>
             <li><strong>Approuver</strong> écrit l'estimation de durée ; <strong>Rejeter</strong> abandonne le candidat et garde la file de recherche propre.</li>
         </ul>
 
-        <h3>Réglages des outils</h3>
+        <h3>Paramètres des outils</h3>
         <p>Configurez les chemins, les emplacements des outils, les types d'archives et les préférences partagées par tous les outils ROM.</p>
 
         <div class="help-tip">
@@ -1666,7 +1666,7 @@
 
         <h3>Opérations de nettoyage</h3>
         <ul>
-            <li><strong>Nettoyer les ROM manquantes</strong> &mdash; Supprimez les entrées de base de données des jeux dont les fichiers ROM n'existent plus sur le disque. Utile après réorganisation ou suppression de fichiers ROM.</li>
+            <li><strong>Nettoyer les ROMs manquantes</strong> &mdash; Supprimez les entrées de base de données des jeux dont les fichiers ROM n'existent plus sur le disque. Utile après réorganisation ou suppression de fichiers ROM.</li>
             <li><strong>Nettoyage des médias orphelins</strong> &mdash; Trouvez et supprimez les fichiers image sur le disque (jaquettes, captures d'écran, fanart) qui n'ont aucune référence correspondante en base de données. Prévisualisez avant de supprimer pour confirmer.</li>
             <li><strong>Effacer les données récupérées</strong> &mdash; Retire ce que la récupération a rempli sur les jeux récupérés, y compris les liens vers leurs images et vidéos, pour que vous puissiez tout récupérer de nouveau. Vos jeux restent, et leurs titres reviennent aux noms de fichier (un titre verrouillé reste). Les fichiers d'images et de vidéos restent sur le disque, sauf si vous cochez <strong>Supprimer aussi les fichiers d'images et de vidéos</strong>. L'aperçu montre combien de jeux sont touchés.</li>
             <li><strong>Effacer les imports CLZ</strong> &mdash; Supprimez tous les enregistrements d'import CLZ Games (entrées de métadonnées uniquement, sans fichiers ROM).</li>
@@ -1844,7 +1844,7 @@
         <h4>Une source affiche une raison au lieu de « En ligne »</h4>
         <p>La raison nomme le problème, par exemple « No API key » ou « Invalid API key ». Saisissez ou corrigez la clé dans Paramètres &rarr; Récupération &rarr; Clés API (administrateurs uniquement) et appuyez sur <strong>Enregistrer les clés API</strong>. Une clé enregistrée s'affiche sous forme d'étoiles ; ne touchez pas à la zone pour la conserver, ou videz-la et saisissez la nouvelle clé.</p>
 
-        <h3 id="ts-bulk-scrape">Récupération en masse</h3>
+        <h3 id="ts-bulk-scrape">Récupération groupée</h3>
 
         <h4>Récupération en masse bloquée</h4>
         <p>Appuyez sur <strong>Annuler</strong> dans la fenêtre Récupération groupée ; cliquez sur la notification de progression pour l'ouvrir. Le jeu en cours de récupération se termine d'abord. Si elle tourne toujours, voir <a href="#ts-jobs">Une tâche semble bloquée</a>.</p>

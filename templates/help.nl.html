@@ -39,13 +39,13 @@
     <a href="#emulators-play" class="help-nav-item">Emulators en spelen</a>
     <a href="#scraping" class="help-nav-item">Scrapen</a>
     <a href="#bulk-scrape" class="help-nav-item">Bulk scrapen</a>
-    <a href="#ai-fill" class="help-nav-item">AI-invulling</a>
+    <a href="#ai-fill" class="help-nav-item">AI-aanvulling</a>
     <a href="#filtering" class="help-nav-item">Filteren</a>
     <a href="#game-detail" class="help-nav-item">Speldetails</a>
     <a href="#bulk-edit" class="help-nav-item">Bulkbewerking</a>
     <a href="#compare" class="help-nav-item">Vergelijken</a>
     <a href="#collections" class="help-nav-item">Collecties</a>
-    <a href="#game-imports" class="help-nav-item">Spelimporten</a>
+    <a href="#game-imports" class="help-nav-item">Game-imports</a>
     <a href="#retroachievements" class="help-nav-item">RetroAchievements</a>
     <a href="#steam-achievements" class="help-nav-item">Steam</a>
     <a href="#xbox-achievements" class="help-nav-item">Xbox</a>
@@ -236,13 +236,13 @@
         <h4>Hulpmiddelen</h4>
         <ul>
             <li><strong>ROM-tools</strong> &mdash; Archiefscanner, CHD-converter/verificatie, dubbeledetector, multi-disc-organizer, deduplicatie van screenshots, afbeeldingsformaat aanpassen, ROM-rapporten</li>
-            <li><strong>Spelimporten</strong> &mdash; Importeren vanuit CLZ, Steam, Xbox en PSN</li>
+            <li><strong>Game-imports</strong> &mdash; Importeren vanuit CLZ, Steam, Xbox en PSN</li>
         </ul>
 
         <h4>Configuratie</h4>
         <ul>
             <li><strong>Instellingen</strong> &mdash; Alle app-configuratie, in tabbladen met subsecties</li>
-            <li><strong>Logboekviewer</strong> &mdash; Blader door toepassingslogboeken van alle categorieën</li>
+            <li><strong>Logviewer</strong> &mdash; Blader door toepassingslogboeken van alle categorieën</li>
         </ul>
 
         <h4>Informatie</h4>
@@ -360,15 +360,15 @@
         <p>Kaarten met een overzicht in één oogopslag:</p>
         <ul>
             <li><strong>Totaal aantal systemen</strong> &mdash; Aantal platforms in uw bibliotheek</li>
-            <li><strong>Totaal aantal spellen</strong> &mdash; Totaal aantal spellen (exclusief bonusschijven)</li>
+            <li><strong>Totaal aantal games</strong> &mdash; Totaal aantal spellen (exclusief bonusschijven)</li>
             <li><strong>Ontbrekende metadata</strong> &mdash; Nog niet gescrapete spellen</li>
-            <li><strong>Compleet</strong> &mdash; Spellen met gescrapete metadata</li>
+            <li><strong>Voltooid</strong> &mdash; Spellen met gescrapete metadata</li>
         </ul>
 
         <h3>Recente activiteit</h3>
         <p>Scrollbare secties met uw recente activiteit (elk verschijnt alleen wanneer er relevante spellen zijn):</p>
         <ul>
-            <li><strong>Verdergaan met spelen</strong> &mdash; Spellen gemarkeerd als "In uitvoering"</li>
+            <li><strong>Verdergaan met spelen</strong> &mdash; Spellen gemarkeerd als "Bezig"</li>
             <li><strong>Recent toegevoegd</strong> &mdash; Nieuwste spellen toegevoegd aan uw bibliotheek</li>
             <li><strong>Recent bekeken</strong> &mdash; Spellen die u onlangs hebt geopend</li>
             <li><strong>Recent gescraped</strong> &mdash; Spellen waarvan recent metadata is opgehaald</li>
@@ -377,7 +377,7 @@
         <h3>Snelle acties</h3>
         <ul>
             <li><strong>Bibliotheek scannen</strong> &mdash; Scan uw ROM-mappen op nieuwe spellen</li>
-            <li><strong>Willekeurig spel</strong> &mdash; Kies een willekeurig spel uit uw bibliotheek</li>
+            <li><strong>Willekeurige game</strong> &mdash; Kies een willekeurig spel uit uw bibliotheek</li>
         </ul>
 
         <h3>API-status</h3>
@@ -388,8 +388,8 @@
         <ul>
             <li><strong>Hervatten</strong> &mdash; Herstart een afzonderlijke onderbroken taak</li>
             <li><strong>Alles hervatten</strong> &mdash; Herstart alle onderbroken taken</li>
-            <li><strong>Negeren</strong> &mdash; Verwijder een afzonderlijke taak uit de herstellijst</li>
-            <li><strong>Alles negeren</strong> &mdash; Verwijder alle onderbroken taken</li>
+            <li><strong>Sluiten</strong> &mdash; Verwijder een afzonderlijke taak uit de herstellijst</li>
+            <li><strong>Alles sluiten</strong> &mdash; Verwijder alle onderbroken taken</li>
         </ul>
     </div>
 </section>
@@ -497,8 +497,8 @@
         <h4>PlayStation Network (PSN)</h4>
         <p>PSN gebruikt authenticatie via een NPSSO-cookie. Zie de sectie <a href="#trophies">Trofeeën</a> voor gedetailleerde instructies.</p>
 
-        <h3>AI-aanbieders (voor AI-invulling &amp; Museum)</h3>
-        <p>Er is één AI-aanbieder nodig voor het genereren van AI-invulling-metadata en museuminhoud. Kies uit:</p>
+        <h3>AI-aanbieders (voor AI-aanvulling &amp; Museum)</h3>
+        <p>Er is één AI-aanbieder nodig voor het genereren van AI-aanvulling-metadata en museuminhoud. Kies uit:</p>
 
         <table class="data-table">
             <thead>
@@ -636,7 +636,7 @@
             <li>Automatisch opvullen van hiaten tussen scrapers voor maximale dekking</li>
             <li>De sorteertitel wordt tijdens het scrapen automatisch gegenereerd op basis van de speltitel</li>
             <li>Een bron wordt alleen doorzocht als die het systeem van het spel kent, en alleen op dat systeem: RAWG heeft geen Intellivision, dus Intellivision-spellen worden niet op RAWG opgezocht, waar ze alleen spellen van andere platforms zouden vinden</li>
-            <li>Als AI aan staat, geeft die ook de officiële titel van het spel zoals uitgebracht in de regio van de ROM, en krijgt het spel die naam, bij het scrapen van één spel en bij bulk scrapen (zie <a href="#ai-fill">AI-invulling</a>)</li>
+            <li>Als AI aan staat, geeft die ook de officiële titel van het spel zoals uitgebracht in de regio van de ROM, en krijgt het spel die naam, bij het scrapen van één spel en bij bulk scrapen (zie <a href="#ai-fill">AI-aanvulling</a>)</li>
         </ul>
 
         <h3>Media-afhandeling</h3>
@@ -644,13 +644,13 @@
             <li>Mediavelden (boxart, 3D-boxart, achterkant van de doos, screenshots, fanart, logo, video, handleiding) worden tijdens normaal scrapen <strong>nooit vervangen</strong> &mdash; alleen ingevuld wanneer ze leeg zijn</li>
             <li>Screenshots worden altijd <strong>toegevoegd</strong>, nooit vervangen</li>
             <li>Om media opnieuw te downloaden, wist u eerst de bestaande afbeelding in het bewerkingsvenster en scrapet u vervolgens opnieuw</li>
-            <li>De modus <strong>Volledig opnieuw scrapen</strong> negeert dit en vervangt alles</li>
+            <li>De modus <strong>Volledige herscrape</strong> negeert dit en vervangt alles</li>
             <li>Verouderde mediaverwijzingen (bestand verwijderd, maar bestandsnaam nog in de database) worden vóór het scrapen automatisch gewist, zodat verse media kan worden gedownload</li>
             <li>Gedownloade afbeeldingen worden automatisch gestandaardiseerd naar doelformaten (zie <a href="#image-standardization">Afbeeldingsstandaardisatie</a>)</li>
         </ul>
 
         <h3>Een titel behouden</h3>
-        <p>Als u in het bewerkingsvenster een nieuwe titel typt en opslaat, verandert scrapen die niet meer, ook niet bij Volledig opnieuw scrapen. Het vakje <strong>Deze titel behouden bij scrapen</strong> in het bewerkingsvenster toont of een titel behouden blijft; vink het uit om scrapers het spel weer te laten hernoemen. <strong>Resetten</strong> op de pagina van een spel laat scrapers het ook weer hernoemen, en <strong>Gescrapete gegevens wissen</strong> bij Onderhoud laat behouden titels zoals ze zijn.</p>
+        <p>Als u in het bewerkingsvenster een nieuwe titel typt en opslaat, verandert scrapen die niet meer, ook niet bij Volledige herscrape. Het vakje <strong>Deze titel behouden bij scrapen</strong> in het bewerkingsvenster toont of een titel behouden blijft; vink het uit om scrapers het spel weer te laten hernoemen. <strong>Resetten</strong> op de pagina van een spel laat scrapers het ook weer hernoemen, en <strong>Gescrapete gegevens wissen</strong> bij Onderhoud laat behouden titels zoals ze zijn.</p>
 
         <h3>Scraperprioriteit</h3>
         <p>Configureer welke scrapers als eerste draaien en welke in-/uitgeschakeld zijn bij <strong>Instellingen &rarr; Scrapen &rarr; Scraper</strong>. Sleep om de prioriteit te herschikken. Uitgeschakelde scrapers worden niet geprobeerd tijdens het scrapen en activeren geen API-statuswaarschuwingen op het dashboard.</p>
@@ -674,7 +674,7 @@
                     <li><strong>Niet-gescrapete selecteren</strong> &mdash; Alleen spellen zonder metadata</li>
                 </ul>
             </li>
-            <li>Kies modus: <strong>Ontbrekende aanvullen</strong> of <strong>Volledig opnieuw scrapen</strong></li>
+            <li>Kies modus: <strong>Ontbrekende aanvullen</strong> of <strong>Volledige herscrape</strong></li>
             <li>Klik op <strong>"Geselecteerde scrapen"</strong></li>
             <li>Klik op <strong>"Klaar"</strong> om de selectiemodus te verlaten</li>
         </ol>
@@ -706,8 +706,8 @@
         <h3>Scrape-opties</h3>
         <ul>
             <li><strong>Alleen ontbrekende invullen</strong> &mdash; Vult alleen lege metadatavelden in, bestaande gegevens blijven behouden</li>
-            <li><strong>Volledig opnieuw scrapen</strong> &mdash; Vervangt alle velden, inclusief media (downloadt nieuwe afbeeldingen en video's)</li>
-            <li><strong>Bestaande media behouden</strong> &mdash; Bij Volledig opnieuw scrapen blijven de afbeeldingen, video's en handleidingen die al op schijf staan behouden in plaats van opnieuw gedownload te worden. Nieuwe screenshots worden nog steeds toegevoegd.</li>
+            <li><strong>Volledige herscrape</strong> &mdash; Vervangt alle velden, inclusief media (downloadt nieuwe afbeeldingen en video's)</li>
+            <li><strong>Bestaande media behouden</strong> &mdash; Bij Volledige herscrape blijven de afbeeldingen, video's en handleidingen die al op schijf staan behouden in plaats van opnieuw gedownload te worden. Nieuwe screenshots worden nog steeds toegevoegd.</li>
             <li><strong>RetroAchievements controleren</strong> &mdash; Controleer tijdens het scrapen ook op RetroAchievements-prestatiesets</li>
         </ul>
 
@@ -718,10 +718,10 @@
 
 <!-- AI Fill -->
 <section id="ai-fill" class="help-section card">
-    <h2 class="card-title">AI-invulling</h2>
+    <h2 class="card-title">AI-aanvulling</h2>
     <div class="card-body">
         <h3>Wat het doet</h3>
-        <p>AI-invulling gebruikt een groot taalmodel (Gemini, OpenAI of Claude) om ontbrekende of onvolledige spelmetadata intelligent aan te vullen. Het is slimmer dan gewoon scrapen, omdat het contextuele kennis over het spel gebruikt om nauwkeurige gegevens te leveren die scrapers mogelijk niet hebben.</p>
+        <p>AI-aanvulling gebruikt een groot taalmodel (Gemini, OpenAI of Claude) om ontbrekende of onvolledige spelmetadata intelligent aan te vullen. Het is slimmer dan gewoon scrapen, omdat het contextuele kennis over het spel gebruikt om nauwkeurige gegevens te leveren die scrapers mogelijk niet hebben.</p>
 
         <h3>Hoe te gebruiken</h3>
         <ol>
@@ -734,7 +734,7 @@
         <h3>Veel spellen tegelijk</h3>
         <p>Om een heel systeem te vullen, open je <strong>ROM-tools &rarr; Bulk-AI-aanvulling</strong> en gebruik je de kaart <strong>Lege velden vullen met AI</strong>. Zet de velden aan die je gevuld wilt hebben; alleen spellen waarvan er een leeg is, tellen mee, en minder velden kosten minder. Kies een systeem, of Alle systemen, en druk op <strong>Vullen met AI</strong>. Het voert AI-aanvulling uit op elk spel en slaat de antwoorden direct op bij het spel. Een voortgangsbalk op de kaart en een melding van AI-aanvulling laten zien hoe ver het is, en je kunt de pagina verlaten terwijl het draait. Spellen die AI-aanvulling al heeft gedaan, worden overgeslagen, dus een tweede ronde doet alleen de rest; zet <strong>Games meenemen die AI-aanvulling al heeft gedaan</strong> aan om er ook een veld in te vullen, zoals verkochte exemplaren. De ronde stopt vanzelf als de AI geen antwoord meer geeft, bijvoorbeeld als de sleutel wordt geweigerd of het account geen tegoed heeft. Je AI-aanbieder rekent voor elk spel.</p>
 
-        <h3>Wat AI-invulling kan leveren</h3>
+        <h3>Wat AI-aanvulling kan leveren</h3>
         <ul>
             <li>Genre, beschrijving, ontwikkelaar, uitgever, releasedatum</li>
             <li>Aantal spelers, spelmodi (Single-Player, Multi-Player, Co-op, enz.)</li>
@@ -753,12 +753,12 @@
             <li><strong>Vergelijkbare spellen</strong> worden altijd ververst (AI-gegevens zijn betrouwbaarder voor dit veld)</li>
             <li><strong>Kruisgekoppelde beoordelingen</strong> &mdash; Als één beoordelingssysteem bekend is, worden lege beoordelingen in andere systemen automatisch ingevuld via kruiskoppeling op basis van leeftijdscategorieën</li>
             <li><strong>Sorteertitel</strong> wordt automatisch gegenereerd wanneer deze wordt ingevuld</li>
-            <li><strong>Officiële titel</strong> &mdash; de AI noemt ook de officiële titel van het spel zoals uitgebracht in de regio van de ROM, en het spel krijgt die naam, bij AI-invulling en telkens wanneer AI tijdens het scrapen gaten opvult. De oude naam blijft bewaard als alternatieve titel. Een titel die u zelf hebt getypt, of hebt behouden met <strong>Deze titel behouden bij scrapen</strong>, wordt nooit hernoemd</li>
+            <li><strong>Officiële titel</strong> &mdash; de AI noemt ook de officiële titel van het spel zoals uitgebracht in de regio van de ROM, en het spel krijgt die naam, bij AI-aanvulling en telkens wanneer AI tijdens het scrapen gaten opvult. De oude naam blijft bewaard als alternatieve titel. Een titel die u zelf hebt getypt, of hebt behouden met <strong>Deze titel behouden bij scrapen</strong>, wordt nooit hernoemd</li>
             <li>Het veld <strong>Aantal spelers</strong> normaliseert bereiken (bijv. "1-4" wordt 4)</li>
         </ul>
 
         <h3>Genre-normalisatie</h3>
-        <p>AI-invulling gebruikt canonieke genrevormen met namen met koppeltekens:</p>
+        <p>AI-aanvulling gebruikt canonieke genrevormen met namen met koppeltekens:</p>
         <ul>
             <li><code>First-Person-Shooter</code>, <code>Shoot-em-up</code>, <code>Beat-em-up</code></li>
             <li><code>Hack-n-Slash</code>, <code>Board-Card</code>, <code>Real-Time Strategy</code></li>
@@ -780,10 +780,10 @@
         <p>Filter spellen op importbron:</p>
         <ul>
             <li><strong>ROM-bestanden</strong> &mdash; Spellen uit uw ROM-bibliotheek</li>
-            <li><strong>CLZ-importen</strong> &mdash; Fysieke spellen geïmporteerd vanuit CLZ</li>
-            <li><strong>Steam-importen</strong> &mdash; Spellen geïmporteerd vanuit Steam</li>
-            <li><strong>Xbox-importen</strong> &mdash; Spellen geïmporteerd vanuit Xbox</li>
-            <li><strong>PSN-importen</strong> &mdash; Spellen geïmporteerd vanuit PlayStation Network</li>
+            <li><strong>CLZ-imports</strong> &mdash; Fysieke spellen geïmporteerd vanuit CLZ</li>
+            <li><strong>Steam-imports</strong> &mdash; Spellen geïmporteerd vanuit Steam</li>
+            <li><strong>Xbox-imports</strong> &mdash; Spellen geïmporteerd vanuit Xbox</li>
+            <li><strong>PSN-imports</strong> &mdash; Spellen geïmporteerd vanuit PlayStation Network</li>
         </ul>
 
         <h3>Filterknoppen</h3>
@@ -802,7 +802,7 @@
             </thead>
             <tbody>
                 <tr><td><strong>Genre</strong></td><td>Actie, RPG, Platformer, enz.</td><td>Ja</td></tr>
-                <tr><td><strong>Serie</strong></td><td>Spelfranchise</td><td>Ja</td></tr>
+                <tr><td><strong>Reeks</strong></td><td>Spelfranchise</td><td>Ja</td></tr>
                 <tr><td><strong>Uitgever</strong></td><td>Uitgeverij</td><td>Ja</td></tr>
                 <tr><td><strong>Ontwikkelaar</strong></td><td>Ontwikkelstudio</td><td>Ja</td></tr>
                 <tr><td><strong>Spelers</strong></td><td>Aantal spelers</td><td>Nee</td></tr>
@@ -901,7 +901,7 @@
         <p>Houd uw voortgang bij met deze statussen (weergegeven als badges op spelkaarten):</p>
         <ul>
             <li><strong>Niet gestart</strong> &mdash; Nog niet gespeeld</li>
-            <li><strong>In uitvoering</strong> &mdash; Wordt momenteel gespeeld</li>
+            <li><strong>Bezig</strong> &mdash; Wordt momenteel gespeeld</li>
             <li><strong>Gespeeld</strong> &mdash; Gespeeld maar niet uitgespeeld</li>
             <li><strong>Voltooid</strong> &mdash; Hoofdspel uitgespeeld</li>
             <li><strong>100%</strong> &mdash; Alles voltooid</li>
@@ -925,7 +925,7 @@
                 <tr><td><strong>CADPA</strong></td><td>China</td></tr>
             </tbody>
         </table>
-        <p>Stel uw voorkeurssysteem in bij <strong>Instellingen &rarr; Bibliotheek &rarr; Weergave</strong>. Officiële classificatieafbeeldingen worden getoond op spelkaarten, detailvensters en detailpagina's. Lege classificaties worden tijdens scrapen, AI-invulling en handmatig bewerken automatisch ingevuld vanuit elke beschikbare classificatie via kruiskoppeling op basis van leeftijdscategorieën.</p>
+        <p>Stel uw voorkeurssysteem in bij <strong>Instellingen &rarr; Bibliotheek &rarr; Weergave</strong>. Officiële classificatieafbeeldingen worden getoond op spelkaarten, detailvensters en detailpagina's. Lege classificaties worden tijdens scrapen, AI-aanvulling en handmatig bewerken automatisch ingevuld vanuit elke beschikbare classificatie via kruiskoppeling op basis van leeftijdscategorieën.</p>
 
         <h3>Bonusschijven</h3>
         <p>RetroDB detecteert automatisch bonus-/extraschijven (bijv. soundtrack-cd's, schijven met extra inhoud) en koppelt ze aan het bijbehorende hoofdspel. Bonusschijven zijn standaard verborgen in de bibliotheek &mdash; schakel <strong>"Bonus tonen"</strong> in de filters in om ze weer te geven. Gekoppelde bonusschijven verschijnen in het detailvenster van het hoofdspel.</p>
@@ -971,7 +971,7 @@
                 <tr><td>Ontwikkelaar</td><td>Ja</td></tr>
                 <tr><td>Franchise</td><td>Ja</td></tr>
                 <tr><td>Regio</td><td>Ja</td></tr>
-                <tr><td>Spelstructuur</td><td>Ja</td></tr>
+                <tr><td>Gamestructuur</td><td>Ja</td></tr>
                 <tr><td>Perspectief</td><td>Ja</td></tr>
                 <tr><td>Dimensie</td><td>Ja</td></tr>
                 <tr><td>Voltooiingsstatus</td><td>Nee (alleen vervangen)</td></tr>
@@ -983,7 +983,7 @@
 
 <!-- Compare Games -->
 <section id="compare" class="help-section card">
-    <h2 class="card-title">Spellen vergelijken</h2>
+    <h2 class="card-title">Games vergelijken</h2>
     <div class="card-body">
         <h3>Wat het doet</h3>
         <p>Vergelijkt de metadata van twee spellen naast elkaar in een tabelweergave. Handig om metadatakwaliteit te controleren, dubbele vermeldingen op te sporen, of versies van hetzelfde spel op verschillende systemen te vergelijken.</p>
@@ -1039,15 +1039,15 @@
 
 <!-- Game Imports -->
 <section id="game-imports" class="help-section card">
-    <h2 class="card-title">Spelimporten</h2>
+    <h2 class="card-title">Game-imports</h2>
     <div class="card-body">
-        <p>Importeer spelcollecties uit externe bronnen. Toegankelijk via <strong>Spelimporten</strong> in de zijbalk. Alle importtypen zijn samengevoegd op één pagina met tabbladen.</p>
+        <p>Importeer spelcollecties uit externe bronnen. Toegankelijk via <strong>Game-imports</strong> in de zijbalk. Alle importtypen zijn samengevoegd op één pagina met tabbladen.</p>
 
         <h3>CLZ Games-import</h3>
         <p>Importeer uw fysieke spelcollectie vanuit CLZ Games.</p>
         <ol>
             <li>Exporteer uw CLZ Games-collectie als PDF</li>
-            <li>Ga naar Spelimporten &rarr; tabblad <strong>CLZ</strong></li>
+            <li>Ga naar Game-imports &rarr; tabblad <strong>CLZ</strong></li>
             <li>Upload het PDF-bestand</li>
             <li>Controleer de geïnterpreteerde spellen</li>
             <li>Selecteer welke spellen u wilt importeren</li>
@@ -1058,7 +1058,7 @@
         <p>Importeer uw Steam-spelbibliotheek en houd prestaties bij.</p>
         <ol>
             <li>Configureer uw Steam Web API-sleutel en Steam-ID in Instellingen</li>
-            <li>Ga naar Spelimporten &rarr; tabblad <strong>Steam</strong></li>
+            <li>Ga naar Game-imports &rarr; tabblad <strong>Steam</strong></li>
             <li>Klik op <strong>"Bibliotheek ophalen"</strong> om uw Steam-spellen op te halen</li>
             <li>Selecteer spellen om te importeren Een spel dat met dezelfde naam al in uw Windows-lijst staat, wordt aan Steam gekoppeld in plaats van twee keer toegevoegd</li>
             <li>Geïmporteerde spellen worden getagd met hun Steam-app-ID voor prestatieregistratie</li>
@@ -1069,7 +1069,7 @@
         <p>Importeer de Xbox-spellen die u hebt gespeeld, met uw eigen OpenXBL-sleutel.</p>
         <ol>
             <li>Sla uw OpenXBL-sleutel op in Instellingen &rarr; Mijn profiel &rarr; Xbox (zie API-sleutels hierboven)</li>
-            <li>Ga naar Spelimporten &rarr; tabblad <strong>Xbox</strong> en klik op <strong>Bibliotheek ophalen</strong></li>
+            <li>Ga naar Game-imports &rarr; tabblad <strong>Xbox</strong> en klik op <strong>Bibliotheek ophalen</strong></li>
             <li>Selecteer spellen om te importeren, met detectie van duplicaten. Apps en spellen alleen voor telefoon worden weggelaten.</li>
             <li>Geïmporteerde spellen worden getagd met hun Xbox-titel-ID voor prestatieregistratie</li>
         </ol>
@@ -1077,7 +1077,7 @@
         <h3>PSN-import</h3>
         <p>Importeer uw PlayStation Network-spelbibliotheek.</p>
         <ol>
-            <li>Ga naar Spelimporten &rarr; tabblad <strong>PSN</strong></li>
+            <li>Ga naar Game-imports &rarr; tabblad <strong>PSN</strong></li>
             <li>Voer uw NPSSO-cookie in (zie <a href="#trophies">Trofeeën &rarr; PSN-authenticatie</a> voor hoe u deze verkrijgt)</li>
             <li>Klik op <strong>"Bibliotheek ophalen"</strong> om uw PSN-spellen op te halen</li>
             <li>Selecteer spellen om te importeren</li>
@@ -1151,7 +1151,7 @@
     <div class="card-body">
         <h3>Instellen</h3>
         <ol>
-            <li>Importeer Steam-spellen via <strong>Spelimporten &rarr; Steam</strong></li>
+            <li>Importeer Steam-spellen via <strong>Game-imports &rarr; Steam</strong></li>
             <li>Zorg ervoor dat uw Steam Web API-sleutel is geconfigureerd in Instellingen</li>
         </ol>
 
@@ -1185,7 +1185,7 @@
     <div class="card-body">
         <h3>Instellen</h3>
         <ol>
-            <li>Importeer Xbox-spellen via <strong>Spelimporten &rarr; Xbox</strong></li>
+            <li>Importeer Xbox-spellen via <strong>Game-imports &rarr; Xbox</strong></li>
             <li>Sla uw OpenXBL-sleutel op in Instellingen &rarr; Mijn profiel &rarr; Xbox</li>
         </ol>
 
@@ -1229,7 +1229,7 @@
         <h3>Tijdcategorieën</h3>
         <ul>
             <li><strong>Hoofdverhaal</strong> &mdash; Tijd om het hoofdverhaal te voltooien</li>
-            <li><strong>Hoofdverhaal + extra's</strong> &mdash; Met nevencontent</li>
+            <li><strong>Hoofdgame + extra's</strong> &mdash; Met nevencontent</li>
             <li><strong>Volledig voltooid</strong> &mdash; 100% van alles</li>
         </ul>
 
@@ -1238,7 +1238,7 @@
             <li><strong>Spel-detailvenster</strong> &mdash; Speeltijdschattingen getoond in de spelinfo</li>
             <li><strong>Volledige spel-detailpagina</strong> &mdash; Dezelfde speeltijdinfo</li>
             <li><strong>Analyse &rarr; tabblad Speeltijd</strong> &mdash; Speeltijdanalyse voor de hele collectie</li>
-            <li><strong>Spellen vergelijken</strong> &mdash; Speeltijdvergelijking naast elkaar</li>
+            <li><strong>Games vergelijken</strong> &mdash; Speeltijdvergelijking naast elkaar</li>
         </ul>
 
         <div class="help-tip">
@@ -1340,7 +1340,7 @@
             <li><strong>Hardwareafbeelding</strong> &mdash; Foto van de console/het systeem</li>
             <li><strong>Technische specificaties</strong> &mdash; CPU, GPU, RAM, resolutie, mediatype</li>
             <li><strong>Geschiedenis</strong> &mdash; Door AI gegenereerd verhaal over de ontwikkeling, lancering en erfenis van het systeem</li>
-            <li><strong>Top 10 spellen</strong> &mdash; De bekendste titels van het systeem (op basis van criticusscores en AI-suggesties)</li>
+            <li><strong>Top 10 games</strong> &mdash; De bekendste titels van het systeem (op basis van criticusscores en AI-suggesties)</li>
             <li><strong>Controllergalerij</strong> &mdash; Afbeeldingen van de controllers van het systeem met beschrijvingen</li>
         </ul>
 
@@ -1419,7 +1419,7 @@
             </thead>
             <tbody>
                 <tr><td><strong>Niet-standaard namen</strong></td><td>ROMs met bestandsnamen die niet overeenkomen met de naamgevingsconventies. Toont de huidige bestandsnaam, gedetecteerde problemen en een voorgestelde gecorrigeerde naam.</td></tr>
-                <tr><td><strong>Naamverschillen</strong></td><td>ROMs waarbij de bestandsnaam niet overeenkomt met de gescrapete metadatatitel. Toont de huidige bestandsnaam tegenover de gescrapete titel, regio, jaar en ontwikkelaar.</td></tr>
+                <tr><td><strong>Naamafwijkingen</strong></td><td>ROMs waarbij de bestandsnaam niet overeenkomt met de gescrapete metadatatitel. Toont de huidige bestandsnaam tegenover de gescrapete titel, regio, jaar en ontwikkelaar.</td></tr>
             </tbody>
         </table>
 
@@ -1454,17 +1454,17 @@
         <p>Converteer schijfkopieën (ISO, BIN/CUE, GDI) naar het gecomprimeerde CHD-formaat. Bespaart aanzienlijk veel opslagruimte met behoud van volledige compatibiliteit met emulators.</p>
         <p><em>Vereist: chdman (uit mame-tools)</em></p>
 
-        <h3>CHD-verificatie</h3>
+        <h3>CHD verifiëren</h3>
         <p>Verifieer de integriteit van CHD-bestanden met hashvalidatie. Identificeert beschadigde of onvolledige conversies.</p>
         <p><em>Vereist: chdman</em></p>
 
-        <h3>Dubbeledetector</h3>
+        <h3>Duplicaten zoeken</h3>
         <p>Vind dubbele ROMs op basis van hash of bestandsnaam, met opties om te prioriteren op regiotags. In de bestandsnaammodus worden gekoppelde regionale versies van één spel niet als duplicaten gemeld; in de hashmodus worden identieke bestanden altijd gemeld.</p>
-        <p><em>Geen externe afhankelijkheden</em></p>
+        <p><em>Geen afhankelijkheden vereist</em></p>
 
         <h3>Regionale versies</h3>
         <p>Alleen voor bewerkers. RetroDB stelt spellen voor die eruitzien als één spel uit verschillende regio's: hetzelfde IGDB- of ScreenScraper-spel, dezelfde titel met een andere regiotag, of een overeenkomende regionale naam. Vink elk spel uit dat er niet bij hoort en klik op <strong>"Aangevinkte games koppelen"</strong>, of klik op <strong>"Geen versies"</strong> zodat die groep nooit meer wordt voorgesteld. Er wordt niets gekoppeld totdat u het bevestigt. Voer eerst <strong>Alternatieve titels aanvullen</strong> uit in Onderhoud: dit vult de IGDB- en ScreenScraper-id's die de voorstellen gebruiken.</p>
-        <p><em>Geen externe afhankelijkheden</em></p>
+        <p><em>Geen afhankelijkheden vereist</em></p>
 
         <h3>MAME Names</h3>
         <p>Alleen voor beheerders. MAME vindt een spel aan de hand van de exacte bestandsnaam, dus houd de korte namen, zoals dyger.zip. Kies de lijst van MAME (een DAT die bij uw ROMs past, of de uitvoer van <code>mame -listxml</code>) en druk op <strong>"MAME-games benoemen"</strong>. Elk spel krijgt zijn echte naam, jaar en maker, en de bestanden blijven ongemoeid. Een titel die u zelf hebt gewijzigd, blijft behouden. Voeg een <code>catver.ini</code> toe om de lijst op categorie te filteren. BIOS-sets worden in de lijst verborgen maar blijven op de schijf, omdat andere spellen ze nodig hebben. Scrape hierna, zodat de scrapers elk spel kunnen vinden.</p>
@@ -1474,22 +1474,22 @@
         <p>Alleen voor bewerkers. Voert AI-aanvulling uit op een heel systeem, voor de velden die je aanzet (zie AI-aanvulling &rarr; Veel spellen tegelijk).</p>
         <p><em>Vereist: een AI-aanbieder in <strong>Instellingen &rarr; Scrapen</strong></em></p>
 
-        <h3>Multi-disc-organizer</h3>
+        <h3>Multi-disc organizer</h3>
         <p>Organiseer spellen met meerdere schijven in submappen en genereer M3U-afspeellijsten voor emulators die dit ondersteunen. Handig voor systemen zoals PlayStation en Saturn.</p>
-        <p><em>Geen externe afhankelijkheden</em></p>
+        <p><em>Geen afhankelijkheden vereist</em></p>
 
-        <h3>Deduplicatie van screenshots</h3>
+        <h3>Screenshot-deduplicatie</h3>
         <p>Vind en verwijder dubbele screenshots in uw spelbibliotheek om opslagruimte vrij te maken.</p>
         <ul>
             <li><strong>Exacte hash (MD5)</strong> &mdash; Identificeert alleen identieke bestanden</li>
             <li><strong>Visuele gelijkenis</strong> &mdash; Perceptuele hashvergelijking met instelbare drempelwaarde (1&ndash;20, lager = strengere overeenkomst)</li>
         </ul>
         <p>Scant geleidelijk met live statistieken die gescande spellen, aantal duplicaten en terug te winnen ruimte tonen. Resultaten zijn gegroepeerd per spel en systeem. U kunt per duplicaatgroep kiezen welk bestand u wilt behouden, of gebruik <strong>"Grootste selecteren"</strong> om automatisch de versie met de hoogste resolutie te behouden.</p>
-        <p><em>Geen externe afhankelijkheden</em></p>
+        <p><em>Geen afhankelijkheden vereist</em></p>
 
-        <h3>Afbeeldingsformaat aanpassen</h3>
+        <h3>Afbeeldingsformaat wijzigen</h3>
         <p>Standaardiseer spelmedia naar consistente doelformaten. Zie <a href="#image-standardization">Afbeeldingsstandaardisatie</a> voor volledige details.</p>
-        <p><em>Geen externe afhankelijkheden (Python-gebaseerde AI-upscaling)</em></p>
+        <p><em>Geen afhankelijkheden vereist (Python-gebaseerde AI-upscaling)</em></p>
 
         <h3>Alternatieve titels aanvullen</h3>
         <p>Loop elk gescrapet spel langs en haal de <strong>alternatieve titels</strong> op uit IGDB / TGDB / ScreenScraper, gelabeld met de regio waar elke naam vandaan komt. Namen die u al hebt, krijgen hun regio erbij. Handig na het importeren van een grote catalogus of het migreren vanuit een ander hulpmiddel dat geen regionale/Japanse/onder­titels opsloeg. Loopt op de achtergrond; de voortgang wordt getoond op de hulpmiddelkaart.</p>
@@ -1501,36 +1501,36 @@
 
         <h3>Regio's herstellen via bestandsnamen</h3>
         <p>De bestandsnaam van een ROM zegt welk exemplaar het is, dus een tag zoals <code>(USA)</code> bepaalt nu de regio en de AI wordt niet gevraagd. Oudere scrapes lieten de AI eerst raden, waardoor een <code>(USA)</code>-bestand als Japan vermeld kon staan. Dit hulpmiddel geeft die spellen de regio uit hun bestandsnaam. Het wijzigt alleen regio's die de AI heeft ingevuld, ook een die u later met de hand hebt gecorrigeerd zodat die afwijkt van de bestandsnaam.</p>
-        <p><em>Geen externe afhankelijkheden</em></p>
+        <p><em>Geen afhankelijkheden vereist</em></p>
 
         <h3>Releasedatums opschonen</h3>
         <p>Oudere scrapes sloegen een datum waarvan alleen het jaar bekend was op als 1 januari of 31 december, alsof de dag bekend was. Dit kort die datums in tot het jaar of de maand, zodat een latere scrape de echte datum kan invullen. Een datum die geen scrape heeft ingevuld, blijft zoals hij is.</p>
-        <p><em>Geen externe afhankelijkheden</em></p>
+        <p><em>Geen afhankelijkheden vereist</em></p>
 
         <h3>Opgeslagen speeltijden controleren</h3>
         <p>Oudere opzoekingen konden de speeltijd van een vervolg opslaan, of van een ander spel met dezelfde naam op een ander systeem. Dit stuurt die overeenkomsten naar de beoordelingspagina van HowLongToBeat, en er verandert geen spel totdat u beslist. Daar houdt Goedkeuren een tijd en wist Afwijzen hem. Sommige overeenkomsten kloppen wel: HowLongToBeat vermeldt niet elk systeem waarop een spel is uitgekomen.</p>
-        <p><em>Geen externe afhankelijkheden</em></p>
+        <p><em>Geen afhankelijkheden vereist</em></p>
 
         <h3>Genres, perspectieven en modi opschonen</h3>
         <p>Bronnen noemen hetzelfde verschillend, dus één genre kon zowel als RPG als Role Playing Game verschijnen, en een filter miste spellen. Scrapes gebruiken nu één set namen, die in de filterlijsten. Dit hulpmiddel zet om wat oudere scrapes hebben opgeslagen. Woorden zonder plek in die lijsten, zoals Arcade of Indie, worden verwijderd. Woorden die in een ander veld horen, zoals FPV, verhuizen daarheen als dat veld leeg is. Een aantal spelers dat in strijd is met de modi van een spel wordt gecorrigeerd, en oude aantallen van 1 uit RAWG worden gewist zodat een echt aantal ze kan invullen. Een waarde die u zelf aan een keuzelijst hebt toegevoegd, blijft staan. Voer daarna bulk scrapen uit met <strong>Ontbrekende aanvullen</strong> om alles wat leeg is gebleven in te vullen.</p>
-        <p><em>Geen externe afhankelijkheden</em></p>
+        <p><em>Geen afhankelijkheden vereist</em></p>
 
         <h3>RAWG-afbeeldingen uit boxart wissen</h3>
         <p>RAWG heeft geen boxart. Oudere scrapes sloegen de achtergrondafbeelding ervan, vaak een screenshot, op als cover, en omdat scrapes alleen lege covers aanvullen, blokkeerde die afbeelding een echte cover. Dit hulpmiddel verwijdert die afbeeldingen en laat de covers leeg. Covers uit andere bronnen en alle fanart blijven staan. Die spellen tonen geen cover totdat een scrape er een vindt, dus voer daarna bulk scrapen uit met <strong>Ontbrekende aanvullen</strong>.</p>
-        <p><em>Geen externe afhankelijkheden</em></p>
+        <p><em>Geen afhankelijkheden vereist</em></p>
 
-        <h3>Bulk HLTB-opzoeken</h3>
+        <h3>Bulk-HLTB-opzoeking</h3>
         <p>Voer een HowLongToBeat-opzoeking uit voor elk spel zonder speeltijdschatting. Elke overeenkomst wordt beoordeeld op titel + platform + releasejaar; overeenkomsten met een hoge betrouwbaarheid worden automatisch opgeslagen. Alles onder de betrouwbaarheidsdrempel (of met tegenstrijdige platforms) wordt geparkeerd voor menselijke beoordeling.</p>
         <p><em>Zoekt elke game op de HowLongToBeat-website op en heeft dus internettoegang nodig</em></p>
 
-        <h3>HLTB in afwachting van beoordeling</h3>
-        <p>Beoordelingswachtrij voor dubbelzinnige overeenkomsten die door Bulk HLTB-opzoeken naar boven zijn gehaald. Elke wachtende rij toont het bronspel naast de HLTB-kandidaat (titel, platform, releasejaar, betrouwbaarheid). Keur per rij goed, wijs af, of kies een andere overeenkomst. De beoordelingskaart verschijnt alleen in het ROM-tools-overzicht wanneer er minstens één wachtende overeenkomst is.</p>
+        <h3>HLTB in afwachting van controle</h3>
+        <p>Beoordelingswachtrij voor dubbelzinnige overeenkomsten die door Bulk-HLTB-opzoeking naar boven zijn gehaald. Elke wachtende rij toont het bronspel naast de HLTB-kandidaat (titel, platform, releasejaar, betrouwbaarheid). Keur per rij goed, wijs af, of kies een andere overeenkomst. De beoordelingskaart verschijnt alleen in het ROM-tools-overzicht wanneer er minstens één wachtende overeenkomst is.</p>
         <ul>
             <li><strong>Filtertabbladen</strong> voor overeenkomsten met lage betrouwbaarheid, alternatieve titel en platformafwijking.</li>
             <li><strong>Goedkeuren</strong> schrijft de speeltijdschatting weg; <strong>Afwijzen</strong> laat de kandidaat vallen en houdt de opzoekwachtrij schoon.</li>
         </ul>
 
-        <h3>Hulpmiddelinstellingen</h3>
+        <h3>Tool-instellingen</h3>
         <p>Configureer paden, locaties van hulpmiddelen, archieftypen en voorkeuren die worden gedeeld door alle ROM-tools.</p>
 
         <div class="help-tip">
@@ -1544,7 +1544,7 @@
     <h2 class="card-title">Normalisatie</h2>
     <div class="card-body">
         <h3>Wat het doet</h3>
-        <p>Normaliseert genre- en spelmoduswaarden naar consistente canonieke vormen. Dit gebeurt automatisch tijdens scrapen en AI-invulling, en kan ook handmatig worden toegepast op uw bestaande bibliotheek.</p>
+        <p>Normaliseert genre- en spelmoduswaarden naar consistente canonieke vormen. Dit gebeurt automatisch tijdens scrapen en AI-aanvulling, en kan ook handmatig worden toegepast op uw bestaande bibliotheek.</p>
 
         <h3>Waarom het belangrijk is</h3>
         <p>Verschillende scrapers gebruiken verschillende namen voor hetzelfde. Normalisatie zorgt voor consistentie in uw hele bibliotheek:</p>
@@ -1565,8 +1565,8 @@
         <p>Voordat u normalisatie toepast, kunt u een voorbeeld bekijken van welke spellen worden beïnvloed en welke wijzigingen zullen worden aangebracht. Zo kunt u alles controleren voordat de wijzigingen in uw bibliotheek worden doorgevoerd.</p>
 
         <h3>Namen die op twee manieren gespeld zijn</h3>
-        <p>De knoppen <strong>Franchise</strong>, <strong>Uitgever</strong> en <strong>Ontwikkelaar</strong> tonen namen die met verschillende hoofdletters zijn geschreven, zoals <code>Doom</code> en <code>DOOM</code>. De schrijfwijze die bij de meeste games staat wordt gekozen; kies een andere als u dat liever hebt en druk dan op <strong>Toepassen</strong>. Brengt een latere scrape of AI-invulling de naam met andere hoofdletters mee, dan gebruikt die de schrijfwijze van uw bibliotheek.</p>
-        <p>Onder <strong>Uitgever</strong> en <strong>Ontwikkelaar</strong> toont <strong>Namen die mogelijk één bedrijf zijn</strong> namen als <code>Eidos</code> en <code>Eidos Interactive</code>. Er is niets aangevinkt, want namen die op elkaar lijken kunnen verschillende bedrijven zijn: <code>Atari Games</code> en <code>Atari, Inc.</code> zijn er twee. Kies in een rij de naam om te behouden, vink de namen aan die hetzelfde bedrijf zijn en druk op <strong>Samenvoegen</strong>. De aangevinkte namen worden de behouden naam, zowel bij Uitgever als bij Ontwikkelaar, en brengt een latere scrape of AI-invulling een samengevoegde naam mee, dan gebruikt die de behouden naam.</p>
+        <p>De knoppen <strong>Franchise</strong>, <strong>Uitgever</strong> en <strong>Ontwikkelaar</strong> tonen namen die met verschillende hoofdletters zijn geschreven, zoals <code>Doom</code> en <code>DOOM</code>. De schrijfwijze die bij de meeste games staat wordt gekozen; kies een andere als u dat liever hebt en druk dan op <strong>Toepassen</strong>. Brengt een latere scrape of AI-aanvulling de naam met andere hoofdletters mee, dan gebruikt die de schrijfwijze van uw bibliotheek.</p>
+        <p>Onder <strong>Uitgever</strong> en <strong>Ontwikkelaar</strong> toont <strong>Namen die mogelijk één bedrijf zijn</strong> namen als <code>Eidos</code> en <code>Eidos Interactive</code>. Er is niets aangevinkt, want namen die op elkaar lijken kunnen verschillende bedrijven zijn: <code>Atari Games</code> en <code>Atari, Inc.</code> zijn er twee. Kies in een rij de naam om te behouden, vink de namen aan die hetzelfde bedrijf zijn en druk op <strong>Samenvoegen</strong>. De aangevinkte namen worden de behouden naam, zowel bij Uitgever als bij Ontwikkelaar, en brengt een latere scrape of AI-aanvulling een samengevoegde naam mee, dan gebruikt die de behouden naam.</p>
     </div>
 </section>
 
@@ -1602,7 +1602,7 @@
 
         <h3>Hoe uit te voeren</h3>
         <ol>
-            <li>Ga naar <strong>Instellingen &rarr; Systeem &rarr; Onderhoud</strong> of <strong>ROM-tools &rarr; Afbeeldingsformaat aanpassen</strong></li>
+            <li>Ga naar <strong>Instellingen &rarr; Systeem &rarr; Onderhoud</strong> of <strong>ROM-tools &rarr; Afbeeldingsformaat wijzigen</strong></li>
             <li>Klik op <strong>"Starten"</strong> om de bulk-standaardisatie te beginnen</li>
             <li>De taak loopt op de achtergrond met een voortgangsmelding die het huidige bestand en statistieken toont</li>
             <li>Afbeeldingen worden ook automatisch gestandaardiseerd tijdens het scrapen (nieuwe downloads worden direct gestandaardiseerd)</li>
@@ -1622,10 +1622,10 @@
 
 <!-- Logs -->
 <section id="logs" class="help-section card">
-    <h2 class="card-title">Logboekviewer</h2>
+    <h2 class="card-title">Logviewer</h2>
     <div class="card-body">
         <h3>Wat het doet</h3>
-        <p>Een centrale viewer voor alle toepassingslogboeken. Toegankelijk via <strong>Logboekviewer</strong> in de zijbalk.</p>
+        <p>Een centrale viewer voor alle toepassingslogboeken. Toegankelijk via <strong>Logviewer</strong> in de zijbalk.</p>
 
         <h3>Logboekcategorieën</h3>
         <table class="data-table">
@@ -1636,7 +1636,7 @@
                 <tr><td><strong>Scrapen</strong></td><td>Scraperactiviteit, API-aanroepen, fouten en resultaten per spel</td></tr>
                 <tr><td><strong>ROM-tools</strong></td><td>Archiefextractie, CHD-conversie, detectie van duplicaten, deduplicatie van screenshots</td></tr>
                 <tr><td><strong>ROM-rapporten</strong></td><td>Resultaten van naamvalidatie</td></tr>
-                <tr><td><strong>Afbeeldingsformaat</strong></td><td>Voortgang van de afbeeldingsstandaardisatietaak (op-/afschalen per bestand)</td></tr>
+                <tr><td><strong>Afbeeldingsformaat wijzigen</strong></td><td>Voortgang van de afbeeldingsstandaardisatietaak (op-/afschalen per bestand)</td></tr>
                 <tr><td><strong>Systeem</strong></td><td>Algemene app-activiteit, onderhoudstaken, opstarten, databasebewerkingen</td></tr>
             </tbody>
         </table>
@@ -1666,10 +1666,10 @@
 
         <h3>Opschoonbewerkingen</h3>
         <ul>
-            <li><strong>Ontbrekende ROMs opschonen</strong> &mdash; Verwijder databasevermeldingen voor spellen waarvan de ROM-bestanden niet meer op schijf bestaan. Handig na het reorganiseren of verwijderen van ROM-bestanden.</li>
+            <li><strong>Ontbrekende ROM's opschonen</strong> &mdash; Verwijder databasevermeldingen voor spellen waarvan de ROM-bestanden niet meer op schijf bestaan. Handig na het reorganiseren of verwijderen van ROM-bestanden.</li>
             <li><strong>Verweesde media opruimen</strong> &mdash; Zoek en verwijder afbeeldingsbestanden op schijf (boxart, screenshots, fanart) die geen bijbehorende databaseverwijzing hebben. Bekijk een voorbeeld voordat u bevestigt.</li>
             <li><strong>Gescrapete gegevens wissen</strong> &mdash; Verwijdert wat het scrapen heeft ingevuld bij gescrapete games, inclusief de koppelingen naar hun afbeeldingen en video's, zodat u helemaal opnieuw kunt scrapen. Uw games blijven staan en hun titels gaan terug naar de bestandsnamen (een vergrendelde titel blijft). De afbeeldings- en videobestanden blijven op schijf, tenzij u <strong>Verwijder ook de afbeeldings- en videobestanden</strong> aanvinkt. Voorbeeld toont hoeveel games erdoor worden geraakt.</li>
-            <li><strong>CLZ-importen wissen</strong> &mdash; Verwijder alle CLZ Games-importvermeldingen (alleen-metadatavermeldingen zonder ROM-bestanden).</li>
+            <li><strong>CLZ-imports wissen</strong> &mdash; Verwijder alle CLZ Games-importvermeldingen (alleen-metadatavermeldingen zonder ROM-bestanden).</li>
         </ul>
 
         <h3>Database-optimalisatie</h3>
@@ -1682,7 +1682,7 @@
 
         <h3>Serverbeheer</h3>
         <ul>
-            <li><strong>Server herstarten</strong> &mdash; Nette herstart van de toepassing (opschonen en afsluiten). Beschikbaar bij Instellingen &rarr; Systeem &rarr; Probleemoplossing.</li>
+            <li><strong>Server opnieuw starten</strong> &mdash; Nette herstart van de toepassing (opschonen en afsluiten). Beschikbaar bij Instellingen &rarr; Systeem &rarr; Probleemoplossing.</li>
         </ul>
     </div>
 </section>
@@ -1976,7 +1976,7 @@
         <h4>Een vergeten wachtwoord</h4>
         <p>Er is geen reset per e-mail. Een beheerder stelt een nieuw wachtwoord in bij Instellingen &rarr; Account &rarr; Gebruikersbeheer. Vergeet de enige beheerder het zijne, herstel dan een back-up die is gemaakt toen het wachtwoord nog bekend was.</p>
 
-        <h4>"You do not have permission to access this feature"</h4>
+        <h4>"Je hebt geen toestemming voor deze actie"</h4>
         <p>Je rol omvat die functie niet. Een beheerder kan je rol wijzigen bij Instellingen &rarr; Account &rarr; Gebruikersbeheer.</p>
 
         <h3 id="ts-data">Database, back-ups en updates</h3>

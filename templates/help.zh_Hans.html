@@ -56,7 +56,7 @@
     <a href="#analytics" class="help-nav-item">分析</a>
     <a href="#reports" class="help-nav-item">报告</a>
     <a href="#rom-tools" class="help-nav-item">ROM 工具</a>
-    <a href="#normalization" class="help-nav-item">规范化</a>
+    <a href="#normalization" class="help-nav-item">标准化</a>
     <a href="#image-standardization" class="help-nav-item">图片缩放</a>
     <a href="#logs" class="help-nav-item">日志</a>
     <a href="#maintenance" class="help-nav-item">维护</a>
@@ -361,7 +361,7 @@
         <ul>
             <li><strong>系统总数</strong> &mdash; 你游戏库中的平台数量</li>
             <li><strong>游戏总数</strong> &mdash; 游戏总数（不含附赠光盘）</li>
-            <li><strong>缺失元数据</strong> &mdash; 尚未抓取的游戏</li>
+            <li><strong>缺少元数据</strong> &mdash; 尚未抓取的游戏</li>
             <li><strong>已完成</strong> &mdash; 已抓取元数据的游戏</li>
         </ul>
 
@@ -386,8 +386,8 @@
         <h3>任务恢复</h3>
         <p>如果 RetroDB 在后台任务（批量抓取、RA 同步、图片缩放等）运行期间重启，被中断的任务会出现在恢复横幅中。选项：</p>
         <ul>
-            <li><strong>恢复</strong> &mdash; 重新启动单个被中断的任务</li>
-            <li><strong>全部恢复</strong> &mdash; 重新启动所有被中断的任务</li>
+            <li><strong>继续</strong> &mdash; 重新启动单个被中断的任务</li>
+            <li><strong>全部继续</strong> &mdash; 重新启动所有被中断的任务</li>
             <li><strong>忽略</strong> &mdash; 从恢复列表中清除单个任务</li>
             <li><strong>全部忽略</strong> &mdash; 清除所有被中断的任务</li>
         </ul>
@@ -548,14 +548,14 @@
 
         <h3>数据标签页</h3>
         <ul>
-            <li><strong>下拉选项</strong> &mdash; 自定义类型、视角和存档类型等列表中提供的值</li>
-            <li><strong>规范化</strong> &mdash; 类型和模式的规范化规则 &mdash; 添加自定义映射以统一抓取器输出</li>
+            <li><strong>下拉菜单</strong> &mdash; 自定义类型、视角和存档类型等列表中提供的值</li>
+            <li><strong>标准化</strong> &mdash; 类型和模式的标准化规则 &mdash; 添加自定义映射以统一抓取器输出</li>
         </ul>
 
         <h3>自定义标签页</h3>
         <ul>
             <li><strong>手柄</strong> &mdash; <strong>打开手柄页面</strong>会进入手柄页面。你可以在那里设置每个系统的默认手柄、添加自己的手柄，并编辑手柄库。默认手柄会在获取元数据时覆盖抓取/AI 的值。</li>
-            <li><strong>徽标</strong> &mdash; <strong>刷新系统徽标</strong>会从你的 ES-DE 文件夹复制新的徽标，然后显示哪些系统还没有徽标</li>
+            <li><strong>标志</strong> &mdash; <strong>刷新系统徽标</strong>会从你的 ES-DE 文件夹复制新的徽标，然后显示哪些系统还没有徽标</li>
         </ul>
 
         <h3>系统标签页</h3>
@@ -671,7 +671,7 @@
             <li>逐个选择游戏，或使用快速选择：
                 <ul>
                     <li><strong>全选</strong> &mdash; 所有可见的游戏</li>
-                    <li><strong>选择未抓取</strong> &mdash; 仅无元数据的游戏</li>
+                    <li><strong>选择未抓取的</strong> &mdash; 仅无元数据的游戏</li>
                 </ul>
             </li>
             <li>选择模式：<strong>填充缺失项</strong> 或 <strong>完整重新抓取</strong></li>
@@ -754,10 +754,10 @@
             <li><strong>交叉映射的分级</strong> &mdash; 如果已知一个分级系统，其他系统中空的分级会使用成熟度等级交叉映射自动填充</li>
             <li>填充时会自动生成<strong>排序标题</strong></li>
             <li><strong>官方标题</strong> &mdash; AI 还会给出游戏在其 ROM 所属地区发行时的官方标题，游戏会被重命名为该标题，在 AI 填充中以及抓取时 AI 填补空缺时都是如此。旧名称会保留为备用标题。你自己输入的标题，或用<strong>抓取时保留此标题</strong>保留的标题，绝不会被重命名</li>
-            <li><strong>玩家人数</strong>字段会规范化范围（例如 "1-4" 变为 4）</li>
+            <li><strong>玩家人数</strong>字段会标准化范围（例如 "1-4" 变为 4）</li>
         </ul>
 
-        <h3>类型规范化</h3>
+        <h3>类型标准化</h3>
         <p>AI 填充使用带连字符名称的规范类型形式：</p>
         <ul>
             <li><code>First-Person-Shooter</code>、<code>Shoot-em-up</code>、<code>Beat-em-up</code></li>
@@ -876,16 +876,16 @@
         <h3>编辑弹窗</h3>
         <p>点击 <strong>编辑</strong>（或按 <kbd>e</kbd>）打开编辑弹窗，其分为以下几个部分：</p>
         <ul>
-            <li><strong>标识</strong> &mdash; 标题、排序标题（自动生成但可编辑）、系列、版本</li>
+            <li><strong>身份</strong> &mdash; 标题、排序标题（自动生成但可编辑）、系列、版本</li>
             <li><strong>发行信息</strong> &mdash; 发行日期、地区（来自可配置的下拉菜单）</li>
             <li><strong>玩法</strong> &mdash; 类型（多选标签）、模式、游戏结构、玩家人数、开发商、发行商</li>
-            <li><strong>技术</strong> &mdash; 手柄（多选）、存档类型、视角（多值）、维度（多值）</li>
+            <li><strong>技术信息</strong> &mdash; 手柄（多选）、存档类型、视角（多值）、维度（多值）</li>
             <li><strong>年龄分级</strong> &mdash; 全部分级系统，带官方分级图片和自动交叉映射。更改一个分级会自动填充其他系统中空的分级。</li>
             <li><strong>评分</strong> &mdash; 媒体评分、用户评分</li>
             <li><strong>简介</strong> &mdash; 游戏简介文本</li>
             <li><strong>自定义图片</strong> &mdash; 上传自定义封面（2D）、3D 封面、盒子背面、同人图和徽标。清除现有图片以允许重新抓取。</li>
             <li><strong>导入 3D 盒子</strong> &mdash; 也在“自定义图片”中。无需点“保存更改”，会立即保存。选择 Slipcase 保存的 <code>.box.json</code> 文件及其图片（选择整个文件夹也可以）。Slipcase 1.4.0 或更新版本会在每张导出的图片旁保存此文件。RetroDB 会为此游戏保存盒子的各个面；之后点击封面就会以 3D 形式显示盒子，可拖动或用方向键转动。你的 3D 封面图片不会被改动。已有各面的游戏会在替换前询问，<strong>移除</strong>会删除它们。</li>
-            <li><strong>视频 / 预告</strong> &mdash; 上传或链接视频预告</li>
+            <li><strong>视频 / 预告片</strong> &mdash; 上传或链接视频预告</li>
         </ul>
 
         <h3>快捷操作</h3>
@@ -983,7 +983,7 @@
 
 <!-- Compare Games -->
 <section id="compare" class="help-section card">
-    <h2 class="card-title">比较游戏</h2>
+    <h2 class="card-title">对比游戏</h2>
     <div class="card-body">
         <h3>功能说明</h3>
         <p>在表格视图中并排比较两款游戏的元数据。可用于检查元数据质量、发现重复项，或比较同一游戏在不同系统上的版本。</p>
@@ -1003,7 +1003,7 @@
 
 <!-- Collections -->
 <section id="collections" class="help-section card">
-    <h2 class="card-title">合集（标签、列表、愿望清单）</h2>
+    <h2 class="card-title">合集（标签、列表、愿望单）</h2>
     <div class="card-body">
         <h3>标签</h3>
         <p>创建自定义颜色的标签来整理你的游戏。标签的作用类似于标记 &mdash; 每款游戏可拥有多个标签，每个标签也可包含多款游戏。</p>
@@ -1023,11 +1023,11 @@
             <li>按自定义顺序或字母顺序排序</li>
         </ul>
 
-        <h3>愿望清单</h3>
+        <h3>愿望单</h3>
         <p>追踪你想要获取的游戏，无论是实体版还是数字版。</p>
         <ul>
             <li>手动添加游戏，包含标题、系统、备注和优先级（1&ndash;5）</li>
-            <li>愿望清单项目可在找到时链接到现有游戏库中的游戏</li>
+            <li>愿望单项目可在找到时链接到现有游戏库中的游戏</li>
             <li>按优先级（从高到低）排序，然后按添加日期排序</li>
         </ul>
 
@@ -1215,7 +1215,7 @@
 
 <!-- HLTB -->
 <section id="hltb" class="help-section card">
-    <h2 class="card-title">How Long to Beat</h2>
+    <h2 class="card-title">通关时长</h2>
     <div class="card-body">
         <h3>用法</h3>
         <ol>
@@ -1230,7 +1230,7 @@
         <ul>
             <li><strong>主线剧情</strong> &mdash; 核心通关时长</li>
             <li><strong>主线 + 额外内容</strong> &mdash; 包含支线内容</li>
-            <li><strong>完美通关</strong> &mdash; 100% 完成所有内容</li>
+            <li><strong>全成就达成者</strong> &mdash; 100% 完成所有内容</li>
         </ul>
 
         <h3>HLTB 数据显示位置</h3>
@@ -1238,7 +1238,7 @@
             <li><strong>游戏详情弹窗</strong> &mdash; 游戏信息中显示游玩时长估算</li>
             <li><strong>完整游戏详情页面</strong> &mdash; 相同的游玩时长信息</li>
             <li><strong>分析 &rarr; 游玩时长标签页</strong> &mdash; 整个合集的游玩时长分析</li>
-            <li><strong>比较游戏</strong> &mdash; 并排比较游玩时长</li>
+            <li><strong>对比游戏</strong> &mdash; 并排比较游玩时长</li>
         </ul>
 
         <div class="help-tip">
@@ -1306,10 +1306,10 @@
                 <tr><th>等级</th><th>示例</th></tr>
             </thead>
             <tbody>
-                <tr><td><strong>铜杯</strong></td><td>添加第一款游戏、达到 10 款游戏、首次抓取、5 个系统、首次完成</td></tr>
-                <tr><td><strong>银杯</strong></td><td>100 款游戏、抓取 50 款、10 个系统、10 次完成、500 款游戏</td></tr>
-                <tr><td><strong>金杯</strong></td><td>1,000 款游戏、100% 元数据覆盖率、20 个系统、50 次完成</td></tr>
-                <tr><td><strong>白金杯</strong></td><td>5,000 款游戏、100 次完成、30 个以上系统</td></tr>
+                <tr><td><strong>青铜</strong></td><td>添加第一款游戏、达到 10 款游戏、首次抓取、5 个系统、首次完成</td></tr>
+                <tr><td><strong>银</strong></td><td>100 款游戏、抓取 50 款、10 个系统、10 次完成、500 款游戏</td></tr>
+                <tr><td><strong>金</strong></td><td>1,000 款游戏、100% 元数据覆盖率、20 个系统、50 次完成</td></tr>
+                <tr><td><strong>白金</strong></td><td>5,000 款游戏、100 次完成、30 个以上系统</td></tr>
             </tbody>
         </table>
 
@@ -1340,7 +1340,7 @@
             <li><strong>硬件图片</strong> &mdash; 主机/系统的照片</li>
             <li><strong>技术规格</strong> &mdash; CPU、GPU、内存、分辨率、媒体类型</li>
             <li><strong>历史</strong> &mdash; 关于该系统开发、发布和影响的 AI 生成叙述</li>
-            <li><strong>十大游戏</strong> &mdash; 该系统最知名的作品（根据媒体评分和 AI 建议）</li>
+            <li><strong>游戏 Top 10</strong> &mdash; 该系统最知名的作品（根据媒体评分和 AI 建议）</li>
             <li><strong>手柄图库</strong> &mdash; 附带描述的该系统手柄图片</li>
         </ul>
 
@@ -1458,7 +1458,7 @@
         <p>通过哈希验证检查 CHD 文件的完整性。识别损坏或不完整的转换结果。</p>
         <p><em>需要：chdman</em></p>
 
-        <h3>重复文件查找器</h3>
+        <h3>重复查找器</h3>
         <p>按哈希或文件名查找重复的 ROM，并可选择按地区标签设定优先级。 在文件名模式下，同一游戏已关联的地区版本不会被报告为重复项；在哈希模式下，相同的文件始终会被报告。</p>
         <p><em>无外部依赖</em></p>
 
@@ -1487,11 +1487,11 @@
         <p>渐进式扫描并实时显示统计信息，包括已扫描游戏数、重复数量和可回收空间。结果按游戏和系统分组。你可以在每个重复组中选择保留哪个文件，或使用 <strong>“选择最大”</strong> 自动保留分辨率最高的版本。</p>
         <p><em>无外部依赖</em></p>
 
-        <h3>图片调整器</h3>
+        <h3>图片尺寸调整</h3>
         <p>将游戏媒体标准化为统一的目标尺寸。详情请参阅 <a href="#image-standardization">图片标准化</a>。</p>
         <p><em>无外部依赖（基于 Python 的 AI 放大）</em></p>
 
-        <h3>补全备用标题</h3>
+        <h3>回填别名标题</h3>
         <p>遍历每个已抓取的游戏，从 IGDB / TGDB / ScreenScraper 获取其<strong>备用标题</strong>，并标注每个名称所属的地区。你已有的名称也会获得其地区。在导入大型目录，或从另一款不存储地区/日文/副标题的工具迁移后特别有用。在后台运行，进度显示在工具卡片上。</p>
         <p><em>至少需要一个抓取源 API 密钥（IGDB / TGDB / ScreenScraper）</em></p>
 
@@ -1501,23 +1501,23 @@
 
         <h3>根据文件名修复地区</h3>
         <p>ROM 的文件名说明了它是哪个版本，因此 <code>(USA)</code> 这样的标记现在会决定其地区，不再询问 AI。旧版抓取让 AI 先猜测，因此 <code>(USA)</code> 文件可能被标为日本。此工具会把这些游戏的地区改为文件名中的地区。它只更改由 AI 填写的地区，包括你之后手动修正、与文件名不同的地区。</p>
-        <p><em>无需依赖</em></p>
+        <p><em>无需依赖项</em></p>
 
         <h3>整理发行日期</h3>
         <p>旧版抓取会把只知道年份的日期存为 1 月 1 日或 12 月 31 日，就像知道具体日期一样。此工具会把这些日期缩减为年份或月份，以便之后的抓取可以填入真实日期。不是由抓取填入的日期保持不变。</p>
-        <p><em>无需依赖</em></p>
+        <p><em>无需依赖项</em></p>
 
         <h3>检查已保存的游玩时间</h3>
         <p>旧版查询可能保存了续作的游玩时间，或另一个系统上同名游戏的游玩时间。此工具会把这些匹配发送到 HowLongToBeat 审核页面，在你做出决定之前，不会更改任何游戏。在那里，批准会保留时间，拒绝会清除它。有些匹配是正确的：HowLongToBeat 并未列出游戏发行过的每个系统。</p>
-        <p><em>无需依赖</em></p>
+        <p><em>无需依赖项</em></p>
 
         <h3>整理类型、视角和模式</h3>
         <p>各来源对同一事物的叫法不同，因此一个类型可能同时显示为 RPG 和 Role Playing Game，筛选器就会漏掉游戏。现在抓取使用同一套名称，即筛选列表中的名称。此工具会转换旧版抓取存储的内容。在这些列表中没有位置的词（如 Arcade 或 Indie）会被删除。属于其他字段的词（如 FPV）会在该字段为空时移到那里。与游戏模式矛盾的玩家人数会被修正，来自 RAWG 的旧玩家人数 1 会被清除，以便填入真实人数。你自己添加到下拉菜单中的值会保留。之后请使用<strong>填充缺失项</strong>运行一次批量抓取，以填充仍为空的内容。</p>
-        <p><em>无需依赖</em></p>
+        <p><em>无需依赖项</em></p>
 
         <h3>清除包装封面中的 RAWG 图片</h3>
         <p>RAWG 没有包装封面。旧版抓取会把它的背景图片（通常是截图）保存为封面，而抓取只填充空封面，所以这张图片挡住了真正的封面。此工具会删除这些图片并让封面留空。来自其他来源的封面和所有同人图都会保留。在抓取找到封面之前，这些游戏不会显示封面，因此之后请使用<strong>填充缺失项</strong>运行一次批量抓取。</p>
-        <p><em>无需依赖</em></p>
+        <p><em>无需依赖项</em></p>
 
         <h3>批量 HLTB 查询</h3>
         <p>为每个缺少游玩时长估算的游戏运行 HowLongToBeat 查询。每次匹配都按标题 + 平台 + 发行年份评分；高置信度的匹配会自动保存。低于置信度阈值（或平台存在冲突）的结果会被搁置，等待人工审核。</p>
@@ -1541,13 +1541,13 @@
 
 <!-- Normalization -->
 <section id="normalization" class="help-section card">
-    <h2 class="card-title">规范化</h2>
+    <h2 class="card-title">标准化</h2>
     <div class="card-body">
         <h3>它的作用</h3>
-        <p>将类型和游戏模式的值规范化为统一的标准形式。此过程在抓取和 AI 填充时自动进行，也可以手动应用到你现有的游戏库。</p>
+        <p>将类型和游戏模式的值标准化为统一的标准形式。此过程在抓取和 AI 填充时自动进行，也可以手动应用到你现有的游戏库。</p>
 
         <h3>为何重要</h3>
-        <p>不同的抓取源对同一事物使用不同的名称。规范化可确保整个游戏库的一致性：</p>
+        <p>不同的抓取源对同一事物使用不同的名称。标准化可确保整个游戏库的一致性：</p>
         <ul>
             <li><code>platform</code> &rarr; <code>Platformer</code></li>
             <li><code>fps</code>, <code>first person shooter</code> &rarr; <code>First-Person-Shooter</code></li>
@@ -1559,10 +1559,10 @@
         </ul>
 
         <h3>自定义规则</h3>
-        <p>你可以在 <strong>设置 &rarr; 数据 &rarr; 规范化</strong> 中添加自定义规范化规则。自定义规则会覆盖内置映射，让你定义自己偏好的类型和模式名称。规则存储在数据库中。</p>
+        <p>你可以在 <strong>设置 &rarr; 数据 &rarr; 标准化</strong> 中添加自定义标准化规则。自定义规则会覆盖内置映射，让你定义自己偏好的类型和模式名称。规则存储在数据库中。</p>
 
         <h3>预览与应用</h3>
-        <p>在应用规范化之前，你可以预览哪些游戏会受到影响以及将做出哪些更改。这让你可以在向游戏库提交更改之前进行审核。</p>
+        <p>在应用标准化之前，你可以预览哪些游戏会受到影响以及将做出哪些更改。这让你可以在向游戏库提交更改之前进行审核。</p>
 
         <h3>名称的两种写法</h3>
         <p><strong>系列</strong>、<strong>发行商</strong>和<strong>开发商</strong>按钮会列出大小写不同的名称，例如 <code>Doom</code> 和 <code>DOOM</code>。系统会选用游戏最多的写法；如果你喜欢别的，可以另选，然后按<strong>应用</strong>。之后的抓取或 AI 填充若带来大小写不同的名称，会采用你游戏库中的写法。</p>
@@ -1602,7 +1602,7 @@
 
         <h3>如何运行</h3>
         <ol>
-            <li>前往 <strong>设置 &rarr; 系统 &rarr; 维护</strong> 或 <strong>ROM 工具 &rarr; 图片调整器</strong></li>
+            <li>前往 <strong>设置 &rarr; 系统 &rarr; 维护</strong> 或 <strong>ROM 工具 &rarr; 图片尺寸调整</strong></li>
             <li>点击 <strong>“开始”</strong> 以启动批量标准化</li>
             <li>任务在后台运行，通过弹出通知显示当前文件和统计信息</li>
             <li>图片在抓取过程中也会自动标准化（新下载的内容会立即标准化）</li>
@@ -1636,7 +1636,7 @@
                 <tr><td><strong>抓取</strong></td><td>抓取源活动、API 调用、错误以及每个游戏的结果</td></tr>
                 <tr><td><strong>ROM 工具</strong></td><td>压缩包解压、CHD 转换、重复文件检测、截图去重</td></tr>
                 <tr><td><strong>ROM 报告</strong></td><td>命名验证结果</td></tr>
-                <tr><td><strong>图片调整</strong></td><td>图片标准化任务进度（每个文件的放大/缩小）</td></tr>
+                <tr><td><strong>图片缩放</strong></td><td>图片标准化任务进度（每个文件的放大/缩小）</td></tr>
                 <tr><td><strong>系统</strong></td><td>常规应用活动、维护任务、启动、数据库操作</td></tr>
             </tbody>
         </table>
@@ -1976,7 +1976,7 @@
         <h4>忘记密码</h4>
         <p>不能通过电子邮件重置。管理员可在 设置 &rarr; 账户 &rarr; 用户管理 中设置新密码。如果唯一的管理员忘了密码，请恢复一份在知道密码时做的备份。</p>
 
-        <h4>“You do not have permission to access this feature”</h4>
+        <h4>“你没有执行此操作的权限”</h4>
         <p>你的角色不包含该功能。管理员可以在 设置 &rarr; 账户 &rarr; 用户管理 中更改你的角色。</p>
 
         <h3 id="ts-data">数据库、备份与更新</h3>
