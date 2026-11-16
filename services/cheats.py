@@ -1,5 +1,5 @@
 # =============================================================================
-# RETRODB - Cheats for the player, DuckStation, PCSX2 and MAME (PASS-59-155)
+# RETRODB - Cheats for the player, FBNeo, DuckStation, PCSX2 and MAME (PASS-59-155)
 # =============================================================================
 # The game page lists the cheats RetroDB found for a game, one switch each,
 # and the game starts with the switched-on ones. The store has two layers:
@@ -19,6 +19,8 @@
 #   place_for_launch() / take_back()      the player's copy, around a session
 #   mame_launch_args()                    MAME's cheat plugin and switches
 #                                         (PASS-59-313, PASS-59-314)
+#   fbneo_view()                          FBNeo's cheat names, no switches
+#                                         (PASS-59-318)
 # =============================================================================
 
 from __future__ import annotations
@@ -49,8 +51,9 @@ PACKS = {
     'retroarch': 'https://buildbot.libretro.com/assets/frontend/cheats.zip',
     'duckstation': 'https://github.com/duckstation/chtdb/releases/download/latest/cheats.zip',
     'pcsx2': 'https://github.com/xs1l3n7x/pcsx2_cheats_collection/archive/refs/heads/main.zip',
+    'fbneo': 'https://github.com/finalburnneo/FBNeo-cheats/archive/master.zip',
 }
-_EXT = {'retroarch': '.cht', 'duckstation': '.cht', 'pcsx2': '.pnach'}
+_EXT = {'retroarch': '.cht', 'duckstation': '.cht', 'pcsx2': '.pnach', 'fbneo': '.ini'}
 MAX_PACK_BYTES = 1024 * 1024 * 1024    # unpacked, as the shader pack (§13)
 MAX_FILE_BYTES = 8 * 1024 * 1024       # one cheat file an import or the panel reads
 _CHUNK = 1024 * 1024
@@ -71,6 +74,8 @@ _CHT_KEY = re.compile(r'^\s*cheat(\d+)_(desc|enable)\s*=\s*"?(.*?)"?\s*$')
 _SECTION = re.compile(r'^\s*\[(.+)\]\s*$')
 _PATCH = re.compile(r'^\s*patch\s*=', re.I)
 _GROUPS = re.compile(r'\(([^)]*)\)|\[([^\]]*)\]')
+_FBNEO_CHEAT = re.compile(r'^\s*cheat\s+"([^"]*)"', re.M)
+_FBNEO_CHOICE = re.compile(r'^\s*\d+\s+"', re.M)
 
 
 # Where a pack download may end up. GitHub answers both of its URLs with a
@@ -646,6 +651,86 @@ def mame_launch_args() -> list:
 
 
 # -----------------------------------------------------------------------------
+# FinalBurn Neo (PASS-59-318)
+# -----------------------------------------------------------------------------
+# Arcade games RetroAchievements links play in the player's FBNeo core, which
+# reads its own <set>.ini files from <RetroArch system>/fbneo/cheats/ and shows
+# them as core options. It switches them all off at every boot by design, so
+# the panel lists the names and says where to switch them on; there is no
+# switch to save. That folder is the user's, so a launch copies the game's
+# file in only where none is there, and the session's end removes that copy.
+
+def _fbneo_file(rom_path) -> Optional[Path]:
+    """The set's .ini in the store, own/ winning over the pack; None if neither."""
+    stem = _set_name(rom_path)
+    if not stem:
+        return None
+    for layer in ('own', 'packs'):
+        p = store_dir() / layer / 'fbneo' / f'{stem}.ini'
+        if p.is_file():
+            return p
+    return None
+
+
+def _fbneo_names(text) -> list:
+    """Each cheat's name once. A `cheat` line with no numbered choice under
+    it is a note or a blank separator, not a cheat."""
+    heads = list(_FBNEO_CHEAT.finditer(text))
+    names = []
+    for m, nxt in zip(heads, heads[1:] + [None]):
+        body = text[m.end():nxt.start() if nxt else len(text)]
+        name = m.group(1).strip()
+        if name and name not in names and _FBNEO_CHOICE.search(body):
+            names.append(name)
+    return names
+
+
+def fbneo_view(rom_path) -> list:
+    """The panel's rows for an FBNeo set, all locked."""
+    f = _fbneo_file(rom_path)
+    if f is None:
+        return []
+    try:
+        names = _fbneo_names(_read_text(f))
+    except (OSError, CheatError) as e:
+        logger.warning("cheats: %s not read: %s", f, e)
+        return []
+    return [{'name': n, 'enabled': False, 'locked': True} for n in names]
+
+
+def _place_fbneo(game_id, rom_path: Path) -> None:
+    """Copy the set's .ini where FBNeo reads it, unless a file the user put
+    there already is. The record names the copy before it is made, so a
+    session that never ended still has it removed by the next."""
+    from services import player
+    src = _fbneo_file(rom_path)
+    if src is None:
+        return
+    dest = Path(player._user_system_dir()) / 'fbneo' / 'cheats' / f'{_set_name(rom_path)}.ini'
+    rec = player._record(game_id)
+    if dest.exists() and rec.get('fbneo_cheats') != str(dest):
+        return
+    rec['fbneo_cheats'] = str(dest)
+    player._save_record(game_id, rec)
+    _copy(src, dest)
+
+
+def _plays_in_fbneo(game) -> bool:
+    """The player runs this game in FBNeo: an arcade folder (PASS-59-318)."""
+    from services import player_cores
+    return player_cores.achievements_only(game.get('system_folder'))
+
+
+def _remove_fbneo(game_id) -> None:
+    from services import player
+    rec = player._record(game_id)
+    placed = rec.pop('fbneo_cheats', None)
+    if placed:
+        Path(placed).unlink(missing_ok=True)
+        player._save_record(game_id, rec)
+
+
+# -----------------------------------------------------------------------------
 # File formats
 # -----------------------------------------------------------------------------
 
@@ -808,9 +893,12 @@ def _save_pack_sources(sources):
 def place_for_launch(game_id, core, rom_path: Path, profile: Path) -> None:
     """Copy the game's list to <profile>/cheats/<library name>/<ROM
     basename>.cht, where RetroArch loads it, or remove a stale copy there
-    (INV-1). Never raises: a cheat problem never stops a launch (INV-11)."""
+    (INV-1); FBNeo's own file goes in place too. Never raises: a cheat
+    problem never stops a launch (INV-11)."""
     from services import player, player_cores
     try:
+        if core == 'fbneo':
+            _place_fbneo(game_id, rom_path)
         library = player_cores.library_name(core)
         if not library:
             logger.warning("cheats: core %s has no library name; launching without cheats", core)
@@ -832,8 +920,13 @@ def place_for_launch(game_id, core, rom_path: Path, profile: Path) -> None:
 
 def take_back(game_id, rom_path: Path, profile: Path) -> None:
     """After a session: RetroArch rewrote the launch copy with the in-game
-    switches, so it replaces the game's list, then goes (INV-2)."""
+    switches, so it replaces the game's list, then goes (INV-2). A copy
+    of FBNeo's file goes too."""
     from services import player
+    try:
+        _remove_fbneo(game_id)
+    except Exception as e:  # noqa: BLE001 — never stops the session's other cleanup
+        logger.warning("cheats: FBNeo copy for game %s not removed: %s", game_id, e)
     try:
         library = player._record(game_id).get('cheats_library')
         if not library:
@@ -927,6 +1020,12 @@ def game_view(game_id) -> Optional[dict]:
     view = {'emulator': None, 'candidates': [], 'source': None, 'cheats': [],
             'always_on': False, 'reason': None}
     emu = ctx.get('emulator') or {}
+    if emu.get('is_player') and _plays_in_fbneo(ctx['game']):
+        view['emulator'] = 'fbneo'
+        view['cheats'] = fbneo_view(ctx['game'].get('rom_path'))
+        if not view['cheats']:
+            view['reason'] = str(_('No cheats were found for this game.'))
+        return view
     if emu.get('is_player'):
         return _player_view(ctx['game'], view)
     if is_mame(emu):
@@ -961,6 +1060,8 @@ def save(game_id, enabled, source=None) -> None:
     if not ctx.get('game'):
         raise CheatError(_('Game not found'))
     emu = ctx.get('emulator') or {}
+    if emu.get('is_player') and _plays_in_fbneo(ctx['game']):
+        raise CheatError(_("FinalBurn Neo's cheats are switched on in RetroArch's menu while you play."))
     if emu.get('is_player'):
         return _player_save(ctx['game'], enabled, source)
     if is_mame(emu):

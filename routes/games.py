@@ -38,7 +38,8 @@ from services.game_query import (
 from services.analytics import invalidate_analytics_cache
 from services.box_faces import faces_for
 from services.release_dates import display_release_dates
-from services.launch_resolver import keyboard_core, launch_checker, launch_emulator_name, rom_launch_problem
+from services.launch_resolver import (has_achievements, keyboard_core, launch_checker,
+                                     launch_emulator_name, rom_launch_problem)
 from services.game_metadata_service import (
     build_game_card,
     apply_hybrid_metadata_to_game,
@@ -159,7 +160,8 @@ def _add_can_launch(games, rows):
     for card, row in zip(games, rows):
         card['can_launch'] = bool(
             can_launch
-            and can_launch(row['system_id'], row['emulator_override_id'])
+            and can_launch(row['system_id'], row['emulator_override_id'],
+                           has_achievements(row))
             and not rom_launch_problem(row['rom_path']))
 
 
@@ -922,7 +924,8 @@ def game_detail(game_id):
                              # PASS-59-197 — named on the Emulator settings card.
                              play_emulator=launch_emulator_name(game['system_id'],
                                                                 game['emulator_override_id'],
-                                                                game['system_name']),
+                                                                game['system_name'],
+                                                                has_achievements(game)),
                              # PASS-59-153 — its images still await upscaling.
                              upscale_pending=upscale_queue.pending_status(game_id)[1],
                              # PASS-59-142 — imported Slipcase faces, or None.

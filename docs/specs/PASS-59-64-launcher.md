@@ -85,7 +85,8 @@ All 2026-09-26, by the user unless marked otherwise.
    `~/.config/retroarch`. The player writes its saves, states, remaps and
    menu choices there.
 7. **BIOS** is read from the user's existing RetroArch system directory.
-   RetroDB never writes it.
+   RetroDB never writes it, except FBNeo's cheat file for one session
+   (PASS-59-155 §4.9).
 8. **RetroAchievements login belongs to the player.**
 9. **Nothing flows back** beyond the exit code, the stderr tail, and the
    settings files §4.5 reads after a session.

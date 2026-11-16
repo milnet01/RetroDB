@@ -107,6 +107,11 @@ system's `cheats` key and the `_library_names` object are PASS-59-155's
 - `cores` is ranked, best first. A core id is the libretro file stem
   without `_libretro` (`snes9x` for `snes9x_libretro.so`).
 - `same_as` points a folder at another entry and carries nothing else.
+- `achievements_only` (the arcade folders, PASS-59-318): the player takes
+  a game there only when RetroAchievements links it and the game has no
+  emulator of its own; it then goes before the system's default. It never
+  stands in for a game without achievements, and never becomes the
+  system's default.
 - `settings` gives the system's default value for each managed setting.
   A setting it omits is not written for that system.
 - `_settings` maps each value to the RetroArch cfg keys it writes.
@@ -149,6 +154,7 @@ system's `cheats` key and the `_library_names` object are PASS-59-155's
 | colecovision | gearcoleco | off |
 | intellivision | freeintv | off |
 | cdimono1 | same_cdi | off |
+| mame, fbneo, arcade, neogeo (achievements only) | fbneo | off |
 
 Every system's default `aspect_ratio` is `core`, `integer_scale` `off` and
 `shader` `none`. Systems with a standalone emulator in the seeds (psx, psp,

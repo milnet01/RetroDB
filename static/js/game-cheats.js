@@ -9,7 +9,9 @@
  * shows here. MAME keeps no record of its own, so its switches are saved by
  * RetroDB and MAME saves its in-game changes back as it stops (PASS-59-314).
  * Switches for the player on a system with cheats, DuckStation, PCSX2 and
- * MAME; any other game gets the reason alone (PASS-59-197).
+ * MAME; any other game gets the reason alone (PASS-59-197). FinalBurn Neo,
+ * where the player runs arcade games with achievements, gets the names
+ * without switches: it turns every cheat off at each start (PASS-59-318).
  *
  * Contract: docs/specs/PASS-59-155-cheats.md §4.6, §4.7.
  */
@@ -18,6 +20,7 @@
 
     const HARDCORE = () => ({
         player: t('A cheat that is on pauses RetroAchievements hardcore mode for that session.'),
+        fbneo: t('A cheat that is on pauses RetroAchievements hardcore mode for that session.'),
         duckstation: t('DuckStation ignores cheats in hardcore mode.'),
         pcsx2: t('PCSX2 ignores cheats in hardcore mode.'),
     });
@@ -65,6 +68,16 @@
         return li;
     }
 
+    // FBNeo has no switches to show (PASS-59-318): the name alone.
+    function nameRow(name) {
+        const li = document.createElement('li');
+        const label = document.createElement('span');
+        label.className = 'cheat-name';
+        label.textContent = name;
+        li.append(label);
+        return li;
+    }
+
     function renderNote(panel, view) {
         const note = document.getElementById('cheatsNote');
         note.replaceChildren();
@@ -81,6 +94,7 @@
         const notes = {
             player: t('Switched-on cheats apply the next time you press Play.'),
             mame: t('Switched-on cheats apply the next time you press Play. Changes made in MAME\'s menu show here after you quit.'),
+            fbneo: t('FinalBurn Neo turns every cheat off each time the game starts. To switch one on while you play, press F1 (or the PS or Xbox button on most controllers) for RetroArch\'s menu, then choose Core Options, then Cheat.'),
         };
         note.textContent = notes[view.emulator]
             || t('Saved in the emulator\'s settings for this game. Changes made inside the emulator show here.');
@@ -134,7 +148,9 @@
             ? t('Set this one in MAME while you play: press Tab, then Plugin Options, then Cheat.')
             : t('This name holds "=", which the emulator\'s settings cannot hold.');
         for (const c of view.cheats) {
-            rows.push(switchRow(c.name, c.enabled, !canEdit || c.locked, c.locked ? lockedWhy : ''));
+            rows.push(view.emulator === 'fbneo'
+                ? nameRow(c.name)
+                : switchRow(c.name, c.enabled, !canEdit || c.locked, c.locked ? lockedWhy : ''));
         }
         list.replaceChildren(...rows);
         const filter = document.getElementById('cheatsFilter');

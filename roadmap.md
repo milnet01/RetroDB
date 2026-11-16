@@ -3081,7 +3081,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: doc-fix.
   Source: PASS-59-315 locale mirroring 2026-11-15.
 
-- 📋 [PASS-59-318] **Arcade achievements: games with RetroAchievements start in FBNeo in the player, with FBNeo's cheat pack (feature, M).**
+- ✅ [PASS-59-318] **Arcade achievements: games with RetroAchievements start in FBNeo in the player, with FBNeo's cheat pack (feature, M).**
   - **Found** (2026-11-16): RetroAchievements lists only FinalBurn Neo
     (libretro) for arcade, plus Flycast for NAOMI/Atomiswave
     (docs.retroachievements.org emulator-support page). Not MAME. Arcade
@@ -3103,6 +3103,17 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     launch routing for RA-linked arcade games (a per-game override still
     wins); cheats pack `fbneo`; panel view. Open: the 6 incomplete sets
     (stay in MAME?); confirm the Neo Geo BIOS gap once FBNeo is in.
+  Done 2026-11-16 (4.0.0): `achievements_only` arcade folders (mame,
+  fbneo, arcade, neogeo) send a game with achievements and no override
+  to the player's fbneo core; the player is never their default. fbneo
+  pack (FBNeo-cheats master zip, 3418 files); the panel lists names
+  without switches, skipping notes and separators; a launch copies the
+  set's .ini into <RetroArch system>/fbneo/cheats/ only where none is
+  and removes it after. Open items settled: the 6 incomplete sets got an
+  Emulator override to MAME in the user's library (user, 2026-11-16);
+  Neo Geo has no BIOS gap — FBNeo reported "No missing files" on mslug
+  (and sf2). Coverage: 318 of the 462 linked sets have an FBNeo cheat
+  file. Not tested: earning an achievement in a real signed-in session.
   **Layman:** Arcade games that have achievements start in an emulator that supports them, and their page lists that emulator's cheats.
   Kind: feature.
   Source: user-request-2026-11-16.

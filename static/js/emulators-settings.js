@@ -631,6 +631,7 @@
         retroarch: t('RetroArch cheats (libretro)'),
         duckstation: t('DuckStation cheats'),
         pcsx2: t('PCSX2 cheats (community collection)'),
+        fbneo: t('FinalBurn Neo arcade cheats'),
     });
     const cheatPacks = $('#cheat-packs');
     const cheatStatus = $('#cheat-status');

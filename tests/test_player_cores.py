@@ -351,6 +351,16 @@ def test_inv5_default_only_where_none_resolves(world):
     assert dict(row) == {'retroarch_core': 'snes9x_libretro.so', 'is_default': 0}
 
 
+def test_inv5_never_default_on_an_achievements_only_system(world):
+    """PASS-59-318: as the arcade default the player would take every game
+    there, not only those with achievements."""
+    from services import player_cores
+    m = world['system']('mame', standalone='broken')
+    before = _default_emulator(m['sid'])
+    player_cores.map_system(m['sid'], 'fbneo')
+    assert _default_emulator(m['sid']) == before
+
+
 # -----------------------------------------------------------------------------
 # INV-8 game choice > system choice > table default, in the right file
 # -----------------------------------------------------------------------------

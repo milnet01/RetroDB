@@ -352,11 +352,15 @@ def _system_folder(system_id) -> str:
     return (row or {}).get('folder') or ''
 
 
-def _player_serves(system_id):
+def _player_serves(system_id, achievements=False):
     """(player row, its system row or None) when the player can stand in for
     this system: its row is enabled, its program is found and the system is
-    in the core table. None otherwise."""
-    if not player_cores.entry(_system_folder(system_id)):
+    in the core table, for an achievements-only system only on a game with
+    achievements. None otherwise."""
+    folder = _system_folder(system_id)
+    if not player_cores.entry(folder):
+        return None
+    if player_cores.achievements_only(folder) and not achievements:
         return None
     emu = player_cores.player_row()
     if not emu or not emu.get('enabled'):
@@ -370,20 +374,28 @@ def _player_serves(system_id):
     return emu, sys_emu
 
 
-def pick_launch_mapping(system_id, emulator_override_id, system_name=''):
+def pick_launch_mapping(system_id, emulator_override_id, system_name='', achievements=False):
     """_pick_mapping, with the player standing in where the game has no
     override and the system's default does not resolve (PASS-59-81 §3.7,
-    §4.5). The player's system row may be None until a core is installed."""
+    §4.5). On an achievements-only system (the arcade folders) a game with
+    `achievements` and no override goes to the player first, as
+    RetroAchievements supports FBNeo there and not MAME (PASS-59-318). The
+    player's system row may be None until a core is installed."""
+    if (achievements and not emulator_override_id
+            and player_cores.achievements_only(_system_folder(system_id))):
+        found = _player_serves(system_id, achievements=True)
+        if found:
+            return found
     try:
         emu, sys_emu = _pick_mapping(system_id, emulator_override_id, system_name)
     except LaunchResolutionError:
-        found = None if emulator_override_id else _player_serves(system_id)
+        found = None if emulator_override_id else _player_serves(system_id, achievements)
         if found:
             return found
         raise
     if emulator_override_id or (emu and emu.get('is_player')) or _mapping_resolves(emu, sys_emu):
         return emu, sys_emu
-    return _player_serves(system_id) or (emu, sys_emu)
+    return _player_serves(system_id, achievements) or (emu, sys_emu)
 
 
 def _fullscreen_flag(emu, system_id) -> list:
@@ -482,18 +494,19 @@ def rom_launch_problem(rom_path):
 
 
 def launch_checker():
-    """Return can_launch(system_id, emulator_override_id) -> bool for one
-    request, resolving each distinct (system, override) pair once
+    """Return can_launch(system_id, emulator_override_id, achievements) ->
+    bool for one request, resolving each distinct combination once
     (PASS-59-91 §4.5). The caller checks the launch permission."""
     cache = {}
 
-    def can_launch(system_id, emulator_override_id):
-        key = (system_id, emulator_override_id)
+    def can_launch(system_id, emulator_override_id, achievements=False):
+        key = (system_id, emulator_override_id, bool(achievements))
         if key not in cache:
             try:
-                emu, sys_emu = pick_launch_mapping(system_id, emulator_override_id)
+                emu, sys_emu = pick_launch_mapping(system_id, emulator_override_id,
+                                                   achievements=achievements)
                 if emu and emu.get('is_player') and not sys_emu:
-                    cache[key] = (_player_serves(system_id) is not None
+                    cache[key] = (_player_serves(system_id, achievements) is not None
                                   and player_cores.can_serve(_system_folder(system_id)))
                 else:
                     cache[key] = _mapping_resolves(emu, sys_emu)
@@ -514,14 +527,22 @@ def keyboard_core(system_id, emulator_override_id) -> bool:
                 and _is_keyboard_core(sys_emu.get('retroarch_core') or ''))
 
 
-def launch_emulator_name(system_id, emulator_override_id, system_name='') -> Optional[str]:
+def launch_emulator_name(system_id, emulator_override_id, system_name='',
+                         achievements=False) -> Optional[str]:
     """The name of the emulator Play would use; None when none is set up
     (PASS-59-197)."""
     try:
-        emu, _sys_emu = pick_launch_mapping(system_id, emulator_override_id, system_name)
+        emu, _sys_emu = pick_launch_mapping(system_id, emulator_override_id, system_name,
+                                            achievements)
     except LaunchResolutionError:
         return None
     return emu['name'] if emu else None
+
+
+def has_achievements(game) -> bool:
+    """The game row is linked to RetroAchievements; it then plays in the
+    player on an achievements-only system (PASS-59-318)."""
+    return bool(game.get('has_retroachievements'))
 
 
 def _launching_user_id():
@@ -585,12 +606,12 @@ def _player_context(game, emu, sys_emu, binary_argv_prefix, rom_path_obj) -> Lau
 def launches_on_player(game_id) -> bool:
     """True when the game's launch would pick the bundled player, so the
     route can hold it to one player session at a time (PASS-59-64 §4.5)."""
-    game = query("SELECT system_id, emulator_override_id FROM games WHERE id = ?",
-                 (game_id,), one=True)
+    game = query("SELECT * FROM games WHERE id = ?", (game_id,), one=True)
     if not game:
         return False
     try:
-        emu, _mapping = pick_launch_mapping(game['system_id'], game.get('emulator_override_id'))
+        emu, _mapping = pick_launch_mapping(game['system_id'], game.get('emulator_override_id'),
+                                            achievements=has_achievements(game))
     except LaunchResolutionError:
         return False
     return bool(emu and emu.get('is_player'))
@@ -600,9 +621,9 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
     """Work out how to launch one game: the emulator, its program, the RetroArch
     core and the full argv, as the header's algorithm sets out. Raises
     LaunchResolutionError with a message for the user when it cannot."""
+    # g.*: a table without has_retroachievements (a test's) still resolves.
     game = query("""
-        SELECT g.id, g.system_id, g.rom_path, g.emulator_override_id, g.launch_args_override,
-               s.name AS system_name, s.folder AS system_folder
+        SELECT g.*, s.name AS system_name, s.folder AS system_folder
         FROM games g JOIN systems s ON s.id = g.system_id
         WHERE g.id = ?
     """, (game_id,), one=True)
@@ -611,7 +632,7 @@ def resolve_launch_context(game_id: int) -> LaunchContext:
 
     # ---- pick emulator -------------------------------------------------------
     emu, sys_emu = pick_launch_mapping(game['system_id'], game.get('emulator_override_id'),
-                                       game['system_name'])
+                                       game['system_name'], has_achievements(game))
     if not emu:
         raise LaunchResolutionError(_('The emulator chosen for this game no longer exists'))
     if not emu.get('enabled'):

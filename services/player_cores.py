@@ -102,6 +102,12 @@ def cores_for(folder) -> list:
     return list((entry(folder) or {}).get('cores', []))
 
 
+def achievements_only(folder) -> bool:
+    """True where the player plays only the games RetroAchievements links:
+    the arcade folders, whose other games stay in MAME (PASS-59-318)."""
+    return bool((entry(folder) or {}).get('achievements_only'))
+
+
 def known_core(core) -> bool:
     return bool(isinstance(core, str) and _CORE_ID.match(core)) and any(
         core in e.get('cores', []) for k, e in _raw().items() if not k.startswith('_'))
@@ -489,8 +495,9 @@ def install_shaders() -> Path:
 
 def map_system(system_id, core: str) -> None:
     """The player's system row names the core; it becomes the default only
-    where the system has no default mapping that resolves (INV-5); then the
-    system cfg is written."""
+    where the system has no default mapping that resolves (INV-5), and never
+    on an achievements-only system (PASS-59-318); then the system cfg is
+    written."""
     # Imported here: launch_resolver imports this module at load time.
     from services.launch_resolver import _mapping_resolves, _pick_mapping
     emu = player_row()
@@ -503,6 +510,7 @@ def map_system(system_id, core: str) -> None:
                         or not _mapping_resolves(cur_emu, cur_row))
     except LaunchResolutionError:
         make_default = True
+    make_default = make_default and not achievements_only(system['folder'])
     with get_db_with_context() as conn:
         updated = conn.execute("""UPDATE system_emulators SET retroarch_core = ?
                                   WHERE system_id = ? AND emulator_id = ?""",

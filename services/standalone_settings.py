@@ -347,11 +347,10 @@ def _context(game_id) -> dict:
     resolver would pick, its settings table, data dir and file."""
     from services.emulator_adapters import adapter_for, find_data_dir
     from services.launch_resolver import (
-        LaunchResolutionError, _resolve_binary, pick_launch_mapping,
+        LaunchResolutionError, _resolve_binary, has_achievements, pick_launch_mapping,
     )
     game = query("""
-        SELECT g.id, g.system_id, g.title, g.rom_path, g.emulator_override_id, g.disc_serial,
-               g.disc_crc, s.folder AS system_folder, s.name AS system_name
+        SELECT g.*, s.folder AS system_folder, s.name AS system_name
         FROM games g JOIN systems s ON s.id = g.system_id WHERE g.id = ?
     """, (game_id,), one=True)
     if not game:
@@ -360,7 +359,7 @@ def _context(game_id) -> dict:
            'reason': None, 'candidates': [], 'serial': game.get('disc_serial')}
     try:
         emu, sys_emu = pick_launch_mapping(game['system_id'], game.get('emulator_override_id'),
-                                           game['system_name'])
+                                           game['system_name'], has_achievements(game))
     except LaunchResolutionError:
         ctx['reason'] = _('No emulator is set up for this system.')
         return ctx

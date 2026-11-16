@@ -2,7 +2,8 @@
 # PASS-59-155 — Cheats for the player, DuckStation and PCSX2
 
 **Status:** built 2026-10-29 for 3.34.0; MAME's list added 2026-11-15
-(§4.8, PASS-59-313), its switches 2026-11-16 (PASS-59-314). The manual run in each emulator (§7) is still owed.
+(§4.8, PASS-59-313), its switches 2026-11-16 (PASS-59-314), FinalBurn
+Neo's list 2026-11-16 (§4.9, PASS-59-318). The manual run in each emulator (§7) is still owed.
 **Kind:** feature.
 **Source:** ROADMAP PASS-59-155 (user asks and answers 2026-10-22 and
 2026-10-23).
@@ -206,7 +207,7 @@ there. RetroDB keeps no table of switches.
 The panel sits in `templates/game_detail.html`, full width under the row
 of cards that holds the Emulator settings panel, because a game can have
 hundreds of cheats. Where the game's emulator is not the player on a system with a
-`cheats` folder, DuckStation or PCSX2, it shows only the reason (PASS-59-197). Its script is
+`cheats` folder, FBNeo (§4.9), DuckStation, PCSX2 or MAME, it shows only the reason (PASS-59-197). Its script is
 `static/js/game-cheats.js`. It starts folded and remembers open or folded across games, in the browser. Otherwise it holds:
 
 - A list picker, player only, shown when there are two or more
@@ -283,6 +284,28 @@ collection arrives only by import.
   changed in MAME's menu shows on the page. A session where no cheats
   loaded leaves the file alone. A script that cannot be written leaves the
   launch with the plugin alone (INV-11).
+
+### 4.9 FinalBurn Neo (PASS-59-318)
+
+An arcade game RetroAchievements links plays in the player's `fbneo` core
+(PASS-59-81 §4.1, `achievements_only`). FBNeo reads its own `<set>.ini`
+files from `<RetroArch system>/fbneo/cheats/` and shows them as core
+options; it switches them all off at every boot (its libretro README).
+
+- **Pack.** `fbneo` is FBNeo-cheats' `master` branch zip; its
+  `cheats/<set>.ini` files go to `packs/fbneo/`. The repository states no
+  licence. Import does not take `.ini` files.
+- **Panel.** The set is the ROM file name. The panel lists each
+  `cheat "<name>"` of the set's `.ini` (own/ over packs/) once, as a plain
+  name with no switch, and says to switch cheats on in RetroArch's menu (Core Options,
+  then Cheat). A save is refused: nothing outlives the boot. A `cheat`
+  line with no numbered choice under it is a note or a separator and is
+  left out. A file that only `include`s another set's file lists nothing.
+- **Launch.** The system folder is the user's, which the player otherwise
+  only reads (PASS-59-64 §3 item 7). A launch copies the set's `.ini` there
+  only where no file of that name is, or where the game's record names it
+  as RetroDB's own copy; the record is written before the copy. The
+  session's end removes that copy (user, 2026-11-16).
 
 ## 5. Invariants
 
