@@ -141,6 +141,10 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     **Still owed**: translating the new strings into the 20 locales, in the
     v4.0.0 end batch (PASS-59-113 step 7). Not wrapped: button labels and
     other non-pop-up text set from JS.
+  When the end batch translates "No results found. Try a different
+  search term.", also replace that quoted message (an h4 in the
+  troubleshooting section) in each templates/help.<lc>.html with the new
+  msgstr.
   **Layman:** Pop-up messages and dialogs show in your own language, not English.
   Kind: implement.
 
@@ -391,10 +395,13 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     A live Xbox reply is still owed there.
 
   ---
+  **Progress** (2026-11-16): Xbox confirmed live through PASS-59-261
+  (a638ecdb). Left: Steam's review summary (Steam answers with a web
+  page, not data), S6 achievement language, and the `hidden` flag.
   **Layman:** Steam and Xbox imports keep the extra details those services already send.
   Kind: implement.
 
-- 🚧 [PASS-59-261] **Xbox import signs in with a free OpenXBL key, not an Azure app (feature, M).**
+- ✅ [PASS-59-261] **Xbox import signs in with a free OpenXBL key, not an Azure app (feature, M).**
   - **Status**: in-progress
   - **Why**: the user tried to link Xbox and was asked for an Azure
     account (2026-11-05). Microsoft app registration needs an Azure
@@ -431,6 +438,12 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     Microsoft's and not yet seen through OpenXBL.
 
   ---
+  **Done** (2026-11-16, a638ecdb): tested with the user's real OpenXBL
+  key. Replies come wrapped in {"content", "code"}, and modern
+  achievements use /achievements/player/{xuid}/{titleId}; both fixed.
+  Live import: 2 games, 17 of 56 achievements and 300 of 1250
+  gamerscore, matching OpenXBL's title summary. The Xbox 360
+  achievements path is unconfirmed: the account has no 360 titles.
   **Layman:** Xbox import works with a free key from OpenXBL instead of a Microsoft developer account.
   Kind: implement.
 
@@ -3124,7 +3137,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: feature.
   Source: user-request-2026-11-16.
 
-- 📋 [PASS-59-319] **Locale manuals name screen items unlike the app's catalogue in many places (doc-fix, M).**
+- ✅ [PASS-59-319] **Locale manuals name screen items unlike the app's catalogue in many places (doc-fix, M).**
   Find them per locale with
     ~/.claude/tools/translate-review templates/help.<lc>.html
     --english templates/help.html --lang <Language> --check-only
@@ -3138,6 +3151,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   then; leave it. id also uses English for Settings, Analytics,
   Game Imports and Playtime in prose. af keeps "Beheerder" for
   controllers (user, 2026-11-16).
+  **Done** (2026-11-16, 7352f7ff): all 20 manuals use their catalogue's
+  names; checker flags from about 1240 to decided false alarms.
+  Catalogue fixes: Background (it/ko/zh), nl Image Resize, zu "N: "
+  prefixes. "No results found" stays English in the manuals until
+  PASS-52-1 translates it.
   **Layman:** Makes the translated help pages call buttons and tabs by the same names the app shows.
   Kind: doc-fix.
   Source: PASS-59-317 translate-review check 2026-11-16.
