@@ -2,96 +2,12 @@
 <div class="settings-tab-panel" id="tab-customization" role="tabpanel" aria-label="{{ _('Customization settings') }}">
     {% call tab_subnav('customization') %}
         {% set _is_admin = has_perm('manage_settings') %}
-        {% if _is_admin %}{{ subnav_link('notifications', '🔔 ' ~ _('Notifications'), active=True) }}{% endif %}
-        {{ subnav_link('controllers', '🎮 ' ~ _('Controllers'), active=not _is_admin) }}
+        {{ subnav_link('controllers', '🎮 ' ~ _('Controllers'), active=True) }}
         {{ subnav_link('controllers-defaults', '⚙️ ' ~ _('System Defaults')) }}
         {{ subnav_link('controllers-add', '➕ ' ~ _('Add Controller')) }}
         {{ subnav_link('controllers-library', '📚 ' ~ _('Library')) }}
         {% if _is_admin %}{{ subnav_link('logos', '🖼️ ' ~ _('Logos')) }}{% endif %}
     {% endcall %}
-
-    <!-- Notification Settings -->
-{% if has_perm('manage_settings') %}
-    <section class="card mb-xl" id="notifications">
-        <div class="card-header">
-            <h2 class="card-title">🔔 {{ _('Notification Settings') }}</h2>
-        </div>
-        <div class="card-body">
-            <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
-                {{ _('Configure how long toast notifications stay visible before automatically dismissing. Set to 0 for notifications that only close when clicked.') }}
-            </p>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-lg);">
-                <!-- Success Timeout -->
-                <div class="form-group">
-                    <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);" for="notifTimeoutSuccess">
-                        <span style="color: var(--neon-green);">✅</span> {{ _('Success Notifications') }}
-                    </label>
-                    <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
-                        <input type="number" class="form-input" id="notifTimeoutSuccess"
-                               value="{{ settings.notification_timeouts.success if settings.notification_timeouts else 3 }}"
-                               min="0" max="60" step="1" style="width: 80px;">
-                        <span class="text-muted">{{ _('seconds') }}</span>
-                    </div>
-                    <span class="field-tip">{{ _('Shown after successful operations') }}</span>
-                </div>
-
-                <!-- Info Timeout -->
-                <div class="form-group">
-                    <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);" for="notifTimeoutInfo">
-                        <span style="color: var(--primary-cyan);">ℹ️</span> {{ _('Info Notifications') }}
-                    </label>
-                    <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
-                        <input type="number" class="form-input" id="notifTimeoutInfo"
-                               value="{{ settings.notification_timeouts.info if settings.notification_timeouts else 3 }}"
-                               min="0" max="60" step="1" style="width: 80px;">
-                        <span class="text-muted">{{ _('seconds') }}</span>
-                    </div>
-                    <span class="field-tip">{{ _('General information messages') }}</span>
-                </div>
-
-                <!-- Warning Timeout -->
-                <div class="form-group">
-                    <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);" for="notifTimeoutWarning">
-                        <span style="color: var(--neon-orange);">⚠️</span> {{ _('Warning Notifications') }}
-                    </label>
-                    <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
-                        <input type="number" class="form-input" id="notifTimeoutWarning"
-                               value="{{ settings.notification_timeouts.warning if settings.notification_timeouts else 5 }}"
-                               min="0" max="60" step="1" style="width: 80px;">
-                        <span class="text-muted">{{ _('seconds') }}</span>
-                    </div>
-                    <span class="field-tip">{{ _('Warnings that need attention') }}</span>
-                </div>
-
-                <!-- Error Timeout -->
-                <div class="form-group">
-                    <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);" for="notifTimeoutError">
-                        <span style="color: var(--neon-red);">❌</span> {{ _('Error Notifications') }}
-                    </label>
-                    <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
-                        <input type="number" class="form-input" id="notifTimeoutError"
-                               value="{{ settings.notification_timeouts.error if settings.notification_timeouts else 8 }}"
-                               min="0" max="60" step="1" style="width: 80px;">
-                        <span class="text-muted">{{ _('seconds') }}</span>
-                    </div>
-                    <span class="field-tip">{{ _('Errors stay longer for readability') }}</span>
-                </div>
-            </div>
-
-            <div style="margin-top: var(--spacing-lg); display: flex; gap: var(--spacing-md); align-items: center;">
-                <button type="button" data-on-click="saveNotificationSettings" class="btn btn-primary" id="saveNotifSettingsBtn">
-                    <span class="btn-icon">💾</span>
-                    {{ _('Save Settings') }}
-                </button>
-                <button type="button" data-on-click="testNotifications" class="btn btn-secondary">
-                    <span class="btn-icon">🔔</span>
-                    {{ _('Test Notifications') }}
-                </button>
-            </div>
-        </div>
-    </section>
-{% endif %}
 
     <!-- Controller Management -->
     <section class="card mb-xl" id="controllers">
@@ -281,7 +197,7 @@
     </div>
     <div class="card-body">
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-            {% trans %}System logos should be placed in <code>static/images/systems/</code> and named to match the system folder name with a supported extension (<code>.png</code>, <code>.webp</code>, <code>.jpg</code>, or <code>.svg</code>).{% endtrans %}
+            {{ _('Refresh System Logos copies any new logos from your ES-DE folder, then updates the table below. The table shows which systems still have no logo.') }}
         </p>
         
         <div style="margin-bottom: var(--spacing-lg); display: flex; gap: var(--spacing-md); flex-wrap: wrap; align-items: center;">

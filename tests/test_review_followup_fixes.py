@@ -51,12 +51,35 @@ def test_refresh_logos_finds_imported_logo_first(db, admin_test_client, monkeypa
     _touch(str(image_path / 'systems' / f'{FOLDER}.webp'))
     if bundled:
         _touch(str(static_path / 'images' / 'systems' / f'{FOLDER}.png'))
+    from scraper import scrape_esde
+    monkeypatch.setattr(scrape_esde, 'import_system_logos', lambda: 0)
 
     client, csrf = admin_test_client()
     resp = client.post('/api/refresh-system-logos', headers={'X-CSRF-Token': csrf})
     assert resp.status_code == 200, resp.get_data(as_text=True)[:300]
     logo = db.conn.execute("SELECT logo FROM systems WHERE id = ?", (db.sid,)).fetchone()['logo']
     assert logo == f'{FOLDER}.webp'
+
+
+def test_refresh_logos_imports_from_esde_first(db, admin_test_client, monkeypatch, tmp_path):
+    """PASS-59-311: the one logos button copies ES-DE's logos in, then records them."""
+    import config
+    from scraper import scrape_esde
+    image_path = tmp_path / 'user_images'
+    monkeypatch.setattr(config, 'IMAGE_PATH', str(image_path))
+    monkeypatch.setattr(config, 'STATIC_PATH', str(tmp_path / 'bundle_static'))
+
+    def fake_import():
+        _touch(str(image_path / 'systems' / f'{FOLDER}.svg'))
+        return 1
+    monkeypatch.setattr(scrape_esde, 'import_system_logos', fake_import)
+
+    client, csrf = admin_test_client()
+    resp = client.post('/api/refresh-system-logos', headers={'X-CSRF-Token': csrf})
+    assert resp.status_code == 200, resp.get_data(as_text=True)[:300]
+    assert resp.get_json()['imported'] == 1
+    logo = db.conn.execute("SELECT logo FROM systems WHERE id = ?", (db.sid,)).fetchone()['logo']
+    assert logo == f'{FOLDER}.svg'
 
 
 def test_unmark_bonus_disc_clears_parent(db, admin_test_client):

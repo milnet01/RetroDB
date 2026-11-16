@@ -17,13 +17,13 @@ def _capture_save(monkeypatch, current):
 
 def test_reset_keeps_setup_done_and_rom_path(monkeypatch):
     saved = _capture_save(monkeypatch, {
-        'setup_completed': True, 'rom_path': '/roms', 'items_per_page': 7})
+        'setup_completed': True, 'rom_path': '/roms', 'preferred_boxart': '3d'})
 
     assert settings_manager.reset_to_defaults()
 
     assert saved['setup_completed'] is True
     assert saved['rom_path'] == '/roms'
-    assert saved['items_per_page'] == settings_manager.DEFAULT_SETTINGS['items_per_page']
+    assert saved['preferred_boxart'] == settings_manager.DEFAULT_SETTINGS['preferred_boxart']
 
 
 def test_reset_before_setup_stays_unset(monkeypatch):

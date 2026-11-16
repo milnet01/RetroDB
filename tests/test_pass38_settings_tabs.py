@@ -172,10 +172,10 @@ def jinja_env():
     env.globals.update(
         current_user=_SilentUndefined(),
         current_user_settings=_SilentUndefined(),
+        notification_timeouts=_SilentUndefined(),
         user_settings=_SilentUndefined(),
         users=(),
         systems=(),
-        stats=_SilentUndefined(),
         config=_SilentUndefined(),
         scraper_settings=_SilentUndefined(),
         settings=_SilentUndefined(),
@@ -221,11 +221,11 @@ class TestAnchorsPreserved:
     # looks up `document.getElementById('<id>')` — losing one breaks the
     # link target.
     EXPECTED_ANCHORS = {
-        "account": ["profile", "timezone", "users"],
+        "account": ["profile", "appearance", "notifications", "timezone", "users"],
         "library": ["library", "display", "rom-naming", "backup"],
-        "scraping": ["esde", "scraper", "apikeys"],
-        "data": ["stats", "trophies", "dropdowns", "normalization"],
-        "customization": ["notifications", "controllers", "logos"],
+        "scraping": ["scraper", "apikeys"],
+        "data": ["dropdowns", "normalization"],
+        "customization": ["controllers", "logos"],
         "system": ["maintenance", "server", "logging"],
     }
 

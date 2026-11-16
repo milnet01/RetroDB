@@ -71,11 +71,6 @@ def _entry_attr(name):
     raise RuntimeError(f'{name}() not found on the running entry module')
 
 
-def get_stats():
-    """Get library statistics - delegates to app.py's canonical version."""
-    return _entry_attr('get_stats')()
-
-
 def get_api_status():
     """Get API status - delegates to app.py's canonical version."""
     return _entry_attr('get_api_status')()
@@ -104,7 +99,6 @@ def settings():
         # Local import: routes.scraper imports back into this package.
         from scraper.scraper_manager import DEFAULT_SCRAPER_PRIORITY, load_scraper_settings
 
-        stats = get_stats()
         api_status = get_api_status()
 
         # Get systems for the clear scraped data dropdown
@@ -191,9 +185,14 @@ def settings():
         from routes.auth import mask_user_keys
         user_key_masks = mask_user_keys(g.get('user_settings'))
 
+        # PASS-59-311 — a port the start command sets wins over the saved
+        # one (server_port.py's order), so the page shows it instead of a box.
+        port_from_env = next(({'name': name, 'value': os.environ[name]}
+                              for name in ('PORT', 'RETRODB_PORT') if os.environ.get(name)), None)
+
         return render_template('settings.html',
+                             port_from_env=port_from_env,
                              user_key_masks=user_key_masks,
-                             stats=stats,
                              api_status=api_status,
                              scraper_settings=scraper_settings,
                              systems=systems,

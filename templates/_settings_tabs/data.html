@@ -1,78 +1,9 @@
 {% from "_macros/sticky_subnav.html" import tab_subnav, subnav_link %}
 <div class="settings-tab-panel" id="tab-data" role="tabpanel" aria-label="{{ _('Data settings') }}">
     {% call tab_subnav('data') %}
-        {{ subnav_link('stats', '📊 ' ~ _('Stats'), active=True) }}
-        {{ subnav_link('trophies', '🏆 ' ~ _('Trophies')) }}
-        {% if has_perm('manage_settings') %}
-        {{ subnav_link('dropdowns', '📋 ' ~ _('Dropdowns')) }}
+        {{ subnav_link('dropdowns', '📋 ' ~ _('Dropdowns'), active=True) }}
         {{ subnav_link('normalization', '🔄 ' ~ _('Normalization')) }}
-        {% endif %}
     {% endcall %}
-
-    <!-- Statistics -->
-    <section class="card mb-xl" id="stats">
-    <div class="card-header">
-        <h2 class="card-title">{{ _('Library Statistics') }}</h2>
-    </div>
-    <div class="card-body">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--spacing-lg);">
-            <div class="text-center">
-                <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-cyan);">{{ stats.total_systems }}</div>
-                <div class="text-muted">{{ _('Systems') }}</div>
-            </div>
-            <div class="text-center">
-                <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-cyan);">{{ stats.total_games }}</div>
-                <div class="text-muted">{{ _('Total Games') }}</div>
-            </div>
-            <div class="text-center">
-                <div style="font-size: 2.5rem; font-weight: 700; color: var(--status-success);">{{ stats.scraped_games }}</div>
-                <div class="text-muted">{{ _('With Metadata') }}</div>
-            </div>
-            <div class="text-center">
-                <div style="font-size: 2.5rem; font-weight: 700; color: var(--status-warning);">{{ stats.missing_metadata }}</div>
-                <div class="text-muted">{{ _('Missing Metadata') }}</div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- RPCS3 Trophy Settings -->
-<section class="card mb-xl" id="trophies">
-    <div class="card-header">
-        <h2 class="card-title">🏆 {{ _('RPCS3 Trophy Settings') }}</h2>
-    </div>
-    <div class="card-body">
-        {# The path the scan uses: the user's own, else the shared one
-           (routes/trophies.py get_user_trophy_path; PASS-59-311 A5). #}
-        {% set _trophy_path = (current_user_settings.get('rpcs3_trophy_path') if current_user_settings else None) or config.RPCS3_TROPHY_PATH %}
-        <div class="detail-item mb-lg">
-            <span class="detail-label">{{ _('RPCS3 Trophy Path') }}</span>
-            <span class="detail-value" style="font-family: var(--font-mono);">
-                {% if _trophy_path %}
-                    {{ _trophy_path }}
-                {% else %}
-                    <span class="text-muted">{{ _('(Not configured)') }}</span>
-                {% endif %}
-            </span>
-        </div>
-        <p class="text-muted" style="font-size: 0.8rem; margin-top: var(--spacing-xs);">
-            {{ _('Set your own path in Account > My Profile > Trophy Settings.') }}
-            {% if has_perm('manage_settings') %}{% trans %}The shared path, used by anyone without their own, is in <a href="#esde">ES-DE Integration</a> on the Scraping tab.{% endtrans %}{% endif %}<br>
-            {{ _('Example:') }} <code>/path/to/rpcs3/dev_hdd0/home/00000001/trophy</code>
-        </p>
-        
-        <div style="margin-top: var(--spacing-xl);">
-            <button type="button" data-on-click="scanTrophies" class="btn btn-primary" id="scanTrophiesBtn" {% if not _trophy_path %}disabled{% endif %}>
-                <span class="btn-icon">🔍</span>
-                {{ _('Scan Trophies') }}
-            </button>
-            <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
-                {{ _('Scan your RPCS3 trophy folder for unlocked trophies') }}
-            </p>
-        </div>
-        <div id="trophyScanResult" style="margin-top: var(--spacing-md);"></div>
-    </div>
-</section>
 
 <!-- Dropdown Options Management -->
 {% if has_perm('manage_settings') %}

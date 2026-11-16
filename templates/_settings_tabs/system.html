@@ -8,7 +8,6 @@
         {{ subnav_link('server', '⚙️ ' ~ _('Server')) }}
         {% endif %}
         {% if _is_admin %}{{ subnav_link('logging', '📋 ' ~ _('Logging')) }}{% endif %}
-        {{ subnav_link('support', '💝 ' ~ _('Support'), active=not _is_admin) }}
     {% endcall %}
 
     <!-- Database Maintenance (Admin Only) -->
@@ -124,12 +123,25 @@
         </div>
         <div id="missingMediaRefsResult" style="margin-top: var(--spacing-md); display: none;"></div>
 
+        <!-- File sizes (moved from Backup, PASS-59-311) -->
+        <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
+            <span>📊</span> {{ _('Calculate File Sizes') }}
+        </h3>
+        <p class="text-muted" style="margin-bottom: var(--spacing-md);">
+            {{ _('Finds the size on disk of every game that does not have one yet.') }}
+        </p>
+        <div>
+            <button type="button" data-on-click="calculateStorage" class="btn btn-secondary">
+                <span class="btn-icon">📊</span> {{ _('Calculate File Sizes') }}
+            </button>
+        </div>
+
         <!-- Database Optimization Section -->
         <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
             <span>💾</span> {{ _('Database Optimization') }}
         </h3>
         <p class="text-muted" style="margin-bottom: var(--spacing-md);">
-            {{ _('Optimize the database for better performance. Runs VACUUM to reclaim unused space and ANALYZE to update query planner statistics.') }}
+            {{ _('Makes the database smaller and faster. Takes a few seconds.') }}
         </p>
         <div>
             <button type="button" data-on-click="optimizeDatabase" class="btn btn-primary" id="optimizeDbBtn">
@@ -193,7 +205,34 @@
             {{ _('Shut Down Server') }}
         </button>
         <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
-            {{ _('Restart the Flask server (useful after configuration changes), or shut it down completely') }}
+            {{ _('Restart RetroDB, or shut it down completely.') }}
+        </p>
+
+        {# PASS-59-311: the saved port applies only when the start command sets none (server_port.py). #}
+        <div class="form-group mt-lg">
+            <label class="form-label" for="serverPortInput">{{ _('Server Port') }}</label>
+            {% if port_from_env %}
+            <span class="detail-value" style="font-family: var(--font-mono);">{{ port_from_env.value }}</span>
+            <span class="form-hint">{% trans name=port_from_env.name %}The command that starts RetroDB sets the port ({{ name }}), so a port saved here would not be used.{% endtrans %}</span>
+            {% else %}
+            <div class="path-input-row">
+                <input type="number" id="serverPortInput" class="form-input" min="1" max="65535" step="1"
+                       value="{{ settings.server_port }}" style="max-width: 140px;">
+                <button type="button" data-on-click="saveServerPort" class="btn btn-primary" id="saveServerPortBtn">
+                    <span class="btn-icon">💾</span> {{ _('Save Port') }}
+                </button>
+            </div>
+            <span class="form-hint">{{ _("The number at the end of RetroDB's web address. After a change, press Restart Server, then open RetroDB at the new address.") }}</span>
+            {% endif %}
+        </div>
+
+        <div class="form-group mb-lg">
+            <div class="form-label">{{ _('Database Location') }}</div>
+            <span class="detail-value" style="font-family: var(--font-mono);">{{ config.DB_PATH }}</span>
+        </div>
+
+        <p class="text-muted" style="font-size: 0.85rem;">
+            {% trans help_url=url_for('help_page') ~ '#troubleshooting' %}Something not working? See <a href="{{ help_url }}">Troubleshooting</a> in Help.{% endtrans %}
         </p>
     </div>
 </section>
@@ -407,23 +446,4 @@
 </section>
 {% endif %}
 
-<!-- Support Development -->
-<section class="card mt-xl" id="support">
-    <div class="card-header">
-        <h2 class="card-title">💝 {{ _('Support Development') }}</h2>
-    </div>
-    <div class="card-body">
-        <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
-            {{ _('RetroDB is free and open source. If it saves you time, consider sponsoring — every bit helps keep solo development sustainable.') }}
-        </p>
-        <a href="https://github.com/sponsors/milnet01" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
-            <span class="btn-icon">💖</span>
-            {{ _('Sponsor on GitHub') }}
-        </a>
-        <a href="https://www.patreon.com/c/AntsProjectsHub" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
-            <span class="btn-icon">🧡</span>
-            {{ _('Support on Patreon') }}
-        </a>
-    </div>
-</section>
 </div><!-- End tab-system -->

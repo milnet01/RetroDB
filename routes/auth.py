@@ -8,6 +8,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_babel import _
 from datetime import datetime, timezone
 from urllib.parse import urlparse
+import json
 import os
 import time
 
@@ -15,7 +16,7 @@ import config
 from services.database import query, execute, get_db_with_context
 from services.api_helpers import handle_api_errors, success, error, json_body, text_field
 from services.i18n import selectable_locales
-from services.settings_validators import ALLOWED_THEMES
+from services.settings_validators import ALLOWED_THEMES, validate_settings_value
 from services.auth import (
     hash_password, verify_password, needs_rehash, get_user_settings,
     admin_required, login_required, has_permission, VALID_ROLES, session_stamp,
@@ -399,7 +400,7 @@ def api_user_settings():
     allowed_fields = [
         'rpcs3_trophy_path', 'ra_username', 'ra_api_key', 'theme_preference',
         'items_per_page', 'psn_username', 'psn_npsso', 'timezone',
-        'locale_preference', 'steam_api_key', 'steam_id',
+        'locale_preference', 'steam_api_key', 'steam_id', 'notification_timeouts',
     ]
 
     # PASS-59-253 — the Steam sync job takes the number as it is stored.
@@ -421,6 +422,16 @@ def api_user_settings():
     # so only a known theme key may be saved.
     if 'theme_preference' in data and data['theme_preference'] not in ALLOWED_THEMES:
         return error(_('Invalid theme'), code=422, field='theme_preference')
+
+    # PASS-59-311 — a person's own message times, held to the household
+    # setting's rules; the column stores them as JSON.
+    if 'notification_timeouts' in data:
+        ok, _reason, cleaned = validate_settings_value('notification_timeouts',
+                                                       data['notification_timeouts'])
+        if not ok:
+            return error(_('Notification times must be whole seconds from 1 to 60.'),
+                         code=422, field='notification_timeouts')
+        data['notification_timeouts'] = json.dumps(cleaned)
 
     # PASS-59-118 — the same check the global RPCS3 path gets in settings.
     if 'rpcs3_trophy_path' in data:

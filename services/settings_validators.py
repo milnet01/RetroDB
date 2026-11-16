@@ -30,7 +30,6 @@ _ALLOWED_RATING_SYSTEMS = {
 }
 _ALLOWED_BOXART_MODES = {'2d', '3d'}
 _ALLOWED_ARTICLE_PLACEMENTS = {'beginning', 'end'}
-_ALLOWED_SORT_ORDERS = {'asc', 'desc'}
 _ALLOWED_LOG_CATEGORIES = {'scraping', 'rom_tools', 'rom_reports', 'image_resize', 'system'}
 _ALLOWED_LOG_LEVELS = {'info', 'warning', 'error'}
 _ALLOWED_NAMING_SYSTEM_TYPES = {'console', 'handheld', 'computer', 'engine'}
@@ -236,16 +235,10 @@ _VALIDATORS = {
     # operator choosing a port for their own machine may pick a privileged
     # one.  Do not "unify" the two ranges.
     'server_port': _port_validator,
-    'items_per_page': _positive_int_validator(1, 500),
-    'default_sort': _string_validator(max_len=64),
-    'default_sort_order': _enum_validator(_ALLOWED_SORT_ORDERS, 'default_sort_order'),
-    'show_unscraped_first': _bool_validator,
     'update_check_auto': _bool_validator,
     'preferred_boxart': _enum_validator(_ALLOWED_BOXART_MODES, 'preferred_boxart'),
     'preferred_rating_system': _enum_validator(_ALLOWED_RATING_SYSTEMS, 'preferred_rating_system'),
-    'enable_animations': _bool_validator,
     'enable_mist_effect': _bool_validator,
-    'enable_scanlines': _bool_validator,
     'notification_timeouts': _notification_timeouts_validator,
     'naming_convention': _naming_convention_validator,
     'region_options': _region_options_validator,

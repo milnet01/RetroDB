@@ -116,12 +116,16 @@ def test_environment_port_survives_an_unloadable_settings_file(settings_file):
 # The retired keys are gone from the surface
 # ---------------------------------------------------------------------------
 
-@pytest.mark.parametrize('key', ['server_host', 'debug_mode'])
+# PASS-59-311: stored and validated, but nothing read them.
+UNUSED = ['items_per_page', 'default_sort', 'default_sort_order',
+          'show_unscraped_first', 'enable_animations', 'enable_scanlines']
+
+@pytest.mark.parametrize('key', ['server_host', 'debug_mode'] + UNUSED)
 def test_retired_key_is_not_a_default(key):
     assert key not in settings_manager.DEFAULT_SETTINGS
 
 
-@pytest.mark.parametrize('key', ['server_host', 'debug_mode'])
+@pytest.mark.parametrize('key', ['server_host', 'debug_mode'] + UNUSED)
 def test_retired_key_is_rejected_by_the_api(key):
     assert key not in known_keys()
     ok, reason, _ = validate_settings_value(key, '0.0.0.0')
@@ -134,6 +138,11 @@ def test_retired_key_no_longer_promises_a_restart(key):
     """The actual defect: a false promise in requires_restart()."""
     assert key not in settings_manager.RESTART_REQUIRED_SETTINGS
     assert settings_manager.requires_restart([key]) is False
+
+
+def test_rom_path_promises_no_restart():
+    """PASS-59-311: every reader resolves rom_path when it runs."""
+    assert settings_manager.requires_restart(['rom_path']) is False
 
 
 def test_server_port_still_promises_a_restart_and_now_means_it():
@@ -159,11 +168,12 @@ def test_stale_retired_keys_are_dropped_not_fatal(settings_file):
         'server_host': '0.0.0.0',
         'server_port': 5099,
         'debug_mode': True,
-        'items_per_page': 25,
+        'enable_scanlines': False,
+        'default_region': 'Europe',
     })
     loaded = settings_manager.load_settings()
-    assert 'server_host' not in loaded
-    assert 'debug_mode' not in loaded
+    for key in ('server_host', 'debug_mode', 'enable_scanlines'):
+        assert key not in loaded, key
     # The live keys around them survive untouched.
     assert loaded['server_port'] == 5099
-    assert loaded['items_per_page'] == 25
+    assert loaded['default_region'] == 'Europe'

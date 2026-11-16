@@ -5,11 +5,11 @@
 {# A tab shows only to a role that can change something in it (PASS-59-311). #}
 {% set _tabs = [
     ('account', '👤', _('Account'), True),
-    ('library', '📁', _('Library'), True),
+    ('library', '📁', _('Library'), has_perm('edit')),
     ('scraping', '🔍', pgettext('settings tab', 'Scraping'), has_perm('manage_settings')),
-    ('data', '📊', _('Data'), True),
+    ('data', '📊', _('Data'), has_perm('manage_settings')),
     ('customization', '🎨', _('Customization'), has_perm('edit')),
-    ('system', '⚙️', _('System'), True),
+    ('system', '⚙️', _('System'), has_perm('manage_settings')),
 ] | selectattr(3) | list %}
 {% if settings_tab_links %}
 <nav class="settings-tabs" id="settingsTabs" aria-label="{{ _('Settings sections') }}" data-sticky-nav>

@@ -5,9 +5,9 @@
     {% call tab_subnav('library') %}
         {% set _is_admin = has_perm('manage_settings') %}
         {% if _is_admin %}{{ subnav_link('library', '📁 ' ~ _('Paths'), active=True) }}{% endif %}
-        {{ subnav_link('display', '🖼️ ' ~ _('Display'), active=not _is_admin) }}
+        {% if _is_admin %}{{ subnav_link('display', '🖼️ ' ~ _('Display')) }}{% endif %}
         {% if _is_admin %}{{ subnav_link('rom-naming', '📝 ' ~ _('ROM Naming')) }}{% endif %}
-        {% if has_perm('edit') %}{{ subnav_link('bonus-discs', '🎁 ' ~ _('Bonus Discs')) }}{% endif %}
+        {{ subnav_link('bonus-discs', '🎁 ' ~ _('Bonus Discs'), active=not _is_admin) }}
         {% if _is_admin %}{{ subnav_link('backup', '💾 ' ~ _('Backup')) }}{% endif %}
     {% endcall %}
 
@@ -34,9 +34,37 @@
         </div>
         
         <div class="form-group mb-lg">
-            <div class="form-label">{{ _('Database Location') }}</div>
-            <span class="detail-value" style="font-family: var(--font-mono);">{{ config.DB_PATH }}</span>
-            <span class="form-hint">{{ _('Database path cannot be changed via UI') }}</span>
+            <label class="form-label" for="esdeGamelistsInput">{{ _('ES-DE Gamelists Path') }}</label>
+            <div class="path-input-row">
+                <input type="text" id="esdeGamelistsInput" class="form-input"
+                   placeholder="{{ _('e.g. /home/user/.es-de/gamelists') }}"
+                   style="font-family: var(--font-mono);">
+                {{ browse_button('esdeGamelistsInput', 'folder') }}
+            </div>
+            <span class="form-hint" id="esdeGamelistsDefault"></span>
+        </div>
+        
+        <div class="form-group mb-lg">
+            <label class="form-label" for="esdeMediaInput">{{ _('ES-DE Downloaded Media Path') }}</label>
+            <div class="path-input-row">
+                <input type="text" id="esdeMediaInput" class="form-input"
+                   placeholder="{{ _('Leave blank to auto-detect from gamelists path') }}"
+                   style="font-family: var(--font-mono);">
+                {{ browse_button('esdeMediaInput', 'folder') }}
+            </div>
+            <span class="form-hint" id="esdeMediaDefault">{{ _('Default: Loading...') }}</span>
+        </div>
+        
+        <div class="form-group mb-lg">
+            <label class="form-label" for="rpcs3TrophyInput">{{ _('RPCS3 Trophy Path') }}</label>
+            <div class="path-input-row">
+                <input type="text" id="rpcs3TrophyInput" class="form-input"
+                   placeholder="{{ _('e.g. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy') }}"
+                   style="font-family: var(--font-mono);">
+                {{ browse_button('rpcs3TrophyInput', 'folder') }}
+            </div>
+            <span class="form-hint">{{ _('Used by anyone who has not set their own in Account > My Profile.') }}</span>
+            <span class="form-hint" id="rpcs3TrophyDefault"></span>
         </div>
         
         <div style="margin-top: var(--spacing-xl); display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
@@ -49,116 +77,22 @@
                 {{ _('Scan Library') }}
             </button>
         </div>
-        <p class="text-muted" style="font-size: 0.85rem; margin-top: var(--spacing-sm);">
-            {{ _('Changes to ROM path require a restart to take full effect') }}
-        </p>
         {{ legal_disclaimer('text-muted text-sm mt-lg') }}
     </div>
 </section>
 {% endif %}
 
-<!-- Display Preferences -->
+<!-- Library display: one choice for the whole household -->
+{% if has_perm('manage_settings') %}
 <section class="card mb-xl" id="display">
     <div class="card-header">
-        <h2 class="card-title">🖼️ {{ _('Display Preferences') }}</h2>
+        <h2 class="card-title">🖼️ {{ _('Library Display') }}</h2>
     </div>
     <div class="card-body">
+        <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
+            {{ _('These choices apply to everyone. Each person picks their own theme and language in Account.') }}
+        </p>
         <div class="form-group mb-lg">
-            <div class="form-label" id="themeSelectorLabel">{{ _('Theme') }}</div>
-            <div class="theme-selector" id="themeSelector" role="radiogroup" aria-labelledby="themeSelectorLabel">
-                <button type="button" class="theme-option" role="radio" aria-checked="false" data-theme="cyberpunk" data-on-click="ThemeManager.apply" data-args='["cyberpunk"]'>
-                    <span class="theme-preview">
-                        <span class="theme-swatch" style="background: #4cc9f0;"></span>
-                        <span class="theme-swatch" style="background: #f72585;"></span>
-                        <span class="theme-swatch" style="background: #0a0e17;"></span>
-                    </span>
-                    <span class="theme-name">{{ _('Cyberpunk') }}</span>
-                </button>
-                <button type="button" class="theme-option" role="radio" aria-checked="false" data-theme="matrix" data-on-click="ThemeManager.apply" data-args='["matrix"]'>
-                    <span class="theme-preview">
-                        <span class="theme-swatch" style="background: #00ff41;"></span>
-                        <span class="theme-swatch" style="background: #008f11;"></span>
-                        <span class="theme-swatch" style="background: #000000;"></span>
-                    </span>
-                    <span class="theme-name">{{ _('Matrix') }}</span>
-                </button>
-                <button type="button" class="theme-option" role="radio" aria-checked="false" data-theme="amber" data-on-click="ThemeManager.apply" data-args='["amber"]'>
-                    <span class="theme-preview">
-                        <span class="theme-swatch" style="background: #ffb000;"></span>
-                        <span class="theme-swatch" style="background: #ff6600;"></span>
-                        <span class="theme-swatch" style="background: #0a0800;"></span>
-                    </span>
-                    <span class="theme-name">{{ _('Retro Amber') }}</span>
-                </button>
-                <button type="button" class="theme-option" role="radio" aria-checked="false" data-theme="ocean" data-on-click="ThemeManager.apply" data-args='["ocean"]'>
-                    <span class="theme-preview">
-                        <span class="theme-swatch" style="background: #4dabf7;"></span>
-                        <span class="theme-swatch" style="background: #20c997;"></span>
-                        <span class="theme-swatch" style="background: #040810;"></span>
-                    </span>
-                    <span class="theme-name">{{ _('Midnight Ocean') }}</span>
-                </button>
-                <button type="button" class="theme-option" role="radio" aria-checked="false" data-theme="christian" data-on-click="ThemeManager.apply" data-args='["christian"]'>
-                    <span class="theme-preview">
-                        <span class="theme-swatch" style="background: #d4a843;"></span>
-                        <span class="theme-swatch" style="background: #7b4db0;"></span>
-                        <span class="theme-swatch" style="background: #0c0810;"></span>
-                    </span>
-                    <span class="theme-name">{{ _('Cathedral') }}</span>
-                </button>
-                <button type="button" class="theme-option" role="radio" aria-checked="false" data-theme="bladerunner" data-on-click="ThemeManager.apply" data-args='["bladerunner"]'>
-                    <span class="theme-preview">
-                        <span class="theme-swatch" style="background: #1a9fff;"></span>
-                        <span class="theme-swatch" style="background: #ff2d7c;"></span>
-                        <span class="theme-swatch" style="background: #06080e;"></span>
-                    </span>
-                    <span class="theme-name">{{ _('Blade Runner') }}</span>
-                </button>
-                <button type="button" class="theme-option" role="radio" aria-checked="false" data-theme="elite" data-on-click="ThemeManager.apply" data-args='["elite"]'>
-                    <span class="theme-preview">
-                        <span class="theme-swatch" style="background: #00ff00;"></span>
-                        <span class="theme-swatch" style="background: #cccccc;"></span>
-                        <span class="theme-swatch" style="background: #000000;"></span>
-                    </span>
-                    <span class="theme-name">{{ _('Elite') }}</span>
-                </button>
-            </div>
-            <span class="form-hint">{{ _('Theme applies instantly. Changes are saved automatically.') }}</span>
-        </div>
-
-        <div class="form-group mb-lg">
-            <div class="toggle-item" style="display: flex; align-items: center; gap: var(--spacing-sm);">
-                <label class="toggle-switch" for="backgroundMotionToggle">
-                    <input type="checkbox" id="backgroundMotionToggle" checked
-                           data-on-change="ThemeManager.setMotion" data-args='["$this.checked"]'>
-                    <span class="toggle-slider"></span>
-                </label>
-                <label class="toggle-label" for="backgroundMotionToggle">{{ _('Moving background') }}</label>
-            </div>
-            <span class="form-hint">{{ _('The mist, rain or stars behind the page. It pauses when you are not using RetroDB. Turn it off to save power on this computer.') }}</span>
-        </div>
-
-        {# Pass 43.1 — per-user UI language. Mirrors the Theme control's
-           label-div + aria-labelledby pairing for an accessible name. Unlike
-           Theme (instant, JS-applied) this is a plain <select> POSTed to
-           /api/users/settings; the page reloads to re-render in the new locale. #}
-        <div class="form-group mb-lg">
-            <div class="form-label" id="languageSelectLabel">{{ _('Language') }}</div>
-            <select id="languageSelect" class="form-select" style="max-width: 300px;"
-                    aria-labelledby="languageSelectLabel"
-                    data-on-change="saveLanguage" data-args='["$this.value"]'>
-                {% set choices = selectable_locales(has_perm('manage_settings')) %}
-                {% set current_locale = (current_user_settings.get('locale_preference') if current_user_settings else 'en') or 'en' %}
-                {% if current_locale not in choices %}{% set current_locale = 'en' %}{% endif %}
-                {% for code in choices %}
-                <option value="{{ code }}" {% if code == current_locale %}selected{% endif %}>{{ locale_display_name(code) }}</option>
-                {% endfor %}
-            </select>
-            <span class="form-hint">{{ _('Changes the interface language. The page reloads when you switch.') }}</span>
-        </div>
-
-        <div class="form-group mb-lg">
-{% if has_perm('manage_settings') %}
             <label class="form-label" for="preferredBoxartSelect">{{ _('Preferred Boxart Style') }}</label>
             <select id="preferredBoxartSelect" class="form-select" style="max-width: 300px;">
                 <option value="2d">{{ _('2D Boxart (Standard)') }}</option>
@@ -189,9 +123,9 @@
                 {{ _('Save Display Settings') }}
             </button>
         </div>
-{% endif %}
     </div>
 </section>
+{% endif %}
 
 <!-- ROM Naming Conventions -->
 {% if has_perm('manage_settings') %}
@@ -317,10 +251,6 @@
             <button type="button" data-on-click="createBackup" class="btn btn-primary" id="createBackupBtn">
                 <span class="btn-icon">💾</span>
                 {{ _('Create Backup') }}
-            </button>
-            <button type="button" data-on-click="calculateStorage" class="btn btn-secondary">
-                <span class="btn-icon">📊</span>
-                {{ _('Calculate File Sizes') }}
             </button>
         </div>
         <p class="text-muted" style="font-size: 0.85rem; margin-bottom: var(--spacing-lg);">

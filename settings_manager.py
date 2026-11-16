@@ -51,10 +51,6 @@ DEFAULT_SETTINGS = {
     'server_port': 5000,
 
     # UI Preferences
-    'items_per_page': 50,
-    'default_sort': 'title',
-    'default_sort_order': 'asc',
-    'show_unscraped_first': False,
     'preferred_boxart': '2d',  # '2d' or '3d' - if 3d, falls back to 2d when unavailable
     'preferred_rating_system': 'esrb',  # esrb, pegi, cero, usk, acb, fpb, grac, classind
     
@@ -62,11 +58,9 @@ DEFAULT_SETTINGS = {
     # (scraper.scraper_manager.load_scraper_settings), not here.
 
     # Feature toggles
-    'enable_animations': True,
     # PASS-59-169 — check GitHub for a new RetroDB once a day (admins see it)
     'update_check_auto': True,
     'enable_mist_effect': True,
-    'enable_scanlines': True,
 
     # Notification timeout settings (in seconds)
     'notification_timeouts': {
@@ -159,9 +153,13 @@ DEFAULT_SETTINGS = {
 # `server_port` is genuinely benign and stays.
 #
 # scraper_priority / scraper_enabled were stored here but read from nowhere;
-# the live values are in scraper_settings.json (PASS-59-63).
+# the live values are in scraper_settings.json (PASS-59-63). The last six were
+# stored and validated, and nothing read them (PASS-59-311).
 _RETIRED_SETTINGS = frozenset({'server_host', 'debug_mode',
-                               'scraper_priority', 'scraper_enabled'})
+                               'scraper_priority', 'scraper_enabled',
+                               'items_per_page', 'default_sort', 'default_sort_order',
+                               'show_unscraped_first', 'enable_animations',
+                               'enable_scanlines'})
 
 
 def ensure_settings_dir():
@@ -345,9 +343,9 @@ def reset_to_defaults():
 # A key belongs here only if a restart genuinely applies it.  `server_port` is
 # read by server_port.resolve_server_port() in app.py's startup path, so a
 # restart really does pick it up; `server_host` and `debug_mode` used to sit
-# here promising the same thing while nothing ever read them.
+# here promising the same thing while nothing ever read them.  `rom_path` is
+# resolved each time it is used, so a save applies it at once (PASS-59-311).
 RESTART_REQUIRED_SETTINGS = [
-    'rom_path',
     'server_port',
 ]
 

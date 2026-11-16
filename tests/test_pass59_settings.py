@@ -42,7 +42,7 @@ def test_save_after_a_corrupt_read_keeps_the_original(settings_path):
 
     settings = settings_manager.load_settings()
     assert settings['rom_path'] != '/my/roms'  # defaults came back
-    settings['items_per_page'] = 48
+    settings['preferred_boxart'] = '3d'
     settings_manager.save_settings(settings)
 
     kept = list(settings_path.parent.glob('settings.json.corrupt-*'))
@@ -68,9 +68,9 @@ def test_save_after_a_transient_read_failure_is_refused(settings_path, monkeypat
 
 def test_a_missing_file_still_saves_normally(settings_path):
     settings = settings_manager.load_settings()
-    settings['items_per_page'] = 48
+    settings['preferred_boxart'] = '3d'
     assert settings_manager.save_settings(settings) is True
-    assert json.loads(settings_path.read_text(encoding='utf-8'))['items_per_page'] == 48
+    assert json.loads(settings_path.read_text(encoding='utf-8'))['preferred_boxart'] == '3d'
 
 
 # ---------------------------------------------------------------------------

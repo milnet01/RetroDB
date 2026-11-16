@@ -1019,6 +1019,20 @@ def _user_theme(user_settings_obj):
     return theme if theme in ALLOWED_THEMES else None
 
 
+def _notification_timeouts(household, user_settings_obj):
+    """Seconds each kind of toast stays: the person's own (PASS-59-311),
+    else the household's in settings.json, else the defaults."""
+    times = dict(settings_manager.DEFAULT_SETTINGS['notification_timeouts'])
+    times.update(household or {})
+    own = dict(user_settings_obj).get('notification_timeouts') if user_settings_obj else None
+    if own:
+        try:
+            times.update(json.loads(own))
+        except (ValueError, TypeError):
+            pass  # a row written by hand; the household's times stand
+    return times
+
+
 @app.context_processor
 def inject_config():
     """Make config, user settings, and current user available to all templates"""
@@ -1048,6 +1062,8 @@ def inject_config():
         'current_user': g.get('user'),
         'current_user_settings': g.get('user_settings'),
         'user_theme': _user_theme(g.get('user_settings')),
+        'notification_timeouts': _notification_timeouts(
+            user_settings.get('notification_timeouts'), g.get('user_settings')),
         'has_permission': has_permission,
         'get_avatar_url': get_avatar_url,
         # Pass 34.6 — asset_url is already registered as a Jinja global

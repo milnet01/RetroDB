@@ -249,7 +249,11 @@ def api_refresh_system_names():
 @admin_required
 @handle_api_errors
 def api_refresh_system_logos():
-    """Check for and update system logos that exist on disk"""
+    """Copy in ES-DE's system logos, then record every logo on disk.
+    One button does both (PASS-59-311); without an ES-DE path the copy
+    finds nothing."""
+    from scraper import scrape_esde
+    imported = scrape_esde.import_system_logos()
     updated = 0
 
     systems = query("SELECT id, folder, logo FROM systems")
@@ -279,52 +283,8 @@ def api_refresh_system_logos():
     return success(
         message=f'Updated {updated} system logos',
         updated=updated,
+        imported=imported,
     )
-
-
-@bp.route('/api/import-logos', methods=['POST'])
-@admin_required
-@handle_api_errors
-def api_import_logos():
-    """Import system logos from ES-DE"""
-    try:
-        from scraper.scrape_esde import import_system_logos
-        imported = import_system_logos()
-
-        if imported > 0:
-            # Update database to set logo paths
-            conn = get_db()
-            try:
-                c = conn.cursor()
-
-                # Get all systems and check for logo files (with multiple extensions)
-                systems = query("SELECT id, folder FROM systems")
-                logo_dir = os.path.join(config.IMAGE_PATH, 'systems')
-
-                for system in systems:
-                    logo_filename, logo_path = find_image_file(logo_dir, system['folder'])
-                    if logo_filename:
-                        c.execute("UPDATE systems SET logo = ? WHERE id = ?",
-                                  (logo_filename, system['id']))
-
-                conn.commit()
-            finally:
-                conn.close()
-
-            return success(
-                imported=imported,
-                message=f'Imported {imported} system logos from ES-DE',
-            )
-        else:
-            return success(
-                imported=0,
-                message='No new logos found to import',
-            )
-    except ImportError:
-        return error(
-            _('ES-DE scraper not available'),
-            500,
-        )
 
 
 def _rom_size(path):

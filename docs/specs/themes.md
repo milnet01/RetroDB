@@ -465,9 +465,9 @@ the one most easily missed.
    you must run `python3 build_js.py` after editing.
 
 7. **Add the picker UI.** New `.theme-option` card in
-   `templates/_settings_tabs/library.html` under the Display Preferences
-   section (the `themeSelector` `<div>` opens around line 58; insert the new
-   card alongside the existing ones):
+   `templates/_settings_tabs/account.html`, in the Theme and Language card
+   (the `themeSelector` `<div>`; insert the new card alongside the existing
+   ones):
 
    ```html
    <div class="theme-option" data-theme="newtheme" onclick="ThemeManager.apply('newtheme')">
@@ -581,4 +581,4 @@ What is **not** automated-tested:
 - `static/css/core/themes.css` — per-theme variable overrides
 - `static/css/core/variables.css` — `:root` baseline
 - `templates/base.html` — FOUC script + standalone `theme.js` `<script>` tag
-- `templates/_settings_tabs/library.html` Display Preferences — theme picker UI
+- `templates/_settings_tabs/account.html` Theme and Language — theme picker UI

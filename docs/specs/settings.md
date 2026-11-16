@@ -66,7 +66,9 @@ as the JSON stores; it appears in the table for symmetry.
     `config.py`. It has its own three-tier ladder — see Precedence.
 - **`data/settings.json`** — every UI-editable preference: paths
   (`rom_path`, `esde_gamelists_path`, …), server port, theme, scraper
-  priority/enabled flags, notification timeouts, naming convention, logging
+  priority/enabled flags, notification timeouts (the household's, used by
+  anyone without their own in `user_settings.notification_timeouts`), naming
+  convention, logging
   config, RetroArch launch settings. Full default set lives in
   `settings_manager.DEFAULT_SETTINGS`.
 

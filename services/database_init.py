@@ -153,6 +153,9 @@ def ensure_user_tables():
             # Pass 43.1 — per-user UI language. Validated at write time against
             # services.i18n.available_locales() in routes/auth.py.
             ('locale_preference', "TEXT DEFAULT 'en'"),
+            # PASS-59-311 — per-user message times, JSON {level: seconds};
+            # empty falls back to the household's in settings.json.
+            ('notification_timeouts', "TEXT DEFAULT ''"),
         ):
             _add_column_if_missing(cursor, 'user_settings', _col, _defn)
 

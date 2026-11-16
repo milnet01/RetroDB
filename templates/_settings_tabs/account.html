@@ -3,6 +3,8 @@
 <div class="settings-tab-panel active" id="tab-account" role="tabpanel" aria-label="{{ _('Account settings') }}">
     {% call tab_subnav('account') %}
         {{ subnav_link('profile', '👤 ' ~ _('My Profile'), active=True) }}
+        {{ subnav_link('appearance', '🎨 ' ~ _('Theme and Language')) }}
+        {{ subnav_link('notifications', '🔔 ' ~ _('Notifications')) }}
         {{ subnav_link('timezone', '🕐 ' ~ _('Timezone')) }}
         {% if current_user and current_user.role == 'admin' %}
         {{ subnav_link('users', '👥 ' ~ _('Users')) }}
@@ -276,6 +278,190 @@
         {% else %}
         <p class="text-muted">{{ _('Please log in to view your profile settings.') }}</p>
         {% endif %}
+    </div>
+</section>
+
+<!-- Theme and Language: each person's own (PASS-59-311) -->
+<section class="card mb-xl" id="appearance">
+    <div class="card-header">
+        <h2 class="card-title">🎨 {{ _('Theme and Language') }}</h2>
+    </div>
+    <div class="card-body">
+        <div class="form-group mb-lg">
+            <div class="form-label" id="themeSelectorLabel">{{ _('Theme') }}</div>
+            <div class="theme-selector" id="themeSelector" role="radiogroup" aria-labelledby="themeSelectorLabel">
+                <button type="button" class="theme-option" role="radio" aria-checked="false" data-theme="cyberpunk" data-on-click="ThemeManager.apply" data-args='["cyberpunk"]'>
+                    <span class="theme-preview">
+                        <span class="theme-swatch" style="background: #4cc9f0;"></span>
+                        <span class="theme-swatch" style="background: #f72585;"></span>
+                        <span class="theme-swatch" style="background: #0a0e17;"></span>
+                    </span>
+                    <span class="theme-name">{{ _('Cyberpunk') }}</span>
+                </button>
+                <button type="button" class="theme-option" role="radio" aria-checked="false" data-theme="matrix" data-on-click="ThemeManager.apply" data-args='["matrix"]'>
+                    <span class="theme-preview">
+                        <span class="theme-swatch" style="background: #00ff41;"></span>
+                        <span class="theme-swatch" style="background: #008f11;"></span>
+                        <span class="theme-swatch" style="background: #000000;"></span>
+                    </span>
+                    <span class="theme-name">{{ _('Matrix') }}</span>
+                </button>
+                <button type="button" class="theme-option" role="radio" aria-checked="false" data-theme="amber" data-on-click="ThemeManager.apply" data-args='["amber"]'>
+                    <span class="theme-preview">
+                        <span class="theme-swatch" style="background: #ffb000;"></span>
+                        <span class="theme-swatch" style="background: #ff6600;"></span>
+                        <span class="theme-swatch" style="background: #0a0800;"></span>
+                    </span>
+                    <span class="theme-name">{{ _('Retro Amber') }}</span>
+                </button>
+                <button type="button" class="theme-option" role="radio" aria-checked="false" data-theme="ocean" data-on-click="ThemeManager.apply" data-args='["ocean"]'>
+                    <span class="theme-preview">
+                        <span class="theme-swatch" style="background: #4dabf7;"></span>
+                        <span class="theme-swatch" style="background: #20c997;"></span>
+                        <span class="theme-swatch" style="background: #040810;"></span>
+                    </span>
+                    <span class="theme-name">{{ _('Midnight Ocean') }}</span>
+                </button>
+                <button type="button" class="theme-option" role="radio" aria-checked="false" data-theme="christian" data-on-click="ThemeManager.apply" data-args='["christian"]'>
+                    <span class="theme-preview">
+                        <span class="theme-swatch" style="background: #d4a843;"></span>
+                        <span class="theme-swatch" style="background: #7b4db0;"></span>
+                        <span class="theme-swatch" style="background: #0c0810;"></span>
+                    </span>
+                    <span class="theme-name">{{ _('Cathedral') }}</span>
+                </button>
+                <button type="button" class="theme-option" role="radio" aria-checked="false" data-theme="bladerunner" data-on-click="ThemeManager.apply" data-args='["bladerunner"]'>
+                    <span class="theme-preview">
+                        <span class="theme-swatch" style="background: #1a9fff;"></span>
+                        <span class="theme-swatch" style="background: #ff2d7c;"></span>
+                        <span class="theme-swatch" style="background: #06080e;"></span>
+                    </span>
+                    <span class="theme-name">{{ _('Blade Runner') }}</span>
+                </button>
+                <button type="button" class="theme-option" role="radio" aria-checked="false" data-theme="elite" data-on-click="ThemeManager.apply" data-args='["elite"]'>
+                    <span class="theme-preview">
+                        <span class="theme-swatch" style="background: #00ff00;"></span>
+                        <span class="theme-swatch" style="background: #cccccc;"></span>
+                        <span class="theme-swatch" style="background: #000000;"></span>
+                    </span>
+                    <span class="theme-name">{{ _('Elite') }}</span>
+                </button>
+            </div>
+            <span class="form-hint">{{ _('Theme applies instantly. Changes are saved automatically.') }}</span>
+        </div>
+
+        <div class="form-group mb-lg">
+            <div class="toggle-item" style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                <label class="toggle-switch" for="backgroundMotionToggle">
+                    <input type="checkbox" id="backgroundMotionToggle" checked
+                           data-on-change="ThemeManager.setMotion" data-args='["$this.checked"]'>
+                    <span class="toggle-slider"></span>
+                </label>
+                <label class="toggle-label" for="backgroundMotionToggle">{{ _('Moving background') }}</label>
+            </div>
+            <span class="form-hint">{{ _('The mist, rain or stars behind the page. It pauses when you are not using RetroDB. Turn it off to save power on this computer.') }}</span>
+        </div>
+
+        {# Pass 43.1 — per-user UI language. Mirrors the Theme control's
+           label-div + aria-labelledby pairing for an accessible name. Unlike
+           Theme (instant, JS-applied) this is a plain <select> POSTed to
+           /api/users/settings; the page reloads to re-render in the new locale. #}
+        <div class="form-group mb-lg">
+            <div class="form-label" id="languageSelectLabel">{{ _('Language') }}</div>
+            <select id="languageSelect" class="form-select" style="max-width: 300px;"
+                    aria-labelledby="languageSelectLabel"
+                    data-on-change="saveLanguage" data-args='["$this.value"]'>
+                {% set choices = selectable_locales(has_perm('manage_settings')) %}
+                {% set current_locale = (current_user_settings.get('locale_preference') if current_user_settings else 'en') or 'en' %}
+                {% if current_locale not in choices %}{% set current_locale = 'en' %}{% endif %}
+                {% for code in choices %}
+                <option value="{{ code }}" {% if code == current_locale %}selected{% endif %}>{{ locale_display_name(code) }}</option>
+                {% endfor %}
+            </select>
+            <span class="form-hint">{{ _('Changes the interface language. The page reloads when you switch.') }}</span>
+        </div>
+
+    </div>
+</section>
+
+<!-- Notification times: each person's own (PASS-59-311) -->
+<section class="card mb-xl" id="notifications">
+    <div class="card-header">
+        <h2 class="card-title">🔔 {{ _('Notification Settings') }}</h2>
+    </div>
+    <div class="card-body">
+        <p class="text-muted" style="margin-bottom: var(--spacing-lg);">
+            {{ _('How long each kind of notification stays on screen before it closes by itself, from 1 to 60 seconds. These are your own; other people keep theirs.') }}
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-lg);">
+            <!-- Success Timeout -->
+            <div class="form-group">
+                <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);" for="notifTimeoutSuccess">
+                    <span style="color: var(--neon-green);">✅</span> {{ _('Success Notifications') }}
+                </label>
+                <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <input type="number" class="form-input" id="notifTimeoutSuccess"
+                           value="{{ notification_timeouts.success }}"
+                           min="1" max="60" step="1" style="width: 80px;">
+                    <span class="text-muted">{{ _('seconds') }}</span>
+                </div>
+                <span class="field-tip">{{ _('Shown after successful operations') }}</span>
+            </div>
+
+            <!-- Info Timeout -->
+            <div class="form-group">
+                <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);" for="notifTimeoutInfo">
+                    <span style="color: var(--primary-cyan);">ℹ️</span> {{ _('Info Notifications') }}
+                </label>
+                <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <input type="number" class="form-input" id="notifTimeoutInfo"
+                           value="{{ notification_timeouts.info }}"
+                           min="1" max="60" step="1" style="width: 80px;">
+                    <span class="text-muted">{{ _('seconds') }}</span>
+                </div>
+                <span class="field-tip">{{ _('General information messages') }}</span>
+            </div>
+
+            <!-- Warning Timeout -->
+            <div class="form-group">
+                <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);" for="notifTimeoutWarning">
+                    <span style="color: var(--neon-orange);">⚠️</span> {{ _('Warning Notifications') }}
+                </label>
+                <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <input type="number" class="form-input" id="notifTimeoutWarning"
+                           value="{{ notification_timeouts.warning }}"
+                           min="1" max="60" step="1" style="width: 80px;">
+                    <span class="text-muted">{{ _('seconds') }}</span>
+                </div>
+                <span class="field-tip">{{ _('Warnings that need attention') }}</span>
+            </div>
+
+            <!-- Error Timeout -->
+            <div class="form-group">
+                <label class="form-label" style="display: flex; align-items: center; gap: var(--spacing-sm);" for="notifTimeoutError">
+                    <span style="color: var(--neon-red);">❌</span> {{ _('Error Notifications') }}
+                </label>
+                <div style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                    <input type="number" class="form-input" id="notifTimeoutError"
+                           value="{{ notification_timeouts.error }}"
+                           min="1" max="60" step="1" style="width: 80px;">
+                    <span class="text-muted">{{ _('seconds') }}</span>
+                </div>
+                <span class="field-tip">{{ _('Errors stay longer for readability') }}</span>
+            </div>
+        </div>
+
+        <div style="margin-top: var(--spacing-lg); display: flex; gap: var(--spacing-md); align-items: center; flex-wrap: wrap;">
+            <button type="button" data-on-click="saveNotificationSettings" class="btn btn-primary" id="saveNotifSettingsBtn">
+                <span class="btn-icon">💾</span>
+                {{ _('Save Notification Times') }}
+            </button>
+            <button type="button" data-on-click="testNotifications" class="btn btn-secondary">
+                <span class="btn-icon">🔔</span>
+                {{ _('Test Notifications') }}
+            </button>
+        </div>
     </div>
 </section>
 

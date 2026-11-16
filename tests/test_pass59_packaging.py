@@ -313,10 +313,10 @@ class TestPass59_14EntryModuleLookup:
         import routes.settings as rs
 
         sentinel = types.ModuleType('__main__')
-        sentinel.get_stats = lambda: {'total_games': 7}
+        sentinel.get_api_status = lambda: {'database': 7}
         monkeypatch.delitem(sys.modules, 'app', raising=False)
         monkeypatch.setitem(sys.modules, '__main__', sentinel)
-        assert rs.get_stats() == {'total_games': 7}
+        assert rs.get_api_status() == {'database': 7}
 
     def test_prefers_app_over_main(self, monkeypatch):
         import types
@@ -333,8 +333,8 @@ class TestPass59_14EntryModuleLookup:
 
         monkeypatch.delitem(sys.modules, 'app', raising=False)
         monkeypatch.setitem(sys.modules, '__main__', types.ModuleType('__main__'))
-        with pytest.raises(RuntimeError, match='get_stats'):
-            rs.get_stats()
+        with pytest.raises(RuntimeError, match='get_api_status'):
+            rs.get_api_status()
 
 
 # -----------------------------------------------------------------------------

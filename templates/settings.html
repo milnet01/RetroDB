@@ -21,19 +21,19 @@
 {% include "_settings_tabs/account.html" %}
 
 <!-- ==================== TAB: LIBRARY ==================== -->
-{% include "_settings_tabs/library.html" %}
+{% if has_perm('edit') %}{% include "_settings_tabs/library.html" %}{% endif %}
 
 <!-- ==================== TAB: SCRAPING ==================== -->
 {% if has_perm('manage_settings') %}{% include "_settings_tabs/scraping.html" %}{% endif %}
 
 <!-- ==================== TAB: DATA ==================== -->
-{% include "_settings_tabs/data.html" %}
+{% if has_perm('manage_settings') %}{% include "_settings_tabs/data.html" %}{% endif %}
 
 <!-- ==================== TAB: CUSTOMIZATION ==================== -->
 {% if has_perm('edit') %}{% include "_settings_tabs/customization.html" %}{% endif %}
 
 <!-- ==================== TAB: SYSTEM ==================== -->
-{% include "_settings_tabs/system.html" %}
+{% if has_perm('manage_settings') %}{% include "_settings_tabs/system.html" %}{% endif %}
 
 </div>
 {% endblock %}
@@ -1750,16 +1750,23 @@ function saveNotificationSettings() {
     btn.disabled = true;
     btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Saving...')|tojson }});
 
+    // Send what was typed: the server refuses anything outside 1-60 with a
+    // message, rather than a 0 being saved quietly as a default.
+    const seconds = id => {
+        const n = parseInt(document.getElementById(id).value, 10);
+        return Number.isNaN(n) ? null : n;
+    };
     const data = {
         notification_timeouts: {
-            success: parseInt(document.getElementById('notifTimeoutSuccess').value) || 3,
-            info: parseInt(document.getElementById('notifTimeoutInfo').value) || 3,
-            warning: parseInt(document.getElementById('notifTimeoutWarning').value) || 5,
-            error: parseInt(document.getElementById('notifTimeoutError').value) || 8
+            success: seconds('notifTimeoutSuccess'),
+            info: seconds('notifTimeoutInfo'),
+            warning: seconds('notifTimeoutWarning'),
+            error: seconds('notifTimeoutError')
         }
     };
 
-    fetch('/api/settings', {
+    // Each person's own times (PASS-59-311).
+    fetch('/api/users/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -1769,7 +1776,6 @@ function saveNotificationSettings() {
         btn.disabled = false;
         btn.innerHTML = originalText;
         if (result.success) {
-            // Update the global notification timeouts
             if (typeof Notifications !== 'undefined') {
                 Notifications.timeouts = data.notification_timeouts;
             }
@@ -2163,6 +2169,27 @@ function calculateStorage() {
 
 // Load backups on page load
 document.addEventListener('DOMContentLoaded', loadBackups);
+
+// PASS-59-311 — the saved port takes effect at the next Restart.
+function saveServerPort() {
+    const port = parseInt(document.getElementById('serverPortInput').value, 10);
+    fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ server_port: port })
+    })
+    .then(r => r.json())
+    .then(result => {
+        if (result.success) {
+            const url = `${location.protocol}//${location.hostname}:${port}`;
+            showModal('✅ ' + {{ _('Port saved')|tojson }},
+                t({{ _('Press Restart Server, then open RetroDB at {url}')|tojson }}, {url: url}));
+        } else {
+            showNotification(t({{ _('Failed to save: {error}')|tojson }}, {error: result.error}), 'error');
+        }
+    })
+    .catch(e => showNotification(t({{ _('Error saving settings: {error}')|tojson }}, {error: e}), 'error'));
+}
 
 // =============================================================================
 // CONFIRM MODAL
@@ -4436,8 +4463,9 @@ async function refreshSystemLogos() {
         if (data.success) {
             // Reload the logo reference table
             await reloadLogoReference();
-            showModal('✅ ' + {{ _('Logos Refreshed')|tojson }}, 
-                t({{ _('System logos updated: {count}. The table has been refreshed.')|tojson }}, {count: data.updated}));
+            showModal('✅ ' + {{ _('Logos Refreshed')|tojson }},
+                t({{ _('Logos copied from ES-DE: {imported}. System logos updated: {count}.')|tojson }},
+                  {imported: data.imported || 0, count: data.updated}));
         } else {
             showModal({{ _('Error')|tojson }}, data.error || {{ _('Failed to refresh logos')|tojson }});
         }
@@ -4483,67 +4511,6 @@ async function refreshSystemNames() {
 // =============================================================================
 // EXISTING FUNCTIONS
 // =============================================================================
-
-async function importSystemLogos() {
-    const btn = document.getElementById('importLogosBtn');
-    const resultDiv = document.getElementById('logoImportResult');
-    
-    btn.disabled = true;
-    btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Importing...')|tojson }});
-    resultDiv.innerHTML = '';
-    
-    try {
-        const response = await fetch('/api/import-logos', { method: 'POST' });
-        const data = await response.json();
-        
-        if (data.success) {
-            resultDiv.innerHTML = `<div class="alert alert-success">${escapeHtml(data.message)}</div>`;
-            if (data.imported > 0) {
-                resultDiv.innerHTML += `<p class="text-muted" style="margin-top: var(--spacing-sm);">${escapeHtml({{ _('Run "Scan Library" to update the database with the new logos.')|tojson }})}</p>`;
-                // Refresh logo reference
-                loadSystems();
-            }
-        } else {
-            resultDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(data.error || {{ _('An error occurred')|tojson }})}</div>`;
-        }
-    } catch (error) {
-        resultDiv.innerHTML = `<div class="alert alert-error">${escapeHtml(t({{ _('Failed to import logos: {error}')|tojson }}, {error: error.message}))}</div>`;
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<span class="btn-icon">🖼️</span> ' + escapeHtml({{ _('Import System Logos')|tojson }});
-    }
-}
-
-async function scanTrophies() {
-    const btn = document.getElementById('scanTrophiesBtn');
-    const resultDiv = document.getElementById('trophyScanResult');
-    
-    btn.disabled = true;
-    btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Scanning...')|tojson }});
-    resultDiv.innerHTML = '<p class="text-muted">Scanning trophy folders...</p>';
-    
-    try {
-        const response = await fetch('/api/scan-trophies', { method: 'POST' });
-        const data = await response.json();
-        
-        if (data.success) {
-            resultDiv.innerHTML = `<div class="alert alert-success">${escapeHtml(data.message)}</div>`;
-            if (data.games_found > 0) {
-                resultDiv.innerHTML += `<p style="margin-top: var(--spacing-sm);">
-                    Found ${data.games_found} games with ${data.total_trophies} trophies (${data.unlocked_trophies} unlocked).
-                    <a href="/trophies" style="color: var(--primary-cyan);">View Trophies →</a>
-                </p>`;
-            }
-        } else {
-            resultDiv.innerHTML = `<div class="alert alert-error">Error: ${escapeHtml(data.error || 'An error occurred')}</div>`;
-        }
-    } catch (error) {
-        resultDiv.innerHTML = `<div class="alert alert-error">Failed to scan trophies: ${escapeHtml(error.message)}</div>`;
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<span class="btn-icon">🔍</span> Scan Trophies';
-    }
-}
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {

@@ -639,7 +639,7 @@ RetroDB's themes each have CSS variable overrides; all but Amber have an animate
 3. Add `_initNewTheme()` and `_drawNewThemeFrame()` methods to `ThemeManager`
 4. Add dispatch cases in `apply()` and `_startEffectLoop()`
 5. Add cleanup in `_destroyCanvas()` for any state properties
-6. Add theme option card in `settings.html` Display Preferences section
+6. Add theme option card in `_settings_tabs/account.html`, Theme and Language card
 7. No bundle rebuild needed — `theme.js` is loaded standalone (not in `core.bundle.js`) for FOUC prevention; the `?v={{ config.APP_VERSION }}` cache-bust picks up the change on next version bump.
 
 ### Background Effects (Legacy)

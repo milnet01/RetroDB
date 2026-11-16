@@ -361,13 +361,14 @@
         </div>
     </div>
     
-    <!-- Notification Settings (from user preferences) -->
+    <!-- Toast times: the person's own, else the household's (app.py _notification_timeouts) -->
+    {% set _nt = notification_timeouts or {} %}
     <script nonce="{{ csp_nonce }}">
         window.NOTIFICATION_TIMEOUTS = {
-            success: {{ (user_settings.notification_timeouts.success if user_settings and user_settings.notification_timeouts else 3)|int }},
-            info: {{ (user_settings.notification_timeouts.info if user_settings and user_settings.notification_timeouts else 3)|int }},
-            warning: {{ (user_settings.notification_timeouts.warning if user_settings and user_settings.notification_timeouts else 5)|int }},
-            error: {{ (user_settings.notification_timeouts.error if user_settings and user_settings.notification_timeouts else 8)|int }}
+            success: {{ (_nt.success or 3)|int }},
+            info: {{ (_nt.info or 3)|int }},
+            warning: {{ (_nt.warning or 5)|int }},
+            error: {{ (_nt.error or 8)|int }}
         };
         window.AI_SCRAPER_ENABLED = {{ 'true' if ai_scraper_enabled else 'false' }};
 
