@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=317 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=318 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -3080,6 +3080,32 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Tidies small differences between the translated help pages and the English one.
   Kind: doc-fix.
   Source: PASS-59-315 locale mirroring 2026-11-15.
+
+- 📋 [PASS-59-318] **Arcade achievements: games with RetroAchievements start in FBNeo in the player, with FBNeo's cheat pack (feature, M).**
+  - **Found** (2026-11-16): RetroAchievements lists only FinalBurn Neo
+    (libretro) for arcade, plus Flycast for NAOMI/Atomiswave
+    (docs.retroachievements.org emulator-support page). Not MAME. Arcade
+    games are hashed by file name. 462 of 6291 `mame` games are RA-linked;
+    all 462 are in FBNeo's dats (libretro/FBNeo `dats/`). By CRC against
+    the user's zips: 359 complete; 97 Neo Geo lack only neo-po.bin,
+    neo-epo.bin, neodebug.bin, neopen.sp1 (likely optional, unconfirmed);
+    6 lack game ROMs (gng, mario, kov2, dmnfrnt, avspirit, sailormn).
+  - **FBNeo cheats**: native `.ini` pack (github.com/finalburnneo/
+    FBNeo-cheats, no stated license) into `<system>/fbneo/cheats/`;
+    shown as core options (Quick Menu > Core Options > Cheat); reset to
+    off at every boot by design (libretro.cpp reset_cheats_from_variables,
+    README FAQ). MAME's cheat.7z is not read. Cheats on = no hardcore.
+  - **Decided** (user, 2026-11-16): only RA-linked arcade games start in
+    FBNeo in the player; the rest stay in MAME. A Download button for the
+    FBNeo pack; the game page lists the game's FBNeo cheats with how to
+    switch them on in RetroArch's menu, no switches.
+  - **Do**: `fbneo` core in data/player_cores.json for the arcade folders;
+    launch routing for RA-linked arcade games (a per-game override still
+    wins); cheats pack `fbneo`; panel view. Open: the 6 incomplete sets
+    (stay in MAME?); confirm the Neo Geo BIOS gap once FBNeo is in.
+  **Layman:** Arcade games that have achievements start in an emulator that supports them, and their page lists that emulator's cheats.
+  Kind: feature.
+  Source: user-request-2026-11-16.
 
 ## 4.0.x — Security and data-loss fixes for the web version
 
