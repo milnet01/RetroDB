@@ -3160,7 +3160,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: doc-fix.
   Source: PASS-59-317 translate-review check 2026-11-16.
 
-- 📋 [PASS-59-320] **Fill the empty and fuzzy entries in every UI catalogue, so those words stop showing in English (i18n, M).**
+- ✅ [PASS-59-320] **Fill the empty and fuzzy entries in every UI catalogue, so those words stop showing in English (i18n, M).**
   - **Measured 2026-11-18** (`msgfmt --statistics` on each
     `translations/<locale>/LC_MESSAGES/messages.po`): every human locale
     has the same set of fuzzy and empty entries; `eo` has none. Gettext
@@ -3177,6 +3177,12 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     the loanword is right.
   - Done when `msgfmt --statistics` reports no fuzzy and no untranslated
     entries for every locale, and the i18n freshness gate passes.
+  Shipped 2026-11-18: scripts/translate_release.py filled every fuzzy and
+  empty entry; msgfmt --statistics reports none in any locale and the
+  i18n freshness gate passes. "Completionist" kept as the loanword in
+  de, nl and id; af "Voltooier", zu "Umqedi". The re-translated 4.0.0
+  changelog entry now uses each locale's on-screen name for Fix Box and
+  Manual Regions and its What changed list.
   **Layman:** Some buttons and messages still show in English in every language because their translation is missing or is a wrong guess; this fills them in.
   Kind: fix.
   Source: translate-mirror session report 2026-11-18.

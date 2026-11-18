@@ -1,137 +1,204 @@
 - version: 4.0.0
   date: '2026-11-18'
   tags:
-  - type: enhancement
-    label: 'מנהלים ועורכים יכולים לסמן את השפות שהם קוראים, תחת הגדרות > חשבון > שפות שאני יכול לקרוא. כשלמשחק אין תמונת קופסה או שם מהאזור שלו, RetroDB בוחר אחד בשפה שמי שמבצע סקרייפינג יכול לקרוא. מי שלא מסמן דבר נחשב כקורא את שפת המסך שלו'
   - type: fix
-    label: 'עותק של אירופה כבר לא מקבל תמונת קופסה או שם בגרמנית, בצרפתית, בספרדית או באיטלקית רק בגלל ש-ScreenScraper אין לו אחד כללי לאירופה. הוא מקבל את הבריטי, או אחד מרשימת האזורים שלך כמו עולם או ארה"ב, אלא אם מי שמבצע סקרייפינג קורא את השפה הזו. תיקון אזורים של קופסאות ומדריכים בודק שוב את הקופסאות והמדריכים שהוחלפו בשפה שאף אחד לא קורא'
+    label: כפתורים והודעות שהוצגו באנגלית בכל שפה מוצגים כעת בשפה שלכם, בכל שפה ש-RetroDB מציעה. לחלקם לא היה תרגום, ולחלקם הוצג תרגום שגוי, כמו "צור גיבוי" שהופיע בגרמנית בתור "שחזר גיבוי"
+    en: Buttons and messages that showed in English whatever your language now show in it, in every language RetroDB offers. Some had no translation, and some showed a wrong one, such as Create Backup reading as "restore backup" in German
   - type: enhancement
-    label: 'לתיקון אזורים של קופסאות ומדריכים יש עכשיו דף משלו, שנפתח מהכרטיס שלו ב-כלי ROM. הרשימה What changed מציגה כל משחק שהתיקון החליף בו קופסה, קופסה תלת-ממדית או מדריך, מקובצים לפי קונסולה, עם הקופסה כפי שהיא עכשיו והאזור שממנו הגיע כל קובץ חדש, כדי שתוכלו לבדוק אותם. גם משחקים שתוקנו לפני העדכון הזה מופיעים ברשימה'
-  - type: enhancement
-    label: 'אפשר להשהות, להמשיך ולעצור את תיקון אזורים של קופסאות ומדריכים בעזרת כפתורים בדף שלו. קודם, הדרך היחידה לעצור אותו הייתה ללחוץ שוב על הכרטיס שלו, ושום דבר על המסך לא אמר זאת'
-  - type: enhancement
-    label: 'תיקון אזורים של קופסאות ומדריכים מציג פס התקדמות ליד הכפתורים שלו בזמן שהוא רץ. הרשימה What changed זוכרת אילו קונסולות סגרת, כך שהן נשארות סגורות בפעם הבאה שתפתח את הדף בדפדפן הזה'
-  - type: enhancement
-    label: 'בזמן שתיקון אזורים של קופסאות ומדריכים רץ, כל משחק שהוא מחליף מצטרף מיד לרשימה What changed, מתחת לקונסולה שלו. קודם היה צריך לרענן את הדף כדי לראות אותם'
+    label: מנהלים ועורכים יכולים לסמן את השפות שהם קוראים תחת הגדרות > חשבון > שפות שאני קורא. כשלמשחק אין תמונת קופסה או שם מהאזור שלו, RetroDB בוחר כאלה בשפה שמי שגורד קורא. מי שלא סימן כלום נחשב כקורא את שפת המסך שלו
+    en: Admins and editors can tick the languages they read, under Settings > Account > Languages I can read. When a game has no box picture or name from its own region, RetroDB picks one in a language someone who scrapes can read. Anyone who ticks none counts as reading their screen language
   - type: fix
-    label: 'פס התקדמות שעוד לא התחיל כבר לא מציג "%" בודד בקצהו השמאלי'
-  - type: fix
-    label: 'הלוגואים של Wii U, PlayStation Vita, Xbox ו-Xbox One בדף מערכות ממלאים את מקומם כמו האחרים. הלוגו של PlayStation Vita וה-ONE של Xbox One לבנים עכשיו, כך שאפשר לקרוא אותם בכל ערכת נושא'
+    label: עותק מאירופה כבר לא מקבל תמונת קופסה או שם בגרמנית, צרפתית, ספרדית או איטלקית רק כי ל-ScreenScraper אין אחד כללי לאירופה. הוא מקבל את הבריטי, או אחד מרשימת האזורים שלך כמו World או USA, אלא אם מי שגורד קורא את השפה הזו. התיקון תיקון אזורים של קופסאות ומדריכים בודק שוב קופסאות ומדריכים שהוחלפו לשפה שאף אחד לא קורא
+    en: A Europe copy no longer gets a German, French, Spanish or Italian box picture or name just because ScreenScraper has no general Europe one. It gets the UK one, or one from your region list such as World or USA, unless someone who scrapes reads that language. Fix Box and Manual Regions looks again at the boxes and manuals it swapped into a language nobody reads
   - type: enhancement
-    label: 'ל-Xbox Series X|S, שייבוא Xbox מוסיף, יש לוגו משלו, והחלון שכפתור ה-ℹ️ שלו פותח מציג תמונה של הקונסולות. יש לו גם את שמו המלא, Microsoft Xbox Series X|S, ואת המפרט שלו'
-  - type: fix
-    label: 'מערכת שייבוא Steam, Xbox, PSN או CLZ מוסיף מקבלת עכשיו את הלוגו שלה, את הסוג שלה ואת שמה המלא כש-RetroDB מכיר אותו. מערכות שנוספו כך קודם מקבלות אותם כש-RetroDB מתעדכן'
+    label: ל-תיקון אזורים של קופסאות ומדריכים יש דף משלו, שנפתח מכרטיס כלי ה-ROM שלו. הרשימה מה השתנה מציגה כל משחק שהתיקון החליף לו קופסה, קופסת תלת-ממד או מדריך, מקובצים לפי קונסולה, עם הקופסה כפי שהיא עכשיו והאזור שממנו הגיע כל קובץ חדש, כדי שתוכלו לבדוק. משחקים שתוקנו כבר לפני העדכון הזה מופיעים גם הם
+    en: Fix Box and Manual Regions has its own page, opened from its ROM Tools card. Its What changed list shows every game the fix swapped a box, 3D box or manual for, grouped by console, with the box as it is now and the region each new file came from, so you can check them. Games already fixed before this update are listed too
   - type: enhancement
-    label: 'תיקון אזורים של קופסאות ומדריכים שואל את ScreenScraper על כל משחק פעם אחת בלבד. קודם, כל הרצה התחילה שוב מהמשחק הראשון ושאלה על כולם, גם על משחקים שכבר נבדקו. משחקים שנסרקו אחרי ההרצה הראשונה שלו כבר יש להם את הקופסאות הנכונות, ולכן הוא מדלג עליהם בלי לשאול'
+    label: אפשר להשהות, להמשיך ולעצור את תיקון אזורים של קופסאות ומדריכים בכפתורים בדף שלו. קודם, הדרך היחידה לעצור הייתה ללחוץ שוב על הכרטיס שלו, ושום דבר על המסך לא אמר זאת
+    en: Fix Box and Manual Regions can be paused, resumed and stopped with buttons on its page. Before, the only way to stop it was to press its card again, which nothing on screen said
+  - type: enhancement
+    label: תיקון אזורים של קופסאות ומדריכים מציג פס התקדמות ליד הכפתורים שלו בזמן הריצה. הרשימה מה השתנה זוכרת אילו קונסולות סגרתם, כך שיישארו סגורות בפעם הבאה שתפתחו את הדף בדפדפן הזה
+    en: Fix Box and Manual Regions shows a progress bar beside its buttons while it runs. Its What changed list remembers which consoles you closed, so they stay closed the next time you open the page in this browser
+  - type: enhancement
+    label: בזמן ש-תיקון אזורים של קופסאות ומדריכים רץ, כל משחק שהוא מחליף מצטרף מיד לרשימה מה השתנה, תחת הקונסולה שלו. קודם היה צריך לרענן את הדף כדי לראות אותם
+    en: While Fix Box and Manual Regions runs, each game it swaps joins its What changed list straight away, under its console. Before, you had to reload the page to see them
   - type: fix
-    label: 'דפי כלי ROM שסורקים או ממירים (הסרת כפילויות צילומי מסך, סקירת צילומי מסך, מאתר כפילויות, ממיר CHD ואימות CHD) שומרים את ההרצה האחרונה שלהם כשעוזבים את הדף וחוזרים. סריקה שרצה ממשיכה להציג את ההתקדמות שלה, וסריקה שהסתיימה מציגה שוב את התוצאות שלה, עד 30 דקות אחרי שהסתיימה. קודם הדף חזר ריק'
+    label: פס התקדמות שעוד לא התחיל כבר לא מציג "%" בודד בקצהו השמאלי
+    en: A progress bar that has not started yet no longer shows a lone "%" at its left end
   - type: fix
-    label: 'דפי העזרה המתורגמים קוראים לכל כפתור, לשונית ודף בשם שהאפליקציה מציגה באותה שפה, ומצטטים את ההודעות שלה כפי שהאפליקציה מציגה אותן. הקטע מילוי AI המוני כבר לא מזכיר כרטיס שאין באפליקציה. הכפתור רקע נקרא עכשיו נכון באיטלקית, בקוריאנית ובסינית, וחלק מהתוויות בזולו כבר לא מתחילות ב"N:" תועה'
+    label: הלוגואים של Wii U, PlayStation Vita, Xbox ו-Xbox One בדף המערכות ממלאים את המקום שלהם כמו האחרים. הלוגו של PlayStation Vita וה-ONE ב-Xbox One הם עכשיו לבנים, כך שאפשר לקרוא אותם בכל ערכת נושא
+    en: The Wii U, PlayStation Vita, Xbox and Xbox One logos on the Systems page fill their space like the others. The PlayStation Vita logo and the ONE in Xbox One are now white, so they can be read on every theme
+  - type: enhancement
+    label: ל-Xbox Series X|S, שמתווסף בייבוא מ-Xbox, יש לוגו משלו, והחלון שנפתח בכפתור ℹ️ שלו מציג תמונה של הקונסולות. יש לו גם את השם המלא Microsoft Xbox Series X|S ואת המפרט שלו
+    en: Xbox Series X|S, which the Xbox import adds, has its own logo, and the window its ℹ️ button opens shows a picture of the consoles. It also has its full name, Microsoft Xbox Series X|S, and its specifications
+  - type: fix
+    label: מערכת שמתווספת בייבוא מ-Steam, Xbox, PSN או CLZ מקבלת עכשיו לוגו, סוג ושם מלא היכן ש-RetroDB מכיר אותם. מערכות שנוספו כך בעבר יקבלו אותם כש-RetroDB יתעדכן
+    en: A system the Steam, Xbox, PSN or CLZ import adds now gets its logo, its type and its full name where RetroDB knows one. Systems added that way before get them when RetroDB updates
+  - type: enhancement
+    label: תיקון אזורים של קופסאות ומדריכים שואל את ScreenScraper על כל משחק רק פעם אחת. קודם, כל הרצה התחילה שוב מהמשחק הראשון ושאלה על כולם, גם על משחקים שכבר נבדקו. משחקים שנגרדו אחרי ההרצה הראשונה כבר כוללים את הקופסאות הנכונות, ולכן הוא מדלג עליהם בלי לשאול
+    en: Fix Box and Manual Regions asks ScreenScraper about each game only once. Before, every run started again at the first game and asked about every one, even games it had already checked. Games scraped after its first run already have the right boxes, so it skips them without asking
+  - type: fix
+    label: דפי כלי ה-ROM שסורקים או ממירים (Screenshot Dedup, Screenshot Review, Duplicate Finder, CHD Converter ו-CHD Verify) שומרים את ההרצה האחרונה כשעוזבים את הדף וחוזרים. סריקה שרצה ממשיכה להציג התקדמות, וסריקה שהסתיימה מציגה שוב את התוצאות, במשך 30 דקות אחרי סיומה. קודם הדף חזר ריק
+    en: The ROM tool pages that scan or convert (Screenshot Dedup, Screenshot Review, Duplicate Finder, CHD Converter and CHD Verify) keep their last run when you leave the page and come back. A running scan carries on showing its progress, and a finished one shows its results again, for 30 minutes after it ends. Before, the page came back empty
+  - type: fix
+    label: דפי עזרה מתורגמים קוראים לכל כפתור, לשונית ודף בשם שהאפליקציה מציגה בשפה הזו, ומצטטים את הודעותיה כפי שהאפליקציה מציגה אותן. הפרק Bulk AI Fill כבר לא מזכיר כרטיס שאין באפליקציה. הכפתור Background נקרא עכשיו נכון באיטלקית, קוריאנית וסינית, וכמה תוויות בזולו כבר לא מתחילות ב-"N:" מיותר
+    en: Translated help pages call every button, tab and page by the name the app shows in that language, and quote its messages as the app shows them. The Bulk AI Fill section no longer names a card the app does not have. The Background button now reads correctly in Italian, Korean and Chinese, and some Zulu labels no longer start with a stray "N:"
   - type: feature
-    label: 'משחקי ארקייד עם RetroAchievements מזכים עכשיו בהישגים. הם מתחילים ב-RetroArch (RetroDB) עם הליבה FinalBurn Neo, ש-RetroAchievements תומכת בה, במקום ב-MAME, שהיא לא תומכת בו; כל שאר משחקי הארקייד נשארים ב-MAME. חבילת "צ''יטים למשחקי ארקייד של FinalBurn Neo" החדשה תחת הגדרות ← אמולטורים ← צ''יטים מציגה את הצ''יטים של כל משחק כזה בעמוד שלו. FinalBurn Neo מכבה צ''יטים בכל פעם שמשחק מתחיל, ולכן מפעילים אותם בתפריט של RetroArch תוך כדי משחק: F1, אחר כך Core Options, אחר כך Cheat'
+    label: 'משחקי ארקייד עם RetroAchievements מרוויחים עכשיו הישגים. הם מתחילים ב-RetroArch (RetroDB) עם ליבת FinalBurn Neo, ש-RetroAchievements תומך בה, במקום MAME, שאינו נתמך; כל משחקי הארקייד האחרים נשארים ב-MAME. חבילת צ''יטים חדשה של FinalBurn Neo לארקייד תחת הגדרות ← אמולטורים ← צ''יטים מציגה את הצ''יטים של כל משחק כזה בדף שלו. FinalBurn Neo מכבה צ''יטים בכל פעם שמשחק מתחיל, ולכן מפעילים אותם בתפריט של RetroArch בזמן המשחק: F1, אחר כך Core Options, ואז Cheat'
+    en: 'Arcade games with RetroAchievements now earn them. They start in RetroArch (RetroDB) with the FinalBurn Neo core, which RetroAchievements supports, instead of MAME, which it does not; every other arcade game stays in MAME. A new FinalBurn Neo arcade cheats pack under Settings → Emulators → Cheats lists each such game''s cheats on its page. FinalBurn Neo turns cheats off each time a game starts, so you switch them on in RetroArch''s menu while you play: F1, then Core Options, then Cheat'
   - type: performance
-    label: 'ההגדרות נפתחות מהר יותר למנהלים. הדף כבר לא בודק את הלוגו ואת תמונת החומרה של כל מערכת בזמן הפתיחה: הטבלה הזו מתמלאת כשפותחים את הלשונית התאמה אישית. לחיצה על שמור מיד אחרי הפתיחה כבר לא ממתינה מאחורי הבדיקות האלה'
+    label: 'ההגדרות נפתחות מהר יותר למנהלים. הן כבר לא בודקות את הלוגו ותמונת החומרה של כל מערכת בזמן הפתיחה: הטבלה הזו מתמלאת כשפותחים את הלשונית Customization. שמירה שנלחצה מיד אחרי הפתיחה כבר לא ממתינה לבדיקות האלה'
+    en: 'Settings opens faster for admins. It no longer checks every system''s logo and hardware picture as it opens: that table fills when you open the Customization tab. A Save pressed straight after opening no longer waits behind those checks'
   - type: enhancement
-    label: 'ההגדרות מסודרות יותר. הבחירות האישיות שלכם נמצאות יחד תחת הגדרות ← חשבון: ערכת נושא ושפה (עם הרקע הנע), וכמה זמן הודעות נשארות על המסך, שהוא עכשיו אישי לכל אדם. ספרייה ← נתיבים מחזיק את כל ארבע התיקיות תחת שמירה אחת. מערכת ← שרת מציג את הפורט ואת המקום של מסד הנתונים. תמוך בפיתוח עבר לסוף דף העזרה'
+    label: 'ההגדרות מסודרות יותר. הבחירות האישיות שלך נמצאות יחד תחת הגדרות ← חשבון: ערכת נושא ושפה (כולל הרקע הנע), ומשך הזמן שהודעות נשארות על המסך, שהוא עכשיו אישי לכל אחד. ספרייה ← נתיבים מכילה את ארבע התיקיות תחת שמירה אחת. מערכת ← שרת מציג את הפורט ואת מיקום מסד הנתונים. Support Development עבר לסוף דף העזרה'
+    en: 'Settings is tidier. Your own choices sit together under Settings → Account: Theme and Language (with the moving background), and how long messages stay on screen, which is now each person''s own. Library → Paths holds all four folders under one Save. System → Server shows the port and where the database is. Support Development moved to the end of the Help page'
   - type: enhancement
-    label: 'לבקרים יש עכשיו עמוד משלהם. הגדרות ← התאמה אישית ← פתיחת הבקרים מוביל לשם: הגדירו בקרי ברירת מחדל לכל מערכת, הוסיפו בקרים משלכם וערכו את ספריית הבקרים'
+    label: 'לבקרים יש דף משלהם. הגדרות ← Customization ← Open Controllers מוביל אליו: קבעו את בקרי ברירת המחדל של כל מערכת, הוסיפו בקרים משלכם וערכו את ספריית הבקרים'
+    en: 'Controllers have their own page. Settings → Customization → Open Controllers goes there: set each system''s default controllers, add your own and edit the controller library'
   - type: enhancement
-    label: 'סינון התאמות בגירוד המוני מציע עכשיו שלוש בחירות פשוטות במקום מספר ציון וטבלה שלו: מחמיר, רגיל וגמיש. רגיל הוא ברירת המחדל הקודמת. הגדרה שעשיתם בעצמכם קודם מופיעה כמותאם אישית עד שתבחרו אחרת'
+    label: 'Bulk Scrape Match Filtering מציע שלוש בחירות פשוטות במקום מספר ציון וטבלה: Strict, Normal ו-Loose. Normal הוא ברירת המחדל הישנה. הגדרה שקבעתם בעצמכם בעבר מוצגת כ-Custom עד שתבחרו אחרת'
+    en: 'Bulk Scrape Match Filtering offers three plain choices instead of a score number and its table: Strict, Normal and Loose. Normal is the old default. A setting you made yourself before shows as Custom until you pick another'
   - type: enhancement
-    label: 'בהפרופיל שלי יש עכשיו כפתור אחד, שמירת הפרופיל שלי, במקום שלושה. הוא בודק אסימון PlayStation חדש או מפתח Xbox חדש בזמן השמירה, ומשאיר את אסימון ה-PlayStation העובד שלכם אם Sony דוחה את החדש. שנה סיסמה אומר עכשיו שנדרשים לפחות 12 תווים, ומבקש את הסיסמה החדשה פעמיים'
+    label: ב-My Profile יש כפתור אחד Save My Profile במקום שלושה. הוא בודק אסימון PlayStation או מפתח Xbox חדשים בזמן השמירה, ושומר את אסימון PlayStation התקין שלך אם Sony דוחה את החדש. Change Password אומר עכשיו שנדרשים לפחות 12 תווים ומבקש את הסיסמה החדשה פעמיים
+    en: My Profile has one Save My Profile button instead of three. It checks a new PlayStation token or Xbox key as it saves, and keeps your working PlayStation token if Sony refuses the new one. Change Password now says it needs at least 12 characters and asks for the new password twice
   - type: fix
-    label: 'מילים פשוטות יותר בהגדרות. הפרופיל שלי מסביר מה עושים מפתח ה-RetroAchievements וכניסה עם סיסמה. מפתחות API מסביר שהמפתח האישי של אדם ל-RetroAchievements או ל-Steam משמש תחילה. מפתחות TheGamesDB נקראים מפתח ראשי ומפתח גיבוי. חלון עריכת אמולטור אומר מיקום התוכנה ואפשרויות שורת פקודה. נקה נתונים שנגרדו מסביר שקובצי התמונות והסרטונים נשארים בדיסק אלא אם תסמנו את התיבה. רשימות מודלי ה-AI כבר לא מציגות מחירים, שהתיישנו'
+    label: ניסוח פשוט יותר בהגדרות. My Profile מסביר מה עושים מפתח RetroAchievements וההתחברות בסיסמה. API Keys מסביר שמפתח RetroAchievements או Steam אישי של משתמש נמשך קודם. המפתחות של TheGamesDB נקראים Main key ו-Backup key. החלון Edit emulator כולל Program location ו-Command-line options. Clear Scraped Data מסביר שקובצי התמונות והווידאו נשארים בדיסק אלא אם מסמנים את התיבה. רשימות מודלי ה-AI כבר לא מציגות מחירים, שהתיישנו
+    en: Plainer words in Settings. My Profile says what the RetroAchievements key and the password sign-in each do. API Keys says a person's own RetroAchievements or Steam key is used first. TheGamesDB's keys are named Main key and Backup key. The Edit emulator window says Program location and Command-line options. Clear Scraped Data says the picture and video files stay on disk unless you tick the box. The AI model lists no longer show prices, which went out of date
   - type: fix
-    label: 'ההגדרות נפטרות ממה שהיה כפול או לא עשה דבר: כרטיס סטטיסטיקת הספרייה (יש אותו בלוח הבקרה), עותק סרוק גביעים בהגדרות (יש אותו בעמוד גביעי PS3), כפתור ייבוא לוגואי מערכת הנפרד (רענן לוגואי מערכת מעתיק עכשיו קודם את הלוגואים של ES-DE) ושש הגדרות שמורות שאף דבר לא השתמש בהן. זמן הודעה של 0 שניות נדחה במקום להישמר בשקט, ושמירת תיקיית ROM חדשה כבר לא אומרת ש-RetroDB צריך להיות מופעל מחדש'
+    label: 'בהגדרות הוסר מה שהיה כפול או לא עשה כלום: הכרטיס Library Statistics (יש אותו בלוח הבקרה), העותק של Scan Trophies בהגדרות (יש אותו בדף גביעי PS3), הכפתור הנפרד Import System Logos (Refresh System Logos מעתיק עכשיו קודם את הלוגואים של ES-DE) ושש הגדרות שמורות שאיש לא השתמש בהן. זמן הודעה של 0 שניות נדחה במקום להישמר בשקט, ושמירת תיקיית ROM חדשה כבר לא אומרת ש-RetroDB צריך להיפתח מחדש'
+    en: 'Settings drops what was there twice or did nothing: the Library Statistics card (the Dashboard has it), the Settings copy of Scan Trophies (the PS3 trophies page has it), the separate Import System Logos button (Refresh System Logos now copies ES-DE''s logos first) and six stored settings nothing used. A message time of 0 seconds is refused instead of quietly saved, and saving a new ROM folder no longer says RetroDB must restart'
   - type: performance
-    label: 'RetroDB קלה הרבה יותר על המחשב שלכם. הערפל הנע של ערכת הנושא Cyberpunk הרגיל ליבת מעבד אחת להיות עסוקה לגמרי כל עוד עמוד כלשהו של RetroDB היה פתוח; עכשיו כרטיס המסך מצייר אותו, והמעבד כמעט לא מרגיש. הוא גם מצייר חצי ממספר הפריימים, מה שנראה אותו דבר כי הערפל נע לאט'
+    label: RetroDB קל בהרבה על המחשב שלך. הערפל הנע של ערכת הנושא Cyberpunk העסיק ליבת מעבד אחת במלואה כל עוד דף RetroDB כלשהו היה פתוח; עכשיו כרטיס המסך מצייר אותו והמעבד כמעט לא מרגיש. הוא גם מצייר חצי מספר פריימים, וזה נראה אותו דבר כי הערפל נע לאט
+    en: RetroDB is far lighter on your computer. The Cyberpunk theme's moving mist kept one processor core fully busy for as long as any RetroDB page was open; the graphics card now draws it, and the processor barely notices. It also draws half as many frames, which looks the same because the mist drifts slowly
   - type: feature
-    label: 'רקעים נעים (ערפל, גשם, כוכבים, אבק) עוצרים עכשיו כשאתם לא משתמשים ב-RetroDB: כשהחלון שלה לא בחזית, הלשונית שלה מוסתרת, או שעברה דקה בלי עכבר או מקלדת. הם מתחילים שוב ברגע שחזרתם. מתג חדש, רקע נע, תחת הגדרות ← חשבון ← ערכת נושא ושפה, משאיר אותם דוממים במחשב הזה'
+    label: 'רקעים נעים (ערפל, גשם, כוכבים, אבק) נעצרים עכשיו כשאינכם משתמשים ב-RetroDB: כשהחלון שלו לא מלפנים, הלשונית מוסתרת, או שעברה דקה בלי עכבר או מקלדת. הם מתחילים שוב ברגע שחוזרים. מתג חדש רקע נע תחת הגדרות ← חשבון ← ערכת נושא ושפה משאיר אותם במצב נייח במחשב הזה'
+    en: 'Moving backgrounds (mist, rain, stars, dust) now pause when you are not using RetroDB: when its window is not in front, its tab is hidden, or a minute passes without the mouse or keyboard. They start again the moment you come back. A new Moving background switch under Settings → Account → Theme and Language keeps them still on that computer'
   - type: performance
-    label: 'כותרות עמודים שומרות על הזוהר שלהן אך כבר לא פועמות כל הזמן, והכותרות המהבהבות "glitch" ברשימות הקונסולות והמשחקים מהבהבות רק כשהעכבר מעליהן'
+    label: כותרות דפים שומרות על הזוהר אך כבר לא פועמות כל הזמן, וכותרות ה-"glitch" המהבהבות ברשימות הקונסולות והמשחקים מהבהבות רק כשהעכבר מעליהן
+    en: Page titles keep their glow but no longer pulse all the time, and the flickering "glitch" titles on the console and game lists flicker only while the mouse is over them
   - type: feature
-    label: 'צ''יטים למשחקי ארקייד ב-MAME. הורידו את "MAME XML Cheats Collection" מ-mamecheat.co.uk בדפדפן וייבאו אותה תחת הגדרות ← אמולטורים ← צ''יטים. עמוד כל משחק ארקייד מציג אז את הצ''יטים שלו עם מתגי הפעלה וכיבוי, ו-MAME מתחיל עם אלה שהפעלתם. צ''יט שמקבל ערך נקבע ב-MAME תוך כדי משחק: לחצו על Tab, אחר כך Plugin Options, אחר כך Cheat'
+    label: 'צ''יטים למשחקי ארקייד ב-MAME. הורידו את "MAME XML Cheats Collection" מ-mamecheat.co.uk בדפדפן וייבאו אותו תחת הגדרות ← אמולטורים ← צ''יטים. בדף של כל משחק ארקייד יופיעו אז הצ''יטים שלו עם מתגי הפעלה וכיבוי, ו-MAME יתחיל עם אלה שהפעלתם. צ''יט שדורש ערך נקבע ב-MAME בזמן המשחק: לחצו Tab, אחר כך Plugin Options, ואז Cheat'
+    en: 'Cheats for arcade games in MAME. Download the "MAME XML Cheats Collection" from mamecheat.co.uk in your browser and import it under Settings → Emulators → Cheats. Each arcade game''s page then lists its cheats with on/off switches, and MAME starts with the ones you switched on. A cheat that takes a value is set in MAME while you play: press Tab, then Plugin Options, then Cheat'
   - type: fix
-    label: 'הקודם והבא בעמוד של משחק נשארים עכשיו ברשימה המסוננת שלכם אחרי שאספתם נתונים למשחק. כשהמסנן ''ללא נתונים'' פעיל, איסוף נתונים הוציא את המשחק מהרשימה, והבא עבר על כל הקונסולה במקום לעבור למשחק הבא ללא נתונים'
+    label: הקודם והבא בדף של משחק נשארים עכשיו ברשימה המסוננת שלך אחרי שגרדת את המשחק. כשהסינון Unscraped פעיל, גרידת משחק הוציאה אותו מהרשימה, ולכן הבא עבר על כל הקונסולה במקום לעבור למשחק הבא שלא נגרד
+    en: Previous and Next on a game's page now stay in your filtered list after you scrape that game. With the Unscraped filter on, scraping a game took it out of the list, so Next stepped through the whole console instead of going to the next unscraped game
   - type: fix
-    label: 'עוד חלקים ב-RetroDB עוקבים עכשיו אחרי השפה שלכם: החלקים דיסקי בונוס, גיבוי ומתן שמות ל-ROM בהגדרות, הכותרת הפרופיל שלי, חלון חיפוש הגירוד והודעות "אין הרשאה". הם נשארו באנגלית לא משנה איזו שפה בחרתם'
+    label: 'עוד חלקים ב-RetroDB עוקבים עכשיו אחרי השפה שלך: החלקים Bonus Discs, גיבוי ו-ROM Naming בהגדרות, הכותרת My Profile, חלון חיפוש הגרידה והודעות "אין הרשאה". הם נשארו באנגלית לא משנה איזו שפה בחרתם'
+    en: 'More of RetroDB now follows your language: the Bonus Discs, Backup and ROM Naming parts of Settings, the My Profile heading, the scrape search window and the "no permission" messages. They stayed in English whatever language you chose'
   - type: fix
-    label: 'הוסף משתמש מבקש עכשיו את הסיסמה הראשונה של האדם החדש (12 תווים ומעלה), והוא בוחר סיסמה משלו בהתחברות הראשונה. קודם, כל חשבון חדש קיבל בשקט את אותה סיסמה, "changeme", שכל אחד יכול היה להשתמש בה עד שבעליה התחבר'
+    label: Add User מבקש עכשיו את הסיסמה הראשונה של המשתמש החדש (12 תווים או יותר), והוא בוחר סיסמה משלו בהתחברות הראשונה. קודם, כל חשבון חדש קיבל בשקט את אותה סיסמה, "changeme", שכל אחד יכול היה להשתמש בה עד שהבעלים התחבר
+    en: Add User now asks for the new person's first password (12 characters or more), and they choose their own the first time they sign in. Before, every new account quietly got the same password, "changeme", which anyone could use until its owner signed in
   - type: fix
-    label: 'ההגדרות מציגות לכל אדם רק מה שהתפקיד שלו יכול לשנות. צופים ושחקנים רואים את לשונית חשבון; עורכים רואים גם דיסקי בונוס ובקרים. קודם הם ראו הגדרות מנהל שכפתור השמירה שלהן נדחה אחר כך, חלקן עם ערכים שגויים'
+    label: ההגדרות מציגות לכל אחד רק מה שהתפקיד שלו יכול לשנות. צופים ושחקנים רואים את הלשונית חשבון; עורכים רואים גם Bonus Discs ובקרים. קודם הם ראו הגדרות מנהל שכפתור השמירה שלהן נדחה, וחלקן הציגו ערכים שגויים
+    en: Settings shows each person only what their role can change. Viewers and players see the Account tab; editors also see Bonus Discs and Controllers. They used to see admin settings whose Save button was then refused, some showing wrong values
   - type: fix
-    label: 'הגדרות ← מערכת כבר לא כוללת את הכפתור Clear Stuck RA Sync. הוא אמר שניקה את הסנכרון גם כשלא; עצרו סנכרון RetroAchievements בעזרת הכפתורים שבהודעת ההתקדמות שלו'
+    label: הגדרות ← מערכת כבר לא כוללות את הכפתור Clear Stuck RA Sync. הוא אמר שניקה את הסנכרון גם כשלא עשה זאת; עצרו סנכרון RetroAchievements בכפתורים שבהודעת ההתקדמות שלו
+    en: Settings → System no longer has the Clear Stuck RA Sync button. It said it had cleared the sync even when it had not; stop a RetroAchievements sync with the buttons on its progress notice
   - type: fix
-    label: 'תיקונים קטנים בהגדרות: אפס לברירת מחדל ברשימת מקורות הגירוד אומר ללחוץ על שמירת הגדרות הסקרייפר כדי לשמור; התקנה חדשה מציגה את ScreenScraper מופעל, כפי שהוא באמת; העזרה של מזהה Steam מבקשת את המספר בן 17 הספרות; עמוד האמולטורים כבר לא מזכיר כפתור הוסף שאין בו; אשף ההתקנה מסתיר את מפתחות ה-API שלכם בזמן ההקלדה'
+    label: 'תיקונים קטנים בהגדרות: Reset to Default ברשימת הגרדים אומר ללחוץ על Save Scraper Settings כדי לשמור; התקנה חדשה מציגה את ScreenScraper כפעיל, כפי שהוא באמת; העזרה של Steam ID מבקשת את המספר בן 17 הספרות; דף האמולטורים כבר לא מזכיר כפתור Add שאין בו; אשף ההתקנה מסתיר את מפתחות ה-API שלך בזמן ההקלדה'
+    en: 'Small Settings fixes: Reset to Default on the scraper list says to press Save Scraper Settings to keep it; a new install shows ScreenScraper switched on, as it really is; the Steam ID help asks for the 17-digit number; the Emulators page no longer mentions an Add button it does not have; the Setup Wizard hides your API keys as you type them'
   - type: enhancement
-    label: 'במדריך יש עכשיו תיבת חיפוש. הקלידו מילה כדי לראות רק את חלקי המדריך שמזכירים אותה, כשהמילה מסומנת. החיפוש מתעלם מסימני ניקוד ופועל בכל שפה'
+    label: במדריך העזרה יש עכשיו תיבת חיפוש. הקלידו מילה כדי לראות רק את חלקי המדריך שמזכירים אותה, עם המילה מסומנת. היא מתעלמת מסימני ניקוד ופועלת בכל שפה
+    en: The help manual now has a search box. Type a word to see only the parts of the manual that mention it, with the word marked. It ignores accents and works in every language
   - type: fix
-    label: 'הקטע פתרון בעיות במדריך מכסה עכשיו כל תכונה: הוספת משחקים, גירוד, מילוי AI, תמונות, משחק, צ''יטים, הישגים, חשבונות, גיבויים ועדכונים. חלק מהעצות הישנות הפנו לכפתורים שכבר לא קיימים. הוא גם כבר לא אומר שחיפושי HowLongToBeat עובדים במצב לא מקוון או שאפשר להגדיר את מהירות הסקרייפר'
+    label: 'פרק פתרון הבעיות במדריך העזרה מכסה עכשיו כל תכונה: הוספת משחקים, גרידה, מילוי AI, תמונות, משחק, צ''יטים, הישגים, חשבונות, גיבויים ועדכונים. חלק מהעצות הישנות הפנו לכפתורים שכבר לא קיימים. הוא גם כבר לא אומר שחיפושי HowLongToBeat עובדים בלי חיבור לאינטרנט או שאפשר לקבוע את מהירות הגרד'
+    en: 'The help manual''s Troubleshooting section now covers each feature: adding games, scraping, AI Fill, pictures, playing, cheats, achievements, accounts, backups and updates. Some of its old advice pointed at buttons that no longer exist. It also no longer says HowLongToBeat lookups work offline or that scraper speed can be set'
   - type: fix
-    label: 'הגדרות ← מערכת כבר לא כוללת את תיבת פתרון הבעיות של הגירוד ההמוני. היא קראה שאריות של הגירוד ההמוני הישן ולא יכלה לעצור גירוד אמיתי; עצרו גירוד המוני בעזרת ביטול בחלון שלו'
+    label: הגדרות ← מערכת כבר לא כוללות את תיבת פתרון הבעיות של Bulk Scrape. היא קראה שאריות של הגרידה הגורפת הישנה ולא יכלה לעצור גרידה אמיתית; עצרו גרידה גורפת עם ביטול בחלון שלה
+    en: Settings → System no longer has the Bulk Scrape troubleshooting box. It read leftovers of the old bulk scrape and could not stop a real one; stop a bulk scrape with Cancel in its window
   - type: fix
-    label: 'המתקין דורש עכשיו Python 3.12 ומעלה, שהספריות של RetroDB צריכות. הוא איפשר גרסאות ישנות יותר, וההתקנה נכשלה אז באמצע. ב-README יש קטע חדש של פתרון בעיות לבעיות התקנה והפעלה'
+    label: המתקין דורש עכשיו Python 3.12 ומעלה, שהספריות של RetroDB צריכות. הוא איפשר גרסאות ישנות יותר, וההתקנה נכשלה באמצע. ב-README יש פרק חדש של פתרון בעיות להתקנה ולהפעלה
+    en: The installer now asks for Python 3.12 or newer, which RetroDB's libraries need. It let older versions through, and the install then failed partway. The README has a new Troubleshooting section for install and start-up problems
   - type: fix
-    label: 'לשונית PSN בייבוא משחקים אומרת עכשיו שאסימון ה-NPSSO נכנס תחת הגדרות ← הפרופיל שלי. היא הזכירה עמוד מפתחות API שאין בו תיבה כזו'
+    label: הלשונית PSN ב-Game Imports אומרת עכשיו שאסימון NPSSO נמצא תחת הגדרות ← My Profile. קודם היא הזכירה דף API Keys שאין בו תיבה כזו
+    en: Game Imports' PSN tab now says the NPSSO token goes under Settings → My Profile. It named an API Keys page that has no such box
   - type: fix
-    label: 'מדריך העזרה מציג כעת גם את דירוג הגיל הסיני (CADPA) לצד האחרים, קורא למקטע "המשך לשחק" בדף הבית בשמו האמיתי, ונותן עצה בטוחה יותר כשתמונות לא נשמרות'
+    label: מדריך העזרה מציג עכשיו את סיווג הגיל הסיני (CADPA) עם האחרים, קורא לחלק Continue Playing בדף הבית בשמו האמיתי, ונותן עצה בטוחה יותר כשלא ניתן לשמור תמונות
+    en: The help manual now lists the Chinese age rating (CADPA) with the others, calls the home page's Continue Playing section by its real name, and gives safer advice when pictures will not save
   - type: fix
-    label: 'הגדרות → גירוד מוצג כעת בשפה שלך: רשימת הסקרייפרים, מפתחות API, נתיבי ES-DE, סינון התאמות והגדרות הבינה המלאכותית, כולל הודעות המצב והתוצאות. הוא נשאר באנגלית בכל שפה שנבחרה'
+    label: 'הגדרות ← גרידה עוקבות עכשיו אחרי השפה שלך: רשימת הגרדים, מפתחות API, נתיבי ES-DE, סינון התאמות והגדרות AI, עם הודעות המצב והתוצאה שלהן. הן נשארו באנגלית לא משנה איזו שפה בחרתם'
+    en: 'Settings → Scraping now follows your language: the scraper list, API keys, ES-DE paths, match filtering and AI settings, with their status and result messages. It stayed in English whatever language you chose'
   - type: enhancement
-    label: 'כששירות ה-AI דוחה בקשת גירוד (מפתח API שגוי, אין יותר קרדיט או חיוב, או יותר מדי בקשות), RetroDB אומר עכשיו מה הסיבה ומה לבדוק, במקום להשאיר בשקט ריקים שדות כמו נתוני מכירות ותאריכי יציאה. אחר כך הוא מפסיק לפנות ל-AI הזה לזמן מה, כך שמקבלים הודעה פעם אחת ולא פעם לכל משחק'
+    label: כששירות ה-AI דוחה גרידה (מפתח API שגוי, אין יתרה או חיוב, או יותר מדי בקשות), RetroDB אומר עכשיו מה קרה ומה לבדוק, במקום להשאיר בשקט שדות כמו נתוני מכירות ותאריכי יציאה ריקים. אחר כך הוא מפסיק לפנות לאותו AI לזמן מה, כך שמקבלים הודעה פעם אחת, לא פעם לכל משחק
+    en: When the AI service refuses a scrape (a wrong API key, no credit or billing left, or too many requests), RetroDB now says which, and what to check, instead of quietly leaving fields such as sales figures and release dates empty. It then stops asking that AI for a while, so you are told once, not once per game
   - type: enhancement
-    label: 'הקופסה התלת־ממדית מציגה כעת את שקע האצבע כפי ש-Slipcase יצר אותו: עם קצוות מרובעים, ומעל או מתחת לאמצע הצד, כשכך הוא במארז. יש לייבא את הקופסה שוב כדי לראות זאת'
+    label: 'קופסת התלת-ממד מציגה עכשיו את חריץ האצבע כפי ש-Slipcase יצר אותו: עם קצוות ישרים, ומעל או מתחת לאמצע הצד, היכן שבקופסה הוא כך. ייבאו את הקופסה שוב כדי לראות'
+    en: 'The 3D box now shows the finger slot as Slipcase made it: with square ends, and above or below the middle of the side, where the case has it so. Import the box again to see it'
   - type: fix
-    label: 'הגדרות → מערכת מוצג כעת בשפה שלך: כלי התחזוקה, הגדרות הרישום ופתרון הבעיות, כולל התוצאות והודעות השגיאה. הם נשארו באנגלית בכל שפה שנבחרה. גם הודעות שנותרו באנגלית בדפים אחרים תורגמו'
+    label: 'הגדרות ← מערכת עוברת עכשיו לשפה שלך: כלי התחזוקה, הגדרות הרישום ומדורי פתרון הבעיות, עם התוצאות והודעות השגיאה שלהם. הם נשארו באנגלית בלי קשר לשפה שבחרת. גם הודעות באנגלית שנשארו בדפים אחרים תורגמו'
+    en: 'Settings → System now follows your language: the maintenance tools, logging settings and troubleshooting sections, with their results and error messages. They stayed in English whatever language you chose. Leftover English messages on other pages are translated too'
   - type: fix
-    label: 'בעמוד קונסולה בהישגים, שורת כפתורי הקונסולות כבר לא מחליקה מתחת ללשוניות המקטעים בזמן הגלילה; היא נגללת עכשיו עם הדף. בכל עמוד הישגים, סרגל האותיות A–Z נשאר עכשיו ממש מתחת ללשוניות המקטעים במקום להסתתר מאחוריהן'
+    label: בדף קונסולה בהישגים, שורת כפתורי הקונסולות כבר לא גולשת מתחת ללשוניות המדורים בזמן הגלילה, אלא נגללת החוצה. בכל דפי ההישגים, סרגל האותיות A–Z נשאר עכשיו ממש מתחת ללשוניות המדורים ולא מוסתר מאחוריהן
+    en: On an Achievements console page, the row of console buttons no longer slides under the section tabs as you scroll; it now scrolls away. On every Achievements page the A–Z letter bar now stays just below the section tabs instead of hiding behind them
   - type: fix
-    label: 'הסרת תמונה בחלון "ערוך משחק" כבר לא מוחקת את הקובץ כשמשחק אחר משתמש באותה תמונה; המשחק האחר שומר עליה'
+    label: הסרת תמונה בחלון עריכת משחק כבר לא מוחקת את הקובץ כשמשחק אחר משתמש באותה תמונה. המשחק האחר שומר עליה
+    en: Removing a picture in the Edit Game window no longer deletes the file when another game uses the same picture; the other game keeps it
   - type: fix
-    label: 'תמונות גב הקופסה שסריקה שומרת בגודל קטן מוגדלות כעת ברקע, כפי שכבר קורה עם תמונות החזית'
+    label: תמונות גב האריזה ש־scrape שומר בגודל קטן מוגדלות עכשיו ברקע, כמו שכבר קורה בכריכות הקדמיות
+    en: Back-of-box pictures that a scrape saves small are now enlarged in the background, as front covers already are
   - type: fix
-    label: 'שמירה בחלון "ערוך משחק" כבר לא ממתינה בזמן שעטיפות או צילומי מסך קטנים שהועלו מוגדלים; זה קורה עכשיו אחר כך, ומוצג כ"משפר תמונות". תמונה שסומנה להסרה נמחקת רק אחרי שהשמירה הצליחה, כך ששמירה שנכשלה כבר לא מאבדת אותה'
+    label: שמירה בחלון עריכת משחק כבר לא מחכה להגדלת תמונות אריזה או צילומי מסך קטנים שהועלו. זה קורה עכשיו אחר כך, ומופיע כ"משפר תמונות". תמונה שסומנה להסרה נמחקת רק אחרי שהשמירה הצליחה, ולכן שמירה שנכשלה כבר לא מאבדת אותה
+    en: Saving in the Edit Game window no longer waits while small uploaded box art or screenshots are enlarged; that now happens afterwards, shown as "Improving images". A picture ticked for removal is deleted only once the save has worked, so a failed save no longer loses it
   - type: fix
-    label: 'הספירה "חסרים מטא-נתונים" בראש דף ספרייה ודפי הקונסולות סופרת כעת משחק עם כמה גרסאות אזוריות פעם אחת, כמו המסנן "לא נגרד". קודם היא ספרה כל גרסה'
+    label: ספירת "מטא־דאטה חסר" בראש דפי הספרייה והקונסולות סופרת עכשיו משחק עם כמה גרסאות אזוריות פעם אחת, כמו מסנן "לא נגרדו". קודם היא ספרה כל גרסה
+    en: The "missing metadata" count at the top of the Library and console pages now counts a game with several regional versions once, as the Unscraped filter does. It counted each version
   - type: enhancement
-    label: 'הגדרות → דיסקי בונוס מציג עכשיו כל דיסק שסומן כדיסק בונוס, עם המשחק שאליו הוא שייך. הכפתור "לא דיסק בונוס" (עורכים ומנהלים) מחזיר דיסק שסומן בטעות לרשימות המשחקים שלך, ואחר כך Auto-Link לא נוגע בו'
+    label: הגדרות ← דיסקי בונוס מציגה עכשיו כל דיסק שסומן כדיסק בונוס, עם המשחק שאליו הוא שייך. כפתור "לא דיסק בונוס" (לעורכים ומנהלים) מחזיר דיסק שסומן בטעות לרשימות המשחקים שלך, ו־Auto-Link כבר לא נוגע בו
+    en: Settings → Bonus Discs now lists every disc marked as a bonus disc, with the game it belongs to. Its "Not a bonus disc" button (editors and admins) puts a wrongly marked disc back in your game lists, and Auto-Link then leaves it alone
   - type: fix
-    label: 'שמות חברות כמו "Nintendo Co., Ltd." ו-"GameTek, Inc." נשארים עכשיו שלמים. הם פוצלו בפסיק, ולכן "Ltd." ו-"Inc." הופיעו כשמות נפרדים במסנני הספרייה, בהגדרות → נורמליזציית נתונים ובסטטיסטיקה. גם דפי המשחקים מציגים אותם שלמים. גם שם עם פסיק בתוך סוגריים, כמו "Majesco (licensed from Konami, Disney)", נשאר שלם'
+    label: שמות חברות כמו "Nintendo Co., Ltd." ו־"GameTek, Inc." נשארים עכשיו שלמים. קודם הם פוצלו בפסיק, ולכן "Ltd." ו־"Inc." הופיעו כשמות נפרדים במסנני הספרייה, בהגדרות ← נרמול נתונים ובסטטיסטיקות. גם בדפי המשחקים הם מוצגים שלמים. שם עם פסיק בתוך סוגריים, כמו "Majesco (licensed from Konami, Disney)", נשאר שלם גם הוא
+    en: Company names such as "Nintendo Co., Ltd." and "GameTek, Inc." now stay whole. They were split at the comma, so "Ltd." and "Inc." showed as names of their own in the Library filters, Settings → Data Normalization and Stats. Game pages show them whole too. A name with a comma inside brackets, such as "Majesco (licensed from Konami, Disney)", stays whole as well
   - type: enhancement
-    label: 'הגדרות → נורמליזציית נתונים יכולה כעת לאחד שמות שונים של אותה חברה. תחת מוציא לאור ומפתח, רשימה חדשה מציגה שמות דומים, כמו "Eidos" ו-"Eidos Interactive". שום דבר לא מתאחד מעצמו, כי שמות דומים יכולים להיות חברות שונות: בחרו את השם שנשאר, סמנו את השמות של אותה חברה ולחצו Merge. השמות משתנים בכל משחק, וסריקות מאוחרות יותר משתמשות בשם שנשמר'
+    label: 'הגדרות ← נרמול נתונים יכולה עכשיו לאחד שמות שונים של אותה חברה. תחת מוציא לאור ומפתח, "שמות שאולי הם חברה אחת" מציגה שמות דומים כמו "Eidos" ו־"Eidos Interactive". שום דבר לא מתאחד מעצמו, כי שמות דומים יכולים להיות חברות שונות: בחר את השם שישאר, סמן את השמות של אותה חברה ולחץ על מיזוג. השמות משתנים בכל משחק, ו־scrape בעתיד ישתמשו בשם שנשאר'
+    en: 'Settings → Data Normalization can now merge one company''s different names. Under Publisher and Developer, "Names that may be one company" lists look-alikes such as "Eidos" and "Eidos Interactive". Nothing is merged for you, because look-alikes can be different companies: pick the name to keep, tick the names that are the same company and press Merge. The names change on every game, and later scrapes use the kept name'
   - type: enhancement
-    label: 'הגדרות → נורמליזציית נתונים כוללת כעת את הכפתורים זכיין, מוציא לאור ומפתח. כל אחד מציג שמות שנכתבו באותיות גדולות וקטנות שונות, כמו "Doom" ו-"DOOM", עם מספר המשחקים לכל כתיב, והכתיב הנפוץ ביותר כבר נבחר. בחרו אחד ולחצו על החל כדי להפוך אותם לשם אחד. שם חדש שנאסף ושונה רק באותיות גדולות מקבל את הכתיב של הספרייה שלכם, ומילוי AI מבקש את הכתיב הרשמי'
+    label: בהגדרות ← נרמול נתונים יש עכשיו כפתורי זיכיון, מוציא לאור ומפתח. כל אחד מציג שמות שנכתבו באותיות רישיות שונות, כמו "Doom" ו־"DOOM", עם מספר המשחקים בכל איות, והנפוץ ביותר נבחר. בחר אחד ולחץ על החל כדי לאחד אותם לשם אחד. שם חדש שנגרד ושונה רק באותיות רישיות מקבל את האיות שבספרייה שלך, ו־מילוי AI מבקש אותיות רישיות רשמיות
+    en: Settings → Data Normalization now has Franchise, Publisher and Developer buttons. Each lists the names spelled with different capitals, such as "Doom" and "DOOM", with how many games use each spelling and the most-used one picked. Choose one and press Apply to make them one name. A newly scraped name that differs only in capitals takes your library's spelling, and AI Fill asks for official capitals
   - type: fix
-    label: 'המסננים בספרייה מתאימים עכשיו ערכים שלמים. בחירת הז''אנר "פעולה" כבר לא מציגה גם משחקי "פעולה-הרפתקה", כך שהתוצאה תואמת את המספר שלידה. רשימות התגיות בדף משחק ו"משחקים דומים" פועלות באותו אופן'
+    label: מסנני הספרייה מתאימים עכשיו לערכים שלמים. בחירה בז'אנר "Action" כבר לא מציגה גם משחקי "Action-Adventure", כך שהתוצאה תואמת את המספר לידה. רשימות התגיות בדף משחק ו־Similar Games מתאימות באותו אופן
+    en: The Library's filters now match whole values. Choosing the genre "Action" no longer also shows "Action-Adventure" games, so the result matches the count beside it. A game page's tag lists and Similar Games match the same way
   - type: security
-    label: 'הגדרות → הפרופיל שלי כבר לא שולח לדף את מפתח ה-RetroAchievements, אסימון ה-PSN או מפתח ה-Steam השמורים שלך. כל תיבה מציגה רק את ארבעת התווים האחרונים שלה, כמו שהמפתחות בלשונית גירוד כבר עשו. שמירה בלי להקליד מחדש משאירה את המפתח השמור'
+    label: הגדרות ← הפרופיל שלי כבר לא שולחת לדף את מפתח RetroAchievements, אסימון PSN או מפתח Steam השמורים שלך. כל שדה מציג רק את ארבעת התווים האחרונים, כמו מפתחות לשונית הגרידה. שמירה בלי להקליד מחדש משאירה את המפתח השמור
+    en: Settings → My Profile no longer sends your saved RetroAchievements key, PSN token or Steam key to the page. Each box shows only its last four characters, as the Scraping tab's keys already did. Saving without retyping keeps the saved key
   - type: fix
-    label: 'דף מציג היומנים כבר לא נפתח על "קובץ יומן לא חוקי". הוא הציג יומני עזר שלא היה פותח, ופתח אחד מהם ראשון; עכשיו הוא מציג רק יומנים שהוא יכול לפתוח'
+    label: מציג היומנים כבר לא נפתח על "קובץ יומן לא תקין". הוא הציג יומני עזר שאינו מציג, ופתח אחד מהם קודם. עכשיו הוא מציג רק יומנים שאפשר לפתוח
+    en: The Log Viewer no longer opens on "Invalid log file". It listed helper logs it would not show, and opened one of them first; it now lists only logs it can open
   - type: fix
-    label: 'לשונית ה-PSN בייבוא משחקים שולחת אותך עכשיו להגדרות → הפרופיל שלי בשביל אסימון ה-NPSSO, איפה שהתיבה נמצאת, במקום להגדרות → מפתחות API, ואפשר לתרגם את מצב החיבור שלה'
+    label: לשונית PSN ביבוא משחקים שולחת אותך עכשיו להגדרות ← הפרופיל שלי עבור אסימון NPSSO, שם נמצא השדה, ולא להגדרות ← מפתחות API, ואת מצב החיבור שלה אפשר לתרגם
+    en: Game Imports' PSN tab now sends you to Settings → My Profile for the NPSSO token, where the box is, instead of Settings → API Keys, and its connection status can be translated
   - type: fix
-    label: 'כשמחוברים כצופה, דפים כבר לא מבקשים מהשרת מידע למנהלים בלבד שהם לא יכולים לקבל, כך שיומן השרת כבר לא מתמלא בבקשות שנדחו'
+    label: כשנכנסים כצופה, הדפים כבר לא מבקשים מהשרת מידע למנהלים בלבד שאין להם גישה אליו, ולכן יומן השרת כבר לא מתמלא בבקשות שנדחו
+    en: Signed in as a viewer, pages no longer ask the server for admin-only information they cannot have, so the server log no longer fills with refused requests
   - type: security
-    label: 'שמות שמגיעים מחוץ ל-RetroDB (נתונים שנגרדו, שמות של קבצים ותיקיות, תשובות משירותים מקוונים) מוצגים עכשיו תמיד כטקסט פשוט: בדף המשחק, בהגדרות, בדוחות, בכלי ROM, בדפי הגביעים ועוד. דפים גם מפעילים רק את הפעולות של הכפתורים שלהם, כך ששם זדוני לא יכול לגרום לדף לעשות משהו, והקישור "חזרה אל" בהודעת התקדמות כבר לא יכול להוביל לאתר אחר'
+    label: שמות שמגיעים מחוץ ל־RetroDB (נתונים שנגרדו, שמות קבצים ותיקיות, תשובות משירותים מקוונים) מוצגים עכשיו תמיד כטקסט רגיל, בדף המשחק, בהגדרות, בדוחות, בכלי ה־ROM, בדפי הגביעים ועוד. הדפים גם מפעילים רק פעולות של הכפתורים שלהם, כך ששם מתוחכם לא יכול לגרום לדף לעשות משהו, וקישור "חזרה אל" בהודעת התקדמות כבר לא יכול להוביל לאתר אחר
+    en: Names that come from outside RetroDB (scraped data, file and folder names, replies from online services) now always show as plain text, on the game page, Settings, Reports, the ROM tools, the trophy pages and more. Pages also run only their own buttons' actions, so a crafted name cannot make a page do something, and a progress toast's "return to" link can no longer lead to another website
   - type: enhancement
-    label: 'לגרידות מרוכזות בתור יש עכשיו כפתור סידור מחדש. הוא פותח את מנהל התור, שבו גרידה ממתינה יכולה לרוץ מוקדם יותר, מאוחר יותר, או להתחלף עם זו שרצה עכשיו. כל הודעה בתור גם שומרת על מספר המקום שלה אחרי שינוי'
+    label: ל־scrape המרוכזים שבתור יש כפתור סידור מחדש. הוא פותח את מנהל התור, שבו scrape ממתין יכול לרוץ מוקדם יותר, מאוחר יותר, או להתחלף עם זה שרץ עכשיו. כל הודעה של פריט בתור גם שומרת על מספר מקומה אחרי שינוי
+    en: Queued bulk scrapes get a Reorder button. It opens the Queue Manager, where a waiting scrape can run sooner, later, or swap with the one running now. Each queued toast also keeps its place number after a change
   - type: fix
-    label: 'התקדמות משימות כבר לא נתקעת ולא חוזרת על עצמה. בדיקה או המרה של CHD שקורסת מסתיימת עכשיו עם הסיבה; ביטול מחזיר לדף את הכפתורים שלו; ביטול, השהיה או הסרה שנדחו מודיעים על כך; "הושלם" כבר לא קופץ שוב שעה מאוחר יותר; וכפתור הסנכרון בדף ההישגים חוזר כשהסנכרון מסתיים'
+    label: התקדמות משימות כבר לא נתקעת וגם לא חוזרת על עצמה. בדיקה או המרה של CHD שקורסת מסתיימת עכשיו עם הסיבה; ביטול מחזיר לדף את הכפתורים; ביטול, השהיה או הסרה שנדחו מודיעים על כך; "הושלם" כבר לא קופץ שוב כעבור שעה; וכפתור הסנכרון בדף ההישגים חוזר כשהסנכרון מסתיים
+    en: Job progress no longer gets stuck or repeats itself. A CHD check or conversion that crashes now ends with its reason; Cancel gives the page its buttons back; a refused cancel, pause or remove says so; "completed" no longer pops up again an hour later; and the achievements page's Sync button comes back when its sync ends
   - type: fix
-    label: 'שמירת התאמה של HowLongToBeat בדף המשחק כבר לא מוחקת את קישור ה-HLTB ואת מספר השחקנים, ואפשר לנסות שוב שמירה שנכשלה. עריכה מהירה כבר לא מציגה כל התאמה שמורה כ-"100% התאמה". תגיות הסינון בספרייה מציגות את שם המערכת במקום המספר שלה, והחיפוש בזמן ההקלדה עובד בדפי הרשימות ובהשוואה'
+    label: שמירת התאמת HowLongToBeat בדף המשחק כבר לא מוחקת את קישור ה־HLTB ואת מספר השחקנים, ושמירה שנכשלה אפשר לנסות שוב. עריכה מהירה כבר לא מציגה כל התאמה שמורה כ"התאמה של 100%". תגיות מסנן הספרייה מציגות שם של מערכת במקום מספר, והחיפוש תוך כדי הקלדה עובד בדפי רשימות ובהשוואה
+    en: Saving a HowLongToBeat match on the game page no longer wipes its HLTB link and player count, and a failed save can be retried. Quick Edit no longer shows every saved match as "100% match". Library filter tags show a system's name instead of its number, and search-as-you-type works on list pages and Compare
   - type: fix
-    label: 'כל חשבון יכול לשנות את הסיסמה שלו בהגדרות → הפרופיל שלי, ומנהל יכול לאפס את הסיסמה של כל אחד. תיקיות האמולטורים עובדות עכשיו ב-Windows. לוח הבקרה כבר לא אומר לעורכים ולצופים שה-API שלהם לא מקוונים, ו-"משחקים ללא תמונת קופסה" פותח את הספרייה עם המשחקים האלה בלבד. מנהל סיסמאות יכול עכשיו למלא את תיבת הכניסה'
+    label: כל חשבון יכול לשנות את הסיסמה שלו בהגדרות ← הפרופיל שלי, ומנהל יכול לאפס סיסמה לכל אחד. תיקיות אמולטור עובדות עכשיו ב־Windows. הלוח הראשי כבר לא אומר לעורכים ולצופים שה־API שלהם לא מחובר, ו"משחקים בלי תמונת אריזה" פותח את הספרייה עם המשחקים האלה בלבד. מנהל סיסמאות יכול עכשיו למלא את שדה הכניסה
+    en: Every account can change its own password in Settings → My Profile, and an admin can reset anyone's. Emulator folders now work on Windows. The dashboard no longer tells editors and viewers that their APIs are offline, and "Games missing box art" opens the Library showing just those games. A password manager can now fill the sign-in box
   - type: fix
-    label: 'כלי ROM: אימות CHD מציב כל תג תקינים או לא תקינים על הקובץ הנכון; מציג היומנים מציג שוב שמות מודולים ומודיע כשרשימת הקבצים שלו נכשלת; "בחר הכול" בייבוא משחקים מייבא רק את המשחקים שהמסנן שלכם מציג; ו"אפס" בהגדרות כלי ROM מחזיר את תיקיית ה-ROM של המחשב הזה'
+    label: 'כלי ROM: אימות CHD מציב כל תג תקין או לא תקין על הקובץ הנכון; מציג היומנים מציג שוב שמות מודולים ומודיע כשרשימת הקבצים שלו נכשלת; בחירת הכול ביבוא משחקים מייבאת רק את המשחקים שהמסנן שלך מציג; ואיפוס בהגדרות כלי ה־ROM משחזר את תיקיית ה־ROM של המחשב הזה'
+    en: 'ROM tools: CHD Verify puts each Valid or Invalid badge on the right file; the log viewer shows module names again and says when its file list fails; Game Imports'' select-all imports only the games your filter shows; and ROM Tools Settings'' Reset restores this computer''s own ROM folder'
   - type: fix
-    label: 'זמני הפתיחה של Steam מוצגים כתאריכים; סרגל A-Z עובד בגביעים מקומיים; מצב הבחירה של PSN ממשיך לעבוד במשחקים שנטענים בזמן הגלילה; צופים כבר לא רואים כפתורי סנכרון או שינוי שם שהם לא יכולים להשתמש בהם; שינוי שם מרוכז מדלג על קובץ ששמו שונה מאז הסריקה; וניתוח נתונים יכול להעתיק ברשת HTTP רגילה ומייצא מספרים כמספרים'
+    label: זמני פתיחה של Steam מוצגים כתאריכים; סרגל A-Z עובד בגביעים מקומיים; מצב הבחירה ב־PSN ממשיך לעבוד במשחקים שנטענים תוך כדי גלילה; צופים כבר לא רואים כפתורי סנכרון או שינוי שם שאין להם הרשאה להשתמש בהם; שינוי שם מרוכז מדלג על קובץ ששמו שונה מאז הסריקה; והניתוח הסטטיסטי יכול להעתיק ברשת HTTP רגילה ומייצא מספרים כמספרים
+    en: Steam unlock times show as dates; the A-Z bar works on Local Trophies; PSN Select mode keeps working on games that load as you scroll; viewers no longer see Sync or Rename buttons they cannot use; a batch rename skips a file renamed since the scan; and Analytics can copy on a plain-HTTP network and exports numbers as numbers
   - type: fix
-    label: 'בחלון אישור, Enter על ביטול או × מבטל עכשיו במקום לאשר. חלון שנפתח באמצעות אישור כבר לא נעלם, ו-Tab ממשיך לעבוד אחרי שרשימת הקיצורים או חלון התקדמות נסגרים'
+    label: בחלון אישור, Enter על ביטול או על × מבטל עכשיו במקום לאשר. חלון שנפתח מאישור כבר לא נעלם, ו־Tab ממשיך לעבוד אחרי שרשימת הקיצורים או חלון התקדמות נסגרים
+    en: In a confirm window, Enter on Cancel or × now cancels instead of confirming. A window opened by OK no longer vanishes, and Tab keeps working after the shortcuts list or a progress window closes
   - type: enhancement
-    label: 'פקדים רבים שעבדו רק עם עכבר עובדים עכשיו גם מהמקלדת (Tab, ואז Enter או רווח): פרופילי הכניסה, תוצאות החיפוש בהשוואה, תגיות וכפתורי העריכה והמחיקה שלהן, כרטיסי משחקים בהישגים, סשנים ביומן, בחירת ערכת נושא ואווטאר, תמונות המוזיאון, ה-× שמסיר ז''אנר או מסנן, תיקיות בהגדרה, תיבות סימון של מקורות סריקה וייבוא CLZ. מתגי הפעלה/כיבוי מציגים עכשיו את טבעת המקלדת'
+    label: 'פקדים רבים שעבדו רק בעכבר עובדים עכשיו גם מהמקלדת (Tab, ואז Enter או רווח): פרופילי הכניסה, תוצאות החיפוש בהשוואה, תגיות וכפתורי העריכה והמחיקה שלהן, כרטיסי משחקי הישגים, סשנים ביומן, בחירות של ערכת נושא ואווטאר, תמונות המוזיאון, ה־× שמסיר ז''אנר או מסנן, תיקיות ההגדרה, תיבות הסימון של מקורות scrape ויבוא CLZ. מתגי הפעלה וכיבוי מציגים עכשיו את טבעת המקלדת'
+    en: 'Many controls that worked only with a mouse now work from the keyboard (Tab, then Enter or Space): the sign-in profiles, Compare search results, tags and their Edit and Delete buttons, achievement game cards, log sessions, theme and avatar choices, Museum pictures, the × that removes a genre or filter, setup folders, scrape-source tick boxes and the CLZ import. On/off switches now show the keyboard ring'
   - type: performance
-    label: 'מסיר הרקע של המוזיאון כבר לא נשאר בזיכרון. הוא הפריד תמונות בקר מהרקע שלהן בעזרת מודל AI שתפס יותר מ-2 GB אחרי השימוש הראשון, ועד כ-9 GB בזמן עיבוד תמונה, עד ש-RetroDB הופעל מחדש. כעת הוא רץ בתוכנת עזר שנפתחת כשצריך ונסגרת שתי דקות אחרי התמונה האחרונה שלה, וכך כל הזיכרון הזה מתפנה'
-    en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'
+    label: מסיר הרקע של המוזיאון כבר לא נשאר בזיכרון. הוא הפריד תמונות בקר מהרקע שלהן בעזרת מודל AI שתפס יותר מ-2 GB אחרי השימוש הראשון, ועד כ-9 GB בזמן עיבוד תמונה, עד ש-RetroDB הופעל מחדש. כעת הוא רץ בתוכנת עזר שנפתחת כשצריך ונסגרת שתי דקות אחרי התמונה האחרונה שלה, וכך כל הזיכרון הזה מתפנה
+    en: The Museum's background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back
   - type: feature
     label: 'ייבוא Xbox כבר לא דורש חשבון Microsoft Azure. כעת כל אחד מדביק מפתח OpenXBL חינמי משלו (מ-xbl.io) תחת הגדרות → הפרופיל שלי, וזה עובד מכל מחשב ברשת שלכם. הייבוא גם משמיט אפליקציות ומשחקים לטלפון בלבד, משייך משחקי PC ל-Windows במקום ל-Xbox One, קורא נכון הישגי Xbox 360, ולא מציג תאריך להישג נעול. המפתח החינמי מאפשר 150 בקשות בשעה: סנכרון הישגים גדול שמגיע למגבלה נעצר, מודיע על כך, ובפעם הבאה מתחיל מהמשחקים שעוד לא הגיע אליהם'
     en: 'Xbox import no longer needs a Microsoft Azure account. Each person now pastes their own free OpenXBL key (from xbl.io) under Settings → My Profile, and it works from any computer on your network. The import also leaves out apps and phone-only games, files PC games under Windows instead of Xbox One, reads Xbox 360 achievements the right way, and shows no date for a locked achievement. The free key allows 150 requests an hour: a big achievement sync that reaches it stops, says so, and next time starts with the games it had not reached'
@@ -448,7 +515,7 @@
   - type: fix
     label: החיפוש ההמוני של HowLongToBeat מסתיים עכשיו בהודעה כשהאתר מדווח על יותר מדי בקשות, וכל בקשה לאתר מרוחקת בזמן
   - type: fix
-    label: Fix Box and Manual Regions כבר לא מוותר אחרי 25 משחקים ברצף ש-ScreenScraper לא מכיר. הוא נעצר רק כש-ScreenScraper אומר שהמגבלה שלו הושגה
+    label: תיקון אזורים של קופסאות ומדריכים כבר לא מוותר אחרי 25 משחקים ברצף ש-ScreenScraper לא מכיר. הוא נעצר רק כש-ScreenScraper אומר שהמגבלה שלו הושגה
   - type: fix
     label: בדף המשחק, כל דירוג גיל ממורכז עכשיו מעל תווית ההערכה של AI שלו
   - type: fix
@@ -591,7 +658,7 @@
   - type: fix
     label: ScreenScraper נותן עכשיו לכל משחק את העטיפה, עטיפת התלת-ממד, המדריך, הכותרת ותאריך ההוצאה של האזור שלו, ולא של האזור הראשון לפי סדר האלפבית
   - type: feature
-    label: כלי חדש ב-ROM Tools, Fix Box and Manual Regions, מחליף עטיפות ומדריכים שגרידות ישנות של ScreenScraper לקחו מהאזור הלא נכון
+    label: כלי חדש ב-ROM Tools, תיקון אזורים של קופסאות ומדריכים, מחליף עטיפות ומדריכים שגרידות ישנות של ScreenScraper לקחו מהאזור הלא נכון
   - type: fix
     label: סרטוני וידאו של ScreenScraper משתמשים עכשיו קודם בקובץ הקטן, ובגדול רק אם זה נכשל
   - type: fix
@@ -616,7 +683,7 @@
     label: במערכות 8 סיביות ו-16 סיביות, הגרידה כבר לא מוסיפה צילומי מסך של IGDB או RAWG למשחק שיצא על כמה מערכות, כי הם עלולים להציג גרסה של מערכת אחרת
   - type: fix
     label: האמולטור של המשחק מופיע עכשיו בכרטיס הגדרות האמולטור, ולא ליד שחק
-  body: "<ul>\n  <li><strong>כל גרדן מחפש את הקונסולה הנכונה.</strong> Atari\n    Lynx, ארקייד CPS, Super Famicom ואחרות חופשו במכונה הלא נכונה, והרבה מערכות נוספות מחופשות עכשיו, בכל המקורות ועבור הישגים.</li>\n  <li><strong>אזור המשחק נקבע קודם משם הקובץ שלו.</strong>\n    תגית כמו (USA) קובעת עכשיו את האזור, וה-AI כבר לא נשאל. ב-ROM Tools יש כלי חדש, Fix Regions from File Names, למשחקים שגרידות ישנות טעו בהם.</li>\n  <li><strong>ScreenScraper לפי אזור המשחק.</strong> העטיפה, עטיפת התלת-ממד, המדריך, הכותרת ותאריך ההוצאה באים עכשיו מהאזור של המשחק עצמו, ולא מהראשון לפי סדר האלפבית. ב-ROM Tools יש כלי חדש, Fix Box and Manual Regions, לגרידות ישנות. סרטוני וידאו מנסים עכשיו קודם את הקובץ הקטן.</li>\n  <li><strong>תמונות RAWG כבר אינן עטיפה.</strong> לעיתים קרובות הן צילומי מסך, והן חסמו עטיפה אמיתית. עכשיו הן משמשות כאמנות מעריצים. ב-ROM Tools יש כלי חדש, Clear RAWG Pictures from Box Art, לתמונות שגרידות ישנות שמרו. RetroDB גם נותן קרדיט ל-RAWG עם קישור בסרגל הצד, כפי ש-RAWG מבקשת.</li>\n  <li><strong>ES-DE שומר על מקומו בסדר הגרידה שלך.</strong> כשהוא לא היה המקור הראשי, מקורות מאוחרים יותר וה-AI החליפו את הטקסט והעטיפות שלו, וצילומי המסך שלו נזרקו. עכשיו הם נשארים. הוא כבר לא מעתיק מדיה שכבר יש למשחק, והוא קורא את הרשומה של קובץ ה-ROM של המשחק עצמו. משחקי PS3 בתיקיות מוצאים עכשיו את עטיפות ה-ES-DE שלהם. ייבוא לוגואים של מערכות כבר לא לוקח תמונה לא קשורה. גירוד מלא מחדש כבר לא מוחק עטיפה שמקור אחר הרגע הוריד.</li>\n  <li><strong>Screenshot Review.</strong> כלי חדש ב-ROM Tools מציג צילומי מסך של ZX Spectrum, Commodore 64 ו-Game Boy כשהחשודים ביותר קודם, ומסיר רק את מה שבחרת. הגרידה מסרבת עכשיו לצילום מסך של Game Boy שהמקור שלו מכיל הרבה יותר גוונים ממה שהמכונה יכולה להציג. במערכות 8 סיביות ו-16 סיביות היא כבר לא מוסיפה צילומי מסך של IGDB או RAWG למשחק שיצא על כמה מערכות.</li>\n  <li><strong>ההתחברות ל-RetroAchievements מגיעה ל-DuckStation ול-PCSX2</strong>\n    כשלוחצים על שחק.</li>\n  <li><strong>בדף של משחק:</strong> מקשי החצים שמאלה וימינה עוברים למשחק הקודם והבא, מדור הצ'יטים ניתן לכיווץ וזוכר את מצבו, החלוניות התחתונות מתאימות לחלון, והאמולטור מופיע בכרטיס הגדרות האמולטור, ולא ליד שחק.</li>\n  <li><strong>ייבא עטיפת תלת-ממד</strong> נמצא עכשיו בחלון הערוך, ליד שאר התמונות.</li>\n  <li><strong>חלון שמתחיל בתיבת טקסט,</strong> כמו גרד, מציב עכשיו את הסמן בתיבה במקום על כפתור הסגירה.</li>\n</ul>\n"
+  body: "<ul>\n  <li><strong>כל גרדן מחפש את הקונסולה הנכונה.</strong> Atari\n    Lynx, ארקייד CPS, Super Famicom ואחרות חופשו במכונה הלא נכונה, והרבה מערכות נוספות מחופשות עכשיו, בכל המקורות ועבור הישגים.</li>\n  <li><strong>אזור המשחק נקבע קודם משם הקובץ שלו.</strong>\n    תגית כמו (USA) קובעת עכשיו את האזור, וה-AI כבר לא נשאל. ב-ROM Tools יש כלי חדש, Fix Regions from File Names, למשחקים שגרידות ישנות טעו בהם.</li>\n  <li><strong>ScreenScraper לפי אזור המשחק.</strong> העטיפה, עטיפת התלת-ממד, המדריך, הכותרת ותאריך ההוצאה באים עכשיו מהאזור של המשחק עצמו, ולא מהראשון לפי סדר האלפבית. ב-ROM Tools יש כלי חדש, תיקון אזורים של קופסאות ומדריכים, לגרידות ישנות. סרטוני וידאו מנסים עכשיו קודם את הקובץ הקטן.</li>\n  <li><strong>תמונות RAWG כבר אינן עטיפה.</strong> לעיתים קרובות הן צילומי מסך, והן חסמו עטיפה אמיתית. עכשיו הן משמשות כאמנות מעריצים. ב-ROM Tools יש כלי חדש, Clear RAWG Pictures from Box Art, לתמונות שגרידות ישנות שמרו. RetroDB גם נותן קרדיט ל-RAWG עם קישור בסרגל הצד, כפי ש-RAWG מבקשת.</li>\n  <li><strong>ES-DE שומר על מקומו בסדר הגרידה שלך.</strong> כשהוא לא היה המקור הראשי, מקורות מאוחרים יותר וה-AI החליפו את הטקסט והעטיפות שלו, וצילומי המסך שלו נזרקו. עכשיו הם נשארים. הוא כבר לא מעתיק מדיה שכבר יש למשחק, והוא קורא את הרשומה של קובץ ה-ROM של המשחק עצמו. משחקי PS3 בתיקיות מוצאים עכשיו את עטיפות ה-ES-DE שלהם. ייבוא לוגואים של מערכות כבר לא לוקח תמונה לא קשורה. גירוד מלא מחדש כבר לא מוחק עטיפה שמקור אחר הרגע הוריד.</li>\n  <li><strong>Screenshot Review.</strong> כלי חדש ב-ROM Tools מציג צילומי מסך של ZX Spectrum, Commodore 64 ו-Game Boy כשהחשודים ביותר קודם, ומסיר רק את מה שבחרת. הגרידה מסרבת עכשיו לצילום מסך של Game Boy שהמקור שלו מכיל הרבה יותר גוונים ממה שהמכונה יכולה להציג. במערכות 8 סיביות ו-16 סיביות היא כבר לא מוסיפה צילומי מסך של IGDB או RAWG למשחק שיצא על כמה מערכות.</li>\n  <li><strong>ההתחברות ל-RetroAchievements מגיעה ל-DuckStation ול-PCSX2</strong>\n    כשלוחצים על שחק.</li>\n  <li><strong>בדף של משחק:</strong> מקשי החצים שמאלה וימינה עוברים למשחק הקודם והבא, מדור הצ'יטים ניתן לכיווץ וזוכר את מצבו, החלוניות התחתונות מתאימות לחלון, והאמולטור מופיע בכרטיס הגדרות האמולטור, ולא ליד שחק.</li>\n  <li><strong>ייבא עטיפת תלת-ממד</strong> נמצא עכשיו בחלון הערוך, ליד שאר התמונות.</li>\n  <li><strong>חלון שמתחיל בתיבת טקסט,</strong> כמו גרד, מציב עכשיו את הסמן בתיבה במקום על כפתור הסגירה.</li>\n</ul>\n"
 - version: 3.34.0
   date: '2026-10-30'
   tags:

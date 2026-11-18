@@ -1,139 +1,206 @@
 - version: 4.0.0
   date: '2026-11-18'
   tags:
-  - type: enhancement
-    label: '管理員和編輯可以在 設定 > 帳戶 > 我能閱讀的語言 中勾選自己能閱讀的語言。當一款遊戲沒有來自自己地區的包裝盒圖片或名稱時,RetroDB 會選一個使用抓取者能閱讀的語言的版本。什麼都不勾選的人,視為閱讀自己的螢幕語言'
   - type: fix
-    label: '歐洲版不再僅僅因為 ScreenScraper 沒有通用的歐洲版,就得到德語、法語、西班牙語或義大利語的包裝盒圖片或名稱。它會得到英國版,或你的地區清單中的某一個,例如世界或美國,除非抓取者能閱讀那種語言。「修復包裝盒與說明書地區」會重新檢查它換成了無人閱讀的語言的包裝盒和說明書'
+    label: 無論你使用哪種語言，過去一律顯示英文的按鈕和訊息，現在都會以該語言顯示，RetroDB 提供的每種語言皆是如此。有些原本沒有翻譯，有些則顯示了錯誤的翻譯，例如德文的「建立備份」被寫成「還原備份」
+    en: Buttons and messages that showed in English whatever your language now show in it, in every language RetroDB offers. Some had no translation, and some showed a wrong one, such as Create Backup reading as "restore backup" in German
   - type: enhancement
-    label: '「修復包裝盒與說明書地區」現在有了自己的頁面,可從 ROM 工具中它的卡片開啟。頁面的 What changed 清單會依主機分組,列出修復替換過包裝盒、3D 包裝盒或說明書的每一款遊戲,並顯示包裝盒現在的樣子和每個新檔案來自的地區,方便你核對。在本次更新之前已修復的遊戲也會列出'
-  - type: enhancement
-    label: '「修復包裝盒與說明書地區」現在可以用其頁面上的按鈕暫停、繼續和停止。以前,停止它的唯一辦法是再次點按它的卡片,而螢幕上沒有任何提示'
-  - type: enhancement
-    label: '「修復包裝盒與說明書地區」執行時,會在按鈕旁顯示進度列。What changed 清單會記住你收起了哪些主機,下次在這個瀏覽器中開啟頁面時它們仍然收起'
-  - type: enhancement
-    label: '「修復包裝盒與說明書地區」執行時,它換過的每個遊戲會立刻出現在 What changed 清單中它所屬的主機下面。以前要重新整理頁面才能看到'
+    label: 管理員和編輯者可以在「設定 > 帳戶 > 我能閱讀的語言」中勾選自己會讀的語言。當遊戲沒有來自其所屬地區的封面圖或名稱時,RetroDB 會選用抓取者能閱讀的語言版本。沒有勾選任何語言的人,視為只讀自己的畫面語言
+    en: Admins and editors can tick the languages they read, under Settings > Account > Languages I can read. When a game has no box picture or name from its own region, RetroDB picks one in a language someone who scrapes can read. Anyone who ticks none counts as reading their screen language
   - type: fix
-    label: '還沒開始的進度列,左端不再顯示孤零零的「%」'
-  - type: fix
-    label: '「系統」頁面上的 Wii U、PlayStation Vita、Xbox 和 Xbox One 標誌現在像其他標誌一樣佔滿位置。PlayStation Vita 標誌和 Xbox One 中的 ONE 現在是白色,在所有主題下都能看清'
+    label: 歐洲版不會再只因為 ScreenScraper 沒有通用的歐洲版,就得到德文、法文、西班牙文或義大利文的封面圖或名稱。除非抓取者讀得懂該語言,否則會使用英國版,或你地區清單中的版本,例如世界或美國。「修正封面與說明書地區」會重新檢查那些被換成無人能讀語言的封面和說明書
+    en: A Europe copy no longer gets a German, French, Spanish or Italian box picture or name just because ScreenScraper has no general Europe one. It gets the UK one, or one from your region list such as World or USA, unless someone who scrapes reads that language. Fix Box and Manual Regions looks again at the boxes and manuals it swapped into a language nobody reads
   - type: enhancement
-    label: '由 Xbox 匯入新增的 Xbox Series X|S 有了自己的標誌,點按它的 ℹ️ 按鈕開啟的視窗會顯示主機的圖片。它還會顯示全名 Microsoft Xbox Series X|S 和規格參數'
-  - type: fix
-    label: '由 Steam、Xbox、PSN 或 CLZ 匯入新增的系統現在會立即取得標誌、類型,以及 RetroDB 知道時的全名。以前這樣新增的系統會在 RetroDB 更新時取得這些資訊'
+    label: 「修正封面與說明書地區」有自己的頁面,可從 ROM 工具卡片開啟。其「變更內容」清單會依主機分組,列出修正時被換過封面、3D 封面或說明書的所有遊戲,顯示目前的封面以及每個新檔案來自的地區,方便你檢查。此次更新前已修正的遊戲也會列出
+    en: Fix Box and Manual Regions has its own page, opened from its ROM Tools card. Its What changed list shows every game the fix swapped a box, 3D box or manual for, grouped by console, with the box as it is now and the region each new file came from, so you can check them. Games already fixed before this update are listed too
   - type: enhancement
-    label: '「修復包裝盒與說明書地區」現在對每款遊戲只向 ScreenScraper 詢問一次。以前,每次執行都會從第一款遊戲重新開始,把所有遊戲都問一遍,包括已經檢查過的。在它首次執行之後抓取的遊戲已經有正確的包裝盒,所以它會直接跳過,不再詢問'
+    label: 「修正封面與說明書地區」現在可以用頁面上的按鈕暫停、繼續和停止。以前要停止只能再按一次它的卡片,而畫面上完全沒有說明
+    en: Fix Box and Manual Regions can be paused, resumed and stopped with buttons on its page. Before, the only way to stop it was to press its card again, which nothing on screen said
+  - type: enhancement
+    label: 「修正封面與說明書地區」執行時,按鈕旁會顯示進度列。其「變更內容」清單會記住你收合了哪些主機,下次在此瀏覽器開啟頁面時仍保持收合
+    en: Fix Box and Manual Regions shows a progress bar beside its buttons while it runs. Its What changed list remembers which consoles you closed, so they stay closed the next time you open the page in this browser
+  - type: enhancement
+    label: 「修正封面與說明書地區」執行時,每個被換過的遊戲會立刻加入「變更內容」清單,並顯示在其主機之下。以前必須重新載入頁面才看得到
+    en: While Fix Box and Manual Regions runs, each game it swaps joins its What changed list straight away, under its console. Before, you had to reload the page to see them
   - type: fix
-    label: '會掃描或轉換的 ROM 工具頁面(螢幕截圖去重、螢幕截圖審查、重複查找器、CHD 轉換器和 CHD 校驗)在你離開頁面再回來時,會保留上一次的執行。正在進行的掃描會繼續顯示進度,已完成的掃描會在結束後 30 分鐘內再次顯示結果。以前,頁面回來時是空的'
+    label: 尚未開始的進度列,左端不會再單獨顯示一個「%」
+    en: A progress bar that has not started yet no longer shows a lone "%" at its left end
   - type: fix
-    label: '翻譯版說明頁面依應用程式在該語言中顯示的名稱稱呼每個按鈕、分頁和頁面，並依應用程式顯示的樣子引用其訊息。批量 AI 填充一節不再提到應用程式中沒有的卡片。後台按鈕現在在義大利語、韓語和中文中讀起來正確，一些祖魯語標籤也不再以多餘的 "N:" 開頭'
+    label: 系統頁面上的 Wii U、PlayStation Vita、Xbox 和 Xbox One 標誌現在和其他標誌一樣填滿空間。PlayStation Vita 標誌和 Xbox One 的 ONE 改為白色,在每個主題下都看得清楚
+    en: The Wii U, PlayStation Vita, Xbox and Xbox One logos on the Systems page fill their space like the others. The PlayStation Vita logo and the ONE in Xbox One are now white, so they can be read on every theme
+  - type: enhancement
+    label: Xbox 匯入所新增的 Xbox Series X|S 有了自己的標誌,按下其 ℹ️ 按鈕開啟的視窗也會顯示主機圖片。它還有完整名稱 Microsoft Xbox Series X|S 及其規格
+    en: Xbox Series X|S, which the Xbox import adds, has its own logo, and the window its ℹ️ button opens shows a picture of the consoles. It also has its full name, Microsoft Xbox Series X|S, and its specifications
+  - type: fix
+    label: 由 Steam、Xbox、PSN 或 CLZ 匯入所新增的系統,現在會在 RetroDB 有資料時取得標誌、類型和完整名稱。以前以此方式新增的系統,會在 RetroDB 更新時補上
+    en: A system the Steam, Xbox, PSN or CLZ import adds now gets its logo, its type and its full name where RetroDB knows one. Systems added that way before get them when RetroDB updates
+  - type: enhancement
+    label: 「修正封面與說明書地區」對每個遊戲只會向 ScreenScraper 查詢一次。以前每次執行都從第一個遊戲重新開始,連已檢查過的也再問一遍。首次執行後才抓取的遊戲已有正確的封面,所以會直接略過,不再查詢
+    en: Fix Box and Manual Regions asks ScreenScraper about each game only once. Before, every run started again at the first game and asked about every one, even games it had already checked. Games scraped after its first run already have the right boxes, so it skips them without asking
+  - type: fix
+    label: 會掃描或轉換的 ROM 工具頁面(截圖去重、截圖審核、重複項目搜尋、CHD 轉換器和 CHD 驗證)在你離開頁面再回來時,會保留上次的執行狀態。執行中的掃描會繼續顯示進度,完成的掃描在結束後 30 分鐘內會再次顯示結果。以前頁面回來時是空白的
+    en: The ROM tool pages that scan or convert (Screenshot Dedup, Screenshot Review, Duplicate Finder, CHD Converter and CHD Verify) keep their last run when you leave the page and come back. A running scan carries on showing its progress, and a finished one shows its results again, for 30 minutes after it ends. Before, the page came back empty
+  - type: fix
+    label: 翻譯後的說明頁面,對每個按鈕、分頁和頁面都使用應用程式在該語言中顯示的名稱,並照應用程式顯示的樣子引用訊息。「批次 AI 填充」一節不再提到應用程式沒有的卡片。「背景」按鈕在義大利文、韓文和中文中現在顯示正確,部分祖魯文標籤也不再以多餘的「N:」開頭
+    en: Translated help pages call every button, tab and page by the name the app shows in that language, and quote its messages as the app shows them. The Bulk AI Fill section no longer names a card the app does not have. The Background button now reads correctly in Italian, Korean and Chinese, and some Zulu labels no longer start with a stray "N:"
   - type: feature
-    label: '帶有 RetroAchievements 的街機遊戲現在可以獲得成就了。它們會在使用 FinalBurn Neo 核心的 RetroArch (RetroDB) 中啟動，因為 RetroAchievements 支援該核心，卻不支援 MAME；其餘街機遊戲仍在 MAME 中遊玩。設定 → 模擬器 → 金手指下新增的「FinalBurn Neo 街機金手指」包，會在每個這類遊戲的頁面上列出它的金手指。FinalBurn Neo 每次啟動遊戲都會關閉金手指，所以請在遊玩時透過 RetroArch 的選單開啟：依序選擇 F1、Core Options、Cheat'
+    label: 有 RetroAchievements 的街機遊戲現在可以獲得成就。它們會用 RetroAchievements 支援的 FinalBurn Neo 核心在 RetroArch (RetroDB) 中啟動,而不是不支援的 MAME;其他街機遊戲仍使用 MAME。「設定 → 模擬器 → 金手指」下新增 FinalBurn Neo 街機金手指包,會在每個遊戲的頁面列出其金手指。FinalBurn Neo 每次啟動遊戲時都會關閉金手指,所以要在遊玩時從 RetroArch 選單開啟:F1,然後選核心選項,再選 Cheat
+    en: 'Arcade games with RetroAchievements now earn them. They start in RetroArch (RetroDB) with the FinalBurn Neo core, which RetroAchievements supports, instead of MAME, which it does not; every other arcade game stays in MAME. A new FinalBurn Neo arcade cheats pack under Settings → Emulators → Cheats lists each such game''s cheats on its page. FinalBurn Neo turns cheats off each time a game starts, so you switch them on in RetroArch''s menu while you play: F1, then Core Options, then Cheat'
   - type: performance
-    label: '管理員開啟設定頁更快了。開啟時不再檢查每個系統的標誌和硬體圖片：這張表在你開啟「自訂」分頁時才載入。開啟後立即按儲存，也不必再等這些檢查完成'
+    label: 管理員開啟設定的速度更快。開啟時不再檢查每個系統的標誌和硬體圖片,該表格會在你開啟「自訂」分頁時才載入。開啟後立刻按儲存,也不用再等那些檢查
+    en: 'Settings opens faster for admins. It no longer checks every system''s logo and hardware picture as it opens: that table fills when you open the Customization tab. A Save pressed straight after opening no longer waits behind those checks'
   - type: enhancement
-    label: '設定更整潔了。你自己的選擇集中在 設定 → 帳戶：主題和語言（含動態背景），以及訊息在畫面上停留多久，這項現在每個人各自設定。遊戲庫 → 路徑 把四個資料夾放在一個儲存按鈕下。系統 → 伺服器 會顯示連接埠和資料庫位置。「支援開發」移到了幫助頁面的末尾'
+    label: 設定變得更整齊。你個人的選項集中在「設定 → 帳戶」:主題與語言(含動態背景),以及訊息在畫面上停留多久,這現在是每個人各自的設定。「遊戲庫 → 路徑」以一個儲存按鈕管理全部四個資料夾。「系統 → 伺服器」顯示連接埠和資料庫位置。「支持開發」移到了說明頁面的最後
+    en: 'Settings is tidier. Your own choices sit together under Settings → Account: Theme and Language (with the moving background), and how long messages stay on screen, which is now each person''s own. Library → Paths holds all four folders under one Save. System → Server shows the port and where the database is. Support Development moved to the end of the Help page'
   - type: enhancement
-    label: '手把有了自己的頁面。設定 → 自訂 → 開啟手把頁面 即可進入：設定每個系統的預設手把、新增你自己的手把，並編輯手把庫'
+    label: 手把有了自己的頁面。「設定 → 自訂 → 開啟手把」會前往該頁:設定每個系統的預設手把、新增自己的手把,以及編輯手把庫
+    en: 'Controllers have their own page. Settings → Customization → Open Controllers goes there: set each system''s default controllers, add your own and edit the controller library'
   - type: enhancement
-    label: '批次抓取比對篩選現在提供三個簡單的選項，取代了分數數字和它的表格：嚴格、普通（建議）和寬鬆。普通就是原來的預設值。你以前自己做過的設定會顯示為自訂，直到你另選一項'
+    label: 「批次抓取比對篩選」改為三個簡單的選項:嚴格、一般和寬鬆,取代分數數字及其表格。一般就是以前的預設值。你以前自行設定的值會顯示為「自訂」,直到你選擇其他選項
+    en: 'Bulk Scrape Match Filtering offers three plain choices instead of a score number and its table: Strict, Normal and Loose. Normal is the old default. A setting you made yourself before shows as Custom until you pick another'
   - type: enhancement
-    label: '我的資料現在只有一個「儲存我的資料」按鈕，不再是三個。儲存時會檢查新的 PlayStation 權杖或 Xbox 金鑰；如果 Sony 拒絕新權杖，會保留你原來可用的 PlayStation 權杖。更改密碼現在會說明至少需要 12 個字元，並要求把新密碼輸入兩次'
+    label: 「我的個人資料」只有一個「儲存我的個人資料」按鈕,取代原本的三個。它在儲存時會檢查新的 PlayStation 權杖或 Xbox 金鑰,如果 Sony 拒絕新權杖,則會保留你原本可用的權杖。「變更密碼」現在說明至少需要 12 個字元,並要求輸入兩次新密碼
+    en: My Profile has one Save My Profile button instead of three. It checks a new PlayStation token or Xbox key as it saves, and keeps your working PlayStation token if Sony refuses the new one. Change Password now says it needs at least 12 characters and asks for the new password twice
   - type: fix
-    label: '設定裡的用詞更平實了。我的資料說明了 RetroAchievements 金鑰和密碼登入各自的作用。API 金鑰說明會優先使用個人自己的 RetroAchievements 或 Steam 金鑰。TheGamesDB 的金鑰改名為主金鑰和備用金鑰。編輯模擬器視窗現在寫的是程式位置和命令列選項。清除抓取的資料說明，除非勾選方塊，否則圖片和影片檔案會留在磁碟上。AI 模型清單不再顯示已經過時的價格'
+    label: 設定中的用詞更淺白。「我的個人資料」說明 RetroAchievements 金鑰和密碼登入各自的用途。「API 金鑰」說明會優先使用個人自己的 RetroAchievements 或 Steam 金鑰。TheGamesDB 的金鑰命名為主要金鑰和備用金鑰。「編輯模擬器」視窗改稱程式位置和命令列選項。「清除抓取資料」說明除非勾選該選項,否則圖片和影片檔案會留在磁碟上。AI 模型清單不再顯示價格,因為價格已過時
+    en: Plainer words in Settings. My Profile says what the RetroAchievements key and the password sign-in each do. API Keys says a person's own RetroAchievements or Steam key is used first. TheGamesDB's keys are named Main key and Backup key. The Edit emulator window says Program location and Command-line options. Clear Scraped Data says the picture and video files stay on disk unless you tick the box. The AI model lists no longer show prices, which went out of date
   - type: fix
-    label: '設定去掉了重複或沒有作用的內容：遊戲庫統計卡片（儀表板裡有）、設定裡的掃描獎盃（PS3 獎盃頁面裡有）、單獨的匯入系統徽標按鈕（重新整理系統徽標現在會先複製 ES-DE 的徽標），以及六項沒有任何用處的已儲存設定。訊息時間設為 0 秒現在會被拒絕，而不是悄悄儲存；儲存新的 ROM 資料夾時也不再提示必須重新啟動 RetroDB'
+    label: 設定移除了重複或沒作用的項目:遊戲庫統計卡片(儀表板已有)、設定中的掃描獎盃複本(PS3 獎盃頁面已有)、獨立的匯入系統標誌按鈕(重新整理系統標誌現在會先複製 ES-DE 的標誌),以及六個沒人使用的已儲存設定。訊息時間設為 0 秒現在會被拒絕,而不是默默儲存;儲存新的 ROM 資料夾也不再提示必須重新啟動 RetroDB
+    en: 'Settings drops what was there twice or did nothing: the Library Statistics card (the Dashboard has it), the Settings copy of Scan Trophies (the PS3 trophies page has it), the separate Import System Logos button (Refresh System Logos now copies ES-DE''s logos first) and six stored settings nothing used. A message time of 0 seconds is refused instead of quietly saved, and saving a new ROM folder no longer says RetroDB must restart'
   - type: performance
-    label: 'RetroDB 現在對你的電腦輕得多。Cyberpunk 主題的流動薄霧以前只要有任何 RetroDB 頁面開著，就會讓一個處理器核心滿載運轉；現在由顯示卡來繪製，處理器幾乎感覺不到。它繪製的影格數也只有原來的一半，看起來卻一樣，因為薄霧飄動得很慢'
+    label: RetroDB 對你的電腦負擔輕得多。Cyberpunk 主題的動態薄霧以前只要開著任何 RetroDB 頁面,就會讓一個處理器核心滿載;現在改由顯示卡繪製,處理器幾乎沒有負擔。它的畫格數也減半,但因為薄霧飄動緩慢,看起來一樣
+    en: RetroDB is far lighter on your computer. The Cyberpunk theme's moving mist kept one processor core fully busy for as long as any RetroDB page was open; the graphics card now draws it, and the processor barely notices. It also draws half as many frames, which looks the same because the mist drifts slowly
   - type: feature
-    label: '動態背景（薄霧、雨、星星、塵埃）現在會在你不使用 RetroDB 時暫停：視窗不在最前面、分頁被隱藏，或一分鐘內沒有動過滑鼠或鍵盤。你一回來它們就會重新開始。設定 → 帳戶 → 主題和語言 下新增的「動態背景」開關，可讓它們在這台電腦上保持靜止'
+    label: 動態背景(薄霧、雨、星星、塵埃)現在會在你不使用 RetroDB 時暫停:視窗不在最前面、分頁被隱藏,或一分鐘沒有操作滑鼠或鍵盤。你一回來它們就會繼續。「設定 → 帳戶 → 主題與語言」下新增「動態背景」開關,可讓它們在該電腦上保持靜止
+    en: 'Moving backgrounds (mist, rain, stars, dust) now pause when you are not using RetroDB: when its window is not in front, its tab is hidden, or a minute passes without the mouse or keyboard. They start again the moment you come back. A new Moving background switch under Settings → Account → Theme and Language keeps them still on that computer'
   - type: performance
-    label: '頁面標題保留光暈，但不再一直脈動；遊戲主機和遊戲列表中會閃爍的「故障」標題，只在滑鼠懸停其上時才閃爍'
+    label: 頁面標題保留光暈,但不再一直閃動,主機和遊戲清單上閃爍的「故障」標題只會在滑鼠移到上面時才閃爍
+    en: Page titles keep their glow but no longer pulse all the time, and the flickering "glitch" titles on the console and game lists flicker only while the mouse is over them
   - type: feature
-    label: 'MAME 中街機遊戲的金手指。在瀏覽器中從 mamecheat.co.uk 下載「MAME XML Cheats Collection」，然後在 設定 → 模擬器 → 金手指 下匯入。之後每個街機遊戲的頁面都會列出它的金手指，並附有開/關開關，MAME 啟動時會啟用你打開的金手指。需要輸入數值的金手指要在遊玩時於 MAME 中設定：依序按 Tab、Plugin Options、Cheat'
+    label: MAME 街機遊戲的金手指。在瀏覽器中從 mamecheat.co.uk 下載「MAME XML Cheats Collection」,然後在「設定 → 模擬器 → 金手指」中匯入。之後每個街機遊戲的頁面都會列出其金手指和開關,MAME 會以你開啟的金手指啟動。需要輸入數值的金手指,要在遊玩時於 MAME 中設定:按 Tab,然後選 Plugin Options,再選 Cheat
+    en: 'Cheats for arcade games in MAME. Download the "MAME XML Cheats Collection" from mamecheat.co.uk in your browser and import it under Settings → Emulators → Cheats. Each arcade game''s page then lists its cheats with on/off switches, and MAME starts with the ones you switched on. A cheat that takes a value is set in MAME while you play: press Tab, then Plugin Options, then Cheat'
   - type: fix
-    label: '遊戲頁面上的「上一個」和「下一個」現在在你抓取該遊戲後仍會沿著篩選後的清單走。開啟「未抓取」篩選時，抓取一個遊戲會讓它離開清單，於是「下一個」走遍整個主機的遊戲，而不是去下一個未抓取的遊戲'
+    label: 在遊戲頁面抓取該遊戲後,「上一個」和「下一個」現在會留在你篩選後的清單中。以前開啟「未抓取」篩選時,抓取遊戲會使它離開清單,結果「下一個」會逐個走過整個主機,而不是前往下一個未抓取的遊戲
+    en: Previous and Next on a game's page now stay in your filtered list after you scrape that game. With the Unscraped filter on, scraping a game took it out of the list, so Next stepped through the whole console instead of going to the next unscraped game
   - type: fix
-    label: 'RetroDB 有更多部分現在會跟隨你的語言：設定裡的附贈光碟、備份和 ROM 命名部分，我的資料標題，抓取搜尋視窗，以及「沒有權限」的提示。以前無論你選哪種語言，它們都只顯示英文'
+    label: RetroDB 有更多部分會跟隨你的語言:設定中的額外光碟、備份和 ROM 命名部分、「我的個人資料」標題、抓取搜尋視窗,以及「沒有權限」訊息。以前不論你選哪種語言,它們都停留在英文
+    en: 'More of RetroDB now follows your language: the Bonus Discs, Backup and ROM Naming parts of Settings, the My Profile heading, the scrape search window and the "no permission" messages. They stayed in English whatever language you chose'
   - type: fix
-    label: '新增使用者現在會要求填寫新使用者的初始密碼（12 個字元或更長），新使用者首次登入時自己選擇密碼。以前每個新帳戶都會悄悄得到同一個密碼「changeme」，在其主人登入之前，任何人都能使用'
+    label: 新增使用者現在會要求輸入新使用者的初始密碼(12 個字元以上),對方第一次登入時再自行設定密碼。以前每個新帳戶都默默得到同一個密碼「changeme」,在擁有者登入前任何人都能使用
+    en: Add User now asks for the new person's first password (12 characters or more), and they choose their own the first time they sign in. Before, every new account quietly got the same password, "changeme", which anyone could use until its owner signed in
   - type: fix
-    label: '設定現在只向每個人顯示其角色可以變更的內容。檢視者和玩家能看到「帳戶」分頁；編輯者還能看到附贈光碟和手把。以前他們會看到管理員設定，而其儲存按鈕隨後會被拒絕，有些還顯示錯誤的值'
+    label: 設定只會顯示其角色可以更改的項目。檢視者和玩家會看到「帳戶」分頁;編輯者還會看到額外光碟和手把。以前他們會看到管理員設定,而其儲存按鈕卻會被拒絕,有些還顯示錯誤的值
+    en: Settings shows each person only what their role can change. Viewers and players see the Account tab; editors also see Bonus Discs and Controllers. They used to see admin settings whose Save button was then refused, some showing wrong values
   - type: fix
-    label: '設定 → 系統 不再有「Clear Stuck RA Sync」按鈕。它在沒有真正清除時也說已清除同步；請用 RetroAchievements 同步進度通知上的按鈕來停止同步'
+    label: 「設定 → 系統」不再有「清除卡住的 RA 同步」按鈕。它即使沒有清除同步也會說已清除;要停止 RetroAchievements 同步,請使用其進度通知上的按鈕
+    en: Settings → System no longer has the Clear Stuck RA Sync button. It said it had cleared the sync even when it had not; stop a RetroAchievements sync with the buttons on its progress notice
   - type: fix
-    label: '設定的一些小修正：抓取來源清單上的重設為預設值會提示按儲存抓取器設定才能保留；新安裝時 ScreenScraper 顯示為開啟，與實際一致；Steam ID 的說明要求填寫 17 位數字；模擬器頁面不再提到它沒有的新增按鈕；設定精靈在你輸入時會隱藏 API 金鑰'
+    label: 設定的小修正:抓取器清單的「重設為預設值」會提示按「儲存抓取器設定」才能保留;全新安裝如實顯示 ScreenScraper 已開啟;Steam ID 說明要求填入 17 位數字;模擬器頁面不再提到它沒有的新增按鈕;設定精靈在你輸入 API 金鑰時會將其隱藏
+    en: 'Small Settings fixes: Reset to Default on the scraper list says to press Save Scraper Settings to keep it; a new install shows ScreenScraper switched on, as it really is; the Steam ID help asks for the 17-digit number; the Emulators page no longer mentions an Add button it does not have; the Setup Wizard hides your API keys as you type them'
   - type: enhancement
-    label: '說明手冊現在有搜尋框了。輸入一個詞，就只顯示手冊中提到它的部分，並標出這個詞。搜尋會忽略重音符號，並適用於所有語言'
+    label: 說明書現在有搜尋框。輸入一個字詞,就只會顯示說明書中提到它的部分,並標出該字詞。搜尋會忽略重音符號,且適用於所有語言
+    en: The help manual now has a search box. Type a word to see only the parts of the manual that mention it, with the word marked. It ignores accents and works in every language
   - type: fix
-    label: '說明手冊的「疑難排解」部分現在涵蓋每項功能：新增遊戲、抓取、AI 填充、圖片、遊玩、金手指、成就、帳戶、備份和更新。舊版中有些建議指向已不存在的按鈕。它也不再說 HowLongToBeat 查詢可離線使用，或抓取速度可以設定'
+    label: 說明書的疑難排解一節現在涵蓋每項功能:新增遊戲、抓取、AI 填充、圖片、遊玩、金手指、成就、帳戶、備份和更新。其中一些舊建議指向已不存在的按鈕。它也不再說 HowLongToBeat 查詢可離線使用,或抓取速度可以設定
+    en: 'The help manual''s Troubleshooting section now covers each feature: adding games, scraping, AI Fill, pictures, playing, cheats, achievements, accounts, backups and updates. Some of its old advice pointed at buttons that no longer exist. It also no longer says HowLongToBeat lookups work offline or that scraper speed can be set'
   - type: fix
-    label: '設定 → 系統中不再有「批次抓取」疑難排解方塊。它讀取的是舊版批次抓取的殘留內容，無法停止真正的批次抓取；請用其視窗中的「取消」來停止批次抓取'
+    label: 「設定 → 系統」不再有「批次抓取疑難排解」方塊。它讀取的是舊批次抓取的殘留資料,也無法停止真正的批次抓取;要停止批次抓取,請使用其視窗中的「取消」
+    en: Settings → System no longer has the Bulk Scrape troubleshooting box. It read leftovers of the old bulk scrape and could not stop a real one; stop a bulk scrape with Cancel in its window
   - type: fix
-    label: '安裝程式現在要求 Python 3.12 或更新版本，這是 RetroDB 的程式庫所需要的。以前它會放行更舊的版本，結果安裝到一半失敗。README 新增了「疑難排解」部分，介紹安裝和啟動問題'
+    label: 安裝程式現在要求 Python 3.12 或更新版本,這是 RetroDB 的函式庫所需要的。以前它放行較舊的版本,結果安裝到一半失敗。README 新增了疑難排解一節,說明安裝和啟動問題
+    en: The installer now asks for Python 3.12 or newer, which RetroDB's libraries need. It let older versions through, and the install then failed partway. The README has a new Troubleshooting section for install and start-up problems
   - type: fix
-    label: '遊戲匯入的 PSN 分頁現在說明 NPSSO 權杖填在「設定 → 我的資料」下。以前它指向的 API 金鑰頁面並沒有這樣的輸入框'
+    label: 遊戲匯入的 PSN 分頁現在說明 NPSSO 權杖要放在「設定 → 我的個人資料」。以前它指向沒有這個欄位的 API 金鑰頁面
+    en: Game Imports' PSN tab now says the NPSSO token goes under Settings → My Profile. It named an API Keys page that has no such box
   - type: fix
-    label: '說明手冊現在把中國的年齡分級（CADPA）與其他分級一併列出，用真實名稱「繼續遊玩」稱呼首頁的相應區塊，並在圖片無法儲存時給出更安全的建議'
+    label: 說明書現在把中國的年齡分級 (CADPA) 與其他分級一起列出,用真正的名稱稱呼首頁的「繼續遊玩」區塊,並在圖片無法儲存時給出更安全的建議
+    en: The help manual now lists the Chinese age rating (CADPA) with the others, calls the home page's Continue Playing section by its real name, and gives safer advice when pictures will not save
   - type: fix
-    label: '設定 → 抓取現在會使用你選擇的語言：抓取器清單、API 金鑰、ES-DE 路徑、比對篩選和 AI 設定，以及它們的狀態和結果訊息。先前無論選擇哪種語言，這些內容都是英文'
+    label: 「設定 → 抓取」現在會跟隨你的語言:抓取器清單、API 金鑰、ES-DE 路徑、比對篩選和 AI 設定,以及其狀態和結果訊息。以前不論你選哪種語言,它們都停留在英文
+    en: 'Settings → Scraping now follows your language: the scraper list, API keys, ES-DE paths, match filtering and AI settings, with their status and result messages. It stayed in English whatever language you chose'
   - type: enhancement
-    label: '當 AI 服務拒絕抓取時（API 金鑰錯誤、沒有餘額或計費、請求過多），RetroDB 現在會說明原因和該檢查什麼，而不是悄悄地讓銷量和發行日期等欄位保持為空。之後它會暫時不再詢問該 AI，所以你只會被告知一次，而不是每個遊戲一次'
+    label: 當 AI 服務拒絕抓取(API 金鑰錯誤、沒有額度或帳單餘額,或請求太多)時,RetroDB 現在會說明是哪一種以及該檢查什麼,而不是默默讓銷售數字和發行日期等欄位留空。之後它會暫時停止向該 AI 查詢,所以你只會被通知一次,而不是每個遊戲一次
+    en: When the AI service refuses a scrape (a wrong API key, no credit or billing left, or too many requests), RetroDB now says which, and what to check, instead of quietly leaving fields such as sales figures and release dates empty. It then stops asking that AI for a while, so you are told once, not once per game
   - type: enhancement
-    label: '3D 盒子現在會依 Slipcase 製作的樣子顯示手指凹槽：可以是方形兩端，也可以位於側面中間偏上或偏下的位置。重新匯入盒子即可看到'
+    label: 3D 封面現在會依 Slipcase 的做法顯示手指槽:兩端為方形,並在盒子有此設計時位於側面中線的上方或下方。請重新匯入封面以查看
+    en: 'The 3D box now shows the finger slot as Slipcase made it: with square ends, and above or below the middle of the side, where the case has it so. Import the box again to see it'
   - type: fix
-    label: '設定 → 系統現在會使用你選擇的語言：維護工具、記錄檔設定和疑難排解，以及它們的結果和錯誤訊息。先前無論選擇哪種語言，這些內容都是英文。其他頁面上殘留的英文訊息也已翻譯'
+    label: 設定 → 系統現在會跟隨你的語言:維護工具、記錄設定和疑難排解區塊,連同其結果和錯誤訊息。之前不論你選哪種語言,它們都只顯示英文。其他頁面上殘留的英文訊息也已翻譯
+    en: 'Settings → System now follows your language: the maintenance tools, logging settings and troubleshooting sections, with their results and error messages. They stayed in English whatever language you chose. Leftover English messages on other pages are translated too'
   - type: fix
-    label: '在成就的主機頁面上，捲動時主機按鈕列不再滑到分區標籤下面，而是隨頁面捲走。在每個成就頁面上，A–Z 字母列現在緊貼在分區標籤下方，不再被它們擋住'
+    label: 在成就的主機頁面上,主機按鈕列不再於捲動時滑到區段分頁底下,而是隨頁面捲走。在所有成就頁面上,A–Z 字母列現在會停在區段分頁正下方,不再被它們遮住
+    en: On an Achievements console page, the row of console buttons no longer slides under the section tabs as you scroll; it now scrolls away. On every Achievements page the A–Z letter bar now stays just below the section tabs instead of hiding behind them
   - type: fix
-    label: '在「編輯遊戲」視窗中移除圖片時，如果另一款遊戲也在用同一張圖片，就不會再刪除該檔案；另一款遊戲會保留它'
+    label: 在「編輯遊戲」視窗中移除圖片時,如果另一個遊戲也使用同一張圖片,就不再刪除該檔案;另一個遊戲仍會保留它
+    en: Removing a picture in the Edit Game window no longer deletes the file when another game uses the same picture; the other game keeps it
   - type: fix
-    label: '抓取時以小尺寸儲存的盒子背面圖片，現在也會像正面封面一樣在背景放大'
+    label: 抓取後儲存為小尺寸的盒背圖片,現在會像正面封面一樣在背景中放大
+    en: Back-of-box pictures that a scrape saves small are now enlarged in the background, as front covers already are
   - type: fix
-    label: '在「編輯遊戲」視窗中儲存時，不再等待上傳的小尺寸封面或截圖放大；放大改為在儲存之後進行，顯示為「正在優化圖片」。勾選移除的圖片只在儲存成功後才刪除，因此儲存失敗時不會再遺失'
+    label: 在「編輯遊戲」視窗中儲存時,不再等待上傳的小尺寸盒裝圖或螢幕截圖放大;放大會在儲存之後進行,並顯示為「正在改善圖片」。勾選移除的圖片只會在儲存成功後才刪除,因此儲存失敗不會再遺失圖片
+    en: Saving in the Edit Game window no longer waits while small uploaded box art or screenshots are enlarged; that now happens afterwards, shown as "Improving images". A picture ticked for removal is deleted only once the save has worked, so a failed save no longer loses it
   - type: fix
-    label: '遊戲庫與主機頁面頂端的「缺少中繼資料」計數現在把有多個地區版本的遊戲只算一次，與「未抓取」篩選一致。以前每個版本都算一次'
+    label: 遊戲庫和主機頁面頂部的「缺少中繼資料」數量,現在會把有多個地區版本的遊戲只算一次,與「未抓取」篩選條件一致。之前每個版本都會計算一次
+    en: The "missing metadata" count at the top of the Library and console pages now counts a game with several regional versions once, as the Unscraped filter does. It counted each version
   - type: enhancement
-    label: '設定 → 附贈光碟 現在會列出每張被標為附贈光碟的光碟，以及它所屬的遊戲。「不是附贈光碟」按鈕（編輯與管理員）可把誤標的光碟放回你的遊戲清單，之後 Auto-Link 不會再動它'
+    label: 設定 → 附贈光碟現在會列出所有標記為附贈光碟的光碟,並顯示它所屬的遊戲。其「不是附贈光碟」按鈕(編輯者和管理員可用)會把被誤標的光碟放回你的遊戲清單,自動連結之後也不會再動它
+    en: Settings → Bonus Discs now lists every disc marked as a bonus disc, with the game it belongs to. Its "Not a bonus disc" button (editors and admins) puts a wrongly marked disc back in your game lists, and Auto-Link then leaves it alone
   - type: fix
-    label: '「Nintendo Co., Ltd.」和「GameTek, Inc.」這樣的公司名稱現在保持完整。以前它們會在逗號處被拆開，導致「Ltd.」和「Inc.」在遊戲庫篩選、設定 → 資料正規化和統計中顯示為單獨的名稱。遊戲頁面也會完整顯示它們。像「Majesco (licensed from Konami, Disney)」這樣括號內帶逗號的名稱也會保持完整'
+    label: 「Nintendo Co., Ltd.」和「GameTek, Inc.」等公司名稱現在會保持完整。之前它們會在逗號處被拆開,使「Ltd.」和「Inc.」在遊戲庫篩選、設定 → 資料標準化和統計中被當成獨立名稱。遊戲頁面現在也會完整顯示。括號內含逗號的名稱,例如「Majesco (licensed from Konami, Disney)」,同樣會保持完整
+    en: Company names such as "Nintendo Co., Ltd." and "GameTek, Inc." now stay whole. They were split at the comma, so "Ltd." and "Inc." showed as names of their own in the Library filters, Settings → Data Normalization and Stats. Game pages show them whole too. A name with a comma inside brackets, such as "Majesco (licensed from Konami, Disney)", stays whole as well
   - type: enhancement
-    label: '設定 → 資料正規化現在可以合併同一家公司的不同名稱。在發行商和開發商下，一個新清單會顯示相似的名稱，例如「Eidos」和「Eidos Interactive」。相似的名稱可能是不同的公司，所以不會自動合併：選擇要保留的名稱，勾選同一家公司的名稱，然後按 Merge。所有遊戲中的名稱都會更改，之後的抓取會使用保留的名稱'
+    label: 設定 → 資料標準化現在可以合併同一家公司的不同名稱。在發行商和開發商下,「可能是同一家公司的名稱」會列出外觀相近的名稱,例如「Eidos」和「Eidos Interactive」。系統不會自動合併,因為相近的名稱也可能是不同公司:請選擇要保留的名稱,勾選屬於同一家公司的名稱,然後按「合併」。所有遊戲上的名稱都會更改,之後的抓取也會使用保留的名稱
+    en: 'Settings → Data Normalization can now merge one company''s different names. Under Publisher and Developer, "Names that may be one company" lists look-alikes such as "Eidos" and "Eidos Interactive". Nothing is merged for you, because look-alikes can be different companies: pick the name to keep, tick the names that are the same company and press Merge. The names change on every game, and later scrapes use the kept name'
   - type: enhancement
-    label: '設定 → 資料正規化現在有「系列」「發行商」「開發商」按鈕。每個按鈕列出僅大小寫不同的名稱，例如「Doom」和「DOOM」，並顯示每種寫法的遊戲數，預先選取最常用的寫法。選擇一種並按「套用」，即可合併為一個名稱。新抓取的名稱若只在大小寫上不同，會採用你的媒體庫中的寫法；AI 填充會要求使用官方大小寫'
+    label: 設定 → 資料標準化現在有系列、發行商和開發商按鈕。每個按鈕會列出僅大小寫不同的名稱,例如「Doom」和「DOOM」,並顯示各寫法被多少遊戲使用,同時預選使用最多的一種。選擇其中一個並按「套用」,即可合併為同一個名稱。新抓取的名稱如果只有大小寫不同,會採用你遊戲庫中的寫法,而 AI 填充會要求使用官方大小寫
+    en: Settings → Data Normalization now has Franchise, Publisher and Developer buttons. Each lists the names spelled with different capitals, such as "Doom" and "DOOM", with how many games use each spelling and the most-used one picked. Choose one and press Apply to make them one name. A newly scraped name that differs only in capitals takes your library's spelling, and AI Fill asks for official capitals
   - type: fix
-    label: '遊戲庫的篩選現在依完整值比對。選擇類型「動作」時不再同時顯示「動作冒險」遊戲，因此結果與旁邊的數量一致。遊戲頁面的標籤清單和相似遊戲也以同樣方式比對'
+    label: 遊戲庫的篩選條件現在會比對完整值。選擇類型「Action」時,不再同時顯示「Action-Adventure」遊戲,因此結果會與旁邊的數量一致。遊戲頁面的標籤清單和相似遊戲也以同樣方式比對
+    en: The Library's filters now match whole values. Choosing the genre "Action" no longer also shows "Action-Adventure" games, so the result matches the count beside it. A game page's tag lists and Similar Games match the same way
   - type: security
-    label: '設定 → 我的資料不再把你儲存的 RetroAchievements 金鑰、PSN 權杖或 Steam 金鑰傳送到頁面。每個輸入框只顯示最後四個字元，與「抓取」分頁中的金鑰一樣。不重新輸入就儲存會保留已儲存的金鑰'
+    label: 設定 → 我的個人資料不再把你儲存的 RetroAchievements 金鑰、PSN 權杖或 Steam 金鑰傳送到頁面。每個欄位只會顯示最後四個字元,就像抓取分頁的金鑰一樣。不重新輸入就儲存,會保留已儲存的金鑰
+    en: Settings → My Profile no longer sends your saved RetroAchievements key, PSN token or Steam key to the page. Each box shows only its last four characters, as the Scraping tab's keys already did. Saving without retyping keeps the saved key
   - type: fix
-    label: '日誌檢視器開啟時不再顯示「日誌檔案無效」。它以前會列出自己不會顯示的輔助日誌，並先開啟其中一個；現在只列出它能開啟的日誌'
+    label: 記錄檢視器不再一開啟就顯示「無效的記錄檔」。之前它會列出不會顯示的輔助記錄,並先開啟其中一個;現在只會列出可以開啟的記錄
+    en: The Log Viewer no longer opens on "Invalid log file". It listed helper logs it would not show, and opened one of them first; it now lists only logs it can open
   - type: fix
-    label: '遊戲匯入的 PSN 分頁現在會讓你到設定 → 我的資料填寫 NPSSO 權杖（輸入框就在那裡），而不是設定 → API 金鑰，其連線狀態也可以翻譯了'
+    label: 遊戲匯入的 PSN 分頁現在會引導你前往欄位所在的設定 → 我的個人資料取得 NPSSO 權杖,而不是設定 → API 金鑰,且其連線狀態也可以翻譯了
+    en: Game Imports' PSN tab now sends you to Settings → My Profile for the NPSSO token, where the box is, instead of Settings → API Keys, and its connection status can be translated
   - type: fix
-    label: '以檢視者身分登入時，頁面不再向伺服器要求只有管理員才能取得的資訊，因此伺服器日誌不再被拒絕的請求塞滿'
+    label: 以檢視者身分登入時,頁面不再向伺服器要求它們無法取得的管理員專屬資訊,因此伺服器記錄不會再充斥被拒絕的請求
+    en: Signed in as a viewer, pages no longer ask the server for admin-only information they cannot have, so the server log no longer fills with refused requests
   - type: security
-    label: '來自 RetroDB 之外的名稱（擷取的資料、檔案和資料夾名稱、線上服務的回覆）現在一律以純文字顯示：遊戲頁面、設定、報告、ROM 工具、獎盃頁面等處都是如此。頁面也只會執行自己按鈕的動作，因此刻意構造的名稱無法讓頁面做任何事，進度通知中的「返回」連結也不會再導向其他網站'
+    label: 來自 RetroDB 外部的名稱(抓取的資料、檔案和資料夾名稱、線上服務的回應)現在一律以純文字顯示,包括遊戲頁面、設定、報告、ROM 工具、獎盃頁面等。頁面也只會執行自己按鈕的動作,因此精心構造的名稱無法讓頁面做出任何動作,進度提示的「返回」連結也不會再通往其他網站
+    en: Names that come from outside RetroDB (scraped data, file and folder names, replies from online services) now always show as plain text, on the game page, Settings, Reports, the ROM tools, the trophy pages and more. Pages also run only their own buttons' actions, so a crafted name cannot make a page do something, and a progress toast's "return to" link can no longer lead to another website
   - type: enhancement
-    label: '佇列中的批次抓取新增了「重新排序」按鈕。它會開啟佇列管理器，你可以讓等候中的抓取提前或延後執行，或與正在執行的抓取互換。每則佇列通知在變更後也會保留自己的順位編號'
+    label: 排隊中的批次抓取新增了「重新排序」按鈕。它會開啟佇列管理員,可讓等待中的抓取提前、延後,或與目前執行中的抓取交換。每個排隊提示在變更後也會保留其順位編號
+    en: Queued bulk scrapes get a Reorder button. It opens the Queue Manager, where a waiting scrape can run sooner, later, or swap with the one running now. Each queued toast also keeps its place number after a change
   - type: fix
-    label: '工作進度不再卡住或重複。當機的 CHD 檢查或轉換現在結束時會說明原因；「取消」會把按鈕還給頁面；取消、暫停或移除遭拒時會明確告知；「已完成」不會在一小時後再次跳出；成就頁面的「同步」按鈕會在同步結束後重新出現'
+    label: 工作進度不再卡住或重複出現。當CHD檢查或轉換崩潰時,現在會以原因結束;取消會讓頁面恢復按鈕;被拒絕的取消、暫停或移除會顯示說明;「已完成」不再於一小時後再次彈出;成就頁面的同步按鈕會在同步結束時恢復
+    en: Job progress no longer gets stuck or repeats itself. A CHD check or conversion that crashes now ends with its reason; Cancel gives the page its buttons back; a refused cancel, pause or remove says so; "completed" no longer pops up again an hour later; and the achievements page's Sync button comes back when its sync ends
   - type: fix
-    label: '在遊戲頁面儲存 HowLongToBeat 比對結果後，不再清除它的 HLTB 連結和玩家人數，儲存失敗時也可以重試。快速編輯不再把每個已儲存的比對都顯示為「比對度 100%」。遊戲庫的篩選標籤顯示系統名稱而不是編號，邊輸入邊搜尋在清單頁面和比較頁面都能使用'
+    label: 在遊戲頁面儲存 HowLongToBeat 配對時,不再清除其 HLTB 連結和玩家數量,儲存失敗後也可以重試。快速編輯不再把所有已儲存的配對都顯示為「100% 相符」。遊戲庫篩選標籤會顯示系統的名稱而非編號,而且邊打字邊搜尋現在可用於清單頁面和比較
+    en: Saving a HowLongToBeat match on the game page no longer wipes its HLTB link and player count, and a failed save can be retried. Quick Edit no longer shows every saved match as "100% match". Library filter tags show a system's name instead of its number, and search-as-you-type works on list pages and Compare
   - type: fix
-    label: '每個帳戶都可以在 設定 → 我的資料 中變更自己的密碼，管理員可以重設任何人的密碼。模擬器資料夾現在在 Windows 上可用。儀表板不再告訴編輯者和檢視者他們的 API 已離線，「缺少封面的遊戲」會開啟只顯示這些遊戲的遊戲庫。密碼管理工具現在可以填寫登入框'
+    label: 每個帳戶都可以在設定 → 我的個人資料變更自己的密碼,管理員也可以重設任何人的密碼。模擬器資料夾現在可在 Windows 上使用。儀表板不再告訴編輯者和檢視者他們的 API 已離線,「缺少盒裝圖的遊戲」會開啟只顯示這些遊戲的遊戲庫。密碼管理員現在可以填入登入欄位
+    en: Every account can change its own password in Settings → My Profile, and an admin can reset anyone's. Emulator folders now work on Windows. The dashboard no longer tells editors and viewers that their APIs are offline, and "Games missing box art" opens the Library showing just those games. A password manager can now fill the sign-in box
   - type: fix
-    label: 'ROM 工具：CHD 校驗會把每個「有效」或「無效」標記放在正確的檔案上；日誌檢視器重新顯示模組名稱，並在檔案清單載入失敗時告知；遊戲匯入中的「全選」只匯入篩選條件顯示的遊戲；ROM 工具設定中的「重置」會還原這台電腦自己的 ROM 資料夾'
+    label: ROM 工具:CHD 驗證會把每個「有效」或「無效」標記放在正確的檔案上;記錄檢視器重新顯示模組名稱,並在檔案清單載入失敗時告知;遊戲匯入的全選只會匯入篩選後顯示的遊戲;ROM 工具設定的重設會還原這台電腦自己的 ROM 資料夾
+    en: 'ROM tools: CHD Verify puts each Valid or Invalid badge on the right file; the log viewer shows module names again and says when its file list fails; Game Imports'' select-all imports only the games your filter shows; and ROM Tools Settings'' Reset restores this computer''s own ROM folder'
   - type: fix
-    label: 'Steam 解鎖時間顯示為日期；A-Z 列在本地獎盃中可用；PSN 選取模式在捲動時載入的遊戲上也能繼續使用；檢視者不再看到他們無法使用的「同步」或「重新命名」按鈕；批次重新命名會略過掃描後已改名的檔案；分析在一般 HTTP 網路上也能複製，並將數字匯出為數字'
+    label: Steam 解鎖時間以日期顯示;A-Z 列可用於本機獎盃;PSN 選取模式在隨捲動載入的遊戲上仍可運作;檢視者不再看到無法使用的同步或重新命名按鈕;批次重新命名會略過掃描後已被重新命名的檔案;分析在純 HTTP 網路上也能複製,並以數字匯出數值
+    en: Steam unlock times show as dates; the A-Z bar works on Local Trophies; PSN Select mode keeps working on games that load as you scroll; viewers no longer see Sync or Rename buttons they cannot use; a batch rename skips a file renamed since the scan; and Analytics can copy on a plain-HTTP network and exports numbers as numbers
   - type: fix
-    label: '在確認視窗中，焦點在「取消」或 × 上時按 Enter 現在會取消，而不是確認。由「確定」開啟的視窗不再消失，關閉快捷鍵清單或進度視窗後 Tab 仍能正常使用'
+    label: 在確認視窗中,對「取消」或 × 按 Enter 現在會取消,而不是確認。由「確定」開啟的視窗不再消失,而且在快捷鍵清單或進度視窗關閉後,Tab 鍵仍可使用
+    en: In a confirm window, Enter on Cancel or × now cancels instead of confirming. A window opened by OK no longer vanishes, and Tab keeps working after the shortcuts list or a progress window closes
   - type: enhancement
-    label: '許多原本只能用滑鼠操作的控制項，現在也能用鍵盤操作（按 Tab，再按 Enter 或空白鍵）：登入頁的個人檔案、比較頁的搜尋結果、標籤及其編輯和刪除按鈕、成就中的遊戲卡片、記錄工作階段、主題和頭像選擇、博物館圖片、移除類型或篩選條件的 ×、設定精靈中的資料夾、擷取來源核取方塊以及 CLZ 匯入。開關現在也會顯示鍵盤焦點環'
+    label: 許多原本只能用滑鼠操作的控制項,現在可以用鍵盤操作(Tab,然後按 Enter 或空白鍵):登入個人資料、比較搜尋結果、標籤及其編輯和刪除按鈕、成就遊戲卡片、記錄工作階段、主題和頭像選項、博物館圖片、移除類型或篩選條件的 ×、設定資料夾、抓取來源勾選框和 CLZ 匯入。開關現在會顯示鍵盤焦點框
+    en: 'Many controls that worked only with a mouse now work from the keyboard (Tab, then Enter or Space): the sign-in profiles, Compare search results, tags and their Edit and Delete buttons, achievement game cards, log sessions, theme and avatar choices, Museum pictures, the × that removes a genre or filter, setup folders, scrape-source tick boxes and the CLZ import. On/off switches now show the keyboard ring'
   - type: performance
-    label: '博物館的背景移除功能不再一直佔用記憶體。它用 AI 模型把手把照片從背景中去背，這個模型一旦用過就佔用超過 2 GB 記憶體，處理照片時最多約 9 GB，直到 RetroDB 重新啟動才釋放。現在它在一個輔助程式中執行，需要時才啟動，處理完最後一張照片兩分鐘後關閉，把這些記憶體全部釋放'
-    en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'
+    label: 博物館的背景移除功能不再一直佔用記憶體。它用 AI 模型把手把照片從背景中去背，這個模型一旦用過就佔用超過 2 GB 記憶體，處理照片時最多約 9 GB，直到 RetroDB 重新啟動才釋放。現在它在一個輔助程式中執行，需要時才啟動，處理完最後一張照片兩分鐘後關閉，把這些記憶體全部釋放
+    en: The Museum's background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back
   - type: feature
-    label: 'Xbox 匯入不再需要 Microsoft Azure 帳戶。現在每個人在「設定 → 我的資料」中貼上自己的免費 OpenXBL 金鑰（來自 xbl.io），而且在你網路中的任何電腦上都能使用。匯入還會排除應用程式和僅限手機的遊戲，把 PC 遊戲歸入 Windows 而不是 Xbox One，正確讀取 Xbox 360 成就，並且不再為未解鎖的成就顯示日期。免費金鑰每小時允許 150 次請求：大量成就同步達到上限時會停止並提示，下次會從尚未處理到的遊戲開始'
+    label: Xbox 匯入不再需要 Microsoft Azure 帳戶。現在每個人在「設定 → 我的資料」中貼上自己的免費 OpenXBL 金鑰（來自 xbl.io），而且在你網路中的任何電腦上都能使用。匯入還會排除應用程式和僅限手機的遊戲，把 PC 遊戲歸入 Windows 而不是 Xbox One，正確讀取 Xbox 360 成就，並且不再為未解鎖的成就顯示日期。免費金鑰每小時允許 150 次請求：大量成就同步達到上限時會停止並提示，下次會從尚未處理到的遊戲開始
     en: 'Xbox import no longer needs a Microsoft Azure account. Each person now pastes their own free OpenXBL key (from xbl.io) under Settings → My Profile, and it works from any computer on your network. The import also leaves out apps and phone-only games, files PC games under Windows instead of Xbox One, reads Xbox 360 achievements the right way, and shows no date for a locked achievement. The free key allows 150 requests an hour: a big achievement sync that reaches it stops, says so, and next time starts with the games it had not reached'
   - type: enhancement
     label: 如果在另一項 RetroAchievements 同步或重新整理仍在執行時又要求一次，新的工作現在會在伺服器上排隊，等前一項完成後自動開始，即使你關閉頁面或是從其他裝置發出要求也一樣。每個頁面都會顯示相同的等候清單與各工作的排隊順位，按 ✕ 即可移除工作。伺服器重新啟動後，等候中的工作會在儀表板上重新提供給你

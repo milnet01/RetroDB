@@ -497,9 +497,9 @@ msgid "Username already exists"
 msgstr "Ce nom d'utilisateur existe déjà"
 
 #: routes/auth.py:230
-#, fuzzy, python-format
+#, python-format
 msgid "User \"%(name)s\" created successfully"
-msgstr "Utilisateur supprimé"
+msgstr "L'utilisateur « %(name)s » a bien été créé"
 
 #: routes/auth.py:252
 msgid "The last admin must stay an active admin"
@@ -520,11 +520,12 @@ msgstr "Vous n'êtes pas connecté"
 #: routes/auth.py:414
 msgid "Only people who can scrape choose these languages."
 msgstr ""
+"Seules les personnes autorisées à récupérer des données choisissent ces "
+"langues."
 
 #: routes/auth.py:418
-#, fuzzy
 msgid "Invalid language"
-msgstr "Langue invalide"
+msgstr "Langue non valide"
 
 #: routes/auth.py:425
 msgid "Steam ID must be the number, not a profile name."
@@ -541,6 +542,8 @@ msgstr "Thème non valide"
 #: routes/auth.py:447
 msgid "Notification times must be whole seconds from 1 to 60."
 msgstr ""
+"La durée des notifications doit être un nombre entier de secondes, de 1 à"
+" 60."
 
 #: routes/auth.py:455
 #, python-format
@@ -1136,86 +1139,72 @@ msgid "This fix is already running."
 msgstr "Cette correction est déjà en cours."
 
 #: routes/maintenance.py:535
-#, fuzzy
 msgid "USA"
-msgstr "Utilisez"
+msgstr "États-Unis"
 
 #: routes/maintenance.py:535
-#, fuzzy
 msgid "Europe"
-msgstr "Violet"
+msgstr "Europe"
 
 #: routes/maintenance.py:535
-#, fuzzy
 msgid "Japan"
-msgstr "Campagne"
+msgstr "Japon"
 
 #: routes/maintenance.py:535
-#, fuzzy
 msgid "World"
-msgstr "Monde ouvert"
+msgstr "Monde"
 
 #: routes/maintenance.py:536
 msgid "United Kingdom"
-msgstr ""
+msgstr "Royaume-Uni"
 
 #: routes/maintenance.py:536
-#, fuzzy
 msgid "France"
-msgstr "Franchise"
+msgstr "France"
 
 #: routes/maintenance.py:536
-#, fuzzy
 msgid "Germany"
-msgstr "Gris"
+msgstr "Allemagne"
 
 #: routes/maintenance.py:537
-#, fuzzy
 msgid "Spain"
-msgstr "Analyser"
+msgstr "Espagne"
 
 #: routes/maintenance.py:537
-#, fuzzy
 msgid "Italy"
-msgstr "Sarcelle"
+msgstr "Italie"
 
 #: routes/maintenance.py:537
-#, fuzzy
 msgid "Australia"
-msgstr "ACB (Australie)"
+msgstr "Australie"
 
 #: routes/maintenance.py:538
 msgid "Brazil"
-msgstr ""
+msgstr "Brésil"
 
 #: routes/maintenance.py:538
-#, fuzzy
 msgid "Korea"
-msgstr "Cœur"
+msgstr "Corée"
 
 #: routes/maintenance.py:538
 msgid "China"
-msgstr ""
+msgstr "Chine"
 
 #: routes/maintenance.py:538
-#, fuzzy
 msgid "Asia"
-msgstr "IA"
+msgstr "Asie"
 
 #: routes/maintenance.py:539
-#, fuzzy
 msgid "Any region"
-msgstr "Région"
+msgstr "Toutes les régions"
 
 #: routes/maintenance.py:547
-#, fuzzy
 msgid "Box"
-msgstr "Xbox"
+msgstr "Boîte"
 
 #: routes/maintenance.py:547
-#, fuzzy
 msgid "3D box"
-msgstr "Importer une boîte 3D"
+msgstr "Boîte 3D"
 
 #: routes/maintenance.py:547 templates/_modals/manual_reader_modal.html:9
 #: templates/analytics.html:488 templates/analytics.html:2432
@@ -1882,14 +1871,12 @@ msgid "Game not found or not an Xbox game"
 msgstr "Jeu introuvable ou n'étant pas un jeu Xbox"
 
 #: services/auth.py:349
-#, fuzzy
 msgid "You do not have permission to access this feature"
-msgstr "Vous n'avez pas l'autorisation d'effectuer cette action"
+msgstr "Vous n'avez pas l'autorisation d'accéder à cette fonction"
 
 #: services/auth.py:370
-#, fuzzy
 msgid "This action requires administrator privileges"
-msgstr "Privilèges d'administrateur requis"
+msgstr "Cette action nécessite des droits d'administrateur"
 
 #: services/cheats.py:150
 #, python-format
@@ -1921,24 +1908,20 @@ msgid "That folder is RetroDB's own cheat store."
 msgstr "Ce dossier est la réserve de codes de triche de RetroDB elle-même."
 
 #: services/cheats.py:451
-#, fuzzy
 msgid "RetroDB cannot read cheat.7z on this computer."
-msgstr "RetroArch n'existe pas pour cet ordinateur."
+msgstr "RetroDB ne peut pas lire cheat.7z sur cet ordinateur."
 
 #: services/cheats.py:470
-#, fuzzy
 msgid "cheat.7z holds no MAME cheat files."
-msgstr "Ce n'est pas un fichier de codes de triche."
+msgstr "cheat.7z ne contient aucun fichier de codes de triche MAME."
 
 #: services/cheats.py:484 services/cheats.py:516 services/cheats.py:527
-#, fuzzy
 msgid "cheat.7z could not be read."
-msgstr "{count} n'ont pas pu être lues."
+msgstr "Impossible de lire cheat.7z."
 
 #: services/cheats.py:505
-#, fuzzy
 msgid "cheat.7z is larger than 1 GiB unpacked."
-msgstr "Une image dépasse 10 Mo."
+msgstr "cheat.7z dépasse 1 Gio une fois décompressé."
 
 #: services/cheats.py:619 services/cheats.py:855 services/cheats.py:878
 #: services/cheats.py:992 services/cheats.py:1027 services/cheats.py:1035
@@ -1955,15 +1938,16 @@ msgid "That cheat list is not one of this game's."
 msgstr "Cette liste de codes de triche n'appartient pas à ce jeu."
 
 #: services/cheats.py:1039 services/cheats.py:1071
-#, fuzzy
 msgid "Cheats work in the player, DuckStation, PCSX2 and MAME."
 msgstr ""
-"Les codes de triche fonctionnent dans RetroArch (RetroDB), DuckStation et"
-" PCSX2."
+"Les codes de triche fonctionnent dans le lecteur, DuckStation, PCSX2 et "
+"MAME."
 
 #: services/cheats.py:1064
 msgid "FinalBurn Neo's cheats are switched on in RetroArch's menu while you play."
 msgstr ""
+"Les codes de triche de FinalBurn Neo s'activent dans le menu de RetroArch"
+" pendant que vous jouez."
 
 #: services/hltb_service.py:173
 #, python-format
@@ -3257,7 +3241,7 @@ msgstr "Filtrer par {field} : {value}"
 
 #: services/js_i18n_strings.py:786
 msgid "FinalBurn Neo arcade cheats"
-msgstr ""
+msgstr "Codes de triche arcade FinalBurn Neo"
 
 #: services/js_i18n_strings.py:787
 msgid ""
@@ -3265,6 +3249,10 @@ msgid ""
 "one on while you play, press F1 (or the PS or Xbox button on most "
 "controllers) for RetroArch's menu, then choose Core Options, then Cheat."
 msgstr ""
+"FinalBurn Neo désactive tous les codes de triche à chaque lancement du "
+"jeu. Pour en activer un pendant que vous jouez, appuyez sur F1 (ou sur le"
+" bouton PS ou Xbox de la plupart des manettes) pour ouvrir le menu de "
+"RetroArch, puis choisissez Options du cœur, puis Triche."
 
 #: services/js_i18n_strings.py:788 templates/_macros/ra_tools.html:16
 msgid "Find Games with Achievements"
@@ -4376,6 +4364,8 @@ msgid ""
 "Set this one in MAME while you play: press Tab, then Plugin Options, then"
 " Cheat."
 msgstr ""
+"Réglez-le dans MAME pendant que vous jouez : appuyez sur Tab, puis sur "
+"Options des plugins, puis sur Triche."
 
 #: services/js_i18n_strings.py:1027 templates/_macros/nav_tabs.html:46
 #: templates/base.html:186 templates/rom_tools_hub.html:119
@@ -4457,13 +4447,13 @@ msgstr ""
 "appuyez sur Jouer."
 
 #: services/js_i18n_strings.py:1044
-#, fuzzy
 msgid ""
 "Switched-on cheats apply the next time you press Play. Changes made in "
 "MAME's menu show here after you quit."
 msgstr ""
 "Les codes de triche activés s'appliquent la prochaine fois que vous "
-"appuyez sur Jouer."
+"appuyez sur Jouer. Les changements faits dans le menu de MAME s'affichent"
+" ici après avoir quitté."
 
 #: services/js_i18n_strings.py:1045
 msgid "Sync In Progress"
@@ -5502,21 +5492,24 @@ msgid ""
 " is its box now. Open a game to look at it closely. The old files were "
 "deleted, so only the new region is shown."
 msgstr ""
+"Chaque jeu ci-dessous a une boîte, une boîte 3D ou un manuel remplacé par"
+" ce correctif. L'image montre sa boîte actuelle. Ouvrez un jeu pour la "
+"voir de près. Les anciens fichiers ont été supprimés, seule la nouvelle "
+"région est donc affichée."
 
 #: templates/_ss_region_changes.html:21
 #, python-format
 msgid "Your copy: %(region)s"
-msgstr ""
+msgstr "Votre exemplaire : %(region)s"
 
 #: templates/_ss_region_changes.html:23
 #, python-format
 msgid "%(kind)s now from: %(region)s"
-msgstr ""
+msgstr "%(kind)s désormais de : %(region)s"
 
 #: templates/_ss_region_changes.html:33
-#, fuzzy
 msgid "Nothing has been swapped yet."
-msgstr "Vos paramètres ont été enregistrés !"
+msgstr "Rien n'a encore été remplacé."
 
 #: templates/achievement_game.html:17 templates/achievement_game.html:37
 #: templates/achievements_ra_empty.html:8
@@ -7848,9 +7841,10 @@ msgstr "Échec de la conversion"
 #: templates/chd_converter.html:335 templates/chd_verify.html:302
 #: templates/duplicate_finder.html:389 templates/screenshot_dedup.html:401
 #: templates/screenshot_review.html:166
-#, fuzzy
 msgid "The last scan's results have expired. Start a new scan."
-msgstr "Ces résultats d'analyse ont expiré. Relancez l'analyse, puis supprimez."
+msgstr ""
+"Les résultats de la dernière analyse ont expiré. Lancez une nouvelle "
+"analyse."
 
 #: templates/chd_converter.html:357 templates/chd_verify.html:326
 msgid "No files selected"
@@ -8142,9 +8136,8 @@ msgid "Controllers"
 msgstr "Manettes"
 
 #: templates/controllers.html:129
-#, fuzzy
 msgid "Back to Settings"
-msgstr "Aller aux Paramètres"
+msgstr "Retour aux Paramètres"
 
 #: templates/controllers.html:134
 msgid "System Defaults"
@@ -9399,14 +9392,13 @@ msgid "An error occurred while deleting the game."
 msgstr "Une erreur s'est produite lors de la suppression du jeu."
 
 #: templates/game_detail.html:5139
-#, fuzzy
 msgid "Searching all sources..."
-msgstr "Recherche dans {source}…"
+msgstr "Recherche dans toutes les sources..."
 
 #: templates/game_detail.html:5159
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Search {sources} for metadata and boxart."
-msgstr "Recherchez des métadonnées et des jaquettes via les scrapers activés."
+msgstr "Rechercher des métadonnées et des jaquettes dans {sources}."
 
 #: templates/game_detail.html:5287 templates/game_detail.html:5288
 msgid "Select for hybrid scraping"
@@ -9418,18 +9410,17 @@ msgid "Apply"
 msgstr "Appliquer"
 
 #: templates/game_detail.html:5333
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "No {source} results"
-msgstr "Aucun résultat"
+msgstr "Aucun résultat pour {source}"
 
 #: templates/game_detail.html:5345
 msgid "No results found. Try a different search term."
-msgstr ""
+msgstr "Aucun résultat. Essayez un autre terme de recherche."
 
 #: templates/game_detail.html:5348
-#, fuzzy
 msgid "Error searching. Please try again."
-msgstr "Erreur réseau. Veuillez réessayer."
+msgstr "Erreur pendant la recherche. Veuillez réessayer."
 
 #: templates/game_detail.html:5413
 msgid "Sort title generated"
@@ -12341,19 +12332,16 @@ msgid "Network error saving language"
 msgstr "Erreur réseau lors de l'enregistrement de la langue"
 
 #: templates/settings.html:1134
-#, fuzzy
 msgid "Reading languages saved"
-msgstr "Paramètres de nommage des ROM enregistrés !"
+msgstr "Langues de lecture enregistrées"
 
 #: templates/settings.html:1136
-#, fuzzy
 msgid "Failed to save languages"
-msgstr "Échec de l'enregistrement de la langue"
+msgstr "Échec de l'enregistrement des langues"
 
 #: templates/settings.html:1141
-#, fuzzy
 msgid "Network error saving languages"
-msgstr "Erreur réseau lors de l'enregistrement de la langue"
+msgstr "Erreur réseau pendant l'enregistrement des langues"
 
 #: templates/settings.html:1150
 msgid "Please enter a new password"
@@ -12377,9 +12365,8 @@ msgid "Add User"
 msgstr "Ajouter un utilisateur"
 
 #: templates/settings.html:1219
-#, fuzzy
 msgid "Edit User"
-msgstr "Ajouter un utilisateur"
+msgstr "Modifier l'utilisateur"
 
 #: templates/settings.html:1235 templates/settings.html:1237
 msgid "Could not load that user."
@@ -12441,9 +12428,8 @@ msgid "Display settings saved!"
 msgstr "Paramètres d'affichage enregistrés !"
 
 #: templates/settings.html:1463
-#, fuzzy
 msgid "Selected tags (in order):"
-msgstr "Sélectionner ce dossier"
+msgstr "Étiquettes sélectionnées (dans l'ordre) :"
 
 #: templates/settings.html:1470
 msgid "Move left"
@@ -12455,16 +12441,15 @@ msgstr "Déplacer vers la droite"
 
 #: templates/settings.html:1477
 msgid "Available tags (click to add):"
-msgstr ""
+msgstr "Étiquettes disponibles (cliquez pour ajouter) :"
 
 #: templates/settings.html:1481
-#, fuzzy
 msgid "Click to add"
-msgstr "Cliquez pour zoomer"
+msgstr "Cliquez pour ajouter"
 
 #: templates/settings.html:1482
 msgid "All tags in use"
-msgstr ""
+msgstr "Toutes les étiquettes sont utilisées"
 
 #: templates/settings.html:1488 templates/settings.html:2894
 msgid "Preview:"
@@ -12503,38 +12488,34 @@ msgid "Error - disappears in {seconds}s"
 msgstr "Erreur - disparaît dans {seconds} s"
 
 #: templates/settings.html:1715
-#, fuzzy
 msgid "No bonus discs detected in your library."
-msgstr "Disques bonus détectés : {count}"
+msgstr "Aucun disque bonus détecté dans votre bibliothèque."
 
 #: templates/settings.html:1717
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Found {count} potential bonus disc(s):"
-msgstr "A {count} disques bonus"
+msgstr "{count} disque(s) bonus potentiel(s) trouvé(s) :"
 
 #: templates/settings.html:1723
 #, python-brace-format
 msgid "Detected from filename: {filename}"
-msgstr ""
+msgstr "Détecté d'après le nom de fichier : {filename}"
 
 #: templates/settings.html:1726
-#, fuzzy
 msgid "Will search for:"
-msgstr "Rechercher :"
+msgstr "Recherche de :"
 
 #: templates/settings.html:1728
 msgid "Could not extract parent title - manual linking required"
-msgstr ""
+msgstr "Impossible d'extraire le titre du parent - liaison manuelle requise"
 
 #: templates/settings.html:1735
-#, fuzzy
 msgid "Unknown System"
 msgstr "Système inconnu"
 
 #: templates/settings.html:1743
-#, fuzzy
 msgid "Mark"
-msgstr "Adultes"
+msgstr "Marquer"
 
 #: templates/settings.html:1752
 #, python-brace-format
@@ -12547,34 +12528,31 @@ msgid "Detection failed: {error}"
 msgstr "Échec de la détection : {error}"
 
 #: templates/_settings_tabs/library.html:209 templates/settings.html:1760
-#, fuzzy
 msgid "Auto-Detect Bonus Discs"
-msgstr "Total des disques bonus :"
+msgstr "Détecter automatiquement les disques bonus"
 
 #: templates/settings.html:1769
-#, fuzzy
 msgid "Linking..."
-msgstr "Synchronisation…"
+msgstr "Liaison en cours..."
 
 #: templates/settings.html:1778
-#, fuzzy
 msgid "Auto-linking complete!"
-msgstr "Récupération groupée terminée !"
+msgstr "Liaison automatique terminée !"
 
 #: templates/settings.html:1780
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Linked: {count} bonus disc(s)"
-msgstr "A {count} disques bonus"
+msgstr "Liés : {count} disque(s) bonus"
 
 #: templates/settings.html:1781
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Already linked: {count}"
-msgstr "Déjà dans la bibliothèque : {count}"
+msgstr "Déjà liés : {count}"
 
 #: templates/settings.html:1782
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "No parent found: {count}"
-msgstr "Sections trouvées : {count}"
+msgstr "Aucun parent trouvé : {count}"
 
 #: templates/settings.html:1786
 #, python-brace-format
@@ -12587,9 +12565,8 @@ msgid "Auto-link failed: {error}"
 msgstr "Échec du lien automatique : {error}"
 
 #: templates/_settings_tabs/library.html:213 templates/settings.html:1797
-#, fuzzy
 msgid "Auto-Link to Parents"
-msgstr "Liés à un parent :"
+msgstr "Lier automatiquement aux parents"
 
 #: templates/settings.html:1813
 msgid "Bonus Disc Statistics"
@@ -12663,9 +12640,8 @@ msgid "Back in your game lists. Auto-Link will leave it alone."
 msgstr "De retour dans vos listes de jeux. Auto-Link le laissera tranquille."
 
 #: templates/settings.html:1974
-#, fuzzy
 msgid "Creating..."
-msgstr "Effacement…"
+msgstr "Création..."
 
 #: templates/settings.html:1980
 #, python-brace-format
@@ -12683,23 +12659,20 @@ msgid "Backup error: {error}"
 msgstr "Erreur de sauvegarde : {error}"
 
 #: templates/_settings_tabs/library.html:253 templates/settings.html:1989
-#, fuzzy
 msgid "Create Backup"
-msgstr "Restaurer la sauvegarde"
+msgstr "Créer une sauvegarde"
 
 #: templates/settings.html:2000
 msgid "No backups found. Create one to get started."
-msgstr ""
+msgstr "Aucune sauvegarde trouvée. Créez-en une pour commencer."
 
 #: templates/settings.html:2013
-#, fuzzy
 msgid "Restore"
-msgstr "Stockage"
+msgstr "Restaurer"
 
 #: templates/settings.html:2022
-#, fuzzy
 msgid "Error loading backups"
-msgstr "Erreur lors du chargement des jeux."
+msgstr "Erreur de chargement des sauvegardes"
 
 #: templates/settings.html:2027
 msgid "Restore Backup"
@@ -12742,14 +12715,13 @@ msgid "Calculation failed: {error}"
 msgstr "Échec du calcul : {error}"
 
 #: templates/settings.html:2076
-#, fuzzy
 msgid "Port saved"
-msgstr "Échec de l'importation"
+msgstr "Port enregistré"
 
 #: templates/settings.html:2077
 #, python-brace-format
 msgid "Press Restart Server, then open RetroDB at {url}"
-msgstr ""
+msgstr "Appuyez sur Redémarrer le serveur, puis ouvrez RetroDB à l'adresse {url}"
 
 #: templates/settings.html:2242
 msgid "Failed to save scraper setting"
@@ -12977,9 +12949,10 @@ msgid "Save API Keys"
 msgstr "Enregistrer les clés API"
 
 #: templates/settings.html:2774
-#, fuzzy
 msgid "Defaults filled in. Press Save Scraper Settings to keep them."
-msgstr "Échec de l'enregistrement du paramètre du récupérateur"
+msgstr ""
+"Valeurs par défaut remplies. Appuyez sur Enregistrer les paramètres de "
+"récupération pour les conserver."
 
 #: templates/settings.html:2822
 msgid "Invalid Input"
@@ -13252,6 +13225,8 @@ msgstr "Logos actualisés"
 #, python-brace-format
 msgid "Logos copied from ES-DE: {imported}. System logos updated: {count}."
 msgstr ""
+"Logos copiés depuis ES-DE : {imported}. Logos de systèmes mis à jour : "
+"{count}."
 
 #: templates/settings.html:3407
 msgid "Failed to refresh logos"
@@ -13493,16 +13468,17 @@ msgid ""
 "RetroArch and its cores folder can be in different places, depending on "
 "how RetroArch was installed. Tell RetroDB where each one is."
 msgstr ""
+"RetroArch et son dossier de cœurs peuvent se trouver à des endroits "
+"différents, selon l'installation de RetroArch. Indiquez à RetroDB où se "
+"trouve chacun."
 
 #: templates/settings_emulators.html:41 templates/settings_emulators.html:198
-#, fuzzy
 msgid "Program"
-msgstr "Progression"
+msgstr "Programme"
 
 #: templates/settings_emulators.html:50
-#, fuzzy
 msgid "Cores folder"
-msgstr "Dossier parent"
+msgstr "Dossier des cœurs"
 
 #: templates/settings_emulators.html:59
 msgid "Auto-detect"
@@ -13602,6 +13578,13 @@ msgid ""
 "fetching the 7-Zip tool from the internet to do so. Each arcade game's "
 "page then lists its cheats with on/off switches."
 msgstr ""
+"Jeux d'arcade dans MAME : téléchargez la « MAME XML Cheats Collection » "
+"depuis <a href=\"https://www.mamecheat.co.uk/\" target=\"_blank\" "
+"rel=\"noopener noreferrer\">mamecheat.co.uk</a> dans votre navigateur, "
+"puis importez le dossier qui la contient. RetroDB la garde compressée et "
+"lit les noms des codes de triche à l'intérieur, en récupérant l'outil "
+"7-Zip sur Internet pour cela. La page de chaque jeu d'arcade liste "
+"ensuite ses codes de triche avec des interrupteurs d'activation."
 
 #: templates/settings_emulators.html:148
 msgid ""
@@ -13610,6 +13593,11 @@ msgid ""
 "cheat pack above; each such game's page lists its cheats, which you "
 "switch on in RetroArch's menu while you play."
 msgstr ""
+"Les jeux d'arcade avec RetroAchievements se jouent dans FinalBurn Neo "
+"dans RetroArch (RetroDB), car RetroAchievements ne prend pas en charge "
+"MAME. Téléchargez son pack de codes de triche ci-dessus ; la page de "
+"chaque jeu concerné liste ses codes de triche, que vous activez dans le "
+"menu de RetroArch pendant que vous jouez."
 
 #: templates/settings_emulators.html:160
 msgid "Emulator folders"
@@ -13625,9 +13613,9 @@ msgstr ""
 "BIOS."
 
 #: templates/settings_emulators.html:169
-#, fuzzy, python-format
+#, python-format
 msgid "e.g. %(path)s"
-msgstr "Actuel : %(path)s"
+msgstr "p. ex. %(path)s"
 
 #: templates/settings_emulators.html:169
 msgid "Emulator folder"
@@ -13650,6 +13638,9 @@ msgid ""
 "RetroDB sets up this list of emulators the first time it runs. Press Edit"
 " on a row to change how that emulator starts."
 msgstr ""
+"RetroDB prépare cette liste d'émulateurs au premier lancement. Appuyez "
+"sur Modifier sur une ligne pour changer la façon dont cet émulateur "
+"démarre."
 
 #: templates/settings_emulators.html:199 templates/settings_emulators.html:251
 msgid "Program location"
@@ -13694,16 +13685,21 @@ msgstr "p. ex."
 #: templates/settings_emulators.html:248
 msgid "RetroDB finds the program by this name when Program location is empty."
 msgstr ""
+"RetroDB trouve le programme grâce à ce nom quand l'emplacement du "
+"programme est vide."
 
 #: templates/settings_emulators.html:253
 msgid "(empty = find it by its program name)"
-msgstr ""
+msgstr "(vide = le trouver par le nom du programme)"
 
 #: templates/settings_emulators.html:256
 msgid ""
 "The full path to the emulator program, AppImage or start script. When "
 "set, RetroDB uses it instead of searching by name."
 msgstr ""
+"Le chemin complet du programme de l'émulateur, de l'AppImage ou du script"
+" de démarrage. Si renseigné, RetroDB l'utilise au lieu de chercher par "
+"nom."
 
 #: templates/settings_emulators.html:259
 msgid "Command-line options (advanced)"
@@ -13714,10 +13710,9 @@ msgid "Tokens:"
 msgstr "Variables :"
 
 #: templates/settings_emulators.html:270
-#, fuzzy
 msgid "This is a RetroArch entry (uses the cores in the Cores folder above)"
 msgstr ""
-"Ceci est une entrée RetroArch (utilise les cœurs du dossier des cœurs ci-"
+"Ceci est une entrée RetroArch (utilise les cœurs du dossier Cœurs ci-"
 "dessus)"
 
 #: templates/settings_emulators.html:276
@@ -14135,12 +14130,10 @@ msgid "Network error. Please try again."
 msgstr "Erreur réseau. Veuillez réessayer."
 
 #: templates/ss_region_repair.html:123
-#, fuzzy
 msgid "What changed"
-msgstr "Liste de codes de triche changée."
+msgstr "Ce qui a changé"
 
 #: templates/ss_region_repair.html:137
-#, fuzzy
 msgid ""
 "Each game with a ScreenScraper box or manual is looked up again. Where "
 "another region suits it better, the file is downloaded and the old one is"
@@ -14150,14 +14143,14 @@ msgid ""
 "ScreenScraper allowance and can take a long time. You can leave this page"
 " and come back to pause or stop it."
 msgstr ""
-"Chaque jeu ayant un boîtier ou un manuel ScreenScraper est recherché à "
+"Chaque jeu ayant une boîte ou un manuel ScreenScraper est recherché à "
 "nouveau. Quand une autre région convient mieux, le fichier est téléchargé"
 " et l'ancien est supprimé.\n"
 "\n"
-"Les jeux que vous avez modifiés à la main ne sont pas touchés. Cette "
-"action utilise votre quota quotidien ScreenScraper et peut être très "
-"longue. Vous pouvez quitter la page, et appuyer de nouveau sur cette "
-"carte pour arrêter."
+"Les jeux que vous avez modifiés à la main ne sont pas touchés. Cela "
+"utilise votre quota quotidien ScreenScraper et peut prendre beaucoup de "
+"temps. Vous pouvez quitter cette page et revenir pour mettre en pause ou "
+"arrêter."
 
 #: templates/ss_region_repair.html:138
 msgid "Could not start the fix"
@@ -14186,9 +14179,11 @@ msgid "Checked {current} of {total} games. Files swapped: {replaced}."
 msgstr "{current} jeux vérifiés sur {total}. Fichiers remplacés : {replaced}."
 
 #: templates/ss_region_repair.html:142
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Paused after {current} of {total} games. Files swapped: {replaced}."
-msgstr "{current} jeux vérifiés sur {total}. Fichiers remplacés : {replaced}."
+msgstr ""
+"En pause après {current} jeux sur {total}. Fichiers remplacés : "
+"{replaced}."
 
 #: templates/ss_region_repair.html:143
 #, python-brace-format
@@ -15131,6 +15126,8 @@ msgid ""
 "Added after the emulator's command-line options. Put quotes around a "
 "value that contains spaces."
 msgstr ""
+"Ajouté après les options de ligne de commande de l'émulateur. Mettez des "
+"guillemets autour d'une valeur contenant des espaces."
 
 #: templates/_modals/filter_modal.html:5
 msgid "Filter Games"
@@ -15331,6 +15328,9 @@ msgid ""
 "Your username and web API key show your achievements in RetroDB. To "
 "unlock achievements while you play, sign in with your password below."
 msgstr ""
+"Votre nom d'utilisateur et votre clé API web affichent vos succès dans "
+"RetroDB. Pour débloquer des succès en jouant, connectez-vous avec votre "
+"mot de passe ci-dessous."
 
 #: templates/_settings_tabs/account.html:103
 msgid "Your RA Username"
@@ -15357,11 +15357,12 @@ msgstr ""
 "cyan);\">panneau de configuration RetroAchievements</a>"
 
 #: templates/_settings_tabs/account.html:118
-#, fuzzy
 msgid ""
 "Password sign-in: unlock achievements while you play in RetroArch, "
 "DuckStation and PCSX2"
-msgstr "Gagner des succès dans RetroArch, DuckStation et PCSX2"
+msgstr ""
+"Connexion par mot de passe : débloquez des succès en jouant dans "
+"RetroArch, DuckStation et PCSX2"
 
 #: templates/_settings_tabs/account.html:119
 msgid ""
@@ -15515,6 +15516,8 @@ msgstr "Coller ici"
 #: templates/_settings_tabs/account.html:211
 msgid "Save My Profile at the bottom of this card checks a new token with Sony."
 msgstr ""
+"Enregistrer My Profile en bas de cette carte vérifie un nouveau jeton "
+"auprès de Sony."
 
 #: templates/_settings_tabs/account.html:217
 msgid ""
@@ -15646,15 +15649,17 @@ msgstr ""
 "automatiquement."
 
 #: templates/_settings_tabs/account.html:360
-#, fuzzy
 msgid "Moving background"
-msgstr "Suppression de l'arrière-plan…"
+msgstr "Arrière-plan animé"
 
 #: templates/_settings_tabs/account.html:362
 msgid ""
 "The mist, rain or stars behind the page. It pauses when you are not using"
 " RetroDB. Turn it off to save power on this computer."
 msgstr ""
+"La brume, la pluie ou les étoiles derrière la page. Il se met en pause "
+"quand vous n'utilisez pas RetroDB. Désactivez-le pour économiser de "
+"l'énergie sur cet ordinateur."
 
 #: templates/_settings_tabs/account.html:370
 msgid "Language"
@@ -15665,9 +15670,8 @@ msgid "Changes the interface language. The page reloads when you switch."
 msgstr "Change la langue de l'interface. La page se recharge lorsque vous changez."
 
 #: templates/_settings_tabs/account.html:391
-#, fuzzy
 msgid "Languages I can read"
-msgstr "Langues"
+msgstr "Langues que je sais lire"
 
 #: templates/_settings_tabs/account.html:401
 msgid ""
@@ -15675,6 +15679,9 @@ msgid ""
 " one in a language someone who scrapes can read. Untick them all to use "
 "your screen language."
 msgstr ""
+"Quand un jeu n'a ni image de boîte ni nom dans sa propre région, RetroDB "
+"en choisit un dans une langue que lit la personne qui récupère les "
+"données. Décochez tout pour utiliser la langue de votre écran."
 
 #: templates/_settings_tabs/account.html:411
 msgid "Notification Settings"
@@ -15686,6 +15693,9 @@ msgid ""
 "itself, from 1 to 60 seconds. These are your own; other people keep "
 "theirs."
 msgstr ""
+"Durée pendant laquelle chaque type de notification reste à l'écran avant "
+"de se fermer seule, de 1 à 60 secondes. Ces réglages sont les vôtres ; "
+"les autres personnes gardent les leurs."
 
 #: templates/_settings_tabs/account.html:422
 msgid "Success Notifications"
@@ -15727,9 +15737,8 @@ msgid "Errors stay longer for readability"
 msgstr "Les erreurs restent affichées plus longtemps pour faciliter la lecture"
 
 #: templates/_settings_tabs/account.html:479
-#, fuzzy
 msgid "Save Notification Times"
-msgstr "Tester les notifications"
+msgstr "Enregistrer les durées des notifications"
 
 #: templates/_settings_tabs/account.html:483
 msgid "Test Notifications"
@@ -15812,15 +15821,16 @@ msgid "Admin - Full access"
 msgstr "Administrateur - Accès complet"
 
 #: templates/_settings_tabs/account.html:627
-#, fuzzy
 msgid "Password *"
-msgstr "Mot de passe"
+msgstr "Mot de passe *"
 
 #: templates/_settings_tabs/account.html:629
 msgid ""
 "12 characters or more. Give it to them; they choose their own the first "
 "time they sign in."
 msgstr ""
+"12 caractères ou plus. Donnez-le à la personne ; elle choisira le sien à "
+"sa première connexion."
 
 #: templates/_settings_tabs/account.html:633
 msgid "Reset Password"
@@ -15847,6 +15857,8 @@ msgid ""
 "Choose the controller each system shows by default, add your own "
 "controllers and edit the controller library."
 msgstr ""
+"Choisissez la manette que chaque système affiche par défaut, ajoutez vos "
+"propres manettes et modifiez la bibliothèque de manettes."
 
 #: templates/_settings_tabs/customization.html:18
 msgid "Open Controllers"
@@ -15862,6 +15874,9 @@ msgid ""
 "updates the table below. The table shows which systems still have no "
 "logo."
 msgstr ""
+"Actualiser les logos des systèmes copie les nouveaux logos depuis votre "
+"dossier ES-DE, puis met à jour le tableau ci-dessous. Le tableau indique "
+"les systèmes qui n'ont toujours pas de logo."
 
 #: templates/_settings_tabs/customization.html:35
 msgid "Refresh System Logos"
@@ -16084,21 +16099,24 @@ msgstr "ex. /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
 #: templates/_settings_tabs/library.html:66
 msgid "Used by anyone who has not set their own in Account > My Profile."
 msgstr ""
+"Utilisé par toute personne qui n'a pas défini le sien dans Compte > Mon "
+"profil."
 
 #: templates/_settings_tabs/library.html:73
 msgid "Save Path Settings"
 msgstr "Enregistrer les paramètres de chemin"
 
 #: templates/_settings_tabs/library.html:89
-#, fuzzy
 msgid "Library Display"
-msgstr "Votre bibliothèque est vide"
+msgstr "Affichage de la bibliothèque"
 
 #: templates/_settings_tabs/library.html:93
 msgid ""
 "These choices apply to everyone. Each person picks their own theme and "
 "language in Account."
 msgstr ""
+"Ces choix s'appliquent à tout le monde. Chaque personne choisit son thème"
+" et sa langue dans Compte."
 
 #: templates/_settings_tabs/library.html:96
 msgid "Preferred Boxart Style"
@@ -16192,23 +16210,20 @@ msgstr ""
 "détectée."
 
 #: templates/_settings_tabs/library.html:168
-#, fuzzy
 msgid "Add region..."
-msgstr "+ Ajouter une dimension…"
+msgstr "Ajouter une région..."
 
 #: templates/_settings_tabs/library.html:172
 msgid "Default Region"
 msgstr "Région par défaut"
 
 #: templates/_settings_tabs/library.html:188
-#, fuzzy
 msgid "Save Naming Settings"
-msgstr "Enregistrer mes paramètres"
+msgstr "Enregistrer les paramètres de nommage"
 
 #: templates/_settings_tabs/library.html:199
-#, fuzzy
 msgid "Bonus Disc Management"
-msgstr "Gestion des utilisateurs"
+msgstr "Gestion des disques bonus"
 
 #: templates/_settings_tabs/library.html:203
 msgid ""
@@ -16216,20 +16231,24 @@ msgid ""
 "on game listing pages. Use this section to auto-detect and link bonus "
 "discs to their parent games."
 msgstr ""
+"Les disques bonus (making-of, coulisses, suppléments) sont masqués par "
+"défaut sur les pages de liste des jeux. Utilisez cette section pour "
+"détecter automatiquement les disques bonus et les lier à leurs jeux "
+"parents."
 
 #: templates/_settings_tabs/library.html:217
-#, fuzzy
 msgid "View Stats"
-msgstr "Statistiques"
+msgstr "Voir les statistiques"
 
 #: templates/_settings_tabs/library.html:224
-#, fuzzy
 msgid "Detected Bonus Discs"
-msgstr "Total des disques bonus :"
+msgstr "Disques bonus détectés"
 
 #: templates/_settings_tabs/library.html:227
 msgid "Click \"Auto-Detect Bonus Discs\" to scan your library"
 msgstr ""
+"Cliquez sur « Détecter automatiquement les disques bonus » pour analyser "
+"votre bibliothèque"
 
 #: templates/_settings_tabs/library.html:231
 msgid "Current Bonus Discs"
@@ -16245,21 +16264,21 @@ msgstr ""
 
 #: templates/_settings_tabs/library.html:247
 msgid "Database Backup & Restore"
-msgstr ""
+msgstr "Sauvegarde et restauration de la base de données"
 
 #: templates/_settings_tabs/library.html:257
 msgid "Create backups before making major changes to your library"
 msgstr ""
+"Créez des sauvegardes avant d'apporter de grands changements à votre "
+"bibliothèque"
 
 #: templates/_settings_tabs/library.html:260
-#, fuzzy
 msgid "Available Backups"
-msgstr "Disponible"
+msgstr "Sauvegardes disponibles"
 
 #: templates/_settings_tabs/library.html:262
-#, fuzzy
 msgid "Loading backups..."
-msgstr "Chargement des valeurs..."
+msgstr "Chargement des sauvegardes..."
 
 #: templates/_settings_tabs/scraping.html:3
 msgid "Scraping settings"
@@ -16296,9 +16315,10 @@ msgid "Enable ES-DE local scraper"
 msgstr "Activer le scraper local ES-DE"
 
 #: templates/_settings_tabs/scraping.html:46
-#, fuzzy
 msgid "Online game database with box art and descriptions (needs a key)"
-msgstr "Grande base de données de jeux avec classements ESRB et notes Metacritic"
+msgstr ""
+"Base de données en ligne de jeux avec jaquettes et descriptions "
+"(nécessite une clé)"
 
 #: templates/_settings_tabs/scraping.html:53
 msgid "Enable TheGamesDB scraper"
@@ -16352,9 +16372,8 @@ msgstr ""
 "ignorés."
 
 #: templates/_settings_tabs/scraping.html:142
-#, fuzzy
 msgid "How closely must a result match the game?"
-msgstr "N'accepter que les résultats correspondant au système du jeu"
+msgstr "À quel point un résultat doit-il correspondre au jeu ?"
 
 #: templates/_settings_tabs/scraping.html:144
 msgid "Strict"
@@ -16365,6 +16384,8 @@ msgid ""
 "Only results with the exact title. Fewer wrong games, but more games stay"
 " unscraped."
 msgstr ""
+"Uniquement les résultats avec le titre exact. Moins de jeux erronés, mais"
+" plus de jeux restent sans données récupérées."
 
 #: templates/_settings_tabs/scraping.html:145
 msgid "Normal (recommended)"
@@ -16372,7 +16393,7 @@ msgstr "Normal (recommandé)"
 
 #: templates/_settings_tabs/scraping.html:145
 msgid "A close title on the right system."
-msgstr ""
+msgstr "Un titre proche sur le bon système."
 
 #: templates/_settings_tabs/scraping.html:146
 msgid "Loose"
@@ -16383,6 +16404,8 @@ msgid ""
 "Also partial titles. More games get filled, and some may be the wrong "
 "game."
 msgstr ""
+"Inclut aussi les titres partiels. Plus de jeux sont renseignés, et "
+"certains peuvent être le mauvais jeu."
 
 #: templates/_settings_tabs/scraping.html:158
 msgid "Custom"
@@ -16393,6 +16416,8 @@ msgid ""
 "Your own setting from an earlier version. Choosing another option "
 "replaces it."
 msgstr ""
+"Votre propre paramètre d'une version précédente. Choisir une autre option"
+" le remplace."
 
 #: templates/_settings_tabs/scraping.html:171
 msgid "Reset to Default"
@@ -16419,6 +16444,8 @@ msgid ""
 "Used first. TheGamesDB calls it the public key; each internet connection "
 "gets its own allowance."
 msgstr ""
+"Utilisée en premier. TheGamesDB l'appelle la clé publique ; chaque "
+"connexion internet a son propre quota."
 
 #: templates/_settings_tabs/scraping.html:208
 msgid "TheGamesDB — Backup key"
@@ -16429,6 +16456,8 @@ msgid ""
 "Used when the main key runs out. TheGamesDB calls it the private key; it "
 "allows about 6,000 requests a month."
 msgstr ""
+"Utilisée quand la clé principale est épuisée. TheGamesDB l'appelle la clé"
+" privée ; elle autorise environ 6 000 requêtes par mois."
 
 #: templates/_settings_tabs/scraping.html:218
 msgid "IGDB / Twitch Client ID"
@@ -16510,6 +16539,9 @@ msgid ""
 "theirs is used first. The household's here is used only for someone who "
 "has not added their own."
 msgstr ""
+"Chaque personne peut ajouter la sienne dans Paramètres > Compte > Mon "
+"profil, et c'est la sienne qui est utilisée en premier. Celle du foyer, "
+"ici, ne sert que pour une personne qui n'a pas ajouté la sienne."
 
 #: templates/_settings_tabs/scraping.html:289
 msgid "RetroAchievements Username"
@@ -16534,6 +16566,11 @@ msgid ""
 "has not added their own, so no one's games land in another person's "
 "library."
 msgstr ""
+"Chaque personne peut ajouter la sienne dans Paramètres > Compte > Mon "
+"profil, et c'est la sienne qui est utilisée en premier. Celle du foyer, "
+"ici, ne sert que pour un administrateur qui n'a pas ajouté la sienne, "
+"afin que les jeux de personne ne se retrouvent dans la bibliothèque d'une"
+" autre personne."
 
 #: templates/_settings_tabs/scraping.html:320
 msgid "Steam ID"
@@ -16696,12 +16733,17 @@ msgid ""
 "publisher, ratings and the links to their pictures and videos. Useful "
 "before scraping again from scratch."
 msgstr ""
+"Supprime ce que la récupération a renseigné sur les jeux récupérés : "
+"description, genre, éditeur, classifications et liens vers leurs images "
+"et vidéos. Utile avant de tout récupérer à nouveau depuis zéro."
 
 #: templates/_settings_tabs/system.html:57
 msgid ""
 "Your games stay in the library, and their titles go back to the file "
 "names (a locked title stays)."
 msgstr ""
+"Vos jeux restent dans la bibliothèque, et leurs titres reviennent aux "
+"noms de fichier (un titre verrouillé est conservé)."
 
 #: templates/_settings_tabs/system.html:69
 #: templates/_settings_tabs/system.html:72
@@ -16711,6 +16753,8 @@ msgstr "Supprimer aussi les fichiers d'images et de vidéos"
 #: templates/_settings_tabs/system.html:72
 msgid "(otherwise they stay on disk, for Orphaned Media Cleanup below)"
 msgstr ""
+"(sinon ils restent sur le disque, pour le Nettoyage des médias orphelins "
+"ci-dessous)"
 
 #: templates/_settings_tabs/system.html:78
 msgid "Preview"
@@ -16752,13 +16796,12 @@ msgstr ""
 
 #: templates/_settings_tabs/system.html:128
 #: templates/_settings_tabs/system.html:135
-#, fuzzy
 msgid "Calculate File Sizes"
-msgstr "Calcul des tailles de fichiers..."
+msgstr "Calculer la taille des fichiers"
 
 #: templates/_settings_tabs/system.html:131
 msgid "Finds the size on disk of every game that does not have one yet."
-msgstr ""
+msgstr "Trouve la taille sur le disque de chaque jeu qui n'en a pas encore."
 
 #: templates/_settings_tabs/system.html:141
 msgid "Database Optimization"
@@ -16767,6 +16810,8 @@ msgstr "Optimisation de la base de données"
 #: templates/_settings_tabs/system.html:144
 msgid "Makes the database smaller and faster. Takes a few seconds."
 msgstr ""
+"Rend la base de données plus petite et plus rapide. Prend quelques "
+"secondes."
 
 #: templates/_settings_tabs/system.html:161
 #, python-format
@@ -16824,12 +16869,11 @@ msgstr "Arrêter le serveur"
 
 #: templates/_settings_tabs/system.html:208
 msgid "Restart RetroDB, or shut it down completely."
-msgstr ""
+msgstr "Redémarrez RetroDB ou arrêtez-le complètement."
 
 #: templates/_settings_tabs/system.html:213
-#, fuzzy
 msgid "Server Port"
-msgstr "Serveur"
+msgstr "Port du serveur"
 
 #: templates/_settings_tabs/system.html:216
 #, python-format
@@ -16837,17 +16881,21 @@ msgid ""
 "The command that starts RetroDB sets the port (%(name)s), so a port saved"
 " here would not be used."
 msgstr ""
+"La commande qui démarre RetroDB définit le port (%(name)s), donc un port "
+"enregistré ici ne serait pas utilisé."
 
 #: templates/_settings_tabs/system.html:222
-#, fuzzy
 msgid "Save Port"
-msgstr "Export CSV"
+msgstr "Enregistrer le port"
 
 #: templates/_settings_tabs/system.html:225
 msgid ""
 "The number at the end of RetroDB's web address. After a change, press "
 "Restart Server, then open RetroDB at the new address."
 msgstr ""
+"Le numéro à la fin de l'adresse web de RetroDB. Après un changement, "
+"appuyez sur Redémarrer le serveur, puis ouvrez RetroDB à la nouvelle "
+"adresse."
 
 #: templates/_settings_tabs/system.html:230
 msgid "Database Location"
@@ -16859,6 +16907,8 @@ msgid ""
 "Something not working? See <a href=\"%(help_url)s\">Troubleshooting</a> "
 "in Help."
 msgstr ""
+"Un problème ? Consultez <a href=\"%(help_url)s\">Dépannage</a> dans "
+"l'aide."
 
 #: templates/_settings_tabs/system.html:245
 msgid "Logging Settings"

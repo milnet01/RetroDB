@@ -1,139 +1,206 @@
 - version: 4.0.0
   date: '2026-11-18'
   tags:
-  - type: enhancement
-    label: '관리자와 편집자는 설정 > 계정 > 읽을 수 있는 언어에서 자신이 읽는 언어를 선택할 수 있습니다. 게임에 자신의 지역 박스 그림이나 이름이 없으면, RetroDB는 스크래핑하는 사람이 읽을 수 있는 언어의 것을 고릅니다. 아무것도 선택하지 않은 사람은 화면 언어를 읽는 것으로 간주됩니다'
   - type: fix
-    label: 'ScreenScraper에 일반 유럽용이 없다는 이유만으로 유럽 사본이 독일어, 프랑스어, 스페인어, 이탈리아어 박스 그림이나 이름을 받는 일은 이제 없습니다. 영국용이나 월드, 미국 같은 지역 목록의 것을 받습니다. 단, 스크래핑하는 사람이 그 언어를 읽는 경우는 예외입니다. 박스와 설명서 지역 수정은 아무도 읽지 않는 언어로 바꾼 박스와 설명서를 다시 살펴봅니다'
+    label: 언어와 상관없이 영어로 표시되던 버튼과 메시지가 이제 RetroDB에서 지원하는 모든 언어로 표시됩니다. 일부는 번역이 없었고, 일부는 잘못된 번역이 표시되었습니다. 예를 들어 독일어에서는 백업 만들기가 "백업 복원"으로 표시되었습니다.
+    en: Buttons and messages that showed in English whatever your language now show in it, in every language RetroDB offers. Some had no translation, and some showed a wrong one, such as Create Backup reading as "restore backup" in German
   - type: enhancement
-    label: '박스와 설명서 지역 수정에 전용 페이지가 생겼으며, ROM 도구의 카드에서 열 수 있습니다. 페이지의 What changed 목록에는 이 수정이 박스, 3D 박스 또는 설명서를 바꾼 모든 게임이 콘솔별로 묶여 표시되고, 현재 박스와 새 파일이 온 지역도 함께 보여 주므로 직접 확인할 수 있습니다. 이번 업데이트 전에 이미 수정된 게임도 목록에 나옵니다'
-  - type: enhancement
-    label: '박스와 설명서 지역 수정을 페이지의 버튼으로 일시정지, 재개, 중지할 수 있습니다. 이전에는 카드를 다시 누르는 것이 유일한 중지 방법이었고, 화면에는 그런 안내가 없었습니다'
-  - type: enhancement
-    label: '박스와 설명서 지역 수정이 실행되는 동안 버튼 옆에 진행 막대가 표시됩니다. What changed 목록은 닫은 콘솔을 기억하므로, 이 브라우저에서 다음에 페이지를 열 때도 닫힌 채로 있습니다'
-  - type: enhancement
-    label: '박스와 설명서 지역 수정이 실행되는 동안, 교체한 게임이 바로 What changed 목록의 해당 콘솔 아래에 추가됩니다. 전에는 페이지를 새로 고쳐야 볼 수 있었습니다'
+    label: 관리자와 편집자는 설정 > 계정 > 읽을 수 있는 언어에서 자신이 읽을 수 있는 언어를 체크할 수 있습니다. 게임에 자기 지역의 박스 그림이나 이름이 없으면, RetroDB는 스크래핑하는 사람이 읽을 수 있는 언어의 것을 고릅니다. 아무것도 체크하지 않으면 화면 언어를 읽는 것으로 봅니다
+    en: Admins and editors can tick the languages they read, under Settings > Account > Languages I can read. When a game has no box picture or name from its own region, RetroDB picks one in a language someone who scrapes can read. Anyone who ticks none counts as reading their screen language
   - type: fix
-    label: '아직 시작되지 않은 진행 막대의 왼쪽 끝에 "%"만 따로 표시되지 않습니다'
-  - type: fix
-    label: '시스템 페이지의 Wii U, PlayStation Vita, Xbox, Xbox One 로고가 다른 로고처럼 자리를 꽉 채웁니다. PlayStation Vita 로고와 Xbox One의 ONE은 이제 흰색이라 어떤 테마에서도 읽을 수 있습니다'
+    label: ScreenScraper에 일반 유럽용 박스 그림이나 이름이 없다는 이유만으로 유럽판에 독일어, 프랑스어, 스페인어, 이탈리아어 박스 그림이나 이름이 붙지 않습니다. 스크래핑하는 사람이 그 언어를 읽는 경우가 아니라면 영국판이나 월드, 미국 같은 지역 목록의 것이 사용됩니다. 박스 및 설명서 지역 수정은 아무도 읽지 않는 언어로 바뀐 박스와 설명서를 다시 확인합니다
+    en: A Europe copy no longer gets a German, French, Spanish or Italian box picture or name just because ScreenScraper has no general Europe one. It gets the UK one, or one from your region list such as World or USA, unless someone who scrapes reads that language. Fix Box and Manual Regions looks again at the boxes and manuals it swapped into a language nobody reads
   - type: enhancement
-    label: 'Xbox 가져오기로 추가되는 Xbox Series X|S에 전용 로고가 생겼고, ℹ️ 버튼으로 여는 창에 콘솔 사진이 표시됩니다. 정식 이름인 Microsoft Xbox Series X|S와 사양도 표시됩니다'
-  - type: fix
-    label: 'Steam, Xbox, PSN 또는 CLZ 가져오기로 추가되는 시스템은 이제 로고와 종류, 그리고 RetroDB가 아는 경우 정식 이름을 바로 받습니다. 이전에 이렇게 추가된 시스템은 RetroDB를 업데이트할 때 받습니다'
+    label: 박스 및 설명서 지역 수정은 ROM 도구 카드에서 여는 전용 페이지가 생겼습니다. 변경 내역 목록에는 수정으로 박스, 3D 박스, 설명서가 바뀐 모든 게임이 콘솔별로 묶여 표시되며, 현재 박스와 새 파일의 출처 지역을 확인할 수 있습니다. 이번 업데이트 전에 이미 수정된 게임도 표시됩니다
+    en: Fix Box and Manual Regions has its own page, opened from its ROM Tools card. Its What changed list shows every game the fix swapped a box, 3D box or manual for, grouped by console, with the box as it is now and the region each new file came from, so you can check them. Games already fixed before this update are listed too
   - type: enhancement
-    label: '박스와 설명서 지역 수정은 이제 게임마다 ScreenScraper에 한 번만 문의합니다. 이전에는 실행할 때마다 첫 게임부터 다시 시작해, 이미 확인한 게임까지 모두 문의했습니다. 첫 실행 이후에 스크래핑한 게임은 이미 올바른 박스를 가지고 있으므로, 문의하지 않고 건너뜁니다'
+    label: 박스 및 설명서 지역 수정은 이제 페이지의 버튼으로 일시정지, 재개, 중지할 수 있습니다. 전에는 카드를 다시 눌러야만 멈출 수 있었고, 화면에는 그런 안내가 없었습니다
+    en: Fix Box and Manual Regions can be paused, resumed and stopped with buttons on its page. Before, the only way to stop it was to press its card again, which nothing on screen said
+  - type: enhancement
+    label: 박스 및 설명서 지역 수정이 실행되는 동안 버튼 옆에 진행 막대가 표시됩니다. 변경 내역 목록은 닫아 둔 콘솔을 기억하므로, 이 브라우저에서 페이지를 다시 열어도 닫힌 상태로 유지됩니다
+    en: Fix Box and Manual Regions shows a progress bar beside its buttons while it runs. Its What changed list remembers which consoles you closed, so they stay closed the next time you open the page in this browser
+  - type: enhancement
+    label: 박스 및 설명서 지역 수정이 실행되는 동안 바뀐 게임은 즉시 해당 콘솔 아래의 변경 내역 목록에 추가됩니다. 전에는 페이지를 새로고침해야 볼 수 있었습니다
+    en: While Fix Box and Manual Regions runs, each game it swaps joins its What changed list straight away, under its console. Before, you had to reload the page to see them
   - type: fix
-    label: '스캔하거나 변환하는 ROM 도구 페이지(스크린샷 중복 제거, 스크린샷 검토, 중복 찾기, CHD 변환기, CHD 검증)는 페이지를 나갔다가 돌아와도 마지막 실행을 유지합니다. 실행 중인 스캔은 진행 상황을 계속 보여 주고, 끝난 스캔은 끝난 뒤 30분 동안 결과를 다시 보여 줍니다. 이전에는 페이지가 빈 상태로 돌아왔습니다'
+    label: 아직 시작하지 않은 진행 막대의 왼쪽 끝에 "%"만 덩그러니 표시되지 않습니다
+    en: A progress bar that has not started yet no longer shows a lone "%" at its left end
   - type: fix
-    label: '번역된 도움말 페이지가 모든 버튼, 탭, 페이지를 앱이 해당 언어로 보여 주는 이름으로 부르고, 앱의 메시지도 앱이 보여 주는 그대로 인용합니다. 대량 AI 채우기 항목은 더 이상 앱에 없는 카드를 언급하지 않습니다. 백그라운드 버튼이 이제 이탈리아어, 한국어, 중국어에서 올바르게 표시되며, 일부 줄루어 레이블은 더 이상 불필요한 "N:"으로 시작하지 않습니다'
+    label: 시스템 페이지의 Wii U, PlayStation Vita, Xbox, Xbox One 로고가 다른 로고처럼 공간을 가득 채웁니다. PlayStation Vita 로고와 Xbox One의 ONE은 흰색으로 바뀌어 모든 테마에서 읽을 수 있습니다
+    en: The Wii U, PlayStation Vita, Xbox and Xbox One logos on the Systems page fill their space like the others. The PlayStation Vita logo and the ONE in Xbox One are now white, so they can be read on every theme
+  - type: enhancement
+    label: Xbox 가져오기로 추가되는 Xbox Series X|S에 전용 로고가 생겼고, ℹ️ 버튼으로 여는 창에 콘솔 그림이 표시됩니다. 전체 이름인 Microsoft Xbox Series X|S와 사양도 표시됩니다
+    en: Xbox Series X|S, which the Xbox import adds, has its own logo, and the window its ℹ️ button opens shows a picture of the consoles. It also has its full name, Microsoft Xbox Series X|S, and its specifications
+  - type: fix
+    label: Steam, Xbox, PSN, CLZ 가져오기로 추가된 시스템에 RetroDB가 아는 경우 로고, 유형, 전체 이름이 붙습니다. 이전에 그렇게 추가된 시스템은 RetroDB를 업데이트할 때 적용됩니다
+    en: A system the Steam, Xbox, PSN or CLZ import adds now gets its logo, its type and its full name where RetroDB knows one. Systems added that way before get them when RetroDB updates
+  - type: enhancement
+    label: 박스 및 설명서 지역 수정은 게임마다 ScreenScraper에 한 번만 문의합니다. 전에는 실행할 때마다 첫 게임부터 다시 시작해 이미 확인한 게임까지 모두 문의했습니다. 첫 실행 이후에 스크래핑한 게임은 이미 올바른 박스를 갖고 있어 문의 없이 건너뜁니다
+    en: Fix Box and Manual Regions asks ScreenScraper about each game only once. Before, every run started again at the first game and asked about every one, even games it had already checked. Games scraped after its first run already have the right boxes, so it skips them without asking
+  - type: fix
+    label: 스캔이나 변환을 하는 ROM 도구 페이지(스크린샷 중복 제거, 스크린샷 검토, 중복 찾기, CHD 변환기, CHD 검증)는 페이지를 떠났다 돌아와도 마지막 실행 내용을 유지합니다. 실행 중인 스캔은 계속 진행 상황을 보여 주고, 끝난 스캔은 종료 후 30분 동안 결과를 다시 보여 줍니다. 전에는 페이지가 빈 상태로 돌아왔습니다
+    en: The ROM tool pages that scan or convert (Screenshot Dedup, Screenshot Review, Duplicate Finder, CHD Converter and CHD Verify) keep their last run when you leave the page and come back. A running scan carries on showing its progress, and a finished one shows its results again, for 30 minutes after it ends. Before, the page came back empty
+  - type: fix
+    label: 번역된 도움말 페이지는 모든 버튼, 탭, 페이지를 앱이 해당 언어로 보여 주는 이름으로 부르고, 앱의 메시지도 표시되는 그대로 인용합니다. 일괄 AI 채우기 항목은 앱에 없는 카드를 더 이상 언급하지 않습니다. 배경 버튼이 이탈리아어, 한국어, 중국어에서 올바르게 표시되고, 일부 줄루어 라벨 앞에 붙던 "N:"이 사라졌습니다
+    en: Translated help pages call every button, tab and page by the name the app shows in that language, and quote its messages as the app shows them. The Bulk AI Fill section no longer names a card the app does not have. The Background button now reads correctly in Italian, Korean and Chinese, and some Zulu labels no longer start with a stray "N:"
   - type: feature
-    label: 'RetroAchievements가 있는 아케이드 게임에서 이제 업적을 얻을 수 있습니다. MAME는 RetroAchievements를 지원하지 않으므로, 이런 게임은 RetroAchievements가 지원하는 FinalBurn Neo 코어를 쓰는 RetroArch (RetroDB)에서 실행됩니다. 나머지 아케이드 게임은 MAME에 그대로 남습니다. 설정 → 에뮬레이터 → 치트의 새 ''FinalBurn Neo 아케이드 치트'' 팩은 이런 각 게임의 치트를 해당 게임 페이지에 나열합니다. FinalBurn Neo는 게임을 시작할 때마다 치트를 끄므로, 플레이 중에 RetroArch 메뉴에서 켜세요. F1, Core Options, Cheat 순서로 선택하세요'
+    label: 'RetroAchievements가 있는 아케이드 게임에서 이제 업적을 달성할 수 있습니다. 이런 게임은 RetroAchievements를 지원하지 않는 MAME 대신 지원하는 FinalBurn Neo 코어로 RetroArch (RetroDB)에서 시작되며, 다른 아케이드 게임은 그대로 MAME를 사용합니다. 설정 → 에뮬레이터 → 치트에 새 FinalBurn Neo 아케이드 치트 팩이 추가되어 각 게임 페이지에 치트가 표시됩니다. FinalBurn Neo는 게임을 시작할 때마다 치트를 끄므로, 플레이 중 RetroArch 메뉴에서 켜야 합니다: F1, 코어 옵션, 치트 순서입니다'
+    en: 'Arcade games with RetroAchievements now earn them. They start in RetroArch (RetroDB) with the FinalBurn Neo core, which RetroAchievements supports, instead of MAME, which it does not; every other arcade game stays in MAME. A new FinalBurn Neo arcade cheats pack under Settings → Emulators → Cheats lists each such game''s cheats on its page. FinalBurn Neo turns cheats off each time a game starts, so you switch them on in RetroArch''s menu while you play: F1, then Core Options, then Cheat'
   - type: performance
-    label: '관리자의 설정 페이지가 더 빨리 열립니다. 열 때마다 모든 시스템의 로고와 하드웨어 사진을 확인하지 않으며, 그 표는 사용자 지정 탭을 열 때 채워집니다. 연 직후 저장을 눌러도 더 이상 그 확인이 끝나기를 기다리지 않습니다'
+    label: 관리자의 설정 화면이 더 빨리 열립니다. 열 때 모든 시스템의 로고와 하드웨어 그림을 더 이상 확인하지 않으며, 그 표는 사용자 지정 탭을 열 때 채워집니다. 설정을 연 직후 저장을 눌러도 그 확인 작업 때문에 기다리지 않습니다
+    en: 'Settings opens faster for admins. It no longer checks every system''s logo and hardware picture as it opens: that table fills when you open the Customization tab. A Save pressed straight after opening no longer waits behind those checks'
   - type: enhancement
-    label: '설정이 더 깔끔해졌습니다. 내가 고르는 항목이 설정 → 계정에 모였습니다. 테마 및 언어(움직이는 배경 포함)와 메시지가 화면에 머무는 시간이며, 이 시간은 이제 사람마다 따로 정합니다. 라이브러리 → 경로는 폴더 네 개를 저장 버튼 하나로 저장합니다. 시스템 → 서버에는 포트와 데이터베이스 위치가 표시됩니다. 개발 지원은 도움말 페이지 맨 끝으로 옮겼습니다'
+    label: '설정이 더 깔끔해졌습니다. 개인 선택 항목은 설정 → 계정에 모여 있습니다: 테마 및 언어(움직이는 배경 포함)와 메시지가 화면에 머무는 시간이며, 이제 사용자마다 따로 정합니다. 라이브러리 → 경로에서는 폴더 네 개를 한 번의 저장으로 처리합니다. 시스템 → 서버에는 포트와 데이터베이스 위치가 표시됩니다. 개발 후원은 도움말 페이지 맨 끝으로 옮겼습니다'
+    en: 'Settings is tidier. Your own choices sit together under Settings → Account: Theme and Language (with the moving background), and how long messages stay on screen, which is now each person''s own. Library → Paths holds all four folders under one Save. System → Server shows the port and where the database is. Support Development moved to the end of the Help page'
   - type: enhancement
-    label: '컨트롤러에 전용 페이지가 생겼습니다. 설정 → 사용자 지정 → 컨트롤러 열기로 이동합니다. 시스템별 기본 컨트롤러를 정하고, 내 컨트롤러를 추가하고, 컨트롤러 라이브러리를 편집할 수 있습니다'
+    label: 컨트롤러 전용 페이지가 생겼습니다. 설정 → 사용자 지정 → 컨트롤러 열기로 이동하면 시스템별 기본 컨트롤러를 정하고, 직접 추가하고, 컨트롤러 라이브러리를 편집할 수 있습니다
+    en: 'Controllers have their own page. Settings → Customization → Open Controllers goes there: set each system''s default controllers, add your own and edit the controller library'
   - type: enhancement
-    label: '일괄 스크래핑 일치 필터가 점수 숫자와 표 대신 알기 쉬운 세 가지 중에서 고르게 바뀌었습니다. 엄격, 보통(권장), 느슨함입니다. 보통이 예전 기본값입니다. 전에 직접 정한 설정은 다른 항목을 고를 때까지 사용자 지정으로 표시됩니다'
+    label: 일괄 스크래핑 일치 필터링은 점수 숫자와 표 대신 엄격, 보통, 느슨의 세 가지 선택지를 제공합니다. 보통은 예전 기본값입니다. 이전에 직접 만든 설정은 다른 것을 고르기 전까지 사용자 지정으로 표시됩니다
+    en: 'Bulk Scrape Match Filtering offers three plain choices instead of a score number and its table: Strict, Normal and Loose. Normal is the old default. A setting you made yourself before shows as Custom until you pick another'
   - type: enhancement
-    label: '내 프로필의 저장 버튼이 세 개에서 하나인 내 프로필 저장으로 바뀌었습니다. 저장할 때 새 PlayStation 토큰이나 Xbox 키도 확인합니다. Sony가 새 토큰을 거부해도 쓰던 PlayStation 토큰은 그대로 유지됩니다. 비밀번호 변경은 12자 이상이어야 한다고 알려 주고, 새 비밀번호를 두 번 입력받습니다'
+    label: 내 프로필에 저장 버튼이 세 개 대신 내 프로필 저장 하나만 있습니다. 새 PlayStation 토큰이나 Xbox 키는 저장할 때 확인하며, Sony가 새 토큰을 거부하면 작동하던 기존 PlayStation 토큰을 유지합니다. 비밀번호 변경은 이제 최소 12자가 필요하다고 안내하고 새 비밀번호를 두 번 입력받습니다
+    en: My Profile has one Save My Profile button instead of three. It checks a new PlayStation token or Xbox key as it saves, and keeps your working PlayStation token if Sony refuses the new one. Change Password now says it needs at least 12 characters and asks for the new password twice
   - type: fix
-    label: '설정의 표현을 더 쉽게 바꿨습니다. 내 프로필에서 RetroAchievements 키와 비밀번호 로그인이 각각 무엇을 하는지 설명합니다. API 키에서는 내 RetroAchievements 키나 Steam 키가 먼저 쓰인다고 알려 줍니다. TheGamesDB 키는 기본 키와 백업 키라는 이름이 붙었습니다. 에뮬레이터 편집 창은 프로그램 위치와 명령줄 옵션으로 표시됩니다. 스크래핑 데이터 지우기는 상자를 선택하지 않으면 그림과 동영상 파일이 디스크에 남는다고 알려 줍니다. AI 모델 목록에서 오래된 가격 표시를 없앴습니다'
+    label: 설정의 문구를 더 쉽게 바꿨습니다. 내 프로필은 RetroAchievements 키와 비밀번호 로그인이 각각 무엇을 하는지 설명합니다. API 키는 개인의 RetroAchievements 또는 Steam 키가 먼저 사용된다고 알려 줍니다. TheGamesDB 키는 기본 키와 백업 키로 부릅니다. 에뮬레이터 편집 창에는 프로그램 위치와 명령줄 옵션이 표시됩니다. 스크래핑 데이터 지우기는 체크하지 않으면 그림과 동영상 파일이 디스크에 남는다고 알려 줍니다. AI 모델 목록에는 오래된 가격이 더 이상 표시되지 않습니다
+    en: Plainer words in Settings. My Profile says what the RetroAchievements key and the password sign-in each do. API Keys says a person's own RetroAchievements or Steam key is used first. TheGamesDB's keys are named Main key and Backup key. The Edit emulator window says Program location and Command-line options. Clear Scraped Data says the picture and video files stay on disk unless you tick the box. The AI model lists no longer show prices, which went out of date
   - type: fix
-    label: '설정에서 중복되거나 아무 일도 하지 않던 것을 없앴습니다. 라이브러리 통계 카드(대시보드에 있습니다), 설정에 있던 트로피 스캔(PS3 트로피 페이지에 있습니다), 따로 있던 시스템 로고 가져오기 버튼(이제 시스템 로고 새로 고침이 먼저 ES-DE 로고를 복사합니다), 그리고 아무도 쓰지 않던 저장 설정 6개입니다. 메시지 시간 0초는 조용히 저장되지 않고 거부됩니다. 새 ROM 폴더를 저장해도 더 이상 RetroDB를 다시 시작해야 한다는 안내가 나오지 않습니다'
+    label: '설정에서 중복되거나 아무 기능이 없던 항목을 없앴습니다: 라이브러리 통계 카드(대시보드에 있음), 설정의 트로피 스캔 복사본(PS3 트로피 페이지에 있음), 별도의 시스템 로고 가져오기 버튼(이제 시스템 로고 새로고침이 먼저 ES-DE 로고를 복사함), 사용되지 않던 저장 설정 여섯 개입니다. 메시지 시간 0초는 조용히 저장되지 않고 거부되며, 새 ROM 폴더를 저장해도 RetroDB를 다시 시작해야 한다는 안내가 나오지 않습니다'
+    en: 'Settings drops what was there twice or did nothing: the Library Statistics card (the Dashboard has it), the Settings copy of Scan Trophies (the PS3 trophies page has it), the separate Import System Logos button (Refresh System Logos now copies ES-DE''s logos first) and six stored settings nothing used. A message time of 0 seconds is refused instead of quietly saved, and saving a new ROM folder no longer says RetroDB must restart'
   - type: performance
-    label: 'RetroDB가 컴퓨터에 훨씬 가벼워졌습니다. Cyberpunk 테마의 움직이는 안개는 RetroDB 페이지가 열려 있는 동안 프로세서 코어 하나를 계속 꽉 채워 쓰고 있었습니다. 이제는 그래픽 카드가 안개를 그리며, 프로세서는 거의 느끼지 못합니다. 그리는 프레임 수도 절반이지만, 안개가 천천히 흐르기 때문에 보기에는 똑같습니다'
+    label: RetroDB가 컴퓨터에 훨씬 가벼워졌습니다. 사이버펑크 테마의 움직이는 안개는 RetroDB 페이지가 열려 있는 동안 프로세서 코어 하나를 계속 최대로 사용했습니다. 이제 그래픽 카드가 그리므로 프로세서는 거의 영향을 받지 않습니다. 프레임도 절반만 그리지만 안개가 천천히 움직여서 보기에는 똑같습니다
+    en: RetroDB is far lighter on your computer. The Cyberpunk theme's moving mist kept one processor core fully busy for as long as any RetroDB page was open; the graphics card now draws it, and the processor barely notices. It also draws half as many frames, which looks the same because the mist drifts slowly
   - type: feature
-    label: '움직이는 배경(안개, 비, 별, 먼지)은 이제 RetroDB를 쓰지 않을 때 멈춥니다. 창이 앞에 있지 않을 때, 탭이 숨겨졌을 때, 마우스나 키보드를 1분 동안 쓰지 않을 때입니다. 돌아오는 즉시 다시 시작됩니다. 설정 → 계정 → 테마 및 언어에 새로 생긴 움직이는 배경 스위치를 끄면 그 컴퓨터에서는 배경이 멈춘 채로 유지됩니다'
+    label: '움직이는 배경(안개, 비, 별, 먼지)은 RetroDB를 사용하지 않을 때 멈춥니다: 창이 앞에 있지 않거나, 탭이 숨겨져 있거나, 1분간 마우스나 키보드 입력이 없을 때입니다. 돌아오면 바로 다시 시작됩니다. 설정 → 계정 → 테마 및 언어의 새 움직이는 배경 스위치로 해당 컴퓨터에서 배경을 멈춰 둘 수 있습니다'
+    en: 'Moving backgrounds (mist, rain, stars, dust) now pause when you are not using RetroDB: when its window is not in front, its tab is hidden, or a minute passes without the mouse or keyboard. They start again the moment you come back. A new Moving background switch under Settings → Account → Theme and Language keeps them still on that computer'
   - type: performance
-    label: '페이지 제목은 빛나는 효과를 유지하지만 더 이상 계속 맥동하지 않으며, 콘솔 및 게임 목록에서 깜빡이는 "글리치" 제목은 마우스를 올려 둔 동안에만 깜빡입니다'
+    label: 페이지 제목은 빛나는 효과는 유지하지만 더 이상 계속 깜빡이지 않으며, 콘솔 및 게임 목록의 깜빡이는 "글리치" 제목은 마우스를 올렸을 때만 깜빡입니다
+    en: Page titles keep their glow but no longer pulse all the time, and the flickering "glitch" titles on the console and game lists flicker only while the mouse is over them
   - type: feature
-    label: 'MAME의 아케이드 게임용 치트. 브라우저에서 mamecheat.co.uk의 "MAME XML Cheats Collection"을 내려받아 설정 → 에뮬레이터 → 치트에서 가져오세요. 그러면 각 아케이드 게임 페이지에 해당 치트가 켜기/끄기 스위치와 함께 나열되고, MAME는 켜 둔 치트로 시작합니다. 값을 받는 치트는 플레이 중에 MAME에서 설정합니다. Tab, Plugin Options, Cheat 순서로 누르세요'
+    label: 'MAME의 아케이드 게임 치트를 지원합니다. 브라우저에서 mamecheat.co.uk의 "MAME XML Cheats Collection"을 다운로드하고 설정 → 에뮬레이터 → 치트에서 가져오세요. 그러면 각 아케이드 게임 페이지에 켜기/끄기 스위치가 있는 치트 목록이 표시되고, MAME는 켜 둔 치트로 시작합니다. 값을 입력해야 하는 치트는 플레이 중 MAME에서 설정합니다: Tab, 플러그인 옵션, 치트 순서로 누르세요'
+    en: 'Cheats for arcade games in MAME. Download the "MAME XML Cheats Collection" from mamecheat.co.uk in your browser and import it under Settings → Emulators → Cheats. Each arcade game''s page then lists its cheats with on/off switches, and MAME starts with the ones you switched on. A cheat that takes a value is set in MAME while you play: press Tab, then Plugin Options, then Cheat'
   - type: fix
-    label: '게임 페이지의 이전과 다음이 이제 그 게임을 스크랩한 뒤에도 필터한 목록을 따릅니다. 스크랩 안 됨 필터를 켠 상태에서 게임을 스크랩하면 목록에서 빠져서, 다음이 다음 미스크랩 게임 대신 콘솔 전체를 넘겨 갔습니다'
+    label: 게임 페이지의 이전과 다음이 이제 해당 게임을 스크래핑한 뒤에도 필터링된 목록 안에 머뭅니다. 스크래핑 안 됨 필터를 켠 상태에서 게임을 스크래핑하면 목록에서 빠져 다음을 눌렀을 때 다음 미스크래핑 게임이 아니라 콘솔 전체를 넘겨 보았습니다
+    en: Previous and Next on a game's page now stay in your filtered list after you scrape that game. With the Unscraped filter on, scraping a game took it out of the list, so Next stepped through the whole console instead of going to the next unscraped game
   - type: fix
-    label: 'RetroDB의 더 많은 부분이 이제 선택한 언어를 따릅니다. 설정의 보너스 디스크, 백업, ROM 명명 부분, 내 프로필 제목, 스크래핑 검색 창, "권한 없음" 메시지입니다. 어떤 언어를 선택해도 영어로 남아 있었습니다'
+    label: 'RetroDB의 더 많은 부분이 선택한 언어를 따릅니다: 설정의 보너스 디스크, 백업, ROM 이름 지정 부분, 내 프로필 제목, 스크래핑 검색 창, "권한 없음" 메시지입니다. 이들은 어떤 언어를 골라도 영어로 남아 있었습니다'
+    en: 'More of RetroDB now follows your language: the Bonus Discs, Backup and ROM Naming parts of Settings, the My Profile heading, the scrape search window and the "no permission" messages. They stayed in English whatever language you chose'
   - type: fix
-    label: '사용자 추가가 이제 새 사용자의 첫 비밀번호(12자 이상)를 요구하며, 새 사용자는 처음 로그인할 때 자신의 비밀번호를 정합니다. 이전에는 모든 새 계정이 조용히 같은 비밀번호 "changeme"를 받았고, 계정 주인이 로그인하기 전까지 누구나 쓸 수 있었습니다'
+    label: 사용자 추가는 이제 새 사용자의 첫 비밀번호(12자 이상)를 입력받으며, 새 사용자는 처음 로그인할 때 직접 비밀번호를 정합니다. 전에는 모든 새 계정이 "changeme"라는 같은 비밀번호를 받았고, 주인이 로그인하기 전까지 누구나 사용할 수 있었습니다
+    en: Add User now asks for the new person's first password (12 characters or more), and they choose their own the first time they sign in. Before, every new account quietly got the same password, "changeme", which anyone could use until its owner signed in
   - type: fix
-    label: '설정에는 이제 각 사람의 역할로 바꿀 수 있는 것만 표시됩니다. 뷰어와 플레이어에게는 계정 탭이 보이고, 편집자에게는 보너스 디스크와 컨트롤러도 보입니다. 이전에는 저장 버튼이 거부되는 관리자 설정이 보였고, 일부는 잘못된 값을 표시했습니다'
+    label: 설정에는 각자의 역할이 바꿀 수 있는 것만 표시됩니다. 보기 전용 사용자와 플레이어는 계정 탭을 보고, 편집자는 보너스 디스크와 컨트롤러도 봅니다. 전에는 저장 버튼이 거부되는 관리자 설정이 보였고, 일부는 잘못된 값을 표시했습니다
+    en: Settings shows each person only what their role can change. Viewers and players see the Account tab; editors also see Bonus Discs and Controllers. They used to see admin settings whose Save button was then refused, some showing wrong values
   - type: fix
-    label: '설정 → 시스템에서 Clear Stuck RA Sync 버튼을 없앴습니다. 동기화를 해제하지 못했는데도 해제했다고 알렸습니다. RetroAchievements 동기화는 진행 알림의 버튼으로 중지하세요'
+    label: 설정 → 시스템에서 멈춘 RA 동기화 지우기 버튼이 없어졌습니다. 이 버튼은 실제로 지우지 못했을 때도 지웠다고 알렸습니다. RetroAchievements 동기화는 진행 알림의 버튼으로 중지하세요
+    en: Settings → System no longer has the Clear Stuck RA Sync button. It said it had cleared the sync even when it had not; stop a RetroAchievements sync with the buttons on its progress notice
   - type: fix
-    label: '설정의 작은 수정: 스크래퍼 목록의 기본값으로 초기화는 유지하려면 스크래퍼 설정 저장을 누르라고 안내합니다. 새로 설치하면 ScreenScraper가 실제와 같이 켜진 상태로 표시됩니다. Steam ID 도움말은 17자리 숫자를 요청합니다. 에뮬레이터 페이지는 없는 추가 버튼을 더 이상 언급하지 않습니다. 설정 마법사는 API 키를 입력하는 동안 숨깁니다'
+    label: '설정의 작은 수정 사항: 스크래퍼 목록의 기본값으로 재설정은 유지하려면 스크래퍼 설정 저장을 눌러야 한다고 알려 줍니다. 새로 설치하면 실제 상태대로 ScreenScraper가 켜진 것으로 표시됩니다. Steam ID 도움말은 17자리 숫자를 요청합니다. 에뮬레이터 페이지는 없는 추가 버튼을 더 이상 언급하지 않습니다. 설정 마법사는 입력하는 API 키를 가려 줍니다'
+    en: 'Small Settings fixes: Reset to Default on the scraper list says to press Save Scraper Settings to keep it; a new install shows ScreenScraper switched on, as it really is; the Steam ID help asks for the 17-digit number; the Emulators page no longer mentions an Add button it does not have; the Setup Wizard hides your API keys as you type them'
   - type: enhancement
-    label: '도움말 설명서에 검색창이 생겼습니다. 단어를 입력하면 그 단어가 들어 있는 부분만 단어를 표시해서 보여 줍니다. 악센트는 무시하며 모든 언어에서 작동합니다'
+    label: 도움말 설명서에 검색 상자가 생겼습니다. 단어를 입력하면 그 단어가 나오는 부분만 단어가 강조되어 표시됩니다. 악센트를 무시하며 모든 언어에서 작동합니다
+    en: The help manual now has a search box. Type a word to see only the parts of the manual that mention it, with the word marked. It ignores accents and works in every language
   - type: fix
-    label: '도움말 설명서의 문제 해결이 이제 게임 추가, 스크래핑, AI 채우기, 이미지, 플레이, 치트, 업적, 계정, 백업, 업데이트까지 기능별로 다룹니다. 예전 안내 중 일부는 더 이상 없는 버튼을 가리켰습니다. 또한 HowLongToBeat 조회가 오프라인에서 된다거나 스크래퍼 속도를 설정할 수 있다는 말도 더 이상 하지 않습니다'
+    label: 도움말 설명서의 문제 해결 항목이 이제 게임 추가, 스크래핑, AI 채우기, 그림, 실행, 치트, 업적, 계정, 백업, 업데이트 등 각 기능을 다룹니다. 예전 조언 일부는 이미 없는 버튼을 가리켰습니다. 또한 HowLongToBeat 조회가 오프라인에서 작동한다거나 스크래퍼 속도를 설정할 수 있다는 말도 더 이상 하지 않습니다
+    en: 'The help manual''s Troubleshooting section now covers each feature: adding games, scraping, AI Fill, pictures, playing, cheats, achievements, accounts, backups and updates. Some of its old advice pointed at buttons that no longer exist. It also no longer says HowLongToBeat lookups work offline or that scraper speed can be set'
   - type: fix
-    label: '설정 → 시스템에서 일괄 스크래핑 문제 해결 상자가 없어졌습니다. 이 상자는 예전 일괄 스크래핑의 흔적을 읽을 뿐 실제 스크래핑을 멈출 수 없었습니다. 일괄 스크래핑은 해당 창의 취소로 멈추세요'
+    label: 설정 → 시스템에서 일괄 스크래핑 문제 해결 상자가 없어졌습니다. 이 상자는 예전 일괄 스크래핑의 잔여 정보를 읽었고 실제 작업은 멈출 수 없었습니다. 일괄 스크래핑은 해당 창의 취소로 중지하세요
+    en: Settings → System no longer has the Bulk Scrape troubleshooting box. It read leftovers of the old bulk scrape and could not stop a real one; stop a bulk scrape with Cancel in its window
   - type: fix
-    label: '설치 프로그램이 이제 RetroDB의 라이브러리가 필요로 하는 Python 3.12 이상을 요구합니다. 예전에는 더 낮은 버전도 통과시켜서 설치가 중간에 실패했습니다. README에는 설치와 시작 문제를 다루는 새 문제 해결 섹션이 생겼습니다'
+    label: 설치 프로그램이 이제 RetroDB 라이브러리에 필요한 Python 3.12 이상을 요구합니다. 전에는 낮은 버전도 통과해 설치가 중간에 실패했습니다. README에는 설치 및 시작 문제를 위한 문제 해결 항목이 새로 생겼습니다
+    en: The installer now asks for Python 3.12 or newer, which RetroDB's libraries need. It let older versions through, and the install then failed partway. The README has a new Troubleshooting section for install and start-up problems
   - type: fix
-    label: '게임 가져오기의 PSN 탭이 이제 NPSSO 토큰을 설정 → 내 프로필에 넣는다고 안내합니다. 예전에는 그런 입력란이 없는 API 키 페이지를 안내했습니다'
+    label: 게임 가져오기의 PSN 탭은 이제 NPSSO 토큰을 설정 → 내 프로필에 넣는다고 안내합니다. 전에는 그런 입력란이 없는 API 키 페이지를 안내했습니다
+    en: Game Imports' PSN tab now says the NPSSO token goes under Settings → My Profile. It named an API Keys page that has no such box
   - type: fix
-    label: '도움말 설명서에 중국 연령 등급(CADPA)이 다른 등급과 함께 표시되고, 홈 페이지의 "이어서 플레이" 섹션이 실제 이름으로 안내되며, 이미지가 저장되지 않을 때 더 안전한 조언을 제공합니다'
+    label: 도움말 설명서에 이제 중국 연령 등급(CADPA)이 다른 등급과 함께 나오고, 홈 페이지의 계속 실행하기 섹션을 실제 이름으로 부르며, 그림이 저장되지 않을 때 더 안전한 조언을 제공합니다
+    en: The help manual now lists the Chinese age rating (CADPA) with the others, calls the home page's Continue Playing section by its real name, and gives safer advice when pictures will not save
   - type: fix
-    label: '설정 → 스크래핑이 이제 선택한 언어로 표시됩니다. 스크래퍼 목록, API 키, ES-DE 경로, 일치 필터링, AI 설정과 그 상태 및 결과 메시지가 해당됩니다. 지금까지는 어떤 언어를 선택해도 영어로 남아 있었습니다'
+    label: '설정 → 스크래핑이 이제 선택한 언어를 따릅니다: 스크래퍼 목록, API 키, ES-DE 경로, 일치 필터링, AI 설정과 상태 및 결과 메시지입니다. 이들은 어떤 언어를 골라도 영어로 남아 있었습니다'
+    en: 'Settings → Scraping now follows your language: the scraper list, API keys, ES-DE paths, match filtering and AI settings, with their status and result messages. It stayed in English whatever language you chose'
   - type: enhancement
-    label: 'AI 서비스가 스크래핑을 거부하면(잘못된 API 키, 크레딧이나 결제 부족, 요청 과다) RetroDB가 판매량이나 출시일 같은 항목을 조용히 비워 두지 않고, 이제 이유와 확인할 점을 알려 줍니다. 그다음에는 한동안 그 AI에 요청하지 않으므로, 게임마다가 아니라 한 번만 알림을 받습니다'
+    label: AI 서비스가 스크래핑을 거부하면(잘못된 API 키, 크레딧이나 결제 잔액 부족, 요청 과다) RetroDB는 판매량이나 출시일 같은 항목을 조용히 비워 두지 않고 어떤 이유인지와 확인할 사항을 알려 줍니다. 그 후 한동안 해당 AI에 요청하지 않으므로, 게임마다가 아니라 한 번만 알림을 받습니다
+    en: When the AI service refuses a scrape (a wrong API key, no credit or billing left, or too many requests), RetroDB now says which, and what to check, instead of quietly leaving fields such as sales figures and release dates empty. It then stops asking that AI for a while, so you are told once, not once per game
   - type: enhancement
-    label: '3D 박스의 손가락 홈이 이제 Slipcase에서 만든 그대로 표시됩니다. 끝이 네모난 홈과 옆면 가운데보다 위나 아래에 있는 홈을 지원합니다. 확인하려면 박스를 다시 가져오세요'
+    label: '3D 박스가 이제 Slipcase가 만든 대로 손가락 홈을 표시합니다: 끝이 사각형이며, 케이스에 해당하는 경우 옆면 중앙보다 위나 아래에 있습니다. 확인하려면 박스를 다시 가져오세요'
+    en: 'The 3D box now shows the finger slot as Slipcase made it: with square ends, and above or below the middle of the side, where the case has it so. Import the box again to see it'
   - type: fix
-    label: '설정 → 시스템이 이제 선택한 언어로 표시됩니다. 유지 관리 도구, 로그 설정, 문제 해결과 그 결과 및 오류 메시지가 해당됩니다. 지금까지는 어떤 언어를 선택해도 영어로 남아 있었습니다. 다른 페이지에 남아 있던 영어 메시지도 번역되었습니다'
+    label: 설정 → 시스템이 이제 선택한 언어를 따릅니다. 유지 관리 도구, 로그 설정, 문제 해결 섹션과 그 결과 및 오류 메시지가 해당됩니다. 이전에는 어떤 언어를 선택해도 영어로 표시되었습니다. 다른 페이지에 남아 있던 영어 메시지도 번역되었습니다
+    en: 'Settings → System now follows your language: the maintenance tools, logging settings and troubleshooting sections, with their results and error messages. They stayed in English whatever language you chose. Leftover English messages on other pages are translated too'
   - type: fix
-    label: '업적의 기기 페이지에서 스크롤할 때 기기 버튼 줄이 더 이상 섹션 탭 아래로 들어가지 않고 페이지와 함께 스크롤됩니다. 모든 업적 페이지에서 A–Z 글자 막대가 섹션 탭 뒤에 숨지 않고 바로 아래에 표시됩니다'
+    label: 업적 콘솔 페이지에서 콘솔 버튼 줄이 스크롤할 때 섹션 탭 아래로 미끄러져 들어가지 않고 그대로 스크롤되어 사라집니다. 모든 업적 페이지에서 A–Z 글자 막대는 이제 섹션 탭 뒤에 가려지지 않고 탭 바로 아래에 고정됩니다
+    en: On an Achievements console page, the row of console buttons no longer slides under the section tabs as you scroll; it now scrolls away. On every Achievements page the A–Z letter bar now stays just below the section tabs instead of hiding behind them
   - type: fix
-    label: '"게임 편집" 창에서 그림을 제거해도 다른 게임이 같은 그림을 쓰고 있으면 더 이상 파일을 지우지 않습니다. 다른 게임은 그림을 그대로 유지합니다'
+    label: 게임 편집 창에서 이미지를 제거할 때 다른 게임이 같은 이미지를 사용 중이면 파일이 삭제되지 않습니다. 다른 게임은 이미지를 그대로 유지합니다
+    en: Removing a picture in the Edit Game window no longer deletes the file when another game uses the same picture; the other game keeps it
   - type: fix
-    label: '스크랩이 작게 저장한 박스 뒷면 그림도 이제 앞면처럼 백그라운드에서 확대됩니다'
+    label: 스크래핑으로 작게 저장된 박스 뒷면 이미지도 앞표지처럼 이제 백그라운드에서 확대됩니다
+    en: Back-of-box pictures that a scrape saves small are now enlarged in the background, as front covers already are
   - type: fix
-    label: '"게임 편집" 창에서 저장할 때 업로드한 작은 박스아트나 스크린샷을 확대하는 동안 더 이상 기다리지 않습니다. 확대는 저장 후에 이루어지며 "이미지 개선 중"으로 표시됩니다. 제거하도록 체크한 이미지는 저장이 성공한 뒤에만 삭제되므로, 저장이 실패해도 더 이상 사라지지 않습니다'
+    label: 게임 편집 창에서 저장할 때 업로드한 작은 박스 아트나 스크린샷이 확대되기를 더 이상 기다리지 않습니다. 확대는 저장 후에 진행되며 "이미지 개선 중"으로 표시됩니다. 제거하도록 체크한 이미지는 저장이 성공한 뒤에만 삭제되므로, 저장에 실패해도 이미지를 잃지 않습니다
+    en: Saving in the Edit Game window no longer waits while small uploaded box art or screenshots are enlarged; that now happens afterwards, shown as "Improving images". A picture ticked for removal is deleted only once the save has worked, so a failed save no longer loses it
   - type: fix
-    label: '라이브러리와 콘솔 페이지 상단의 "메타데이터 누락" 수가 이제 지역 버전이 여러 개인 게임을 "미스크래핑" 필터처럼 한 번만 셉니다. 이전에는 버전마다 셌습니다'
+    label: 라이브러리와 콘솔 페이지 상단의 "메타데이터 누락" 수가 이제 지역별 버전이 여러 개인 게임을 미스크래핑 필터처럼 한 번만 셉니다. 이전에는 버전마다 따로 셌습니다
+    en: The "missing metadata" count at the top of the Library and console pages now counts a game with several regional versions once, as the Unscraped filter does. It counted each version
   - type: enhancement
-    label: '설정 → 보너스 디스크에 보너스 디스크로 표시된 모든 디스크가 소속 게임과 함께 표시됩니다. "보너스 디스크 아님" 버튼(편집자와 관리자)으로 잘못 표시된 디스크를 게임 목록으로 되돌릴 수 있으며, 그 후 Auto-Link는 이 디스크를 건드리지 않습니다'
+    label: 설정 → 보너스 디스크에 보너스 디스크로 표시된 모든 디스크가 소속 게임과 함께 표시됩니다. "보너스 디스크 아님" 버튼(편집자와 관리자용)을 누르면 잘못 표시된 디스크가 게임 목록으로 돌아가며, 이후 자동 연결에서도 제외됩니다
+    en: Settings → Bonus Discs now lists every disc marked as a bonus disc, with the game it belongs to. Its "Not a bonus disc" button (editors and admins) puts a wrongly marked disc back in your game lists, and Auto-Link then leaves it alone
   - type: fix
-    label: '"Nintendo Co., Ltd."나 "GameTek, Inc." 같은 회사 이름이 이제 나뉘지 않습니다. 이전에는 쉼표에서 나뉘어 "Ltd."와 "Inc."가 라이브러리 필터, 설정 → 데이터 정규화, 통계에 별도의 이름으로 표시되었습니다. 게임 페이지에서도 전체 이름으로 표시됩니다. "Majesco (licensed from Konami, Disney)"처럼 괄호 안에 쉼표가 있는 이름도 나뉘지 않습니다'
+    label: '"Nintendo Co., Ltd."나 "GameTek, Inc." 같은 회사 이름이 이제 그대로 유지됩니다. 이전에는 쉼표에서 나뉘어 "Ltd."와 "Inc."가 라이브러리 필터, 설정 → 데이터 정규화, 통계에 별개의 이름으로 나타났습니다. 게임 페이지에서도 전체 이름이 표시됩니다. "Majesco (licensed from Konami, Disney)"처럼 괄호 안에 쉼표가 있는 이름도 그대로 유지됩니다'
+    en: Company names such as "Nintendo Co., Ltd." and "GameTek, Inc." now stay whole. They were split at the comma, so "Ltd." and "Inc." showed as names of their own in the Library filters, Settings → Data Normalization and Stats. Game pages show them whole too. A name with a comma inside brackets, such as "Majesco (licensed from Konami, Disney)", stays whole as well
   - type: enhancement
-    label: '설정 → 데이터 정규화에서 한 회사의 서로 다른 이름을 합칠 수 있습니다. 배급사와 개발사 아래의 새 목록에 "Eidos"와 "Eidos Interactive"처럼 비슷한 이름이 표시됩니다. 비슷한 이름이 다른 회사일 수도 있으므로 저절로 합쳐지지 않습니다. 남길 이름을 고르고 같은 회사의 이름에 체크한 뒤 Merge를 누르세요. 모든 게임에서 이름이 바뀌고, 이후 스크랩은 남긴 이름을 사용합니다'
+    label: 설정 → 데이터 정규화에서 한 회사의 서로 다른 이름을 병합할 수 있습니다. 배급사와 개발사 아래의 "같은 회사일 수 있는 이름"에 "Eidos"와 "Eidos Interactive" 같은 비슷한 이름이 나열됩니다. 비슷한 이름이 다른 회사일 수도 있으므로 자동으로 병합되지 않습니다. 유지할 이름을 고르고, 같은 회사인 이름을 체크한 다음 병합을 누르세요. 모든 게임의 이름이 바뀌며 이후 스크래핑에서도 유지한 이름이 사용됩니다
+    en: 'Settings → Data Normalization can now merge one company''s different names. Under Publisher and Developer, "Names that may be one company" lists look-alikes such as "Eidos" and "Eidos Interactive". Nothing is merged for you, because look-alikes can be different companies: pick the name to keep, tick the names that are the same company and press Merge. The names change on every game, and later scrapes use the kept name'
   - type: enhancement
-    label: '설정 → 데이터 정규화에 프랜차이즈, 배급사, 개발사 버튼이 생겼습니다. 각 버튼은 "Doom"과 "DOOM"처럼 대소문자만 다른 이름을 표기별 게임 수와 함께 보여 주며, 가장 많이 쓰인 표기가 미리 선택됩니다. 하나를 고르고 적용을 누르면 하나의 이름이 됩니다. 새로 가져온 이름이 대소문자만 다르면 라이브러리의 표기를 따르고, AI 채우기는 공식 대소문자를 요청합니다'
+    label: 설정 → 데이터 정규화에 프랜차이즈, 배급사, 개발사 버튼이 생겼습니다. 각 버튼은 "Doom"과 "DOOM"처럼 대소문자만 다른 이름을 철자별 게임 수와 함께 보여 주고 가장 많이 쓰인 이름을 미리 선택합니다. 하나를 고르고 적용을 누르면 하나의 이름으로 통일됩니다. 새로 스크래핑한 이름이 대소문자만 다르면 라이브러리의 철자를 따르며, AI 채우기는 공식 대소문자를 요청합니다
+    en: Settings → Data Normalization now has Franchise, Publisher and Developer buttons. Each lists the names spelled with different capitals, such as "Doom" and "DOOM", with how many games use each spelling and the most-used one picked. Choose one and press Apply to make them one name. A newly scraped name that differs only in capitals takes your library's spelling, and AI Fill asks for official capitals
   - type: fix
-    label: '라이브러리 필터가 이제 값 전체로 일치합니다. 장르 "액션"을 선택해도 더 이상 "액션-어드벤처" 게임이 함께 표시되지 않으므로 결과가 옆의 개수와 일치합니다. 게임 페이지의 태그 목록과 유사 게임도 같은 방식으로 일치합니다'
+    label: 라이브러리 필터가 이제 값 전체가 일치해야 합니다. 장르 "Action"을 선택해도 "Action-Adventure" 게임이 함께 나오지 않아 옆의 개수와 결과가 일치합니다. 게임 페이지의 태그 목록과 비슷한 게임도 같은 방식으로 일치시킵니다
+    en: The Library's filters now match whole values. Choosing the genre "Action" no longer also shows "Action-Adventure" games, so the result matches the count beside it. A game page's tag lists and Similar Games match the same way
   - type: security
-    label: '설정 → 내 프로필이 더 이상 저장된 RetroAchievements 키, PSN 토큰, Steam 키를 페이지로 보내지 않습니다. 각 입력란에는 스크래핑 탭의 키처럼 마지막 네 글자만 표시됩니다. 다시 입력하지 않고 저장하면 저장된 키가 유지됩니다'
+    label: 설정 → 내 프로필이 더 이상 저장된 RetroAchievements 키, PSN 토큰, Steam 키를 페이지로 보내지 않습니다. 각 입력란에는 스크래핑 탭의 키처럼 마지막 네 글자만 표시됩니다. 다시 입력하지 않고 저장하면 저장된 키가 유지됩니다
+    en: Settings → My Profile no longer sends your saved RetroAchievements key, PSN token or Steam key to the page. Each box shows only its last four characters, as the Scraping tab's keys already did. Saving without retyping keeps the saved key
   - type: fix
-    label: '로그 뷰어 페이지가 더 이상 "잘못된 로그 파일입니다"로 열리지 않습니다. 보여 주지 않을 보조 로그를 목록에 올리고 그중 하나를 먼저 열었기 때문입니다. 이제 열 수 있는 로그만 목록에 표시합니다'
+    label: 로그 뷰어가 더 이상 "잘못된 로그 파일" 상태로 열리지 않습니다. 표시할 수 없는 보조 로그까지 나열하고 그중 하나를 먼저 열었는데, 이제 열 수 있는 로그만 나열합니다
+    en: The Log Viewer no longer opens on "Invalid log file". It listed helper logs it would not show, and opened one of them first; it now lists only logs it can open
   - type: fix
-    label: '게임 가져오기의 PSN 탭이 이제 NPSSO 토큰을 위해 설정 → API 키 대신 입력란이 있는 설정 → 내 프로필로 안내하며, 연결 상태도 번역할 수 있습니다'
+    label: 게임 가져오기의 PSN 탭이 이제 NPSSO 토큰 입력란이 있는 설정 → 내 프로필로 안내하며, 설정 → API 키로 보내지 않습니다. 연결 상태도 번역할 수 있습니다
+    en: Game Imports' PSN tab now sends you to Settings → My Profile for the NPSSO token, where the box is, instead of Settings → API Keys, and its connection status can be translated
   - type: fix
-    label: '뷰어로 로그인하면 페이지가 받을 수 없는 관리자 전용 정보를 더 이상 서버에 요청하지 않으므로, 서버 로그가 거부된 요청으로 가득 차지 않습니다'
+    label: 뷰어로 로그인하면 페이지가 더 이상 접근할 수 없는 관리자 전용 정보를 서버에 요청하지 않으므로, 서버 로그에 거부된 요청이 쌓이지 않습니다
+    en: Signed in as a viewer, pages no longer ask the server for admin-only information they cannot have, so the server log no longer fills with refused requests
   - type: security
-    label: 'RetroDB 바깥에서 들어오는 이름(스크랩한 데이터, 파일·폴더 이름, 온라인 서비스의 응답)은 이제 게임 페이지, 설정, 보고서, ROM 도구, 트로피 페이지 등에서 항상 일반 텍스트로 표시됩니다. 또한 페이지는 자기 버튼의 동작만 실행하므로, 조작된 이름이 페이지에 무언가를 시킬 수 없고, 진행 알림의 "돌아가기" 링크가 다른 웹사이트로 이어지는 일도 없습니다'
+    label: RetroDB 외부에서 오는 이름(스크래핑 데이터, 파일 및 폴더 이름, 온라인 서비스 응답)은 게임 페이지, 설정, 보고서, ROM 도구, 트로피 페이지 등에서 항상 일반 텍스트로 표시됩니다. 또한 페이지는 자체 버튼의 동작만 실행하므로 조작된 이름으로 페이지를 동작시킬 수 없으며, 진행 알림의 "돌아가기" 링크가 다른 웹사이트로 연결될 수도 없습니다
+    en: Names that come from outside RetroDB (scraped data, file and folder names, replies from online services) now always show as plain text, on the game page, Settings, Reports, the ROM tools, the trophy pages and more. Pages also run only their own buttons' actions, so a crafted name cannot make a page do something, and a progress toast's "return to" link can no longer lead to another website
   - type: enhancement
-    label: '대기열에 있는 일괄 스크랩에 순서 변경 버튼이 생겼습니다. 이 버튼은 대기열 관리자를 여는데, 여기서 대기 중인 스크랩을 더 일찍 또는 늦게 실행하거나 지금 실행 중인 스크랩과 바꿀 수 있습니다. 대기열의 각 알림은 변경 후에도 순번을 유지합니다'
+    label: 대기 중인 대량 스크래핑에 순서 변경 버튼이 생겼습니다. 누르면 대기열 관리자가 열리며, 대기 중인 스크래핑을 더 빨리 또는 더 늦게 실행하거나 현재 실행 중인 것과 바꿀 수 있습니다. 변경 후에도 각 대기 알림이 순번을 유지합니다
+    en: Queued bulk scrapes get a Reorder button. It opens the Queue Manager, where a waiting scrape can run sooner, later, or swap with the one running now. Each queued toast also keeps its place number after a change
   - type: fix
-    label: '작업 진행 상황이 더 이상 멈추거나 반복되지 않습니다. 충돌한 CHD 검사나 변환은 이제 이유를 알려 주며 끝납니다. 취소하면 페이지 버튼이 돌아옵니다. 취소, 일시 정지, 제거가 거부되면 그렇다고 알려 줍니다. "완료"가 한 시간 뒤에 다시 뜨지 않습니다. 업적 페이지의 동기화 버튼은 동기화가 끝나면 다시 나타납니다'
+    label: 작업 진행 상태가 더 이상 멈추거나 반복되지 않습니다. 충돌한 CHD 검사나 변환은 이제 이유와 함께 끝나고, 취소하면 페이지의 버튼이 돌아오며, 거부된 취소, 일시정지, 제거는 그렇다고 알려 줍니다. "완료" 알림이 한 시간 뒤 다시 나타나지 않으며, 동기화가 끝나면 업적 페이지의 동기화 버튼이 돌아옵니다
+    en: Job progress no longer gets stuck or repeats itself. A CHD check or conversion that crashes now ends with its reason; Cancel gives the page its buttons back; a refused cancel, pause or remove says so; "completed" no longer pops up again an hour later; and the achievements page's Sync button comes back when its sync ends
   - type: fix
-    label: '게임 페이지에서 HowLongToBeat 일치 항목을 저장해도 HLTB 링크와 플레이어 수가 더 이상 지워지지 않으며, 저장에 실패하면 다시 시도할 수 있습니다. 빠른 편집에서 저장된 일치 항목이 모두 "100% 일치"로 보이지 않습니다. 라이브러리 필터 태그에는 시스템 번호 대신 이름이 표시되고, 입력하면서 검색하기가 목록 페이지와 비교에서 작동합니다'
+    label: 게임 페이지에서 HowLongToBeat 일치 항목을 저장해도 HLTB 링크와 플레이어 수가 지워지지 않으며, 저장에 실패하면 다시 시도할 수 있습니다. 빠른 편집이 저장된 모든 일치 항목을 "100% 일치"로 표시하지 않습니다. 라이브러리 필터 태그가 시스템 번호 대신 이름을 보여 주고, 목록 페이지와 비교에서 입력하는 대로 검색됩니다
+    en: Saving a HowLongToBeat match on the game page no longer wipes its HLTB link and player count, and a failed save can be retried. Quick Edit no longer shows every saved match as "100% match". Library filter tags show a system's name instead of its number, and search-as-you-type works on list pages and Compare
   - type: fix
-    label: '모든 계정이 설정 → 내 프로필에서 자기 비밀번호를 바꿀 수 있고, 관리자는 누구의 비밀번호든 재설정할 수 있습니다. 에뮬레이터 폴더가 이제 Windows에서 작동합니다. 대시보드가 편집자와 보기 전용 사용자에게 API가 오프라인이라고 표시하지 않으며, "박스 아트가 없는 게임"을 누르면 해당 게임만 보이는 라이브러리가 열립니다. 이제 비밀번호 관리자가 로그인 칸을 채울 수 있습니다'
+    label: 모든 계정이 설정 → 내 프로필에서 자신의 비밀번호를 변경할 수 있으며, 관리자는 누구의 비밀번호든 재설정할 수 있습니다. 에뮬레이터 폴더가 Windows에서 작동합니다. 대시보드가 편집자와 뷰어에게 API가 오프라인이라고 알리지 않으며, "박스 아트 없는 게임"은 해당 게임만 보여 주는 라이브러리를 엽니다. 비밀번호 관리자가 로그인 입력란을 채울 수 있습니다
+    en: Every account can change its own password in Settings → My Profile, and an admin can reset anyone's. Emulator folders now work on Windows. The dashboard no longer tells editors and viewers that their APIs are offline, and "Games missing box art" opens the Library showing just those games. A password manager can now fill the sign-in box
   - type: fix
-    label: 'ROM 도구: CHD 검증이 유효 또는 무효 배지를 올바른 파일에 붙입니다. 로그 뷰어가 다시 모듈 이름을 보여 주고, 파일 목록을 불러오지 못하면 알려 줍니다. 게임 가져오기의 모두 선택은 필터에 보이는 게임만 가져옵니다. ROM 도구 설정의 초기화는 이 컴퓨터의 ROM 폴더로 되돌립니다'
+    label: 'ROM 도구: CHD 검증이 유효 또는 무효 배지를 올바른 파일에 표시합니다. 로그 뷰어가 모듈 이름을 다시 표시하고 파일 목록을 불러오지 못하면 알려 줍니다. 게임 가져오기의 전체 선택은 필터에 표시된 게임만 가져옵니다. ROM 도구 설정의 초기화는 이 컴퓨터의 ROM 폴더로 복원합니다'
+    en: 'ROM tools: CHD Verify puts each Valid or Invalid badge on the right file; the log viewer shows module names again and says when its file list fails; Game Imports'' select-all imports only the games your filter shows; and ROM Tools Settings'' Reset restores this computer''s own ROM folder'
   - type: fix
-    label: 'Steam 잠금 해제 시각이 날짜로 표시됩니다. 로컬 트로피에서 A-Z 막대가 작동합니다. PSN 선택 모드가 스크롤할 때 불러오는 게임에서도 계속 작동합니다. 보기 전용 사용자에게는 쓸 수 없는 동기화나 이름 변경 버튼이 더 이상 보이지 않습니다. 일괄 이름 변경은 스캔 이후 이름이 바뀐 파일을 건너뜁니다. 분석은 일반 HTTP 네트워크에서도 복사할 수 있고 숫자를 숫자로 내보냅니다'
+    label: Steam 잠금 해제 시간이 날짜로 표시됩니다. A-Z 막대가 로컬 트로피에서 작동합니다. PSN 선택 모드가 스크롤하면서 불러오는 게임에서도 계속 작동합니다. 뷰어에게는 사용할 수 없는 동기화나 이름 변경 버튼이 보이지 않습니다. 일괄 이름 변경은 스캔 이후 이름이 바뀐 파일을 건너뜁니다. 분석은 일반 HTTP 네트워크에서도 복사할 수 있고 숫자를 숫자로 내보냅니다
+    en: Steam unlock times show as dates; the A-Z bar works on Local Trophies; PSN Select mode keeps working on games that load as you scroll; viewers no longer see Sync or Rename buttons they cannot use; a batch rename skips a file renamed since the scan; and Analytics can copy on a plain-HTTP network and exports numbers as numbers
   - type: fix
-    label: '확인 창에서 취소나 × 위에서 Enter를 누르면 이제 확인 대신 취소됩니다. 확인으로 연 창이 더 이상 사라지지 않고, 단축키 목록이나 진행 창을 닫은 뒤에도 Tab이 계속 작동합니다'
+    label: 확인 창에서 취소나 ×에 Enter를 누르면 확인되지 않고 취소됩니다. 확인으로 연 창이 사라지지 않으며, 단축키 목록이나 진행 창을 닫은 뒤에도 Tab이 계속 작동합니다
+    en: In a confirm window, Enter on Cancel or × now cancels instead of confirming. A window opened by OK no longer vanishes, and Tab keeps working after the shortcuts list or a progress window closes
   - type: enhancement
-    label: '마우스로만 쓸 수 있던 많은 컨트롤을 이제 키보드(Tab 다음 Enter 또는 Space)로 쓸 수 있습니다: 로그인 프로필, 비교 검색 결과, 태그와 그 편집·삭제 버튼, 업적 게임 카드, 로그 세션, 테마와 아바타 선택, 박물관 사진, 장르나 필터를 지우는 ×, 설정 폴더, 스크랩 출처 체크박스, CLZ 가져오기. 켜기/끄기 스위치에도 이제 키보드 테두리가 보입니다'
+    label: 마우스로만 작동하던 많은 컨트롤이 이제 키보드(Tab 후 Enter 또는 Space)로 작동합니다. 로그인 프로필, 비교 검색 결과, 태그와 그 편집 및 삭제 버튼, 업적 게임 카드, 로그 세션, 테마와 아바타 선택, 박물관 이미지, 장르나 필터를 제거하는 ×, 설정 폴더, 스크래핑 소스 체크박스, CLZ 가져오기가 해당됩니다. 켜기/끄기 스위치에도 키보드 포커스 링이 표시됩니다
+    en: 'Many controls that worked only with a mouse now work from the keyboard (Tab, then Enter or Space): the sign-in profiles, Compare search results, tags and their Edit and Delete buttons, achievement game cards, log sessions, theme and avatar choices, Museum pictures, the × that removes a genre or filter, setup folders, scrape-source tick boxes and the CLZ import. On/off switches now show the keyboard ring'
   - type: performance
-    label: '박물관의 배경 제거 기능이 더 이상 메모리에 계속 남아 있지 않습니다. 이 기능은 AI 모델로 컨트롤러 사진에서 배경을 잘라 냈는데, 이 모델은 한 번 사용하면 2 GB 이상, 사진을 처리하는 동안에는 최대 약 9 GB의 메모리를 RetroDB를 다시 시작할 때까지 차지했습니다. 이제는 필요할 때 시작되고 마지막 사진 후 2분 뒤에 닫히는 보조 프로그램에서 실행되어, 그 메모리를 모두 돌려줍니다'
-    en: 'The Museum''s background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back'
+    label: 박물관의 배경 제거 기능이 더 이상 메모리에 계속 남아 있지 않습니다. 이 기능은 AI 모델로 컨트롤러 사진에서 배경을 잘라 냈는데, 이 모델은 한 번 사용하면 2 GB 이상, 사진을 처리하는 동안에는 최대 약 9 GB의 메모리를 RetroDB를 다시 시작할 때까지 차지했습니다. 이제는 필요할 때 시작되고 마지막 사진 후 2분 뒤에 닫히는 보조 프로그램에서 실행되어, 그 메모리를 모두 돌려줍니다
+    en: The Museum's background remover no longer stays in memory. It cut controller photos out of their background with an AI model that took over 2 GB once used, and up to about 9 GB during a photo, until RetroDB restarted. It now runs in a helper that starts when needed and closes two minutes after its last photo, giving all of that memory back
   - type: feature
-    label: 'Xbox 가져오기에 더 이상 Microsoft Azure 계정이 필요하지 않습니다. 이제 각 사용자가 자신의 무료 OpenXBL 키(xbl.io에서 발급)를 설정 → 내 프로필에 붙여 넣으면 되고, 네트워크의 어느 컴퓨터에서든 작동합니다. 가져오기는 앱과 휴대폰 전용 게임을 제외하고, PC 게임을 Xbox One 대신 Windows 아래에 분류하며, Xbox 360 업적을 올바르게 읽고, 잠긴 업적에는 날짜를 표시하지 않습니다. 무료 키는 한 시간에 요청 150건까지 허용합니다. 대량 업적 동기화가 이 한도에 도달하면 멈추고 그 사실을 알려 주며, 다음번에는 아직 처리하지 못한 게임부터 시작합니다'
+    label: Xbox 가져오기에 더 이상 Microsoft Azure 계정이 필요하지 않습니다. 이제 각 사용자가 자신의 무료 OpenXBL 키(xbl.io에서 발급)를 설정 → 내 프로필에 붙여 넣으면 되고, 네트워크의 어느 컴퓨터에서든 작동합니다. 가져오기는 앱과 휴대폰 전용 게임을 제외하고, PC 게임을 Xbox One 대신 Windows 아래에 분류하며, Xbox 360 업적을 올바르게 읽고, 잠긴 업적에는 날짜를 표시하지 않습니다. 무료 키는 한 시간에 요청 150건까지 허용합니다. 대량 업적 동기화가 이 한도에 도달하면 멈추고 그 사실을 알려 주며, 다음번에는 아직 처리하지 못한 게임부터 시작합니다
     en: 'Xbox import no longer needs a Microsoft Azure account. Each person now pastes their own free OpenXBL key (from xbl.io) under Settings → My Profile, and it works from any computer on your network. The import also leaves out apps and phone-only games, files PC games under Windows instead of Xbox One, reads Xbox 360 achievements the right way, and shows no date for a locked achievement. The free key allows 150 requests an hour: a big achievement sync that reaches it stops, says so, and next time starts with the games it had not reached'
   - type: enhancement
     label: 다른 RetroAchievements 동기화나 새로고침이 실행 중일 때 요청하면, 이제 해당 작업은 서버에서 대기하다가 앞선 작업이 끝나면 자동으로 시작됩니다. 페이지를 닫거나 다른 기기에서 요청해도 마찬가지입니다. 모든 페이지에 각 작업의 대기 순서가 포함된 같은 대기 목록이 표시되며, ✕를 누르면 작업이 목록에서 빠집니다. 서버를 재시작하면 대기 중이던 작업이 대시보드에 다시 표시됩니다

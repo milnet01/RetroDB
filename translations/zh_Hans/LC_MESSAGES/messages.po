@@ -482,9 +482,9 @@ msgid "Username already exists"
 msgstr "用户名已存在"
 
 #: routes/auth.py:230
-#, fuzzy, python-format
+#, python-format
 msgid "User \"%(name)s\" created successfully"
-msgstr "用户删除成功"
+msgstr "用户“%(name)s”创建成功"
 
 #: routes/auth.py:252
 msgid "The last admin must stay an active admin"
@@ -504,12 +504,11 @@ msgstr "未登录"
 
 #: routes/auth.py:414
 msgid "Only people who can scrape choose these languages."
-msgstr ""
+msgstr "只有拥有抓取权限的人才能选择这些语言。"
 
 #: routes/auth.py:418
-#, fuzzy
 msgid "Invalid language"
-msgstr "无效的语言区域"
+msgstr "语言无效"
 
 #: routes/auth.py:425
 msgid "Steam ID must be the number, not a profile name."
@@ -525,7 +524,7 @@ msgstr "无效的主题"
 
 #: routes/auth.py:447
 msgid "Notification times must be whole seconds from 1 to 60."
-msgstr ""
+msgstr "通知时间必须是 1 到 60 之间的整数秒。"
 
 #: routes/auth.py:455
 #, python-format
@@ -1096,86 +1095,72 @@ msgid "This fix is already running."
 msgstr "此修复已在运行。"
 
 #: routes/maintenance.py:535
-#, fuzzy
 msgid "USA"
-msgstr "使用"
+msgstr "美国"
 
 #: routes/maintenance.py:535
-#, fuzzy
 msgid "Europe"
-msgstr "紫色"
+msgstr "欧洲"
 
 #: routes/maintenance.py:535
-#, fuzzy
 msgid "Japan"
-msgstr "战役"
+msgstr "日本"
 
 #: routes/maintenance.py:535
-#, fuzzy
 msgid "World"
-msgstr "Open-World"
+msgstr "全球"
 
 #: routes/maintenance.py:536
 msgid "United Kingdom"
-msgstr ""
+msgstr "英国"
 
 #: routes/maintenance.py:536
-#, fuzzy
 msgid "France"
-msgstr "系列"
+msgstr "法国"
 
 #: routes/maintenance.py:536
-#, fuzzy
 msgid "Germany"
-msgstr "灰色"
+msgstr "德国"
 
 #: routes/maintenance.py:537
-#, fuzzy
 msgid "Spain"
-msgstr "扫描"
+msgstr "西班牙"
 
 #: routes/maintenance.py:537
-#, fuzzy
 msgid "Italy"
-msgstr "青绿色"
+msgstr "意大利"
 
 #: routes/maintenance.py:537
-#, fuzzy
 msgid "Australia"
-msgstr "ACB（澳大利亚）"
+msgstr "澳大利亚"
 
 #: routes/maintenance.py:538
 msgid "Brazil"
-msgstr ""
+msgstr "巴西"
 
 #: routes/maintenance.py:538
-#, fuzzy
 msgid "Korea"
-msgstr "核心"
+msgstr "韩国"
 
 #: routes/maintenance.py:538
 msgid "China"
-msgstr ""
+msgstr "中国"
 
 #: routes/maintenance.py:538
-#, fuzzy
 msgid "Asia"
-msgstr "AI"
+msgstr "亚洲"
 
 #: routes/maintenance.py:539
-#, fuzzy
 msgid "Any region"
-msgstr "地区"
+msgstr "任意地区"
 
 #: routes/maintenance.py:547
-#, fuzzy
 msgid "Box"
-msgstr "Xbox"
+msgstr "盒子"
 
 #: routes/maintenance.py:547
-#, fuzzy
 msgid "3D box"
-msgstr "导入 3D 盒子"
+msgstr "3D 盒子"
 
 #: routes/maintenance.py:547 templates/_modals/manual_reader_modal.html:9
 #: templates/analytics.html:488 templates/analytics.html:2432
@@ -1806,14 +1791,12 @@ msgid "Game not found or not an Xbox game"
 msgstr "未找到该游戏，或它不是 Xbox 游戏"
 
 #: services/auth.py:349
-#, fuzzy
 msgid "You do not have permission to access this feature"
-msgstr "你没有执行此操作的权限"
+msgstr "你没有权限使用此功能"
 
 #: services/auth.py:370
-#, fuzzy
 msgid "This action requires administrator privileges"
-msgstr "需要管理员权限"
+msgstr "此操作需要管理员权限"
 
 #: services/cheats.py:150
 #, python-format
@@ -1845,24 +1828,20 @@ msgid "That folder is RetroDB's own cheat store."
 msgstr "该文件夹是 RetroDB 自己的金手指存储位置。"
 
 #: services/cheats.py:451
-#, fuzzy
 msgid "RetroDB cannot read cheat.7z on this computer."
-msgstr "RetroArch 没有适用于这台电脑的版本。"
+msgstr "RetroDB 无法在这台电脑上读取 cheat.7z。"
 
 #: services/cheats.py:470
-#, fuzzy
 msgid "cheat.7z holds no MAME cheat files."
-msgstr "不是金手指文件。"
+msgstr "cheat.7z 中没有 MAME 金手指文件。"
 
 #: services/cheats.py:484 services/cheats.py:516 services/cheats.py:527
-#, fuzzy
 msgid "cheat.7z could not be read."
-msgstr "{count} 张无法读取。"
+msgstr "无法读取 cheat.7z。"
 
 #: services/cheats.py:505
-#, fuzzy
 msgid "cheat.7z is larger than 1 GiB unpacked."
-msgstr "有一张图片超过 10 MB。"
+msgstr "cheat.7z 解压后超过 1 GiB。"
 
 #: services/cheats.py:619 services/cheats.py:855 services/cheats.py:878
 #: services/cheats.py:992 services/cheats.py:1027 services/cheats.py:1035
@@ -1879,13 +1858,12 @@ msgid "That cheat list is not one of this game's."
 msgstr "该金手指列表不属于此游戏。"
 
 #: services/cheats.py:1039 services/cheats.py:1071
-#, fuzzy
 msgid "Cheats work in the player, DuckStation, PCSX2 and MAME."
-msgstr "金手指可在播放器、DuckStation 和 PCSX2 中使用。"
+msgstr "金手指可在播放器、DuckStation、PCSX2 和 MAME 中使用。"
 
 #: services/cheats.py:1064
 msgid "FinalBurn Neo's cheats are switched on in RetroArch's menu while you play."
-msgstr ""
+msgstr "FinalBurn Neo 的金手指需要在游玩时通过 RetroArch 菜单开启。"
 
 #: services/hltb_service.py:173
 #, python-format
@@ -3155,7 +3133,7 @@ msgstr "按{field}筛选：{value}"
 
 #: services/js_i18n_strings.py:786
 msgid "FinalBurn Neo arcade cheats"
-msgstr ""
+msgstr "FinalBurn Neo 街机金手指"
 
 #: services/js_i18n_strings.py:787
 msgid ""
@@ -3163,6 +3141,8 @@ msgid ""
 "one on while you play, press F1 (or the PS or Xbox button on most "
 "controllers) for RetroArch's menu, then choose Core Options, then Cheat."
 msgstr ""
+"FinalBurn Neo 每次启动游戏时都会关闭所有金手指。要在游玩时开启,请按 F1(大多数手柄上是 PS 或 Xbox 按钮)打开 "
+"RetroArch 菜单,然后选择“核心选项”,再选择“金手指”。"
 
 #: services/js_i18n_strings.py:788 templates/_macros/ra_tools.html:16
 msgid "Find Games with Achievements"
@@ -4246,7 +4226,7 @@ msgstr "按系统设置，位于 设置 > 模拟器"
 msgid ""
 "Set this one in MAME while you play: press Tab, then Plugin Options, then"
 " Cheat."
-msgstr ""
+msgstr "请在游玩时于 MAME 中设置:按 Tab 键,然后选择“插件选项”,再选择“金手指”。"
 
 #: services/js_i18n_strings.py:1027 templates/_macros/nav_tabs.html:46
 #: templates/base.html:186 templates/rom_tools_hub.html:119
@@ -4326,11 +4306,10 @@ msgid "Switched-on cheats apply the next time you press Play."
 msgstr "已开启的金手指会在你下次按下游玩时生效。"
 
 #: services/js_i18n_strings.py:1044
-#, fuzzy
 msgid ""
 "Switched-on cheats apply the next time you press Play. Changes made in "
 "MAME's menu show here after you quit."
-msgstr "已开启的金手指会在你下次按下游玩时生效。"
+msgstr "开启的金手指会在你下次点击“游玩”时生效。在 MAME 菜单中所做的更改会在退出后显示在这里。"
 
 #: services/js_i18n_strings.py:1045
 msgid "Sync In Progress"
@@ -5291,22 +5270,21 @@ msgid ""
 "Each game below has a box, 3D box or manual this fix swapped. The picture"
 " is its box now. Open a game to look at it closely. The old files were "
 "deleted, so only the new region is shown."
-msgstr ""
+msgstr "下面每个游戏都有被此修复替换过的盒子、3D 盒子或说明书。图片是它现在的盒子。打开游戏可以仔细查看。旧文件已被删除,所以只显示新的地区。"
 
 #: templates/_ss_region_changes.html:21
 #, python-format
 msgid "Your copy: %(region)s"
-msgstr ""
+msgstr "你的版本:%(region)s"
 
 #: templates/_ss_region_changes.html:23
 #, python-format
 msgid "%(kind)s now from: %(region)s"
-msgstr ""
+msgstr "%(kind)s 现来自:%(region)s"
 
 #: templates/_ss_region_changes.html:33
-#, fuzzy
 msgid "Nothing has been swapped yet."
-msgstr "你的设置已保存!"
+msgstr "尚未替换任何内容。"
 
 #: templates/achievement_game.html:17 templates/achievement_game.html:37
 #: templates/achievements_ra_empty.html:8
@@ -7603,9 +7581,8 @@ msgstr "转换失败"
 #: templates/chd_converter.html:335 templates/chd_verify.html:302
 #: templates/duplicate_finder.html:389 templates/screenshot_dedup.html:401
 #: templates/screenshot_review.html:166
-#, fuzzy
 msgid "The last scan's results have expired. Start a new scan."
-msgstr "这些扫描结果已过期。请重新扫描后再删除。"
+msgstr "上次扫描的结果已过期。请重新扫描。"
 
 #: templates/chd_converter.html:357 templates/chd_verify.html:326
 msgid "No files selected"
@@ -7889,9 +7866,8 @@ msgid "Controllers"
 msgstr "手柄"
 
 #: templates/controllers.html:129
-#, fuzzy
 msgid "Back to Settings"
-msgstr "前往设置"
+msgstr "返回设置"
 
 #: templates/controllers.html:134
 msgid "System Defaults"
@@ -9102,14 +9078,13 @@ msgid "An error occurred while deleting the game."
 msgstr "删除游戏时出错。"
 
 #: templates/game_detail.html:5139
-#, fuzzy
 msgid "Searching all sources..."
-msgstr "正在搜索 {source}…"
+msgstr "正在搜索所有来源..."
 
 #: templates/game_detail.html:5159
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Search {sources} for metadata and boxart."
-msgstr "在已启用的抓取器中搜索元数据和封面。"
+msgstr "在 {sources} 中搜索元数据和封面。"
 
 #: templates/game_detail.html:5287 templates/game_detail.html:5288
 msgid "Select for hybrid scraping"
@@ -9121,18 +9096,17 @@ msgid "Apply"
 msgstr "应用"
 
 #: templates/game_detail.html:5333
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "No {source} results"
-msgstr "无结果"
+msgstr "没有 {source} 的结果"
 
 #: templates/game_detail.html:5345
 msgid "No results found. Try a different search term."
-msgstr ""
+msgstr "未找到结果。请换个搜索词试试。"
 
 #: templates/game_detail.html:5348
-#, fuzzy
 msgid "Error searching. Please try again."
-msgstr "网络错误,请重试。"
+msgstr "搜索出错。请重试。"
 
 #: templates/game_detail.html:5413
 msgid "Sort title generated"
@@ -11839,19 +11813,16 @@ msgid "Network error saving language"
 msgstr "保存语言时发生网络错误"
 
 #: templates/settings.html:1134
-#, fuzzy
 msgid "Reading languages saved"
-msgstr "ROM 命名设置已保存!"
+msgstr "阅读语言已保存"
 
 #: templates/settings.html:1136
-#, fuzzy
 msgid "Failed to save languages"
 msgstr "保存语言失败"
 
 #: templates/settings.html:1141
-#, fuzzy
 msgid "Network error saving languages"
-msgstr "保存语言时发生网络错误"
+msgstr "保存语言时出现网络错误"
 
 #: templates/settings.html:1150
 msgid "Please enter a new password"
@@ -11875,9 +11846,8 @@ msgid "Add User"
 msgstr "添加用户"
 
 #: templates/settings.html:1219
-#, fuzzy
 msgid "Edit User"
-msgstr "添加用户"
+msgstr "编辑用户"
 
 #: templates/settings.html:1235 templates/settings.html:1237
 msgid "Could not load that user."
@@ -11937,9 +11907,8 @@ msgid "Display settings saved!"
 msgstr "显示设置已保存!"
 
 #: templates/settings.html:1463
-#, fuzzy
 msgid "Selected tags (in order):"
-msgstr "选择此文件夹"
+msgstr "已选标签(按顺序):"
 
 #: templates/settings.html:1470
 msgid "Move left"
@@ -11951,16 +11920,15 @@ msgstr "右移"
 
 #: templates/settings.html:1477
 msgid "Available tags (click to add):"
-msgstr ""
+msgstr "可用标签(点击添加):"
 
 #: templates/settings.html:1481
-#, fuzzy
 msgid "Click to add"
-msgstr "点击放大"
+msgstr "点击添加"
 
 #: templates/settings.html:1482
 msgid "All tags in use"
-msgstr ""
+msgstr "所有标签都已使用"
 
 #: templates/settings.html:1488 templates/settings.html:2894
 msgid "Preview:"
@@ -11999,38 +11967,34 @@ msgid "Error - disappears in {seconds}s"
 msgstr "错误 - {seconds} 秒后消失"
 
 #: templates/settings.html:1715
-#, fuzzy
 msgid "No bonus discs detected in your library."
-msgstr "检测到额外光盘:{count}"
+msgstr "在你的游戏库中未发现额外光盘。"
 
 #: templates/settings.html:1717
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Found {count} potential bonus disc(s):"
-msgstr "有 {count} 张额外光盘"
+msgstr "发现 {count} 张可能的额外光盘:"
 
 #: templates/settings.html:1723
 #, python-brace-format
 msgid "Detected from filename: {filename}"
-msgstr ""
+msgstr "从文件名识别:{filename}"
 
 #: templates/settings.html:1726
-#, fuzzy
 msgid "Will search for:"
-msgstr "搜索："
+msgstr "将搜索:"
 
 #: templates/settings.html:1728
 msgid "Could not extract parent title - manual linking required"
-msgstr ""
+msgstr "无法提取主游戏标题,需要手动关联"
 
 #: templates/settings.html:1735
-#, fuzzy
 msgid "Unknown System"
 msgstr "未知系统"
 
 #: templates/settings.html:1743
-#, fuzzy
 msgid "Mark"
-msgstr "成人"
+msgstr "标记"
 
 #: templates/settings.html:1752
 #, python-brace-format
@@ -12043,34 +12007,31 @@ msgid "Detection failed: {error}"
 msgstr "检测失败:{error}"
 
 #: templates/_settings_tabs/library.html:209 templates/settings.html:1760
-#, fuzzy
 msgid "Auto-Detect Bonus Discs"
-msgstr "额外光盘总数:"
+msgstr "自动检测额外光盘"
 
 #: templates/settings.html:1769
-#, fuzzy
 msgid "Linking..."
-msgstr "正在同步……"
+msgstr "正在关联..."
 
 #: templates/settings.html:1778
-#, fuzzy
 msgid "Auto-linking complete!"
-msgstr "批量抓取完成！"
+msgstr "自动关联完成!"
 
 #: templates/settings.html:1780
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Linked: {count} bonus disc(s)"
-msgstr "有 {count} 张额外光盘"
+msgstr "已关联:{count} 张额外光盘"
 
 #: templates/settings.html:1781
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Already linked: {count}"
-msgstr "已在游戏库中:{count}"
+msgstr "已关联过:{count}"
 
 #: templates/settings.html:1782
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "No parent found: {count}"
-msgstr "找到的章节：{count}"
+msgstr "未找到主游戏:{count}"
 
 #: templates/settings.html:1786
 #, python-brace-format
@@ -12083,9 +12044,8 @@ msgid "Auto-link failed: {error}"
 msgstr "自动关联失败:{error}"
 
 #: templates/_settings_tabs/library.html:213 templates/settings.html:1797
-#, fuzzy
 msgid "Auto-Link to Parents"
-msgstr "已关联主游戏:"
+msgstr "自动关联到主游戏"
 
 #: templates/settings.html:1813
 msgid "Bonus Disc Statistics"
@@ -12157,9 +12117,8 @@ msgid "Back in your game lists. Auto-Link will leave it alone."
 msgstr "已回到你的游戏列表。Auto-Link 不会再动它。"
 
 #: templates/settings.html:1974
-#, fuzzy
 msgid "Creating..."
-msgstr "正在清除…"
+msgstr "正在创建..."
 
 #: templates/settings.html:1980
 #, python-brace-format
@@ -12177,23 +12136,20 @@ msgid "Backup error: {error}"
 msgstr "备份出错:{error}"
 
 #: templates/_settings_tabs/library.html:253 templates/settings.html:1989
-#, fuzzy
 msgid "Create Backup"
-msgstr "恢复备份"
+msgstr "创建备份"
 
 #: templates/settings.html:2000
 msgid "No backups found. Create one to get started."
-msgstr ""
+msgstr "未找到备份。请先创建一个。"
 
 #: templates/settings.html:2013
-#, fuzzy
 msgid "Restore"
-msgstr "存储"
+msgstr "恢复"
 
 #: templates/settings.html:2022
-#, fuzzy
 msgid "Error loading backups"
-msgstr "加载游戏时出错。"
+msgstr "加载备份时出错"
 
 #: templates/settings.html:2027
 msgid "Restore Backup"
@@ -12235,14 +12191,13 @@ msgid "Calculation failed: {error}"
 msgstr "计算失败:{error}"
 
 #: templates/settings.html:2076
-#, fuzzy
 msgid "Port saved"
-msgstr "导入失败"
+msgstr "端口已保存"
 
 #: templates/settings.html:2077
 #, python-brace-format
 msgid "Press Restart Server, then open RetroDB at {url}"
-msgstr ""
+msgstr "请点击重启服务器,然后在 {url} 打开 RetroDB"
 
 #: templates/settings.html:2242
 msgid "Failed to save scraper setting"
@@ -12470,9 +12425,8 @@ msgid "Save API Keys"
 msgstr "保存 API 密钥"
 
 #: templates/settings.html:2774
-#, fuzzy
 msgid "Defaults filled in. Press Save Scraper Settings to keep them."
-msgstr "保存抓取设置失败"
+msgstr "已填入默认值。请点击“保存抓取设置”以保留。"
 
 #: templates/settings.html:2822
 msgid "Invalid Input"
@@ -12724,7 +12678,7 @@ msgstr "标志已刷新"
 #: templates/settings.html:3404
 #, python-brace-format
 msgid "Logos copied from ES-DE: {imported}. System logos updated: {count}."
-msgstr ""
+msgstr "已从 ES-DE 复制标志:{imported}。已更新系统标志:{count}。"
 
 #: templates/settings.html:3407
 msgid "Failed to refresh logos"
@@ -12953,17 +12907,15 @@ msgstr "映射"
 msgid ""
 "RetroArch and its cores folder can be in different places, depending on "
 "how RetroArch was installed. Tell RetroDB where each one is."
-msgstr ""
+msgstr "RetroArch 和它的核心文件夹可能在不同位置,取决于 RetroArch 的安装方式。请告诉 RetroDB 它们各在哪里。"
 
 #: templates/settings_emulators.html:41 templates/settings_emulators.html:198
-#, fuzzy
 msgid "Program"
-msgstr "进度"
+msgstr "程序"
 
 #: templates/settings_emulators.html:50
-#, fuzzy
 msgid "Cores folder"
-msgstr "上级文件夹"
+msgstr "核心文件夹"
 
 #: templates/settings_emulators.html:59
 msgid "Auto-detect"
@@ -13050,6 +13002,10 @@ msgid ""
 "fetching the 7-Zip tool from the internet to do so. Each arcade game's "
 "page then lists its cheats with on/off switches."
 msgstr ""
+"MAME 中的街机游戏:请在浏览器中从 <a href=\"https://www.mamecheat.co.uk/\" "
+"target=\"_blank\" rel=\"noopener noreferrer\">mamecheat.co.uk</a> 下载“MAME"
+" XML Cheats Collection”,然后导入存放它的文件夹。RetroDB 会保持其压缩状态并从中读取金手指名称,为此会从网上获取 "
+"7-Zip 工具。之后每个街机游戏的页面都会列出它的金手指,并带有开关。"
 
 #: templates/settings_emulators.html:148
 msgid ""
@@ -13058,6 +13014,9 @@ msgid ""
 "cheat pack above; each such game's page lists its cheats, which you "
 "switch on in RetroArch's menu while you play."
 msgstr ""
+"带有 RetroAchievements 的街机游戏会在 RetroArch 的 FinalBurn Neo 中游玩(RetroDB),因为 "
+"RetroAchievements 不支持 MAME。请下载上方的金手指包;每个此类游戏的页面都会列出其金手指,你可以在游玩时通过 "
+"RetroArch 的菜单开启。"
 
 #: templates/settings_emulators.html:160
 msgid "Emulator folders"
@@ -13070,9 +13029,9 @@ msgid ""
 msgstr "添加存放模拟器的文件夹。RetroDB 会在其中找到每个模拟器，将其关联到它运行的系统，并检查它的 BIOS 文件。"
 
 #: templates/settings_emulators.html:169
-#, fuzzy, python-format
+#, python-format
 msgid "e.g. %(path)s"
-msgstr "当前:%(path)s"
+msgstr "例如 %(path)s"
 
 #: templates/settings_emulators.html:169
 msgid "Emulator folder"
@@ -13094,7 +13053,7 @@ msgstr "已注册的模拟器"
 msgid ""
 "RetroDB sets up this list of emulators the first time it runs. Press Edit"
 " on a row to change how that emulator starts."
-msgstr ""
+msgstr "RetroDB 首次运行时会设置好这份模拟器列表。点击某一行的“编辑”,可更改该模拟器的启动方式。"
 
 #: templates/settings_emulators.html:199 templates/settings_emulators.html:251
 msgid "Program location"
@@ -13136,17 +13095,17 @@ msgstr "例如"
 
 #: templates/settings_emulators.html:248
 msgid "RetroDB finds the program by this name when Program location is empty."
-msgstr ""
+msgstr "当“程序位置”为空时,RetroDB 会按这个名称查找程序。"
 
 #: templates/settings_emulators.html:253
 msgid "(empty = find it by its program name)"
-msgstr ""
+msgstr "(留空 = 按程序名称查找)"
 
 #: templates/settings_emulators.html:256
 msgid ""
 "The full path to the emulator program, AppImage or start script. When "
 "set, RetroDB uses it instead of searching by name."
-msgstr ""
+msgstr "模拟器程序、AppImage 或启动脚本的完整路径。设置后,RetroDB 会直接使用它,不再按名称搜索。"
 
 #: templates/settings_emulators.html:259
 msgid "Command-line options (advanced)"
@@ -13157,9 +13116,8 @@ msgid "Tokens:"
 msgstr "占位符："
 
 #: templates/settings_emulators.html:270
-#, fuzzy
 msgid "This is a RetroArch entry (uses the cores in the Cores folder above)"
-msgstr "这是 RetroArch 条目（使用上方核心目录中的核心）"
+msgstr "这是 RetroArch 条目(使用上方“核心”文件夹中的核心)"
 
 #: templates/settings_emulators.html:276
 msgid "Enabled (uncheck to hide from launch)"
@@ -13547,12 +13505,10 @@ msgid "Network error. Please try again."
 msgstr "网络错误,请重试。"
 
 #: templates/ss_region_repair.html:123
-#, fuzzy
 msgid "What changed"
-msgstr "金手指列表已更换。"
+msgstr "更改内容"
 
 #: templates/ss_region_repair.html:137
-#, fuzzy
 msgid ""
 "Each game with a ScreenScraper box or manual is looked up again. Where "
 "another region suits it better, the file is downloaded and the old one is"
@@ -13562,9 +13518,9 @@ msgid ""
 "ScreenScraper allowance and can take a long time. You can leave this page"
 " and come back to pause or stop it."
 msgstr ""
-"每个带有 ScreenScraper 包装盒或说明书的游戏都会被重新查询。若有更合适的其他地区版本,会下载该文件并删除旧文件。\n"
+"每个带有 ScreenScraper 包装盒或说明书的游戏都会被重新查找。如果其他地区的版本更合适,会下载新文件并删除旧文件。\n"
 "\n"
-"你手动修改过的游戏不会被改动。此操作会消耗你每日的 ScreenScraper 额度,可能需要很长时间。你可以离开此页面,再次点击此卡片即可停止。"
+"你手动修改过的游戏不会被改动。此操作会使用你每天的 ScreenScraper 额度,可能需要很长时间。你可以离开此页面,稍后回来暂停或停止。"
 
 #: templates/ss_region_repair.html:138
 msgid "Could not start the fix"
@@ -13589,9 +13545,9 @@ msgid "Checked {current} of {total} games. Files swapped: {replaced}."
 msgstr "已检查 {current}/{total} 个游戏。已替换文件:{replaced}。"
 
 #: templates/ss_region_repair.html:142
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Paused after {current} of {total} games. Files swapped: {replaced}."
-msgstr "已检查 {current}/{total} 个游戏。已替换文件:{replaced}。"
+msgstr "已在 {current}/{total} 个游戏后暂停。已替换文件:{replaced}。"
 
 #: templates/ss_region_repair.html:143
 #, python-brace-format
@@ -14473,7 +14429,7 @@ msgstr "例如  --renderer vulkan"
 msgid ""
 "Added after the emulator's command-line options. Put quotes around a "
 "value that contains spaces."
-msgstr ""
+msgstr "添加在模拟器命令行选项之后。如果值中含有空格,请加上引号。"
 
 #: templates/_modals/filter_modal.html:5
 msgid "Filter Games"
@@ -14664,7 +14620,7 @@ msgstr "RetroAchievements 设置"
 msgid ""
 "Your username and web API key show your achievements in RetroDB. To "
 "unlock achievements while you play, sign in with your password below."
-msgstr ""
+msgstr "你的用户名和网页 API 密钥可在 RetroDB 中显示你的成就。若要在游玩时解锁成就,请在下方使用密码登录。"
 
 #: templates/_settings_tabs/account.html:103
 msgid "Your RA Username"
@@ -14690,11 +14646,10 @@ msgstr ""
 "(--primary-cyan);\">RetroAchievements 控制面板</a> 获取你的 API 密钥"
 
 #: templates/_settings_tabs/account.html:118
-#, fuzzy
 msgid ""
 "Password sign-in: unlock achievements while you play in RetroArch, "
 "DuckStation and PCSX2"
-msgstr "在 RetroArch、DuckStation 和 PCSX2 中赢取成就"
+msgstr "密码登录:在 RetroArch、DuckStation 和 PCSX2 中游玩时解锁成就"
 
 #: templates/_settings_tabs/account.html:119
 msgid ""
@@ -14829,7 +14784,7 @@ msgstr "在此粘贴"
 
 #: templates/_settings_tabs/account.html:211
 msgid "Save My Profile at the bottom of this card checks a new token with Sony."
-msgstr ""
+msgstr "点击此卡片底部的“保存我的资料”,会向 Sony 验证新的令牌。"
 
 #: templates/_settings_tabs/account.html:217
 msgid ""
@@ -14954,15 +14909,14 @@ msgid "Theme applies instantly. Changes are saved automatically."
 msgstr "主题即时生效。更改会自动保存。"
 
 #: templates/_settings_tabs/account.html:360
-#, fuzzy
 msgid "Moving background"
-msgstr "正在移除背景…"
+msgstr "动态背景"
 
 #: templates/_settings_tabs/account.html:362
 msgid ""
 "The mist, rain or stars behind the page. It pauses when you are not using"
 " RetroDB. Turn it off to save power on this computer."
-msgstr ""
+msgstr "页面后方的薄雾、雨或星星。你不使用 RetroDB 时会暂停。关闭它可为这台电脑省电。"
 
 #: templates/_settings_tabs/account.html:370
 msgid "Language"
@@ -14973,16 +14927,15 @@ msgid "Changes the interface language. The page reloads when you switch."
 msgstr "更改界面语言。切换时页面将重新加载。"
 
 #: templates/_settings_tabs/account.html:391
-#, fuzzy
 msgid "Languages I can read"
-msgstr "语言"
+msgstr "我能阅读的语言"
 
 #: templates/_settings_tabs/account.html:401
 msgid ""
 "When a game has no box picture or name from its own region, RetroDB picks"
 " one in a language someone who scrapes can read. Untick them all to use "
 "your screen language."
-msgstr ""
+msgstr "当游戏没有本地区的包装盒图片或名称时,RetroDB 会选择抓取者能读懂的语言的版本。全部取消勾选则使用你的界面语言。"
 
 #: templates/_settings_tabs/account.html:411
 msgid "Notification Settings"
@@ -14993,7 +14946,7 @@ msgid ""
 "How long each kind of notification stays on screen before it closes by "
 "itself, from 1 to 60 seconds. These are your own; other people keep "
 "theirs."
-msgstr ""
+msgstr "每种通知在自动关闭前显示的时长,范围为 1 到 60 秒。这只是你自己的设置,其他人保持各自的设置。"
 
 #: templates/_settings_tabs/account.html:422
 msgid "Success Notifications"
@@ -15035,9 +14988,8 @@ msgid "Errors stay longer for readability"
 msgstr "错误提示停留更久以便阅读"
 
 #: templates/_settings_tabs/account.html:479
-#, fuzzy
 msgid "Save Notification Times"
-msgstr "测试通知"
+msgstr "保存通知时长"
 
 #: templates/_settings_tabs/account.html:483
 msgid "Test Notifications"
@@ -15118,15 +15070,14 @@ msgid "Admin - Full access"
 msgstr "管理员 - 完全访问"
 
 #: templates/_settings_tabs/account.html:627
-#, fuzzy
 msgid "Password *"
-msgstr "密码"
+msgstr "密码 *"
 
 #: templates/_settings_tabs/account.html:629
 msgid ""
 "12 characters or more. Give it to them; they choose their own the first "
 "time they sign in."
-msgstr ""
+msgstr "至少 12 个字符。请把它交给对方,对方首次登录时可自行设置密码。"
 
 #: templates/_settings_tabs/account.html:633
 msgid "Reset Password"
@@ -15152,7 +15103,7 @@ msgstr "标志"
 msgid ""
 "Choose the controller each system shows by default, add your own "
 "controllers and edit the controller library."
-msgstr ""
+msgstr "选择每个系统默认显示的手柄,添加你自己的手柄,并编辑手柄库。"
 
 #: templates/_settings_tabs/customization.html:18
 msgid "Open Controllers"
@@ -15167,7 +15118,7 @@ msgid ""
 "Refresh System Logos copies any new logos from your ES-DE folder, then "
 "updates the table below. The table shows which systems still have no "
 "logo."
-msgstr ""
+msgstr "“刷新系统标志”会从你的 ES-DE 文件夹复制新的标志,然后更新下方表格。表格会显示哪些系统仍没有标志。"
 
 #: templates/_settings_tabs/customization.html:35
 msgid "Refresh System Logos"
@@ -15371,22 +15322,21 @@ msgstr "例如 /home/user/.config/rpcs3/dev_hdd0/home/00000001/trophy"
 
 #: templates/_settings_tabs/library.html:66
 msgid "Used by anyone who has not set their own in Account > My Profile."
-msgstr ""
+msgstr "适用于尚未在“账户 > 我的资料”中自行设置的所有人。"
 
 #: templates/_settings_tabs/library.html:73
 msgid "Save Path Settings"
 msgstr "保存路径设置"
 
 #: templates/_settings_tabs/library.html:89
-#, fuzzy
 msgid "Library Display"
-msgstr "你的游戏库是空的"
+msgstr "游戏库显示"
 
 #: templates/_settings_tabs/library.html:93
 msgid ""
 "These choices apply to everyone. Each person picks their own theme and "
 "language in Account."
-msgstr ""
+msgstr "这些选项对所有人生效。每个人可在“账户”中选择自己的主题和语言。"
 
 #: templates/_settings_tabs/library.html:96
 msgid "Preferred Boxart Style"
@@ -15467,44 +15417,39 @@ msgid ""
 msgstr "配置可用的地区值和默认地区。抓取时如果未检测到地区，将使用默认地区。"
 
 #: templates/_settings_tabs/library.html:168
-#, fuzzy
 msgid "Add region..."
-msgstr "+ 添加维度……"
+msgstr "添加地区..."
 
 #: templates/_settings_tabs/library.html:172
 msgid "Default Region"
 msgstr "默认地区"
 
 #: templates/_settings_tabs/library.html:188
-#, fuzzy
 msgid "Save Naming Settings"
-msgstr "保存我的设置"
+msgstr "保存命名设置"
 
 #: templates/_settings_tabs/library.html:199
-#, fuzzy
 msgid "Bonus Disc Management"
-msgstr "用户管理"
+msgstr "额外光盘管理"
 
 #: templates/_settings_tabs/library.html:203
 msgid ""
 "Bonus discs (making-of, behind the scenes, extras) are hidden by default "
 "on game listing pages. Use this section to auto-detect and link bonus "
 "discs to their parent games."
-msgstr ""
+msgstr "额外光盘(制作花絮、幕后、附加内容)在游戏列表页面默认隐藏。可在此自动检测额外光盘,并将其关联到所属游戏。"
 
 #: templates/_settings_tabs/library.html:217
-#, fuzzy
 msgid "View Stats"
-msgstr "统计"
+msgstr "查看统计"
 
 #: templates/_settings_tabs/library.html:224
-#, fuzzy
 msgid "Detected Bonus Discs"
-msgstr "额外光盘总数:"
+msgstr "已检测到的额外光盘"
 
 #: templates/_settings_tabs/library.html:227
 msgid "Click \"Auto-Detect Bonus Discs\" to scan your library"
-msgstr ""
+msgstr "点击“自动检测额外光盘”来扫描你的游戏库"
 
 #: templates/_settings_tabs/library.html:231
 msgid "Current Bonus Discs"
@@ -15518,21 +15463,19 @@ msgstr "误标的光盘可以回到你的游戏列表。之后 Auto-Link 不会�
 
 #: templates/_settings_tabs/library.html:247
 msgid "Database Backup & Restore"
-msgstr ""
+msgstr "数据库备份与恢复"
 
 #: templates/_settings_tabs/library.html:257
 msgid "Create backups before making major changes to your library"
-msgstr ""
+msgstr "对游戏库做重大更改前,请先创建备份"
 
 #: templates/_settings_tabs/library.html:260
-#, fuzzy
 msgid "Available Backups"
-msgstr "可用"
+msgstr "可用备份"
 
 #: templates/_settings_tabs/library.html:262
-#, fuzzy
 msgid "Loading backups..."
-msgstr "正在加载值……"
+msgstr "正在加载备份..."
 
 #: templates/_settings_tabs/scraping.html:3
 msgid "Scraping settings"
@@ -15566,9 +15509,8 @@ msgid "Enable ES-DE local scraper"
 msgstr "启用 ES-DE 本地抓取器"
 
 #: templates/_settings_tabs/scraping.html:46
-#, fuzzy
 msgid "Online game database with box art and descriptions (needs a key)"
-msgstr "大型游戏数据库，含 ESRB 分级和 Metacritic 评分"
+msgstr "在线游戏数据库,含包装盒图片和简介(需要密钥)"
 
 #: templates/_settings_tabs/scraping.html:53
 msgid "Enable TheGamesDB scraper"
@@ -15617,9 +15559,8 @@ msgid ""
 msgstr "控制批量抓取时接受哪些搜索结果。未通过筛选的结果会被跳过。"
 
 #: templates/_settings_tabs/scraping.html:142
-#, fuzzy
 msgid "How closely must a result match the game?"
-msgstr "只接受与游戏所属系统相符的结果"
+msgstr "结果需要与游戏匹配到什么程度?"
 
 #: templates/_settings_tabs/scraping.html:144
 msgid "Strict"
@@ -15629,7 +15570,7 @@ msgstr "严格"
 msgid ""
 "Only results with the exact title. Fewer wrong games, but more games stay"
 " unscraped."
-msgstr ""
+msgstr "只接受标题完全一致的结果。错误的游戏更少,但会有更多游戏未被抓取。"
 
 #: templates/_settings_tabs/scraping.html:145
 msgid "Normal (recommended)"
@@ -15637,7 +15578,7 @@ msgstr "普通（推荐）"
 
 #: templates/_settings_tabs/scraping.html:145
 msgid "A close title on the right system."
-msgstr ""
+msgstr "在正确系统上找到的相近标题。"
 
 #: templates/_settings_tabs/scraping.html:146
 msgid "Loose"
@@ -15647,7 +15588,7 @@ msgstr "宽松"
 msgid ""
 "Also partial titles. More games get filled, and some may be the wrong "
 "game."
-msgstr ""
+msgstr "也包括部分匹配的标题。会填充更多游戏,但可能有些游戏匹配错误。"
 
 #: templates/_settings_tabs/scraping.html:158
 msgid "Custom"
@@ -15657,7 +15598,7 @@ msgstr "自定义"
 msgid ""
 "Your own setting from an earlier version. Choosing another option "
 "replaces it."
-msgstr ""
+msgstr "这是你在早期版本中的自定义设置。选择其他选项会将其替换。"
 
 #: templates/_settings_tabs/scraping.html:171
 msgid "Reset to Default"
@@ -15681,7 +15622,7 @@ msgstr "获取 API 密钥 →"
 msgid ""
 "Used first. TheGamesDB calls it the public key; each internet connection "
 "gets its own allowance."
-msgstr ""
+msgstr "优先使用。TheGamesDB 称之为公钥;每个网络连接有各自的额度。"
 
 #: templates/_settings_tabs/scraping.html:208
 msgid "TheGamesDB — Backup key"
@@ -15691,7 +15632,7 @@ msgstr "TheGamesDB — 备用密钥"
 msgid ""
 "Used when the main key runs out. TheGamesDB calls it the private key; it "
 "allows about 6,000 requests a month."
-msgstr ""
+msgstr "主密钥用完后使用。TheGamesDB 称之为私钥;每月约允许 6,000 次请求。"
 
 #: templates/_settings_tabs/scraping.html:218
 msgid "IGDB / Twitch Client ID"
@@ -15772,7 +15713,7 @@ msgid ""
 "Each person can add their own in Settings > Account > My Profile, and "
 "theirs is used first. The household's here is used only for someone who "
 "has not added their own."
-msgstr ""
+msgstr "每个人都可以在 设置 > 账户 > 我的资料 中添加自己的密钥,并优先使用自己的。这里的家庭密钥只会用于尚未添加自己密钥的人。"
 
 #: templates/_settings_tabs/scraping.html:289
 msgid "RetroAchievements Username"
@@ -15797,6 +15738,8 @@ msgid ""
 "has not added their own, so no one's games land in another person's "
 "library."
 msgstr ""
+"每个人都可以在 设置 > 账户 > 我的资料 "
+"中添加自己的密钥,并优先使用自己的。这里的家庭密钥只会用于尚未添加自己密钥的管理员,这样任何人的游戏都不会进入别人的游戏库。"
 
 #: templates/_settings_tabs/scraping.html:320
 msgid "Steam ID"
@@ -15949,13 +15892,13 @@ msgid ""
 "Removes what scraping filled in on scraped games: description, genre, "
 "publisher, ratings and the links to their pictures and videos. Useful "
 "before scraping again from scratch."
-msgstr ""
+msgstr "清除抓取在已抓取游戏中填入的内容:简介、类型、发行商、分级,以及图片和视频的链接。适合在重新从头抓取之前使用。"
 
 #: templates/_settings_tabs/system.html:57
 msgid ""
 "Your games stay in the library, and their titles go back to the file "
 "names (a locked title stays)."
-msgstr ""
+msgstr "你的游戏会保留在游戏库中,标题会恢复为文件名(已锁定的标题除外)。"
 
 #: templates/_settings_tabs/system.html:69
 #: templates/_settings_tabs/system.html:72
@@ -15964,7 +15907,7 @@ msgstr "同时删除图片和视频文件"
 
 #: templates/_settings_tabs/system.html:72
 msgid "(otherwise they stay on disk, for Orphaned Media Cleanup below)"
-msgstr ""
+msgstr "(否则它们会留在磁盘上,可用下方的孤立媒体清理处理)"
 
 #: templates/_settings_tabs/system.html:78
 msgid "Preview"
@@ -15996,13 +15939,12 @@ msgstr "与孤立媒体清理相反：查找封面、截图、视频或手册指
 
 #: templates/_settings_tabs/system.html:128
 #: templates/_settings_tabs/system.html:135
-#, fuzzy
 msgid "Calculate File Sizes"
-msgstr "正在计算文件大小..."
+msgstr "计算文件大小"
 
 #: templates/_settings_tabs/system.html:131
 msgid "Finds the size on disk of every game that does not have one yet."
-msgstr ""
+msgstr "查找每个尚无大小记录的游戏在磁盘上的大小。"
 
 #: templates/_settings_tabs/system.html:141
 msgid "Database Optimization"
@@ -16010,7 +15952,7 @@ msgstr "数据库优化"
 
 #: templates/_settings_tabs/system.html:144
 msgid "Makes the database smaller and faster. Takes a few seconds."
-msgstr ""
+msgstr "让数据库更小、更快。需要几秒钟。"
 
 #: templates/_settings_tabs/system.html:161
 #, python-format
@@ -16065,30 +16007,28 @@ msgstr "关闭服务器"
 
 #: templates/_settings_tabs/system.html:208
 msgid "Restart RetroDB, or shut it down completely."
-msgstr ""
+msgstr "重启 RetroDB,或将其完全关闭。"
 
 #: templates/_settings_tabs/system.html:213
-#, fuzzy
 msgid "Server Port"
-msgstr "服务器"
+msgstr "服务器端口"
 
 #: templates/_settings_tabs/system.html:216
 #, python-format
 msgid ""
 "The command that starts RetroDB sets the port (%(name)s), so a port saved"
 " here would not be used."
-msgstr ""
+msgstr "启动 RetroDB 的命令已设置端口(%(name)s),所以在此保存的端口不会生效。"
 
 #: templates/_settings_tabs/system.html:222
-#, fuzzy
 msgid "Save Port"
-msgstr "CSV 导出"
+msgstr "保存端口"
 
 #: templates/_settings_tabs/system.html:225
 msgid ""
 "The number at the end of RetroDB's web address. After a change, press "
 "Restart Server, then open RetroDB at the new address."
-msgstr ""
+msgstr "RetroDB 网址末尾的数字。更改后,请点击重启服务器,然后用新地址打开 RetroDB。"
 
 #: templates/_settings_tabs/system.html:230
 msgid "Database Location"
@@ -16099,7 +16039,7 @@ msgstr "数据库位置"
 msgid ""
 "Something not working? See <a href=\"%(help_url)s\">Troubleshooting</a> "
 "in Help."
-msgstr ""
+msgstr "遇到问题?请查看帮助中的<a href=\"%(help_url)s\">故障排除</a>。"
 
 #: templates/_settings_tabs/system.html:245
 msgid "Logging Settings"
