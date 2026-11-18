@@ -18,7 +18,12 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--spacing-sm);
+    align-items: center;
     margin-top: var(--spacing-md);
+}
+
+.region-fix-progress {
+    flex: 1 1 240px;
 }
 
 .region-fix-system {
@@ -102,8 +107,14 @@
             <button type="button" class="btn btn-secondary" id="regionFixPause" data-on-click="regionFix.pause" hidden>{{ _('Pause') }}</button>
             <button type="button" class="btn btn-secondary" id="regionFixResume" data-on-click="regionFix.resume" hidden>{{ _('Resume') }}</button>
             <button type="button" class="btn btn-danger" id="regionFixStop" data-on-click="regionFix.stop" hidden>{{ _('Stop') }}</button>
-        </div>
+        {% else %}
+        <div class="region-fix-actions">
         {% endif %}
+            <div class="progress-container progress-container-sm region-fix-progress" id="regionFixProgress" hidden>
+                <div class="progress-bar" id="regionFixProgressBar" role="progressbar" aria-label="{{ _('Fix Box and Manual Regions') }}"
+                     aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-percent="0" style="width: 0%">0%</div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -116,7 +127,7 @@
         <p>{{ _('Each game below has a box, 3D box or manual this fix swapped. The picture is its box now. Open a game to look at it closely. The old files were deleted, so only the new region is shown.') }}</p>
         <p class="text-muted">{{ _('Reload the page to see games swapped since you opened it.') }}</p>
         {% for system_name, games in by_system.items() %}
-        <details class="region-fix-system" open>
+        <details class="region-fix-system" data-system="{{ system_name }}" open>
             <summary>{{ system_name }} ({{ games|length|format_number }})</summary>
             <div class="region-fix-grid">
                 {% for game in games %}
@@ -173,6 +184,14 @@ const regionFix = (function() {
             : (stops.length || status.cancelled) ? TEXT.stopped : TEXT.done;
         const said = template.replace(/\{(\w+)\}/g, (_m, key) => formatNumber(status[key] || 0));
         box.textContent = [said, ...stops].join(' ');
+        const total = status.total || 0;
+        const percent = total ? Math.min(100, Math.floor((status.current || 0) * 100 / total)) : 0;
+        const bar = document.getElementById('regionFixProgressBar');
+        document.getElementById('regionFixProgress').hidden = !total;
+        bar.style.width = `${percent}%`;
+        bar.dataset.percent = percent;
+        bar.setAttribute('aria-valuenow', percent);
+        bar.textContent = `${percent}%`;
     }
 
     function setButtons(status) {
@@ -223,5 +242,20 @@ const regionFix = (function() {
 })();
 window.regionFix = regionFix;
 document.addEventListener('DOMContentLoaded', regionFix.poll);
+
+// Systems the user closed stay closed on their next visit.
+document.addEventListener('DOMContentLoaded', function() {
+    const KEY = 'regionFixClosedSystems';
+    const saved = Storage.get(KEY, []);
+    const closed = new Set(Array.isArray(saved) ? saved : []);
+    document.querySelectorAll('.region-fix-system').forEach(function(section) {
+        const name = section.dataset.system;
+        if (closed.has(name)) section.open = false;
+        section.addEventListener('toggle', function() {
+            if (section.open) closed.delete(name); else closed.add(name);
+            Storage.set(KEY, [...closed]);
+        });
+    });
+});
 </script>
 {% endblock %}
