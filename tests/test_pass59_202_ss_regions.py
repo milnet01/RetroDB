@@ -539,6 +539,18 @@ def test_changed_list_names_each_swapped_file(library, monkeypatch):
     assert changed[0]['system_name'] == 'Mega Drive'
 
 
+def test_changed_list_alone_feeds_the_open_page(library, monkeypatch, admin_test_client):
+    """The page fetches the list by itself to add games as they swap."""
+    client, _csrf = admin_test_client()
+    _run_job(monkeypatch, RECORD)
+    part = client.get('/tools/box-regions/changes')
+    assert part.status_code == 200
+    assert b'data-game-id="1"' in part.data
+    assert b'id="regionFixSystems"' in part.data
+    assert b'regionFixStatus' not in part.data      # the list only, not the page
+    assert part.data.strip() in client.get('/tools/box-regions').data
+
+
 def test_pause_holds_the_run_until_resumed(library, monkeypatch):
     import threading
     import time

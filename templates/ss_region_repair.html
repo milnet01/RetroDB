@@ -122,38 +122,8 @@
     <div class="card-header">
         <h2 class="card-title"><span>🔍</span> {{ _('What changed') }}</h2>
     </div>
-    <div class="card-body">
-        {% if by_system %}
-        <p>{{ _('Each game below has a box, 3D box or manual this fix swapped. The picture is its box now. Open a game to look at it closely. The old files were deleted, so only the new region is shown.') }}</p>
-        <p class="text-muted">{{ _('Reload the page to see games swapped since you opened it.') }}</p>
-        {% for system_name, games in by_system.items() %}
-        <details class="region-fix-system" data-system="{{ system_name }}" open>
-            <summary>{{ system_name }} ({{ games|length|format_number }})</summary>
-            <div class="region-fix-grid">
-                {% for game in games %}
-                <a class="region-fix-game" href="{{ url_for('games.game_detail', game_id=game.id) }}">
-                    {% if game.boxart %}
-                    <img src="{{ url_for('static', filename='images/boxart/' ~ game.boxart) }}" alt="" loading="lazy">
-                    {% elif game.boxart_3d %}
-                    <img src="{{ url_for('static', filename='images/boxart_3d/' ~ game.boxart_3d) }}" alt="" loading="lazy">
-                    {% else %}
-                    <span class="region-fix-nopic" aria-hidden="true">📖</span>
-                    {% endif %}
-                    <span class="region-fix-title">{{ game.title }}</span>
-                    <ul>
-                        {% if game.region %}<li>{{ _('Your copy: %(region)s', region=game.region) }}</li>{% endif %}
-                        {% for kind, region in game.changes %}
-                        <li>{{ _('%(kind)s now from: %(region)s', kind=kind, region=region) }}</li>
-                        {% endfor %}
-                    </ul>
-                </a>
-                {% endfor %}
-            </div>
-        </details>
-        {% endfor %}
-        {% else %}
-        <p>{{ _('Nothing has been swapped yet.') }}</p>
-        {% endif %}
+    <div class="card-body" id="regionFixChanges">
+        {% include '_ss_region_changes.html' %}
     </div>
 </div>
 </div>
@@ -206,12 +176,86 @@ const regionFix = (function() {
         toggle('regionFixStop', running);
     }
 
+    // Systems the user closed stay closed on their next visit.
+    const CLOSED_KEY = 'regionFixClosedSystems';
+    let closed = null;
+    function keepClosed(section) {
+        if (section.dataset.watched) return;
+        section.dataset.watched = '1';
+        if (!closed) {
+            const saved = Storage.get(CLOSED_KEY, []);
+            closed = new Set(Array.isArray(saved) ? saved : []);
+        }
+        const name = section.dataset.system;
+        if (closed.has(name)) section.open = false;
+        section.addEventListener('toggle', function() {
+            if (section.open) closed.delete(name); else closed.add(name);
+            Storage.set(CLOSED_KEY, [...closed]);
+        });
+    }
+
+    // Puts the `fresh` nodes into `parent` in their order. A child `parent`
+    // already shows under the same key stays, unless `pick(old, node)` returns
+    // the new one; children the fresh list lacks go.
+    function merge(parent, fresh, key, pick) {
+        const shown = new Map([...parent.children].map(n => [key(n), n]));
+        const wanted = new Set();
+        let cursor = parent.firstElementChild;
+        fresh.forEach(node => {
+            wanted.add(key(node));
+            const old = shown.get(key(node));
+            const keep = old ? pick(old, node) : node;
+            if (keep !== old) {
+                if (old) old.replaceWith(keep); else parent.insertBefore(keep, cursor);
+            }
+            cursor = keep.nextElementSibling;
+        });
+        shown.forEach((node, k) => { if (!wanted.has(k)) node.remove(); });
+    }
+
+    // Games swapped since the page opened join the list where they belong.
+    // Cards already shown are left in place, so the page does not jump.
+    function mergeList(html) {
+        const fresh = document.createElement('template');
+        fresh.innerHTML = html;
+        const body = document.getElementById('regionFixChanges');
+        const list = document.getElementById('regionFixSystems');
+        const freshList = fresh.content.getElementById('regionFixSystems');
+        if (!list || !freshList) {
+            body.replaceChildren(fresh.content);
+        } else {
+            merge(list, [...freshList.children], s => s.dataset.system, (old, section) => {
+                old.querySelector('summary').textContent = section.querySelector('summary').textContent;
+                merge(old.querySelector('.region-fix-grid'),
+                      [...section.querySelectorAll('.region-fix-game')], c => c.dataset.gameId,
+                      (had, card) => had.innerHTML === card.innerHTML ? had : card);
+                return old;
+            });
+        }
+        body.querySelectorAll('.region-fix-system').forEach(keepClosed);
+    }
+
+    // The swap count the list was last fetched at; null until the first poll.
+    let listedSwaps = null;
+    function refreshList(status) {
+        const swaps = status.replaced || 0;
+        if (listedSwaps === null && !status.running) listedSwaps = swaps;
+        if (swaps === listedSwaps) return;
+        fetch('/tools/box-regions/changes')
+            .then(r => r.ok ? r.text() : Promise.reject(r.status))
+            .then(html => { mergeList(html); listedSwaps = swaps; })
+            .catch(() => {});
+    }
+
     function poll() {
         clearTimeout(timer);
         fetch('/api/maintenance/ss-region-repair/status')
             .then(r => r.json())
             .then(status => {
-                if (status.running || status.completed) show(status);
+                if (status.running || status.completed) {
+                    show(status);
+                    refreshList(status);
+                }
                 setButtons(status);
                 if (status.running) timer = setTimeout(poll, 3000);
             })
@@ -222,6 +266,7 @@ const regionFix = (function() {
 
     return {
         poll,
+        keepClosed,
         start() {
             showConfirm(TEXT.confirmTitle, TEXT.confirm, function() {
                 fetch('/api/maintenance/ss-region-repair/start', post)
@@ -241,21 +286,9 @@ const regionFix = (function() {
     };
 })();
 window.regionFix = regionFix;
-document.addEventListener('DOMContentLoaded', regionFix.poll);
-
-// Systems the user closed stay closed on their next visit.
 document.addEventListener('DOMContentLoaded', function() {
-    const KEY = 'regionFixClosedSystems';
-    const saved = Storage.get(KEY, []);
-    const closed = new Set(Array.isArray(saved) ? saved : []);
-    document.querySelectorAll('.region-fix-system').forEach(function(section) {
-        const name = section.dataset.system;
-        if (closed.has(name)) section.open = false;
-        section.addEventListener('toggle', function() {
-            if (section.open) closed.delete(name); else closed.add(name);
-            Storage.set(KEY, [...closed]);
-        });
-    });
+    document.querySelectorAll('.region-fix-system').forEach(regionFix.keepClosed);
+    regionFix.poll();
 });
 </script>
 {% endblock %}

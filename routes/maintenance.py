@@ -541,10 +541,8 @@ def _ss_region_name(code):
     return names.get(code, code.upper())
 
 
-@bp.route('/tools/box-regions')
-@login_required
-def ss_region_repair_page():
-    """Fix Box and Manual Regions: its controls and every game it changed."""
+def _swapped_by_system():
+    """Every game the region fix changed, grouped by console, its changes in words."""
     from services.jobs.ss_region_repair import swapped_games
     kind_names = {'boxart': _('Box'), 'boxart_3d': _('3D box'), 'manual': _('Manual')}
     by_system = {}
@@ -552,7 +550,21 @@ def ss_region_repair_page():
         game['changes'] = [(kind_names[column], _ss_region_name(code))
                            for column, code in game['changes']]
         by_system.setdefault(game['system_name'], []).append(game)
-    return render_template('ss_region_repair.html', by_system=by_system)
+    return by_system
+
+
+@bp.route('/tools/box-regions')
+@login_required
+def ss_region_repair_page():
+    """Fix Box and Manual Regions: its controls and every game it changed."""
+    return render_template('ss_region_repair.html', by_system=_swapped_by_system())
+
+
+@bp.route('/tools/box-regions/changes')
+@login_required
+def ss_region_repair_changes():
+    """The page's list of changed games alone, fetched as the fix swaps more."""
+    return render_template('_ss_region_changes.html', by_system=_swapped_by_system())
 
 
 @bp.route('/api/restart', methods=['POST'])

@@ -32,9 +32,12 @@
     min-width: 0;
 }
 
+/* An empty bar has no room for its label; shown, it would be clipped to "%". */
 .progress-bar[data-percent="0"] {
     min-width: 0;
     width: 0%;
+    color: transparent;
+    text-shadow: none;
 }
 
 .progress-bar:not([data-percent="0"]) {
