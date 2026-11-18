@@ -3182,7 +3182,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Source: translate-mirror session report 2026-11-18.
   Lanes: i18n.
 
-- 📋 [PASS-59-321] **System names and specs reach existing installs: move SYSTEM_NAME_MAP and SYSTEM_SPECS out of config.py (fix, M).**
+- ✅ [PASS-59-321] **System names and specs reach existing installs: move SYSTEM_NAME_MAP and SYSTEM_SPECS out of config.py (fix, M).**
   - An update never rewrites config.py
     (tests/test_scraper_platform_maps.py::test_maps_reach_existing_installs
     says so for the scraper maps, which were moved out for that reason).
@@ -3197,6 +3197,12 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     services/game_utils.system_defaults, routes/clz_import.py.
   - Then migration 045's rename reaches those installs on the next scan or
     a later migration; check which.
+  Done 2026-11-18: both tables live in services/system_catalog.py;
+  config.example.py no longer has them, and no reader or test uses
+  config for them
+  (tests/test_scraper_platform_maps.py::test_system_tables_reach_existing_installs).
+  No config.py override: an old config.py keeps an unused copy.
+  Migration 045 renames a bare XBOXSERIESX row from the shipped map.
   **Layman:** A new console name or its specs added in an update only shows on new installs today; this makes every update carry them.
   Kind: fix.
   Source: session-2026-11-18 Xbox Series X|S fix.

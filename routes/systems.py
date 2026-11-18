@@ -16,6 +16,7 @@ from services.auth import login_required, admin_required
 from services.game_utils import (find_image_file, is_ra_supported, get_ra_supported_systems,
                                  detect_system_type)
 from services.game_query import listed_sql
+from services.system_catalog import SYSTEM_NAME_MAP, SYSTEM_SPECS
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +89,7 @@ def systems():
                 'local_trophies': folder in local_trophy_folders
             }
 
-        return render_template('systems.html', systems=systems_list, system_specs=config.SYSTEM_SPECS,
+        return render_template('systems.html', systems=systems_list, system_specs=SYSTEM_SPECS,
                              system_features=system_features)
     except Exception as e:
         logger.error(f"Systems error: {e}", exc_info=True)
@@ -221,15 +222,14 @@ def api_refresh_system_types():
 @admin_required
 @handle_api_errors
 def api_refresh_system_names():
-    """Update system names from config mappings"""
+    """Update system names from SYSTEM_NAME_MAP"""
     updated = 0
     systems = query("SELECT id, folder, name FROM systems")
 
     updates_list = []
     for system in systems:
         folder = system['folder']
-        # Get mapped name from config
-        mapped_name = config.SYSTEM_NAME_MAP.get(folder)
+        mapped_name = SYSTEM_NAME_MAP.get(folder)
 
         if mapped_name and system['name'] != mapped_name:
             updates_list.append((mapped_name, system['id']))

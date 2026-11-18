@@ -16,6 +16,7 @@ from services.jobs.base import (
     resolve_terminal_status, shutdown_requested,
     acquire_job_singleton_lock, release_singleton_fd,
 )
+from services.system_catalog import SYSTEM_SPECS
 
 logger = logging.getLogger(__name__)
 
@@ -152,7 +153,6 @@ class MuseumGenerateJob:
 
     def _worker(self, system_ids=None):
         """Background worker — loops systems and generates AI content."""
-        import config
         from scraper.scrape_ai import (
             _get_active_provider, _call_gemini, _call_openai, _call_claude,
         )
@@ -285,7 +285,7 @@ class MuseumGenerateJob:
                         continue
 
                 # Get specs for prompt context
-                specs = config.SYSTEM_SPECS.get(folder, {})
+                specs = SYSTEM_SPECS.get(folder, {})
 
                 # Build prompt for history + summary
                 prompt = _build_museum_prompt(system_name, specs)

@@ -489,12 +489,12 @@ def test_every_table_folder_is_a_known_system():
     """The table is keyed by systems.folder; a folder no library uses (the
     spec's draft said superfamicom, libraries say sfc) is never matched."""
     import json
-    import config
     from services.player_cores import TABLE_PATH
+    from services.system_catalog import SYSTEM_NAME_MAP
     with open(TABLE_PATH, encoding='utf-8') as f:
         table = json.load(f)
-    unknown = sorted(k for k in table if not k.startswith('_') and k not in config.SYSTEM_NAME_MAP)
-    assert not unknown, f"folders not in config.SYSTEM_NAME_MAP: {unknown}"
+    unknown = sorted(k for k in table if not k.startswith('_') and k not in SYSTEM_NAME_MAP)
+    assert not unknown, f"folders not in SYSTEM_NAME_MAP: {unknown}"
 
 
 # -----------------------------------------------------------------------------

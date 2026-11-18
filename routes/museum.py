@@ -19,6 +19,7 @@ from urllib.parse import urlparse
 import config
 from services.database import get_request_db
 from services.auth import login_required, editor_required
+from services.system_catalog import SYSTEM_SPECS
 
 logger = logging.getLogger(__name__)
 
@@ -199,7 +200,7 @@ def _get_top_games(system_id, museum_data):
 def _get_system_type(folder):
     """Determine system type from generation string."""
     from services.game_utils import COMPUTER_SYSTEMS, HANDHELD_SYSTEMS
-    specs = config.SYSTEM_SPECS.get(folder, {})
+    specs = SYSTEM_SPECS.get(folder, {})
     gen = specs.get('generation', '')
 
     if folder in COMPUTER_SYSTEMS:
@@ -245,7 +246,7 @@ def museum():
     generations = {}
     for system in systems:
         folder = system['folder']
-        specs = config.SYSTEM_SPECS.get(folder, {})
+        specs = SYSTEM_SPECS.get(folder, {})
         gen = specs.get('generation', '')
 
         # Classify into generation bucket
@@ -319,7 +320,7 @@ def museum_system(system_id):
         return render_template('museum_system.html', system=None, error=_('System not found')), 404
 
     folder = system['folder']
-    specs = config.SYSTEM_SPECS.get(folder, {})
+    specs = SYSTEM_SPECS.get(folder, {})
     hw_image = _find_hardware_image(folder)
 
     # Museum content
@@ -404,7 +405,7 @@ def generate_system(system_id):
     if not call_fn:
         return jsonify({'success': False, 'error': _('Unknown provider: %(provider)s') % {'provider': provider}}), 400
 
-    specs = config.SYSTEM_SPECS.get(system['folder'], {})
+    specs = SYSTEM_SPECS.get(system['folder'], {})
     prompt = _build_museum_prompt(system['name'], specs)
 
     kwargs = {}

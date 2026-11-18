@@ -5,6 +5,8 @@
 # template filters, and stats endpoints.
 # =============================================================================
 
+from services.system_catalog import SYSTEM_SPECS
+
 MANUFACTURER_MAP = {
     'nes': 'Nintendo', 'snes': 'Nintendo', 'n64': 'Nintendo', 'gc': 'Nintendo',
     'gamecube': 'Nintendo', 'wii': 'Nintendo', 'wiiu': 'Nintendo', 'switch': 'Nintendo',
@@ -30,7 +32,7 @@ MANUFACTURER_MAP = {
 def get_manufacturer(folder):
     """The maker a system folder groups under on Analytics.
 
-    MANUFACTURER_MAP first, then the first maker `config.SYSTEM_SPECS` names
+    MANUFACTURER_MAP first, then the first maker `SYSTEM_SPECS` names
     ("NEC / Hudson Soft" groups under NEC), so an ES-DE folder the map lacks
     is not "Other" (PASS-59-249).
     """
@@ -39,8 +41,7 @@ def get_manufacturer(folder):
     folder = folder.lower()
     if folder in MANUFACTURER_MAP:
         return MANUFACTURER_MAP[folder]
-    import config
-    maker = (getattr(config, 'SYSTEM_SPECS', {}).get(folder) or {}).get('manufacturer')
+    maker = (SYSTEM_SPECS.get(folder) or {}).get('manufacturer')
     return maker.split(' / ')[0].strip() if maker else 'Other'
 
 

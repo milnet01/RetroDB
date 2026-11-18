@@ -17,6 +17,7 @@ from services.analytics import invalidate_analytics_cache
 from services.database import get_db, query, execute
 from services.game_utils import system_defaults
 from services.normalization import normalize_genre
+from services.system_catalog import SYSTEM_NAME_MAP
 from flask import g
 
 from services.auth import editor_required, login_required
@@ -502,7 +503,7 @@ def api_clz_parse():
             game['existing'] = key in existing_games
         elif matched_folder and may_create:
             game['system_id'] = None
-            game['system_name'] = config.SYSTEM_NAME_MAP.get(matched_folder, matched_folder.upper())
+            game['system_name'] = SYSTEM_NAME_MAP.get(matched_folder, matched_folder.upper())
             game['system_folder'] = matched_folder
             game['new_system'] = True
             game['existing'] = False

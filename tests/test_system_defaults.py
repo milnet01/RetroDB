@@ -9,7 +9,7 @@ import sqlite3
 import pytest
 
 import config
-from services import game_utils
+from services import game_utils, system_catalog
 from tests._versions_util import vdb  # noqa: F401  (a fixture)
 from tests.test_migration_015 import _load
 
@@ -26,7 +26,7 @@ def logo_roots(tmp_path, monkeypatch):
     (tmp_path / 'images' / 'systems').mkdir(parents=True)
     monkeypatch.setattr(config, 'STATIC_PATH', str(tmp_path / 'static'))
     monkeypatch.setattr(config, 'IMAGE_PATH', str(tmp_path / 'images'))
-    monkeypatch.setitem(config.SYSTEM_NAME_MAP, FOLDER, 'Maker Console')
+    monkeypatch.setitem(system_catalog.SYSTEM_NAME_MAP, FOLDER, 'Maker Console')
     monkeypatch.setitem(game_utils.SYSTEM_TYPE_MAP, FOLDER, 'Console')
     return tmp_path
 

@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import config
 import settings_manager
-from config import SYSTEM_NAME_MAP
+from services.system_catalog import SYSTEM_NAME_MAP
 from scraper.base_scraper import get_scraper_conn
 from services.rom_scanner import RomPathNotConfigured
 from services.game_utils import find_image_file

@@ -9,8 +9,8 @@ import pathlib
 
 import pytest
 
-import config
 from scraper import hltb_lookup, retroachievements, scrape_igdb, scrape_screenscraper, scrape_thegamesdb
+from services.system_catalog import SYSTEM_NAME_MAP
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
@@ -67,7 +67,7 @@ def test_igdb_platform(name, expected):
 def test_folder_and_display_name_agree(lookup):
     """The scrapers are handed a system's name, other callers its folder."""
     differ = {folder: (lookup(folder), lookup(name))
-              for folder, name in config.SYSTEM_NAME_MAP.items()
+              for folder, name in SYSTEM_NAME_MAP.items()
               if lookup(folder) != lookup(name)}
     assert not differ
 
@@ -86,6 +86,44 @@ def test_maps_reach_existing_installs(module, name):
     assigned = {t.id for node in example.body if isinstance(node, ast.Assign)
                 for t in node.targets if isinstance(t, ast.Name)}
     assert name not in assigned
+
+
+def _reads_from_config(tree, name):
+    """True where the module imports `name` from config or reads config.<name>."""
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module == 'config' \
+                and any(alias.name == name for alias in node.names):
+            return True
+        if isinstance(node, ast.Attribute) and node.attr == name \
+                and isinstance(node.value, ast.Name) and node.value.id == 'config':
+            return True
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) \
+                and node.func.id == 'getattr' and len(node.args) >= 2 \
+                and isinstance(node.args[0], ast.Name) and node.args[0].id == 'config' \
+                and isinstance(node.args[1], ast.Constant) and node.args[1].value == name:
+            return True
+    return False
+
+
+@pytest.mark.parametrize('name', ['SYSTEM_NAME_MAP', 'SYSTEM_SPECS'])
+def test_system_tables_reach_existing_installs(name):
+    """PASS-59-321: the system names and specs ship outside config.py."""
+    example = ast.parse((ROOT / 'config.example.py').read_text(encoding='utf-8'))
+    assigned = {t.id for node in example.body if isinstance(node, ast.Assign)
+                for t in node.targets if isinstance(t, ast.Name)}
+    assert name not in assigned
+    sources = [ROOT / 'app.py'] + [p for d in ('routes', 'services', 'scraper', 'tests')
+                                   for p in (ROOT / d).rglob('*.py')]
+    readers = sorted(str(p.relative_to(ROOT)) for p in sources
+                     if _reads_from_config(ast.parse(p.read_text(encoding='utf-8')), name))
+    assert not readers
+
+
+def test_system_catalog_names_series_x():
+    """The 2026-11-18 Xbox Series X|S name and specs, which an old config.py lacks."""
+    from services import system_catalog
+    assert system_catalog.SYSTEM_NAME_MAP['xboxseriesx'] == 'Microsoft Xbox Series X|S'
+    assert system_catalog.SYSTEM_SPECS['xboxseriesx']['manufacturer'] == 'Microsoft'
 
 
 def _fake_tgdb(monkeypatch, games_by_platform):

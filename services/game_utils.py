@@ -9,6 +9,7 @@ import os
 import re
 
 import config
+from services.system_catalog import SYSTEM_NAME_MAP
 
 
 # =============================================================================
@@ -1620,7 +1621,7 @@ def system_defaults(folder):
         logo, _path = find_image_file(os.path.join(root, 'systems'), folder)
         if logo:
             break
-    name = config.SYSTEM_NAME_MAP.get(folder, folder.upper())
+    name = SYSTEM_NAME_MAP.get(folder, folder.upper())
     return name, logo, detect_system_type(folder)
 
 
