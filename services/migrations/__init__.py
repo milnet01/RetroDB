@@ -68,6 +68,7 @@ MIGRATIONS = [
     '041_psn_hand_links',
     '042_drop_xbox_oauth_tokens',
     '043_not_bonus_disc',
+    '044_ss_region_checked',
 ]
 
 

@@ -4,6 +4,7 @@ The region lists are the real orders from the Sonic 2 and Gran Turismo 4
 replies: ScreenScraper lists regions alphabetically, and the first was taken.
 No test here reaches ScreenScraper.
 """
+import json
 import sqlite3
 
 import pytest
@@ -255,12 +256,12 @@ def library(tmp_path, monkeypatch):
 
 
 def _run_job(monkeypatch, reply, image_ok=True, manual_bytes=b'%PDF-1.4'):
-    """Run the job's worker on this thread with a canned search reply."""
+    """Run the job's worker on this thread with a canned lookup reply."""
     from services.jobs import ss_region_repair as mod
     searches, downloads = [], []
 
-    def search(title, folder, *a, **k):
-        searches.append(title)
+    def lookup(ss_id, *a, **k):
+        searches.append(ss_id)
         return reply
 
     def image(url, path, image_type, **_):
@@ -276,7 +277,7 @@ def _run_job(monkeypatch, reply, image_ok=True, manual_bytes=b'%PDF-1.4'):
             f.write(manual_bytes)
         return True
 
-    monkeypatch.setattr(mod, 'search_game', search)
+    monkeypatch.setattr(mod, 'get_game_by_id', lookup)
     monkeypatch.setattr(mod, '_download_and_finalize', image)
     monkeypatch.setattr(mod, 'download_ss_media', manual)
     monkeypatch.setattr(mod, 'preferred_image_extension', lambda _t, ext: '.webp')
@@ -288,7 +289,7 @@ def _run_job(monkeypatch, reply, image_ok=True, manual_bytes=b'%PDF-1.4'):
 
 def test_repair_swaps_a_wrong_region_box_and_manual(library, monkeypatch):
     row, images = library
-    job, _, downloads = _run_job(monkeypatch, [{'id': 76}, RECORD])
+    job, _, downloads = _run_job(monkeypatch, RECORD)
     # 3D lists only the USA, so the stored copy is already right.
     assert downloads == ['https://ss.example/box-2D/us', 'https://ss.example/manuel/us']
     game = row()
@@ -306,7 +307,7 @@ def test_repair_swaps_a_wrong_region_box_and_manual(library, monkeypatch):
 
 def test_repair_keeps_the_old_file_when_the_download_fails(library, monkeypatch):
     row, images = library
-    job, _, _ = _run_job(monkeypatch, [RECORD], image_ok=False)
+    job, _, _ = _run_job(monkeypatch, RECORD, image_ok=False)
     assert row()['boxart'] == '1_ss_boxart.webp'
     assert (images / 'boxart' / '1_ss_boxart.webp').read_bytes() == b'old'
     assert job.get_status()['failed'] == 1
@@ -314,7 +315,7 @@ def test_repair_keeps_the_old_file_when_the_download_fails(library, monkeypatch)
 
 def test_repair_refuses_a_manual_that_is_not_a_document(library, monkeypatch):
     row, images = library
-    job, _, _ = _run_job(monkeypatch, [RECORD], manual_bytes=b'NOMEDIA')
+    job, _, _ = _run_job(monkeypatch, RECORD, manual_bytes=b'NOMEDIA')
     assert row()['manual'] == '1_ss_manual.pdf'
     assert (images / 'manuals' / '1_ss_manual.pdf').read_bytes() == b'old'
     assert not (images / 'manuals' / '1_ss_manual_us.pdf').exists()
@@ -323,7 +324,7 @@ def test_repair_refuses_a_manual_that_is_not_a_document(library, monkeypatch):
 
 def test_repair_leaves_a_game_alone_when_the_reply_lacks_its_id(library, monkeypatch):
     row, images = library
-    job, _, downloads = _run_job(monkeypatch, [{'id': 76, 'medias': RECORD['medias']}])
+    job, _, downloads = _run_job(monkeypatch, {'id': 76, 'medias': RECORD['medias']})
     assert downloads == []
     assert row()['boxart'] == '1_ss_boxart.webp'
     assert job.get_status()['no_match'] == 1
@@ -331,11 +332,63 @@ def test_repair_leaves_a_game_alone_when_the_reply_lacks_its_id(library, monkeyp
 
 def test_repair_skips_a_game_it_already_repaired(library, monkeypatch):
     row, _ = library
-    _run_job(monkeypatch, [RECORD])
-    # 3D still holds its first-listed name, so the game is checked once more.
-    _, _, downloads = _run_job(monkeypatch, [RECORD])
-    assert downloads == []
+    _run_job(monkeypatch, RECORD)
+    # 3D keeps its first-listed name, but the game is settled: no second lookup.
+    _, searches, downloads = _run_job(monkeypatch, RECORD)
+    assert (searches, downloads) == ([], [])
     assert row()['boxart'] == '1_ss_boxart_us.webp'
+    assert row()['ss_region_checked'] == 1
+
+
+def test_repair_asks_again_after_a_failed_download(library, monkeypatch):
+    row, _ = library
+    _run_job(monkeypatch, RECORD, image_ok=False)
+    assert row()['ss_region_checked'] == 0
+    _, searches, _ = _run_job(monkeypatch, RECORD)
+    assert searches == [77]
+    assert row()['ss_region_checked'] == 1
+
+
+def test_repair_asks_again_about_a_game_not_found(library, monkeypatch):
+    row, _ = library
+    _run_job(monkeypatch, None)
+    assert row()['ss_region_checked'] == 0
+    _, searches, _ = _run_job(monkeypatch, None)
+    assert searches == [77]
+
+
+def _scraped_at(stamp, first_run=None):
+    conn = sqlite3.connect(config.DB_PATH)
+    conn.execute("UPDATE games SET scrape_history = ?",
+                 (json.dumps([{'timestamp': stamp, 'primary_source': 'screenscraper'}]),))
+    if first_run:
+        conn.execute("INSERT INTO job_queue (job_type, status, created_at, updated_at) "
+                     "VALUES ('ss_region_repair', 'dismissed', ?, ?)", (first_run, first_run))
+    conn.commit()
+    conn.close()
+
+
+def test_repair_settles_a_game_first_scraped_after_its_first_run(library, monkeypatch):
+    row, _ = library
+    _scraped_at('2026-11-05T10:00:00', first_run='2026-11-01T19:13:32+00:00')
+    _, searches, downloads = _run_job(monkeypatch, RECORD)
+    assert (searches, downloads) == ([], [])
+    assert row()['boxart'] == '1_ss_boxart.webp'
+    assert row()['ss_region_checked'] == 1
+
+
+def test_repair_asks_about_a_game_scraped_before_its_first_run(library, monkeypatch):
+    row, _ = library
+    _scraped_at('2026-07-04T15:01:07', first_run='2026-11-01T19:13:32+00:00')
+    _, searches, _ = _run_job(monkeypatch, RECORD)
+    assert searches == [77]
+    assert row()['boxart'] == '1_ss_boxart_us.webp'
+
+
+def test_repair_with_no_earlier_run_asks_about_every_scraped_game(library, monkeypatch):
+    _scraped_at('2026-11-05T10:00:00')
+    _, searches, _ = _run_job(monkeypatch, RECORD)
+    assert searches == [77]
 
 
 def test_repair_ignores_media_from_other_sources(library, monkeypatch):
@@ -344,7 +397,7 @@ def test_repair_ignores_media_from_other_sources(library, monkeypatch):
     conn.execute("UPDATE games SET boxart = '1_igdb.webp', boxart_3d = NULL, manual = NULL")
     conn.commit()
     conn.close()
-    _, searches, _ = _run_job(monkeypatch, [RECORD])
+    _, searches, _ = _run_job(monkeypatch, RECORD)
     assert searches == []
     assert row()['boxart'] == '1_igdb.webp'
 
@@ -389,7 +442,7 @@ def test_repair_leaves_an_unmapped_system_alone(library, monkeypatch):
     conn.execute("UPDATE systems SET folder = 'not-a-system'")
     conn.commit()
     conn.close()
-    _, searches, _ = _run_job(monkeypatch, [RECORD])
+    _, searches, _ = _run_job(monkeypatch, RECORD)
     assert searches == []
 
 
@@ -420,7 +473,7 @@ def test_status_route_has_what_the_card_reads(admin_test_client):
 def test_changed_list_names_each_swapped_file(library, monkeypatch):
     from services.jobs.ss_region_repair import swapped_games
     assert swapped_games() == []
-    _run_job(monkeypatch, [RECORD])
+    _run_job(monkeypatch, RECORD)
     changed = swapped_games()
     assert [g['id'] for g in changed] == [1]
     # The 3D box kept its first-listed file, so it is not listed as changed.
@@ -434,7 +487,7 @@ def test_pause_holds_the_run_until_resumed(library, monkeypatch):
     from services.jobs import ss_region_repair as mod
     _more_games(3)
     searches = []
-    monkeypatch.setattr(mod, 'search_game', lambda title, *a, **k: searches.append(title))
+    monkeypatch.setattr(mod, 'get_game_by_id', lambda ss_id, *a, **k: searches.append(ss_id))
     job = mod.SsRegionRepairJob()
     job.running = True
     assert job.pause() == {'success': True}
@@ -453,7 +506,7 @@ def test_stop_ends_a_paused_run(library, monkeypatch):
     import threading
     from services.jobs import ss_region_repair as mod
     searches = []
-    monkeypatch.setattr(mod, 'search_game', lambda title, *a, **k: searches.append(title))
+    monkeypatch.setattr(mod, 'get_game_by_id', lambda ss_id, *a, **k: searches.append(ss_id))
     job = mod.SsRegionRepairJob()
     job.running = True
     job.pause()

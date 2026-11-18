@@ -28,16 +28,16 @@ def test_one_game_raising_does_not_end_the_region_repair(library, monkeypatch): 
     from services.jobs import ss_region_repair as mod
     seen = []
 
-    def search(title, folder, *a, **k):
-        seen.append(title)
-        if title == 'Sonic':
+    def lookup(ss_id, *a, **k):
+        seen.append(ss_id)
+        if ss_id == 77:
             raise ConnectionError('network down')
         return None
-    monkeypatch.setattr(mod, 'search_game', search)
+    monkeypatch.setattr(mod, 'get_game_by_id', lookup)
     job = mod.SsRegionRepairJob()
     job.running = True
     job._worker({'screenscraper_username': 'u', 'screenscraper_password': 'p'})
-    assert sorted(seen) == ['Sonic', 'Sonic 2']
+    assert sorted(seen) == [77, 78]
     assert job.error_message is None
     assert job.failed_count == 1
 

@@ -9,10 +9,16 @@
 #
 # Only files a scrape named `<id>_ss_boxart.*`, `<id>_ss_boxart3d.*` or
 # `<id>_ss_manual.*` are touched, so a picture from anywhere else is safe. A
-# swapped file's name gains its region, which also marks it as done for a later
-# run. The old file goes only after the new one is saved and recorded.
+# swapped file's name gains its region. The old file goes only after the new
+# one is saved and recorded.
+#
+# ScreenScraper is asked only where a file may be wrong, and once per game:
+# `games.ss_region_checked` marks a game whose files are settled, and a game
+# first scraped after this job first ran was scraped by region already, so it
+# is marked without asking.
 # =============================================================================
 
+import json
 import logging
 import os
 import re
@@ -25,7 +31,7 @@ from scraper import service_limits
 from scraper.metadata_merger import (
     _download_and_finalize, _MEDIA_EXTS, download_ss_media, load_scraper_settings,
 )
-from scraper.scrape_screenscraper import get_system_id, search_game
+from scraper.scrape_screenscraper import get_game_by_id, get_system_id
 from scraper.ss_regions import by_region, own_region
 from services.database import query
 from services.game_media_service import remove_media_file
@@ -93,6 +99,31 @@ def swapped_games():
         if changes:
             games.append({**dict(row), 'changes': changes})
     return games
+
+
+def _first_scrape(history):
+    """When the game's earliest history entry was written, else None."""
+    try:
+        stamps = [e.get('timestamp') for e in json.loads(history or '[]')
+                  if isinstance(e, dict) and e.get('timestamp')]
+        return min(datetime.fromisoformat(t) for t in stamps) if stamps else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _region_aware_since(conn):
+    """The earliest moment this install surely chose boxes by region.
+
+    This job shipped with region-aware scraping, so its first recorded run
+    proves it. History entries hold local time without a zone, so the answer
+    does too. Job history is pruned, so a later answer only means more asking.
+    """
+    row = conn.execute(
+        "SELECT MIN(created_at) FROM job_queue WHERE job_type = 'ss_region_repair'"
+    ).fetchone()
+    if row and row[0]:
+        return datetime.fromisoformat(row[0]).astimezone().replace(tzinfo=None)
+    return datetime.now()
 
 
 def _fetch(chosen, path, column):
@@ -201,20 +232,37 @@ class SsRegionRepairJob:
             }
 
     def _candidates(self):
-        """Games holding an old-named file and a known ScreenScraper id."""
+        """Games holding an old-named file that may be from the wrong region.
+
+        Marks, without asking ScreenScraper, each game first scraped after
+        region-aware scraping began, and returns the rest.
+        """
         conn = _get_conn()
         try:
             rows = conn.execute("""
                 SELECT g.id, g.title, g.rom_path, g.region, g.screenscraper_id,
-                       g.boxart, g.boxart_3d, g.manual, s.folder AS system_folder
+                       g.boxart, g.boxart_3d, g.manual, g.scrape_history,
+                       s.folder AS system_folder
                 FROM games g JOIN systems s ON g.system_id = s.id
-                WHERE g.screenscraper_id IS NOT NULL
+                WHERE g.screenscraper_id IS NOT NULL AND g.ss_region_checked = 0
                 ORDER BY g.id
             """).fetchall()
+            since = _region_aware_since(conn)
+            games, settled = [], []
+            for row in rows:
+                if not any(_is_old_name(row[column], stem) for column, _t, _d, stem, _e in _KINDS):
+                    continue
+                first = _first_scrape(row['scrape_history'])
+                if first and first >= since:
+                    settled.append((row['id'],))
+                else:
+                    games.append(dict(row))
+            if settled:
+                conn.executemany("UPDATE games SET ss_region_checked = 1 WHERE id = ?", settled)
+                _commit_with_retry(conn)
         finally:
             conn.close()
-        return [dict(r) for r in rows
-                if any(_is_old_name(r[column], stem) for column, _t, _d, stem, _e in _KINDS)]
+        return games
 
     def _repair_kind(self, conn, game, record, kind):
         """Swap one file if a nearer region exists. True when a file changed."""
@@ -246,35 +294,35 @@ class SsRegionRepairJob:
         return bool(changed)
 
     def _repair_game(self, conn, game, keys):
-        """Look one game up and repair it."""
-        results = search_game(
-            game['title'], game['system_folder'],
+        """Look one game up by its ScreenScraper id and repair it."""
+        record = get_game_by_id(
+            game['screenscraper_id'],
             keys['screenscraper_username'], keys['screenscraper_password'],
             keys.get('screenscraper_devid', ''), keys.get('screenscraper_devpassword', ''),
+            system_id=get_system_id(game['system_folder']),
         )
-        if not results:
-            # A search cut short by the day's limit says nothing about the game.
+        if not record or str(record.get('id')) != str(game['screenscraper_id']):
+            # A lookup cut short by the day's limit says nothing about the game.
             if not service_limits.stopped(service_limits.SCREENSCRAPER):
                 with self._lock:
                     self.no_match_count += 1
             return
-        wanted = str(game['screenscraper_id'])
-        record = next((r for r in results if str(r.get('id')) == wanted), None)
-        if record is None:
-            with self._lock:
-                self.no_match_count += 1
-            return
+        settled = True
         for kind in _KINDS:
             try:
                 changed = self._repair_kind(conn, game, record, kind)
             except Exception as e:
                 logger.warning(f"Region repair: game {game['id']}: {e}")
+                settled = False
                 with self._lock:
                     self.failed_count += 1
                 continue
             if changed:
                 with self._lock:
                     self.replaced_count += 1
+        if settled:
+            conn.execute("UPDATE games SET ss_region_checked = 1 WHERE id = ?", (game['id'],))
+            _commit_with_retry(conn)
 
     def _worker(self, keys):
         persist_id = None

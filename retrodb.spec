@@ -74,6 +74,7 @@ _MIGRATION_SCRIPTS = [
     'services.migrations.scripts.041_psn_hand_links',
     'services.migrations.scripts.042_drop_xbox_oauth_tokens',
     'services.migrations.scripts.043_not_bonus_disc',
+    'services.migrations.scripts.044_ss_region_checked',
 ]
 
 # Some pip packages have their own runtime imports that PyInstaller's

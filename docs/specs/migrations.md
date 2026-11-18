@@ -569,6 +569,7 @@ your migration — not in the runner.
 | 041 | `041_psn_hand_links.py` | Add `psn_games.link_set_by_hand` (0 by default); set it to 1 where the link is to the game the PSN import made for that title. | PASS-59-260. A sync replaces only a link no person set; older links are checked again (user, 2026-11-06). |
 | 042 | `042_drop_xbox_oauth_tokens.py` | Delete `user_platform_tokens` rows for `xbox` that hold no `api_key`. | PASS-59-261. Xbox moved to a per-user OpenXBL key; rows from the retired Microsoft sign-in held unusable OAuth tokens. |
 | 043 | `043_not_bonus_disc.py` | Add `games.not_bonus_disc` (INTEGER, 0 by default): 1 when a person unlinked or unmarked the disc. | PASS-59-262. Auto-link skips it; a manual link or mark clears it. |
+| 044 | `044_ss_region_checked.py` | Add `games.ss_region_checked` (INTEGER, 0 by default): 1 when the box and manual region fix has settled the game. | PASS-59-202. The fix asks ScreenScraper about a game once, not on every run. |
 
 ---
 
