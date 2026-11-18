@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=320 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=321 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -3181,6 +3181,26 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: fix.
   Source: translate-mirror session report 2026-11-18.
   Lanes: i18n.
+
+- 📋 [PASS-59-321] **System names and specs reach existing installs: move SYSTEM_NAME_MAP and SYSTEM_SPECS out of config.py (fix, M).**
+  - An update never rewrites config.py
+    (tests/test_scraper_platform_maps.py::test_maps_reach_existing_installs
+    says so for the scraper maps, which were moved out for that reason).
+    SYSTEM_NAME_MAP and SYSTEM_SPECS still live in config.py, so the
+    2026-11-18 xboxseriesx name and specs reach new installs only; on an
+    existing one the Series X|S card keeps "XBOXSERIESX" and its ℹ️ window
+    shows no specs (its logo, type and picture do arrive).
+  - Fix: move both tables into a shipped module, as the TGDB and IGDB maps
+    were; keep a config.py override only if someone needs one. Readers:
+    scraper/scan_roms.py, routes/systems.py, routes/museum.py,
+    services/jobs/museum.py, services/formatters.py,
+    services/game_utils.system_defaults, routes/clz_import.py.
+  - Then migration 045's rename reaches those installs on the next scan or
+    a later migration; check which.
+  **Layman:** A new console name or its specs added in an update only shows on new installs today; this makes every update carry them.
+  Kind: fix.
+  Source: session-2026-11-18 Xbox Series X|S fix.
+  Lanes: config.
 
 ## 4.0.x — Security and data-loss fixes for the web version
 

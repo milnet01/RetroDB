@@ -8,6 +8,8 @@
 import os
 import re
 
+import config
+
 
 # =============================================================================
 # CONSTANTS
@@ -1605,6 +1607,21 @@ def find_image_file(base_path, base_name, extensions=None):
         if os.path.exists(full_path):
             return filename, full_path
     return None, None
+
+
+def system_defaults(folder):
+    """(name, logo, type) a system row for `folder` starts with.
+
+    A logo imported from ES-DE (under IMAGE_PATH) wins over the bundled one
+    (under STATIC_PATH), as on Settings' Refresh Logos.
+    """
+    logo = None
+    for root in (config.IMAGE_PATH, os.path.join(config.STATIC_PATH, 'images')):
+        logo, _path = find_image_file(os.path.join(root, 'systems'), folder)
+        if logo:
+            break
+    name = config.SYSTEM_NAME_MAP.get(folder, folder.upper())
+    return name, logo, detect_system_type(folder)
 
 
 # =============================================================================

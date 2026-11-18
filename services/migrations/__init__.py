@@ -69,6 +69,7 @@ MIGRATIONS = [
     '042_drop_xbox_oauth_tokens',
     '043_not_bonus_disc',
     '044_ss_region_checked',
+    '045_imported_system_defaults',
 ]
 
 

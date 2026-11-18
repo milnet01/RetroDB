@@ -23,7 +23,6 @@
 #   POST /api/psn/import                   - Import selected PSN games
 # =============================================================================
 
-import os
 import re
 import logging
 from datetime import datetime, timezone
@@ -31,10 +30,9 @@ from datetime import datetime, timezone
 from flask import Blueprint, request, jsonify, redirect, url_for, g
 from flask_babel import gettext as _
 
-import config
 from services.achievement_linking import normalize_title_for_dedup as normalize_title
 from services.database import get_db, query, execute
-from services.game_utils import generate_sort_title
+from services.game_utils import generate_sort_title, system_defaults
 from services.api_helpers import success, error, job_reply
 from services.auth import login_required, editor_required, has_permission
 from routes.scraper import is_masked_sentinel
@@ -63,12 +61,11 @@ def _ensure_system_exists(folder, name=None):
     if not has_permission('edit'):
         return None
 
-    system_name = name or config.SYSTEM_NAME_MAP.get(folder, folder.upper())
-    logo = f"{folder}.png" if os.path.isfile(
-        os.path.join(config.IMAGE_PATH, 'systems', f'{folder}.png')) else None
+    mapped_name, logo, system_type = system_defaults(folder)
+    system_name = name or mapped_name
     try:
-        execute("INSERT OR IGNORE INTO systems (name, folder, logo) VALUES (?, ?, ?)",
-                (system_name, folder, logo))
+        execute("INSERT OR IGNORE INTO systems (name, folder, logo, system_type) VALUES (?, ?, ?, ?)",
+                (system_name, folder, logo, system_type))
         row = query("SELECT id, name, folder FROM systems WHERE folder = ?", (folder,), one=True)
         if row:
             logger.info(f"Platform Import: Auto-created system '{system_name}' (folder: {folder})")

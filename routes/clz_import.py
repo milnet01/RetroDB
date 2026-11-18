@@ -15,6 +15,7 @@ from datetime import datetime, timezone
 import config
 from services.analytics import invalidate_analytics_cache
 from services.database import get_db, query, execute
+from services.game_utils import system_defaults
 from services.normalization import normalize_genre
 from flask import g
 
@@ -530,10 +531,9 @@ def api_clz_parse():
 
 def _create_system(folder):
     """The id of the system for `folder`, created if the library lacks it."""
-    system_name = config.SYSTEM_NAME_MAP.get(folder, folder.upper())
-    logo = f"{folder}.png" if os.path.isfile(os.path.join(config.IMAGE_PATH, 'systems', f'{folder}.png')) else None
-    execute("INSERT OR IGNORE INTO systems (name, folder, logo) VALUES (?, ?, ?)",
-            (system_name, folder, logo))
+    system_name, logo, system_type = system_defaults(folder)
+    execute("INSERT OR IGNORE INTO systems (name, folder, logo, system_type) VALUES (?, ?, ?, ?)",
+            (system_name, folder, logo, system_type))
     row = query("SELECT id FROM systems WHERE folder = ?", (folder,), one=True)
     if row:
         logger.info(f"CLZ Import: Created system '{system_name}' (folder: {folder})")

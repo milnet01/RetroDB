@@ -277,6 +277,7 @@ SYSTEM_NAME_MAP = {
     "xbox": "Microsoft Xbox",
     "xbox360": "Microsoft Xbox 360",
     "xboxone": "Microsoft Xbox One",
+    "xboxseriesx": "Microsoft Xbox Series X|S",
     
     # Atari
     "atari2600": "Atari 2600",
@@ -1973,6 +1974,19 @@ SYSTEM_SPECS = {
         "media": "Blu-ray, DVD, Digital Download",
         "storage": "500 GB / 1 TB HDD",
         "generation": "8th Generation",
+    },
+    "xboxseriesx": {
+        "manufacturer": "Microsoft",
+        "released": "2020",
+        "cpu": "AMD Zen 2 8-core @ 3.8 GHz (Series X) / 3.6 GHz (Series S)",
+        "gpu": "AMD RDNA 2: 12.15 TFLOPS (Series X) / 4 TFLOPS (Series S)",
+        "ram": "16 GB GDDR6 (Series X) / 10 GB GDDR6 (Series S)",
+        "resolution": "Up to 4K @ 120Hz (Series X) / 1440p @ 120Hz (Series S)",
+        "colors": "16.7 million",
+        "sound": "Dolby Atmos, DTS:X, Spatial Sound",
+        "media": "Ultra HD Blu-ray, Digital Download (Series S: digital only)",
+        "storage": "1 TB SSD (Series X) / 512 GB SSD (Series S)",
+        "generation": "9th Generation",
     },
 
     # Arcade variants
