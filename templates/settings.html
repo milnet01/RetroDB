@@ -467,6 +467,17 @@
     margin-top: 0.3em;
 }
 
+.language-choices {
+    min-width: 0;  /* a fieldset is otherwise as wide as its grid's content */
+}
+
+.language-choice-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
+    column-gap: var(--spacing-md);
+    max-width: 33rem;  /* four columns at most; two on a phone */
+}
+
 
 /* Scraper Settings Actions */
 .scraper-settings-actions {
@@ -1111,6 +1122,23 @@ function saveLanguage(locale) {
         // A refusal carries the server's message on err.status (PASS-59-120).
         showNotification(err.status ? err.message
             : {{ _('Network error saving language')|tojson }}, 'error');
+    });
+}
+
+// The languages boxes and titles are chosen in; none means the screen language.
+function saveReadLanguages() {
+    const codes = [...document.querySelectorAll('#readLanguages input:checked')].map(i => i.value);
+    API.post('/api/users/settings', { read_languages: codes })
+    .then(result => {
+        if (result.success) {
+            showNotification({{ _('Reading languages saved')|tojson }}, 'success');
+        } else {
+            showNotification(result.error || {{ _('Failed to save languages')|tojson }}, 'error');
+        }
+    })
+    .catch(err => {
+        showNotification(err.status ? err.message
+            : {{ _('Network error saving languages')|tojson }}, 'error');
     });
 }
 

@@ -12,6 +12,10 @@
 # swapped file's name gains its region. The old file goes only after the new
 # one is saved and recorded.
 #
+# In a game not yet settled, a file this job swapped in is looked at again
+# only where the order no longer ranks its region at all, as a German box on
+# a Europe copy in a household that reads only English.
+#
 # ScreenScraper is asked only where a file may be wrong, and once per game:
 # `games.ss_region_checked` marks a game whose files are settled, and a game
 # first scraped after this job first ran was scraped by region already, so it
@@ -32,7 +36,7 @@ from scraper.metadata_merger import (
     _download_and_finalize, _MEDIA_EXTS, download_ss_media, load_scraper_settings,
 )
 from scraper.scrape_screenscraper import get_game_by_id, get_system_id
-from scraper.ss_regions import by_region, own_region
+from scraper.ss_regions import by_region, own_region, rank_order, readable_regions
 from services.database import query
 from services.game_media_service import remove_media_file
 from services.image_utils import preferred_image_extension
@@ -52,6 +56,10 @@ _KINDS = (
     ('manual', ('manuel',), 'manuals', 'ss_manual', 'pdf'),
 )
 
+# Marks a run made since boxes are chosen in a readable language. Only such a
+# run proves later scrapes chose that way (`_region_aware_since`).
+_ORDER = 'readable'
+
 # Every manual stored so far begins with one of these. A refused media request
 # is answered with a short text such as NOMEDIA, which must not replace a manual.
 _MANUAL_MAGIC = (b'%PDF', b'PK', b'Rar!', b'7z')
@@ -62,9 +70,14 @@ def _is_old_name(filename, stem):
     return bool(filename) and re.search(rf'_{stem}\.[^./]+$', filename) is not None
 
 
+def _region_code(chosen):
+    """The region a chosen entry's file name carries."""
+    return re.sub(r'[^a-z0-9]', '', (chosen.get('region') or '').lower()) or 'any'
+
+
 def _new_name(game_id, stem, column, chosen, default_ext):
     """The file name for a swapped file; region and format come off the wire."""
-    region = re.sub(r'[^a-z0-9]', '', (chosen.get('region') or '').lower()) or 'any'
+    region = _region_code(chosen)
     ext = str(chosen.get('format') or '').lower()
     ext = ext if ext in _MEDIA_EXTS else default_ext
     suffix = f'.{ext}' if column == 'manual' else preferred_image_extension(column, f'.{ext}')
@@ -112,14 +125,16 @@ def _first_scrape(history):
 
 
 def _region_aware_since(conn):
-    """The earliest moment this install surely chose boxes by region.
+    """The earliest moment this install surely chose boxes as it does now.
 
-    This job shipped with region-aware scraping, so its first recorded run
-    proves it. History entries hold local time without a zone, so the answer
-    does too. Job history is pruned, so a later answer only means more asking.
+    This job ships with the order scrapes use, so its first run marked with
+    `_ORDER` proves it; an earlier run chose by region alone. History entries
+    hold local time without a zone, so the answer does too. Job history is
+    pruned, so a later answer only means more asking.
     """
     row = conn.execute(
-        "SELECT MIN(created_at) FROM job_queue WHERE job_type = 'ss_region_repair'"
+        "SELECT MIN(created_at) FROM job_queue WHERE job_type = 'ss_region_repair' "
+        "AND json_extract(params, '$.order') = ?", (_ORDER,)
     ).fetchone()
     if row and row[0]:
         return datetime.fromisoformat(row[0]).astimezone().replace(tzinfo=None)
@@ -248,9 +263,13 @@ class SsRegionRepairJob:
                 ORDER BY g.id
             """).fetchall()
             since = _region_aware_since(conn)
+            readable = readable_regions()
             games, settled = [], []
             for row in rows:
-                if not any(_is_old_name(row[column], stem) for column, _t, _d, stem, _e in _KINDS):
+                rank = rank_order(own_region(dict(row)), readable)
+                if not any(_is_old_name(row[column], stem)
+                           or _swapped_region(row[column], stem) not in (None, *rank)
+                           for column, _t, _d, stem, _e in _KINDS):
                     continue
                 first = _first_scrape(row['scrape_history'])
                 if first and first >= since:
@@ -268,13 +287,19 @@ class SsRegionRepairJob:
         """Swap one file if a nearer region exists. True when a file changed."""
         column, types, folder, stem, default_ext = kind
         old = game[column]
-        if not _is_old_name(old, stem):
+        swapped = _swapped_region(old, stem)
+        if not (swapped or _is_old_name(old, stem)):
             return False
         listed = [m for m in record.get('medias') or []
                   if m.get('type') in types and m.get('url')]
         ordered = by_region(listed, own_region(game))
-        # The first listed is what the old scrape took, so that file is right.
-        if not ordered or ordered[0] is listed[0]:
+        if not ordered:
+            return False
+        # An old scrape took the first listed; a swapped name says its region.
+        if swapped:
+            if _region_code(ordered[0]) == swapped:
+                return False
+        elif ordered[0] is listed[0]:
             return False
 
         name = _new_name(game['id'], stem, column, ordered[0], default_ext)
@@ -330,7 +355,7 @@ class SsRegionRepairJob:
             games = self._candidates()
             with self._lock:
                 self.total_games = len(games)
-            persist_id = persist_job_start('ss_region_repair', {'total': len(games)})
+            persist_id = persist_job_start('ss_region_repair', {'total': len(games), 'order': _ORDER})
 
             conn = _get_conn()
             last_persist = time.time()

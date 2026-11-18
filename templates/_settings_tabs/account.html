@@ -381,6 +381,27 @@
             <span class="form-hint">{{ _('Changes the interface language. The page reloads when you switch.') }}</span>
         </div>
 
+        {# Boxes and titles are shared, so only people who scrape choose the
+           languages they are picked in (scraper/ss_regions.reading_languages).
+           None ticked means the screen language, so that one shows ticked. #}
+        {% if has_perm('scrape') %}
+        {% set _ticked = ((current_user_settings.get('read_languages') if current_user_settings else '') or '').split(',') | select | list %}
+        {% if not _ticked %}{% set _ticked = [current_locale.split('_')[0]] %}{% endif %}
+        <fieldset class="form-group mb-lg match-filter-panel language-choices" id="readLanguages">
+            <legend class="form-label">{{ _('Languages I can read') }}</legend>
+            <div class="language-choice-grid">
+                {% for code in reading_language_codes %}
+                <label class="match-choice">
+                    <input type="checkbox" value="{{ code }}"{% if code in _ticked %} checked{% endif %}
+                           data-on-change="saveReadLanguages">
+                    <span>{{ locale_display_name(code) }}</span>
+                </label>
+                {% endfor %}
+            </div>
+            <span class="form-hint">{{ _('When a game has no box picture or name from its own region, RetroDB picks one in a language someone who scrapes can read. Untick them all to use your screen language.') }}</span>
+        </fieldset>
+        {% endif %}
+
     </div>
 </section>
 

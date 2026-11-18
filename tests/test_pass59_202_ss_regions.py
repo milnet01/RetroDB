@@ -140,6 +140,15 @@ def test_by_region_puts_the_own_region_first(own, first):
     assert by_region(items, own)[0]['region'] == first
 
 
+def test_europe_copy_prefers_world_to_another_language():
+    """The Atari ST Spider-Man: a Europe copy, boxes only from Germany and
+    the World. Europe means its general entry and the UK's, not every country."""
+    from scraper.ss_regions import by_region
+    items = [{'region': r} for r in ['de', 'fr', 'us', 'wor']]
+    assert [i['region'] for i in by_region(items, 'Europe')] == ['us', 'wor', 'de', 'fr']
+    assert by_region([{'region': 'de'}, {'region': 'uk'}], 'PAL')[0]['region'] == 'uk'
+
+
 def test_by_region_ends_with_ss_then_the_rest_in_listed_order():
     from scraper.ss_regions import by_region
     items = [{'region': r} for r in ['kr', 'br', 'ss']]
@@ -340,6 +349,46 @@ def test_repair_skips_a_game_it_already_repaired(library, monkeypatch):
     assert row()['ss_region_checked'] == 1
 
 
+def _holding_swapped_box(code, images):
+    """Game 1 as a Europe copy holding a box an earlier run swapped in."""
+    conn = sqlite3.connect(config.DB_PATH)
+    conn.execute("UPDATE games SET rom_path = '/roms/md/Sonic.zip', region = 'Europe', "
+                 "boxart = ?, boxart_3d = NULL, manual = NULL", (f'1_ss_boxart_{code}.webp',))
+    conn.commit()
+    conn.close()
+    (images / 'boxart' / f'1_ss_boxart_{code}.webp').write_bytes(b'old')
+
+
+def test_repair_swaps_a_box_it_swapped_into_another_language(library, monkeypatch):
+    row, images = library
+    _holding_swapped_box('de', images)
+    reply = {'id': 77, 'medias': _media('box-2D', ['de', 'wor'])}
+    _, _, downloads = _run_job(monkeypatch, reply)
+    assert downloads == ['https://ss.example/box-2D/wor']
+    assert row()['boxart'] == '1_ss_boxart_wor.webp'
+    assert not (images / 'boxart' / '1_ss_boxart_de.webp').exists()
+    assert row()['ss_region_checked'] == 1
+
+
+def test_repair_does_not_ask_about_a_swapped_box_the_order_still_ranks(library, monkeypatch):
+    """Only a region the order no longer ranks can be wrong now."""
+    row, images = library
+    _holding_swapped_box('eu', images)
+    reply = {'id': 77, 'medias': _media('box-2D', ['de', 'eu', 'wor'])}
+    _, searches, downloads = _run_job(monkeypatch, reply)
+    assert (searches, downloads) == ([], [])
+    assert row()['boxart'] == '1_ss_boxart_eu.webp'
+
+
+def test_a_german_reader_keeps_the_german_box(library, monkeypatch):
+    row, images = library
+    _holding_swapped_box('de', images)
+    monkeypatch.setattr('scraper.ss_regions.reading_languages', lambda: ['de'])
+    _, searches, _ = _run_job(monkeypatch, {'id': 77, 'medias': _media('box-2D', ['de', 'wor'])})
+    assert searches == []
+    assert row()['boxart'] == '1_ss_boxart_de.webp'
+
+
 def test_repair_asks_again_after_a_failed_download(library, monkeypatch):
     row, _ = library
     _run_job(monkeypatch, RECORD, image_ok=False)
@@ -357,13 +406,15 @@ def test_repair_asks_again_about_a_game_not_found(library, monkeypatch):
     assert searches == [77]
 
 
-def _scraped_at(stamp, first_run=None):
+def _scraped_at(stamp, first_run=None, order='readable'):
     conn = sqlite3.connect(config.DB_PATH)
     conn.execute("UPDATE games SET scrape_history = ?",
                  (json.dumps([{'timestamp': stamp, 'primary_source': 'screenscraper'}]),))
     if first_run:
-        conn.execute("INSERT INTO job_queue (job_type, status, created_at, updated_at) "
-                     "VALUES ('ss_region_repair', 'dismissed', ?, ?)", (first_run, first_run))
+        params = json.dumps({'total': 1, 'order': order} if order else {'total': 1})
+        conn.execute("INSERT INTO job_queue (job_type, status, created_at, updated_at, params) "
+                     "VALUES ('ss_region_repair', 'dismissed', ?, ?, ?)",
+                     (first_run, first_run, params))
     conn.commit()
     conn.close()
 
@@ -375,6 +426,13 @@ def test_repair_settles_a_game_first_scraped_after_its_first_run(library, monkey
     assert (searches, downloads) == ([], [])
     assert row()['boxart'] == '1_ss_boxart.webp'
     assert row()['ss_region_checked'] == 1
+
+
+def test_a_run_from_before_the_language_order_proves_nothing(library, monkeypatch):
+    """Scrapes after such a run could still take a box in another language."""
+    _scraped_at('2026-11-05T10:00:00', first_run='2026-11-01T19:13:32+00:00', order=None)
+    _, searches, _ = _run_job(monkeypatch, RECORD)
+    assert searches == [77]
 
 
 def test_repair_asks_about_a_game_scraped_before_its_first_run(library, monkeypatch):
@@ -531,3 +589,32 @@ def test_box_regions_page_opens(admin_test_client):
     page = client.get('/tools/box-regions')
     assert page.status_code == 200
     assert b'regionFixStatus' in page.data
+
+
+# --- whose languages count ---------------------------------------------------
+
+def test_reading_languages_come_from_people_who_scrape(tmp_path, monkeypatch):
+    from scraper.ss_regions import reading_languages
+    from services.database_init import ensure_user_tables
+    monkeypatch.setattr(config, 'DB_PATH', str(tmp_path / 'users.db'))
+    ensure_user_tables()                        # seeds an admin reading 'en'
+    assert reading_languages() == ['en']
+    conn = sqlite3.connect(config.DB_PATH)
+    for uid, role, ticked, screen in ((2, 'editor', 'de,fr', 'en'),
+                                      (3, 'editor', '', 'pt_BR'),
+                                      (4, 'player', 'ja', 'ja')):
+        conn.execute("INSERT INTO users (id, username, password_hash, role) VALUES (?, ?, 'x', ?)",
+                     (uid, f'u{uid}', role))
+        conn.execute("INSERT INTO user_settings (user_id, read_languages, locale_preference) "
+                     "VALUES (?, ?, ?)", (uid, ticked, screen))
+    conn.commit()
+    conn.close()
+    # Ticked languages replace the screen language; none ticked means it.
+    # A player cannot scrape, so Japanese does not count.
+    assert sorted(reading_languages()) == ['de', 'en', 'fr', 'pt']
+
+
+def test_reading_languages_without_user_tables_is_english(tmp_path, monkeypatch):
+    from scraper.ss_regions import reading_languages
+    monkeypatch.setattr(config, 'DB_PATH', str(tmp_path / 'empty.db'))
+    assert reading_languages() == ['en']

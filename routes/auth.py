@@ -15,6 +15,7 @@ import time
 import config
 from services.database import query, execute, get_db_with_context
 from services.api_helpers import handle_api_errors, success, error, json_body, text_field
+from scraper.ss_regions import LANGUAGE_REGIONS
 from services.i18n import selectable_locales
 from services.settings_validators import ALLOWED_THEMES, validate_settings_value
 from services.auth import (
@@ -401,7 +402,21 @@ def api_user_settings():
         'rpcs3_trophy_path', 'ra_username', 'ra_api_key', 'theme_preference',
         'items_per_page', 'psn_username', 'psn_npsso', 'timezone',
         'locale_preference', 'steam_api_key', 'steam_id', 'notification_timeouts',
+        'read_languages',
     ]
+
+    # The languages boxes and titles are chosen in; only people who scrape
+    # have a say. Stored as comma-separated codes; empty means the screen
+    # language (scraper.ss_regions.reading_languages).
+    if 'read_languages' in data:
+        codes = data['read_languages']
+        if not has_permission('scrape'):
+            return error(_('Only people who can scrape choose these languages.'),
+                         code=403, field='read_languages')
+        if (not isinstance(codes, list)
+                or not all(isinstance(c, str) and c in LANGUAGE_REGIONS for c in codes)):
+            return error(_('Invalid language'), code=422, field='read_languages')
+        data['read_languages'] = ','.join(dict.fromkeys(codes))
 
     # PASS-59-253 — the Steam sync job takes the number as it is stored.
     if 'steam_id' in data:

@@ -153,6 +153,10 @@ def ensure_user_tables():
             # Pass 43.1 — per-user UI language. Validated at write time against
             # services.i18n.available_locales() in routes/auth.py.
             ('locale_preference', "TEXT DEFAULT 'en'"),
+            # Languages a person who scrapes reads, comma-separated codes from
+            # scraper.ss_regions.LANGUAGE_REGIONS; empty means the screen
+            # language. Boxes and titles are chosen in one of them.
+            ('read_languages', "TEXT DEFAULT ''"),
             # PASS-59-311 — per-user message times, JSON {level: seconds};
             # empty falls back to the household's in settings.json.
             ('notification_timeouts', "TEXT DEFAULT ''"),

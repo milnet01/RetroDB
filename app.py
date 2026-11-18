@@ -253,6 +253,9 @@ from services.i18n import locale_display_name
 app.jinja_env.globals['available_locales'] = available_locales
 app.jinja_env.globals['selectable_locales'] = selectable_locales
 app.jinja_env.globals['locale_display_name'] = locale_display_name
+# Account > "Languages I can read" lists these (scraper/ss_regions.py).
+from scraper.ss_regions import LANGUAGE_REGIONS
+app.jinja_env.globals['reading_language_codes'] = tuple(LANGUAGE_REGIONS)
 
 # i18n display helpers (Pass 43.2/43.3). All three are Jinja globals called once
 # per full-page render in base.html — NOT routed through inject_config (which
