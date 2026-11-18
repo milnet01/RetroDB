@@ -114,6 +114,8 @@
 const REVIEW_PAGE_SIZE = 40;
 let reviewShots = [];
 let reviewShown = 0;
+let reviewTaskId = null;
+let reviewRemoved = [];  // filenames removed here; the server's results still list them
 let reviewUnreadable = 0;  // the last scan's count, kept for the summary after a Remove
 
 function endReviewScan() {
@@ -121,7 +123,63 @@ function endReviewScan() {
     document.getElementById('progressSection').hidden = true;
 }
 
+const reviewCallbacks = {
+    onProgress(task) {
+        const percent = task.percent || 0;
+        document.getElementById('progressBar').style.width = percent + '%';
+        document.getElementById('progressBar').textContent = percent + '%';
+        document.getElementById('progressAction').textContent = task.current_file || '';
+    },
+    onComplete(task) {
+        endReviewScan();
+        reviewShots = task.results.shots.filter(shot => !reviewRemoved.includes(shot.filename));
+        reviewShown = 0;
+        document.getElementById('reviewGrid').innerHTML = '';
+        document.getElementById('resultsCard').hidden = false;
+        reviewUnreadable = task.results.unreadable || 0;
+        updateReviewSummary(reviewUnreadable);
+        showMoreShots();
+    },
+    onError(task) {
+        endReviewScan();
+        showNotification(task.error || {{ _('Scan failed')|tojson }}, 'error');
+    },
+    onCancel: endReviewScan,
+    onNotFound: handleReviewNotFound
+};
+
+// Session persistence: the task id outlives a page change, so a finished
+// scan's results come back. Removed shots are kept too, as the server's
+// results still list them.
+SessionState.setKey('screenshotReviewState');
+
+function saveSessionState() {
+    SessionState.save({ taskId: reviewTaskId, removed: reviewRemoved });
+}
+
+function handleReviewNotFound() {
+    SessionState.clear();
+    reviewTaskId = null;
+    reviewRemoved = [];
+    endReviewScan();
+    document.getElementById('resultsCard').hidden = true;
+    showNotification({{ _("The last scan's results have expired. Start a new scan.")|tojson }}, 'warning');
+}
+
+function restoreReviewScan() {
+    const state = SessionState.load();
+    if (!state || !state.taskId) return;
+    reviewTaskId = state.taskId;
+    reviewRemoved = state.removed || [];
+    document.getElementById('scanBtn').disabled = true;
+    document.getElementById('progressSection').hidden = false;
+    TaskPoller.start(state.taskId, reviewCallbacks, 500);
+}
+
 async function startReviewScan() {
+    SessionState.clear();
+    reviewTaskId = null;
+    reviewRemoved = [];
     document.getElementById('scanBtn').disabled = true;
     document.getElementById('progressSection').hidden = false;
     document.getElementById('resultsCard').hidden = true;
@@ -133,29 +191,10 @@ async function startReviewScan() {
             endReviewScan();
             return;
         }
-        TaskPoller.start(data.task_id, {
-            onProgress(task) {
-                const percent = task.percent || 0;
-                document.getElementById('progressBar').style.width = percent + '%';
-                document.getElementById('progressBar').textContent = percent + '%';
-                document.getElementById('progressAction').textContent = task.current_file || '';
-            },
-            onComplete(task) {
-                endReviewScan();
-                reviewShots = task.results.shots;
-                reviewShown = 0;
-                document.getElementById('reviewGrid').innerHTML = '';
-                document.getElementById('resultsCard').hidden = false;
-                reviewUnreadable = task.results.unreadable || 0;
-                updateReviewSummary(reviewUnreadable);
-                showMoreShots();
-            },
-            onError(task) {
-                endReviewScan();
-                showNotification(task.error || {{ _('Scan failed')|tojson }}, 'error');
-            },
-            onCancel: endReviewScan
-        }, 500);
+        reviewTaskId = data.task_id;
+        reviewRemoved = [];
+        saveSessionState();
+        TaskPoller.start(data.task_id, reviewCallbacks, 500);
     } catch (err) {
         endReviewScan();
         showNotification(err.message, 'error');
@@ -200,6 +239,8 @@ function removeReviewShot(gameId, filename, button) {
             }
             button.closest('.review-shot').remove();
             reviewShots = reviewShots.filter(shot => shot.filename !== filename);
+            reviewRemoved.push(filename);
+            saveSessionState();
             reviewShown -= 1;
             updateReviewSummary(reviewUnreadable);
             showNotification({{ _('Screenshot removed')|tojson }}, 'success');
@@ -208,5 +249,8 @@ function removeReviewShot(gameId, filename, button) {
         }
     });
 }
+
+// After core.bundle.js (deferred), which defines safeParseJSON and API.
+document.addEventListener('DOMContentLoaded', restoreReviewScan);
 </script>
 {% endblock %}

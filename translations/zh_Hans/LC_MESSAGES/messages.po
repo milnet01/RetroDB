@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-16 16:04+0200\n"
+"POT-Creation-Date: 2026-11-18 12:36+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans\n"
@@ -122,11 +122,11 @@ msgstr "%(job)s 已加入队列"
 
 #: app.py:1456 services/js_i18n_strings.py:963
 #: templates/archive_scanner.html:1628 templates/dashboard.html:1159
-#: templates/dashboard.html:1164
+#: templates/dashboard.html:1164 templates/ss_region_repair.html:103
 msgid "Resume"
 msgstr "继续"
 
-#: app.py:1456
+#: app.py:1456 templates/ss_region_repair.html:101
 msgid "Start"
 msgstr "开始"
 
@@ -1085,6 +1085,94 @@ msgstr "请先在设置中添加你的 ScreenScraper 账户。"
 #: routes/maintenance.py:490
 msgid "This fix is already running."
 msgstr "此修复已在运行。"
+
+#: routes/maintenance.py:535
+#, fuzzy
+msgid "USA"
+msgstr "使用"
+
+#: routes/maintenance.py:535
+#, fuzzy
+msgid "Europe"
+msgstr "紫色"
+
+#: routes/maintenance.py:535
+#, fuzzy
+msgid "Japan"
+msgstr "战役"
+
+#: routes/maintenance.py:535
+#, fuzzy
+msgid "World"
+msgstr "Open-World"
+
+#: routes/maintenance.py:536
+msgid "United Kingdom"
+msgstr ""
+
+#: routes/maintenance.py:536
+#, fuzzy
+msgid "France"
+msgstr "系列"
+
+#: routes/maintenance.py:536
+#, fuzzy
+msgid "Germany"
+msgstr "灰色"
+
+#: routes/maintenance.py:537
+#, fuzzy
+msgid "Spain"
+msgstr "扫描"
+
+#: routes/maintenance.py:537
+#, fuzzy
+msgid "Italy"
+msgstr "青绿色"
+
+#: routes/maintenance.py:537
+#, fuzzy
+msgid "Australia"
+msgstr "ACB（澳大利亚）"
+
+#: routes/maintenance.py:538
+msgid "Brazil"
+msgstr ""
+
+#: routes/maintenance.py:538
+#, fuzzy
+msgid "Korea"
+msgstr "核心"
+
+#: routes/maintenance.py:538
+msgid "China"
+msgstr ""
+
+#: routes/maintenance.py:538
+#, fuzzy
+msgid "Asia"
+msgstr "AI"
+
+#: routes/maintenance.py:539
+#, fuzzy
+msgid "Any region"
+msgstr "地区"
+
+#: routes/maintenance.py:549
+#, fuzzy
+msgid "Box"
+msgstr "Xbox"
+
+#: routes/maintenance.py:549
+#, fuzzy
+msgid "3D box"
+msgstr "导入 3D 盒子"
+
+#: routes/maintenance.py:549 templates/_modals/manual_reader_modal.html:9
+#: templates/analytics.html:488 templates/analytics.html:2432
+#: templates/game_detail.html:125
+msgid "Manual"
+msgstr "说明书"
 
 #: routes/mame_names.py:38
 msgid "One of those files was not found."
@@ -2844,10 +2932,10 @@ msgstr "请输入一个文件夹路径。"
 #: templates/archive_scanner.html:1173 templates/archive_scanner.html:1403
 #: templates/archive_scanner.html:1406 templates/archive_scanner.html:1428
 #: templates/archive_scanner.html:1431 templates/archive_scanner.html:1479
-#: templates/archive_scanner.html:1482 templates/chd_converter.html:347
-#: templates/chd_converter.html:351 templates/chd_converter.html:355
-#: templates/chd_verify.html:315 templates/chd_verify.html:319
-#: templates/chd_verify.html:323 templates/controllers.html:910
+#: templates/archive_scanner.html:1482 templates/chd_converter.html:316
+#: templates/chd_converter.html:386 templates/chd_converter.html:390
+#: templates/chd_verify.html:283 templates/chd_verify.html:356
+#: templates/chd_verify.html:360 templates/controllers.html:910
 #: templates/controllers.html:914 templates/controllers.html:982
 #: templates/controllers.html:986 templates/controllers.html:1017
 #: templates/controllers.html:1021 templates/controllers.html:1047
@@ -2855,7 +2943,7 @@ msgstr "请输入一个文件夹路径。"
 #: templates/controllers.html:1135 templates/controllers.html:1153
 #: templates/controllers.html:1184 templates/controllers.html:1244
 #: templates/controllers.html:1248 templates/dashboard.html:1310
-#: templates/duplicate_finder.html:556 templates/duplicate_finder.html:559
+#: templates/duplicate_finder.html:590 templates/duplicate_finder.html:593
 #: templates/game_detail.html:5082 templates/game_detail.html:5086
 #: templates/local_trophy_detail.html:374
 #: templates/local_trophy_detail.html:429
@@ -2961,7 +3049,7 @@ msgstr "清除 HLTB 失败:{error}"
 msgid "Failed to clear RA data"
 msgstr "清除 RA 数据失败"
 
-#: services/js_i18n_strings.py:765 templates/screenshot_dedup.html:601
+#: services/js_i18n_strings.py:765 templates/screenshot_dedup.html:637
 msgid "Failed to delete"
 msgstr "删除失败"
 
@@ -3668,7 +3756,7 @@ msgstr "系列作品之一"
 #: services/js_i18n_strings.py:922 templates/_bulk_scrape_modal.html:46
 #: templates/archive_scanner.html:658 templates/archive_scanner.html:795
 #: templates/archive_scanner.html:1601 templates/archive_scanner.html:1632
-#: templates/psn_trophies.html:295
+#: templates/psn_trophies.html:295 templates/ss_region_repair.html:102
 msgid "Pause"
 msgstr "暂停"
 
@@ -3779,7 +3867,7 @@ msgstr "地区名称匹配"
 #: templates/_settings_tabs/account.html:224
 #: templates/_settings_tabs/library.html:163 templates/compare_games.html:24
 #: templates/compare_games.html:40 templates/rom_tools_settings.html:462
-#: templates/rom_tools_settings.html:501 templates/screenshot_review.html:187
+#: templates/rom_tools_settings.html:501 templates/screenshot_review.html:226
 #: templates/settings.html:1442 templates/settings.html:1550
 msgid "Remove"
 msgstr "移除"
@@ -4895,7 +4983,7 @@ msgstr "找不到 RetroArch 核心：%(path)s"
 msgid "The player cannot use a path containing '|': %(path)s"
 msgstr "播放器无法使用包含 '|' 的路径：%(path)s"
 
-#: services/player_cores.py:544
+#: services/player_cores.py:546
 #, python-format
 msgid "Player core not found: %(path)s"
 msgstr "找不到播放器核心：%(path)s"
@@ -5564,6 +5652,7 @@ msgid "All systems"
 msgstr "所有系统"
 
 #: templates/ai_fill_bulk.html:100 templates/mame_names.html:67
+#: templates/ss_region_repair.html:104
 msgid "Stop"
 msgstr "停止"
 
@@ -6102,11 +6191,6 @@ msgstr "同人图"
 msgid "Video"
 msgstr "视频"
 
-#: templates/_modals/manual_reader_modal.html:9 templates/analytics.html:488
-#: templates/analytics.html:2432 templates/game_detail.html:125
-msgid "Manual"
-msgstr "说明书"
-
 #: templates/analytics.html:490 templates/analytics.html:2432
 msgid "Ratings"
 msgstr "分级"
@@ -6320,7 +6404,7 @@ msgid "Unwanted"
 msgstr "不需要"
 
 #: templates/archive_scanner.html:655 templates/duplicate_finder.html:207
-#: templates/screenshot_dedup.html:260 templates/screenshot_dedup.html:448
+#: templates/screenshot_dedup.html:260 templates/screenshot_dedup.html:484
 #: templates/screenshot_review.html:80
 msgid "Start Scan"
 msgstr "开始扫描"
@@ -6438,7 +6522,7 @@ msgstr "压缩包收藏中发现的问题数：{count}"
 msgid "Scan Error"
 msgstr "扫描出错"
 
-#: templates/archive_scanner.html:1210 templates/screenshot_review.html:155
+#: templates/archive_scanner.html:1210 templates/screenshot_review.html:145
 msgid "Scan failed"
 msgstr "扫描失败"
 
@@ -6460,8 +6544,8 @@ msgstr "取消扫描"
 msgid "Are you sure you want to cancel the scan?"
 msgstr "确定要取消扫描吗？"
 
-#: templates/archive_scanner.html:1378 templates/chd_converter.html:305
-#: templates/chd_verify.html:259 templates/duplicate_finder.html:538
+#: templates/archive_scanner.html:1378 templates/chd_converter.html:357
+#: templates/chd_verify.html:326 templates/duplicate_finder.html:572
 #: templates/psn_trophies.html:1674
 msgid "No Selection"
 msgstr "未选择"
@@ -7481,13 +7565,20 @@ msgstr "压缩后大小"
 msgid "Space Saved"
 msgstr "已节省空间"
 
-#: templates/chd_converter.html:305 templates/chd_verify.html:259
-msgid "No files selected"
-msgstr "未选择文件"
-
-#: templates/chd_converter.html:347
+#: templates/chd_converter.html:316
 msgid "Conversion failed"
 msgstr "转换失败"
+
+#: templates/chd_converter.html:335 templates/chd_verify.html:302
+#: templates/duplicate_finder.html:389 templates/screenshot_dedup.html:401
+#: templates/screenshot_review.html:166
+#, fuzzy
+msgid "The last scan's results have expired. Start a new scan."
+msgstr "这些扫描结果已过期。请重新扫描后再删除。"
+
+#: templates/chd_converter.html:357 templates/chd_verify.html:326
+msgid "No files selected"
+msgstr "未选择文件"
 
 #: templates/chd_verify.html:91
 msgid "Why Verify CHD Files?"
@@ -7536,7 +7627,7 @@ msgstr "无效"
 msgid "Total Size"
 msgstr "总大小"
 
-#: templates/chd_verify.html:315
+#: templates/chd_verify.html:283
 msgid "Verification failed"
 msgstr "验证失败"
 
@@ -8361,15 +8452,15 @@ msgstr "保留最小的"
 msgid "Delete Unselected"
 msgstr "删除未选项"
 
-#: templates/duplicate_finder.html:538 templates/screenshot_dedup.html:575
+#: templates/duplicate_finder.html:572 templates/screenshot_dedup.html:611
 msgid "No files selected for deletion"
 msgstr "未选择要删除的文件"
 
-#: templates/duplicate_finder.html:542
+#: templates/duplicate_finder.html:576
 msgid "Delete Files"
 msgstr "删除文件"
 
-#: templates/duplicate_finder.html:542
+#: templates/duplicate_finder.html:576
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete these files ({count})?\n"
@@ -8380,11 +8471,11 @@ msgstr ""
 "\n"
 "此操作无法撤销!"
 
-#: templates/duplicate_finder.html:553
+#: templates/duplicate_finder.html:587
 msgid "Files Deleted"
 msgstr "文件已删除"
 
-#: templates/duplicate_finder.html:553
+#: templates/duplicate_finder.html:587
 #, python-brace-format
 msgid "Files deleted: {deleted}. Space freed: {size}"
 msgstr "已删除文件:{deleted}。释放空间:{size}"
@@ -10989,7 +11080,7 @@ msgstr ""
 "查找可能是其他系统版本的游戏截图。ZX Spectrum、Commodore 64 和 Game Boy "
 "的截图会按可疑程度从高到低列出,由你决定是否移除。"
 
-#: templates/rom_tools_hub.html:274 templates/rom_tools_hub.html:748
+#: templates/rom_tools_hub.html:274 templates/rom_tools_hub.html:686
 msgid "Image Resizer"
 msgstr "图片尺寸调整"
 
@@ -11023,11 +11114,12 @@ msgstr ""
 msgid "Metadata only &middot; no media downloads"
 msgstr "仅元数据 &middot; 不下载媒体"
 
-#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:461
+#: templates/rom_tools_hub.html:300 templates/ss_region_repair.html:4
+#: templates/ss_region_repair.html:92 templates/ss_region_repair.html:155
 msgid "Fix Box and Manual Regions"
 msgstr "修复包装盒和说明书地区"
 
-#: templates/rom_tools_hub.html:303
+#: templates/rom_tools_hub.html:303 templates/ss_region_repair.html:93
 msgid ""
 "Older ScreenScraper scrapes could give a game another region's box or "
 "manual, such as a European box on a USA game. This looks each one up "
@@ -11037,11 +11129,11 @@ msgstr ""
 "旧版 ScreenScraper "
 "抓取可能给游戏配上其他地区的包装盒或说明书,例如美版游戏配了欧版包装盒。此功能会重新查询每一项,并替换为正确地区的版本。来自其他来源的图片不会改动。"
 
-#: templates/rom_tools_hub.html:306
+#: templates/rom_tools_hub.html:306 templates/ss_region_repair.html:98
 msgid "Needs a ScreenScraper account"
 msgstr "需要 ScreenScraper 账户"
 
-#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:522
+#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:460
 msgid "Fix Regions from File Names"
 msgstr "根据文件名修复地区"
 
@@ -11052,7 +11144,7 @@ msgid ""
 " their file name."
 msgstr "AI 以前即使文件名已写明,也会猜测游戏的地区,导致 (USA) 文件被列为日本。此功能会为这些游戏设置文件名中的地区。"
 
-#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:556
+#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:494
 msgid "Tidy Genres, Perspectives and Modes"
 msgstr "整理类型、视角和模式"
 
@@ -11075,7 +11167,7 @@ msgstr "根据 MAME 自带的列表,为 MAME 游戏填入真实名称、年份�
 msgid "Needs a MAME list file"
 msgstr "需要 MAME 列表文件"
 
-#: templates/rom_tools_hub.html:354 templates/rom_tools_hub.html:590
+#: templates/rom_tools_hub.html:354 templates/rom_tools_hub.html:528
 msgid "Tidy Release Dates"
 msgstr "整理发行日期"
 
@@ -11088,7 +11180,7 @@ msgstr ""
 "旧版抓取会把只知道年份的日期存成 1 月 1 日或 12 月 31 "
 "日,好像具体日期是已知的一样。此操作会把这些日期还原为只保留年份或月份,以便重新抓取时填入真实日期。"
 
-#: templates/rom_tools_hub.html:367 templates/rom_tools_hub.html:624
+#: templates/rom_tools_hub.html:367 templates/rom_tools_hub.html:562
 msgid "Check Saved Play Times"
 msgstr "检查已保存的游玩时间"
 
@@ -11099,7 +11191,7 @@ msgid ""
 "review page, where you keep or clear each one."
 msgstr "旧版查询可能会保存续作的游玩时间,或其他系统上同名游戏的游玩时间。此操作会将这些匹配发送到审核页面,由你逐个选择保留或清除。"
 
-#: templates/rom_tools_hub.html:380 templates/rom_tools_hub.html:658
+#: templates/rom_tools_hub.html:380 templates/rom_tools_hub.html:596
 msgid "Clear RAWG Pictures from Box Art"
 msgstr "清除包装封面中的 RAWG 图片"
 
@@ -11110,7 +11202,7 @@ msgid ""
 "pictures so a scrape can find real covers."
 msgstr "RAWG 没有包装封面,所以旧版抓取把背景图或截图保存成了封面,导致无法使用真正的封面。此功能会清除这些图片,以便抓取时找到真正的封面。"
 
-#: templates/rom_tools_hub.html:393 templates/rom_tools_hub.html:696
+#: templates/rom_tools_hub.html:393 templates/rom_tools_hub.html:634
 msgid "Bulk HLTB Lookup"
 msgstr "批量 HLTB 查询"
 
@@ -11171,8 +11263,8 @@ msgstr ""
 msgid "Alt-titles backfill started"
 msgstr "已开始回填别名标题"
 
-#: templates/rom_tools_hub.html:452 templates/rom_tools_hub.html:715
-#: templates/rom_tools_hub.html:767
+#: templates/rom_tools_hub.html:452 templates/rom_tools_hub.html:653
+#: templates/rom_tools_hub.html:705
 msgid "Failed to start"
 msgstr "启动失败"
 
@@ -11180,55 +11272,7 @@ msgstr "启动失败"
 msgid "Failed to start backfill"
 msgstr "启动回填失败"
 
-#: templates/rom_tools_hub.html:462
-msgid ""
-"Each game with a ScreenScraper box or manual is looked up again. Where "
-"another region suits it better, the file is downloaded and the old one is"
-" deleted.\n"
-"\n"
-"Games you have changed by hand are not touched. This uses your daily "
-"ScreenScraper allowance and can take a long time. You can leave the page,"
-" and press this card again to stop."
-msgstr ""
-"每个带有 ScreenScraper 包装盒或说明书的游戏都会被重新查询。若有更合适的其他地区版本,会下载该文件并删除旧文件。\n"
-"\n"
-"你手动修改过的游戏不会被改动。此操作会消耗你每日的 ScreenScraper 额度,可能需要很长时间。你可以离开此页面,再次点击此卡片即可停止。"
-
-#: templates/rom_tools_hub.html:463
-msgid "Could not start the fix"
-msgstr "无法开始修复"
-
-#: templates/rom_tools_hub.html:464
-msgid ""
-"Stop the fix? Files already swapped stay as they are, and a later run "
-"carries on with the rest."
-msgstr "要停止修复吗?已替换的文件会保持不变,之后再运行会继续处理剩余部分。"
-
-#: templates/rom_tools_hub.html:465 templates/rom_tools_hub.html:469
-#, python-brace-format
-msgid "Stopped. Files swapped: {replaced}."
-msgstr "已停止。已替换文件:{replaced}。"
-
-#: templates/rom_tools_hub.html:466
-#, python-brace-format
-msgid ""
-"The fix stopped with an error. Files swapped: {replaced}. The log has the"
-" details."
-msgstr "修复因错误而停止。已替换文件:{replaced}。详情请查看日志。"
-
-#: templates/rom_tools_hub.html:467
-#, python-brace-format
-msgid "Checked {current} of {total} games. Files swapped: {replaced}."
-msgstr "已检查 {current}/{total} 个游戏。已替换文件:{replaced}。"
-
-#: templates/rom_tools_hub.html:468
-#, python-brace-format
-msgid ""
-"Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
-"not download: {failed}."
-msgstr "已完成。已替换文件:{replaced}。未找到的游戏:{no_match}。下载失败:{failed}。"
-
-#: templates/rom_tools_hub.html:523
+#: templates/rom_tools_hub.html:461
 #, python-brace-format
 msgid ""
 "{count} games have a region from the AI that their file name contradicts."
@@ -11241,20 +11285,20 @@ msgstr ""
 "\n"
 "只有由 AI 填写的地区会被更改。如果你曾手动把其中某个地区改得与文件名不同,它也会被更改。"
 
-#: templates/rom_tools_hub.html:524
+#: templates/rom_tools_hub.html:462
 msgid "No game has an AI region that its file name contradicts."
 msgstr "没有游戏的 AI 地区与文件名不符。"
 
-#: templates/rom_tools_hub.html:525
+#: templates/rom_tools_hub.html:463
 #, python-brace-format
 msgid "Fixed {count} regions."
 msgstr "已修复 {count} 个地区。"
 
-#: templates/rom_tools_hub.html:526
+#: templates/rom_tools_hub.html:464
 msgid "Could not fix the regions"
 msgstr "无法修复地区"
 
-#: templates/rom_tools_hub.html:557
+#: templates/rom_tools_hub.html:495
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -11275,22 +11319,22 @@ msgstr ""
 "\n"
 "完成后,请使用“填充缺失项”进行批量抓取,以补全仍为空的内容。"
 
-#: templates/rom_tools_hub.html:558
+#: templates/rom_tools_hub.html:496
 msgid "Every game already uses these names."
 msgstr "所有游戏都已使用这些名称。"
 
-#: templates/rom_tools_hub.html:559
+#: templates/rom_tools_hub.html:497
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to fill "
 "anything left empty."
 msgstr "已整理 {count} 个游戏。请使用“填充缺失项”进行批量抓取,以补全仍为空的内容。"
 
-#: templates/rom_tools_hub.html:560
+#: templates/rom_tools_hub.html:498
 msgid "Could not tidy the names"
 msgstr "无法整理名称"
 
-#: templates/rom_tools_hub.html:591
+#: templates/rom_tools_hub.html:529
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -11302,22 +11346,22 @@ msgstr ""
 "\n"
 "像 1987 年 1 月 1 日这样的日期会变为 1987 年。没有被任何抓取填充过的日期将保持不变。"
 
-#: templates/rom_tools_hub.html:592
+#: templates/rom_tools_hub.html:530
 msgid "No release dates need tidying."
 msgstr "没有需要整理的发行日期。"
 
-#: templates/rom_tools_hub.html:593
+#: templates/rom_tools_hub.html:531
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to look for "
 "fuller dates."
 msgstr "已整理 {count} 个游戏。请使用“填充缺失项”进行批量抓取,以查找更完整的日期。"
 
-#: templates/rom_tools_hub.html:594
+#: templates/rom_tools_hub.html:532
 msgid "Could not tidy the release dates"
 msgstr "无法整理发行日期"
 
-#: templates/rom_tools_hub.html:625
+#: templates/rom_tools_hub.html:563
 #, python-brace-format
 msgid ""
 "{count} saved play times look like another game. They will go to the "
@@ -11329,20 +11373,20 @@ msgstr ""
 "\n"
 "在审核页面,“批准”会保留该时间,“拒绝”会清除该时间。"
 
-#: templates/rom_tools_hub.html:626
+#: templates/rom_tools_hub.html:564
 msgid "No saved play time looks wrong."
 msgstr "没有发现看起来有误的已保存游玩时间。"
 
-#: templates/rom_tools_hub.html:627
+#: templates/rom_tools_hub.html:565
 #, python-brace-format
 msgid "Sent {count} play times to the HowLongToBeat review page."
 msgstr "已将 {count} 个游玩时间发送到 HowLongToBeat 审核页面。"
 
-#: templates/rom_tools_hub.html:628
+#: templates/rom_tools_hub.html:566
 msgid "Could not check the saved play times"
 msgstr "无法检查已保存的游玩时间"
 
-#: templates/rom_tools_hub.html:659
+#: templates/rom_tools_hub.html:597
 #, python-brace-format
 msgid ""
 "{count} games and wishlist items use a RAWG picture as their box art. "
@@ -11356,22 +11400,22 @@ msgstr ""
 "\n"
 "来自其他来源的封面和所有同人图会保留。之后请用“填充缺失项”进行批量抓取,以查找真正的封面。"
 
-#: templates/rom_tools_hub.html:660
+#: templates/rom_tools_hub.html:598
 msgid "No game uses a RAWG picture as its box art."
 msgstr "没有游戏使用 RAWG 图片作为包装封面。"
 
-#: templates/rom_tools_hub.html:661
+#: templates/rom_tools_hub.html:599
 #, python-brace-format
 msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
 " real covers."
 msgstr "已清除 {count} 张图片。请用“填充缺失项”进行批量抓取,以查找真正的封面。"
 
-#: templates/rom_tools_hub.html:662
+#: templates/rom_tools_hub.html:600
 msgid "Could not clear the pictures"
 msgstr "无法清除图片"
 
-#: templates/rom_tools_hub.html:697
+#: templates/rom_tools_hub.html:635
 msgid ""
 "Fetch HowLongToBeat playtime for every game.\n"
 "\n"
@@ -11390,15 +11434,15 @@ msgstr ""
 "\n"
 "默认只处理还没有 HLTB 匹配的游戏。HLTB 有访问频率限制,所以这项任务会在后台缓慢运行,你可以离开此页面。"
 
-#: templates/rom_tools_hub.html:707
+#: templates/rom_tools_hub.html:645
 msgid "Bulk HLTB lookup started — queued matches will appear on the review page"
 msgstr "已开始批量 HLTB 查询,排队的匹配将显示在审核页面"
 
-#: templates/rom_tools_hub.html:718
+#: templates/rom_tools_hub.html:656
 msgid "Failed to start bulk HLTB"
 msgstr "启动批量 HLTB 失败"
 
-#: templates/rom_tools_hub.html:749
+#: templates/rom_tools_hub.html:687
 msgid ""
 "Standardize all images to consistent sizes:\n"
 "\n"
@@ -11420,11 +11464,11 @@ msgstr ""
 "\n"
 "对于大型收藏,这可能需要一段时间。"
 
-#: templates/rom_tools_hub.html:759
+#: templates/rom_tools_hub.html:697
 msgid "Image standardization started"
 msgstr "图片标准化已开始"
 
-#: templates/rom_tools_hub.html:770
+#: templates/rom_tools_hub.html:708
 msgid "Failed to start image resize"
 msgstr "启动图片调整失败"
 
@@ -11643,15 +11687,15 @@ msgstr "可回收空间"
 msgid "Keep Largest"
 msgstr "保留最大的"
 
-#: templates/screenshot_dedup.html:557
+#: templates/screenshot_dedup.html:593
 msgid "Selected largest file in each group"
 msgstr "已选中每组中最大的文件"
 
-#: templates/screenshot_dedup.html:580
+#: templates/screenshot_dedup.html:616
 msgid "Delete Duplicate Screenshots"
 msgstr "删除重复截图"
 
-#: templates/screenshot_dedup.html:581
+#: templates/screenshot_dedup.html:617
 #, python-brace-format
 msgid ""
 "Duplicate screenshots to delete: {count}\n"
@@ -11663,12 +11707,12 @@ msgstr ""
 "\n"
 "文件将从磁盘中移除,数据库引用也会更新。此操作无法撤销。"
 
-#: templates/screenshot_dedup.html:594
+#: templates/screenshot_dedup.html:630
 #, python-brace-format
 msgid "Files deleted: {deleted}. Space freed: {size}. Games updated: {updated}"
 msgstr "已删除文件:{deleted}。释放空间:{size}。已更新游戏:{updated}"
 
-#: templates/screenshot_dedup.html:604
+#: templates/screenshot_dedup.html:640
 #, python-brace-format
 msgid "Failed to delete: {error}"
 msgstr "删除失败:{error}"
@@ -11689,40 +11733,40 @@ msgstr "你的游戏库中没有可检查的 ZX Spectrum、Commodore 64 或 Game
 msgid "Show more"
 msgstr "显示更多"
 
-#: templates/screenshot_review.html:167
+#: templates/screenshot_review.html:206
 #, python-brace-format
 msgid "{count} screenshots, most suspicious first."
 msgstr "{count} 张截图,最可疑的排在最前。"
 
-#: templates/screenshot_review.html:168
+#: templates/screenshot_review.html:207
 msgid "No screenshots to review for this system."
 msgstr "此系统没有需要审核的截图。"
 
-#: templates/screenshot_review.html:170
+#: templates/screenshot_review.html:209
 #, python-brace-format
 msgid "{count} could not be read."
 msgstr "{count} 张无法读取。"
 
-#: templates/screenshot_review.html:182
+#: templates/screenshot_review.html:221
 msgid "Open full size"
 msgstr "打开原图"
 
-#: templates/screenshot_review.html:185
+#: templates/screenshot_review.html:224
 #, python-brace-format
 msgid "Colour misfit: {score}"
 msgstr "色彩不符:{score}"
 
-#: templates/screenshot_review.html:194
+#: templates/screenshot_review.html:233
 msgid "Remove Screenshot"
 msgstr "移除截图"
 
-#: templates/screenshot_review.html:194
+#: templates/screenshot_review.html:233
 msgid ""
 "Remove this screenshot from the game and delete its file? This cannot be "
 "undone."
 msgstr "要从游戏中移除此截图并删除其文件吗?此操作无法撤销。"
 
-#: templates/screenshot_review.html:205
+#: templates/screenshot_review.html:246
 msgid "Screenshot removed"
 msgstr "截图已移除"
 
@@ -13454,6 +13498,91 @@ msgstr "设置失败。"
 #: templates/setup.html:534
 msgid "Network error. Please try again."
 msgstr "网络错误,请重试。"
+
+#: templates/ss_region_repair.html:112
+#, fuzzy
+msgid "What changed"
+msgstr "金手指列表已更换。"
+
+#: templates/ss_region_repair.html:116
+msgid ""
+"Each game below has a box, 3D box or manual this fix swapped. The picture"
+" is its box now. Open a game to look at it closely. The old files were "
+"deleted, so only the new region is shown."
+msgstr ""
+
+#: templates/ss_region_repair.html:117
+msgid "Reload the page to see games swapped since you opened it."
+msgstr ""
+
+#: templates/ss_region_repair.html:133
+#, python-format
+msgid "Your copy: %(region)s"
+msgstr ""
+
+#: templates/ss_region_repair.html:135
+#, python-format
+msgid "%(kind)s now from: %(region)s"
+msgstr ""
+
+#: templates/ss_region_repair.html:144
+#, fuzzy
+msgid "Nothing has been swapped yet."
+msgstr "你的设置已保存!"
+
+#: templates/ss_region_repair.html:156
+#, fuzzy
+msgid ""
+"Each game with a ScreenScraper box or manual is looked up again. Where "
+"another region suits it better, the file is downloaded and the old one is"
+" deleted.\n"
+"\n"
+"Games you have changed by hand are not touched. This uses your daily "
+"ScreenScraper allowance and can take a long time. You can leave this page"
+" and come back to pause or stop it."
+msgstr ""
+"每个带有 ScreenScraper 包装盒或说明书的游戏都会被重新查询。若有更合适的其他地区版本,会下载该文件并删除旧文件。\n"
+"\n"
+"你手动修改过的游戏不会被改动。此操作会消耗你每日的 ScreenScraper 额度,可能需要很长时间。你可以离开此页面,再次点击此卡片即可停止。"
+
+#: templates/ss_region_repair.html:157
+msgid "Could not start the fix"
+msgstr "无法开始修复"
+
+#: templates/ss_region_repair.html:158
+msgid ""
+"Stop the fix? Files already swapped stay as they are, and a later run "
+"carries on with the rest."
+msgstr "要停止修复吗?已替换的文件会保持不变,之后再运行会继续处理剩余部分。"
+
+#: templates/ss_region_repair.html:159
+#, python-brace-format
+msgid ""
+"The fix stopped with an error. Files swapped: {replaced}. The log has the"
+" details."
+msgstr "修复因错误而停止。已替换文件:{replaced}。详情请查看日志。"
+
+#: templates/ss_region_repair.html:160
+#, python-brace-format
+msgid "Checked {current} of {total} games. Files swapped: {replaced}."
+msgstr "已检查 {current}/{total} 个游戏。已替换文件:{replaced}。"
+
+#: templates/ss_region_repair.html:161
+#, fuzzy, python-brace-format
+msgid "Paused after {current} of {total} games. Files swapped: {replaced}."
+msgstr "已检查 {current}/{total} 个游戏。已替换文件:{replaced}。"
+
+#: templates/ss_region_repair.html:162
+#, python-brace-format
+msgid ""
+"Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
+"not download: {failed}."
+msgstr "已完成。已替换文件:{replaced}。未找到的游戏:{no_match}。下载失败:{failed}。"
+
+#: templates/ss_region_repair.html:163
+#, python-brace-format
+msgid "Stopped. Files swapped: {replaced}."
+msgstr "已停止。已替换文件:{replaced}。"
 
 #: templates/steam_achievement_game.html:36
 msgid "Steam Store"

@@ -294,6 +294,58 @@ function renderFileList() {
     document.getElementById('convertBtn').disabled = false;
 }
 
+const taskCallbacks = {
+    onProgress(task) {
+        document.getElementById('progressBar').style.width = task.percent + '%';
+        document.getElementById('progressBar').textContent = task.percent + '%';
+        document.getElementById('progressStatus').textContent = task.current_file ? `Converting: ${task.current_file}` : 'Processing...';
+
+        if (task.results) {
+            document.getElementById('statConverted').textContent = formatNumber(task.results.converted || 0);
+            document.getElementById('statOriginal').textContent = formatBytes(task.results.original_size || 0);
+            document.getElementById('statCompressed').textContent = formatBytes(task.results.compressed_size || 0);
+            document.getElementById('statSaved').textContent = (task.results.percent_saved || 0) + '%';
+        }
+
+        if (task.logs) {
+            document.getElementById('conversionLog').innerHTML = task.logs.map(l => `<div>${escapeHtml(l)}</div>`).join('');
+            document.getElementById('conversionLog').scrollTop = document.getElementById('conversionLog').scrollHeight;
+        }
+    },
+    onComplete() { resetUI(); },
+    onError(task) { showModal('❌ ' + {{ _('Error')|tojson }}, task.error || {{ _('Conversion failed')|tojson }}); resetUI(); },
+    onCancel() { resetUI(); },
+    onNotFound: handleTaskNotFound
+};
+
+// Session persistence: the task id outlives a page change, so a running or
+// finished task's progress, stats and log come back.
+SessionState.setKey('chdConverterState');
+let scanTaskId = null;
+
+function saveSessionState() {
+    SessionState.save({ taskId: scanTaskId });
+}
+
+function handleTaskNotFound() {
+    SessionState.clear();
+    scanTaskId = null;
+    resetUI();
+    document.getElementById('progressSection').style.display = 'none';
+    showNotification({{ _("The last scan's results have expired. Start a new scan.")|tojson }}, 'warning');
+}
+
+function restoreTask() {
+    const state = SessionState.load();
+    if (!state || !state.taskId) return;
+    scanTaskId = state.taskId;
+    document.getElementById('convertBtn').disabled = true;
+    document.getElementById('cancelBtn').disabled = false;
+    document.getElementById('progressSection').style.display = 'block';
+    document.getElementById('conversionLog').style.display = 'block';
+    TaskPoller.start(state.taskId, taskCallbacks, 500);
+}
+
 async function startConversion() {
     const selectedFiles = [];
     document.querySelectorAll('.file-list-item input[type="checkbox"]:checked').forEach(cb => {
@@ -308,6 +360,8 @@ async function startConversion() {
     
     document.getElementById('convertBtn').disabled = true;
     document.getElementById('cancelBtn').disabled = false;
+    SessionState.clear();
+    scanTaskId = null;
     document.getElementById('progressSection').style.display = 'block';
     document.getElementById('conversionLog').style.display = 'block';
     document.getElementById('conversionLog').innerHTML = '';
@@ -325,28 +379,9 @@ async function startConversion() {
         const data = await response.json();
 
         if (data.success) {
-            TaskPoller.start(data.task_id, {
-                onProgress(task) {
-                    document.getElementById('progressBar').style.width = task.percent + '%';
-                    document.getElementById('progressBar').textContent = task.percent + '%';
-                    document.getElementById('progressStatus').textContent = task.current_file ? `Converting: ${task.current_file}` : 'Processing...';
-
-                    if (task.results) {
-                        document.getElementById('statConverted').textContent = formatNumber(task.results.converted || 0);
-                        document.getElementById('statOriginal').textContent = formatBytes(task.results.original_size || 0);
-                        document.getElementById('statCompressed').textContent = formatBytes(task.results.compressed_size || 0);
-                        document.getElementById('statSaved').textContent = (task.results.percent_saved || 0) + '%';
-                    }
-
-                    if (task.logs) {
-                        document.getElementById('conversionLog').innerHTML = task.logs.map(l => `<div>${escapeHtml(l)}</div>`).join('');
-                        document.getElementById('conversionLog').scrollTop = document.getElementById('conversionLog').scrollHeight;
-                    }
-                },
-                onComplete() { resetUI(); },
-                onError(task) { showModal('❌ ' + {{ _('Error')|tojson }}, task.error || {{ _('Conversion failed')|tojson }}); resetUI(); },
-                onCancel() { resetUI(); }
-            }, 500);
+            scanTaskId = data.task_id;
+            saveSessionState();
+            TaskPoller.start(data.task_id, taskCallbacks, 500);
         } else {
             showModal('❌ ' + {{ _('Error')|tojson }}, data.error);
             resetUI();
@@ -366,5 +401,7 @@ function resetUI() {
     document.getElementById('cancelBtn').disabled = true;
 }
 
+// After core.bundle.js (deferred), which defines safeParseJSON and API.
+document.addEventListener('DOMContentLoaded', restoreTask);
 </script>
 {% endblock %}

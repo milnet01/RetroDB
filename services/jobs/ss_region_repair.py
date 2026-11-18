@@ -27,12 +27,13 @@ from scraper.metadata_merger import (
 )
 from scraper.scrape_screenscraper import get_system_id, search_game
 from scraper.ss_regions import by_region, own_region
+from services.database import query
 from services.game_media_service import remove_media_file
 from services.image_utils import preferred_image_extension
 from services.jobs.base import (
     _get_conn, _commit_with_retry,
     persist_job_start, persist_job_progress, persist_job_complete,
-    resolve_terminal_status,
+    resolve_terminal_status, shutdown_requested,
     acquire_job_singleton_lock, release_singleton_fd,
 )
 
@@ -64,6 +65,36 @@ def _new_name(game_id, stem, column, chosen, default_ext):
     return f'{game_id}_{stem}_{region}{suffix}'
 
 
+def _swapped_region(filename, stem):
+    """The region code a swapped file's name carries, else None."""
+    match = re.search(rf'_{stem}_([a-z0-9]+)\.[^./]+$', filename or '')
+    return match.group(1) if match else None
+
+
+def swapped_games():
+    """Every game holding a file this job swapped, by console then title.
+
+    Each row has `changes`, a list of (column, region code). The old file is
+    gone, so only the new region is known.
+    """
+    rows = query("""
+        SELECT g.id, g.title, g.region, g.boxart, g.boxart_3d, g.manual,
+               s.name AS system_name
+        FROM games g JOIN systems s ON g.system_id = s.id
+        WHERE g.boxart GLOB '*_ss_boxart_*' OR g.boxart_3d GLOB '*_ss_boxart3d_*'
+           OR g.manual GLOB '*_ss_manual_*'
+        ORDER BY s.name COLLATE NOCASE, COALESCE(g.sort_title, g.title) COLLATE NOCASE
+    """)
+    games = []
+    for row in rows:
+        changes = [(column, _swapped_region(row[column], stem))
+                   for column, _t, _d, stem, _e in _KINDS]
+        changes = [(column, code) for column, code in changes if code]
+        if changes:
+            games.append({**dict(row), 'changes': changes})
+    return games
+
+
 def _fetch(chosen, path, column):
     """Download a chosen entry to `path`; True only for a usable file."""
     if column != 'manual':
@@ -88,6 +119,7 @@ class SsRegionRepairJob:
         self.running = False
         self.completed = False
         self.cancelled = False
+        self.paused = False
         self.current_index = 0
         self.total_games = 0
         self.replaced_count = 0
@@ -122,8 +154,32 @@ class SsRegionRepairJob:
         with self._lock:
             if self.running and not self.completed:
                 self.cancelled = True
+                self.paused = False  # so the waiting loop sees the stop
                 return {'success': True}
             return {'success': False, 'error': 'not_running'}
+
+    def pause(self):
+        """Hold the run after the game it is on, until resumed or stopped."""
+        with self._lock:
+            if self.running and not self.completed:
+                self.paused = True
+                return {'success': True}
+            return {'success': False, 'error': 'not_running'}
+
+    def resume(self):
+        with self._lock:
+            if self.running and self.paused:
+                self.paused = False
+                return {'success': True}
+            return {'success': False, 'error': 'not_paused'}
+
+    def _wait_while_paused(self):
+        while True:
+            with self._lock:
+                if not self.paused or self.cancelled:
+                    return
+            if shutdown_requested.wait(0.5):
+                return
 
     def get_status(self):
         with self._lock:
@@ -133,6 +189,7 @@ class SsRegionRepairJob:
                 'running': self.running,
                 'completed': self.completed,
                 'cancelled': self.cancelled,
+                'paused': self.paused,
                 'current': self.current_index,
                 'total': self.total_games,
                 'percent': percent,
@@ -231,6 +288,7 @@ class SsRegionRepairJob:
             last_persist = time.time()
             try:
                 for i, game in enumerate(games):
+                    self._wait_while_paused()
                     with self._lock:
                         if self.cancelled:
                             break

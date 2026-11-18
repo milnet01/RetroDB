@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-16 16:04+0200\n"
+"POT-Creation-Date: 2026-11-18 12:36+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -131,11 +131,11 @@ msgstr "%(job)s a été mis en file d'attente"
 
 #: app.py:1456 services/js_i18n_strings.py:963
 #: templates/archive_scanner.html:1628 templates/dashboard.html:1159
-#: templates/dashboard.html:1164
+#: templates/dashboard.html:1164 templates/ss_region_repair.html:103
 msgid "Resume"
 msgstr "Reprendre"
 
-#: app.py:1456
+#: app.py:1456 templates/ss_region_repair.html:101
 msgid "Start"
 msgstr "Démarrer"
 
@@ -1125,6 +1125,94 @@ msgstr "Ajoutez d'abord votre compte ScreenScraper dans les Paramètres."
 #: routes/maintenance.py:490
 msgid "This fix is already running."
 msgstr "Cette correction est déjà en cours."
+
+#: routes/maintenance.py:535
+#, fuzzy
+msgid "USA"
+msgstr "Utilisez"
+
+#: routes/maintenance.py:535
+#, fuzzy
+msgid "Europe"
+msgstr "Violet"
+
+#: routes/maintenance.py:535
+#, fuzzy
+msgid "Japan"
+msgstr "Campagne"
+
+#: routes/maintenance.py:535
+#, fuzzy
+msgid "World"
+msgstr "Monde ouvert"
+
+#: routes/maintenance.py:536
+msgid "United Kingdom"
+msgstr ""
+
+#: routes/maintenance.py:536
+#, fuzzy
+msgid "France"
+msgstr "Franchise"
+
+#: routes/maintenance.py:536
+#, fuzzy
+msgid "Germany"
+msgstr "Gris"
+
+#: routes/maintenance.py:537
+#, fuzzy
+msgid "Spain"
+msgstr "Analyser"
+
+#: routes/maintenance.py:537
+#, fuzzy
+msgid "Italy"
+msgstr "Sarcelle"
+
+#: routes/maintenance.py:537
+#, fuzzy
+msgid "Australia"
+msgstr "ACB (Australie)"
+
+#: routes/maintenance.py:538
+msgid "Brazil"
+msgstr ""
+
+#: routes/maintenance.py:538
+#, fuzzy
+msgid "Korea"
+msgstr "Cœur"
+
+#: routes/maintenance.py:538
+msgid "China"
+msgstr ""
+
+#: routes/maintenance.py:538
+#, fuzzy
+msgid "Asia"
+msgstr "IA"
+
+#: routes/maintenance.py:539
+#, fuzzy
+msgid "Any region"
+msgstr "Région"
+
+#: routes/maintenance.py:549
+#, fuzzy
+msgid "Box"
+msgstr "Xbox"
+
+#: routes/maintenance.py:549
+#, fuzzy
+msgid "3D box"
+msgstr "Importer une boîte 3D"
+
+#: routes/maintenance.py:549 templates/_modals/manual_reader_modal.html:9
+#: templates/analytics.html:488 templates/analytics.html:2432
+#: templates/game_detail.html:125
+msgid "Manual"
+msgstr "Manuel"
 
 #: routes/mame_names.py:38
 msgid "One of those files was not found."
@@ -2940,10 +3028,10 @@ msgstr "Saisissez un seul chemin de dossier."
 #: templates/archive_scanner.html:1173 templates/archive_scanner.html:1403
 #: templates/archive_scanner.html:1406 templates/archive_scanner.html:1428
 #: templates/archive_scanner.html:1431 templates/archive_scanner.html:1479
-#: templates/archive_scanner.html:1482 templates/chd_converter.html:347
-#: templates/chd_converter.html:351 templates/chd_converter.html:355
-#: templates/chd_verify.html:315 templates/chd_verify.html:319
-#: templates/chd_verify.html:323 templates/controllers.html:910
+#: templates/archive_scanner.html:1482 templates/chd_converter.html:316
+#: templates/chd_converter.html:386 templates/chd_converter.html:390
+#: templates/chd_verify.html:283 templates/chd_verify.html:356
+#: templates/chd_verify.html:360 templates/controllers.html:910
 #: templates/controllers.html:914 templates/controllers.html:982
 #: templates/controllers.html:986 templates/controllers.html:1017
 #: templates/controllers.html:1021 templates/controllers.html:1047
@@ -2951,7 +3039,7 @@ msgstr "Saisissez un seul chemin de dossier."
 #: templates/controllers.html:1135 templates/controllers.html:1153
 #: templates/controllers.html:1184 templates/controllers.html:1244
 #: templates/controllers.html:1248 templates/dashboard.html:1310
-#: templates/duplicate_finder.html:556 templates/duplicate_finder.html:559
+#: templates/duplicate_finder.html:590 templates/duplicate_finder.html:593
 #: templates/game_detail.html:5082 templates/game_detail.html:5086
 #: templates/local_trophy_detail.html:374
 #: templates/local_trophy_detail.html:429
@@ -3059,7 +3147,7 @@ msgstr "Échec de la suppression des données HLTB : {error}"
 msgid "Failed to clear RA data"
 msgstr "Échec de l'effacement des données RA"
 
-#: services/js_i18n_strings.py:765 templates/screenshot_dedup.html:601
+#: services/js_i18n_strings.py:765 templates/screenshot_dedup.html:637
 msgid "Failed to delete"
 msgstr "Échec de la suppression"
 
@@ -3786,7 +3874,7 @@ msgstr "Fait partie d'une série"
 #: services/js_i18n_strings.py:922 templates/_bulk_scrape_modal.html:46
 #: templates/archive_scanner.html:658 templates/archive_scanner.html:795
 #: templates/archive_scanner.html:1601 templates/archive_scanner.html:1632
-#: templates/psn_trophies.html:295
+#: templates/psn_trophies.html:295 templates/ss_region_repair.html:102
 msgid "Pause"
 msgstr "Pause"
 
@@ -3897,7 +3985,7 @@ msgstr "Correspondances de noms régionaux"
 #: templates/_settings_tabs/account.html:224
 #: templates/_settings_tabs/library.html:163 templates/compare_games.html:24
 #: templates/compare_games.html:40 templates/rom_tools_settings.html:462
-#: templates/rom_tools_settings.html:501 templates/screenshot_review.html:187
+#: templates/rom_tools_settings.html:501 templates/screenshot_review.html:226
 #: templates/settings.html:1442 templates/settings.html:1550
 msgid "Remove"
 msgstr "Supprimer"
@@ -5079,7 +5167,7 @@ msgstr "Cœur RetroArch introuvable : %(path)s"
 msgid "The player cannot use a path containing '|': %(path)s"
 msgstr "Le lecteur ne peut pas utiliser un chemin contenant '|' : %(path)s"
 
-#: services/player_cores.py:544
+#: services/player_cores.py:546
 #, python-format
 msgid "Player core not found: %(path)s"
 msgstr "Cœur du lecteur introuvable : %(path)s"
@@ -5793,6 +5881,7 @@ msgid "All systems"
 msgstr "Tous les systèmes"
 
 #: templates/ai_fill_bulk.html:100 templates/mame_names.html:67
+#: templates/ss_region_repair.html:104
 msgid "Stop"
 msgstr "Arrêter"
 
@@ -6333,11 +6422,6 @@ msgstr "Fanart"
 msgid "Video"
 msgstr "Vidéo"
 
-#: templates/_modals/manual_reader_modal.html:9 templates/analytics.html:488
-#: templates/analytics.html:2432 templates/game_detail.html:125
-msgid "Manual"
-msgstr "Manuel"
-
 #: templates/analytics.html:490 templates/analytics.html:2432
 msgid "Ratings"
 msgstr "Classifications"
@@ -6551,7 +6635,7 @@ msgid "Unwanted"
 msgstr "Indésirable"
 
 #: templates/archive_scanner.html:655 templates/duplicate_finder.html:207
-#: templates/screenshot_dedup.html:260 templates/screenshot_dedup.html:448
+#: templates/screenshot_dedup.html:260 templates/screenshot_dedup.html:484
 #: templates/screenshot_review.html:80
 msgid "Start Scan"
 msgstr "Démarrer l'analyse"
@@ -6671,7 +6755,7 @@ msgstr "Problèmes trouvés dans votre collection d'archives : {count}"
 msgid "Scan Error"
 msgstr "Erreur d'analyse"
 
-#: templates/archive_scanner.html:1210 templates/screenshot_review.html:155
+#: templates/archive_scanner.html:1210 templates/screenshot_review.html:145
 msgid "Scan failed"
 msgstr "Échec de l'analyse"
 
@@ -6695,8 +6779,8 @@ msgstr "Annuler l'analyse"
 msgid "Are you sure you want to cancel the scan?"
 msgstr "Voulez-vous vraiment annuler l'analyse ?"
 
-#: templates/archive_scanner.html:1378 templates/chd_converter.html:305
-#: templates/chd_verify.html:259 templates/duplicate_finder.html:538
+#: templates/archive_scanner.html:1378 templates/chd_converter.html:357
+#: templates/chd_verify.html:326 templates/duplicate_finder.html:572
 #: templates/psn_trophies.html:1674
 msgid "No Selection"
 msgstr "Aucune sélection"
@@ -7726,13 +7810,20 @@ msgstr "Taille compressée"
 msgid "Space Saved"
 msgstr "Espace économisé"
 
-#: templates/chd_converter.html:305 templates/chd_verify.html:259
-msgid "No files selected"
-msgstr "Aucun fichier sélectionné"
-
-#: templates/chd_converter.html:347
+#: templates/chd_converter.html:316
 msgid "Conversion failed"
 msgstr "Échec de la conversion"
+
+#: templates/chd_converter.html:335 templates/chd_verify.html:302
+#: templates/duplicate_finder.html:389 templates/screenshot_dedup.html:401
+#: templates/screenshot_review.html:166
+#, fuzzy
+msgid "The last scan's results have expired. Start a new scan."
+msgstr "Ces résultats d'analyse ont expiré. Relancez l'analyse, puis supprimez."
+
+#: templates/chd_converter.html:357 templates/chd_verify.html:326
+msgid "No files selected"
+msgstr "Aucun fichier sélectionné"
 
 #: templates/chd_verify.html:91
 msgid "Why Verify CHD Files?"
@@ -7785,7 +7876,7 @@ msgstr "Invalide"
 msgid "Total Size"
 msgstr "Taille totale"
 
-#: templates/chd_verify.html:315
+#: templates/chd_verify.html:283
 msgid "Verification failed"
 msgstr "Échec de la vérification"
 
@@ -8638,15 +8729,15 @@ msgstr "Conserver le plus petit"
 msgid "Delete Unselected"
 msgstr "Supprimer les non sélectionnés"
 
-#: templates/duplicate_finder.html:538 templates/screenshot_dedup.html:575
+#: templates/duplicate_finder.html:572 templates/screenshot_dedup.html:611
 msgid "No files selected for deletion"
 msgstr "Aucun fichier sélectionné pour la suppression"
 
-#: templates/duplicate_finder.html:542
+#: templates/duplicate_finder.html:576
 msgid "Delete Files"
 msgstr "Supprimer les fichiers"
 
-#: templates/duplicate_finder.html:542
+#: templates/duplicate_finder.html:576
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete these files ({count})?\n"
@@ -8657,11 +8748,11 @@ msgstr ""
 "\n"
 "Cette action est irréversible !"
 
-#: templates/duplicate_finder.html:553
+#: templates/duplicate_finder.html:587
 msgid "Files Deleted"
 msgstr "Fichiers supprimés"
 
-#: templates/duplicate_finder.html:553
+#: templates/duplicate_finder.html:587
 #, python-brace-format
 msgid "Files deleted: {deleted}. Space freed: {size}"
 msgstr "Fichiers supprimés : {deleted}. Espace libéré : {size}"
@@ -11398,7 +11489,7 @@ msgstr ""
 "Boy sont classées des plus suspectes aux moins suspectes, et c'est vous "
 "qui décidez de ce qu'il faut retirer."
 
-#: templates/rom_tools_hub.html:274 templates/rom_tools_hub.html:748
+#: templates/rom_tools_hub.html:274 templates/rom_tools_hub.html:686
 msgid "Image Resizer"
 msgstr "Redimensionneur d'images"
 
@@ -11438,11 +11529,12 @@ msgstr ""
 msgid "Metadata only &middot; no media downloads"
 msgstr "Métadonnées uniquement &middot; aucun téléchargement de médias"
 
-#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:461
+#: templates/rom_tools_hub.html:300 templates/ss_region_repair.html:4
+#: templates/ss_region_repair.html:92 templates/ss_region_repair.html:155
 msgid "Fix Box and Manual Regions"
 msgstr "Corriger les régions des boîtiers et des manuels"
 
-#: templates/rom_tools_hub.html:303
+#: templates/rom_tools_hub.html:303 templates/ss_region_repair.html:93
 msgid ""
 "Older ScreenScraper scrapes could give a game another region's box or "
 "manual, such as a European box on a USA game. This looks each one up "
@@ -11455,11 +11547,11 @@ msgstr ""
 " remplace par celui de la bonne région. Les images provenant d'ailleurs "
 "ne sont pas touchées."
 
-#: templates/rom_tools_hub.html:306
+#: templates/rom_tools_hub.html:306 templates/ss_region_repair.html:98
 msgid "Needs a ScreenScraper account"
 msgstr "Nécessite un compte ScreenScraper"
 
-#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:522
+#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:460
 msgid "Fix Regions from File Names"
 msgstr "Corriger les régions d'après les noms de fichiers"
 
@@ -11473,7 +11565,7 @@ msgstr ""
 "l'indiquait, si bien qu'un fichier (USA) pouvait être classé Japon. Cette"
 " action attribue à ces jeux la région indiquée dans leur nom de fichier."
 
-#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:556
+#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:494
 msgid "Tidy Genres, Perspectives and Modes"
 msgstr "Harmoniser les genres, perspectives et modes"
 
@@ -11500,7 +11592,7 @@ msgstr ""
 msgid "Needs a MAME list file"
 msgstr "Un fichier de liste MAME est nécessaire"
 
-#: templates/rom_tools_hub.html:354 templates/rom_tools_hub.html:590
+#: templates/rom_tools_hub.html:354 templates/rom_tools_hub.html:528
 msgid "Tidy Release Dates"
 msgstr "Nettoyer les dates de sortie"
 
@@ -11515,7 +11607,7 @@ msgstr ""
 "connu. Cette action ramène ces dates à l'année ou au mois, pour qu'une "
 "récupération puisse renseigner la vraie date."
 
-#: templates/rom_tools_hub.html:367 templates/rom_tools_hub.html:624
+#: templates/rom_tools_hub.html:367 templates/rom_tools_hub.html:562
 msgid "Check Saved Play Times"
 msgstr "Vérifier les durées de jeu enregistrées"
 
@@ -11530,7 +11622,7 @@ msgstr ""
 "envoie ces correspondances à la page de vérification, où vous gardez ou "
 "effacez chacune d'elles."
 
-#: templates/rom_tools_hub.html:380 templates/rom_tools_hub.html:658
+#: templates/rom_tools_hub.html:380 templates/rom_tools_hub.html:596
 msgid "Clear RAWG Pictures from Box Art"
 msgstr "Effacer les images RAWG des jaquettes"
 
@@ -11545,7 +11637,7 @@ msgstr ""
 "d'avoir une vraie jaquette. Cette action efface ces images pour qu'une "
 "récupération puisse trouver de vraies jaquettes."
 
-#: templates/rom_tools_hub.html:393 templates/rom_tools_hub.html:696
+#: templates/rom_tools_hub.html:393 templates/rom_tools_hub.html:634
 msgid "Bulk HLTB Lookup"
 msgstr "Recherche HLTB groupée"
 
@@ -11617,8 +11709,8 @@ msgstr ""
 msgid "Alt-titles backfill started"
 msgstr "Complément des titres alternatifs lancé"
 
-#: templates/rom_tools_hub.html:452 templates/rom_tools_hub.html:715
-#: templates/rom_tools_hub.html:767
+#: templates/rom_tools_hub.html:452 templates/rom_tools_hub.html:653
+#: templates/rom_tools_hub.html:705
 msgid "Failed to start"
 msgstr "Échec du démarrage"
 
@@ -11626,66 +11718,7 @@ msgstr "Échec du démarrage"
 msgid "Failed to start backfill"
 msgstr "Échec du démarrage du remplissage"
 
-#: templates/rom_tools_hub.html:462
-msgid ""
-"Each game with a ScreenScraper box or manual is looked up again. Where "
-"another region suits it better, the file is downloaded and the old one is"
-" deleted.\n"
-"\n"
-"Games you have changed by hand are not touched. This uses your daily "
-"ScreenScraper allowance and can take a long time. You can leave the page,"
-" and press this card again to stop."
-msgstr ""
-"Chaque jeu ayant un boîtier ou un manuel ScreenScraper est recherché à "
-"nouveau. Quand une autre région convient mieux, le fichier est téléchargé"
-" et l'ancien est supprimé.\n"
-"\n"
-"Les jeux que vous avez modifiés à la main ne sont pas touchés. Cette "
-"action utilise votre quota quotidien ScreenScraper et peut être très "
-"longue. Vous pouvez quitter la page, et appuyer de nouveau sur cette "
-"carte pour arrêter."
-
-#: templates/rom_tools_hub.html:463
-msgid "Could not start the fix"
-msgstr "Impossible de lancer la correction"
-
-#: templates/rom_tools_hub.html:464
-msgid ""
-"Stop the fix? Files already swapped stay as they are, and a later run "
-"carries on with the rest."
-msgstr ""
-"Arrêter la correction ? Les fichiers déjà remplacés restent tels quels, "
-"et une prochaine exécution continuera avec le reste."
-
-#: templates/rom_tools_hub.html:465 templates/rom_tools_hub.html:469
-#, python-brace-format
-msgid "Stopped. Files swapped: {replaced}."
-msgstr "Arrêté. Fichiers remplacés : {replaced}."
-
-#: templates/rom_tools_hub.html:466
-#, python-brace-format
-msgid ""
-"The fix stopped with an error. Files swapped: {replaced}. The log has the"
-" details."
-msgstr ""
-"La correction s'est arrêtée à cause d'une erreur. Fichiers remplacés : "
-"{replaced}. Le journal contient les détails."
-
-#: templates/rom_tools_hub.html:467
-#, python-brace-format
-msgid "Checked {current} of {total} games. Files swapped: {replaced}."
-msgstr "{current} jeux vérifiés sur {total}. Fichiers remplacés : {replaced}."
-
-#: templates/rom_tools_hub.html:468
-#, python-brace-format
-msgid ""
-"Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
-"not download: {failed}."
-msgstr ""
-"Terminé. Fichiers remplacés : {replaced}. Jeux introuvables : {no_match}."
-" Téléchargements impossibles : {failed}."
-
-#: templates/rom_tools_hub.html:523
+#: templates/rom_tools_hub.html:461
 #, python-brace-format
 msgid ""
 "{count} games have a region from the AI that their file name contradicts."
@@ -11701,20 +11734,20 @@ msgstr ""
 " l'une d'elles à la main pour qu'elle diffère du nom de fichier, elle "
 "sera aussi modifiée."
 
-#: templates/rom_tools_hub.html:524
+#: templates/rom_tools_hub.html:462
 msgid "No game has an AI region that its file name contradicts."
 msgstr "Aucun jeu n'a de région IA contredite par son nom de fichier."
 
-#: templates/rom_tools_hub.html:525
+#: templates/rom_tools_hub.html:463
 #, python-brace-format
 msgid "Fixed {count} regions."
 msgstr "{count} régions corrigées."
 
-#: templates/rom_tools_hub.html:526
+#: templates/rom_tools_hub.html:464
 msgid "Could not fix the regions"
 msgstr "Impossible de corriger les régions"
 
-#: templates/rom_tools_hub.html:557
+#: templates/rom_tools_hub.html:495
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -11739,11 +11772,11 @@ msgstr ""
 "Ensuite, lancez une récupération en masse avec Compléter les manquants "
 "pour remplir ce qui reste vide."
 
-#: templates/rom_tools_hub.html:558
+#: templates/rom_tools_hub.html:496
 msgid "Every game already uses these names."
 msgstr "Tous les jeux utilisent déjà ces noms."
 
-#: templates/rom_tools_hub.html:559
+#: templates/rom_tools_hub.html:497
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to fill "
@@ -11752,11 +11785,11 @@ msgstr ""
 "{count} jeux harmonisés. Lancez une récupération en masse avec Compléter "
 "les manquants pour remplir ce qui reste vide."
 
-#: templates/rom_tools_hub.html:560
+#: templates/rom_tools_hub.html:498
 msgid "Could not tidy the names"
 msgstr "Impossible d'harmoniser les noms"
 
-#: templates/rom_tools_hub.html:591
+#: templates/rom_tools_hub.html:529
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -11769,11 +11802,11 @@ msgstr ""
 "Une date comme le 1er janvier 1987 devient 1987. Une date qu'aucune "
 "récupération n'a renseignée reste telle quelle."
 
-#: templates/rom_tools_hub.html:592
+#: templates/rom_tools_hub.html:530
 msgid "No release dates need tidying."
 msgstr "Aucune date de sortie à nettoyer."
 
-#: templates/rom_tools_hub.html:593
+#: templates/rom_tools_hub.html:531
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to look for "
@@ -11782,11 +11815,11 @@ msgstr ""
 "{count} jeux nettoyés. Lancez une récupération en masse avec Compléter "
 "les manquants pour chercher des dates plus précises."
 
-#: templates/rom_tools_hub.html:594
+#: templates/rom_tools_hub.html:532
 msgid "Could not tidy the release dates"
 msgstr "Impossible de nettoyer les dates de sortie"
 
-#: templates/rom_tools_hub.html:625
+#: templates/rom_tools_hub.html:563
 #, python-brace-format
 msgid ""
 "{count} saved play times look like another game. They will go to the "
@@ -11800,20 +11833,20 @@ msgstr ""
 "\n"
 "Là, Approuver garde une durée et Rejeter l'efface."
 
-#: templates/rom_tools_hub.html:626
+#: templates/rom_tools_hub.html:564
 msgid "No saved play time looks wrong."
 msgstr "Aucune durée de jeu enregistrée ne semble erronée."
 
-#: templates/rom_tools_hub.html:627
+#: templates/rom_tools_hub.html:565
 #, python-brace-format
 msgid "Sent {count} play times to the HowLongToBeat review page."
 msgstr "{count} durées de jeu envoyées à la page de vérification de HowLongToBeat."
 
-#: templates/rom_tools_hub.html:628
+#: templates/rom_tools_hub.html:566
 msgid "Could not check the saved play times"
 msgstr "Impossible de vérifier les durées de jeu enregistrées"
 
-#: templates/rom_tools_hub.html:659
+#: templates/rom_tools_hub.html:597
 #, python-brace-format
 msgid ""
 "{count} games and wishlist items use a RAWG picture as their box art. "
@@ -11831,11 +11864,11 @@ msgstr ""
 "Ensuite, lancez une récupération en masse avec Remplir les manquants pour"
 " chercher de vraies jaquettes."
 
-#: templates/rom_tools_hub.html:660
+#: templates/rom_tools_hub.html:598
 msgid "No game uses a RAWG picture as its box art."
 msgstr "Aucun jeu n'utilise d'image RAWG comme jaquette."
 
-#: templates/rom_tools_hub.html:661
+#: templates/rom_tools_hub.html:599
 #, python-brace-format
 msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
@@ -11844,11 +11877,11 @@ msgstr ""
 "{count} images effacées. Lancez une récupération en masse avec Remplir "
 "les manquants pour chercher de vraies jaquettes."
 
-#: templates/rom_tools_hub.html:662
+#: templates/rom_tools_hub.html:600
 msgid "Could not clear the pictures"
 msgstr "Impossible d'effacer les images"
 
-#: templates/rom_tools_hub.html:697
+#: templates/rom_tools_hub.html:635
 msgid ""
 "Fetch HowLongToBeat playtime for every game.\n"
 "\n"
@@ -11871,17 +11904,17 @@ msgstr ""
 "traités. HLTB limite le débit, donc l'opération est lente en arrière-plan"
 " : vous pouvez quitter la page."
 
-#: templates/rom_tools_hub.html:707
+#: templates/rom_tools_hub.html:645
 msgid "Bulk HLTB lookup started — queued matches will appear on the review page"
 msgstr ""
 "Recherche HLTB groupée lancée : les correspondances en attente "
 "apparaîtront sur la page de vérification"
 
-#: templates/rom_tools_hub.html:718
+#: templates/rom_tools_hub.html:656
 msgid "Failed to start bulk HLTB"
 msgstr "Échec du démarrage de la recherche HLTB groupée"
 
-#: templates/rom_tools_hub.html:749
+#: templates/rom_tools_hub.html:687
 msgid ""
 "Standardize all images to consistent sizes:\n"
 "\n"
@@ -11905,11 +11938,11 @@ msgstr ""
 "\n"
 "Cela peut prendre du temps pour les grandes collections."
 
-#: templates/rom_tools_hub.html:759
+#: templates/rom_tools_hub.html:697
 msgid "Image standardization started"
 msgstr "Uniformisation des images lancée"
 
-#: templates/rom_tools_hub.html:770
+#: templates/rom_tools_hub.html:708
 msgid "Failed to start image resize"
 msgstr "Échec du démarrage du redimensionnement des images"
 
@@ -12143,15 +12176,15 @@ msgstr "Espace récupérable"
 msgid "Keep Largest"
 msgstr "Conserver le plus grand"
 
-#: templates/screenshot_dedup.html:557
+#: templates/screenshot_dedup.html:593
 msgid "Selected largest file in each group"
 msgstr "Plus gros fichier sélectionné dans chaque groupe"
 
-#: templates/screenshot_dedup.html:580
+#: templates/screenshot_dedup.html:616
 msgid "Delete Duplicate Screenshots"
 msgstr "Supprimer les captures d'écran en double"
 
-#: templates/screenshot_dedup.html:581
+#: templates/screenshot_dedup.html:617
 #, python-brace-format
 msgid ""
 "Duplicate screenshots to delete: {count}\n"
@@ -12164,14 +12197,14 @@ msgstr ""
 "Les fichiers seront supprimés du disque et les références de la base de "
 "données mises à jour. Cette action est irréversible."
 
-#: templates/screenshot_dedup.html:594
+#: templates/screenshot_dedup.html:630
 #, python-brace-format
 msgid "Files deleted: {deleted}. Space freed: {size}. Games updated: {updated}"
 msgstr ""
 "Fichiers supprimés : {deleted}. Espace libéré : {size}. Jeux mis à jour :"
 " {updated}"
 
-#: templates/screenshot_dedup.html:604
+#: templates/screenshot_dedup.html:640
 #, python-brace-format
 msgid "Failed to delete: {error}"
 msgstr "Échec de la suppression : {error}"
@@ -12200,34 +12233,34 @@ msgstr ""
 msgid "Show more"
 msgstr "Afficher plus"
 
-#: templates/screenshot_review.html:167
+#: templates/screenshot_review.html:206
 #, python-brace-format
 msgid "{count} screenshots, most suspicious first."
 msgstr "{count} captures d'écran, les plus suspectes d'abord."
 
-#: templates/screenshot_review.html:168
+#: templates/screenshot_review.html:207
 msgid "No screenshots to review for this system."
 msgstr "Aucune capture d'écran à vérifier pour ce système."
 
-#: templates/screenshot_review.html:170
+#: templates/screenshot_review.html:209
 #, python-brace-format
 msgid "{count} could not be read."
 msgstr "{count} n'ont pas pu être lues."
 
-#: templates/screenshot_review.html:182
+#: templates/screenshot_review.html:221
 msgid "Open full size"
 msgstr "Ouvrir en taille réelle"
 
-#: templates/screenshot_review.html:185
+#: templates/screenshot_review.html:224
 #, python-brace-format
 msgid "Colour misfit: {score}"
 msgstr "Couleurs inadaptées : {score}"
 
-#: templates/screenshot_review.html:194
+#: templates/screenshot_review.html:233
 msgid "Remove Screenshot"
 msgstr "Retirer la capture d'écran"
 
-#: templates/screenshot_review.html:194
+#: templates/screenshot_review.html:233
 msgid ""
 "Remove this screenshot from the game and delete its file? This cannot be "
 "undone."
@@ -12235,7 +12268,7 @@ msgstr ""
 "Retirer cette capture d'écran du jeu et supprimer son fichier ? Cette "
 "action est irréversible."
 
-#: templates/screenshot_review.html:205
+#: templates/screenshot_review.html:246
 msgid "Screenshot removed"
 msgstr "Capture d'écran retirée"
 
@@ -14053,6 +14086,102 @@ msgstr "Échec de la configuration."
 #: templates/setup.html:534
 msgid "Network error. Please try again."
 msgstr "Erreur réseau. Veuillez réessayer."
+
+#: templates/ss_region_repair.html:112
+#, fuzzy
+msgid "What changed"
+msgstr "Liste de codes de triche changée."
+
+#: templates/ss_region_repair.html:116
+msgid ""
+"Each game below has a box, 3D box or manual this fix swapped. The picture"
+" is its box now. Open a game to look at it closely. The old files were "
+"deleted, so only the new region is shown."
+msgstr ""
+
+#: templates/ss_region_repair.html:117
+msgid "Reload the page to see games swapped since you opened it."
+msgstr ""
+
+#: templates/ss_region_repair.html:133
+#, python-format
+msgid "Your copy: %(region)s"
+msgstr ""
+
+#: templates/ss_region_repair.html:135
+#, python-format
+msgid "%(kind)s now from: %(region)s"
+msgstr ""
+
+#: templates/ss_region_repair.html:144
+#, fuzzy
+msgid "Nothing has been swapped yet."
+msgstr "Vos paramètres ont été enregistrés !"
+
+#: templates/ss_region_repair.html:156
+#, fuzzy
+msgid ""
+"Each game with a ScreenScraper box or manual is looked up again. Where "
+"another region suits it better, the file is downloaded and the old one is"
+" deleted.\n"
+"\n"
+"Games you have changed by hand are not touched. This uses your daily "
+"ScreenScraper allowance and can take a long time. You can leave this page"
+" and come back to pause or stop it."
+msgstr ""
+"Chaque jeu ayant un boîtier ou un manuel ScreenScraper est recherché à "
+"nouveau. Quand une autre région convient mieux, le fichier est téléchargé"
+" et l'ancien est supprimé.\n"
+"\n"
+"Les jeux que vous avez modifiés à la main ne sont pas touchés. Cette "
+"action utilise votre quota quotidien ScreenScraper et peut être très "
+"longue. Vous pouvez quitter la page, et appuyer de nouveau sur cette "
+"carte pour arrêter."
+
+#: templates/ss_region_repair.html:157
+msgid "Could not start the fix"
+msgstr "Impossible de lancer la correction"
+
+#: templates/ss_region_repair.html:158
+msgid ""
+"Stop the fix? Files already swapped stay as they are, and a later run "
+"carries on with the rest."
+msgstr ""
+"Arrêter la correction ? Les fichiers déjà remplacés restent tels quels, "
+"et une prochaine exécution continuera avec le reste."
+
+#: templates/ss_region_repair.html:159
+#, python-brace-format
+msgid ""
+"The fix stopped with an error. Files swapped: {replaced}. The log has the"
+" details."
+msgstr ""
+"La correction s'est arrêtée à cause d'une erreur. Fichiers remplacés : "
+"{replaced}. Le journal contient les détails."
+
+#: templates/ss_region_repair.html:160
+#, python-brace-format
+msgid "Checked {current} of {total} games. Files swapped: {replaced}."
+msgstr "{current} jeux vérifiés sur {total}. Fichiers remplacés : {replaced}."
+
+#: templates/ss_region_repair.html:161
+#, fuzzy, python-brace-format
+msgid "Paused after {current} of {total} games. Files swapped: {replaced}."
+msgstr "{current} jeux vérifiés sur {total}. Fichiers remplacés : {replaced}."
+
+#: templates/ss_region_repair.html:162
+#, python-brace-format
+msgid ""
+"Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
+"not download: {failed}."
+msgstr ""
+"Terminé. Fichiers remplacés : {replaced}. Jeux introuvables : {no_match}."
+" Téléchargements impossibles : {failed}."
+
+#: templates/ss_region_repair.html:163
+#, python-brace-format
+msgid "Stopped. Files swapped: {replaced}."
+msgstr "Arrêté. Fichiers remplacés : {replaced}."
 
 #: templates/steam_achievement_game.html:36
 msgid "Steam Store"

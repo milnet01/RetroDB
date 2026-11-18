@@ -248,6 +248,73 @@ function renderFileList() {
     document.getElementById('statTotal').textContent = foundFiles.length;
 }
 
+const taskCallbacks = {
+    onProgress(task) {
+        document.getElementById('progressBar').style.width = task.percent + '%';
+        document.getElementById('progressBar').textContent = task.percent + '%';
+        document.getElementById('progressStatus').textContent = task.current_file ? `Verifying: ${task.current_file}` : 'Processing...';
+
+        if (task.results) {
+            document.getElementById('statTotal').textContent = task.results.total || 0;
+            document.getElementById('statValid').textContent = task.results.valid || 0;
+            document.getElementById('statInvalid').textContent = task.results.invalid || 0;
+            document.getElementById('statSize').textContent = formatBytes(task.results.total_size || 0);
+
+            if (task.results.files) {
+                // Match each result to its row by path: results skip
+                // unticked and rejected files, so indexes do not line up.
+                task.results.files.forEach(f => {
+                    const i = foundFiles.findIndex(ff => ff.path === f.path);
+                    const row = i >= 0 ? document.querySelector(`#file-${i} .status-badge`) : null;
+                    if (row) {
+                        row.className = `status-badge status-${f.status}`;
+                        row.textContent = f.status.charAt(0).toUpperCase() + f.status.slice(1);
+                    }
+                });
+            }
+        }
+
+        if (task.logs) {
+            document.getElementById('verifyLog').innerHTML = task.logs.map(l => `<div>${escapeHtml(l)}</div>`).join('');
+            document.getElementById('verifyLog').scrollTop = document.getElementById('verifyLog').scrollHeight;
+        }
+    },
+    onComplete() { resetUI(); },
+    onError(task) { showModal('❌ ' + {{ _('Error')|tojson }}, task.error || {{ _('Verification failed')|tojson }}); resetUI(); },
+    onCancel() { resetUI(); },
+    onNotFound: handleTaskNotFound
+};
+
+// Session persistence: the task id outlives a page change, so a running or
+// finished task's progress, stats and log come back.
+SessionState.setKey('chdVerifyState');
+let scanTaskId = null;
+
+function saveSessionState() {
+    SessionState.save({ taskId: scanTaskId, files: foundFiles });
+}
+
+function handleTaskNotFound() {
+    SessionState.clear();
+    scanTaskId = null;
+    resetUI();
+    document.getElementById('progressSection').style.display = 'none';
+    showNotification({{ _("The last scan's results have expired. Start a new scan.")|tojson }}, 'warning');
+}
+
+function restoreTask() {
+    const state = SessionState.load();
+    if (!state || !state.taskId) return;
+    scanTaskId = state.taskId;
+    foundFiles = state.files || [];
+    renderFileList();
+    document.getElementById('verifyBtn').disabled = true;
+    document.getElementById('cancelBtn').disabled = false;
+    document.getElementById('progressSection').style.display = 'block';
+    document.getElementById('verifyLog').style.display = 'block';
+    TaskPoller.start(state.taskId, taskCallbacks, 500);
+}
+
 async function startVerification() {
     const selectedFiles = [];
     document.querySelectorAll('.file-list-item input[type="checkbox"]:checked').forEach(cb => {
@@ -262,6 +329,8 @@ async function startVerification() {
     
     document.getElementById('verifyBtn').disabled = true;
     document.getElementById('cancelBtn').disabled = false;
+    SessionState.clear();
+    scanTaskId = null;
     document.getElementById('progressSection').style.display = 'block';
     document.getElementById('verifyLog').style.display = 'block';
     document.getElementById('verifyLog').innerHTML = '';
@@ -280,41 +349,9 @@ async function startVerification() {
         const data = await response.json();
         
         if (data.success) {
-            TaskPoller.start(data.task_id, {
-                onProgress(task) {
-                    document.getElementById('progressBar').style.width = task.percent + '%';
-                    document.getElementById('progressBar').textContent = task.percent + '%';
-                    document.getElementById('progressStatus').textContent = task.current_file ? `Verifying: ${task.current_file}` : 'Processing...';
-
-                    if (task.results) {
-                        document.getElementById('statTotal').textContent = task.results.total || 0;
-                        document.getElementById('statValid').textContent = task.results.valid || 0;
-                        document.getElementById('statInvalid').textContent = task.results.invalid || 0;
-                        document.getElementById('statSize').textContent = formatBytes(task.results.total_size || 0);
-
-                        if (task.results.files) {
-                            // Match each result to its row by path: results skip
-                            // unticked and rejected files, so indexes do not line up.
-                            task.results.files.forEach(f => {
-                                const i = foundFiles.findIndex(ff => ff.path === f.path);
-                                const row = i >= 0 ? document.querySelector(`#file-${i} .status-badge`) : null;
-                                if (row) {
-                                    row.className = `status-badge status-${f.status}`;
-                                    row.textContent = f.status.charAt(0).toUpperCase() + f.status.slice(1);
-                                }
-                            });
-                        }
-                    }
-
-                    if (task.logs) {
-                        document.getElementById('verifyLog').innerHTML = task.logs.map(l => `<div>${escapeHtml(l)}</div>`).join('');
-                        document.getElementById('verifyLog').scrollTop = document.getElementById('verifyLog').scrollHeight;
-                    }
-                },
-                onComplete() { resetUI(); },
-                onError(task) { showModal('❌ ' + {{ _('Error')|tojson }}, task.error || {{ _('Verification failed')|tojson }}); resetUI(); },
-                onCancel() { resetUI(); }
-            }, 500);
+            scanTaskId = data.task_id;
+            saveSessionState();
+            TaskPoller.start(data.task_id, taskCallbacks, 500);
         } else {
             showModal('❌ ' + {{ _('Error')|tojson }}, data.error);
             resetUI();
@@ -334,5 +371,7 @@ function resetUI() {
     document.getElementById('cancelBtn').disabled = true;
 }
 
+// After core.bundle.js (deferred), which defines safeParseJSON and API.
+document.addEventListener('DOMContentLoaded', restoreTask);
 </script>
 {% endblock %}

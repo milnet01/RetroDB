@@ -6,7 +6,7 @@
 # Also exposes image-resize and alt-titles backfill job controls.
 # =============================================================================
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template
 from flask_babel import gettext as _
 from scraper.service_limits import SCREENSCRAPER
 from services.service_stop_text import stop_sentences
@@ -509,6 +509,50 @@ def api_ss_region_repair_cancel():
     """Stop the region repair job after the game it is on."""
     from services.jobs import ss_region_repair_job
     return jsonify(ss_region_repair_job.cancel())
+
+
+@bp.route('/api/maintenance/ss-region-repair/pause', methods=['POST'])
+@admin_required
+@handle_api_errors
+def api_ss_region_repair_pause():
+    """Hold the region repair job after the game it is on."""
+    from services.jobs import ss_region_repair_job
+    return jsonify(ss_region_repair_job.pause())
+
+
+@bp.route('/api/maintenance/ss-region-repair/resume', methods=['POST'])
+@admin_required
+@handle_api_errors
+def api_ss_region_repair_resume():
+    """Carry on a paused region repair job."""
+    from services.jobs import ss_region_repair_job
+    return jsonify(ss_region_repair_job.resume())
+
+
+def _ss_region_name(code):
+    """A ScreenScraper region code in words, else the code itself."""
+    names = {
+        'us': _('USA'), 'eu': _('Europe'), 'jp': _('Japan'), 'wor': _('World'),
+        'uk': _('United Kingdom'), 'fr': _('France'), 'de': _('Germany'),
+        'sp': _('Spain'), 'it': _('Italy'), 'au': _('Australia'),
+        'br': _('Brazil'), 'kr': _('Korea'), 'cn': _('China'), 'asi': _('Asia'),
+        'ss': _('Any region'),
+    }
+    return names.get(code, code.upper())
+
+
+@bp.route('/tools/box-regions')
+@login_required
+def ss_region_repair_page():
+    """Fix Box and Manual Regions: its controls and every game it changed."""
+    from services.jobs.ss_region_repair import swapped_games
+    kind_names = {'boxart': _('Box'), 'boxart_3d': _('3D box'), 'manual': _('Manual')}
+    by_system = {}
+    for game in swapped_games():
+        game['changes'] = [(kind_names[column], _ss_region_name(code))
+                           for column, code in game['changes']]
+        by_system.setdefault(game['system_name'], []).append(game)
+    return render_template('ss_region_repair.html', by_system=by_system)
 
 
 @bp.route('/api/restart', methods=['POST'])

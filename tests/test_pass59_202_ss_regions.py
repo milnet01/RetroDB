@@ -412,6 +412,69 @@ def test_start_route_words_the_refusal(admin_test_client, monkeypatch):
 def test_status_route_has_what_the_card_reads(admin_test_client):
     client, _csrf = admin_test_client()
     status = client.get('/api/maintenance/ss-region-repair/status').get_json()
-    for key in ('running', 'completed', 'cancelled', 'current', 'total', 'replaced',
+    for key in ('running', 'completed', 'cancelled', 'paused', 'current', 'total', 'replaced',
                 'no_match', 'failed', 'service_stops', 'error'):
         assert key in status
+
+
+def test_changed_list_names_each_swapped_file(library, monkeypatch):
+    from services.jobs.ss_region_repair import swapped_games
+    assert swapped_games() == []
+    _run_job(monkeypatch, [RECORD])
+    changed = swapped_games()
+    assert [g['id'] for g in changed] == [1]
+    # The 3D box kept its first-listed file, so it is not listed as changed.
+    assert changed[0]['changes'] == [('boxart', 'us'), ('manual', 'us')]
+    assert changed[0]['system_name'] == 'Mega Drive'
+
+
+def test_pause_holds_the_run_until_resumed(library, monkeypatch):
+    import threading
+    import time
+    from services.jobs import ss_region_repair as mod
+    _more_games(3)
+    searches = []
+    monkeypatch.setattr(mod, 'search_game', lambda title, *a, **k: searches.append(title))
+    job = mod.SsRegionRepairJob()
+    job.running = True
+    assert job.pause() == {'success': True}
+    assert job.get_status()['paused'] is True
+    worker = threading.Thread(target=job._worker, args=({'screenscraper_username': 'u', 'screenscraper_password': 'p'},))
+    worker.start()
+    time.sleep(0.3)
+    assert searches == []
+    assert job.resume() == {'success': True}
+    worker.join(5)
+    assert len(searches) == 4
+    assert job.get_status()['paused'] is False
+
+
+def test_stop_ends_a_paused_run(library, monkeypatch):
+    import threading
+    from services.jobs import ss_region_repair as mod
+    searches = []
+    monkeypatch.setattr(mod, 'search_game', lambda title, *a, **k: searches.append(title))
+    job = mod.SsRegionRepairJob()
+    job.running = True
+    job.pause()
+    worker = threading.Thread(target=job._worker, args=({'screenscraper_username': 'u', 'screenscraper_password': 'p'},))
+    worker.start()
+    assert job.cancel() == {'success': True}
+    worker.join(5)
+    assert not worker.is_alive()
+    assert searches == []
+    assert job.get_status()['cancelled'] is True
+
+
+def test_pause_and_resume_refuse_when_nothing_runs():
+    from services.jobs import ss_region_repair as mod
+    job = mod.SsRegionRepairJob()
+    assert job.pause()['success'] is False
+    assert job.resume()['success'] is False
+
+
+def test_box_regions_page_opens(admin_test_client):
+    client, _csrf = admin_test_client()
+    page = client.get('/tools/box-regions')
+    assert page.status_code == 200
+    assert b'regionFixStatus' in page.data

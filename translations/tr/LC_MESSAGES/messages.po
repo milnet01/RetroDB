@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-16 16:04+0200\n"
+"POT-Creation-Date: 2026-11-18 12:36+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: tr\n"
@@ -126,11 +126,11 @@ msgstr "%(job)s sıraya alındı"
 
 #: app.py:1456 services/js_i18n_strings.py:963
 #: templates/archive_scanner.html:1628 templates/dashboard.html:1159
-#: templates/dashboard.html:1164
+#: templates/dashboard.html:1164 templates/ss_region_repair.html:103
 msgid "Resume"
 msgstr "Sürdür"
 
-#: app.py:1456
+#: app.py:1456 templates/ss_region_repair.html:101
 msgid "Start"
 msgstr "Başlat"
 
@@ -1112,6 +1112,94 @@ msgstr "Önce Ayarlar'dan ScreenScraper hesabınızı ekleyin."
 #: routes/maintenance.py:490
 msgid "This fix is already running."
 msgstr "Bu düzeltme zaten çalışıyor."
+
+#: routes/maintenance.py:535
+#, fuzzy
+msgid "USA"
+msgstr "Kullan"
+
+#: routes/maintenance.py:535
+#, fuzzy
+msgid "Europe"
+msgstr "Mor"
+
+#: routes/maintenance.py:535
+#, fuzzy
+msgid "Japan"
+msgstr "Kampanya"
+
+#: routes/maintenance.py:535
+#, fuzzy
+msgid "World"
+msgstr "Açık Dünya"
+
+#: routes/maintenance.py:536
+msgid "United Kingdom"
+msgstr ""
+
+#: routes/maintenance.py:536
+#, fuzzy
+msgid "France"
+msgstr "Seri"
+
+#: routes/maintenance.py:536
+#, fuzzy
+msgid "Germany"
+msgstr "Gri"
+
+#: routes/maintenance.py:537
+#, fuzzy
+msgid "Spain"
+msgstr "Tara"
+
+#: routes/maintenance.py:537
+#, fuzzy
+msgid "Italy"
+msgstr "Deniz yeşili"
+
+#: routes/maintenance.py:537
+#, fuzzy
+msgid "Australia"
+msgstr "ACB (Avustralya)"
+
+#: routes/maintenance.py:538
+msgid "Brazil"
+msgstr ""
+
+#: routes/maintenance.py:538
+#, fuzzy
+msgid "Korea"
+msgstr "Çekirdek"
+
+#: routes/maintenance.py:538
+msgid "China"
+msgstr ""
+
+#: routes/maintenance.py:538
+#, fuzzy
+msgid "Asia"
+msgstr "YZ"
+
+#: routes/maintenance.py:539
+#, fuzzy
+msgid "Any region"
+msgstr "Bölge"
+
+#: routes/maintenance.py:549
+#, fuzzy
+msgid "Box"
+msgstr "Xbox"
+
+#: routes/maintenance.py:549
+#, fuzzy
+msgid "3D box"
+msgstr "3D kutu içe aktar"
+
+#: routes/maintenance.py:549 templates/_modals/manual_reader_modal.html:9
+#: templates/analytics.html:488 templates/analytics.html:2432
+#: templates/game_detail.html:125
+msgid "Manual"
+msgstr "Kılavuz"
 
 #: routes/mame_names.py:38
 msgid "One of those files was not found."
@@ -2905,10 +2993,10 @@ msgstr "Tek bir klasör yolu girin."
 #: templates/archive_scanner.html:1173 templates/archive_scanner.html:1403
 #: templates/archive_scanner.html:1406 templates/archive_scanner.html:1428
 #: templates/archive_scanner.html:1431 templates/archive_scanner.html:1479
-#: templates/archive_scanner.html:1482 templates/chd_converter.html:347
-#: templates/chd_converter.html:351 templates/chd_converter.html:355
-#: templates/chd_verify.html:315 templates/chd_verify.html:319
-#: templates/chd_verify.html:323 templates/controllers.html:910
+#: templates/archive_scanner.html:1482 templates/chd_converter.html:316
+#: templates/chd_converter.html:386 templates/chd_converter.html:390
+#: templates/chd_verify.html:283 templates/chd_verify.html:356
+#: templates/chd_verify.html:360 templates/controllers.html:910
 #: templates/controllers.html:914 templates/controllers.html:982
 #: templates/controllers.html:986 templates/controllers.html:1017
 #: templates/controllers.html:1021 templates/controllers.html:1047
@@ -2916,7 +3004,7 @@ msgstr "Tek bir klasör yolu girin."
 #: templates/controllers.html:1135 templates/controllers.html:1153
 #: templates/controllers.html:1184 templates/controllers.html:1244
 #: templates/controllers.html:1248 templates/dashboard.html:1310
-#: templates/duplicate_finder.html:556 templates/duplicate_finder.html:559
+#: templates/duplicate_finder.html:590 templates/duplicate_finder.html:593
 #: templates/game_detail.html:5082 templates/game_detail.html:5086
 #: templates/local_trophy_detail.html:374
 #: templates/local_trophy_detail.html:429
@@ -3022,7 +3110,7 @@ msgstr "HLTB temizlenemedi: {error}"
 msgid "Failed to clear RA data"
 msgstr "RA verisi temizlenemedi"
 
-#: services/js_i18n_strings.py:765 templates/screenshot_dedup.html:601
+#: services/js_i18n_strings.py:765 templates/screenshot_dedup.html:637
 msgid "Failed to delete"
 msgstr "Silinemedi"
 
@@ -3747,7 +3835,7 @@ msgstr "Bir Serinin Parçası"
 #: services/js_i18n_strings.py:922 templates/_bulk_scrape_modal.html:46
 #: templates/archive_scanner.html:658 templates/archive_scanner.html:795
 #: templates/archive_scanner.html:1601 templates/archive_scanner.html:1632
-#: templates/psn_trophies.html:295
+#: templates/psn_trophies.html:295 templates/ss_region_repair.html:102
 msgid "Pause"
 msgstr "Duraklat"
 
@@ -3858,7 +3946,7 @@ msgstr "Bölgesel ad eşleşmeleri"
 #: templates/_settings_tabs/account.html:224
 #: templates/_settings_tabs/library.html:163 templates/compare_games.html:24
 #: templates/compare_games.html:40 templates/rom_tools_settings.html:462
-#: templates/rom_tools_settings.html:501 templates/screenshot_review.html:187
+#: templates/rom_tools_settings.html:501 templates/screenshot_review.html:226
 #: templates/settings.html:1442 templates/settings.html:1550
 msgid "Remove"
 msgstr "Kaldır"
@@ -5028,7 +5116,7 @@ msgstr "RetroArch çekirdeği bulunamadı: %(path)s"
 msgid "The player cannot use a path containing '|': %(path)s"
 msgstr "Oynatıcı '|' içeren bir yolu kullanamaz: %(path)s"
 
-#: services/player_cores.py:544
+#: services/player_cores.py:546
 #, python-format
 msgid "Player core not found: %(path)s"
 msgstr "Oynatıcı çekirdeği bulunamadı: %(path)s"
@@ -5736,6 +5824,7 @@ msgid "All systems"
 msgstr "Tüm sistemler"
 
 #: templates/ai_fill_bulk.html:100 templates/mame_names.html:67
+#: templates/ss_region_repair.html:104
 msgid "Stop"
 msgstr "Durdur"
 
@@ -6276,11 +6365,6 @@ msgstr "Hayran Sanatı"
 msgid "Video"
 msgstr "Video"
 
-#: templates/_modals/manual_reader_modal.html:9 templates/analytics.html:488
-#: templates/analytics.html:2432 templates/game_detail.html:125
-msgid "Manual"
-msgstr "Kılavuz"
-
 #: templates/analytics.html:490 templates/analytics.html:2432
 msgid "Ratings"
 msgstr "Derecelendirmeler"
@@ -6494,7 +6578,7 @@ msgid "Unwanted"
 msgstr "İstenmeyen"
 
 #: templates/archive_scanner.html:655 templates/duplicate_finder.html:207
-#: templates/screenshot_dedup.html:260 templates/screenshot_dedup.html:448
+#: templates/screenshot_dedup.html:260 templates/screenshot_dedup.html:484
 #: templates/screenshot_review.html:80
 msgid "Start Scan"
 msgstr "Taramayı Başlat"
@@ -6614,7 +6698,7 @@ msgstr "Arşiv koleksiyonunuzda bulunan sorunlar: {count}"
 msgid "Scan Error"
 msgstr "Tarama Hatası"
 
-#: templates/archive_scanner.html:1210 templates/screenshot_review.html:155
+#: templates/archive_scanner.html:1210 templates/screenshot_review.html:145
 msgid "Scan failed"
 msgstr "Tarama başarısız oldu"
 
@@ -6638,8 +6722,8 @@ msgstr "Taramayı İptal Et"
 msgid "Are you sure you want to cancel the scan?"
 msgstr "Taramayı iptal etmek istediğinize emin misiniz?"
 
-#: templates/archive_scanner.html:1378 templates/chd_converter.html:305
-#: templates/chd_verify.html:259 templates/duplicate_finder.html:538
+#: templates/archive_scanner.html:1378 templates/chd_converter.html:357
+#: templates/chd_verify.html:326 templates/duplicate_finder.html:572
 #: templates/psn_trophies.html:1674
 msgid "No Selection"
 msgstr "Seçim Yok"
@@ -7665,13 +7749,20 @@ msgstr "Sıkıştırılmış Boyut"
 msgid "Space Saved"
 msgstr "Kazanılan Alan"
 
-#: templates/chd_converter.html:305 templates/chd_verify.html:259
-msgid "No files selected"
-msgstr "Dosya seçilmedi"
-
-#: templates/chd_converter.html:347
+#: templates/chd_converter.html:316
 msgid "Conversion failed"
 msgstr "Dönüştürme başarısız oldu"
+
+#: templates/chd_converter.html:335 templates/chd_verify.html:302
+#: templates/duplicate_finder.html:389 templates/screenshot_dedup.html:401
+#: templates/screenshot_review.html:166
+#, fuzzy
+msgid "The last scan's results have expired. Start a new scan."
+msgstr "Bu tarama sonuçlarının süresi doldu. Yeniden tarayın, ardından silin."
+
+#: templates/chd_converter.html:357 templates/chd_verify.html:326
+msgid "No files selected"
+msgstr "Dosya seçilmedi"
 
 #: templates/chd_verify.html:91
 msgid "Why Verify CHD Files?"
@@ -7724,7 +7815,7 @@ msgstr "Geçersiz"
 msgid "Total Size"
 msgstr "Toplam Boyut"
 
-#: templates/chd_verify.html:315
+#: templates/chd_verify.html:283
 msgid "Verification failed"
 msgstr "Doğrulama başarısız oldu"
 
@@ -8570,15 +8661,15 @@ msgstr "En Küçüğü Tut"
 msgid "Delete Unselected"
 msgstr "Seçilmeyenleri Sil"
 
-#: templates/duplicate_finder.html:538 templates/screenshot_dedup.html:575
+#: templates/duplicate_finder.html:572 templates/screenshot_dedup.html:611
 msgid "No files selected for deletion"
 msgstr "Silinecek dosya seçilmedi"
 
-#: templates/duplicate_finder.html:542
+#: templates/duplicate_finder.html:576
 msgid "Delete Files"
 msgstr "Dosyaları Sil"
 
-#: templates/duplicate_finder.html:542
+#: templates/duplicate_finder.html:576
 #, python-brace-format
 msgid ""
 "Are you sure you want to delete these files ({count})?\n"
@@ -8589,11 +8680,11 @@ msgstr ""
 "\n"
 "Bu işlem geri alınamaz!"
 
-#: templates/duplicate_finder.html:553
+#: templates/duplicate_finder.html:587
 msgid "Files Deleted"
 msgstr "Dosyalar Silindi"
 
-#: templates/duplicate_finder.html:553
+#: templates/duplicate_finder.html:587
 #, python-brace-format
 msgid "Files deleted: {deleted}. Space freed: {size}"
 msgstr "Silinen dosyalar: {deleted}. Boşalan alan: {size}"
@@ -11307,7 +11398,7 @@ msgstr ""
 " şüpheli olan başta olacak şekilde listelenir, neyin kaldırılacağına siz "
 "karar verirsiniz."
 
-#: templates/rom_tools_hub.html:274 templates/rom_tools_hub.html:748
+#: templates/rom_tools_hub.html:274 templates/rom_tools_hub.html:686
 msgid "Image Resizer"
 msgstr "Resim Boyutlandırıcı"
 
@@ -11345,11 +11436,12 @@ msgstr ""
 msgid "Metadata only &middot; no media downloads"
 msgstr "Yalnızca meta veri &middot; medya indirme yok"
 
-#: templates/rom_tools_hub.html:300 templates/rom_tools_hub.html:461
+#: templates/rom_tools_hub.html:300 templates/ss_region_repair.html:4
+#: templates/ss_region_repair.html:92 templates/ss_region_repair.html:155
 msgid "Fix Box and Manual Regions"
 msgstr "Kutu ve Kılavuz Bölgelerini Düzelt"
 
-#: templates/rom_tools_hub.html:303
+#: templates/rom_tools_hub.html:303 templates/ss_region_repair.html:93
 msgid ""
 "Older ScreenScraper scrapes could give a game another region's box or "
 "manual, such as a European box on a USA game. This looks each one up "
@@ -11361,11 +11453,11 @@ msgstr ""
 "her birini yeniden arar ve doğru bölgeyle değiştirir. Başka kaynaklardan "
 "gelen görsellere dokunulmaz."
 
-#: templates/rom_tools_hub.html:306
+#: templates/rom_tools_hub.html:306 templates/ss_region_repair.html:98
 msgid "Needs a ScreenScraper account"
 msgstr "ScreenScraper hesabı gerekir"
 
-#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:522
+#: templates/rom_tools_hub.html:313 templates/rom_tools_hub.html:460
 msgid "Fix Regions from File Names"
 msgstr "Bölgeleri Dosya Adlarından Düzelt"
 
@@ -11379,7 +11471,7 @@ msgstr ""
 "yüzden (USA) olan bir dosya Japonya olarak listelenebiliyordu. Bu işlem o"
 " oyunlara dosya adındaki bölgeyi verir."
 
-#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:556
+#: templates/rom_tools_hub.html:326 templates/rom_tools_hub.html:494
 msgid "Tidy Genres, Perspectives and Modes"
 msgstr "Türleri, Bakış Açılarını ve Modları Düzenle"
 
@@ -11405,7 +11497,7 @@ msgstr ""
 msgid "Needs a MAME list file"
 msgstr "Bir MAME liste dosyası gerekli"
 
-#: templates/rom_tools_hub.html:354 templates/rom_tools_hub.html:590
+#: templates/rom_tools_hub.html:354 templates/rom_tools_hub.html:528
 msgid "Tidy Release Dates"
 msgstr "Çıkış Tarihlerini Düzenle"
 
@@ -11419,7 +11511,7 @@ msgstr ""
 " Ocak veya 31 Aralık olarak kaydetmişti. Bu işlem bu tarihleri yıla veya "
 "aya indirir; böylece yeni bir kazıma gerçek tarihi doldurabilir."
 
-#: templates/rom_tools_hub.html:367 templates/rom_tools_hub.html:624
+#: templates/rom_tools_hub.html:367 templates/rom_tools_hub.html:562
 msgid "Check Saved Play Times"
 msgstr "Kayıtlı Oynama Sürelerini Denetle"
 
@@ -11434,7 +11526,7 @@ msgstr ""
 "eşleşmeleri inceleme sayfasına gönderir; orada her birini tutar veya "
 "silersiniz."
 
-#: templates/rom_tools_hub.html:380 templates/rom_tools_hub.html:658
+#: templates/rom_tools_hub.html:380 templates/rom_tools_hub.html:596
 msgid "Clear RAWG Pictures from Box Art"
 msgstr "RAWG Görsellerini Kutu Resminden Temizle"
 
@@ -11449,7 +11541,7 @@ msgstr ""
 "engelliyor. Bu işlem o görselleri temizler, böylece kazıma gerçek "
 "kapakları bulabilir."
 
-#: templates/rom_tools_hub.html:393 templates/rom_tools_hub.html:696
+#: templates/rom_tools_hub.html:393 templates/rom_tools_hub.html:634
 msgid "Bulk HLTB Lookup"
 msgstr "Toplu HLTB Araması"
 
@@ -11519,8 +11611,8 @@ msgstr ""
 msgid "Alt-titles backfill started"
 msgstr "Alternatif ad doldurma başlatıldı"
 
-#: templates/rom_tools_hub.html:452 templates/rom_tools_hub.html:715
-#: templates/rom_tools_hub.html:767
+#: templates/rom_tools_hub.html:452 templates/rom_tools_hub.html:653
+#: templates/rom_tools_hub.html:705
 msgid "Failed to start"
 msgstr "Başlatılamadı"
 
@@ -11528,66 +11620,7 @@ msgstr "Başlatılamadı"
 msgid "Failed to start backfill"
 msgstr "Doldurma başlatılamadı"
 
-#: templates/rom_tools_hub.html:462
-msgid ""
-"Each game with a ScreenScraper box or manual is looked up again. Where "
-"another region suits it better, the file is downloaded and the old one is"
-" deleted.\n"
-"\n"
-"Games you have changed by hand are not touched. This uses your daily "
-"ScreenScraper allowance and can take a long time. You can leave the page,"
-" and press this card again to stop."
-msgstr ""
-"ScreenScraper kutusu veya kılavuzu olan her oyun yeniden aranır. Başka "
-"bir bölge daha uygunsa dosya indirilir ve eskisi silinir.\n"
-"\n"
-"Elle değiştirdiğiniz oyunlara dokunulmaz. Bu işlem günlük ScreenScraper "
-"hakkınızı kullanır ve uzun sürebilir. Sayfadan ayrılabilirsiniz, "
-"durdurmak için bu karta tekrar basın."
-
-#: templates/rom_tools_hub.html:463
-msgid "Could not start the fix"
-msgstr "Düzeltme başlatılamadı"
-
-#: templates/rom_tools_hub.html:464
-msgid ""
-"Stop the fix? Files already swapped stay as they are, and a later run "
-"carries on with the rest."
-msgstr ""
-"Düzeltme durdurulsun mu? Değiştirilen dosyalar olduğu gibi kalır, sonraki"
-" çalıştırma kalanlarla devam eder."
-
-#: templates/rom_tools_hub.html:465 templates/rom_tools_hub.html:469
-#, python-brace-format
-msgid "Stopped. Files swapped: {replaced}."
-msgstr "Durduruldu. Değiştirilen dosya: {replaced}."
-
-#: templates/rom_tools_hub.html:466
-#, python-brace-format
-msgid ""
-"The fix stopped with an error. Files swapped: {replaced}. The log has the"
-" details."
-msgstr ""
-"Düzeltme bir hatayla durdu. Değiştirilen dosya: {replaced}. Ayrıntılar "
-"günlükte."
-
-#: templates/rom_tools_hub.html:467
-#, python-brace-format
-msgid "Checked {current} of {total} games. Files swapped: {replaced}."
-msgstr ""
-"{total} oyundan {current} tanesi denetlendi. Değiştirilen dosya: "
-"{replaced}."
-
-#: templates/rom_tools_hub.html:468
-#, python-brace-format
-msgid ""
-"Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
-"not download: {failed}."
-msgstr ""
-"Bitti. Değiştirilen dosya: {replaced}. Bulunamayan oyun: {no_match}. "
-"İndirilemeyen: {failed}."
-
-#: templates/rom_tools_hub.html:523
+#: templates/rom_tools_hub.html:461
 #, python-brace-format
 msgid ""
 "{count} games have a region from the AI that their file name contradicts."
@@ -11602,20 +11635,20 @@ msgstr ""
 "Yalnızca yapay zekanın doldurduğu bölgeler değişir. Bunlardan birini elle"
 " dosya adından farklı olacak şekilde düzelttiyseniz o da değişir."
 
-#: templates/rom_tools_hub.html:524
+#: templates/rom_tools_hub.html:462
 msgid "No game has an AI region that its file name contradicts."
 msgstr "Hiçbir oyunun, dosya adıyla çelişen bir yapay zeka bölgesi yok."
 
-#: templates/rom_tools_hub.html:525
+#: templates/rom_tools_hub.html:463
 #, python-brace-format
 msgid "Fixed {count} regions."
 msgstr "{count} bölge düzeltildi."
 
-#: templates/rom_tools_hub.html:526
+#: templates/rom_tools_hub.html:464
 msgid "Could not fix the regions"
 msgstr "Bölgeler düzeltilemedi"
 
-#: templates/rom_tools_hub.html:557
+#: templates/rom_tools_hub.html:495
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -11639,11 +11672,11 @@ msgstr ""
 "Sonrasında, boş kalanları doldurmak için Eksikleri Doldur ile toplu "
 "kazıma çalıştırın."
 
-#: templates/rom_tools_hub.html:558
+#: templates/rom_tools_hub.html:496
 msgid "Every game already uses these names."
 msgstr "Tüm oyunlar zaten bu adları kullanıyor."
 
-#: templates/rom_tools_hub.html:559
+#: templates/rom_tools_hub.html:497
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to fill "
@@ -11652,11 +11685,11 @@ msgstr ""
 "{count} oyun düzenlendi. Boş kalanları doldurmak için Eksikleri Doldur "
 "ile toplu kazıma çalıştırın."
 
-#: templates/rom_tools_hub.html:560
+#: templates/rom_tools_hub.html:498
 msgid "Could not tidy the names"
 msgstr "Adlar düzenlenemedi"
 
-#: templates/rom_tools_hub.html:591
+#: templates/rom_tools_hub.html:529
 #, python-brace-format
 msgid ""
 "{count} games will change.\n"
@@ -11669,11 +11702,11 @@ msgstr ""
 "1 Ocak 1987 gibi bir tarih 1987 olur. Hiçbir kazımanın doldurmadığı tarih"
 " olduğu gibi kalır."
 
-#: templates/rom_tools_hub.html:592
+#: templates/rom_tools_hub.html:530
 msgid "No release dates need tidying."
 msgstr "Düzenlenmesi gereken çıkış tarihi yok."
 
-#: templates/rom_tools_hub.html:593
+#: templates/rom_tools_hub.html:531
 #, python-brace-format
 msgid ""
 "Tidied {count} games. Run a bulk scrape with Fill Missing to look for "
@@ -11682,11 +11715,11 @@ msgstr ""
 "{count} oyun düzenlendi. Daha ayrıntılı tarihleri aramak için Eksikleri "
 "Doldur ile toplu kazıma çalıştırın."
 
-#: templates/rom_tools_hub.html:594
+#: templates/rom_tools_hub.html:532
 msgid "Could not tidy the release dates"
 msgstr "Çıkış tarihleri düzenlenemedi"
 
-#: templates/rom_tools_hub.html:625
+#: templates/rom_tools_hub.html:563
 #, python-brace-format
 msgid ""
 "{count} saved play times look like another game. They will go to the "
@@ -11700,20 +11733,20 @@ msgstr ""
 "\n"
 "Orada Onayla süreyi korur, Reddet siler."
 
-#: templates/rom_tools_hub.html:626
+#: templates/rom_tools_hub.html:564
 msgid "No saved play time looks wrong."
 msgstr "Kayıtlı hiçbir oynama süresi yanlış görünmüyor."
 
-#: templates/rom_tools_hub.html:627
+#: templates/rom_tools_hub.html:565
 #, python-brace-format
 msgid "Sent {count} play times to the HowLongToBeat review page."
 msgstr "{count} oynama süresi HowLongToBeat inceleme sayfasına gönderildi."
 
-#: templates/rom_tools_hub.html:628
+#: templates/rom_tools_hub.html:566
 msgid "Could not check the saved play times"
 msgstr "Kayıtlı oynama süreleri denetlenemedi"
 
-#: templates/rom_tools_hub.html:659
+#: templates/rom_tools_hub.html:597
 #, python-brace-format
 msgid ""
 "{count} games and wishlist items use a RAWG picture as their box art. "
@@ -11731,11 +11764,11 @@ msgstr ""
 "gerçek kapakları aramak için Eksikleri Doldur ile toplu kazıma "
 "çalıştırın."
 
-#: templates/rom_tools_hub.html:660
+#: templates/rom_tools_hub.html:598
 msgid "No game uses a RAWG picture as its box art."
 msgstr "Hiçbir oyun kutu resmi olarak RAWG görseli kullanmıyor."
 
-#: templates/rom_tools_hub.html:661
+#: templates/rom_tools_hub.html:599
 #, python-brace-format
 msgid ""
 "Cleared {count} pictures. Run a bulk scrape with Fill Missing to look for"
@@ -11744,11 +11777,11 @@ msgstr ""
 "{count} görsel temizlendi. Gerçek kapakları aramak için Eksikleri Doldur "
 "ile toplu kazıma çalıştırın."
 
-#: templates/rom_tools_hub.html:662
+#: templates/rom_tools_hub.html:600
 msgid "Could not clear the pictures"
 msgstr "Görseller temizlenemedi"
 
-#: templates/rom_tools_hub.html:697
+#: templates/rom_tools_hub.html:635
 msgid ""
 "Fetch HowLongToBeat playtime for every game.\n"
 "\n"
@@ -11770,17 +11803,17 @@ msgstr ""
 " HLTB istek sınırı uyguladığı için bu işlem arka planda yavaş çalışır; "
 "sayfadan ayrılabilirsiniz."
 
-#: templates/rom_tools_hub.html:707
+#: templates/rom_tools_hub.html:645
 msgid "Bulk HLTB lookup started — queued matches will appear on the review page"
 msgstr ""
 "Toplu HLTB araması başlatıldı — sıradaki eşleşmeler inceleme sayfasında "
 "görünecek"
 
-#: templates/rom_tools_hub.html:718
+#: templates/rom_tools_hub.html:656
 msgid "Failed to start bulk HLTB"
 msgstr "Toplu HLTB başlatılamadı"
 
-#: templates/rom_tools_hub.html:749
+#: templates/rom_tools_hub.html:687
 msgid ""
 "Standardize all images to consistent sizes:\n"
 "\n"
@@ -11804,11 +11837,11 @@ msgstr ""
 "\n"
 "Büyük koleksiyonlarda bu işlem biraz sürebilir."
 
-#: templates/rom_tools_hub.html:759
+#: templates/rom_tools_hub.html:697
 msgid "Image standardization started"
 msgstr "Görsel standartlaştırma başlatıldı"
 
-#: templates/rom_tools_hub.html:770
+#: templates/rom_tools_hub.html:708
 msgid "Failed to start image resize"
 msgstr "Görsel yeniden boyutlandırma başlatılamadı"
 
@@ -12036,15 +12069,15 @@ msgstr "Geri Kazanılabilir Alan"
 msgid "Keep Largest"
 msgstr "En Büyüğü Tut"
 
-#: templates/screenshot_dedup.html:557
+#: templates/screenshot_dedup.html:593
 msgid "Selected largest file in each group"
 msgstr "Her gruptaki en büyük dosya seçildi"
 
-#: templates/screenshot_dedup.html:580
+#: templates/screenshot_dedup.html:616
 msgid "Delete Duplicate Screenshots"
 msgstr "Yinelenen Ekran Görüntülerini Sil"
 
-#: templates/screenshot_dedup.html:581
+#: templates/screenshot_dedup.html:617
 #, python-brace-format
 msgid ""
 "Duplicate screenshots to delete: {count}\n"
@@ -12057,14 +12090,14 @@ msgstr ""
 "Dosyalar diskten kaldırılacak ve veritabanı başvuruları güncellenecek. Bu"
 " işlem geri alınamaz."
 
-#: templates/screenshot_dedup.html:594
+#: templates/screenshot_dedup.html:630
 #, python-brace-format
 msgid "Files deleted: {deleted}. Space freed: {size}. Games updated: {updated}"
 msgstr ""
 "Silinen dosya: {deleted}. Boşalan alan: {size}. Güncellenen oyun: "
 "{updated}"
 
-#: templates/screenshot_dedup.html:604
+#: templates/screenshot_dedup.html:640
 #, python-brace-format
 msgid "Failed to delete: {error}"
 msgstr "Silinemedi: {error}"
@@ -12092,34 +12125,34 @@ msgstr ""
 msgid "Show more"
 msgstr "Daha fazla göster"
 
-#: templates/screenshot_review.html:167
+#: templates/screenshot_review.html:206
 #, python-brace-format
 msgid "{count} screenshots, most suspicious first."
 msgstr "{count} ekran görüntüsü, en şüpheliler önce."
 
-#: templates/screenshot_review.html:168
+#: templates/screenshot_review.html:207
 msgid "No screenshots to review for this system."
 msgstr "Bu sistem için incelenecek ekran görüntüsü yok."
 
-#: templates/screenshot_review.html:170
+#: templates/screenshot_review.html:209
 #, python-brace-format
 msgid "{count} could not be read."
 msgstr "{count} tanesi okunamadı."
 
-#: templates/screenshot_review.html:182
+#: templates/screenshot_review.html:221
 msgid "Open full size"
 msgstr "Tam boyutta aç"
 
-#: templates/screenshot_review.html:185
+#: templates/screenshot_review.html:224
 #, python-brace-format
 msgid "Colour misfit: {score}"
 msgstr "Renk uyumsuzluğu: {score}"
 
-#: templates/screenshot_review.html:194
+#: templates/screenshot_review.html:233
 msgid "Remove Screenshot"
 msgstr "Ekran Görüntüsünü Kaldır"
 
-#: templates/screenshot_review.html:194
+#: templates/screenshot_review.html:233
 msgid ""
 "Remove this screenshot from the game and delete its file? This cannot be "
 "undone."
@@ -12127,7 +12160,7 @@ msgstr ""
 "Bu ekran görüntüsü oyundan kaldırılsın ve dosyası silinsin mi? Bu işlem "
 "geri alınamaz."
 
-#: templates/screenshot_review.html:205
+#: templates/screenshot_review.html:246
 msgid "Screenshot removed"
 msgstr "Ekran görüntüsü kaldırıldı"
 
@@ -13938,6 +13971,104 @@ msgstr "Kurulum başarısız oldu."
 #: templates/setup.html:534
 msgid "Network error. Please try again."
 msgstr "Ağ hatası. Lütfen tekrar deneyin."
+
+#: templates/ss_region_repair.html:112
+#, fuzzy
+msgid "What changed"
+msgstr "Hile listesi değiştirildi."
+
+#: templates/ss_region_repair.html:116
+msgid ""
+"Each game below has a box, 3D box or manual this fix swapped. The picture"
+" is its box now. Open a game to look at it closely. The old files were "
+"deleted, so only the new region is shown."
+msgstr ""
+
+#: templates/ss_region_repair.html:117
+msgid "Reload the page to see games swapped since you opened it."
+msgstr ""
+
+#: templates/ss_region_repair.html:133
+#, python-format
+msgid "Your copy: %(region)s"
+msgstr ""
+
+#: templates/ss_region_repair.html:135
+#, python-format
+msgid "%(kind)s now from: %(region)s"
+msgstr ""
+
+#: templates/ss_region_repair.html:144
+#, fuzzy
+msgid "Nothing has been swapped yet."
+msgstr "Ayarlarınız kaydedildi!"
+
+#: templates/ss_region_repair.html:156
+#, fuzzy
+msgid ""
+"Each game with a ScreenScraper box or manual is looked up again. Where "
+"another region suits it better, the file is downloaded and the old one is"
+" deleted.\n"
+"\n"
+"Games you have changed by hand are not touched. This uses your daily "
+"ScreenScraper allowance and can take a long time. You can leave this page"
+" and come back to pause or stop it."
+msgstr ""
+"ScreenScraper kutusu veya kılavuzu olan her oyun yeniden aranır. Başka "
+"bir bölge daha uygunsa dosya indirilir ve eskisi silinir.\n"
+"\n"
+"Elle değiştirdiğiniz oyunlara dokunulmaz. Bu işlem günlük ScreenScraper "
+"hakkınızı kullanır ve uzun sürebilir. Sayfadan ayrılabilirsiniz, "
+"durdurmak için bu karta tekrar basın."
+
+#: templates/ss_region_repair.html:157
+msgid "Could not start the fix"
+msgstr "Düzeltme başlatılamadı"
+
+#: templates/ss_region_repair.html:158
+msgid ""
+"Stop the fix? Files already swapped stay as they are, and a later run "
+"carries on with the rest."
+msgstr ""
+"Düzeltme durdurulsun mu? Değiştirilen dosyalar olduğu gibi kalır, sonraki"
+" çalıştırma kalanlarla devam eder."
+
+#: templates/ss_region_repair.html:159
+#, python-brace-format
+msgid ""
+"The fix stopped with an error. Files swapped: {replaced}. The log has the"
+" details."
+msgstr ""
+"Düzeltme bir hatayla durdu. Değiştirilen dosya: {replaced}. Ayrıntılar "
+"günlükte."
+
+#: templates/ss_region_repair.html:160
+#, python-brace-format
+msgid "Checked {current} of {total} games. Files swapped: {replaced}."
+msgstr ""
+"{total} oyundan {current} tanesi denetlendi. Değiştirilen dosya: "
+"{replaced}."
+
+#: templates/ss_region_repair.html:161
+#, fuzzy, python-brace-format
+msgid "Paused after {current} of {total} games. Files swapped: {replaced}."
+msgstr ""
+"{total} oyundan {current} tanesi denetlendi. Değiştirilen dosya: "
+"{replaced}."
+
+#: templates/ss_region_repair.html:162
+#, python-brace-format
+msgid ""
+"Finished. Files swapped: {replaced}. Games not found: {no_match}. Could "
+"not download: {failed}."
+msgstr ""
+"Bitti. Değiştirilen dosya: {replaced}. Bulunamayan oyun: {no_match}. "
+"İndirilemeyen: {failed}."
+
+#: templates/ss_region_repair.html:163
+#, python-brace-format
+msgid "Stopped. Files swapped: {replaced}."
+msgstr "Durduruldu. Değiştirilen dosya: {replaced}."
 
 #: templates/steam_achievement_game.html:36
 msgid "Steam Store"

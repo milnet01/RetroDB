@@ -329,6 +329,77 @@ function getFullPath() {
     return subPath ? `${ROM_PATH}/${subPath}` : ROM_PATH;
 }
 
+const scanCallbacks = {
+    onProgress(task) {
+        const percent = task.percent || 0;
+        document.getElementById('progressBar').style.width = `${percent}%`;
+        document.getElementById('progressBar').textContent = `${percent}%`;
+        document.getElementById('progressCount').textContent = formatNumber(task.progress || 0);
+        document.getElementById('progressTotal').textContent = formatNumber(task.total || 0);
+        document.getElementById('progressAction').textContent = task.current_action || task.current_file || 'Processing...';
+
+        if (task.results) {
+            document.getElementById('statScanned').textContent = formatNumber(task.results.files_scanned || 0);
+            document.getElementById('statGroups').textContent = formatNumber(task.results.duplicate_groups || 0);
+            document.getElementById('statDuplicates').textContent = formatNumber(task.results.duplicate_files || 0);
+            document.getElementById('statWasted').textContent = formatBytes(task.results.wasted_space || 0);
+        }
+
+        if (task.logs && task.logs.length > 0) {
+            const logEl = document.getElementById('scanLog');
+            const existingCount = logEl.querySelectorAll('.log-entry').length;
+            for (let i = existingCount; i < task.logs.length; i++) {
+                addLogEntry(task.logs[i]);
+            }
+        }
+    },
+    onComplete(task) {
+        addLogEntry('Scan completed!', 'info');
+        if (task.results && task.results.groups) {
+            duplicateGroups = task.results.groups;
+                    renderDuplicateGroups();
+        }
+        resetUI();
+    },
+    onError(task) {
+        addLogEntry(`Scan failed: ${task.error || 'Unknown error'}`, 'error');
+        resetUI();
+    },
+    onCancel() {
+        addLogEntry('Scan cancelled', 'warning');
+        resetUI();
+    },
+    onNotFound: handleScanNotFound
+};
+
+// Session persistence: the task id outlives a page change, so a finished
+// scan's results (and the Delete buttons that need its id) come back.
+SessionState.setKey('duplicateFinderState');
+
+function saveSessionState() {
+    SessionState.save({ taskId: scanTaskId });
+}
+
+function handleScanNotFound() {
+    SessionState.clear();
+    scanTaskId = null;
+    duplicateGroups = [];
+    document.getElementById('resultsCard').style.display = 'none';
+    resetUI();
+    showNotification({{ _("The last scan's results have expired. Start a new scan.")|tojson }}, 'warning');
+}
+
+function restoreScan() {
+    const state = SessionState.load();
+    if (!state || !state.taskId) return;
+    scanTaskId = state.taskId;
+    document.getElementById('scanBtn').disabled = true;
+    document.getElementById('scanBtn').innerHTML = '<span class="btn-icon">⏳</span> Scanning...';
+    document.getElementById('progressSection').style.display = 'block';
+    document.getElementById('logContainer').style.display = 'block';
+    TaskPoller.start(state.taskId, scanCallbacks, 500);
+}
+
 async function startScan() {
     const path = getFullPath();
     const method = document.getElementById('scanMethod').value;
@@ -336,6 +407,8 @@ async function startScan() {
     const ignoreRegion = document.getElementById('optIgnoreRegion').checked;
     const includeArchives = document.getElementById('optArchives').checked;
     
+    SessionState.clear();
+    scanTaskId = null;
     document.getElementById('scanBtn').disabled = true;
     document.getElementById('scanBtn').innerHTML = '<span class="btn-icon">⏳</span> Scanning...';
     document.getElementById('progressSection').style.display = 'block';
@@ -364,48 +437,9 @@ async function startScan() {
         const data = await response.json();
         
         if (data.success) {
-            TaskPoller.start(data.task_id, {
-                onProgress(task) {
-                    const percent = task.percent || 0;
-                    document.getElementById('progressBar').style.width = `${percent}%`;
-                    document.getElementById('progressBar').textContent = `${percent}%`;
-                    document.getElementById('progressCount').textContent = formatNumber(task.progress || 0);
-                    document.getElementById('progressTotal').textContent = formatNumber(task.total || 0);
-                    document.getElementById('progressAction').textContent = task.current_action || task.current_file || 'Processing...';
-
-                    if (task.results) {
-                        document.getElementById('statScanned').textContent = formatNumber(task.results.files_scanned || 0);
-                        document.getElementById('statGroups').textContent = formatNumber(task.results.duplicate_groups || 0);
-                        document.getElementById('statDuplicates').textContent = formatNumber(task.results.duplicate_files || 0);
-                        document.getElementById('statWasted').textContent = formatBytes(task.results.wasted_space || 0);
-                    }
-
-                    if (task.logs && task.logs.length > 0) {
-                        const logEl = document.getElementById('scanLog');
-                        const existingCount = logEl.querySelectorAll('.log-entry').length;
-                        for (let i = existingCount; i < task.logs.length; i++) {
-                            addLogEntry(task.logs[i]);
-                        }
-                    }
-                },
-                onComplete(task) {
-                    addLogEntry('Scan completed!', 'info');
-                    if (task.results && task.results.groups) {
-                        duplicateGroups = task.results.groups;
-                        scanTaskId = data.task_id;
-                        renderDuplicateGroups();
-                    }
-                    resetUI();
-                },
-                onError(task) {
-                    addLogEntry(`Scan failed: ${task.error || 'Unknown error'}`, 'error');
-                    resetUI();
-                },
-                onCancel() {
-                    addLogEntry('Scan cancelled', 'warning');
-                    resetUI();
-                }
-            }, 500);
+            scanTaskId = data.task_id;
+            saveSessionState();
+            TaskPoller.start(data.task_id, scanCallbacks, 500);
         } else {
             addLogEntry(`Error: ${data.error}`, 'error');
             resetUI();
@@ -566,5 +600,8 @@ function resetUI() {
     document.getElementById('scanBtn').innerHTML = '<span class="btn-icon">🔍</span> Start Scan';
 }
 
+
+// After core.bundle.js (deferred), which defines safeParseJSON and API.
+document.addEventListener('DOMContentLoaded', restoreScan);
 </script>
 {% endblock %}
