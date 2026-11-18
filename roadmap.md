@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=319 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=320 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -3159,6 +3159,28 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Makes the translated help pages call buttons and tabs by the same names the app shows.
   Kind: doc-fix.
   Source: PASS-59-317 translate-review check 2026-11-16.
+
+- 📋 [PASS-59-320] **Fill the empty and fuzzy entries in every UI catalogue, so those words stop showing in English (i18n, M).**
+  - **Measured 2026-11-18** (`msgfmt --statistics` on each
+    `translations/<locale>/LC_MESSAGES/messages.po`): every human locale
+    has the same set of fuzzy and empty entries; `eo` has none. Gettext
+    shows the English msgid for both.
+  - Fuzzy entries are wrong guesses, not near-misses. de examples:
+    "Create Backup" → "Sicherung wiederherstellen" (restore), "Restore" →
+    "Speicher", "Moving background" → "Hintergrund wird entfernt…".
+    Translate afresh; never just clear the fuzzy flag.
+  - Empty in de: "No results found. Try a different search term.",
+    "FinalBurn Neo arcade cheats". "You do not have permission to access
+    this feature" is fuzzy. help.de.html quotes the first and last in
+    German while the app shows English; filling the catalogue fixes both.
+  - "Completionist" has msgstr = msgid in de; decide per locale whether
+    the loanword is right.
+  - Done when `msgfmt --statistics` reports no fuzzy and no untranslated
+    entries for every locale, and the i18n freshness gate passes.
+  **Layman:** Some buttons and messages still show in English in every language because their translation is missing or is a wrong guess; this fills them in.
+  Kind: fix.
+  Source: translate-mirror session report 2026-11-18.
+  Lanes: i18n.
 
 ## 4.0.x — Security and data-loss fixes for the web version
 
