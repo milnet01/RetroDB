@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=321 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=322 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -3217,6 +3217,25 @@ After 4.0.0 the web version gets security and data-loss fixes only, always as 4.
 The first piece of the native app (Rust + Slint): the Library, console and game
 pages, and launching games. Port plan phases 0 to 2
 (docs/plans/PASS-59-270-native-app-port.md).
+
+- 📋 [PASS-59-322] **Plan every part of the desktop app in full before any code is written (research, L).**
+  User, 2026-11-18: once the last web update (4.0.0) is out and
+  published, plan the whole desktop app before coding starts.
+  Extends the existing PASS-59-270 spec and plan; it does not
+  replace them. The plan must settle at least:
+  - Which files hold settings, and where they live on each system.
+  - Where media (box art, screenshots, videos, manuals) goes.
+  - Where the museum's history goes. The museum ships with the
+    releases so everyone can download it (user, 2026-11-18).
+  - How to build the app efficiently (build speed, release builds).
+  - How RAM, CPU and GPU stay low at all times.
+  - Every other part: one section per subsystem the web app has.
+  Blocked by: PASS-59-113 (4.0.0 released). Blocks: PASS-59-270
+  phase 0.
+  **Layman:** Before building the desktop app, write down exactly how every part of it will work.
+  Kind: research.
+  Source: user-request-2026-11-18.
+  Blocked-by: PASS-59-113.
 
 - 📋 [PASS-59-182] **A missing emulator falls back to a RetroArch that can play the game (ENHANCEMENT, S).**
   - **Report**: Tomb Raider (GBC) failed with "Emulator binary not
