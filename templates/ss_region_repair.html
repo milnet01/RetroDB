@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% set adaptive_layout = true %}
+{% from "_macros/nav_tabs.html" import rom_tool_tabs %}
 
 {% block title %}{{ _('Fix Box and Manual Regions') }} - RetroDB{% endblock %}
 
@@ -97,6 +98,8 @@
     <h1>📦 {{ _('Fix Box and Manual Regions') }}</h1>
     <p>{{ _('Older ScreenScraper scrapes could give a game another region\'s box or manual, such as a European box on a USA game. This looks each one up again and swaps it for the right region. Pictures from anywhere else are left alone.') }}</p>
 </div>
+
+{{ rom_tool_tabs('ss_region_repair') }}
 
 <div class="card">
     <div class="card-body">

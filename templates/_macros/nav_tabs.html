@@ -42,6 +42,9 @@
     {% if has_perm('system_functions') %}{{ _tab(url_for('mame_names.mame_names_page'), '🕹️', _('MAME Names'), active == 'mame_names') }}{% endif %}
     {{ _tab(url_for('tools.screenshot_dedup'), '📸', _('Screenshot Dedup'), active == 'screenshot_dedup') }}
     {% if has_perm('edit') %}{{ _tab(url_for('tools.screenshot_review'), '🎨', _('Screenshot Review'), active == 'screenshot_review') }}{% endif %}
+    {{ _tab(url_for('maintenance.ss_region_repair_page'), '🗺️', _('Fix Box and Manual Regions'), active == 'ss_region_repair') }}
+    {# Shown on its own page only: its hub card hides when nothing waits for review. #}
+    {% if active == 'hltb_review' %}{{ _tab(url_for('games_hltb.hltb_review_page'), '📖', _('HLTB Pending Review'), true) }}{% endif %}
     {{ _tab(url_for('reports.reports'), '📊', _('ROM Reports'), active == 'reports') }}
     {{ _tab(url_for('tools.rom_tools_settings'), '⚙️', _('Settings'), active == 'rom_tools_settings') }}
 </nav>

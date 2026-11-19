@@ -123,6 +123,22 @@ def test_rom_tool_pages_list_rom_reports(client, page):
     assert active == [page]
 
 
+@pytest.mark.parametrize('page', ['/tools/box-regions', '/hltb/review'])
+def test_tool_pages_outside_the_tools_blueprint_have_the_tabs(client, page):
+    # Both open from a ROM Tools card, so both carry the strip.
+    tabs = _soup(client, page).select('nav.tool-tabs a.tool-tab')
+    assert '/tools/archive-scanner' in [t['href'] for t in tabs]
+    assert [t['href'] for t in tabs if t.get('aria-current') == 'page'] == [page]
+
+
+def test_hltb_review_tab_shows_only_on_its_own_page(client):
+    # Its hub card hides when nothing waits for review; so does its tab.
+    tabs = _soup(client, '/tools/chd-verify').select('nav.tool-tabs a.tool-tab')
+    hrefs = [t['href'] for t in tabs]
+    assert '/tools/box-regions' in hrefs
+    assert '/hltb/review' not in hrefs
+
+
 def test_reports_page_highlights_rom_tools(client):
     links = _sidebar_links(_soup(client, '/reports'))
     active = [a.select_one('.nav-text').get_text(strip=True)

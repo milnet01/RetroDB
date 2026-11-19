@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% set adaptive_layout = true %}
+{% from "_macros/nav_tabs.html" import rom_tool_tabs %}
 
 {% block title %}HLTB Review - RetroDB{% endblock %}
 
@@ -19,6 +20,8 @@
         </button>
     </div>
 </div>
+
+{{ rom_tool_tabs('hltb_review') }}
 
 <div class="hltb-review-summary" id="hltbReviewSummary" style="margin-bottom: 1rem; color: var(--text-secondary);">
     {{ _('Loading pending matches&hellip;') }}
