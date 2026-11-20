@@ -473,11 +473,7 @@ const AllGamesController = (function() {
         grid.appendChild(fragment);
 
         // Masonry: measure card heights and assign explicit grid positions
-        requestAnimationFrame(() => {
-            layoutMasonryItems(newWrappers, append);
-            // Re-layout after badge images load (they affect card height via wrapping)
-            scheduleImageRelayout(newWrappers);
-        });
+        requestAnimationFrame(() => layoutMasonryItems(newWrappers, append));
     }
 
     // Masonry state
@@ -486,26 +482,22 @@ const AllGamesController = (function() {
     let _imageRelayoutTimer = null;
     let _filterBarResizeObserver = null;
 
-    /** Watch for unloaded images in new cards and re-layout masonry when they load */
-    function scheduleImageRelayout(wrappers) {
-        let pending = 0;
-        const onLoad = () => {
-            pending--;
-            if (pending <= 0) {
-                clearTimeout(_imageRelayoutTimer);
-                _imageRelayoutTimer = setTimeout(() => window.relayoutMasonry(), 50);
-            }
-        };
-        wrappers.forEach(w => {
-            w.querySelectorAll('img').forEach(img => {
-                if (!img.complete) {
-                    pending++;
-                    img.addEventListener('load', onLoad, { once: true });
-                    img.addEventListener('error', onLoad, { once: true });
-                }
+    // A card can grow after it is placed: its rating icons get their size
+    // as they load and wrap onto a second row, and an off-screen card is
+    // only drawn once scrolled to. Waiting for every image never finished
+    // (lazy box art below the fold), so the card ran over the one beneath
+    // (PASS-59-323). Re-place the cards whenever one's height changes.
+    const _cardResizeObserver = typeof ResizeObserver === 'undefined' ? null
+        : new ResizeObserver(entries => {
+            const changed = entries.some(e => {
+                const placed = e.target.dataset.masonryHeight;
+                return placed !== undefined
+                    && Math.ceil(e.target.getBoundingClientRect().height) !== Number(placed);
             });
+            if (!changed) return;
+            clearTimeout(_imageRelayoutTimer);
+            _imageRelayoutTimer = setTimeout(() => window.relayoutMasonry(), 50);
         });
-    }
 
     function layoutMasonryItems(items, append) {
         const grid = document.getElementById('gamesGrid');
@@ -518,6 +510,7 @@ const AllGamesController = (function() {
         // extra columns too), so a full layout clears it first; otherwise a
         // grid narrowed to one column still reads as two.
         if (!append) {
+            if (_cardResizeObserver) _cardResizeObserver.disconnect();
             items.forEach(w => {
                 w.style.gridColumn = w.style.gridRowStart = w.style.gridRowEnd = '';
             });
@@ -557,6 +550,9 @@ const AllGamesController = (function() {
             const h = heights[i];
             if (h === null) return;
             const span = h > 0 ? Math.ceil(h) + gap : 296;
+            const card = wrapper.querySelector('.game-card-new');
+            card.dataset.masonryHeight = String(Math.ceil(h));
+            if (_cardResizeObserver) _cardResizeObserver.observe(card);
 
             const col = masonryItemCount % columns;
             wrapper.style.gridColumn = String(col + 1);
@@ -1727,6 +1723,7 @@ const AllGamesController = (function() {
         clearTimeout(searchTimeout);
         clearTimeout(scrollSaveTimer);
         clearTimeout(_imageRelayoutTimer);
+        if (_cardResizeObserver) _cardResizeObserver.disconnect();
         window.removeEventListener('scroll', _onScrollSave);
         clearTimeout(_resizeRelayoutTimer);
         if (_gridResizeObserver) _gridResizeObserver.disconnect();

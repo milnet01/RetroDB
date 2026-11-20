@@ -3219,7 +3219,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Source: session-2026-11-18 Xbox Series X|S fix.
   Lanes: config.
 
-- 📋 [PASS-59-323] **Game cards in the two-column list overlap the card below them (MEDIUM, S).**
+- ✅ [PASS-59-323] **Game cards in the two-column list overlap the card below them (MEDIUM, S).**
   Seen 2026-11-20 in the user's Brave, list view with two columns of
   cards (007 titles, then numbers-first titles such as 2 Player
   Baseball and 3 Bags Full). Each card's top edge lands inside the
@@ -3236,6 +3236,16 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   which page and view this is (Library or a system page; both use
   AllGamesController), reproduce on :5001 at desktop and phone width,
   and fix it on every page that uses the same card list.
+  Fixed 2026-11-20. Cause: the masonry script measured each card once, then
+  re-measured only after every image in the new batch loaded. Lazy box
+  art below the fold never loads, so the re-measure never ran, and a
+  card that grew (rating icons sized and wrapped to a second row, about
+  36px) ran over the next. all-games-controller.js now watches each
+  card with a ResizeObserver and re-places the grid when a height
+  differs from the one it was placed at. Checked headless on :5001:
+  2 and 3 columns, Library and a system page, 1,300 cards via infinite
+  scroll, phone width: no on-screen overlaps, no console errors. The
+  Systems page masonry places after window load and showed none.
   **Layman:** In the game list, some cards are taller than their slot and run over the next card, hiding part of it.
   Kind: fix.
   Source: user-report-2026-11-20.
