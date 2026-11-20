@@ -491,14 +491,12 @@ def helper_argv(tree, kind, plan_path) -> list:
     return [sys.executable, os.path.join(tree, 'updater_apply.py'), plan_path]
 
 
-def _backup_database(version) -> str:
-    from services.database import backup_database
+def _backup_path(version) -> str:
+    """Where the helper copies the database once this process has stopped
+    (PASS-59-174): a copy taken here would miss what the job drain saves."""
     backup_dir = os.path.join(os.path.dirname(config.DB_PATH), 'backups')
-    os.makedirs(backup_dir, exist_ok=True)
     stamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    path = os.path.join(backup_dir, f'pre_update_{config.APP_VERSION}_to_{version}_{stamp}.db')
-    backup_database(config.DB_PATH, path)
-    return path
+    return os.path.join(backup_dir, f'pre_update_{config.APP_VERSION}_to_{version}_{stamp}.db')
 
 
 def _spawn(argv, cwd):
@@ -524,7 +522,7 @@ def install(port) -> dict:
         job.state = 'installing'
         tree, kind, version = job.tree, job.kind, job.version
     try:
-        db_backup = _backup_database(version)
+        db_backup = _backup_path(version)
         plan = build_plan(tree, kind, version, port, db_backup)
         plan_path = _paths()['plan']
         with open(plan_path, 'w', encoding='utf-8') as f:

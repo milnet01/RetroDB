@@ -281,6 +281,12 @@ FAKE_APP = textwrap.dedent('''
     here = os.path.dirname(os.path.abspath(__file__))
     version = open(os.path.join(here, 'VERSION')).read().strip()
     if version == 'broken':
+        # Opens and changes the database, as a migration would, then dies.
+        import sqlite3
+        conn = sqlite3.connect(os.path.join(here, 'database', 'roms.db'))
+        conn.execute("UPDATE t SET v = 'migrated'")
+        conn.commit()
+        conn.close()
         sys.exit(1)
 
     class H(BaseHTTPRequestHandler):
@@ -391,12 +397,7 @@ def test_helper_updates_and_keeps_user_data(fake_install):
 
 def test_helper_rolls_back_when_the_new_version_does_not_start(fake_install):
     install, tree, plan, db = fake_install
-    (tree / 'VERSION').write_text('broken')
-    # The "new version" touched the database before it failed.
-    conn = sqlite3.connect(db)
-    conn.execute("UPDATE t SET v = 'migrated'")
-    conn.commit()
-    conn.close()
+    (tree / 'VERSION').write_text('broken')   # changes the database, then dies
     assert updater_apply.apply(plan) == 1
     status = _status(plan)
     assert status['result'] == 'rolled_back' and 'did not start' in status['reason']
@@ -409,6 +410,45 @@ def test_helper_rolls_back_when_the_new_version_does_not_start(fake_install):
     assert conn.execute('SELECT v FROM t').fetchone()[0] == 'before'
     conn.close()
     assert updater_apply.healthy_version(plan['port']) == '1.0.0'
+
+
+def test_rollback_keeps_what_the_old_version_saved_after_the_plan(fake_install):
+    """PASS-59-174: the old version still writes while its jobs drain, after
+    the plan is written; a rollback must not lose those writes."""
+    install, tree, plan, db = fake_install
+    (tree / 'VERSION').write_text('broken')
+    conn = sqlite3.connect(db)
+    conn.execute("UPDATE t SET v = 'saved while stopping'")
+    conn.commit()
+    conn.close()
+    assert updater_apply.apply(plan) == 1
+    conn = sqlite3.connect(db)
+    assert conn.execute('SELECT v FROM t').fetchone()[0] == 'saved while stopping'
+    conn.close()
+
+
+def test_rollback_puts_the_old_packages_back(fake_install, monkeypatch):
+    """PASS-59-174: packages the new lockfile installed are reinstalled from
+    the old lockfile when the update rolls back."""
+    install, tree, plan, db = fake_install
+    (install / 'requirements.lock').write_text('old')
+    (tree / 'requirements.lock').write_text('new')
+    (tree / 'VERSION').write_text('broken')
+    installed = []
+
+    class FakeCore:
+        @staticmethod
+        def select_pip_args(base):
+            return ['-r', os.path.join(base, 'requirements.lock')], 'lock'
+
+        @staticmethod
+        def pip_install(args, base, quiet=False):
+            installed.append(Path(args[-1]).read_text())
+            return subprocess.CompletedProcess(args, 0, '', '')
+
+    monkeypatch.setattr(updater_apply, '_load_installer_core', lambda tree_dir: FakeCore)
+    assert updater_apply.apply(plan) == 1
+    assert installed == ['new', 'old']
 
 
 def test_helper_waits_for_the_old_process(fake_install):

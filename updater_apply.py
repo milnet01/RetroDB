@@ -307,27 +307,77 @@ def file_digest(path):
         return None
 
 
-def install_dependencies(plan, log):
-    """Source installs: run the new tree's hash-locked pip install when the
-    lockfile changed. Raises UpdateFailed."""
-    install_dir = plan['install_dir']
-    new_lock = os.path.join(install_dir, 'requirements.lock')
+def _load_installer_core(tree):
+    """`tree`'s own installer_core.py, loaded by path: a plain import would
+    reuse whichever copy was imported first."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        '_installer_core_' + str(abs(hash(tree))), os.path.join(tree, 'installer_core.py'))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def lock_changed(plan):
+    """Source installs, after the swap: True when the new lockfile differs
+    from the one it replaced."""
+    new_lock = os.path.join(plan['install_dir'], 'requirements.lock')
     old_lock = os.path.join(plan['rollback_dir'], 'requirements.lock')
-    if file_digest(new_lock) == file_digest(old_lock):
+    return file_digest(new_lock) != file_digest(old_lock)
+
+
+def install_dependencies(plan, log):
+    """Run the hash-locked pip install of the tree now in install_dir: the
+    new one after the swap, the old one again after a rollback.
+    Raises UpdateFailed."""
+    install_dir = plan['install_dir']
+    installer_core = _load_installer_core(install_dir)
+    args, source = installer_core.select_pip_args(install_dir)
+    if args is None:
         return
-    sys.path.insert(0, install_dir)
-    try:
-        import installer_core
-        args, source = installer_core.select_pip_args(install_dir)
-        if args is None:
-            return
-        log(f'installing dependencies from {source}')
-        result = installer_core.pip_install(args, install_dir, quiet=True)
-    finally:
-        sys.path.remove(install_dir)
+    log(f'installing dependencies from {source}')
+    result = installer_core.pip_install(args, install_dir, quiet=True)
     if result.returncode != 0:
         tail = (result.stderr or '').strip().splitlines()[-3:]
         raise UpdateFailed('dependency install failed: ' + ' | '.join(tail))
+
+
+def backup_database(plan, log):
+    """Copy the database once the old RetroDB has stopped, so the copy holds
+    everything it saved while its jobs drained (PASS-59-174). Written
+    owner-only and renamed into place only once complete."""
+    import sqlite3
+    import tempfile
+    backup, db = plan.get('db_backup'), plan.get('db_path')
+    if not backup or not db or not os.path.exists(db):
+        return
+    folder = os.path.dirname(backup) or '.'
+    os.makedirs(folder, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(prefix='.' + os.path.basename(backup) + '.',
+                               suffix='.partial', dir=folder)
+    os.close(fd)
+    try:
+        src = sqlite3.connect(db)
+        try:
+            dst = sqlite3.connect(tmp)
+            try:
+                with dst:
+                    src.backup(dst)
+                ok = dst.execute('PRAGMA integrity_check').fetchone()
+            finally:
+                dst.close()
+        finally:
+            src.close()
+        if not ok or ok[0] != 'ok':
+            raise UpdateFailed('the database copy failed its integrity check')
+        os.replace(tmp, backup)
+    except BaseException:
+        try:
+            os.remove(tmp)
+        except OSError:
+            pass
+        raise
+    log(f'database copied to {os.path.basename(backup)}')
 
 
 def restore_database(plan, log):
@@ -409,10 +459,11 @@ def apply(plan):
         return 1
 
     try:
+        backup_database(plan, log)
         shutil.rmtree(plan['rollback_dir'], ignore_errors=True)
         os.makedirs(plan['rollback_dir'], exist_ok=True)
         swap = Swap(plan['install_dir'], plan['rollback_dir'], log)
-    except (OSError, KeyError) as e:
+    except Exception as e:
         # Nothing swapped yet: say why and bring the old version back.
         reason = f'could not prepare the update: {e!r}'
         log(reason)
@@ -424,13 +475,16 @@ def apply(plan):
         return 1
     proc = None
     new_files = None
+    packages_changed = False
     try:
         if plan['kind'] == 'standalone':
             swap_standalone(plan, swap)
         else:
             new_files = swap_source(plan, swap)
             purge_bytecode(plan['install_dir'])
-            install_dependencies(plan, log)
+            if lock_changed(plan):
+                packages_changed = True   # before pip: a half-done install counts
+                install_dependencies(plan, log)
         log('files swapped; starting the new version')
         proc = start_app(plan)
         if not wait_healthy(plan['port'], plan['to_version'], proc, host=bind_host(plan)):
@@ -442,10 +496,18 @@ def apply(plan):
         swap.undo()
         if plan['kind'] != 'standalone':
             purge_bytecode(plan['install_dir'])
-        try:
-            restore_database(plan, log)
-        except OSError as db_err:
-            log(f'database restore failed: {db_err}')
+        if packages_changed:
+            # The old lockfile is back in place: reinstall what it pins.
+            try:
+                install_dependencies(plan, log)
+            except Exception as pip_err:
+                log(f'could not put the old packages back: {pip_err}')
+        if proc is not None:
+            # Only a started new version can have changed the database.
+            try:
+                restore_database(plan, log)
+            except OSError as db_err:
+                log(f'database restore failed: {db_err}')
         _restart_old(plan, log)
         write_status(plan, 'rolled_back', reason=reason)
         return 1

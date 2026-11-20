@@ -102,9 +102,10 @@ below it.
 
 `POST /api/updates/install`, admin only, state `ready`:
 
-1. Back up the database with `services.database.backup_database` to
-   `database/backups/pre_update_<from>_to_<to>_<stamp>.db`. Backups named
-   `pre_*` are never pruned.
+1. Name the database copy
+   `database/backups/pre_update_<from>_to_<to>_<stamp>.db` (`db_backup`).
+   The helper writes it once this process has stopped (§5.2), so it holds
+   what the job drain saves. Backups named `pre_*` are never pruned.
 2. Write `.update/plan.json` (§5.1).
 3. Start the **new** version's helper, detached from this process:
    source `python <staging>/updater_apply.py <plan>`, standalone
@@ -139,7 +140,9 @@ version, then reloads.
 the standalone binary can run it without starting a server or touching the
 database.
 
-1. Wait up to 120 s for `pid` to exit.
+1. Wait up to 120 s for `pid` to exit. Then copy the database to
+   `db_backup` with SQLite's backup API, owner-only and integrity-checked;
+   a failed copy changes nothing and restarts the old version.
 2. Swap, recording every step in `rollback_dir`:
    - **standalone:** move the old `_internal/` and every top-level file the
      new tree also has (program, start script, `install-launcher.sh`,
@@ -170,8 +173,9 @@ database.
    the next update, for a manual revert.
 7. **Failure** (swap error, dependency install error, no healthy start):
    stop the new process, put every recorded file back, remove files the
-   update added, restore the database from `db_backup` (removing `-wal` /
-   `-shm`), start the old version the same way, and write
+   update added, reinstall the old `requirements.lock` if step 3 ran,
+   restore the database from `db_backup` (removing `-wal` / `-shm`) if the
+   new version was started, start the old version the same way, and write
    `{"result": "rolled_back", "reason": ...}`.
 
 On the next status request the old/new app reads `status_path` once,

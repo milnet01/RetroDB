@@ -506,7 +506,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** An update is checked for a genuine signature before it installs.
   Kind: implement.
 
-- 📋 [PASS-59-174] **A failed update rolls back packages and keeps writes made after its backup (MEDIUM, M).**
+- ✅ [PASS-59-174] **A failed update rolls back packages and keeps writes made after its backup (MEDIUM, M).**
   - **Why**: `updater_apply.py::install_dependencies` runs pip into the
     shared interpreter before the health check, and rollback never
     reverts it, so old code can restart against upgraded packages. The
@@ -520,6 +520,17 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - **Source**: code review of PR #23, 2026-10-29.
 
   ---
+  **Done** (2026-11-20, in the open 4.0.0): the helper copies the
+  database after the old process exits (`updater_apply.backup_database`),
+  restores it only when the new version was started, and on rollback
+  reinstalls the old `requirements.lock` when the update changed it.
+  `services/updater.py` now only names the copy's path. Tests in
+  `tests/test_updater.py` (rollback keeps late writes, rollback puts old
+  packages back), both seen red first. Packages only the new lockfile
+  added stay installed, unused. Not shared with `player_install`: the
+  two downloads differ in cap, progress and error type, and
+  `player_install.host()` also requires x86_64, so one helper would need
+  options for every difference.
   **Layman:** If an update fails, RetroDB goes back to how it was without losing anything saved since.
   Kind: implement.
   Lanes: updater.
