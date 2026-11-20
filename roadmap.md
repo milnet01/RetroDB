@@ -1066,7 +1066,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** The maintenance tools in Settings can be translated.
   Kind: implement.
 
-- 📋 [PASS-59-188] **Popups placed inside a page's content can sit under the sidebar and phone bars (LOW, S).**
+- ✅ [PASS-59-188] **Popups placed inside a page's content can sit under the sidebar and phone bars (LOW, S).**
   - **Status**: todo
   `.content-wrapper` has `position: relative; z-index: 1` (layout.css,
   since the first commit, reason unrecorded). That caps the z-index of
@@ -1082,6 +1082,16 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   the cover zoom in Firefox before being reverted for the local fix.
 
   ---
+  Fixed 2026-11-20 by dropping .content-wrapper's z-index (route one).
+  That alone was not enough: in-page pop-ups at z-index 1000-1001 still
+  tied with the sidebar or lost to the phone header (1001), so
+  .modal-overlay (modals.css), the trophy pages' .modal, archive
+  scanner's two modals and ROM Tools settings' success message moved to
+  the modal level, 10000. Checked headless on :5001 at 375 px: nine
+  pop-ups all under the phone bars before, all on top after. Ten page
+  screenshots (fanart game page, hovered system page, Library,
+  Dashboard, Settings; desktop and phone) are pixel-identical before
+  and after, so the fanart backgrounds still sit behind the content.
   **Layman:** Pop-ups stop appearing under the sidebar or the phone's top bar.
   Kind: implement.
 
