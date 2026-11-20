@@ -3281,6 +3281,130 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Source: user-report-2026-11-20.
   Evidence: /home/ants/Pictures/ClaudePaste/paste_20261120_153019_666_be249f57.png
 
+- 📋 [PASS-49-8] **Job resume off-by-one silently drops the in-progress game (MEDIUM, S)**
+  - **Status**: deferred — pre-existing (predates the Pass 49 per-game-commit fix);
+    surfaced by the Loop-2 cold re-review.
+  - **Lane**: background jobs (Lane 7).
+  - **Finding**: the periodic-persist block runs at the *top* of iteration `i` and
+    writes `'current': i + 1`, but only games `0..i-1` are committed at that point.
+    `resume_from_params` computes `remaining_ids = game_ids[resume_index:]` =
+    `game_ids[i+1:]`, so the in-progress game at index `i` is skipped on resume and
+    counted in neither success nor failed (`ra_sync.py`, `platform_sync.py` ×2).
+  - **Decision**: persist `current` as completed-count, or resume from
+    `max(resume_index - 1, 0)` — the upserts are idempotent (`ON CONFLICT DO
+    UPDATE`), so re-processing one already-done game is harmless. Re-runnable sync
+    job, so impact is LOW-MEDIUM.
+
+  ---
+  Moved into 4.0.0 (user, 2026-11-20).
+  **Layman:** A resumed job could skip the game it was on.
+  Kind: implement.
+
+- 📋 [PASS-49-2] **bulk-scrape swap/demote counter corruption after join timeout (MEDIUM, M)**
+  - **Status**: deferred — needs careful concurrency design.
+  - **Lane**: background jobs (Lane 7).
+  - **Finding**: `services/jobs/bulk_scrape.py` `swap_with_running` /
+    `demote_running` `join(timeout=60)` then proceed even if the old worker is
+    still alive; a hung scraper's worker can wake after `reset()` and increment
+    the *new* job's `success_count`/`failed_count`.
+  - **Decision**: block or hard-fail the swap when the old thread is still alive
+    rather than "proceed with state mixing possible".
+  Moved into 4.0.0 (user, 2026-11-20).
+  **Layman:** Swapping a running bulk scrape could mix up its counts.
+  Kind: implement.
+
+- 📋 [PASS-49-4] **`organize-multidisc` relies on incidental path-nesting (MEDIUM, S)**
+  - **Status**: deferred — currently safe; explicit hardening.
+  - **Lane**: maintenance/reports (Lane 9).
+  - **Finding**: `routes/reports.py` move branch blocks a traversing `system`
+    param only because `folder_path` nests under `system_path` and `safe_path`
+    catches the escape — there is no independent DB/`safe_path` check on `system`
+    like the multidisc-scan path has.
+  - **Decision**: add an explicit `system` validation mirroring `reports.py:405`.
+  Moved into 4.0.0 (user, 2026-11-20).
+  **Layman:** Add an extra check on the multi-disc organiser, which is safe today.
+  Kind: implement.
+
+- 📋 [PASS-49-3] **SSRF redirect-chain HEAD probes are unpinned (MEDIUM, M)**
+  - **Status**: deferred — hardening; the GET is now correctly pinned (Pass 49 port-0 fix).
+  - **Lane**: core/SSRF (Lane 11).
+  - **Finding**: `services/ssrf.py` `validate_redirect_chain` validates each hop
+    then issues `session.head(...)` unpinned, re-resolving DNS — a rebinding
+    server can pass validation and serve a private/metadata IP to the HEAD.
+  - **Decision**: wrap each HEAD hop in `pin_host_ip` (or re-validate the IP the
+    HEAD resolved). Low live risk on a LAN with no internal SSRF targets.
+  Moved into 4.0.0 (user, 2026-11-20).
+  **Layman:** A web-safety check on followed links could be tightened further.
+  Kind: implement.
+
+- 📋 [PASS-49-7] **Assorted LOW / INFO review notes (LOW, S)**
+  - **Status**: deferred bundle — verified-but-low; pick up opportunistically.
+  - Items:
+    - `services/migrations/__init__.py` — add a defensive `not conn.in_transaction`
+      assert before `BEGIN IMMEDIATE` so a future stray open transaction fails loudly.
+    - `services/database.py:_fsync_path` duplicates `services/atomic_io.py:fsync_path`
+      — dedupe to prevent drift.
+    - `services/jobs/museum.py` `get_status()` field names (`current_index`/
+      `total_systems`/`success_count`) diverge from the §7/§9 toast contract
+      (`current`/`total`/`success`, no `processing`/`percent`).
+    - `services/jobs/webp_migrate.py` resume path adopts a pre-existing `.webp`
+      sibling without the `verify()` the fresh path does (spec §12.1) → corrupt
+      sibling can silently replace a good boxart.
+    - `image_resize` and `webp_migrate` take distinct singleton locks and can race
+      the same boxart tree (stranded orphan `.png`); responsive-variant regen runs
+      on `'skipped'` files too (disk churn).
+    - `routes/trophies.py` import-time global monkeypatch of `pyrate_limiter`
+      (`_Limiter._try_acquire`) is fragile across library upgrades.
+    - ~~`scraper/scrape_thegamesdb.py` assigns free-text TGDB ratings verbatim into
+      `esrb_rating`; `metadata_merger.py` drops bare single-letter ESRB codes
+      ("E"/"T"/"M") that lack a trailing space.~~ Closed by Pass 59.19 — both
+      parses share one whole-token parser and the verbatim fallback is gone.
+    - `scraper/scrape_rawg.py` defaults `players` to `1` (truthy), pre-filling a
+      weak value that crowds out a better secondary source.
+    - ~~Xbox scrapers (`scrape_xbox.py`) bypass `base_scraper.http_get` — no SSRF
+      risk (hardcoded `*.xboxlive.com`/`login.live.com` hosts) but `docs/specs/
+      scrapers.md` §10 wrongly claims Xbox was migrated; fix the doc.~~ Closed by
+      Pass 59.26 — the code was migrated instead, so §10 is now true as written.
+    - `hybrid_scraper.py` generic-controller `elif` branch is a no-op `pass` whose
+      comment promises to clear generic controller values.
+    - ~~`static/js/main.js` `performGlobalSearch` is dead (`#globalSearch` absent
+      from all templates, `/api/search` route absent) — surface before removing.~~
+      Closed by Pass 59.39 — deleted with its binding and helpers.
+    - `build_dist.py` source-ZIP walk is denylist-only (a gitignored
+      `audit_rule_quality.json` shipped); `EXCLUDE_DIRS` matches by basename at any
+      depth. No secret leaked today, but make the walk respect `.gitignore` and
+      anchor `EXCLUDE_DIRS` to top-level.
+    - **(Loop-2)** `ra_sync`/`platform_sync` skip-path (`if result is None:
+      continue`) bypasses the `shutdown_requested.wait()` rate-limit — a long run
+      of skipped games becomes a tight loop that drains a SIGTERM slightly slower
+      than the per-request budget implies.
+    - **(Loop-2)** `services/ssrf.py` pin host match is exact-string + fail-open
+      (`return _orig_getaddrinfo` on miss); a future caller passing a
+      non-normalized host (trailing dot / uppercase) to `pin_host_ip` would
+      silently skip the pin. Normalize/lower the host on both store and compare.
+  Moved into 4.0.0 (user, 2026-11-20). Confirm each note against current
+  source first.
+  **Layman:** A bundle of small, low-risk code notes from a review.
+  Kind: implement.
+
+- 📋 [PASS-49-9] **`clear-ra-data` library-wide vs per-user semantics (MEDIUM, S)**
+  - **Status**: deferred — design decision, not a silent fix.
+  - **Lane**: collections/achievements/trophies (Lane 10).
+  - **Finding**: `routes/ra_sync.py` `api_clear_ra_data_all` / `_system` DELETE
+    `game_achievement_progress` with no `user_id` predicate, wiping every user's
+    earned-achievement progress (the table is per-user, migration 009). It is
+    paired with clearing the *shared* `games.ra_game_id` links, so clearing all
+    progress is internally consistent (otherwise orphaned) — which is why this is
+    a semantics call, not a clear bug.
+  - **Decision**: confirm intended meaning — a library-wide admin reset (current)
+    or a per-user clear. If per-user, scope BOTH the link clear and the progress
+    DELETE by `g.user['id']`. Single-household threat model keeps impact LOW.
+  Decision (user, 2026-11-20): both. An admin can still clear all
+  RetroAchievements data for everyone; every user can also clear their
+  own progress only, scoped by user id.
+  **Layman:** Decide whether clearing RetroAchievements data clears everyone's or only yours.
+  Kind: implement.
+
 ## 4.0.x — Security and data-loss fixes for the web version
 
 After 4.0.0 the web version gets security and data-loss fixes only, always as 4.0.x: the 4.0 updater treats 4.1.0 and up as the desktop app.
@@ -3750,10 +3874,6 @@ The native app does everything the web version did, on Windows, Linux, macOS and
   **Layman:** RetroDB becomes a desktop and Android app instead of a web page.
   Kind: implement.
 
-## Ideas, not planned
-
-Considered or dropped. Kept so the reasoning is not lost.
-
 - 💭 [PASS-12-5] **— FTS5 virtual table for `games.title` + `alternate_titles` (MEDIUM, L)**
   - **Target**: search endpoints (`routes/games_search.py::api_games_find`
     and similar), plus filter pages doing `WHERE title LIKE '%q%'`.
@@ -3771,6 +3891,8 @@ Considered or dropped. Kept so the reasoning is not lost.
     `WHERE title LIKE '%q%'` is actually the hot path on a realistic
     10k-row library.  `RETRODB_SLOW_QUERY_MS=100` (Pass 12.4) is the
     instrument to collect that data.
+  Moved to 5.0.0 as a note for the native app (user, 2026-11-20); not
+  for the web version.
   **Layman:** Faster title search on very large libraries.
   Kind: implement.
 
@@ -3787,6 +3909,8 @@ Considered or dropped. Kept so the reasoning is not lost.
   - **Status**: deferred (LOW priority, L sized — its own pass)
 
   ---
+  Moved to 5.0.0 as a note for the native app (user, 2026-11-20); not
+  for the web version.
   **Layman:** Add type labels to the biggest code files so mistakes show up sooner.
   Kind: implement.
 
@@ -3800,59 +3924,32 @@ Considered or dropped. Kept so the reasoning is not lost.
     held pending user appetite for the extra complexity.
 
   ---
+  Moved to 5.0.0 as a note for the native app (user, 2026-11-20); not
+  for the web version.
   **Layman:** Scrape several games at once to finish a bulk scrape sooner.
   Kind: implement.
 
-- 💭 [PASS-49-9] **`clear-ra-data` library-wide vs per-user semantics (MEDIUM, S)**
-  - **Status**: deferred — design decision, not a silent fix.
-  - **Lane**: collections/achievements/trophies (Lane 10).
-  - **Finding**: `routes/ra_sync.py` `api_clear_ra_data_all` / `_system` DELETE
-    `game_achievement_progress` with no `user_id` predicate, wiping every user's
-    earned-achievement progress (the table is per-user, migration 009). It is
-    paired with clearing the *shared* `games.ra_game_id` links, so clearing all
-    progress is internally consistent (otherwise orphaned) — which is why this is
-    a semantics call, not a clear bug.
-  - **Decision**: confirm intended meaning — a library-wide admin reset (current)
-    or a per-user clear. If per-user, scope BOTH the link clear and the progress
-    DELETE by `g.user['id']`. Single-household threat model keeps impact LOW.
-  **Layman:** Decide whether clearing RetroAchievements data clears everyone's or only yours.
+- 💭 [PASS-59-135] **Scrape speed: fetch by stored IGDB or ScreenScraper ID instead of searching (LOW, M).**
+  - **Status**: deferred
+  - **Where**: `hybrid_scraper.py` writes `igdb_id` and `screenscraper_id`
+    but no scrape reads them to skip a search; only
+    `services/version_groups.py` does.
+  - **Held**: PASS-59-124 found 111 games whose stored IDs pointed at the
+    wrong game. Using IDs would repeat those mistakes on every re-scrape.
+    Consider only for normal (fill) mode, never Full Re-scrape, and only once
+    PASS-59-125 makes the search use the filename.
+
+  ---
+  Moved to 5.0.0 as a note for the native app (user, 2026-11-20); not
+  for the web version.
+  **Layman:** Look up games by their saved IGDB or ScreenScraper ID instead of searching again.
   Kind: implement.
 
-- 💭 [PASS-49-2] **bulk-scrape swap/demote counter corruption after join timeout (MEDIUM, M)**
-  - **Status**: deferred — needs careful concurrency design.
-  - **Lane**: background jobs (Lane 7).
-  - **Finding**: `services/jobs/bulk_scrape.py` `swap_with_running` /
-    `demote_running` `join(timeout=60)` then proceed even if the old worker is
-    still alive; a hung scraper's worker can wake after `reset()` and increment
-    the *new* job's `success_count`/`failed_count`.
-  - **Decision**: block or hard-fail the swap when the old thread is still alive
-    rather than "proceed with state mixing possible".
-  **Layman:** Swapping a running bulk scrape could mix up its counts.
-  Kind: implement.
+## Ideas, not planned
 
-- 💭 [PASS-49-3] **SSRF redirect-chain HEAD probes are unpinned (MEDIUM, M)**
-  - **Status**: deferred — hardening; the GET is now correctly pinned (Pass 49 port-0 fix).
-  - **Lane**: core/SSRF (Lane 11).
-  - **Finding**: `services/ssrf.py` `validate_redirect_chain` validates each hop
-    then issues `session.head(...)` unpinned, re-resolving DNS — a rebinding
-    server can pass validation and serve a private/metadata IP to the HEAD.
-  - **Decision**: wrap each HEAD hop in `pin_host_ip` (or re-validate the IP the
-    HEAD resolved). Low live risk on a LAN with no internal SSRF targets.
-  **Layman:** A web-safety check on followed links could be tightened further.
-  Kind: implement.
+Considered or dropped. Kept so the reasoning is not lost.
 
-- 💭 [PASS-49-4] **`organize-multidisc` relies on incidental path-nesting (MEDIUM, S)**
-  - **Status**: deferred — currently safe; explicit hardening.
-  - **Lane**: maintenance/reports (Lane 9).
-  - **Finding**: `routes/reports.py` move branch blocks a traversing `system`
-    param only because `folder_path` nests under `system_path` and `safe_path`
-    catches the escape — there is no independent DB/`safe_path` check on `system`
-    like the multidisc-scan path has.
-  - **Decision**: add an explicit `system` validation mirroring `reports.py:405`.
-  **Layman:** Add an extra check on the multi-disc organiser, which is safe today.
-  Kind: implement.
-
-- 💭 [PASS-49-6] **i18n — inline-`<script>` toast/modal strings untranslatable (MEDIUM, L)**
+- 🚫 [PASS-49-6] **i18n — inline-`<script>` toast/modal strings untranslatable (MEDIUM, L)**
   - **Status**: deferred — large mechanical sweep (~138 strings across ~20 templates).
   - **Lane**: templates/i18n (Lane 13).
   - **Finding**: `build_js.py` only scans `static/js/*.js`, so toast/modal string
@@ -3864,76 +3961,12 @@ Considered or dropped. Kept so the reasoning is not lost.
     consistency.
   - **Decision**: wrap each inline-`<script>` user-facing string in `{{ _('...') }}`
     (the `wishlist.html` pattern) and regenerate catalogs per `docs/specs/i18n.md`.
+  Dropped 2026-11-20 (user): duplicate of PASS-59-278, which translates
+  the page scripts.
   **Layman:** Translate pop-up text written inside page scripts.
   Kind: implement.
 
-- 💭 [PASS-49-7] **Assorted LOW / INFO review notes (LOW, S)**
-  - **Status**: deferred bundle — verified-but-low; pick up opportunistically.
-  - Items:
-    - `services/migrations/__init__.py` — add a defensive `not conn.in_transaction`
-      assert before `BEGIN IMMEDIATE` so a future stray open transaction fails loudly.
-    - `services/database.py:_fsync_path` duplicates `services/atomic_io.py:fsync_path`
-      — dedupe to prevent drift.
-    - `services/jobs/museum.py` `get_status()` field names (`current_index`/
-      `total_systems`/`success_count`) diverge from the §7/§9 toast contract
-      (`current`/`total`/`success`, no `processing`/`percent`).
-    - `services/jobs/webp_migrate.py` resume path adopts a pre-existing `.webp`
-      sibling without the `verify()` the fresh path does (spec §12.1) → corrupt
-      sibling can silently replace a good boxart.
-    - `image_resize` and `webp_migrate` take distinct singleton locks and can race
-      the same boxart tree (stranded orphan `.png`); responsive-variant regen runs
-      on `'skipped'` files too (disk churn).
-    - `routes/trophies.py` import-time global monkeypatch of `pyrate_limiter`
-      (`_Limiter._try_acquire`) is fragile across library upgrades.
-    - ~~`scraper/scrape_thegamesdb.py` assigns free-text TGDB ratings verbatim into
-      `esrb_rating`; `metadata_merger.py` drops bare single-letter ESRB codes
-      ("E"/"T"/"M") that lack a trailing space.~~ Closed by Pass 59.19 — both
-      parses share one whole-token parser and the verbatim fallback is gone.
-    - `scraper/scrape_rawg.py` defaults `players` to `1` (truthy), pre-filling a
-      weak value that crowds out a better secondary source.
-    - ~~Xbox scrapers (`scrape_xbox.py`) bypass `base_scraper.http_get` — no SSRF
-      risk (hardcoded `*.xboxlive.com`/`login.live.com` hosts) but `docs/specs/
-      scrapers.md` §10 wrongly claims Xbox was migrated; fix the doc.~~ Closed by
-      Pass 59.26 — the code was migrated instead, so §10 is now true as written.
-    - `hybrid_scraper.py` generic-controller `elif` branch is a no-op `pass` whose
-      comment promises to clear generic controller values.
-    - ~~`static/js/main.js` `performGlobalSearch` is dead (`#globalSearch` absent
-      from all templates, `/api/search` route absent) — surface before removing.~~
-      Closed by Pass 59.39 — deleted with its binding and helpers.
-    - `build_dist.py` source-ZIP walk is denylist-only (a gitignored
-      `audit_rule_quality.json` shipped); `EXCLUDE_DIRS` matches by basename at any
-      depth. No secret leaked today, but make the walk respect `.gitignore` and
-      anchor `EXCLUDE_DIRS` to top-level.
-    - **(Loop-2)** `ra_sync`/`platform_sync` skip-path (`if result is None:
-      continue`) bypasses the `shutdown_requested.wait()` rate-limit — a long run
-      of skipped games becomes a tight loop that drains a SIGTERM slightly slower
-      than the per-request budget implies.
-    - **(Loop-2)** `services/ssrf.py` pin host match is exact-string + fail-open
-      (`return _orig_getaddrinfo` on miss); a future caller passing a
-      non-normalized host (trailing dot / uppercase) to `pin_host_ip` would
-      silently skip the pin. Normalize/lower the host on both store and compare.
-  **Layman:** A bundle of small, low-risk code notes from a review.
-  Kind: implement.
-
-- 💭 [PASS-49-8] **Job resume off-by-one silently drops the in-progress game (MEDIUM, S)**
-  - **Status**: deferred — pre-existing (predates the Pass 49 per-game-commit fix);
-    surfaced by the Loop-2 cold re-review.
-  - **Lane**: background jobs (Lane 7).
-  - **Finding**: the periodic-persist block runs at the *top* of iteration `i` and
-    writes `'current': i + 1`, but only games `0..i-1` are committed at that point.
-    `resume_from_params` computes `remaining_ids = game_ids[resume_index:]` =
-    `game_ids[i+1:]`, so the in-progress game at index `i` is skipped on resume and
-    counted in neither success nor failed (`ra_sync.py`, `platform_sync.py` ×2).
-  - **Decision**: persist `current` as completed-count, or resume from
-    `max(resume_index - 1, 0)` — the upserts are idempotent (`ON CONFLICT DO
-    UPDATE`), so re-processing one already-done game is harmless. Re-runnable sync
-    job, so impact is LOW-MEDIUM.
-
-  ---
-  **Layman:** A resumed job could skip the game it was on.
-  Kind: implement.
-
-- 💭 [PASS-47-5] **Buy Me A Coffee (LOW, S)**
+- 🚫 [PASS-47-5] **Buy Me A Coffee (LOW, S)**
   - **Target**: <https://buymeacoffee.com> profile.
   - **Why**: lowest-friction one-off-tip surface for users without a
     GitHub account or who don't want monthly commitment. Stripe-backed;
@@ -3950,6 +3983,8 @@ Considered or dropped. Kept so the reasoning is not lost.
        three platforms. Use BMAC strictly for one-off coffees.
   - **Status**: deferred
   Progress (2026-06-30): Parked by maintainer. Buy Me A Coffee does not support South Africa yet, so this surface can't go live regardless of code. Leave planned; revisit only if/when BMAC adds ZA payouts. GitHub Sponsors already covers the in-app/README/FUNDING donation surfaces, so nothing is blocked on this.
+  Dropped 2026-11-20 (user): Buy Me A Coffee does not pay out to South
+  Africa.
   **Layman:** A Buy Me A Coffee page for one-off tips.
   Kind: implement.
 
@@ -3974,20 +4009,6 @@ Considered or dropped. Kept so the reasoning is not lost.
     fetch).
 
   ---
-  Kind: implement.
-
-- 💭 [PASS-59-135] **Scrape speed: fetch by stored IGDB or ScreenScraper ID instead of searching (LOW, M).**
-  - **Status**: deferred
-  - **Where**: `hybrid_scraper.py` writes `igdb_id` and `screenscraper_id`
-    but no scrape reads them to skip a search; only
-    `services/version_groups.py` does.
-  - **Held**: PASS-59-124 found 111 games whose stored IDs pointed at the
-    wrong game. Using IDs would repeat those mistakes on every re-scrape.
-    Consider only for normal (fill) mode, never Full Re-scrape, and only once
-    PASS-59-125 makes the search use the filename.
-
-  ---
-  **Layman:** Look up games by their saved IGDB or ScreenScraper ID instead of searching again.
   Kind: implement.
 
 - 🚫 [PASS-59-196] **Fewer Claude web searches per game, and log how many each uses (perf, S).**
