@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import configparser
 import os
+import plistlib
 import re
 import sys
 from dataclasses import dataclass
@@ -244,39 +245,75 @@ def _retroarch_bios(binary, data_dir, sys_emu):
 # The adapters
 # -----------------------------------------------------------------------------
 
-def _pat(regex):
-    return (re.compile(regex, re.IGNORECASE),)
+def _pat(appimage, exe=None, app=None):
+    """One pattern per kind of program file: an AppImage on Linux, the main
+    program's exact `.exe` on Windows (never its updater or uninstaller),
+    its `.app` bundle on macOS.  The walk only offers the host's own kind."""
+    return tuple(re.compile(p, re.IGNORECASE) for p in (appimage, exe, app) if p)
+
+
+def program_kinds() -> tuple:
+    """The file-name endings an emulator program has on this OS (§4.2)."""
+    if sys.platform == 'win32':
+        return ('.exe',)
+    if sys.platform == 'darwin':
+        return ('.app',)
+    return ('.appimage', '-portable.sh')
+
+
+def app_program(bundle: Path) -> Optional[Path]:
+    """The program a macOS `.app` runs: Contents/MacOS/<CFBundleExecutable>
+    from its Info.plist.  None when the plist names nothing usable."""
+    try:
+        with open(bundle / 'Contents' / 'Info.plist', 'rb') as f:
+            name = plistlib.load(f).get('CFBundleExecutable')
+    except (OSError, ValueError, plistlib.InvalidFileException):
+        return None
+    if not isinstance(name, str) or not name or Path(name).name != name or name in ('.', '..'):
+        return None
+    program = bundle / 'Contents' / 'MacOS' / name
+    return program if program.is_file() else None
 
 
 ADAPTERS = {a.binary_name: a for a in (
+    # Windows and macOS names: each emulator's official release files
+    # (read 2026-11-20); mame.exe is the probable name, unconfirmed.
     # RetroArch lists no systems: which core runs a system is PASS-59-81's.
     # Its Flatpak keeps its own probe (routes/launch_settings.py).
-    EmulatorAdapter('retroarch', _pat(r'.*retroarch.*\.appimage$'), 'retroarch',
+    EmulatorAdapter('retroarch', _pat(r'.*retroarch.*\.appimage$', r'retroarch\.exe$',
+                                    r'retroarch\.app$'), 'retroarch',
                     bios=_retroarch_bios),
-    EmulatorAdapter('duckstation-qt', _pat(r'duckstation.*\.appimage$'), 'duckstation',
+    EmulatorAdapter('duckstation-qt', _pat(r'duckstation.*\.appimage$',
+                                              r'duckstation-qt-x64-releaseltcg\.exe$',
+                                              r'duckstation\.app$'), 'duckstation',
                     ('org.duckstation.DuckStation',), ('psx',),
                     _duckstation_dirs, 'settings.ini', _duckstation_bios),
-    EmulatorAdapter('pcsx2-qt', _pat(r'pcsx2.*\.appimage$'), 'pcsx2',
+    EmulatorAdapter('pcsx2-qt', _pat(r'pcsx2.*\.appimage$', r'pcsx2-qt\.exe$',
+                                        r'pcsx2(-v[0-9.]+)?\.app$'), 'pcsx2',
                     ('net.pcsx2.PCSX2',), ('ps2',),
                     _pcsx2_dirs, 'inis/PCSX2.ini', _pcsx2_bios),
-    EmulatorAdapter('rpcs3', _pat(r'rpcs3.*\.appimage$'), 'rpcs3',
+    EmulatorAdapter('rpcs3', _pat(r'rpcs3.*\.appimage$', r'rpcs3\.exe$', r'rpcs3\.app$'), 'rpcs3',
                     ('net.rpcs3.RPCS3',), ('ps3',),
                     _rpcs3_dirs, 'config.yml', _rpcs3_bios),
-    EmulatorAdapter('PPSSPPSDL', _pat(r'ppsspp.*\.appimage$'), 'ppsspp',
+    EmulatorAdapter('PPSSPPSDL', _pat(r'ppsspp.*\.appimage$', r'ppssppwindows64\.exe$',
+                                           r'ppssppsdl\.app$'), 'ppsspp',
                     ('org.ppsspp.PPSSPP',), ('psp',)),
-    EmulatorAdapter('dolphin-emu', _pat(r'dolphin.*\.appimage$'), 'dolphin',
+    EmulatorAdapter('dolphin-emu', _pat(r'dolphin.*\.appimage$', r'dolphin\.exe$',
+                                             r'dolphin\.app$'), 'dolphin',
                     ('org.DolphinEmu.dolphin-emu',), ('gc', 'wii')),
-    EmulatorAdapter('cemu', _pat(r'cemu.*\.appimage$'), 'cemu',
+    EmulatorAdapter('cemu', _pat(r'cemu.*\.appimage$', r'cemu\.exe$', r'cemu\.app$'), 'cemu',
                     ('info.cemu.Cemu',), ('wiiu',)),
-    EmulatorAdapter('mgba-qt', _pat(r'mgba.*\.appimage$'), 'mgba',
+    EmulatorAdapter('mgba-qt', _pat(r'mgba.*\.appimage$', r'mgba\.exe$', r'mgba\.app$'), 'mgba',
                     ('io.mgba.mGBA',), ('gb', 'gbc', 'gba')),
-    EmulatorAdapter('melonDS', _pat(r'melonds.*\.appimage$'), 'melonds',
+    EmulatorAdapter('melonDS', _pat(r'melonds.*\.appimage$', r'melonds\.exe$',
+                                             r'melonds\.app$'), 'melonds',
                     ('net.kuribo64.melonDS',), ('nds',)),
-    EmulatorAdapter('citra-qt', _pat(r'citra.*\.appimage$'), 'citra',
+    EmulatorAdapter('citra-qt', _pat(r'citra.*\.appimage$', None, r'azahar\.app$'), 'citra',
                     ('org.citra_emu.citra',), ('n3ds',)),
-    EmulatorAdapter('scummvm', _pat(r'scummvm.*\.appimage$'), 'scummvm',
+    EmulatorAdapter('scummvm', _pat(r'scummvm.*\.appimage$', r'scummvm\.exe$',
+                                             r'scummvm\.app$'), 'scummvm',
                     ('org.scummvm.ScummVM',), ('scummvm',)),
-    EmulatorAdapter('mame', _pat(r'mame.*\.appimage$'), 'mame',
+    EmulatorAdapter('mame', _pat(r'mame.*\.appimage$', r'mame\.exe$'), 'mame',
                     ('org.mamedev.MAME',), ('arcade', 'mame')),
 )}
 

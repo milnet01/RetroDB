@@ -8,6 +8,7 @@
 import os
 import json
 import logging
+import sys
 import threading
 from datetime import datetime, timezone
 
@@ -36,6 +37,21 @@ _settings_cache_lock = threading.Lock()
 _settings_write_lock = threading.RLock()
 
 # Default values for user-editable settings
+def default_scan_paths() -> str:
+    """Where Detect looks for emulators unless the admin says otherwise,
+    joined like PATH (';' on Windows).  Linux: a manual /mnt/Emulators tree,
+    Downloads, ~/.local/bin and /opt.  Windows: an Emulators folder at home
+    or on C:, and Downloads.  macOS: both Applications folders and
+    Downloads."""
+    if sys.platform == 'win32':
+        folders = (r'~\Emulators', r'~\Downloads', r'C:\Emulators')
+    elif sys.platform == 'darwin':
+        folders = ('/Applications', '~/Applications', '~/Downloads')
+    else:
+        folders = ('/mnt/Emulators', '~/Downloads', '~/.local/bin', '/opt')
+    return os.pathsep.join(folders)
+
+
 DEFAULT_SETTINGS = {
     # Setup wizard completion flag
     'setup_completed': False,
@@ -97,14 +113,8 @@ DEFAULT_SETTINGS = {
     'launch_concurrent_same_game':   'reject',
     # PASS-59-81 — Play may download the player's missing core (admin switch).
     'player_core_downloads':         True,
-    # Pass 44.1 — directories that the auto-detect probe walks for
-    # standalone-emulator AppImages.  Defaults cover the common spots:
-    # a top-level /mnt/Emulators tree (manual portable installs), the
-    # user's Downloads dir (newly-downloaded AppImages), ~/.local/bin
-    # (user-installed binaries), and /opt (system-wide manual installs).
-    # Colon-separated for portability (matches PATH); accepts both string
-    # and list forms via the validator.
-    'emulator_scan_paths': '/mnt/Emulators:~/Downloads:~/.local/bin:/opt',
+    # Folders Detect walks for emulator programs (default_scan_paths).
+    'emulator_scan_paths': default_scan_paths(),
 
     # Logging settings
     'logging': {

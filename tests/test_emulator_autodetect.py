@@ -40,8 +40,8 @@ def fake_layout(tmp_path):
 
 
 def test_walk_finds_all_appimages(fake_layout):
-    from routes.launch_settings import _walk_appimages
-    paths = sorted(p.name for p in _walk_appimages([fake_layout]))
+    from routes.launch_settings import _walk_programs
+    paths = sorted(p.name for p in _walk_programs([fake_layout]))
     assert 'RetroArch-Linux-x86_64.AppImage' in paths
     assert 'pcsx2.AppImage' in paths
     assert 'DuckStation-x64.AppImage' in paths
@@ -78,8 +78,8 @@ def test_detect_skips_unknown_emulator_names(fake_layout):
 
 
 def test_walk_handles_nonexistent_root(tmp_path):
-    from routes.launch_settings import _walk_appimages
-    paths = list(_walk_appimages([tmp_path / 'does-not-exist']))
+    from routes.launch_settings import _walk_programs
+    paths = list(_walk_programs([tmp_path / 'does-not-exist']))
     assert paths == []
 
 

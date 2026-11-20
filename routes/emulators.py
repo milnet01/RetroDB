@@ -19,7 +19,7 @@ from services.emulator_adapters import bios_status
 from services.launch_resolver import _mapping_resolves, _resolve_binary
 from services.launcher.base import LaunchResolutionError
 from services.standalone_settings import settings_for
-from settings_manager import get_setting
+from settings_manager import default_scan_paths, get_setting
 
 logger = logging.getLogger(__name__)
 
@@ -48,9 +48,8 @@ def page_emulators_settings():
         player_core_downloads=get_setting('player_core_downloads', True),
         retroarch_binary=get_setting('retroarch_binary', ''),
         retroarch_cores_dir=get_setting('retroarch_cores_dir', ''),
-        emulator_scan_paths=get_setting(
-            'emulator_scan_paths',
-            '/mnt/Emulators:~/Downloads:~/.local/bin:/opt'),
+        emulator_scan_paths=get_setting('emulator_scan_paths',
+                                        default_scan_paths()),
         path_list_separator=os.pathsep,
     )
 

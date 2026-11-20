@@ -150,11 +150,21 @@ it at once, with `apply=true`.
 `POST /api/settings/emulators/detect` (admin, existing) keeps its query flag
 `apply` and its response, and changes underneath:
 
-- **Files:** the existing walk (`_walk_appimages`, its depth and entry caps),
+- **Files:** the existing walk (`_walk_programs`, its depth and entry caps),
   matched through `ADAPTERS`. A `*-portable.sh` still beats its AppImage,
   and a copy beside one beats a bare copy found first. The walk does not
   enter hidden folders or AppImage `.home` folders, whose files used up the
   entry cap on `/mnt/Emulators` before the other emulators were reached.
+- **Per OS:** the walk offers only the host's kind of program — an AppImage
+  or `*-portable.sh` on Linux, an `.exe` on Windows, an `.app` bundle on
+  macOS. A Windows pattern names the main program exactly, so an updater or
+  uninstaller beside it never matches. A `.app` is not entered; its program
+  is `Contents/MacOS/<CFBundleExecutable>` from its `Info.plist`, and a
+  bundle naming no file there is skipped. The default folders follow the OS
+  (`settings_manager.default_scan_paths`): `~\Emulators`, `~\Downloads` and
+  `C:\Emulators` on Windows; `/Applications`, `~/Applications` and
+  `~/Downloads` on macOS. Names come from each emulator's release files,
+  read 2026-11-20; none is verified on a real Windows or macOS install.
 - **Flatpak:** for each adapter's `flatpak_ids`, the exported launcher
   `/var/lib/flatpak/exports/bin/<id>` or
   `~/.local/share/flatpak/exports/bin/<id>`, whichever exists and is

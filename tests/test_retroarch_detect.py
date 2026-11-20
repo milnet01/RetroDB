@@ -29,15 +29,15 @@ def test_probe_binary_falls_through_to_which(monkeypatch):
 
 
 def test_probe_binary_returns_first_chain_hit(monkeypatch):
-    """If multiple chain candidates exist, the first one in `_BIN_CHAIN`
+    """If multiple chain candidates exist, the first one in `_bin_chain()`
     wins. Pins the priority ordering — a regression that flipped the
     order (e.g. flatpak-first when /usr/bin is present) would silently
     break user expectations on packaged distros (test-audit c-006 LOW
     coverage_gaps)."""
     from routes import launch_settings as ls
 
-    first_choice = ls._BIN_CHAIN[0]  # canonical highest-priority candidate
-    fallback_choice = ls._BIN_CHAIN[-1]  # last (lowest priority)
+    first_choice = ls._bin_chain()[0]  # canonical highest-priority candidate
+    fallback_choice = ls._bin_chain()[-1]  # last (lowest priority)
 
     # Pretend ONLY first_choice exists; nothing else.
     def _exists(self):

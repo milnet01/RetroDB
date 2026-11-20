@@ -9,6 +9,7 @@ import logging
 import os
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 from flask import Blueprint, request
@@ -16,30 +17,41 @@ from flask import Blueprint, request
 from services.api_helpers import handle_api_errors, success
 from services.auth import login_required, admin_required
 from services.database import query, execute
-from services.emulator_adapters import ADAPTERS, find_data_dir
+from services.emulator_adapters import (ADAPTERS, app_program, find_data_dir,
+                                       program_kinds)
 from services.launch_resolver import _mapping_resolves
-from settings_manager import get_setting
+from settings_manager import default_scan_paths, get_setting
 
 logger = logging.getLogger(__name__)
 
 bp = Blueprint('launch_settings', __name__)
 
 
-_BIN_CHAIN = (
-    '/usr/bin/retroarch',
-    '/usr/local/bin/retroarch',
-    str(Path('~/.local/bin/retroarch').expanduser()),
-)
-_CORES_CHAIN = (
-    str(Path('~/.config/retroarch/cores/').expanduser()),
-    '/usr/lib64/libretro/',
-    '/usr/lib/libretro/',
-    '/var/lib/flatpak/exports/share/libretro/cores/',
-)
+# Where RetroArch's own installers put it.  The Windows and macOS places
+# follow libretro's installers and are unverified on a real install.
+def _bin_chain() -> tuple:
+    if sys.platform == 'win32':
+        return (r'C:\RetroArch-Win64\retroarch.exe',)
+    if sys.platform == 'darwin':
+        return ('/Applications/RetroArch.app/Contents/MacOS/RetroArch',)
+    return ('/usr/bin/retroarch',
+            '/usr/local/bin/retroarch',
+            str(Path('~/.local/bin/retroarch').expanduser()))
+
+
+def _cores_chain() -> tuple:
+    if sys.platform == 'win32':
+        return (r'C:\RetroArch-Win64\cores',)
+    if sys.platform == 'darwin':
+        return (str(Path('~/Library/Application Support/RetroArch/cores').expanduser()),)
+    return (str(Path('~/.config/retroarch/cores/').expanduser()),
+            '/usr/lib64/libretro/',
+            '/usr/lib/libretro/',
+            '/var/lib/flatpak/exports/share/libretro/cores/')
 
 
 def _probe_retroarch_binary() -> str:
-    for cand in _BIN_CHAIN:
+    for cand in _bin_chain():
         if Path(cand).exists() and os.access(cand, os.X_OK):
             return cand
     try:
@@ -54,7 +66,7 @@ def _probe_retroarch_binary() -> str:
 
 
 def _probe_cores_dir() -> str:
-    for cand in _CORES_CHAIN:
+    for cand in _cores_chain():
         if Path(cand).is_dir():
             return cand
     return ''
@@ -127,8 +139,7 @@ _MAX_SCAN_DEPTH = 4
 
 
 def _scan_paths() -> list:
-    raw = get_setting('emulator_scan_paths',
-                      '/mnt/Emulators:~/Downloads:~/.local/bin:/opt')
+    raw = get_setting('emulator_scan_paths', default_scan_paths())
     if isinstance(raw, list):
         parts = raw
     else:
@@ -138,12 +149,15 @@ def _scan_paths() -> list:
     return [Path(p).expanduser() for p in parts]
 
 
-def _walk_appimages(roots):
-    """Yield the Path of each *.AppImage / *.appimage / *-portable.sh found
-    under any root, at most _MAX_SCAN_DEPTH deep and _MAX_ENTRIES_PER_ROOT
-    entries per root.  Hidden folders and AppImage `.home` folders are not
-    entered: they hold an emulator's own files, thousands of them, and
-    walking them used up the cap before the next emulator's folder."""
+def _walk_programs(roots):
+    """Yield the Path of each emulator program found under any root, at most
+    _MAX_SCAN_DEPTH deep and _MAX_ENTRIES_PER_ROOT entries per root: an
+    AppImage or `*-portable.sh` on Linux, an `.exe` on Windows, an `.app`
+    bundle on macOS (program_kinds).  Hidden folders, AppImage `.home`
+    folders and `.app` bundles are not entered: they hold an emulator's own
+    files, thousands of them, and walking them used up the cap before the
+    next emulator's folder."""
+    kinds = program_kinds()
     for root in roots:
         if not root.is_dir():
             continue
@@ -151,9 +165,11 @@ def _walk_appimages(roots):
         for dirpath, dirnames, filenames in os.walk(
                 root, onerror=lambda e: logger.warning("emulator scan: %s", e)):
             depth = len(Path(dirpath).relative_to(root).parts)
+            bundles = sorted(d for d in dirnames if d.lower().endswith('.app'))
             dirnames[:] = sorted(d for d in dirnames
                                  if depth + 1 < _MAX_SCAN_DEPTH
-                                 and not d.startswith('.') and not d.endswith('.home'))
+                                 and not d.startswith('.') and not d.endswith('.home')
+                                 and not d.lower().endswith('.app'))
             seen += len(dirnames) + len(filenames)
             if seen > _MAX_ENTRIES_PER_ROOT:
                 logger.warning(
@@ -161,8 +177,11 @@ def _walk_appimages(roots):
                     root, _MAX_ENTRIES_PER_ROOT,
                 )
                 break
+            if '.app' in kinds:
+                for name in bundles:
+                    yield Path(dirpath) / name
             for name in sorted(filenames):
-                if name.lower().endswith('.appimage') or name.endswith('-portable.sh'):
+                if name.lower().endswith(kinds):
                     yield Path(dirpath) / name
 
 
@@ -186,21 +205,27 @@ def _detect_emulators(roots) -> dict:
     """Return {binary_name: {'path', 'preferred', 'has_portable_script',
     'systems', 'data_dir'}, ...}.
 
-    `path` is the AppImage absolute path; `preferred` is either the
-    portable-script wrapper (if present alongside) or the AppImage itself.
+    `path` is the program's absolute path (for a macOS `.app`, the program
+    inside it); `preferred` is either the portable-script wrapper (if
+    present alongside) or the program itself.
     First match per emulator wins, except that a copy with a portable script
     beats an earlier one without (the user's own beside a bundled one, as
     ES-DE ships RetroArch).  An emulator with no file under the roots falls
     back to its exported Flatpak launcher, which is executable, so
     _resolve_binary takes it unchanged (§4.2)."""
     found = {}
-    candidates = list(_walk_appimages(roots))
+    candidates = list(_walk_programs(roots))
     for p in candidates:
         for key, adapter in ADAPTERS.items():
             if key in found and found[key]['has_portable_script']:
                 continue
             if not any(pat.match(p.name) for pat in adapter.name_patterns):
                 continue
+            if p.name.lower().endswith('.app'):
+                program = app_program(p)
+                if program and key not in found:
+                    found[key] = _suggestion(adapter, program, program, False)
+                break
             portable = p.parent / f"{adapter.portable_base}-portable.sh"
             preferred = portable if (portable.exists() and os.access(str(portable), os.X_OK)) else p
             if key not in found or portable.exists():
