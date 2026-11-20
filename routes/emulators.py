@@ -14,7 +14,7 @@ from flask_babel import gettext as _
 
 from services.api_helpers import handle_api_errors, success, error
 from services.auth import login_required, admin_required, permission_required
-from services.database import query, execute
+from services.database import query, execute, get_request_db
 from services.emulator_adapters import bios_status
 from services.launch_resolver import _mapping_resolves, _resolve_binary
 from services.launcher.base import LaunchResolutionError
@@ -239,17 +239,23 @@ def api_list_system_emulators():
 def api_map_system_emulator():
     """Body: {system_id, emulator_id, is_default?, retroarch_core?, extra_args?}"""
     data = request.get_json() or {}
-    system_id = data.get('system_id')
-    emulator_id = data.get('emulator_id')
-    if not (system_id and emulator_id):
+    try:
+        system_id = int(data.get('system_id'))
+        emulator_id = int(data.get('emulator_id'))
+    except (TypeError, ValueError):
         return error(_('system_id and emulator_id required'), 400)
+    if not (query("SELECT 1 FROM systems WHERE id = ?", (system_id,), one=True)
+            and query("SELECT 1 FROM emulators WHERE id = ?", (emulator_id,), one=True)):
+        return error(_('No such system or emulator.'), 404)
 
     is_default = int(bool(data.get('is_default')))
-    if is_default:
-        execute("UPDATE system_emulators SET is_default = 0 WHERE system_id = ?",
-                (system_id,))
-
-    new_id = execute("""
+    # One transaction: a save that fails keeps the old default (PASS-59-280).
+    conn = get_request_db()
+    with conn:
+        if is_default:
+            conn.execute("UPDATE system_emulators SET is_default = 0 WHERE system_id = ?",
+                         (system_id,))
+        new_id = conn.execute("""
         INSERT INTO system_emulators
         (system_id, emulator_id, is_default, retroarch_core, extra_args)
         VALUES (?, ?, ?, ?, ?)
@@ -258,7 +264,7 @@ def api_map_system_emulator():
           retroarch_core = excluded.retroarch_core,
           extra_args = excluded.extra_args
     """, (system_id, emulator_id, is_default,
-          data.get('retroarch_core'), data.get('extra_args')))
+          data.get('retroarch_core'), data.get('extra_args'))).lastrowid
     return success(id=new_id), 201
 
 

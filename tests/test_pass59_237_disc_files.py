@@ -47,6 +47,49 @@ def test_playlists_follow_a_renamed_disc(tmp_path):
         b'Game/Game (Disc 1) [fixed].chd\r\nGame/Game (Disc 2).chd\r\n')
 
 
+def test_sheet_tracks_stay_in_the_sheet_folder(tmp_path):
+    """PASS-59-280: CHD conversion deletes what a sheet names, so a name
+    that leaves the sheet's folder is not a track."""
+    folder = tmp_path / 'Game'
+    folder.mkdir()
+    outside = tmp_path / 'outside.bin'
+    outside.write_bytes(b'not a track')
+    cue = folder / 'Game.cue'
+    cue.write_text(f'FILE "../outside.bin" BINARY\nFILE "{outside}" BINARY\n'
+                   'FILE "sub/inside.bin" BINARY\n')
+    assert disc_files.sheet_tracks(str(cue)) == [str(folder / 'sub' / 'inside.bin')]
+
+
+def test_playlist_rewrite_keeps_bytes_it_cannot_decode(tmp_path):
+    """PASS-59-280: a disc name that is not UTF-8 survives a rewrite."""
+    folder = os.fsencode(str(tmp_path))
+    odd = folder + b'/Jeu \xe9t\xe9 (Disc 2).chd'
+    with open(odd, 'wb') as f:
+        f.write(b'x')
+    disc = tmp_path / 'Jeu (Disc 1).chd'
+    disc.write_bytes(b'x')
+    m3u = tmp_path / 'Jeu.m3u'
+    m3u.write_bytes(b'Jeu (Disc 1).chd\nJeu \xe9t\xe9 (Disc 2).chd\n')
+    disc_files.repoint_playlists(str(disc), str(tmp_path / 'Jeu (Disc 1).iso'))
+    assert m3u.read_bytes() == b'Jeu (Disc 1).iso\nJeu \xe9t\xe9 (Disc 2).chd\n'
+    assert disc_files.playlists_naming(os.fsdecode(odd)) == [str(m3u)]
+
+
+def test_playlist_rewrite_never_empties_an_unreadable_playlist(tmp_path, monkeypatch):
+    """PASS-59-280: a playlist that cannot be read is left alone."""
+    disc = tmp_path / 'Game (Disc 1).chd'
+    disc.write_bytes(b'x')
+    m3u = tmp_path / 'Game.m3u'
+    m3u.write_text('Game (Disc 1).chd\nGame (Disc 2).chd\n')
+    monkeypatch.setattr(disc_files, 'playlists_naming', lambda path: [str(m3u)])
+    m3u.chmod(0)
+    try:
+        disc_files.repoint_playlists(str(disc), str(tmp_path / 'new.chd'))
+    finally:
+        m3u.chmod(0o644)
+    assert m3u.read_text() == 'Game (Disc 1).chd\nGame (Disc 2).chd\n'
+
+
 # --- Duplicate Finder --------------------------------------------------------
 
 @pytest.fixture

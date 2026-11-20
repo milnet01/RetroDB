@@ -6,6 +6,7 @@ rename a file, so they never break the sheet or playlist that needs it.
 """
 import os
 import re
+import shutil
 
 SHEETS = ('.cue', '.gdi')
 
@@ -16,7 +17,9 @@ _GDI_TRACK = re.compile(r'^\s*\d+\s+\d+\s+\d+\s+\d+\s+(?:"([^"]+)"|(\S+))')
 
 def _read(path):
     try:
-        with open(path, encoding='utf-8', errors='replace', newline='') as f:
+        # surrogateescape keeps bytes that are not UTF-8, so a name read here
+        # still opens and is written back unchanged (PASS-59-280).
+        with open(path, encoding='utf-8', errors='surrogateescape', newline='') as f:
             return f.read()
     except OSError:
         return None
@@ -33,7 +36,19 @@ def sheet_tracks(sheet):
     else:
         matches = filter(None, (_GDI_TRACK.match(line) for line in text.splitlines()[1:]))
     folder = os.path.dirname(sheet)
-    return [os.path.join(folder, m.group(1) or m.group(2)) for m in matches]
+    tracks = (os.path.join(folder, m.group(1) or m.group(2)) for m in matches)
+    return [t for t in tracks if _inside(t, folder)]
+
+
+def _inside(path, folder):
+    """True when `path` resolves inside `folder`. CHD conversion deletes a
+    sheet's tracks, so a ../ or absolute name must not reach past the disc
+    (PASS-59-280)."""
+    root = os.path.realpath(folder)
+    try:
+        return os.path.commonpath([root, os.path.realpath(path)]) == root
+    except ValueError:  # another drive on Windows
+        return False
 
 
 def _files_with(folder, extensions):
@@ -84,17 +99,29 @@ def repoint_playlists(old, new):
     """Make every playlist that lists `old` list `new` instead."""
     target = os.path.realpath(old)
     for m3u in playlists_naming(old):
+        text = _read(m3u)
+        if text is None:
+            continue  # never write a playlist that could not be read
         folder = os.path.dirname(m3u)
         out = []
-        for line in (_read(m3u) or '').splitlines(keepends=True):
+        for line in text.splitlines(keepends=True):
             entry = line.strip()
             if entry and not entry.startswith('#') and \
                     os.path.realpath(os.path.join(folder, entry)) == target:
                 ending = line[len(line.rstrip('\r\n')):]
                 line = os.path.relpath(new, folder).replace(os.sep, '/') + ending
             out.append(line)
-        with open(m3u, 'w', encoding='utf-8', newline='') as f:
-            f.write(''.join(out))
+        # Write beside it and swap, so a failed write leaves the old list.
+        tmp = m3u + '.retrodb-tmp'
+        try:
+            with open(tmp, 'w', encoding='utf-8', errors='surrogateescape',
+                      newline='') as f:
+                f.write(''.join(out))
+            shutil.copymode(m3u, tmp)
+            os.replace(tmp, m3u)
+        finally:
+            if os.path.exists(tmp):
+                os.remove(tmp)
 
 
 def rename_disc(old, new):

@@ -663,6 +663,16 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   installer, emulator routes, launch_settings, emulator_adapters,
   disc_files findings, and the other Lows. The off-repo ledger.json was
   not found; findings are checked against source.
+  Progress 2026-11-20 (2): disc_files done (.cue/.gdi tracks must
+  resolve inside the sheet's folder; .m3u rewrite skips an unreadable
+  playlist, keeps undecodable bytes, writes via temp + swap).
+  routes/emulators.py is_default: ids checked first (400/404), clear +
+  upsert in one transaction. emulator_adapters: DuckStation and PCSX2
+  Windows/macOS data dirs from their sources, Linux DuckStation follows
+  XDG_CONFIG_HOME, settings.ini beside it is portable (spec PASS-59-91
+  section 4.1 amended). Left: Detect on Windows/macOS (routes/
+  launch_settings.py: .exe/.app names, per-OS default scan folders,
+  RetroArch probe), installer findings, the other Lows.
   **Layman:** Fixes for emulator setup on Windows and macOS, the installer, and the image helpers that use the graphics card.
   Kind: implement.
 

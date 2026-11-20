@@ -2,6 +2,18 @@
   date: '2026-11-20'
   tags:
   - type: fix
+    label: "No Windows e no macOS, o RetroDB agora encontra as pastas de configurações do DuckStation e do PCSX2, então as configurações por jogo e a verificação de BIOS funcionam lá. No Linux, a pasta do DuckStation também é encontrada quando XDG_CONFIG_HOME está definido"
+    en: "On Windows and macOS, RetroDB now finds DuckStation's and PCSX2's settings folders, so per-game settings and the BIOS check work there. On Linux, DuckStation's folder is also found when XDG_CONFIG_HOME is set"
+  - type: fix
+    label: "Converter um disco para CHD não pode mais apagar um arquivo fora da pasta do próprio jogo quando sua folha .cue ou .gdi aponta para lá"
+    en: "Converting a disc to CHD can no longer delete a file outside the game's own folder when its .cue or .gdi sheet points there"
+  - type: fix
+    label: "Quando um disco é renomeado ou convertido, sua playlist de vários discos (.m3u) é atualizada com segurança: uma playlist que não pode ser lida fica como está em vez de ser esvaziada, e nomes de disco com letras acentuadas de sistemas mais antigos mantêm suas letras"
+    en: "When a disc is renamed or converted, its multi-disc playlist (.m3u) is updated safely: a playlist that cannot be read is left alone instead of being emptied, and disc names with accented letters from older systems keep their letters"
+  - type: fix
+    label: "Escolher um novo emulador padrão para um sistema que depois falha ao salvar mantém o padrão antigo, em vez de deixar o sistema sem emulador padrão"
+    en: "Choosing a new default emulator for a system that then fails to save keeps the old default, instead of leaving the system with no default emulator"
+  - type: fix
     label: "Se a placa de vídeo parar de responder durante uma ampliação com IA, o RetroDB agora a libera em cerca de dois minutos e continua ampliando com o processador. Antes, a placa ficava ocupada até o RetroDB ser reiniciado"
     en: "If the graphics card stops responding during an AI upscale, RetroDB now lets go of it within about two minutes and carries on upscaling with the processor. Before, the card stayed busy until RetroDB was restarted"
   - type: fix

@@ -144,6 +144,64 @@ def test_portable_duckstation_suggests_appimage_psx_and_its_folder(tmp_path, fak
     assert duck['data_dir'] == str(folder)
 
 
+def _data_dir_of(kind, binary):
+    from services.emulator_adapters import ADAPTERS, find_data_dir
+    return find_data_dir(ADAPTERS[kind], binary)
+
+
+def _marked(folder, marker):
+    (folder / marker).parent.mkdir(parents=True, exist_ok=True)
+    (folder / marker).write_text('[Main]\n')
+    return folder
+
+
+def test_duckstation_follows_xdg_config_home(tmp_path, fake_home, monkeypatch):
+    """PASS-59-280: DuckStation's own rule (src/core/core.cpp) uses
+    $XDG_CONFIG_HOME/duckstation when that variable is set."""
+    monkeypatch.setenv('XDG_CONFIG_HOME', str(tmp_path / 'cfg'))
+    data = _marked(tmp_path / 'cfg' / 'duckstation', 'settings.ini')
+    assert _data_dir_of('duckstation-qt', tmp_path / 'bin' / 'duckstation-qt') == data
+
+
+def test_duckstation_settings_ini_beside_it_is_portable(tmp_path, fake_home):
+    """PASS-59-280: a settings.ini beside the program makes it portable."""
+    folder = _marked(tmp_path / 'DuckStation', 'settings.ini')
+    assert _data_dir_of('duckstation-qt', folder / 'duckstation-qt') == folder
+
+
+@pytest.mark.parametrize('kind,folder,marker', [
+    ('duckstation-qt', 'DuckStation', 'settings.ini'),
+    ('pcsx2-qt', 'PCSX2', 'inis/PCSX2.ini'),
+])
+def test_data_dir_in_windows_documents(tmp_path, fake_home, monkeypatch, kind, folder, marker):
+    """PASS-59-280: both keep their files in Documents on Windows."""
+    monkeypatch.setattr('services.emulator_adapters.sys.platform', 'win32')
+    data = _marked(fake_home / 'Documents' / folder, marker)
+    assert _data_dir_of(kind, tmp_path / 'bin' / f'{kind}.exe') == data
+
+
+def test_new_duckstation_on_windows_uses_local_appdata(tmp_path, fake_home, monkeypatch):
+    monkeypatch.setattr('services.emulator_adapters.sys.platform', 'win32')
+    monkeypatch.setenv('LOCALAPPDATA', str(tmp_path / 'Local'))
+    data = _marked(tmp_path / 'Local' / 'DuckStation', 'settings.ini')
+    assert _data_dir_of('duckstation-qt', tmp_path / 'bin' / 'duckstation-qt.exe') == data
+
+
+@pytest.mark.parametrize('kind,folder,marker', [
+    ('duckstation-qt', 'DuckStation', 'settings.ini'),
+    ('pcsx2-qt', 'PCSX2', 'inis/PCSX2.ini'),
+])
+def test_data_dir_in_macos_application_support(tmp_path, fake_home, monkeypatch, kind, folder, marker):
+    monkeypatch.setattr('services.emulator_adapters.sys.platform', 'darwin')
+    data = _marked(fake_home / 'Library' / 'Application Support' / folder, marker)
+    assert _data_dir_of(kind, tmp_path / 'bin' / kind) == data
+
+
+def test_linux_never_reads_a_windows_documents_folder(tmp_path, fake_home):
+    _marked(fake_home / 'Documents' / 'PCSX2', 'inis/PCSX2.ini')
+    assert _data_dir_of('pcsx2-qt', tmp_path / 'bin' / 'pcsx2-qt') is None
+
+
 def test_flatpak_launcher_is_suggested_and_resolves(fake_home):
     """INV-2."""
     bin_dir = fake_home / '.local' / 'share' / 'flatpak' / 'exports' / 'bin'

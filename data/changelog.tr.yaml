@@ -2,6 +2,18 @@
   date: '2026-11-20'
   tags:
   - type: fix
+    label: "Windows ve macOS'ta RetroDB artık DuckStation ve PCSX2'nin ayar klasörlerini buluyor; böylece oyuna özel ayarlar ve BIOS denetimi orada çalışıyor. Linux'ta XDG_CONFIG_HOME ayarlı olduğunda da DuckStation klasörü bulunuyor"
+    en: "On Windows and macOS, RetroDB now finds DuckStation's and PCSX2's settings folders, so per-game settings and the BIOS check work there. On Linux, DuckStation's folder is also found when XDG_CONFIG_HOME is set"
+  - type: fix
+    label: "Bir diski CHD'ye dönüştürmek, .cue veya .gdi sayfası oyunun kendi klasörünün dışını gösterdiğinde artık oradaki bir dosyayı silemez"
+    en: "Converting a disc to CHD can no longer delete a file outside the game's own folder when its .cue or .gdi sheet points there"
+  - type: fix
+    label: "Bir disk yeniden adlandırıldığında veya dönüştürüldüğünde çok diskli çalma listesi (.m3u) güvenle güncellenir: okunamayan bir çalma listesi boşaltılmak yerine olduğu gibi bırakılır ve eski sistemlerden gelen aksanlı harfler içeren disk adları harflerini korur"
+    en: "When a disc is renamed or converted, its multi-disc playlist (.m3u) is updated safely: a playlist that cannot be read is left alone instead of being emptied, and disc names with accented letters from older systems keep their letters"
+  - type: fix
+    label: "Bir sistem için seçilen yeni varsayılan emülatör kaydedilemezse, sistem varsayılan emülatörsüz kalmak yerine eski varsayılanı korur"
+    en: "Choosing a new default emulator for a system that then fails to save keeps the old default, instead of leaving the system with no default emulator"
+  - type: fix
     label: "Bir yapay zekâ büyütmesi sırasında ekran kartı yanıt vermeyi keserse, RetroDB artık onu yaklaşık iki dakika içinde bırakıyor ve büyütmeye işlemciyle devam ediyor. Önceden kart, RetroDB yeniden başlatılana kadar meşgul kalıyordu"
     en: "If the graphics card stops responding during an AI upscale, RetroDB now lets go of it within about two minutes and carries on upscaling with the processor. Before, the card stayed busy until RetroDB was restarted"
   - type: fix

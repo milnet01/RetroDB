@@ -2,6 +2,18 @@
   date: '2026-11-20'
   tags:
   - type: fix
+    label: "Op Windows en macOS vindt RetroDB nu de instellingenmappen van DuckStation en PCSX2, zodat instellingen per spel en de BIOS-controle daar werken. Op Linux wordt de map van DuckStation ook gevonden als XDG_CONFIG_HOME is ingesteld"
+    en: "On Windows and macOS, RetroDB now finds DuckStation's and PCSX2's settings folders, so per-game settings and the BIOS check work there. On Linux, DuckStation's folder is also found when XDG_CONFIG_HOME is set"
+  - type: fix
+    label: "Het omzetten van een schijf naar CHD kan geen bestand buiten de eigen map van het spel meer verwijderen wanneer het .cue- of .gdi-blad daarheen verwijst"
+    en: "Converting a disc to CHD can no longer delete a file outside the game's own folder when its .cue or .gdi sheet points there"
+  - type: fix
+    label: "Wanneer een schijf een nieuwe naam krijgt of wordt omgezet, wordt de afspeellijst voor meerdere schijven (.m3u) veilig bijgewerkt: een afspeellijst die niet te lezen is, blijft ongemoeid in plaats van te worden leeggemaakt, en schijfnamen met letters met accenten van oudere systemen behouden hun letters"
+    en: "When a disc is renamed or converted, its multi-disc playlist (.m3u) is updated safely: a playlist that cannot be read is left alone instead of being emptied, and disc names with accented letters from older systems keep their letters"
+  - type: fix
+    label: "Als een nieuwe standaardemulator voor een systeem wordt gekozen en daarna niet kan worden opgeslagen, blijft de oude standaard behouden in plaats van dat het systeem zonder standaardemulator achterblijft"
+    en: "Choosing a new default emulator for a system that then fails to save keeps the old default, instead of leaving the system with no default emulator"
+  - type: fix
     label: "Als de grafische kaart niet meer reageert tijdens een AI-opschaling, laat RetroDB hem nu binnen ongeveer twee minuten los en schaalt verder op met de processor. Voorheen bleef de kaart bezet tot RetroDB opnieuw werd gestart"
     en: "If the graphics card stops responding during an AI upscale, RetroDB now lets go of it within about two minutes and carries on upscaling with the processor. Before, the card stayed busy until RetroDB was restarted"
   - type: fix

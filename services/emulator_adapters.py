@@ -12,6 +12,7 @@ from __future__ import annotations
 import configparser
 import os
 import re
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Optional
@@ -62,19 +63,52 @@ def _home_of(binary: Path) -> Optional[Path]:
     return app.with_name(app.name + '.home') if app else None
 
 
+def _documents() -> Path:
+    """Windows' Documents folder, wherever the user or OneDrive moved it."""
+    try:
+        import winreg
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, r'Software\Microsoft\Windows'
+                            r'\CurrentVersion\Explorer\User Shell Folders') as key:
+            return Path(os.path.expandvars(winreg.QueryValueEx(key, 'Personal')[0]))
+    except (ImportError, OSError):
+        return Path.home() / 'Documents'
+
+
+_MAC_SUPPORT = Path('Library') / 'Application Support'
+
+
 def _duckstation_dirs(binary: Path) -> list:
+    # DuckStation's Core::SetAppRootAndResources (src/core/core.cpp): portable
+    # beside the program; Windows Documents if there, else LOCALAPPDATA; macOS
+    # Application Support; Linux $XDG_CONFIG_HOME if set, else ~/.local/share.
+    portable = any((binary.parent / m).exists() for m in ('portable.txt', 'settings.ini'))
+    dirs = [binary.parent] if portable else []
+    if sys.platform == 'win32':
+        local = os.environ.get('LOCALAPPDATA')
+        return dirs + [_documents() / 'DuckStation'] + (
+            [Path(local) / 'DuckStation'] if local else [])
+    if sys.platform == 'darwin':
+        return dirs + [Path.home() / _MAC_SUPPORT / 'DuckStation']
     home = _home_of(binary)
-    dirs = [binary.parent] if (binary.parent / 'portable.txt').exists() else []
     if home:
         dirs.append(home / '.local' / 'share' / 'duckstation')
-    return dirs + [_xdg('XDG_DATA_HOME', '.local/share') / 'duckstation',
-                   Path.home() / '.var/app/org.duckstation.DuckStation/data/duckstation']
+    xdg = os.environ.get('XDG_CONFIG_HOME', '')
+    own = (Path(xdg) / 'duckstation' if os.path.isabs(xdg)
+           else Path.home() / '.local' / 'share' / 'duckstation')
+    flatpak = Path.home() / '.var/app/org.duckstation.DuckStation'
+    return dirs + [own, flatpak / 'config/duckstation', flatpak / 'data/duckstation']
 
 
 def _pcsx2_dirs(binary: Path) -> list:
-    home = _home_of(binary)
+    # PCSX2's EmuFolders::SetDataDirectory (pcsx2/Pcsx2Config.cpp): portable
+    # beside the program; Windows Documents; macOS Application Support.
     portable = any((binary.parent / m).exists() for m in ('portable.txt', 'portable.ini'))
     dirs = [binary.parent] if portable else []
+    if sys.platform == 'win32':
+        return dirs + [_documents() / 'PCSX2']
+    if sys.platform == 'darwin':
+        return dirs + [Path.home() / _MAC_SUPPORT / 'PCSX2']
+    home = _home_of(binary)
     if home:
         dirs.append(home / '.config' / 'PCSX2')
     return dirs + [_xdg('XDG_CONFIG_HOME', '.config') / 'PCSX2',

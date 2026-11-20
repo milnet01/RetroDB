@@ -118,22 +118,28 @@ still matches. Every emulator in `data/emulator_seeds.json` gets an adapter;
 only DuckStation, PCSX2 and RPCS3 get `settings`.
 
 **Data directory.** The first candidate holding `data_marker` wins. None →
-the emulator has no data directory yet, and §4.6 is skipped (§6). Linux
-candidates, in order:
+the emulator has no data directory yet, and §4.6 is skipped (§6). Candidates,
+in order, each list starting with the portable one where its file is beside
+the binary:
 
-| Adapter | Candidates | Marker |
-|---|---|---|
-| DuckStation | binary's dir if `portable.txt` is there; `<AppImage>.home/.local/share/duckstation`; `$XDG_DATA_HOME/duckstation`; `~/.var/app/org.duckstation.DuckStation/data/duckstation` | `settings.ini` |
-| PCSX2 | binary's dir if `portable.txt` or `portable.ini` is there; `<AppImage>.home/.config/PCSX2`; `$XDG_CONFIG_HOME/PCSX2`; `~/.var/app/net.pcsx2.PCSX2/config/PCSX2` | `inis/PCSX2.ini` |
-| RPCS3 | `<AppImage>.home/.config/rpcs3`; `$XDG_CONFIG_HOME/rpcs3`; `~/.var/app/net.rpcs3.RPCS3/config/rpcs3` | `config.yml` |
+| Adapter | Portable | Linux | Windows | macOS | Marker |
+|---|---|---|---|---|---|
+| DuckStation | `portable.txt` or `settings.ini` | `<AppImage>.home/.local/share/duckstation`; `$XDG_CONFIG_HOME/duckstation` if set, else `~/.local/share/duckstation`; `~/.var/app/org.duckstation.DuckStation/config/duckstation`, then `…/data/duckstation` | `<Documents>\DuckStation`; `%LOCALAPPDATA%\DuckStation` | `~/Library/Application Support/DuckStation` | `settings.ini` |
+| PCSX2 | `portable.txt` or `portable.ini` | `<AppImage>.home/.config/PCSX2`; `$XDG_CONFIG_HOME/PCSX2`; `~/.var/app/net.pcsx2.PCSX2/config/PCSX2` | `<Documents>\PCSX2` | `~/Library/Application Support/PCSX2` | `inis/PCSX2.ini` |
+| RPCS3 | a `portable` folder, then the binary's own dir | `<AppImage>.home/.config/rpcs3`; `$XDG_CONFIG_HOME/rpcs3`; `~/.var/app/net.rpcs3.RPCS3/config/rpcs3` | (the binary's dir) | `~/Library/Application Support/rpcs3` | `config.yml` |
 
-`$XDG_*_HOME` takes its XDG default when unset. For a `*-portable.sh`, or
-any other `.sh` launcher, the binary's dir is the script's dir and
-`<AppImage>` is the AppImage beside it.
+DuckStation's and PCSX2's rows follow their own sources:
+`Core::SetAppRootAndResources` in DuckStation's `src/core/core.cpp` and
+`EmuFolders::SetDataDirectory` in PCSX2's `pcsx2/Pcsx2Config.cpp` (read
+2026-11-20). `<Documents>` is the Windows Documents folder wherever it was
+moved, read from the registry's `User Shell Folders`. `$XDG_*_HOME` takes its
+XDG default when unset. For a `*-portable.sh`, or any other `.sh` launcher,
+the binary's dir is the script's dir and `<AppImage>` is the AppImage beside
+it.
 Verified on this machine: DuckStation's portable directory,
 `pcsx2.AppImage.home/.config/PCSX2` and `RPCS3.AppImage.home/.config/rpcs3`
-under `/mnt/Emulators`. The Flatpak and XDG rows are *unverified*: no
-emulator Flatpak is installed here.
+under `/mnt/Emulators`. The Flatpak, XDG, Windows and macOS rows are
+*unverified* on a real install: they follow the emulators' sources.
 
 ### 4.2 Pointing at a folder
 
@@ -644,7 +650,6 @@ it is given; §10 says so.
 - Settings adapters for PPSSPP, Dolphin and other emulators — deferred; not
   yet queued.
 - Downloading or copying BIOS files — not planned (§3.6).
-- Windows and macOS data-directory candidates — deferred; not yet queued.
 - Reading the serial at scan time, or as a bulk job — deferred; not yet
   queued.
 

@@ -2,6 +2,18 @@
   date: '2026-11-20'
   tags:
   - type: fix
+    label: "På Windows og macOS finner RetroDB nå innstillingsmappene til DuckStation og PCSX2, så innstillinger per spill og BIOS-sjekken virker der. På Linux blir DuckStation-mappen også funnet når XDG_CONFIG_HOME er satt"
+    en: "On Windows and macOS, RetroDB now finds DuckStation's and PCSX2's settings folders, so per-game settings and the BIOS check work there. On Linux, DuckStation's folder is also found when XDG_CONFIG_HOME is set"
+  - type: fix
+    label: "Konvertering av en plate til CHD kan ikke lenger slette en fil utenfor spillets egen mappe når .cue- eller .gdi-arket peker dit"
+    en: "Converting a disc to CHD can no longer delete a file outside the game's own folder when its .cue or .gdi sheet points there"
+  - type: fix
+    label: "Når en plate får nytt navn eller konverteres, oppdateres flerplate-spillelisten (.m3u) trygt: en spilleliste som ikke kan leses, blir latt være i stedet for å tømmes, og platenavn med aksentbokstaver fra eldre systemer beholder bokstavene sine"
+    en: "When a disc is renamed or converted, its multi-disc playlist (.m3u) is updated safely: a playlist that cannot be read is left alone instead of being emptied, and disc names with accented letters from older systems keep their letters"
+  - type: fix
+    label: "Velger du en ny standardemulator for et system og den ikke kan lagres, beholdes den gamle standarden i stedet for at systemet står uten standardemulator"
+    en: "Choosing a new default emulator for a system that then fails to save keeps the old default, instead of leaving the system with no default emulator"
+  - type: fix
     label: "Hvis grafikkortet slutter å svare under en KI-oppskalering, slipper RetroDB det nå innen omtrent to minutter og fortsetter oppskaleringen med prosessoren. Før forble kortet opptatt til RetroDB ble startet på nytt"
     en: "If the graphics card stops responding during an AI upscale, RetroDB now lets go of it within about two minutes and carries on upscaling with the processor. Before, the card stayed busy until RetroDB was restarted"
   - type: fix

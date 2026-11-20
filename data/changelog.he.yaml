@@ -2,6 +2,18 @@
   date: '2026-11-20'
   tags:
   - type: fix
+    label: "ב-Windows וב-macOS, ‏RetroDB מוצא כעת את תיקיות ההגדרות של DuckStation ושל PCSX2, כך שהגדרות לכל משחק ובדיקת ה-BIOS עובדות שם. ב-Linux, התיקייה של DuckStation נמצאת גם כאשר XDG_CONFIG_HOME מוגדר"
+    en: "On Windows and macOS, RetroDB now finds DuckStation's and PCSX2's settings folders, so per-game settings and the BIOS check work there. On Linux, DuckStation's folder is also found when XDG_CONFIG_HOME is set"
+  - type: fix
+    label: "המרת דיסק ל-CHD כבר לא יכולה למחוק קובץ מחוץ לתיקייה של המשחק כאשר גיליון ה-.cue או ה-.gdi שלו מפנה לשם"
+    en: "Converting a disc to CHD can no longer delete a file outside the game's own folder when its .cue or .gdi sheet points there"
+  - type: fix
+    label: "כאשר דיסק משנה שם או מומר, רשימת ההשמעה מרובת הדיסקים שלו (.m3u) מתעדכנת בבטחה: רשימה שלא ניתן לקרוא נשארת כמות שהיא במקום להתרוקן, ושמות דיסקים עם אותיות מוטעמות ממערכות ישנות שומרים על האותיות שלהם"
+    en: "When a disc is renamed or converted, its multi-disc playlist (.m3u) is updated safely: a playlist that cannot be read is left alone instead of being emptied, and disc names with accented letters from older systems keep their letters"
+  - type: fix
+    label: "בחירת אמולטור ברירת מחדל חדש למערכת שאחר כך נכשלת בשמירה משאירה את ברירת המחדל הישנה, במקום להשאיר את המערכת בלי אמולטור ברירת מחדל"
+    en: "Choosing a new default emulator for a system that then fails to save keeps the old default, instead of leaving the system with no default emulator"
+  - type: fix
     label: "אם כרטיס המסך מפסיק להגיב במהלך הגדלה בבינה מלאכותית, RetroDB משחרר אותו כעת תוך כשתי דקות וממשיך להגדיל בעזרת המעבד. קודם לכן הכרטיס נשאר תפוס עד ש-RetroDB הופעל מחדש"
     en: "If the graphics card stops responding during an AI upscale, RetroDB now lets go of it within about two minutes and carries on upscaling with the processor. Before, the card stayed busy until RetroDB was restarted"
   - type: fix

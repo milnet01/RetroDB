@@ -210,6 +210,21 @@ def test_viewer_cannot_list_mappings(monkeypatch, mapping):
     assert _role_client(monkeypatch, 'viewer').get('/api/system_emulators').status_code == 403
 
 
+@pytest.mark.parametrize('emulator_id', [999999, 'not-a-number'])
+def test_a_failed_default_keeps_the_old_default(monkeypatch, mapping, emulator_id):
+    """PASS-59-280: a new default that cannot be saved leaves the system's
+    old default in place, not a system with none."""
+    from services.database import query
+    sys_id = query("SELECT system_id FROM system_emulators WHERE id = ?",
+                   (mapping,), one=True)['system_id']
+    rv = _make_client(monkeypatch, 'admin').post(
+        '/api/system_emulators', headers={'X-CSRF-Token': _CSRF_TOKEN},
+        json={'system_id': sys_id, 'emulator_id': emulator_id, 'is_default': True})
+    assert query("SELECT is_default FROM system_emulators WHERE id = ?",
+                 (mapping,), one=True)['is_default'] == 1
+    assert rv.status_code in (400, 404), rv.data
+
+
 # The dropdown offers the player on a system it can run but no scan or core
 # install has linked: an empty system never gets linked otherwise.
 

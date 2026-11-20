@@ -2,6 +2,18 @@
   date: '2026-11-20'
   tags:
   - type: fix
+    label: "Windows와 macOS에서 RetroDB가 이제 DuckStation과 PCSX2의 설정 폴더를 찾으므로, 게임별 설정과 BIOS 확인이 작동합니다. Linux에서는 XDG_CONFIG_HOME이 설정된 경우에도 DuckStation 폴더를 찾습니다"
+    en: "On Windows and macOS, RetroDB now finds DuckStation's and PCSX2's settings folders, so per-game settings and the BIOS check work there. On Linux, DuckStation's folder is also found when XDG_CONFIG_HOME is set"
+  - type: fix
+    label: "디스크를 CHD로 변환할 때 .cue 또는 .gdi 시트가 게임 자체 폴더 밖을 가리키더라도 그 파일이 더 이상 삭제되지 않습니다"
+    en: "Converting a disc to CHD can no longer delete a file outside the game's own folder when its .cue or .gdi sheet points there"
+  - type: fix
+    label: "디스크 이름을 바꾸거나 변환하면 멀티 디스크 재생 목록(.m3u)이 안전하게 업데이트됩니다. 읽을 수 없는 재생 목록은 비워지지 않고 그대로 남으며, 오래된 시스템의 악센트 문자가 들어간 디스크 이름도 글자가 유지됩니다"
+    en: "When a disc is renamed or converted, its multi-disc playlist (.m3u) is updated safely: a playlist that cannot be read is left alone instead of being emptied, and disc names with accented letters from older systems keep their letters"
+  - type: fix
+    label: "시스템의 새 기본 에뮬레이터를 선택했는데 저장에 실패하면, 시스템에 기본 에뮬레이터가 없는 상태가 되지 않고 이전 기본값이 유지됩니다"
+    en: "Choosing a new default emulator for a system that then fails to save keeps the old default, instead of leaving the system with no default emulator"
+  - type: fix
     label: "AI 업스케일 중에 그래픽 카드가 응답하지 않으면, 이제 RetroDB가 약 2분 안에 카드를 놓아주고 프로세서로 업스케일을 계속합니다. 이전에는 RetroDB를 다시 시작할 때까지 카드가 사용 중인 상태로 남았습니다"
     en: "If the graphics card stops responding during an AI upscale, RetroDB now lets go of it within about two minutes and carries on upscaling with the processor. Before, the card stayed busy until RetroDB was restarted"
   - type: fix
