@@ -51,7 +51,8 @@ def _dead_pid():
 
 
 def _release(version='9.0.0'):
-    names = [f'RetroDB-v{version}-Linux.zip', 'SHA256SUMS.txt']
+    names = [f'RetroDB-v{version}-Linux.zip', 'SHA256SUMS.txt',
+             f'RetroDB-v{version}-Linux.zip.cosign.bundle']
     return updater._summarise({'tag_name': f'v{version}', 'assets': [
         {'name': n, 'browser_download_url': f'{PREFIX}v{version}/{n}', 'size': 10}
         for n in names]})

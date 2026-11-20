@@ -8,7 +8,7 @@
 #
 #   status()          what the Settings card and dashboard banner show
 #   check(force)      query GitHub (cached for CHECK_INTERVAL)
-#   job.start()       download + verify + unpack in the background
+#   job.start()       download + verify (checksum, then signature) + unpack
 #   install()         back up the DB, write the plan, start the helper
 #
 # Contract: docs/specs/PASS-59-169-self-updater.md.
@@ -49,6 +49,10 @@ CHECK_RETRY = 3600          # after a failed check: try again sooner
 MAX_DOWNLOAD = 3 * 1024 ** 3
 MAX_UNPACKED = 8 * 1024 ** 3
 MAX_CHECKSUM_FILE = 64 * 1024
+MAX_BUNDLE_FILE = 256 * 1024
+# A release's files are signed by release.yml running on that release's tag
+# (keyless cosign: GitHub's OIDC token names the workflow and the ref).
+SIGNER_ISSUER = 'https://token.actions.githubusercontent.com'
 _CHUNK = 1024 * 1024
 
 
@@ -127,7 +131,9 @@ def asset_names(version, kind, platform) -> list:
 
 
 def pick_asset(release, kind, platform) -> Optional[dict]:
-    """{'name', 'url', 'size', 'checksum_url'} for this install, or None."""
+    """{'name', 'url', 'size', 'checksum_url', 'bundle_url'} for this
+    install, or None. A download without its checksum file or its signature
+    bundle is never offered."""
     if not kind or not platform:
         return None
     assets = {a.get('name'): a for a in release.get('assets') or [] if isinstance(a, dict)}
@@ -138,18 +144,43 @@ def pick_asset(release, kind, platform) -> Optional[dict]:
         if not asset:
             continue
         checksum = assets.get('SHA256SUMS.txt' if kind == 'source' else f'{name}.sha256')
-        if not checksum:
+        bundle = assets.get(f'{name}.cosign.bundle')
+        if not (checksum and bundle):
             continue
-        url, sum_url = asset.get('browser_download_url'), checksum.get('browser_download_url')
-        if not (_allowed_url(url) and _allowed_url(sum_url)):
+        urls = [a.get('browser_download_url') for a in (asset, checksum, bundle)]
+        if not all(map(_allowed_url, urls)):
             continue
-        return {'name': name, 'url': url, 'size': asset.get('size') or 0,
-                'checksum_url': sum_url}
+        return {'name': name, 'url': urls[0], 'size': asset.get('size') or 0,
+                'checksum_url': urls[1], 'bundle_url': urls[2]}
     return None
 
 
 def _allowed_url(url) -> bool:
     return isinstance(url, str) and url.startswith(DOWNLOAD_PREFIX) and '..' not in url
+
+
+def signer_identity(version) -> str:
+    """The certificate identity that may sign release `version`'s files."""
+    return (f'https://github.com/{RELEASES_REPO}/.github/workflows/release.yml'
+            f'@refs/tags/v{version}')
+
+
+def verify_signature(path, bundle_json, version, offline=False) -> None:
+    """Raise UpdateError unless `bundle_json` (a cosign bundle) is a valid
+    Sigstore signature of the file at `path` by `signer_identity(version)`."""
+    try:
+        from sigstore.errors import Error as SigstoreError
+        from sigstore.models import Bundle
+        from sigstore.verify import Verifier, policy
+    except ImportError:
+        raise UpdateError('the sigstore package is missing, so the download cannot be checked') from None
+    identity = policy.Identity(identity=signer_identity(version), issuer=SIGNER_ISSUER)
+    try:
+        bundle = Bundle.from_json(bundle_json)
+        with open(path, 'rb') as f:
+            Verifier.production(offline=offline).verify_artifact(f.read(), bundle, identity)
+    except (SigstoreError, ValueError) as e:
+        raise UpdateError(f'the download failed its signature check: {e}') from e
 
 
 def checksum_for(text, name) -> Optional[str]:
@@ -389,7 +420,10 @@ class UpdateJob:
             for d in (p['download'], p['staging']):
                 shutil.rmtree(d, ignore_errors=True)
                 os.makedirs(d, exist_ok=True)
-            sums = self._fetch_checksums()
+            sums = self._fetch_small(self.asset['checksum_url'], MAX_CHECKSUM_FILE,
+                                     'the checksum file').decode('utf-8', 'replace')
+            bundle = self._fetch_small(self.asset['bundle_url'], MAX_BUNDLE_FILE,
+                                       'the signature')
             expected = checksum_for(sums, self.asset['name'])
             if not expected:
                 raise UpdateError('the release lists no checksum for this download')
@@ -397,6 +431,11 @@ class UpdateJob:
             if self._download(archive) != expected:
                 os.remove(archive)
                 raise UpdateError('the download failed its checksum')
+            try:
+                verify_signature(archive, bundle, self.version)
+            except Exception:
+                os.remove(archive)
+                raise
             safe_extract(archive, p['staging'])
             tops = [n for n in os.listdir(p['staging']) if not n.startswith('.')]
             if len(tops) != 1:
@@ -417,17 +456,17 @@ class UpdateJob:
             with self._lock:
                 self.state, self.error = 'error', str(e) or type(e).__name__
 
-    def _fetch_checksums(self) -> str:
-        r = _http_get(self.asset['checksum_url'], stream=True)
+    def _fetch_small(self, url, limit, what) -> bytes:
+        r = _http_get(url, stream=True)
         try:
             if r.status_code != 200:
-                raise UpdateError(f'HTTP {r.status_code} for the checksum file')
+                raise UpdateError(f'HTTP {r.status_code} for {what}')
             body = b''
             for chunk in r.iter_content(8192):
                 body += chunk
-                if len(body) > MAX_CHECKSUM_FILE:
-                    raise UpdateError('the checksum file is too large')
-            return body.decode('utf-8', 'replace')
+                if len(body) > limit:
+                    raise UpdateError(f'{what} is too large')
+            return body
         finally:
             r.close()
 

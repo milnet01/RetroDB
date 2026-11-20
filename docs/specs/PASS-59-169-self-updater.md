@@ -36,8 +36,6 @@ covered, on Linux, Windows and macOS.
   neither is an install run under LocalWebServerManager (`LWSM_MANAGED=1`),
   whose manager restarts the process itself and would race the swap. Both
   still see the notice and a download link.
-- Signature verification of the cosign bundles `release.yml` attaches is
-  not in this pass (§7).
 
 ## 3. Where updates come from
 
@@ -60,15 +58,16 @@ because the whole list is read, not only GitHub's "latest".
 
 The asset for this install:
 
-| Install | Asset | Checksum |
-|---|---|---|
-| source | `RetroDB-v{V}-{Platform}.zip` | its line in `SHA256SUMS.txt` |
-| standalone | `RetroDB-v{V}-{Platform}-Standalone.zip`, else `RetroDB-v{V}-{Platform}-CPU-Standalone.zip` | `<asset>.sha256` |
+| Install | Asset | Checksum | Signature |
+|---|---|---|---|
+| source | `RetroDB-v{V}-{Platform}.zip` | its line in `SHA256SUMS.txt` | `<asset>.cosign.bundle` |
+| standalone | `RetroDB-v{V}-{Platform}-Standalone.zip`, else `RetroDB-v{V}-{Platform}-CPU-Standalone.zip` | `<asset>.sha256` | `<asset>.cosign.bundle` |
 
 `{Platform}` is `Linux`, `macOS` or `Windows`. A download URL must start
 with `https://github.com/milnet01/RetroDB/releases/download/`; GitHub then
 redirects to its file host, which `requests` follows. A release without a
-matching asset or checksum is shown as available but not installable.
+matching asset, checksum or signature is shown as available but not
+installable.
 
 **Checking.** On demand (Check now) and, unless `update_check_auto` is off,
 at most once every 24 hours, started in the background by an admin's
@@ -86,6 +85,11 @@ below it.
 2. Stream the asset to `.update/download/`, refusing more than 3 GiB, and
    hash it as it arrives. Fetch the checksum file (at most 64 KiB) and take
    the line naming the asset. A mismatch deletes the file and stops.
+   Then fetch the signature bundle (at most 256 KiB) and check it with the
+   `sigstore` package (`verify_signature`): the signer must be
+   `release.yml` on tag `v{V}` of this repository
+   (`signer_identity`), issued by GitHub Actions. A missing package, a bad
+   bundle or another signer deletes the file and stops (PASS-59-170).
 3. Extract into `.update/staging/`. Every member name must stay inside the
    staging folder (no absolute paths, no `..`), symlink members are refused,
    and Unix permission bits from the zip are restored (`& 0o755`) so the
@@ -197,13 +201,17 @@ Release notes are GitHub's release body, shown as plain text.
 
 ## 7. Threat model
 
-What makes a download trustworthy here is HTTPS to GitHub plus the checksum
-published with the release: a truncated, corrupted or CDN-substituted file
-installs nothing. Someone who can publish a release on the repository can
-also change its checksums, and could equally push code, so this adds no new
-trust in anyone. Verifying the cosign keyless signatures `release.yml`
-already attaches would also bind the file to the release workflow; it needs
-the `sigstore` package and is a follow-up (roadmap).
+HTTPS to GitHub plus the checksum published with the release stop a
+truncated, corrupted or CDN-substituted file. The cosign keyless signature
+binds the file to `release.yml` running on the release's own tag, so files
+and checksums swapped together on a published release are refused too.
+Someone who can push a tag and run the workflow can still sign a release;
+that is the same trust as pushing code.
+
+`release.yml` signs every zip, standalone ones included, and stops a manual
+dispatch not started on the release tag, because the certificate names the
+ref the run started from. `release-standalone.sh` dispatches with
+`--ref <tag>`.
 
 Only admins can check, download or install. The URL prefix check keeps the
 updater on the RetroDB release host. Archive extraction refuses path escape
@@ -216,8 +224,10 @@ Settings > System > Updates has the toggle.
 
 ## 9. Verification
 
-- Unit: version comparison, asset choice per install kind and platform,
-  checksum parsing, URL prefix check, extraction refusing `..`, absolute
+- Unit: version comparison, asset choice per install kind and platform
+  (no signature bundle, no install), checksum parsing, a real release
+  file and bundle verified offline (passes; a changed byte or another
+  signer is refused), a download failing its signature leaving nothing, URL prefix check, extraction refusing `..`, absolute
   paths and symlinks and keeping executable bits, the protected-path list.
 - Helper end to end with a fake install: a tiny server script stands in for
   the app and answers `/health` with its version. Covers success, a new

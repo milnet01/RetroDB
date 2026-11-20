@@ -32,6 +32,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      # The signing certificate names the ref this run started from, and the
+      # self-updater accepts only release.yml on the release's own tag
+      # (PASS-59-170). A dispatch from a branch would sign every file with a
+      # signature the updater refuses, so it stops here.
+      - name: Dispatch runs on the release tag
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        env:
+          WANT: refs/tags/${{ github.event.inputs.tag }}
+          GOT: ${{ github.ref }}
+        run: |
+          if [ "$GOT" != "$WANT" ]; then
+            echo "::error::Run this workflow on the tag: gh workflow run release.yml --ref <tag> (ran on $GOT)"
+            exit 1
+          fi
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           ref: ${{ github.event.inputs.tag || github.ref }}
@@ -223,10 +238,12 @@ jobs:
     needs: build-and-release
 
     # Attaches assets to the draft release build-and-release already created.
-    # No cosign signing and no attestation here, so neither `id-token` nor
-    # `attestations` is needed (zizmor excessive-permissions).
+    # Each zip is cosign-signed like the source zips (`id-token` for the OIDC
+    # exchange); there is no attestation here, so no `attestations`
+    # (zizmor excessive-permissions).
     permissions:
       contents: write
+      id-token: write
     strategy:
       fail-fast: false
       matrix:
@@ -285,6 +302,19 @@ jobs:
                 print(z + '.sha256')
         run: python -c "$CHECKSUM_SCRIPT"
 
+      - name: Install cosign (keyless signing)
+        uses: sigstore/cosign-installer@756fe2d284c7292c4e9b62c8a28f1e5629c59532  # v4.1.3
+
+      # The self-updater refuses a download without a valid signature by this
+      # workflow on this tag (PASS-59-170), so every zip gets its bundle.
+      - name: Sign standalone zips with cosign (keyless OIDC)
+        shell: bash
+        working-directory: ${{ runner.temp }}/staging
+        run: |
+          for f in RetroDB-*-Standalone.zip; do
+            cosign sign-blob --yes --bundle "${f}.cosign.bundle" "$f"
+          done
+
       - name: Upload standalone bundle to release
         uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3  # v3.0.4
         with:
@@ -293,3 +323,4 @@ jobs:
           files: |
             ${{ runner.temp }}/staging/RetroDB-*-Standalone.zip
             ${{ runner.temp }}/staging/RetroDB-*-Standalone.zip.sha256
+            ${{ runner.temp }}/staging/RetroDB-*-Standalone.zip.cosign.bundle

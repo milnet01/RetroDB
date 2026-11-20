@@ -20,6 +20,8 @@
 import sys
 from pathlib import Path
 
+from PyInstaller.utils.hooks import collect_data_files
+
 # PyInstaller injects `SPEC` (path to this file) at parse time; use it to
 # anchor the project root regardless of where pyinstaller was invoked from.
 PROJECT_ROOT = Path(SPECPATH).resolve()  # noqa: F821 (SPECPATH injected by PyInstaller)
@@ -172,6 +174,9 @@ DATAS = [
     # on the user's machine, so the bundle must carry them or it ships with no
     # translations (the dropdown would collapse to English-only).
     ('translations', 'translations'),
+    # The self-updater's signature check (PASS-59-170) reads Sigstore's
+    # trust root from these package files; no PyInstaller hook ships them.
+    *collect_data_files('sigstore'),
     # docs/ is deliberately NOT bundled. The comment here used to read "docs
     # the help-page route reads from disk", and that was never true: the help
     # route renders templates/help.<locale>.html (app.py::help_page), a

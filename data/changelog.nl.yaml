@@ -1,6 +1,9 @@
 - version: 4.0.0
   date: '2026-11-20'
   tags:
+  - type: security
+    label: "Voordat een update wordt geïnstalleerd, controleert RetroDB nu of die een echte handtekening van RetroDB's eigen releaseproces draagt. Een download die iemand heeft gewijzigd of verwisseld, wordt geweigerd, ook als het checksumbestand ook is verwisseld"
+    en: "Before an update installs, RetroDB now checks that it carries a genuine signature from RetroDB's own release process. A download someone has changed or swapped is refused, even if its checksum file was swapped too"
   - type: fix
     label: "Als een update mislukt en RetroDB teruggaat naar de versie die je had, gaat niets verloren van wat je opsloeg terwijl het afsloot. De kopie van je bibliotheek die wordt teruggezet, wordt nu gemaakt nadat RetroDB helemaal is gestopt, en wordt alleen teruggezet als de nieuwe versie was gestart. Programmabibliotheken die de update installeerde, gaan ook terug naar de oude versies"
     en: "If an update fails and RetroDB goes back to the version you had, nothing you saved while it was closing down is lost. The copy of your library it restores is now taken after RetroDB has fully stopped, and is only restored if the new version started. Program libraries the update installed are put back to the old versions too"

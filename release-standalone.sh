@@ -100,7 +100,9 @@ fi
 # against the wrong run and the release is never finalised (the 2026-06-30 bug).
 prev_rid="$(gh run list -w "$WORKFLOW" -e workflow_dispatch -L 1 --json databaseId -q '.[0].databaseId' 2>/dev/null || true)"
 say "• Dispatching $WORKFLOW (build_standalone=true)"
-gh workflow run "$WORKFLOW" -f tag="$TAG" -f build_standalone=true
+# --ref: the signatures name the ref the run started from, and the updater
+# accepts only the release's own tag (PASS-59-170).
+gh workflow run "$WORKFLOW" --ref "$TAG" -f tag="$TAG" -f build_standalone=true
 
 # Poll until a NEW workflow_dispatch run (id != prev_rid) appears.
 rid=""

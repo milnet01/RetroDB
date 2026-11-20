@@ -488,7 +488,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** The 3D box viewer reads two new settings from Slipcase for the finger hole in a case.
   Kind: implement.
 
-- 📋 [PASS-59-170] **Verify release signatures before an update installs (SECURITY, M).**
+- ✅ [PASS-59-170] **Verify release signatures before an update installs (SECURITY, M).**
   - **Status**: todo
   - **Why**: PASS-59-169 checks downloads against the SHA-256 file
     published in the same release, which catches corruption and a
@@ -503,6 +503,15 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - **Verify**: a tampered zip with a matching checksum file is refused.
 
   ---
+  Done 2026-11-20 (4.0.0). updater.verify_signature checks each zip's
+  .cosign.bundle (sigstore) for release.yml on tag v{V}; pick_asset
+  offers no download without one. Found: dispatched releases were
+  signed as refs/heads/main, so release-standalone.sh now dispatches
+  with --ref <tag> and release.yml refuses a dispatch from a branch.
+  Standalone zips are signed too; retrodb.spec bundles sigstore's
+  trust root. Tested on v3.35.4's real SHA256SUMS.txt + bundle
+  (tests/fixtures/updater), offline, and in a PyInstaller probe build.
+  Not yet seen end to end: a real 4.0.x release signed on its tag.
   **Layman:** An update is checked for a genuine signature before it installs.
   Kind: implement.
 

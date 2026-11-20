@@ -39,7 +39,9 @@ def test_versions_compare_as_numbers():
     assert not updater.is_newer('nightly', '3.33.0')
 
 
-def _release(tag='v3.40.0', names=(), prefix=PREFIX):
+def _release(tag='v3.40.0', names=(), prefix=PREFIX, signed=True):
+    """A GitHub release listing `names`; signed=True adds each zip's cosign bundle."""
+    names = list(names) + [n + '.cosign.bundle' for n in names if signed and n.endswith('.zip')]
     return {'tag_name': tag, 'assets': [
         {'name': n, 'browser_download_url': f'{prefix}{tag}/{n}', 'size': 10} for n in names]}
 
@@ -50,6 +52,15 @@ def test_source_asset_needs_its_checksum_file():
     asset = updater.pick_asset(_release(names=names + ['SHA256SUMS.txt']), 'source', 'Linux')
     assert asset['name'] == 'RetroDB-v3.40.0-Linux.zip'
     assert asset['checksum_url'].endswith('/SHA256SUMS.txt')
+    assert asset['bundle_url'].endswith('/RetroDB-v3.40.0-Linux.zip.cosign.bundle')
+
+
+def test_a_download_without_its_signature_is_never_offered():
+    names = ['RetroDB-v3.40.0-Linux.zip', 'SHA256SUMS.txt']
+    assert updater.pick_asset(_release(names=names, signed=False), 'source', 'Linux') is None
+    cpu = 'RetroDB-v3.40.0-Linux-CPU-Standalone.zip'
+    rel = _release(names=[cpu, cpu + '.sha256'], signed=False)
+    assert updater.pick_asset(rel, 'standalone', 'Linux') is None
 
 
 def test_standalone_prefers_the_full_build_then_cpu():
@@ -233,10 +244,12 @@ def _source_release_zip(tmp_path, version):
     return z.read_bytes()
 
 
-def _run_job(monkeypatch, sandbox, blob, sums):
+def _run_job(monkeypatch, sandbox, blob, sums, verify=lambda *a, **kw: None):
     urls = {f'{PREFIX}v9.0.0/RetroDB-v9.0.0-Linux.zip': blob,
-            f'{PREFIX}v9.0.0/SHA256SUMS.txt': sums.encode()}
+            f'{PREFIX}v9.0.0/SHA256SUMS.txt': sums.encode(),
+            f'{PREFIX}v9.0.0/RetroDB-v9.0.0-Linux.zip.cosign.bundle': b'BUNDLE'}
     monkeypatch.setattr(updater, '_http_get', lambda url, **kw: FakeResponse(body=urls[url]))
+    monkeypatch.setattr(updater, 'verify_signature', verify)
     monkeypatch.setattr(updater, 'host_platform', lambda: 'Linux')
     job = updater.UpdateJob()
     release = updater._summarise(_release('v9.0.0', ['RetroDB-v9.0.0-Linux.zip', 'SHA256SUMS.txt']))
@@ -269,6 +282,57 @@ def test_download_of_another_version_is_refused(sandbox, monkeypatch, tmp_path):
     digest = hashlib.sha256(blob).hexdigest()
     job = _run_job(monkeypatch, sandbox, blob, f'{digest}  RetroDB-v9.0.0-Linux.zip\n')
     assert job.state == 'error'
+
+
+# -----------------------------------------------------------------------------
+# Signatures: a real file and bundle from release v3.35.4, checked offline
+# against the trust root the sigstore package ships. That release was built
+# from a dispatch on main, so its signer is release.yml@refs/heads/main.
+# -----------------------------------------------------------------------------
+
+SIGNED = Path(__file__).parent / 'fixtures' / 'updater'
+MAIN_SIGNER = 'https://github.com/milnet01/RetroDB/.github/workflows/release.yml@refs/heads/main'
+
+
+def _verify(monkeypatch, path, signer=MAIN_SIGNER):
+    pytest.importorskip('sigstore')
+    monkeypatch.setattr(updater, 'signer_identity', lambda version: signer)
+    bundle = (SIGNED / 'SHA256SUMS.txt.cosign.bundle').read_bytes()
+    updater.verify_signature(str(path), bundle, '3.35.4', offline=True)
+
+
+def test_signer_is_the_release_workflow_on_the_versions_tag():
+    assert updater.signer_identity('4.0.1') == (
+        'https://github.com/milnet01/RetroDB/.github/workflows/release.yml@refs/tags/v4.0.1')
+
+
+def test_a_genuine_signature_passes(monkeypatch):
+    _verify(monkeypatch, SIGNED / 'SHA256SUMS.txt')
+
+
+def test_a_changed_file_fails_its_signature(monkeypatch, tmp_path):
+    changed = tmp_path / 'SHA256SUMS.txt'
+    changed.write_bytes((SIGNED / 'SHA256SUMS.txt').read_bytes() + b'x')
+    with pytest.raises(updater.UpdateError, match='signature'):
+        _verify(monkeypatch, changed)
+
+
+def test_a_signature_by_another_signer_is_refused(monkeypatch):
+    with pytest.raises(updater.UpdateError, match='signature'):
+        _verify(monkeypatch, SIGNED / 'SHA256SUMS.txt', signer=updater.signer_identity('3.35.4'))
+
+
+def test_a_download_that_fails_its_signature_installs_nothing(sandbox, monkeypatch, tmp_path):
+    blob = _source_release_zip(tmp_path, '9.0.0')
+    digest = hashlib.sha256(blob).hexdigest()
+
+    def refuse(path, bundle, version, offline=False):
+        assert bundle == b'BUNDLE' and version == '9.0.0'
+        raise updater.UpdateError('the download failed its signature check: no')
+    job = _run_job(monkeypatch, sandbox, blob, f'{digest}  RetroDB-v9.0.0-Linux.zip\n', verify=refuse)
+    assert job.state == 'error' and 'signature' in job.error
+    assert not os.listdir(sandbox / '.update' / 'staging')
+    assert not os.listdir(sandbox / '.update' / 'download')
 
 
 # -----------------------------------------------------------------------------

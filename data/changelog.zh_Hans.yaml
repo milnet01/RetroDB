@@ -1,6 +1,9 @@
 - version: 4.0.0
   date: '2026-11-20'
   tags:
+  - type: security
+    label: "安装更新前，RetroDB 现在会检查它是否带有来自 RetroDB 自身发布流程的真实签名。被人修改或调换过的下载会被拒绝，即使它的校验和文件也一起被调换"
+    en: "Before an update installs, RetroDB now checks that it carries a genuine signature from RetroDB's own release process. A download someone has changed or swapped is refused, even if its checksum file was swapped too"
   - type: fix
     label: "如果更新失败、RetroDB 回到你原来的版本，它关闭期间保存的内容不再丢失。用于恢复的资料库副本现在在 RetroDB 完全停止后才制作，并且只有在新版本曾经启动时才会恢复。更新安装的程序库也会恢复到旧版本"
     en: "If an update fails and RetroDB goes back to the version you had, nothing you saved while it was closing down is lost. The copy of your library it restores is now taken after RetroDB has fully stopped, and is only restored if the new version started. Program libraries the update installed are put back to the old versions too"
