@@ -169,7 +169,7 @@
 
                 <div class="nav-section">
                     <div class="nav-section-title">{{ _('Tools') }}</div>
-                    <a href="{{ url_for('tools.rom_tools_hub') }}" {{ nav_active(request.blueprint in ['tools', 'reports'] or (request.endpoint == 'games.game_detail' and request.args.get('from') == 'rom_reports')) }}>
+                    <a href="{{ url_for('tools.rom_tools_hub') }}" {{ nav_active(request.blueprint in ['tools', 'reports'] or request.endpoint in ['versions.versions_review', 'ai_fill_bulk.ai_fill_bulk_page', 'mame_names.mame_names_page', 'maintenance.ss_region_repair_page', 'games_hltb.hltb_review_page'] or (request.endpoint == 'games.game_detail' and request.args.get('from') == 'rom_reports')) }}>
                         <span class="nav-icon">🛠️</span>
                         <span class="nav-text">{{ _('ROM Tools') }}</span>
                     </a>
