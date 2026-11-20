@@ -1364,7 +1364,7 @@ styleSheet.textContent = `
         position: fixed;
         top: 20px;
         right: 20px;
-        z-index: 10002;
+        z-index: 10200;
         display: flex;
         flex-direction: column;
         gap: 10px;
