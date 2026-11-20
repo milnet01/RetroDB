@@ -2,6 +2,9 @@
   date: '2026-11-20'
   tags:
   - type: fix
+    label: "Якщо оновлення не вдалося і RetroDB повертається до попередньої версії, нічого зі збереженого під час закриття не втрачається. Копія вашої бібліотеки, яку він відновлює, тепер робиться після повної зупинки RetroDB і відновлюється, лише якщо нова версія встигла запуститися. Програмні бібліотеки, встановлені оновленням, теж повертаються до старих версій"
+    en: "If an update fails and RetroDB goes back to the version you had, nothing you saved while it was closing down is lost. The copy of your library it restores is now taken after RetroDB has fully stopped, and is only restored if the new version started. Program libraries the update installed are put back to the old versions too"
+  - type: fix
     label: "Спливні вікна тепер закривають верхню й нижню панелі на телефоні та бічну панель на комп'ютері. Раніше панелі лишалися яскравими поверх вікон, як-от списки фільтрів Бібліотеки, сканування трофеїв і вікна Звітів та Налаштувань, і на них усе ще можна було натиснути"
     en: "Pop-up windows now cover the phone's top and bottom bars, and the sidebar on a computer. Before, the bars stayed bright on top of windows such as the Library's filter lists, the trophy scans and the Reports and Settings windows, and could still be pressed"
   - type: fix
