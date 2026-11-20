@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=322 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=323 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -3218,6 +3218,28 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: fix.
   Source: session-2026-11-18 Xbox Series X|S fix.
   Lanes: config.
+
+- 📋 [PASS-59-323] **Game cards in the two-column list overlap the card below them (MEDIUM, S).**
+  Seen 2026-11-20 in the user's Brave, list view with two columns of
+  cards (007 titles, then numbers-first titles such as 2 Player
+  Baseball and 3 Bags Full). Each card's top edge lands inside the
+  card above it:
+  - The World is not Enough covers the bottom of GoldenEye (Tiger).
+  - Its achievements bar (8/44) spills past its own bottom edge,
+    under 2 Player Baseball.
+  - In the right column, Nightfire and Tomorrow Never Dies start
+    inside the cards above them.
+  The cards that overflow carry a second badge row (age badge, Played,
+  star score, user score, achievements bar). Guess, unchecked: the
+  rows get a fixed or estimated height, or the columns are placed by
+  script, and a card taller than that runs over. Next session: find
+  which page and view this is (Library or a system page; both use
+  AllGamesController), reproduce on :5001 at desktop and phone width,
+  and fix it on every page that uses the same card list.
+  **Layman:** In the game list, some cards are taller than their slot and run over the next card, hiding part of it.
+  Kind: fix.
+  Source: user-report-2026-11-20.
+  Evidence: /home/ants/Pictures/ClaudePaste/paste_20261120_153019_666_be249f57.png
 
 ## 4.0.x — Security and data-loss fixes for the web version
 
