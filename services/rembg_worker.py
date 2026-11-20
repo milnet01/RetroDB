@@ -11,14 +11,19 @@ work. A separate process from the upscaler, so the two models are never
 loaded together.
 
 Inside the helper a GPU session that fails at run time is replaced by a CPU
-one. A helper that crashes outright is followed by a CPU-only helper; one
-that crashes on CPU turns background removal off until the server restarts.
+one; a file that is not a picture is refused before it reaches the session,
+so it cannot cost the GPU. A helper that crashes outright is followed by a
+CPU-only helper; one that crashes on CPU turns background removal off until
+the server restarts.
 The caller then keeps the photo as it was.
 """
 from __future__ import annotations
 
 import importlib.util
+import io
+from contextlib import nullcontext
 import logging
+import os
 
 from services import upscale_worker
 
@@ -69,14 +74,36 @@ def get():
 # -----------------------------------------------------------------------------
 
 def _providers(cpu_only):
-    """GPU providers first when onnxruntime offers one, else CPU."""
+    """GPU providers first when onnxruntime offers one, else CPU. ROCm only
+    when /dev/kfd is readable and writable: onnxruntime-rocm aborts the
+    process otherwise (docs/specs/image-pipeline.md, Dispatch)."""
     if cpu_only:
         return ['CPUExecutionProvider']
     import onnxruntime as ort
-    available = ort.get_available_providers()
+    available = set(ort.get_available_providers())
+    if 'ROCMExecutionProvider' in available and not os.access('/dev/kfd', os.R_OK | os.W_OK):
+        logger.warning("ROCm provider available but /dev/kfd not accessible "
+                       "(add user to 'render' group); using CPU")
+        available.discard('ROCMExecutionProvider')
     preferred = ['CUDAExecutionProvider', 'ROCMExecutionProvider',
                  'CoreMLExecutionProvider', 'CPUExecutionProvider']
     return [p for p in preferred if p in available] or None
+
+
+def _model_missing():
+    """True when rembg would download the model on its first session."""
+    from rembg.sessions.base import BaseSession
+    return not os.path.exists(os.path.join(BaseSession.u2net_home(), f'{MODEL}.onnx'))
+
+
+def _check_picture(data):
+    """Raise ValueError unless `data` is a picture Pillow can read."""
+    from PIL import Image
+    try:
+        with Image.open(io.BytesIO(data)) as img:
+            img.verify()
+    except Exception as e:
+        raise ValueError(f"not a picture: {e}") from e
 
 
 def child_main(argv):
@@ -90,10 +117,13 @@ def child_main(argv):
         except ImportError:
             return 'unavailable', None, ''
         data = arr.tobytes()
+        _check_picture(data)
         if state['session'] is None:
             providers = _providers(state['cpu'])
             logger.info("rembg %s using %s", MODEL, providers)
-            state['session'] = new_session(MODEL, providers=providers)
+            # The first session downloads the model (about 1 GB).
+            with upscale_worker.still_working() if _model_missing() else nullcontext():
+                state['session'] = new_session(MODEL, providers=providers)
         try:
             out = remove(data, session=state['session'], post_process_mask=True)
         except Exception as e:

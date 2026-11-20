@@ -73,6 +73,10 @@ _gpu_thread = None
 # calling thread forever; the TimeoutError trips the circuit breaker in
 # `_enhance_local` (or the warm-up fallback), which moves to CPU.
 _GPU_RUN_TIMEOUT = 120
+# PASS-59-156 — set when a GPU call times out. The stuck call keeps the
+# card, and nothing in-process can cancel it, so the upscale helper exits
+# when it sees this (services/upscale_worker.py).
+_gpu_hung = False
 
 
 def _gpu_inference_worker():
@@ -96,7 +100,9 @@ def _gpu_run(session, input_dict):
 
     Raises RuntimeError when the GPU thread is gone, or stops while this call
     waits (the circuit breaker tripped in another thread), so the caller falls
-    back to Lanczos at once instead of waiting out the timeout."""
+    back to Lanczos at once instead of waiting out the timeout. A timeout
+    also sets `_gpu_hung`."""
+    global _gpu_hung
     gpu_queue = _gpu_queue
     if gpu_queue is None:
         raise RuntimeError("GPU inference thread has stopped")
@@ -108,6 +114,7 @@ def _gpu_run(session, input_dict):
         if _gpu_queue is not gpu_queue:
             raise RuntimeError("GPU inference thread stopped during the call")
         if time.monotonic() >= deadline:
+            _gpu_hung = True
             raise TimeoutError(f"GPU inference gave no result in {_GPU_RUN_TIMEOUT}s")
     if 'error' in result:
         raise result['error']
@@ -445,7 +452,9 @@ def _init_upscaler(allow_gpu=True):
             logger.warning(f"Real-ESRGAN model at {model_path} is not the published file; downloading it again")
             os.remove(model_path)
         if not os.path.exists(model_path):
-            _download_model(model_url, model_path)
+            from services.upscale_worker import still_working
+            with still_working():
+                _download_model(model_url, model_path)
 
         # Prefer GPU providers, fall back to CPU
         # CUDA = NVIDIA, ROCm = AMD (prefer ROCm EP over MIGraphX — MIGraphX

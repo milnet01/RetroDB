@@ -13,10 +13,13 @@ and GPU-to-CPU breaker work as before (docs/specs/image-pipeline.md §5).
 Here, in the server: a helper that crashes in an upscale is followed by a
 CPU-only one; a CPU-only helper that crashes turns upscaling off until
 the server restarts. Every failure raises, and the caller falls back to
-Lanczos.
+Lanczos. A helper whose GPU stops answering exits, since only the end of
+the process gives the card back; that counts as a crash (PASS-59-156).
+A helper that cannot load its model is asked again after `RETRY_SECONDS`.
 """
 from __future__ import annotations
 
+import contextlib
 import importlib.util
 import io
 import json
@@ -26,6 +29,7 @@ import queue
 import subprocess
 import sys
 import threading
+import time
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -33,9 +37,17 @@ logger = logging.getLogger(__name__)
 FLAG = '--upscale-worker'
 CPU_FLAG = '--cpu'
 IDLE_SECONDS = 120
-# One call's ceiling: model download and warm-up on a first call, then up
-# to the tile cap (about a minute on GPU or CPU). A helper past it is killed.
+# One call's ceiling: warm-up on a first call, then up to the tile cap
+# (about a minute on GPU or CPU). A helper past it is killed. A model
+# download sends 'wait' every KEEPALIVE_SECONDS, and each one restarts the
+# clock, so a slow link is not taken for a hang.
 CALL_TIMEOUT = 600
+KEEPALIVE_SECONDS = 30
+# How long a helper that could not load its model is left before the next
+# try: a failed download is often a passing network fault.
+RETRY_SECONDS = 15 * 60
+# The helper's exit code when its GPU stopped answering.
+GPU_HUNG_EXIT = 4
 _LOG_NAME = 'upscale_worker.log'
 _LOG_MAX_BYTES = 5 * 1024 * 1024
 
@@ -93,6 +105,7 @@ class _Remote:
         self._proc = None
         self.cpu_only = False
         self.disabled = False
+        self.retry_at = 0.0    # monotonic time before which 'unavailable' stands
 
     def _argv(self):
         if getattr(sys, 'frozen', False):
@@ -121,9 +134,23 @@ class _Remote:
         watchdog.start()
         try:
             _send(proc.stdin, 'work', arr)
-            return _recv(proc.stdout)
+            while True:
+                reply = _recv(proc.stdout)
+                if reply[0] != 'wait':
+                    return reply
+                watchdog.cancel()          # still downloading: restart the clock
+                watchdog = threading.Timer(CALL_TIMEOUT, proc.kill)
+                watchdog.start()
         finally:
             watchdog.cancel()
+
+    def _close(self):
+        """Let the helper go: closing its stdin makes it exit at once."""
+        if self._proc is not None and self._proc.poll() is None:
+            try:
+                self._proc.stdin.close()
+            except OSError:
+                pass
 
     def _call(self, arr):
         """The helper's (kind, array, text) reply; the caller holds _lock.
@@ -137,6 +164,9 @@ class _Remote:
                 code = self._ended()
                 if code == 0 and attempt == 1:
                     continue    # it left for idleness as the work went in
+                if code == GPU_HUNG_EXIT:
+                    logger.warning(f"{self.NAME} helper's GPU stopped answering; "
+                                   f"the helper exited to free it")
                 if self.cpu_only:
                     self.disabled = True
                     logger.warning(f"{self.NAME} helper crashed again on CPU (exit {code}); "
@@ -159,15 +189,17 @@ class _Remote:
         """(upscaled array, None), or (None, None) when the image is over
         the tile cap or no upscaler can load. Raises when the helper fails."""
         with self._lock:
-            if self.disabled:
+            if self.disabled or time.monotonic() < self.retry_at:
                 return None, None
             kind, out, text = self._call(arr)
             if kind == 'ok':
                 return out, None
             if kind == 'unavailable':
-                self.disabled = True
-                logger.warning("Real-ESRGAN could not load in the upscale helper; "
-                               "see logs/upscale_worker.log. Upscaling uses Lanczos.")
+                self.retry_at = time.monotonic() + RETRY_SECONDS
+                self._close()
+                logger.warning(f"Real-ESRGAN could not load in the upscale helper; "
+                               f"see logs/upscale_worker.log. Upscaling uses Lanczos "
+                               f"and tries again in {RETRY_SECONDS // 60} minutes.")
                 return None, None
             raise RuntimeError(text)
 
@@ -205,10 +237,45 @@ def _log_to_file(log_name=_LOG_NAME):
                         format=f'%(asctime)s - {log_name[:-4]} - %(name)s - %(levelname)s - %(message)s')
 
 
+_replies = None              # the helper's reply pipe, while serve() runs
+_replies_lock = threading.Lock()
+
+
+def _reply(kind, arr=None, text=''):
+    with _replies_lock:
+        _send(_replies, kind, arr, text)
+
+
+@contextlib.contextmanager
+def still_working():
+    """In a helper, send 'wait' every KEEPALIVE_SECONDS while the block runs,
+    so the server does not kill a slow model download as a hang. Does
+    nothing outside a helper."""
+    if _replies is None:
+        yield
+        return
+    stop = threading.Event()
+
+    def _beat():
+        while not stop.wait(KEEPALIVE_SECONDS):
+            try:
+                _reply('wait')
+            except OSError:
+                return
+    beat = threading.Thread(target=_beat, daemon=True, name='helper-keepalive')
+    beat.start()
+    try:
+        yield
+    finally:
+        stop.set()
+        beat.join()
+
+
 def serve(handle, log_name=_LOG_NAME):
     """Answer each request with handle(array) -> (kind, array or None, text)
     until stdin closes or IDLE_SECONDS pass without one, then exit."""
-    replies = os.fdopen(os.dup(1), 'wb')      # the pipe, before fd 1 moves
+    global _replies
+    replies = _replies = os.fdopen(os.dup(1), 'wb')   # the pipe, before fd 1 moves
     requests = os.fdopen(os.dup(0), 'rb')
     _log_to_file(log_name)
 
@@ -230,13 +297,17 @@ def serve(handle, log_name=_LOG_NAME):
         if item is None:
             break
         try:
-            kind, out, text = handle(item[1])
-            _send(replies, kind, out, text)
+            reply = handle(item[1])
         except Exception as e:
-            _send(replies, 'error', text=f"{type(e).__name__}: {e}")
+            reply = ('error', None, f"{type(e).__name__}: {e}")
+        try:
+            _reply(*reply)
+        except OSError:
+            break               # the server has gone
     # os._exit skips exit handlers: ROCm's roctracer aborts in them and
     # leaves a core dump behind.
-    replies.flush()
+    with contextlib.suppress(OSError):
+        replies.flush()
     os._exit(0)
 
 
@@ -247,9 +318,18 @@ def child_main(argv):
         image_utils._gpu_failed = True
 
     def _upscale(arr):
-        if image_utils._get_local_upscaler() is None:
-            return 'unavailable', None, ''
-        # None when the image is over the tile cap
-        return 'ok', image_utils._enhance_local(arr), ''
+        try:
+            if image_utils._get_local_upscaler() is None:
+                return 'unavailable', None, ''
+            # None when the image is over the tile cap
+            return 'ok', image_utils._enhance_local(arr), ''
+        finally:
+            if image_utils._gpu_hung:
+                # The stuck GPU call still holds the card, and nothing in a
+                # process can cancel it: only exiting gives it back. The
+                # server sees a crash and starts a CPU-only helper.
+                logging.getLogger(__name__).warning(
+                    "GPU stopped answering; exiting to free it")
+                os._exit(GPU_HUNG_EXIT)
 
     serve(_upscale)

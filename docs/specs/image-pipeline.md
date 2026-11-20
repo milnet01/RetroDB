@@ -242,7 +242,13 @@ first upscale and sends it one image at a time over its pipes. The
 helper exits after `IDLE_SECONDS` without work; the next upscale starts
 another. A helper that crashes in an upscale is followed by a CPU-only
 one; a CPU-only helper that crashes turns upscaling off until the
-server restarts. Each failed image uses Lanczos. The helper logs to
+server restarts. Each failed image uses Lanczos. A GPU call that times
+out still holds the card and cannot be cancelled, so the helper exits
+(`GPU_HUNG_EXIT`) and the server counts it as a crash (PASS-59-156).
+Each call has `CALL_TIMEOUT`; a model download sends `wait` every
+`KEEPALIVE_SECONDS` to restart that clock, so a slow link is not taken
+for a hang. A helper that cannot load the model is asked again after
+`RETRY_SECONDS`. The helper logs to
 `logs/upscale_worker.log`, native libraries' output included. Everything
 below in this section happens inside the helper.
 
@@ -250,8 +256,10 @@ below in this section happens inside the helper.
 second, separate helper: `services/rembg_worker.py` starts
 `app.py --rembg-worker`, which loads rembg's `birefnet-general` model and
 takes one photo at a time, with the same idle exit and the same
-crash-to-CPU-to-off steps. Inside it, a GPU session that fails at run time
-is replaced by a CPU one. `routes/museum.py` never imports rembg; when the
+crash-to-CPU-to-off steps and the same download `wait`. Inside it, a GPU
+session that fails at run time is replaced by a CPU one; a file that is
+not a picture is refused first, so it cannot cost the GPU. ROCm is
+offered only when `/dev/kfd` is readable and writable. `routes/museum.py` never imports rembg; when the
 helper fails, the photo is kept as it was. It logs to
 `logs/rembg_worker.log`.
 

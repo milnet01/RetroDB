@@ -118,16 +118,72 @@ def test_the_real_helper_falls_back_to_cpu_then_exits_when_idle():
         from services import rembg_worker, upscale_worker
         upscale_worker.IDLE_SECONDS = 1
         upscale_worker._log_to_file = lambda *_a: None
+        rembg_worker._model_missing = lambda: False
         rembg_worker._providers = lambda cpu: ['CPUExecutionProvider'] if cpu else ['ROCMExecutionProvider']
         rembg_worker.child_main([])
     ''')
     import numpy as np
     proc = subprocess.Popen([sys.executable, '-c', script], stdin=subprocess.PIPE,
                             stdout=subprocess.PIPE, cwd=_ROOT)
-    upscale_worker._send(proc.stdin, 'work', np.frombuffer(b'photo', dtype=np.uint8))
+    upscale_worker._send(proc.stdin, 'work', np.frombuffer(_PNG, dtype=np.uint8))
     kind, out, _ = upscale_worker._recv(proc.stdout)
-    assert kind == 'ok' and out.tobytes() == b'cut:photo2'   # GPU session, then CPU
-    upscale_worker._send(proc.stdin, 'work', np.frombuffer(b'again', dtype=np.uint8))
+    assert kind == 'ok' and out.tobytes() == b'cut:' + _PNG + b'2'   # GPU session, then CPU
+    upscale_worker._send(proc.stdin, 'work', np.frombuffer(_PNG, dtype=np.uint8))
     kind, out, _ = upscale_worker._recv(proc.stdout)
-    assert out.tobytes() == b'cut:again2'                     # CPU session kept
+    assert out.tobytes() == b'cut:' + _PNG + b'2'                     # CPU session kept
     assert proc.wait(timeout=10) == 0
+
+
+def _png():
+    import io
+    from PIL import Image
+    buf = io.BytesIO()
+    Image.new('RGB', (2, 2), 'red').save(buf, 'PNG')
+    return buf.getvalue()
+
+
+_PNG = _png()
+
+
+def test_a_file_that_is_not_a_picture_keeps_the_gpu():
+    """PASS-59-280: a bad upload is refused before the session, so it no
+    longer moves background removal to CPU for good."""
+    script = textwrap.dedent('''
+        import sys, types
+        fake = types.ModuleType('rembg')
+        made = []
+        def new_session(model, providers=None):
+            made.append(providers)
+            return {}
+        def remove(data, session=None, post_process_mask=False):
+            return b'cut:' + str(made).encode()
+        fake.new_session, fake.remove = new_session, remove
+        sys.modules['rembg'] = fake
+        from services import rembg_worker, upscale_worker
+        upscale_worker.IDLE_SECONDS = 1
+        upscale_worker._log_to_file = lambda *_a: None
+        rembg_worker._model_missing = lambda: False
+        rembg_worker._providers = lambda cpu: ['CPUExecutionProvider'] if cpu else ['ROCMExecutionProvider']
+        rembg_worker.child_main([])
+    ''')
+    import numpy as np
+    proc = subprocess.Popen([sys.executable, '-c', script], stdin=subprocess.PIPE,
+                            stdout=subprocess.PIPE, cwd=_ROOT)
+    upscale_worker._send(proc.stdin, 'work', np.frombuffer(b'not a picture', dtype=np.uint8))
+    kind, _, text = upscale_worker._recv(proc.stdout)
+    assert kind == 'error' and 'not a picture' in text
+    upscale_worker._send(proc.stdin, 'work', np.frombuffer(_PNG, dtype=np.uint8))
+    kind, out, _ = upscale_worker._recv(proc.stdout)
+    assert kind == 'ok' and out.tobytes() == b"cut:[['ROCMExecutionProvider']]"
+    assert proc.wait(timeout=10) == 0
+
+
+def test_rocm_is_left_out_when_dev_kfd_is_not_usable(monkeypatch):
+    import types
+    fake = types.ModuleType('onnxruntime')
+    fake.get_available_providers = lambda: ['ROCMExecutionProvider', 'CPUExecutionProvider']
+    monkeypatch.setitem(sys.modules, 'onnxruntime', fake)
+    monkeypatch.setattr(rembg_worker.os, 'access', lambda *_a: False)
+    assert rembg_worker._providers(False) == ['CPUExecutionProvider']
+    monkeypatch.setattr(rembg_worker.os, 'access', lambda *_a: True)
+    assert rembg_worker._providers(False) == ['ROCMExecutionProvider', 'CPUExecutionProvider']

@@ -631,7 +631,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Small leftover English words, plurals and dates get translated.
   Kind: implement.
 
-- 📋 [PASS-59-280] **Python: emulator setup on Windows and macOS, installer safety, and the GPU helpers (audit-fix, M).**
+- 🚧 [PASS-59-280] **Python: emulator setup on Windows and macOS, installer safety, and the GPU helpers (audit-fix, M).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
@@ -654,6 +654,15 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - Open questions (answer first): install.py; install_gui.py; installer_core.py; requirements.lock; routes/launch_settings.py; services/player_cores.py:401; services/standalone_settings.py (write_lines, _target); routes/emulators.py; services/upscale_worker.py:167-171; services/upscale_worker.py:120,140-148; services/upscale_worker.py:211-213,245; services/upscale_worker.py (Popen pipes)
 
   ---
+  Progress 2026-11-20: GPU-helper group done. H watchdog vs slow first
+  download (helpers send 'wait' during a model download, each restarts
+  CALL_TIMEOUT); M rembg ROCm without /dev/kfd check; M rembg any error
+  went CPU for good (non-pictures refused first); M upscale
+  'unavailable' until restart (retried after RETRY_SECONDS). Low:
+  serve() no longer dies on a reply to a server that has gone. Left:
+  installer, emulator routes, launch_settings, emulator_adapters,
+  disc_files findings, and the other Lows. The off-repo ledger.json was
+  not found; findings are checked against source.
   **Layman:** Fixes for emulator setup on Windows and macOS, the installer, and the image helpers that use the graphics card.
   Kind: implement.
 
@@ -918,7 +927,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Auto-link stops re-marking a disc you said is not a bonus disc.
   Kind: implement.
 
-- 📋 [PASS-59-156] **A hung GPU upscale holds the GPU until the server restarts (MEDIUM, M).**
+- ✅ [PASS-59-156] **A hung GPU upscale holds the GPU until the server restarts (MEDIUM, M).**
   - **Status**: todo
   - **Seen 2026-10-22**: at 17:01 `_gpu_run` timed out ("GPU inference
     gave no result in 120s") and the breaker in `_upscale_image` moved to
@@ -936,6 +945,12 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     the timeout the child is gone and rocm-smi shows the VRAM released.
 
   ---
+  Shipped 2026-11-20. Since PASS-59-269 the upscaler runs in a helper
+  process; a GPU call that times out now sets image_utils._gpu_hung and
+  the helper exits (GPU_HUNG_EXIT), so the server starts a CPU-only one.
+  Proven on the RX card: while stuck the helper held about 576 MiB and
+  was listed by rocm-smi; after its exit neither. RunOptions.terminate
+  was not needed.
   **Layman:** A graphics-card upscale that hangs lets go of the card without a server restart.
   Kind: implement.
 
