@@ -3394,7 +3394,7 @@ Port plan phase 4.
     opened the hub: `navigateToRomTools` in `base.html` is defined but nothing
     calls it, in the whole git history, so the `lastRomToolsPage` script is
     dead code. A last-visited option would be new behaviour, not a
-    preference over existing behaviour. The dead script is not removed yet.
+    preference over existing behaviour. The dead script was removed on 2026-11-20.
   - **Plan**: make it a user preference (Settings): "ROM Tools opens → hub /
     last-visited", defaulting to hub for new users so power users keep the
     shortcut. Small, opt-in; no behaviour forced.

@@ -866,26 +866,6 @@
     }
 
     // =============================================================================
-    // ROM Tools Navigation Memory
-    // =============================================================================
-    const ROM_TOOLS_PAGES = ['/tools/', '/tools/archive-scanner', '/tools/chd-converter', '/tools/chd-verify', '/tools/duplicate-finder', '/tools/multi-disc-organizer', '/tools/settings'];
-    const ROM_TOOLS_DEFAULT = '/tools/';
-
-    function navigateToRomTools(event) {
-        event.preventDefault();
-        const lastPage = localStorage.getItem('lastRomToolsPage') || ROM_TOOLS_DEFAULT;
-        window.location.href = lastPage;
-    }
-
-    // Save current ROM Tools page to localStorage when visiting
-    (function() {
-        const currentPath = window.location.pathname;
-        if (ROM_TOOLS_PAGES.includes(currentPath)) {
-            localStorage.setItem('lastRomToolsPage', currentPath);
-        }
-    })();
-
-    // =============================================================================
     // PAGE CLEANUP - Clear intervals and references on page unload
     // =============================================================================
     window.addEventListener('beforeunload', function() {
