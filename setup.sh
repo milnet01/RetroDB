@@ -132,6 +132,14 @@ else
     fi
 fi
 
+# Debian and Ubuntu ship Python's venv module separately. The installer
+# needs it to give RetroDB its own Python folder where the system's Python
+# forbids installing packages.
+if [ "$DISTRO" = "debian" ] && ! python3 -c "import ensurepip" &>/dev/null; then
+    echo -e "  ${YELLOW}Python's venv module not found${NC}"
+    install_pkg "python3-venv" "python3-venv" "python" || true
+fi
+
 # ── Step 3: tkinter ─────────────────────────────────────────────────────────
 echo -e "${BOLD}[3/3]${NC} Checking tkinter (for graphical installer)..."
 

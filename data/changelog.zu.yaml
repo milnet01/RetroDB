@@ -1,6 +1,24 @@
 - version: 4.0.0
   date: '2026-11-20'
   tags:
+  - type: fix
+    label: "Igeyimu evaleka ngokushesha nje uma iqala manje ihlale ihlanzwa ngemuva, njengokubuyisa ukungena kwe-RetroAchievements i-RetroDB ebikunikeze lokho kuqalisa"
+    en: "A game that closes the moment it starts is now always tidied up after, such as taking back the RetroAchievements sign-in RetroDB gave that launch"
+  - type: fix
+    label: "I-emulator ezenzakalelayo oyikhethele uhlelo manje ihlala iyiyona kuphela ezenzakalelayo uma i-RetroDB yengeza iziphakamiso zayo zama-emulator lapho iqala"
+    en: "A default emulator you picked for a system now stays its only default when RetroDB adds its own emulator suggestions at start-up"
+  - type: fix
+    label: "Uma ukubuyekezwa kwama-shader omdlali kwehluleka, ama-shader obunawo ayagcinwa. Uhlu lwama-core afakiwe alusakwazi ukulahleka phakathi nokulondoloza, futhi uhlu lwama-core oluhluleka ukulandwa luzanywa futhi ngemuva kwemizuzu emihlanu esikhundleni sehora"
+    en: "If updating the player's shaders fails, the shaders you had are kept. The list of installed cores can no longer be lost part-way through saving, and a core list that fails to download is tried again after five minutes instead of an hour"
+  - type: fix
+    label: "Ezinhlelweni ze-Linux ezivikela i-Python yazo, njenge-Debian, i-Ubuntu ne-Fedora, isifaki manje senzela i-RetroDB ifolda yayo ye-Python esikhundleni sokuphoqa izingxenye zayo ku-Python yohlelo, okwakungaphula amathuluzi ohlelo"
+    en: "On Linux systems that protect their own Python, such as Debian, Ubuntu and Fedora, the installer now gives RetroDB its own Python folder instead of forcing its parts into the system's Python, which could break system tools"
+  - type: security
+    label: "Amafayela ezilungiselelo isifaki esiwenzayo, aqukethe amaphasiwedi nokhiye, manje angafundwa i-akhawunti yakho kuphela, hhayi abanye abantu abasebenzisa ikhompyutha efanayo"
+    en: "The settings files the installer creates, which hold passwords and keys, can now be read only by your own account, not by other people who use the same computer"
+  - type: fix
+    label: "Ngemuva kokufaka, isifaki manje sivula i-RetroDB ethekwini esilisebenzisa ngempela, uma nje i-RetroDB isilungile. Ngaphambilini sasihlala sivula itheku 5000 ngemuva kokulinda isikhathi esinqunyiwe, okwakungabonisa ikhasi lephutha"
+    en: "After installing, the installer now opens RetroDB on the port it really uses, once RetroDB is ready. Before, it always opened port 5000 after a fixed wait, which could show an error page"
   - type: enhancement
     label: "KuWindows nakuma-macOS, i-RetroDB manje ingakutholela ama-emulator akho ne-RetroArch kokuthi Izilungiselelo > Ama-emulator, ibheka kumafolda ajwayelekile alolo hlelo ngaphandle uma ubhala awakho"
     en: "On Windows and macOS, RetroDB can now find your emulators and RetroArch for you in Settings > Emulators, looking in the usual folders for that system unless you list your own"

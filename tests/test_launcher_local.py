@@ -230,3 +230,29 @@ def test_quick_exit_status_carries_stderr(local_launcher, monkeypatch):
     st = launcher.status('err')
     assert st.state == 'exited'
     assert 'core missing' in st.stderr_tail
+
+
+@pytest.mark.skipif(not TRUE, reason='no /bin/true')
+def test_on_exit_runs_when_the_exit_is_seen_during_launch(local_launcher):
+    """PASS-59-280: a status read that lands between the registry entry
+    being made and launch() returning must still run on_exit. Before, the
+    hook was attached after the entry existed, so a game that quit at once
+    could be marked exited with no hook, and its clean-up never ran."""
+    from services.launcher.base import LaunchContext
+
+    launcher = local_launcher
+    ran = []
+    real_register = launcher._registry.register
+
+    def register_then_poll(**kwargs):
+        handle = real_register(**kwargs)
+        kwargs['proc'].wait()
+        launcher.status(kwargs['token'])   # another request polling now
+        return handle
+
+    launcher._registry.register = register_then_poll
+    ctx = LaunchContext(game_id=4, emulator_id=4, binary=Path(TRUE),
+                        argv=[TRUE], token='t4', on_exit=lambda: ran.append(1))
+    launcher.launch(ctx)
+    launcher.wait('t4', timeout_s=_WAIT_S)
+    assert ran == [1]

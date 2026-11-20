@@ -173,7 +173,7 @@
         <ul>
             <li>Протестировано на Ubuntu, Fedora, openSUSE и Arch Linux</li>
             <li>Для инструментов ROM требуется: <code>sudo apt install p7zip-full unrar mame-tools</code> (Debian/Ubuntu) или аналог для вашего дистрибутива</li>
-            <li>При использовании системного Python установщик автоматически обрабатывает <code>--break-system-packages</code></li>
+            <li>Если системный Python не разрешает устанавливать пакеты, установщик создаёт для RetroDB собственную папку Python (<code>.venv</code>) и не трогает системный Python</li>
             <li>Поддерживается ускорение ROCm GPU для видеокарт AMD (масштабирование изображений Real-ESRGAN)</li>
         </ul>
 

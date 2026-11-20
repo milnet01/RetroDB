@@ -7,6 +7,7 @@ REM Usage: Double-click start.bat or run from command prompt
 REM =============================================================================
 
 title RetroDB
+cd /d "%~dp0"
 
 echo.
 echo ========================================================
@@ -28,6 +29,8 @@ if %errorlevel% neq 0 (
 ) else (
     set PYTHON=python
 )
+REM RetroDB's own Python folder, where install.py made one.
+if exist ".venv\Scripts\python.exe" set PYTHON=.venv\Scripts\python.exe
 echo   OK: Python found
 
 REM Resolve the port once (PORT -^> RETRODB_PORT -^> config default) so the
@@ -56,6 +59,7 @@ if %errorlevel% neq 0 (
         pause
         exit /b 1
     )
+    if exist ".venv\Scripts\python.exe" set PYTHON=.venv\Scripts\python.exe
 )
 
 REM Create directories if needed

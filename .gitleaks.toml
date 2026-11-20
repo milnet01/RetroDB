@@ -9,9 +9,10 @@
 useDefault = true
 
 [[allowlists]]
-description = "Scan scope, not excuses: git-ignored runtime state (user-edited settings and tokens, logs, the DB) and scraped binary media. None of it is project source."
+description = "Scan scope, not excuses: git-ignored runtime state (user-edited settings and tokens, logs, the DB, the installer's .venv of third-party packages) and scraped binary media. None of it is project source."
 paths = [
   '''logs/.*''',
+  '''\.venv/.*''',
   '''data/scraper_settings\.json$''',
   '''data/settings\.json$''',
   '''data/psn_tokens\.json$''',

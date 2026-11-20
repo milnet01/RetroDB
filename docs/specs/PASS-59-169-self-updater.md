@@ -165,7 +165,9 @@ database.
      new tree does not itself ship.
 3. **source only:** when `requirements.lock` changed, run the new tree's
    `installer_core.pip_install(select_pip_args(...))` with the install's own
-   Python. A failure rolls back.
+   Python, passing `system_ok=True` where that `pip_install` takes it: an
+   install already in a system Python that forbids pip installs keeps
+   updating there. A failure rolls back.
 4. Start `restart_argv` in `restart_cwd`, detached, with
    `RETRODB_OPEN_BROWSER=0` (the open tab reloads itself), output appended
    to `log_path`.

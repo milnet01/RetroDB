@@ -1,6 +1,24 @@
 - version: 4.0.0
   date: '2026-11-20'
   tags:
+  - type: fix
+    label: "시작하자마자 닫히는 게임도 이제 항상 뒷정리가 됩니다. 예를 들어 RetroDB가 그 실행에 준 RetroAchievements 로그인을 다시 거둡니다"
+    en: "A game that closes the moment it starts is now always tidied up after, such as taking back the RetroAchievements sign-in RetroDB gave that launch"
+  - type: fix
+    label: "시스템에 고른 기본 에뮬레이터는 이제 RetroDB가 시작할 때 자체 추천 에뮬레이터를 추가해도 유일한 기본으로 남습니다"
+    en: "A default emulator you picked for a system now stays its only default when RetroDB adds its own emulator suggestions at start-up"
+  - type: fix
+    label: "플레이어의 셰이더 업데이트가 실패하면 기존 셰이더가 유지됩니다. 설치된 코어 목록이 저장 도중 사라질 수 없게 되었고, 코어 목록 다운로드에 실패하면 한 시간이 아니라 5분 뒤에 다시 시도합니다"
+    en: "If updating the player's shaders fails, the shaders you had are kept. The list of installed cores can no longer be lost part-way through saving, and a core list that fails to download is tried again after five minutes instead of an hour"
+  - type: fix
+    label: "Debian, Ubuntu, Fedora처럼 시스템 Python을 보호하는 Linux에서는 이제 설치 프로그램이 RetroDB 전용 Python 폴더를 만듭니다. 이전에는 구성 요소를 시스템 Python에 강제로 설치해 시스템 도구가 망가질 수 있었습니다"
+    en: "On Linux systems that protect their own Python, such as Debian, Ubuntu and Fedora, the installer now gives RetroDB its own Python folder instead of forcing its parts into the system's Python, which could break system tools"
+  - type: security
+    label: "설치 프로그램이 만드는 설정 파일에는 비밀번호와 키가 들어 있는데, 이제 본인 계정만 읽을 수 있고 같은 컴퓨터를 쓰는 다른 사람은 읽을 수 없습니다"
+    en: "The settings files the installer creates, which hold passwords and keys, can now be read only by your own account, not by other people who use the same computer"
+  - type: fix
+    label: "설치가 끝나면 이제 RetroDB가 준비된 뒤 실제로 사용하는 포트로 RetroDB를 엽니다. 이전에는 정해진 시간만큼 기다린 뒤 항상 포트 5000을 열어 오류 페이지가 보일 수 있었습니다"
+    en: "After installing, the installer now opens RetroDB on the port it really uses, once RetroDB is ready. Before, it always opened port 5000 after a fixed wait, which could show an error page"
   - type: enhancement
     label: "Windows와 macOS에서도 이제 설정 > 에뮬레이터에서 RetroDB가 에뮬레이터와 RetroArch를 찾아 줍니다. 직접 폴더를 지정하지 않으면 해당 시스템의 일반적인 폴더를 찾아봅니다"
     en: "On Windows and macOS, RetroDB can now find your emulators and RetroArch for you in Settings > Emulators, looking in the usual folders for that system unless you list your own"

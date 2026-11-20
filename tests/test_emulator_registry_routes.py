@@ -139,6 +139,39 @@ class TestEmulatorCRUD:
             f"got args={captured['args']!r}"
         )
 
+    def test_update_writes_only_the_fields_sent(self, admin_client, monkeypatch):
+        """PASS-59-280: a field left out keeps its value. Before, a partial
+        PUT turned is_retroarch off, enabled on, and blanked the path
+        override and description."""
+        captured = {}
+
+        def _execute(sql, args=()):
+            captured['sql'] = sql
+            return 1
+
+        monkeypatch.setattr('routes.emulators.execute', _execute)
+        rv = admin_client.put('/api/emulators/5', json={'name': 'Renamed'},
+                              headers=self._csrf())
+        assert rv.status_code == 200
+        set_clause = captured['sql'].split(' SET ', 1)[1].split(' WHERE ', 1)[0]
+        assert 'name = ?' in set_clause
+        for untouched in ('is_retroarch', 'enabled', 'binary_path_override',
+                          'description', 'binary_name', 'args_template'):
+            assert untouched not in set_clause
+
+    @pytest.mark.parametrize('payload', [{}, {'unknown': 1}])
+    def test_update_with_nothing_to_change_is_refused(self, admin_client, monkeypatch, payload):
+        monkeypatch.setattr('routes.emulators.execute',
+                            lambda *a, **k: pytest.fail('nothing should be written'))
+        rv = admin_client.put('/api/emulators/5', json=payload, headers=self._csrf())
+        assert rv.status_code == 400
+
+    def test_update_refuses_a_blank_name(self, admin_client, monkeypatch):
+        monkeypatch.setattr('routes.emulators.execute',
+                            lambda *a, **k: pytest.fail('nothing should be written'))
+        rv = admin_client.put('/api/emulators/5', json={'name': '  '}, headers=self._csrf())
+        assert rv.status_code == 400
+
     def test_admin_can_delete(self, admin_client, monkeypatch):
         captured = {}
 
@@ -223,6 +256,24 @@ def test_a_failed_default_keeps_the_old_default(monkeypatch, mapping, emulator_i
     assert query("SELECT is_default FROM system_emulators WHERE id = ?",
                  (mapping,), one=True)['is_default'] == 1
     assert rv.status_code in (400, 404), rv.data
+
+
+def test_resaving_a_mapping_keeps_what_was_not_sent(monkeypatch, mapping):
+    """PASS-59-280: a save that leaves out the core, the extra arguments or
+    the default flag keeps them, instead of blanking them."""
+    from services.database import execute, query
+    execute("UPDATE system_emulators SET retroarch_core = 'probe_core', "
+            "extra_args = '--probe' WHERE id = ?", (mapping,))
+    row = query("SELECT system_id, emulator_id FROM system_emulators WHERE id = ?",
+                (mapping,), one=True)
+    rv = _make_client(monkeypatch, 'admin').post(
+        '/api/system_emulators', headers={'X-CSRF-Token': _CSRF_TOKEN},
+        json={'system_id': row['system_id'], 'emulator_id': row['emulator_id']})
+    assert rv.status_code == 201, rv.data
+    after = query("SELECT is_default, retroarch_core, extra_args FROM system_emulators "
+                  "WHERE id = ?", (mapping,), one=True)
+    assert dict(after) == {'is_default': 1, 'retroarch_core': 'probe_core',
+                           'extra_args': '--probe'}
 
 
 # The dropdown offers the player on a system it can run but no scan or core

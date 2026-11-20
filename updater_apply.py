@@ -336,7 +336,14 @@ def install_dependencies(plan, log):
     if args is None:
         return
     log(f'installing dependencies from {source}')
-    result = installer_core.pip_install(args, install_dir, quiet=True)
+    # An install already in a system Python keeps updating there. The tree
+    # loaded may be an older release's (a rollback), whose pip_install has
+    # no system_ok and always allowed it.
+    import inspect
+    extra = ({'system_ok': True}
+             if 'system_ok' in inspect.signature(installer_core.pip_install).parameters
+             else {})
+    result = installer_core.pip_install(args, install_dir, quiet=True, **extra)
     if result.returncode != 0:
         tail = (result.stderr or '').strip().splitlines()[-3:]
         raise UpdateFailed('dependency install failed: ' + ' | '.join(tail))

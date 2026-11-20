@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=323 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=324 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -631,7 +631,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Small leftover English words, plurals and dates get translated.
   Kind: implement.
 
-- 🚧 [PASS-59-280] **Python: emulator setup on Windows and macOS, installer safety, and the GPU helpers (audit-fix, M).**
+- ✅ [PASS-59-280] **Python: emulator setup on Windows and macOS, installer safety, and the GPU helpers (audit-fix, M).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
@@ -673,6 +673,23 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   section 4.1 amended). Left: Detect on Windows/macOS (routes/
   launch_settings.py: .exe/.app names, per-OS default scan folders,
   RetroArch probe), installer findings, the other Lows.
+  Progress 2026-11-20 (3), closed. Installer: a PEP 668 system
+  Python gets RetroDB's own .venv (user's choice 2026-11-20); no silent
+  --break-system-packages except for the updater on an install already
+  in a system Python; start.sh/.command/.bat use .venv; setup.sh adds
+  python3-venv on Debian; settings templates copied 0600 without
+  following links; Pillow only from the lock; the real port shown; the
+  GUI lets app.py open the browser and reports a failed start; Exit asks
+  mid-install; openSUSE detected; Windows console colours. MIN_PYTHON
+  was already 3.12. Lows: emulator PUT and mapping re-save keep unsent
+  fields; launcher entries registered whole (on_exit race); seeder adds
+  no second default; core record locked + swapped in; failed shader
+  swap restores the old pack; a core list with no cores is retried in
+  5 min; ended helper's pipes closed; .venv out of gitleaks scope.
+  Checked and left: index fetch under its lock (dedupes on purpose),
+  the upscale crash ladder and log rotation (no defect found; the
+  review's own text was lost). Installer run on this openSUSE (protected
+  Python) and on the Windows PC; GUI driven under Xvfb. Not run: macOS.
   **Layman:** Fixes for emulator setup on Windows and macOS, the installer, and the image helpers that use the graphics card.
   Kind: implement.
 
@@ -3429,6 +3446,19 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   own progress only, scoped by user id.
   **Layman:** Decide whether clearing RetroAchievements data clears everyone's or only yours.
   Kind: implement.
+
+- 📋 [PASS-59-324] **Try emulator Detect on the Windows test PC with portable emulators.**
+  PASS-59-280 matched each emulator's exact .exe from release files,
+  but no Windows run has tried it. The test PC (ssh wintest; the user
+  does not use Windows, so this is ours to run) has no emulators. Unpack
+  portable builds (DuckStation, PCSX2, PPSSPP, RetroArch, Azahar) into a
+  scratch folder there, run RetroDB from a source checkout, press Detect
+  with that folder listed, and compare against the expected matches.
+  Also settles Azahar/Citra's Windows .exe name, which has no pattern
+  yet. Remove the scratch folder after.
+  **Layman:** Check that Settings > Emulators really finds emulators on a Windows computer, not just in tests.
+  Kind: test.
+  Source: PASS-59-280 close 2026-11-20.
 
 ## 4.0.x — Security and data-loss fixes for the web version
 

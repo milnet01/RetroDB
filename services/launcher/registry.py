@@ -42,11 +42,17 @@ class ProcessRegistry:
         self._ttl = post_exit_ttl_s
 
     def register(self, *, token: str, proc, game_id: int, emulator_id: int,
-                 started_at: float) -> LaunchHandle:
+                 started_at: float, on_exit: Optional[Callable[[], None]] = None,
+                 quit_port: Optional[int] = None,
+                 command_port: Optional[int] = None) -> LaunchHandle:
+        """Add an entry whole: a status read may mark it exited the moment
+        it is listed, and its on_exit must already be there."""
         h = LaunchHandle(token=token, pid=proc.pid, game_id=game_id,
                          emulator_id=emulator_id, started_at=started_at)
         with self._lock:
-            self._entries[token] = ProcessEntry(handle=h, proc=proc)
+            self._entries[token] = ProcessEntry(
+                handle=h, proc=proc, on_exit=on_exit,
+                quit_port=quit_port, command_port=command_port)
         return h
 
     def get(self, token: str) -> Optional[ProcessEntry]:

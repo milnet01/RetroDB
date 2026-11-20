@@ -1,6 +1,24 @@
 - version: 4.0.0
   date: '2026-11-20'
   tags:
+  - type: fix
+    label: "起動した直後に終了したゲームでも、必ず後片付けが行われるようになりました。たとえば、その起動のために RetroDB が渡した RetroAchievements のサインインを取り消します"
+    en: "A game that closes the moment it starts is now always tidied up after, such as taking back the RetroAchievements sign-in RetroDB gave that launch"
+  - type: fix
+    label: "システムに選んだ既定のエミュレーターは、起動時に RetroDB が独自のおすすめエミュレーターを追加しても、唯一の既定のままになります"
+    en: "A default emulator you picked for a system now stays its only default when RetroDB adds its own emulator suggestions at start-up"
+  - type: fix
+    label: "プレーヤーのシェーダーの更新に失敗しても、それまでのシェーダーは残ります。インストール済みコアの一覧が保存の途中で失われることはなくなり、コア一覧のダウンロードに失敗したときは 1 時間ではなく 5 分後に再試行します"
+    en: "If updating the player's shaders fails, the shaders you had are kept. The list of installed cores can no longer be lost part-way through saving, and a core list that fails to download is tried again after five minutes instead of an hour"
+  - type: fix
+    label: "Debian、Ubuntu、Fedora など、システムの Python を保護している Linux では、インストーラーが RetroDB 専用の Python フォルダーを作成するようになりました。以前はシステムの Python に部品を無理に入れており、システムのツールが壊れることがありました"
+    en: "On Linux systems that protect their own Python, such as Debian, Ubuntu and Fedora, the installer now gives RetroDB its own Python folder instead of forcing its parts into the system's Python, which could break system tools"
+  - type: security
+    label: "インストーラーが作成する設定ファイルにはパスワードやキーが含まれますが、今後はあなた自身のアカウントだけが読めるようになり、同じコンピューターを使う他の人は読めません"
+    en: "The settings files the installer creates, which hold passwords and keys, can now be read only by your own account, not by other people who use the same computer"
+  - type: fix
+    label: "インストール後、インストーラーは RetroDB の準備ができてから、実際に使っているポートで RetroDB を開くようになりました。以前は決まった時間だけ待ってから常にポート 5000 を開いていたため、エラーページが表示されることがありました"
+    en: "After installing, the installer now opens RetroDB on the port it really uses, once RetroDB is ready. Before, it always opened port 5000 after a fixed wait, which could show an error page"
   - type: enhancement
     label: "Windows と macOS でも、設定 > エミュレーターで RetroDB がエミュレーターと RetroArch を自動で見つけられるようになりました。自分でフォルダーを指定しない限り、そのシステムの標準的なフォルダーを探します"
     en: "On Windows and macOS, RetroDB can now find your emulators and RetroArch for you in Settings > Emulators, looking in the usual folders for that system unless you list your own"

@@ -9,13 +9,12 @@ Can also be run directly if Python + tkinter are already installed:
 """
 
 import tkinter as tk
-from tkinter import ttk
+from tkinter import messagebox, ttk
 import threading
 import queue
 import os
 import sys
 import subprocess
-import shutil
 
 import installer_core
 
@@ -46,7 +45,7 @@ STEPS = [
     'Verify Python version',
     'Check pip availability',
     'Install core dependencies',
-    'Install Pillow (optional)',
+    'Check image support',
     'Setup configuration files',
     'Create directories',
     'Build CSS bundle',
@@ -57,13 +56,13 @@ STEPS = [
 # =============================================================================
 # HELPERS
 # =============================================================================
-# Pass 38.3 — distro detection, pip install with PEP-668 fallback, module
-# probe, and build-script runner moved to `installer_core` (shared with the
-# CLI install.py). The GUI's `pip_install` always runs in quiet mode.
+# Pass 38.3 — distro detection, RetroDB's own Python folder, pip install,
+# module probe, and build-script runner live in `installer_core` (shared with
+# the CLI install.py). The GUI's `pip_install` always runs in quiet mode.
 
-def pip_install(args, cwd=None):
+def pip_install(args, cwd=None, python=None):
     """GUI shim: quiet pip install via the shared installer_core helper."""
-    return installer_core.pip_install(args, cwd, quiet=True)
+    return installer_core.pip_install(args, cwd, quiet=True, python=python)
 
 
 # =============================================================================
@@ -78,6 +77,8 @@ class InstallerApp:
         self.step_icons = []
         self.step_labels = []
         self.installing = False
+        self.current_step = None
+        self.python = sys.executable
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
 
         self._setup_window()
@@ -242,7 +243,7 @@ class InstallerApp:
             btn_frame, text='   Exit   ', font=('Helvetica', 12),
             fg=TEXT, bg=BG_LIGHT, activebackground=BG_CARD,
             activeforeground=TEXT, bd=0, padx=28, pady=10, cursor='hand2',
-            command=self.root.quit
+            command=self._exit
         )
         self.exit_btn.pack(side='left', padx=8)
 
@@ -255,6 +256,8 @@ class InstallerApp:
         self._enqueue('log', text, tag)
 
     def _set_step(self, index, status):
+        if status == 'running':
+            self.current_step = index
         self._enqueue('step', index, status)
 
     def _set_progress(self, value):
@@ -262,6 +265,14 @@ class InstallerApp:
 
     def _finish(self, success):
         self._enqueue('done', success)
+
+    def _exit(self):
+        """Leaving halfway stops pip mid-install, so ask first."""
+        if self.installing and not messagebox.askyesno(
+                'RetroDB Installer',
+                'The install is not finished. Stop it and close the installer?'):
+            return
+        self.root.quit()
 
     # ── Queue polling (runs on main thread) ──────────────────────────────
 
@@ -337,6 +348,8 @@ class InstallerApp:
         try:
             self._install_worker()
         except Exception as e:
+            if self.current_step is not None:
+                self._set_step(self.current_step, 'failed')
             self._log(f'Installer error: {e}', 'error')
             self._finish(False)
 
@@ -366,9 +379,26 @@ class InstallerApp:
         self._set_step(step, 'running')
         self._log('Checking pip...')
 
+        python, how, output = installer_core.choose_python(base_dir)
+        if how == 'failed':
+            self._set_step(step, 'failed')
+            self._log("  This system's Python does not allow installing packages,", 'error')
+            self._log("  and RetroDB could not make its own Python folder (.venv):", 'error')
+            for line in output.splitlines()[-3:]:
+                self._log(f'    {line.strip()}', 'error')
+            hint = installer_core.venv_install_hint(installer_core.detect_distro())
+            self._log(f'  Install it with:  {hint}', 'error')
+            self._finish(False)
+            return
+        self.python = python
+        if how == 'venv-created':
+            self._log("  Made RetroDB's own Python folder (.venv); the system's Python is left alone", 'success')
+        elif how == 'venv':
+            self._log("  Using RetroDB's own Python folder (.venv)", 'muted')
+
         try:
             result = subprocess.run(
-                [sys.executable, '-m', 'pip', '--version'],
+                [python, '-m', 'pip', '--version'],
                 capture_output=True, text=True, check=True
             )
             version_line = result.stdout.strip().split('\n')[0]
@@ -397,7 +427,7 @@ class InstallerApp:
             self._log('  neither requirements.lock nor requirements.txt found', 'error')
             errors.append('Missing requirements file')
         else:
-            result = pip_install(pip_args, base_dir)
+            result = pip_install(pip_args, base_dir, python)
             if result.returncode != 0:
                 self._set_step(step, 'failed')
                 self._log('  pip install failed', 'error')
@@ -408,7 +438,7 @@ class InstallerApp:
             else:
                 ok = 0
                 for mod, name in installer_core.CORE_MODULES:
-                    if installer_core.check_module(mod):
+                    if installer_core.check_module(mod, python):
                         ok += 1
                         self._log(f'  \u2713 {name}', 'success')
                     else:
@@ -423,22 +453,18 @@ class InstallerApp:
         step += 1
         self._set_progress(step)
 
-        # ── Step 3: Pillow (optional) ────────────────────────────────────
+        # ── Step 3: Pillow ───────────────────────────────────────────────
+        # Pillow comes with the locked packages above; it is only checked
+        # here, never installed on its own, so it is always the checked one.
         self._set_step(step, 'running')
         self._log('Checking Pillow (image processing)...')
 
-        if installer_core.check_module('PIL'):
-            self._log('  Already installed', 'success')
+        if installer_core.check_module('PIL', python):
+            self._log('  \u2713 Pillow installed', 'success')
             self._set_step(step, 'done')
         else:
-            self._log('  Installing Pillow...')
-            result = pip_install(['Pillow'], base_dir)
-            if result.returncode == 0 and installer_core.check_module('PIL'):
-                self._log('  \u2713 Pillow installed', 'success')
-                self._set_step(step, 'done')
-            else:
-                self._log('  Pillow not available (optional — avatar/image features limited)', 'warning')
-                self._set_step(step, 'warning')
+            self._log('  Pillow is missing (avatars and image resizing limited)', 'warning')
+            self._set_step(step, 'warning')
 
         step += 1
         self._set_progress(step)
@@ -450,14 +476,12 @@ class InstallerApp:
         for src_name, dst_name in installer_core.CONFIG_COPIES:
             src = os.path.join(base_dir, src_name)
             dst = os.path.join(base_dir, dst_name)
-            if os.path.exists(dst):
-                self._log(f'  {dst_name} (exists)', 'muted')
-            elif os.path.exists(src):
-                os.makedirs(os.path.dirname(dst), exist_ok=True)
-                shutil.copy2(src, dst)
+            if not os.path.exists(src):
+                self._log(f'  Template {src_name} not found', 'warning')
+            elif installer_core.copy_private(src, dst):
                 self._log(f'  \u2713 Created {dst_name}', 'success')
             else:
-                self._log(f'  Template {src_name} not found', 'warning')
+                self._log(f'  {dst_name} (exists)', 'muted')
 
         self._set_step(step, 'done')
         step += 1
@@ -483,7 +507,7 @@ class InstallerApp:
         self._set_step(step, 'running')
         self._log('Building CSS bundle...')
 
-        css_ok, _css_msg = installer_core.run_build_script(base_dir, 'build_css.py')
+        css_ok, _css_msg = installer_core.run_build_script(base_dir, 'build_css.py', python)
         if css_ok is None:
             self._log('  build_css.py not found', 'warning')
             self._set_step(step, 'warning')
@@ -507,7 +531,7 @@ class InstallerApp:
         self._set_step(step, 'running')
         self._log('Building JS bundle...')
 
-        js_ok, _js_msg = installer_core.run_build_script(base_dir, 'build_js.py')
+        js_ok, _js_msg = installer_core.run_build_script(base_dir, 'build_js.py', python)
         if js_ok is None:
             self._log('  build_js.py not found', 'warning')
             self._set_step(step, 'warning')
@@ -565,28 +589,30 @@ class InstallerApp:
             )
 
     def _launch(self):
-        """Start the RetroDB server and open the browser."""
+        """Start the RetroDB server; it opens the browser itself once it is
+        listening, on whatever port it was given."""
         base_dir = self.base_dir
-        app_py = os.path.join(base_dir, 'app.py')
-
+        self.install_btn.configure(state='disabled', bg=TEXT_MUTED, cursor='arrow')
         self._log('')
         self._log('Starting RetroDB server...', 'info')
 
-        # Launch server in background process
-        subprocess.Popen(
-            [sys.executable, app_py],
-            cwd=base_dir,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-        )
+        os.makedirs(os.path.join(base_dir, 'logs'), exist_ok=True)
+        log_path = os.path.join(base_dir, 'logs', 'launch.log')
+        env = dict(os.environ, RETRODB_OPEN_BROWSER='1')
+        with open(log_path, 'ab') as log:
+            proc = subprocess.Popen(
+                [self.python, os.path.join(base_dir, 'app.py')],
+                cwd=base_dir, env=env, stdout=log, stderr=subprocess.STDOUT)
 
-        # Open browser after a short delay
-        def open_browser():
-            import webbrowser
-            webbrowser.open('http://localhost:5000')
-            self.root.after(1000, self.root.quit)
+        def check_started():
+            if proc.poll() is None:
+                self.root.quit()
+                return
+            self._log(f'RetroDB stopped while starting. See {log_path}', 'error')
+            self._poll_queue()
+            self._on_complete(True)
 
-        self.root.after(2500, open_browser)
+        self.root.after(5000, check_started)
 
     # ── Run ──────────────────────────────────────────────────────────────
 

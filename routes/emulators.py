@@ -100,20 +100,28 @@ def api_emulators_for_system(system_id):
 # -----------------------------------------------------------------------------
 
 def _validate_emulator_payload(data, require_all=True):
-    name = (data.get('name') or '').strip()
-    binary_name = (data.get('binary_name') or '').strip()
-    args_template = data.get('args_template') or ''
-    if require_all and not (name and binary_name and args_template):
-        return None, error(_('name, binary_name, args_template are required'), 400)
-    return {
-        'name':                 name or None,
-        'binary_name':          binary_name or None,
-        'binary_path_override': data.get('binary_path_override') or None,
-        'args_template':        args_template or None,
-        'is_retroarch':         int(bool(data.get('is_retroarch'))),
-        'description':          data.get('description'),
-        'enabled':              int(bool(data.get('enabled', True))),
-    }, None
+    """The emulator fields `data` sets. A create (`require_all`) fills every
+    field; an update holds only the keys sent, so one left out keeps its
+    value. Name, program and arguments may not be blank."""
+    def given(key):
+        return require_all or key in data
+
+    fields = {}
+    for key in ('name', 'binary_name', 'args_template'):
+        if given(key):
+            value = data.get(key)
+            if not isinstance(value, str) or not value.strip():
+                return None, error(_('name, binary_name, args_template are required'), 400)
+            fields[key] = value.strip() if key != 'args_template' else value
+    if given('binary_path_override'):
+        fields['binary_path_override'] = data.get('binary_path_override') or None
+    if given('description'):
+        fields['description'] = data.get('description')
+    if given('is_retroarch'):
+        fields['is_retroarch'] = int(bool(data.get('is_retroarch')))
+    if given('enabled'):
+        fields['enabled'] = int(bool(data.get('enabled', True)))
+    return fields, None
 
 
 @bp.route('/api/emulators', methods=['POST'])
@@ -143,16 +151,10 @@ def api_update_emulator(emulator_id):
     fields, err = _validate_emulator_payload(request.get_json() or {}, require_all=False)
     if err:
         return err
-    sets, args = [], []
-    for k, v in fields.items():
-        if v is None and k not in ('binary_path_override', 'description'):
-            continue
-        sets.append(f"{k} = ?")
-        args.append(v)
-    sets.append("updated_at = datetime('now')")
-    if not sets:
+    if not fields:
         return error(_('nothing to update'), 400)
-    args.append(emulator_id)
+    sets = [f"{k} = ?" for k in fields] + ["updated_at = datetime('now')"]
+    args = list(fields.values()) + [emulator_id]
     execute(f"UPDATE emulators SET {', '.join(sets)} WHERE id = ?", tuple(args))
     return success()
 
@@ -248,6 +250,8 @@ def api_map_system_emulator():
         return error(_('No such system or emulator.'), 404)
 
     is_default = int(bool(data.get('is_default')))
+    # A re-save changes only the fields sent; one left out keeps its value.
+    sent = [int(key in data) for key in ('is_default', 'retroarch_core', 'extra_args')]
     # One transaction: a save that fails keeps the old default (PASS-59-280).
     conn = get_request_db()
     with conn:
@@ -259,11 +263,11 @@ def api_map_system_emulator():
         (system_id, emulator_id, is_default, retroarch_core, extra_args)
         VALUES (?, ?, ?, ?, ?)
         ON CONFLICT(system_id, emulator_id) DO UPDATE SET
-          is_default = excluded.is_default,
-          retroarch_core = excluded.retroarch_core,
-          extra_args = excluded.extra_args
+          is_default = CASE WHEN ? THEN excluded.is_default ELSE is_default END,
+          retroarch_core = CASE WHEN ? THEN excluded.retroarch_core ELSE retroarch_core END,
+          extra_args = CASE WHEN ? THEN excluded.extra_args ELSE extra_args END
     """, (system_id, emulator_id, is_default,
-          data.get('retroarch_core'), data.get('extra_args'))).lastrowid
+          data.get('retroarch_core'), data.get('extra_args'), *sent)).lastrowid
     return success(id=new_id), 201
 
 

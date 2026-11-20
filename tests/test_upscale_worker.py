@@ -141,6 +141,22 @@ def test_an_ended_helper_is_collected_without_waiting_for_the_next_upscale(monke
     assert remote._proc.returncode == 0
 
 
+def test_a_replaced_helper_leaves_no_pipes_open(monkeypatch):
+    """PASS-59-280: the pipes of a helper that ended are closed when the
+    next one starts, not left for the garbage collector."""
+    remote, _ = _remote(monkeypatch, 'idle', 'ok')
+    first = []
+    real_start = remote._start
+
+    def start():
+        if remote._proc is not None:
+            first.append(remote._proc)
+        real_start()
+    monkeypatch.setattr(remote, '_start', start)
+    remote.enhance(_IMG)
+    assert first and first[0].stdin.closed and first[0].stdout.closed
+
+
 def test_the_helper_exits_to_free_a_hung_gpu():
     """PASS-59-156: a GPU call that timed out still holds the card, so the
     helper exits without replying instead of carrying on on CPU."""

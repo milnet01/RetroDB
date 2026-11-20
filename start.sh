@@ -55,6 +55,11 @@ else
     exit 1
 fi
 
+# RetroDB's own Python folder: install.py makes it where the system's Python
+# forbids installing packages.
+pick_venv() { if [ -x .venv/bin/python ]; then PYTHON=.venv/bin/python; fi; }
+pick_venv
+
 # Resolve the port once (PORT -> RETRODB_PORT -> config default) so the banner
 # matches what app.py actually binds.  app.py
 # re-resolves it from the same environment, so nothing is passed through here.
@@ -72,14 +77,14 @@ else
     echo -e "${YELLOW}Flask not found. Running the installer...${NC}"
     # install.py -> installer_core.select_pip_args, which prefers
     # `--require-hashes -r requirements.lock` and only falls back to an
-    # unhashed requirements.txt when no lockfile is present.  It also applies
-    # --break-system-packages as a PEP 668 retry rather than unconditionally,
-    # so a Debian/Ubuntu system's site-packages is not clobbered up front.
+    # unhashed requirements.txt when no lockfile is present.  Where the
+    # system's Python forbids installs it installs into .venv instead.
     # Installing by hand here bypassed both controls (Pass 59.12).
     if ! $PYTHON install.py; then
         echo -e "${RED}✗ Dependency install failed — see the output above.${NC}"
         exit 1
     fi
+    pick_venv
 fi
 
 # Create directories if they don't exist

@@ -4,12 +4,14 @@ RetroDB Installer
 Cross-platform setup script that installs dependencies and prepares the application.
 
 Usage:
-    python3 install.py              # Full interactive install
-    python3 install.py --no-pillow  # Skip optional Pillow install
+    python3 install.py
+
+On a system whose own Python forbids installing packages (PEP 668), the
+packages go into RetroDB's own Python folder, .venv, which the start
+scripts then use.
 """
 
 import os
-import shutil
 import subprocess
 import sys
 
@@ -23,6 +25,13 @@ def _c(code, text):
     if _NO_COLOR or not sys.stdout.isatty():
         return text
     return f'\033[{code}m{text}\033[0m'
+
+
+if os.name == 'nt' and sys.stdout.isatty():
+    # A Windows console shows colour codes as text until something switches
+    # them on; an empty system() call does.
+    os.system('')  # noqa: S605 -- fixed empty command, no input
+
 
 def _green(t):  return _c('0;32', t)
 def _red(t):    return _c('0;31', t)
@@ -65,7 +74,6 @@ def _print_banner():
 
 def main():
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    skip_pillow = '--no-pillow' in sys.argv
     distro = installer_core.detect_distro()
     errors = []
     warnings = []
@@ -91,12 +99,25 @@ def main():
         sys.exit(1)
     print(f"  {_green('OK')}: Python {major}.{minor}.{sys.version_info.micro}")
 
-    # ── Step 2: pip ──────────────────────────────────────────────────────
+    # ── Step 2: Python folder and pip ────────────────────────────────────
     step += 1
     print(f"{_bold(f'[{step}/{total_steps}]')} Checking pip...")
+    python, how, output = installer_core.choose_python(base_dir)
+    if how == 'failed':
+        print(f"  {_red('ERROR')}: this system's Python does not allow installing packages,")
+        print("  and RetroDB could not make its own Python folder (.venv):")
+        for line in output.splitlines()[-3:]:
+            print(f"    {line.strip()}")
+        print(f"  Install it with:  {_yellow(installer_core.venv_install_hint(distro))}")
+        sys.exit(1)
+    if how == 'venv-created':
+        print(f"  {_green('OK')}: made RetroDB's own Python folder (.venv); "
+              f"the system's Python is left alone")
+    elif how == 'venv':
+        print(f"  {_green('OK')}: using RetroDB's own Python folder (.venv)")
     try:
         result = subprocess.run(
-            [sys.executable, '-m', 'pip', '--version'],
+            [python, '-m', 'pip', '--version'],
             capture_output=True, text=True, check=True
         )
         pip_version = result.stdout.strip().split()[1] if result.stdout else '?'
@@ -117,7 +138,7 @@ def main():
     if source == 'fallback':
         print(f"  {_yellow('WARN')}: requirements.lock missing — falling back to "
               f"requirements.txt (no hash verification)")
-    result = installer_core.pip_install(pip_args, base_dir)
+    result = installer_core.pip_install(pip_args, base_dir, python=python)
     if result.returncode != 0:
         print(f"  {_red('ERROR')}: pip install failed")
         # Show meaningful error lines (skip pip warnings about PATH)
@@ -130,28 +151,23 @@ def main():
         ok_count = 0
         names = [name for _, name in installer_core.CORE_MODULES]
         for mod, name in installer_core.CORE_MODULES:
-            if installer_core.check_module(mod):
+            if installer_core.check_module(mod, python):
                 ok_count += 1
             else:
                 print(f"  {_red('MISSING')}: {name}")
                 errors.append(f'{name} not importable after install')
         print(f"  {_green('OK')}: {ok_count}/{len(names)} core packages verified ({', '.join(names)})")
 
-    # ── Step 4: Optional Pillow ──────────────────────────────────────────
+    # ── Step 4: Pillow ───────────────────────────────────────────────────
+    # Pillow comes with the locked packages above; it is only checked here,
+    # never installed on its own, so it is always the checked version.
     step += 1
-    print(f"{_bold(f'[{step}/{total_steps}]')} Checking optional dependencies...")
-    if skip_pillow:
-        print(f"  {_yellow('SKIP')}: Pillow (--no-pillow flag)")
-    elif installer_core.check_module('PIL'):
-        print(f"  {_green('OK')}: Pillow already installed")
+    print(f"{_bold(f'[{step}/{total_steps}]')} Checking image support...")
+    if installer_core.check_module('PIL', python):
+        print(f"  {_green('OK')}: Pillow installed")
     else:
-        print("  Installing Pillow (image processing for avatars & image standardization)...")
-        result = installer_core.pip_install(['Pillow'], base_dir)
-        if result.returncode == 0 and installer_core.check_module('PIL'):
-            print(f"  {_green('OK')}: Pillow installed")
-        else:
-            print(f"  {_yellow('WARN')}: Pillow install failed (optional — avatars/image resize won't work)")
-            warnings.append('Pillow not installed (optional)')
+        print(f"  {_yellow('WARN')}: Pillow is missing (avatars and image resizing won't work)")
+        warnings.append('Pillow not installed')
 
     # ── Step 5: Config files ─────────────────────────────────────────────
     step += 1
@@ -159,14 +175,12 @@ def main():
     for src_name, dst_name in installer_core.CONFIG_COPIES:
         src = os.path.join(base_dir, src_name)
         dst = os.path.join(base_dir, dst_name)
-        if os.path.exists(dst):
-            print(f"  {_green('SKIP')}: {dst_name} (already exists)")
-        elif os.path.exists(src):
-            os.makedirs(os.path.dirname(dst), exist_ok=True)
-            shutil.copy2(src, dst)
+        if not os.path.exists(src):
+            print(f"  {_yellow('WARN')}: Template {src_name} not found")
+        elif installer_core.copy_private(src, dst):
             print(f"  {_green('CREATED')}: {dst_name}")
         else:
-            print(f"  {_yellow('WARN')}: Template {src_name} not found")
+            print(f"  {_green('SKIP')}: {dst_name} (already exists)")
 
     # ── Step 6: Directories ──────────────────────────────────────────────
     step += 1
@@ -182,7 +196,7 @@ def main():
     # ── Step 7: Build CSS ────────────────────────────────────────────────
     step += 1
     print(f"{_bold(f'[{step}/{total_steps}]')} Building CSS bundle...")
-    css_ok, _ = installer_core.run_build_script(base_dir, 'build_css.py')
+    css_ok, _ = installer_core.run_build_script(base_dir, 'build_css.py', python)
     if css_ok is None:
         print(f"  {_yellow('SKIP')}: build_css.py not found")
     elif css_ok:
@@ -198,7 +212,7 @@ def main():
     # ── Step 8: Build JS ─────────────────────────────────────────────────
     step += 1
     print(f"{_bold(f'[{step}/{total_steps}]')} Building JS bundle...")
-    js_ok, _ = installer_core.run_build_script(base_dir, 'build_js.py')
+    js_ok, _ = installer_core.run_build_script(base_dir, 'build_js.py', python)
     if js_ok is None:
         print(f"  {_yellow('SKIP')}: build_js.py not found")
     elif js_ok:
@@ -246,7 +260,7 @@ def main():
         print(f"  1. Start RetroDB:  {_cyan('./start.command')}")
     else:
         print(f"  1. Start RetroDB:  {_cyan('./start.sh')}")
-    print(f"  2. Open in browser: {_cyan('http://localhost:5000')}")
+    print(f"  2. Open in browser: {_cyan(installer_core.server_url(base_dir, python))}")
     print("  3. Follow the setup wizard to configure paths and API keys")
     print()
     print(f"  Default login:  {_bold('admin')} / {_bold('admin')}")

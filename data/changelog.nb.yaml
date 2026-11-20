@@ -1,6 +1,24 @@
 - version: 4.0.0
   date: '2026-11-20'
   tags:
+  - type: fix
+    label: "Et spill som lukkes i det øyeblikket det starter, blir nå alltid ryddet opp etter, for eksempel ved å ta tilbake RetroAchievements-påloggingen RetroDB ga den oppstarten"
+    en: "A game that closes the moment it starts is now always tidied up after, such as taking back the RetroAchievements sign-in RetroDB gave that launch"
+  - type: fix
+    label: "En standardemulator du har valgt for et system, forblir nå systemets eneste standard når RetroDB legger til sine egne emulatorforslag ved oppstart"
+    en: "A default emulator you picked for a system now stays its only default when RetroDB adds its own emulator suggestions at start-up"
+  - type: fix
+    label: "Hvis oppdateringen av spillerens shadere mislykkes, beholdes shaderne du hadde. Listen over installerte kjerner kan ikke lenger gå tapt midt i lagringen, og en kjerneliste som ikke lar seg laste ned, prøves igjen etter fem minutter i stedet for en time"
+    en: "If updating the player's shaders fails, the shaders you had are kept. The list of installed cores can no longer be lost part-way through saving, and a core list that fails to download is tried again after five minutes instead of an hour"
+  - type: fix
+    label: "På Linux-systemer som beskytter sin egen Python, som Debian, Ubuntu og Fedora, lager installasjonsprogrammet nå en egen Python-mappe for RetroDB i stedet for å tvinge delene inn i systemets Python, noe som kunne ødelegge systemverktøy"
+    en: "On Linux systems that protect their own Python, such as Debian, Ubuntu and Fedora, the installer now gives RetroDB its own Python folder instead of forcing its parts into the system's Python, which could break system tools"
+  - type: security
+    label: "Innstillingsfilene installasjonsprogrammet lager, som inneholder passord og nøkler, kan nå bare leses av din egen konto, ikke av andre som bruker den samme datamaskinen"
+    en: "The settings files the installer creates, which hold passwords and keys, can now be read only by your own account, not by other people who use the same computer"
+  - type: fix
+    label: "Etter installasjonen åpner installasjonsprogrammet nå RetroDB på porten det faktisk bruker, så snart RetroDB er klart. Før åpnet det alltid port 5000 etter en fast ventetid, noe som kunne vise en feilside"
+    en: "After installing, the installer now opens RetroDB on the port it really uses, once RetroDB is ready. Before, it always opened port 5000 after a fixed wait, which could show an error page"
   - type: enhancement
     label: "På Windows og macOS kan RetroDB nå finne emulatorene dine og RetroArch for deg under Innstillinger > Emulatorer, og leter i de vanlige mappene for det systemet med mindre du oppgir dine egne"
     en: "On Windows and macOS, RetroDB can now find your emulators and RetroArch for you in Settings > Emulators, looking in the usual folders for that system unless you list your own"

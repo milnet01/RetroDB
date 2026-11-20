@@ -203,7 +203,11 @@ def index() -> Optional[dict]:
         try:
             r = _http_get(f'{HOST}/nightly/{d}/latest/.index-extended')
             if r.status_code == 200:
-                data = _parse_index(r.text)
+                # No cores at all is a page that is not the list, not an
+                # empty build: retried like any failure.
+                data = _parse_index(r.text) or None
+                if data is None:
+                    logger.warning("core index: no cores in the reply")
             else:
                 logger.warning("core index: HTTP %s", r.status_code)
         except requests.RequestException as e:
@@ -384,9 +388,30 @@ def _record_path() -> Path:
 def installed() -> dict:
     """{core: {'crc', 'date'}} for the cores RetroDB installed."""
     try:
-        return json.loads(_record_path().read_text(encoding='utf-8'))
+        record = json.loads(_record_path().read_text(encoding='utf-8'))
     except (OSError, ValueError):
         return {}
+    return record if isinstance(record, dict) else {}
+
+
+_record_lock = threading.Lock()
+
+
+def _note_installed(core: str, crc: str, date: str) -> None:
+    """Add one core to the record. Locked, so two installs at once both
+    land; written beside and swapped in, so a failed write keeps the old."""
+    path = _record_path()
+    with _record_lock:
+        record = installed()
+        record[core] = {'crc': crc, 'date': date}
+        fd, tmp = tempfile.mkstemp(dir=path.parent, prefix='.installed.')
+        try:
+            with os.fdopen(fd, 'w', encoding='utf-8') as out:
+                out.write(json.dumps(record, indent=1, sort_keys=True))
+            os.replace(tmp, path)
+        except BaseException:
+            Path(tmp).unlink(missing_ok=True)
+            raise
 
 
 def install(core: str) -> Path:
@@ -432,10 +457,7 @@ def install(core: str) -> Path:
         dest = cores / name
         os.replace(tmp, dest)
         tmp = None
-        record = installed()
-        record[core] = {'crc': line[1], 'date': line[0]}
-        _record_path().write_text(json.dumps(record, indent=1, sort_keys=True),
-                                  encoding='utf-8')
+        _note_installed(core, line[1], line[0])
         return dest
     except (OSError, zipfile.BadZipFile, requests.RequestException) as e:
         raise CoreInstallError(str(e)) from e
@@ -476,7 +498,12 @@ def install_shaders() -> Path:
         if dest.exists():
             old = profile / f'.shaders-old-{os.getpid()}'
             os.replace(dest, old)
-        os.replace(staging, dest)
+        try:
+            os.replace(staging, dest)
+        except OSError:
+            if old:
+                os.replace(old, dest)   # the old pack back, not none
+            raise
         staging = None
         if old:
             shutil.rmtree(old, ignore_errors=True)

@@ -115,6 +115,12 @@ class _Remote:
         return argv + ([CPU_FLAG] if self.cpu_only else [])
 
     def _start(self):
+        if self._proc is not None:      # the ended helper's pipes
+            for pipe in (self._proc.stdin, self._proc.stdout):
+                try:
+                    pipe.close()
+                except OSError:
+                    pass
         flags = getattr(subprocess, 'CREATE_NO_WINDOW', 0)   # Windows: no console
         self._proc = subprocess.Popen(
             self._argv(), stdin=subprocess.PIPE, stdout=subprocess.PIPE,

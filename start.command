@@ -26,6 +26,11 @@ else
     read -n 1
     exit 1
 fi
+
+# RetroDB's own Python folder: install.py makes it where the system's Python
+# forbids installing packages.
+pick_venv() { if [ -x .venv/bin/python ]; then PYTHON=.venv/bin/python; fi; }
+pick_venv
 echo "  OK: Python found ($($PYTHON --version))"
 
 # Resolve the port once (PORT -> RETRODB_PORT -> config default) so the banner
@@ -48,6 +53,7 @@ if ! $PYTHON -c "import flask" 2>/dev/null; then
         read -n 1
         exit 1
     fi
+    pick_venv
 fi
 
 # Create directories

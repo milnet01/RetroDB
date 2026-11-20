@@ -173,3 +173,31 @@ def test_inv12_seeded_core_names_carry_the_host_suffix(db, monkeypatch):
         db.execute("DELETE FROM emulators")
         db.execute("DELETE FROM systems WHERE folder = 'snes'")
         db.commit()
+
+
+def test_seeder_never_adds_a_second_default(db):
+    """PASS-59-280: a system whose default the user changed keeps one
+    default. Before, a re-seed put back the seed's mapping still marked
+    default beside the user's choice."""
+    from services.emulator_seeder import seed_emulators_from_file
+
+    c = db.cursor()
+    try:
+        seed_emulators_from_file(db, _SEEDS_PATH)
+        psx = c.execute("SELECT id FROM systems WHERE folder = 'psx'").fetchone()[0]
+        # The user removes the seeded default and picks their own emulator.
+        c.execute("DELETE FROM system_emulators WHERE system_id = ?", (psx,))
+        mine = c.execute("INSERT INTO emulators (name, binary_name, args_template) "
+                         "VALUES ('Mine', 'mine', '{rom}')").lastrowid
+        c.execute("INSERT INTO system_emulators (system_id, emulator_id, is_default) "
+                  "VALUES (?, ?, 1)", (psx, mine))
+        db.commit()
+
+        seed_emulators_from_file(db, _SEEDS_PATH)
+        defaults = c.execute("SELECT emulator_id FROM system_emulators "
+                             "WHERE system_id = ? AND is_default = 1", (psx,)).fetchall()
+        assert defaults == [(mine,)]
+    finally:
+        db.execute("DELETE FROM system_emulators")
+        db.execute("DELETE FROM emulators")
+        db.commit()

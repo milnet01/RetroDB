@@ -64,16 +64,15 @@ class LocalLauncher:
         handle = self._registry.register(
             token=ctx.token, proc=proc,
             game_id=ctx.game_id, emulator_id=ctx.emulator_id,
-            started_at=time.time(),
+            started_at=time.time(), on_exit=ctx.on_exit,
+            quit_port=ctx.quit_port, command_port=ctx.command_port,
         )
         drain = threading.Thread(target=self._drain_stderr, args=(ctx.token, proc),
                                  daemon=True)
-        entry = self._registry.get(ctx.token)
-        entry.drain = drain
-        entry.on_exit = ctx.on_exit
-        entry.quit_port = ctx.quit_port
-        entry.command_port = ctx.command_port
         drain.start()
+        # Listed once running: a status read joins it, and joining a thread
+        # not yet started raises.
+        self._registry.get(ctx.token).drain = drain
 
         logger.info("launched game=%s emulator=%s pid=%s argv=%s",
                     ctx.game_id, ctx.emulator_id, proc.pid, ctx.argv)

@@ -1,6 +1,24 @@
 - version: 4.0.0
   date: '2026-11-20'
   tags:
+  - type: fix
+    label: "Un gioco che si chiude appena avviato ora viene sempre ripulito dopo, per esempio riprendendo l'accesso a RetroAchievements che RetroDB aveva dato a quell'avvio"
+    en: "A game that closes the moment it starts is now always tidied up after, such as taking back the RetroAchievements sign-in RetroDB gave that launch"
+  - type: fix
+    label: "Un emulatore predefinito che hai scelto per un sistema ora resta il suo unico predefinito quando RetroDB aggiunge all'avvio i propri emulatori suggeriti"
+    en: "A default emulator you picked for a system now stays its only default when RetroDB adds its own emulator suggestions at start-up"
+  - type: fix
+    label: "Se l'aggiornamento degli shader del lettore non riesce, gli shader che avevi vengono mantenuti. L'elenco dei core installati non può più perdersi a metà salvataggio, e un elenco dei core che non si scarica viene ritentato dopo cinque minuti invece che dopo un'ora"
+    en: "If updating the player's shaders fails, the shaders you had are kept. The list of installed cores can no longer be lost part-way through saving, and a core list that fails to download is tried again after five minutes instead of an hour"
+  - type: fix
+    label: "Sui sistemi Linux che proteggono il proprio Python, come Debian, Ubuntu e Fedora, l'installatore ora crea per RetroDB una cartella Python propria invece di forzare i suoi componenti nel Python di sistema, cosa che poteva rompere gli strumenti di sistema"
+    en: "On Linux systems that protect their own Python, such as Debian, Ubuntu and Fedora, the installer now gives RetroDB its own Python folder instead of forcing its parts into the system's Python, which could break system tools"
+  - type: security
+    label: "I file di impostazioni creati dall'installatore, che contengono password e chiavi, ora possono essere letti solo dal tuo account, non da altre persone che usano lo stesso computer"
+    en: "The settings files the installer creates, which hold passwords and keys, can now be read only by your own account, not by other people who use the same computer"
+  - type: fix
+    label: "Dopo l'installazione, l'installatore ora apre RetroDB sulla porta che usa davvero, appena RetroDB è pronto. Prima apriva sempre la porta 5000 dopo un'attesa fissa, cosa che poteva mostrare una pagina di errore"
+    en: "After installing, the installer now opens RetroDB on the port it really uses, once RetroDB is ready. Before, it always opened port 5000 after a fixed wait, which could show an error page"
   - type: enhancement
     label: "Su Windows e macOS, RetroDB ora può trovare per te i tuoi emulatori e RetroArch in Impostazioni > Emulatori, cercando nelle cartelle abituali di quel sistema a meno che tu non indichi le tue"
     en: "On Windows and macOS, RetroDB can now find your emulators and RetroArch for you in Settings > Emulators, looking in the usual folders for that system unless you list your own"

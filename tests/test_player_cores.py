@@ -151,6 +151,17 @@ def test_index_fetched_once_an_hour(pc):
     assert pc.http.calls.count(f'{BASE}/.index-extended') == 1
 
 
+def test_an_index_with_no_cores_is_retried_soon(pc):
+    """PASS-59-280: a reply holding no cores (an error page served as 200)
+    is a failed fetch, retried after five minutes, not an hour of
+    'nothing is built for this computer'."""
+    pc.http.routes[f'{BASE}/.index-extended'] = _Resp(200, b'<html>busy</html>')
+    assert pc.index() is None
+    pc._index_cache['at'] -= pc._INDEX_RETRY + 1
+    _serve_index(pc, ['2026-10-19 0badf00d mesen_libretro.so.zip'])
+    assert pc.index() == {'mesen_libretro.so.zip': ('2026-10-19', '0badf00d')}
+
+
 def test_offline_index_falls_back_to_an_installed_core(pc):
     from services import player
     path = player.core_file('fceumm_libretro.so')
@@ -253,6 +264,53 @@ def test_shader_pack_installs(pc):
     pc.http.routes[pc.SHADERS_URL] = _Resp(200, _zip({'crt/crt-easymode.slangp': b'x'}))
     pc.install_shaders()
     assert (pc.shaders_dir() / 'crt' / 'crt-easymode.slangp').read_bytes() == b'x'
+
+
+def test_a_failed_shader_swap_keeps_the_old_pack(pc, monkeypatch):
+    """PASS-59-280: when the new pack cannot be moved into place, the old
+    one is put back rather than leaving no shaders at all."""
+    import os
+    pc.http.routes[pc.SHADERS_URL] = _Resp(200, _zip({'old.slangp': b'old'}))
+    pc.install_shaders()
+    pc.http.routes[pc.SHADERS_URL] = _Resp(200, _zip({'new.slangp': b'new'}))
+    real_replace = os.replace
+
+    def replace(src, dst):
+        if str(src).startswith(str(pc.shaders_dir().parent / '.shaders-')) \
+                and '-old-' not in str(src) and str(dst) == str(pc.shaders_dir()):
+            raise OSError('disk full')
+        return real_replace(src, dst)
+
+    monkeypatch.setattr(pc.os, 'replace', replace)
+    with pytest.raises(pc.CoreInstallError, match='disk full'):
+        pc.install_shaders()
+    assert (pc.shaders_dir() / 'old.slangp').read_bytes() == b'old'
+
+
+def test_a_damaged_core_record_reads_as_empty(pc):
+    """PASS-59-280: a record that is valid JSON but not a table does not
+    break the next install."""
+    from services import player
+    record = player.profile_dir() / 'cores' / 'installed.json'
+    record.parent.mkdir(parents=True, exist_ok=True)
+    record.write_text('[1, 2]', encoding='utf-8')
+    assert pc.installed() == {}
+    _serve_core(pc, 'snes9x', data=b'core')
+    pc.install('snes9x')
+    assert set(pc.installed()) == {'snes9x'}
+
+
+def test_the_core_record_is_never_left_half_written(pc, monkeypatch):
+    """PASS-59-280: the record is written beside and swapped in, so a
+    failed write leaves the old record whole."""
+    _serve_core(pc, 'snes9x', data=b'core')
+    pc.install('snes9x')
+    before = pc.installed()
+    # Text that cannot be encoded fails part-way through the write.
+    monkeypatch.setattr(pc.json, 'dumps', lambda *a, **k: '{"x": 1, "\ud800": 2}')
+    with pytest.raises(Exception):
+        pc.install('snes9x')
+    assert pc.installed() == before
 
 
 # -----------------------------------------------------------------------------

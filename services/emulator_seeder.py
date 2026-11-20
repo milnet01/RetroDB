@@ -56,6 +56,11 @@ def seed_emulators_from_file(conn, path):
         if not emu_row:
             logger.warning("seed: emulator %r referenced by mapping but missing", sm['emulator_name'])
             continue
+        # Default only where the system has none: one the user picked stays
+        # the only one.
+        has_default = c.execute(
+            "SELECT 1 FROM system_emulators WHERE system_id = ? AND is_default = 1",
+            (sys_row[0],)).fetchone()
         c.execute("""
             INSERT OR IGNORE INTO system_emulators
             (system_id, emulator_id, is_default, retroarch_core, extra_args)
@@ -63,7 +68,7 @@ def seed_emulators_from_file(conn, path):
         """, (
             sys_row[0],
             emu_row[0],
-            int(sm.get('is_default', 0)),
+            int(sm.get('is_default', 0) and not has_default),
             _host_core(sm.get('retroarch_core')),
             sm.get('extra_args'),
         ))
