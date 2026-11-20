@@ -1,6 +1,15 @@
 - version: 4.0.0
   date: '2026-11-20'
   tags:
+  - type: fix
+    label: "Se a placa de vídeo parar de responder durante uma ampliação com IA, o RetroDB agora a libera em cerca de dois minutos e continua ampliando com o processador. Antes, a placa ficava ocupada até o RetroDB ser reiniciado"
+    en: "If the graphics card stops responding during an AI upscale, RetroDB now lets go of it within about two minutes and carries on upscaling with the processor. Before, the card stayed busy until RetroDB was restarted"
+  - type: fix
+    label: "Em uma conexão de internet lenta, o primeiro download dos modelos de IA de ampliação e remoção de fundo não é mais interrompido como se tivesse parado. Se o download da ampliação falhar, o RetroDB tenta de novo 15 minutos depois, em vez de deixar a ampliação com IA desligada até reiniciar"
+    en: "On a slow internet connection, the first download of the AI upscaling and background-removal models is no longer cut off as if it had stopped. If the upscaling download fails, RetroDB tries again 15 minutes later instead of leaving AI upscaling off until a restart"
+  - type: fix
+    label: "Uma foto danificada do Museu não faz mais a remoção de fundo deixar de usar a placa de vídeo para todas as fotos seguintes"
+    en: "A damaged Museum photo no longer makes background removal stop using the graphics card for every photo after it"
   - type: security
     label: "Antes de instalar uma atualização, o RetroDB agora verifica se ela tem uma assinatura autêntica do próprio processo de lançamento do RetroDB. Um download que alguém alterou ou trocou é recusado, mesmo que o arquivo de soma de verificação também tenha sido trocado"
     en: "Before an update installs, RetroDB now checks that it carries a genuine signature from RetroDB's own release process. A download someone has changed or swapped is refused, even if its checksum file was swapped too"

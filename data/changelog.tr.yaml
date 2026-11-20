@@ -1,6 +1,15 @@
 - version: 4.0.0
   date: '2026-11-20'
   tags:
+  - type: fix
+    label: "Bir yapay zekâ büyütmesi sırasında ekran kartı yanıt vermeyi keserse, RetroDB artık onu yaklaşık iki dakika içinde bırakıyor ve büyütmeye işlemciyle devam ediyor. Önceden kart, RetroDB yeniden başlatılana kadar meşgul kalıyordu"
+    en: "If the graphics card stops responding during an AI upscale, RetroDB now lets go of it within about two minutes and carries on upscaling with the processor. Before, the card stayed busy until RetroDB was restarted"
+  - type: fix
+    label: "Yavaş bir internet bağlantısında, yapay zekâ büyütme ve arka plan kaldırma modellerinin ilk indirmesi artık durmuş gibi kesilmiyor. Büyütme indirmesi başarısız olursa RetroDB, yapay zekâ büyütmesini yeniden başlatmaya kadar kapalı bırakmak yerine 15 dakika sonra yeniden deniyor"
+    en: "On a slow internet connection, the first download of the AI upscaling and background-removal models is no longer cut off as if it had stopped. If the upscaling download fails, RetroDB tries again 15 minutes later instead of leaving AI upscaling off until a restart"
+  - type: fix
+    label: "Hasarlı bir Müze fotoğrafı artık arka plan kaldırmanın sonraki tüm fotoğraflar için ekran kartını kullanmayı bırakmasına yol açmıyor"
+    en: "A damaged Museum photo no longer makes background removal stop using the graphics card for every photo after it"
   - type: security
     label: "RetroDB artık bir güncellemeyi kurmadan önce, RetroDB'nin kendi sürüm sürecinden gelen gerçek bir imza taşıdığını denetliyor. Birinin değiştirdiği ya da başkasıyla değiştirdiği bir indirme, sağlama toplamı dosyası da değiştirilmiş olsa bile reddedilir"
     en: "Before an update installs, RetroDB now checks that it carries a genuine signature from RetroDB's own release process. A download someone has changed or swapped is refused, even if its checksum file was swapped too"

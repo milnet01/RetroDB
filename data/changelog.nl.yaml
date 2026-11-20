@@ -1,6 +1,15 @@
 - version: 4.0.0
   date: '2026-11-20'
   tags:
+  - type: fix
+    label: "Als de grafische kaart niet meer reageert tijdens een AI-opschaling, laat RetroDB hem nu binnen ongeveer twee minuten los en schaalt verder op met de processor. Voorheen bleef de kaart bezet tot RetroDB opnieuw werd gestart"
+    en: "If the graphics card stops responding during an AI upscale, RetroDB now lets go of it within about two minutes and carries on upscaling with the processor. Before, the card stayed busy until RetroDB was restarted"
+  - type: fix
+    label: "Bij een trage internetverbinding wordt de eerste download van de AI-modellen voor opschalen en achtergrondverwijdering niet meer afgebroken alsof die was vastgelopen. Mislukt de download voor het opschalen, dan probeert RetroDB het 15 minuten later opnieuw, in plaats van AI-opschaling uit te laten tot een herstart"
+    en: "On a slow internet connection, the first download of the AI upscaling and background-removal models is no longer cut off as if it had stopped. If the upscaling download fails, RetroDB tries again 15 minutes later instead of leaving AI upscaling off until a restart"
+  - type: fix
+    label: "Een beschadigde Museum-foto zorgt er niet meer voor dat de achtergrondverwijdering voor alle volgende foto's de grafische kaart niet meer gebruikt"
+    en: "A damaged Museum photo no longer makes background removal stop using the graphics card for every photo after it"
   - type: security
     label: "Voordat een update wordt geïnstalleerd, controleert RetroDB nu of die een echte handtekening van RetroDB's eigen releaseproces draagt. Een download die iemand heeft gewijzigd of verwisseld, wordt geweigerd, ook als het checksumbestand ook is verwisseld"
     en: "Before an update installs, RetroDB now checks that it carries a genuine signature from RetroDB's own release process. A download someone has changed or swapped is refused, even if its checksum file was swapped too"

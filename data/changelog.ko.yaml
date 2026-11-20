@@ -1,6 +1,15 @@
 - version: 4.0.0
   date: '2026-11-20'
   tags:
+  - type: fix
+    label: "AI 업스케일 중에 그래픽 카드가 응답하지 않으면, 이제 RetroDB가 약 2분 안에 카드를 놓아주고 프로세서로 업스케일을 계속합니다. 이전에는 RetroDB를 다시 시작할 때까지 카드가 사용 중인 상태로 남았습니다"
+    en: "If the graphics card stops responding during an AI upscale, RetroDB now lets go of it within about two minutes and carries on upscaling with the processor. Before, the card stayed busy until RetroDB was restarted"
+  - type: fix
+    label: "인터넷 연결이 느릴 때 AI 업스케일 및 배경 제거 모델의 첫 다운로드가 멈춘 것으로 간주되어 끊기지 않습니다. 업스케일 다운로드가 실패하면 다시 시작할 때까지 AI 업스케일을 끄는 대신 15분 후에 다시 시도합니다"
+    en: "On a slow internet connection, the first download of the AI upscaling and background-removal models is no longer cut off as if it had stopped. If the upscaling download fails, RetroDB tries again 15 minutes later instead of leaving AI upscaling off until a restart"
+  - type: fix
+    label: "손상된 박물관 사진 때문에 이후의 모든 사진에서 배경 제거가 그래픽 카드를 쓰지 않게 되는 일이 더 이상 없습니다"
+    en: "A damaged Museum photo no longer makes background removal stop using the graphics card for every photo after it"
   - type: security
     label: "업데이트를 설치하기 전에 RetroDB 자체 릴리스 과정에서 만든 진짜 서명이 있는지 확인합니다. 누군가 바꾸거나 바꿔치기한 다운로드는 체크섬 파일까지 바꿔치기되었더라도 거부됩니다"
     en: "Before an update installs, RetroDB now checks that it carries a genuine signature from RetroDB's own release process. A download someone has changed or swapped is refused, even if its checksum file was swapped too"

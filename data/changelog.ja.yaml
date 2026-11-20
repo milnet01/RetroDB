@@ -1,6 +1,15 @@
 - version: 4.0.0
   date: '2026-11-20'
   tags:
+  - type: fix
+    label: "AI アップスケール中にグラフィックカードが応答しなくなった場合、RetroDB は約 2 分以内にカードを解放し、プロセッサーでアップスケールを続けるようになりました。以前は、RetroDB を再起動するまでカードが使用中のままでした"
+    en: "If the graphics card stops responding during an AI upscale, RetroDB now lets go of it within about two minutes and carries on upscaling with the processor. Before, the card stayed busy until RetroDB was restarted"
+  - type: fix
+    label: "インターネット接続が遅い場合でも、AI アップスケールと背景除去のモデルの最初のダウンロードが、止まったものとして打ち切られなくなりました。アップスケール用のダウンロードに失敗した場合、再起動まで AI アップスケールを無効にするのではなく、15 分後にもう一度試します"
+    en: "On a slow internet connection, the first download of the AI upscaling and background-removal models is no longer cut off as if it had stopped. If the upscaling download fails, RetroDB tries again 15 minutes later instead of leaving AI upscaling off until a restart"
+  - type: fix
+    label: "ミュージアムの写真が壊れていても、それ以降のすべての写真で背景除去がグラフィックカードを使わなくなることはなくなりました"
+    en: "A damaged Museum photo no longer makes background removal stop using the graphics card for every photo after it"
   - type: security
     label: "アップデートをインストールする前に、RetroDB 自身のリリース工程による正規の署名があるかを確認するようになりました。誰かが変更したり差し替えたりしたダウンロードは、チェックサムファイルまで差し替えられていても拒否されます"
     en: "Before an update installs, RetroDB now checks that it carries a genuine signature from RetroDB's own release process. A download someone has changed or swapped is refused, even if its checksum file was swapped too"

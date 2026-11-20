@@ -1,6 +1,15 @@
 - version: 4.0.0
   date: '2026-11-20'
   tags:
+  - type: fix
+    label: "אם כרטיס המסך מפסיק להגיב במהלך הגדלה בבינה מלאכותית, RetroDB משחרר אותו כעת תוך כשתי דקות וממשיך להגדיל בעזרת המעבד. קודם לכן הכרטיס נשאר תפוס עד ש-RetroDB הופעל מחדש"
+    en: "If the graphics card stops responding during an AI upscale, RetroDB now lets go of it within about two minutes and carries on upscaling with the processor. Before, the card stayed busy until RetroDB was restarted"
+  - type: fix
+    label: "בחיבור אינטרנט איטי, ההורדה הראשונה של מודלי הבינה המלאכותית להגדלה ולהסרת רקע כבר לא נקטעת כאילו נעצרה. אם הורדת מודל ההגדלה נכשלת, RetroDB מנסה שוב כעבור 15 דקות במקום להשאיר את ההגדלה בבינה מלאכותית כבויה עד להפעלה מחדש"
+    en: "On a slow internet connection, the first download of the AI upscaling and background-removal models is no longer cut off as if it had stopped. If the upscaling download fails, RetroDB tries again 15 minutes later instead of leaving AI upscaling off until a restart"
+  - type: fix
+    label: "תמונה פגומה במוזיאון כבר לא גורמת להסרת הרקע להפסיק להשתמש בכרטיס המסך עבור כל התמונות שאחריה"
+    en: "A damaged Museum photo no longer makes background removal stop using the graphics card for every photo after it"
   - type: security
     label: "לפני שעדכון מותקן, RetroDB בודק עכשיו שהוא נושא חתימה אמיתית מתהליך השחרור של RetroDB עצמו. הורדה שמישהו שינה או החליף נדחית, גם אם גם קובץ סכום הביקורת שלה הוחלף"
     en: "Before an update installs, RetroDB now checks that it carries a genuine signature from RetroDB's own release process. A download someone has changed or swapped is refused, even if its checksum file was swapped too"

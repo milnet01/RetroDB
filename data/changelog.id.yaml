@@ -1,6 +1,15 @@
 - version: 4.0.0
   date: '2026-11-20'
   tags:
+  - type: fix
+    label: "Jika kartu grafis berhenti merespons saat peningkatan resolusi AI, RetroDB kini melepaskannya dalam sekitar dua menit dan melanjutkan peningkatan resolusi dengan prosesor. Sebelumnya, kartu tetap sibuk sampai RetroDB dimulai ulang"
+    en: "If the graphics card stops responding during an AI upscale, RetroDB now lets go of it within about two minutes and carries on upscaling with the processor. Before, the card stayed busy until RetroDB was restarted"
+  - type: fix
+    label: "Pada koneksi internet yang lambat, unduhan pertama model AI untuk peningkatan resolusi dan penghapusan latar tidak lagi diputus seolah-olah berhenti. Jika unduhan peningkatan resolusi gagal, RetroDB mencoba lagi 15 menit kemudian, alih-alih mematikan peningkatan resolusi AI sampai dimulai ulang"
+    en: "On a slow internet connection, the first download of the AI upscaling and background-removal models is no longer cut off as if it had stopped. If the upscaling download fails, RetroDB tries again 15 minutes later instead of leaving AI upscaling off until a restart"
+  - type: fix
+    label: "Foto Museum yang rusak tidak lagi membuat penghapusan latar berhenti memakai kartu grafis untuk setiap foto sesudahnya"
+    en: "A damaged Museum photo no longer makes background removal stop using the graphics card for every photo after it"
   - type: security
     label: "Sebelum pembaruan dipasang, RetroDB kini memeriksa bahwa pembaruan itu membawa tanda tangan asli dari proses rilis RetroDB sendiri. Unduhan yang telah diubah atau ditukar seseorang ditolak, meskipun file checksum-nya juga ikut ditukar"
     en: "Before an update installs, RetroDB now checks that it carries a genuine signature from RetroDB's own release process. A download someone has changed or swapped is refused, even if its checksum file was swapped too"
