@@ -10,6 +10,7 @@ from werkzeug.datastructures import FileStorage
 
 import config
 from services import game_media_service as gms
+from services import image_utils
 
 GAME_ID = 990417
 
@@ -32,7 +33,10 @@ def _upload(raw, name='cover.png'):
 
 
 @pytest.fixture(autouse=True)
-def _cleanup():
+def _cleanup(monkeypatch):
+    # The Lanczos fallback, not Real-ESRGAN: these tests check the pipeline,
+    # and the real upscaler cost tens of seconds a run (PASS-59-221).
+    monkeypatch.setattr(image_utils, '_get_upscaler', lambda: None)
     yield
     for sub in ('boxart', 'fanart', 'screenshots'):
         folder = os.path.join(config.IMAGE_PATH, sub)

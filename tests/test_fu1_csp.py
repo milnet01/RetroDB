@@ -231,24 +231,29 @@ class TestDelegatedActionsResolve:
         assert len(set(self._ACTION.findall(text))) > 20, (
             "found almost no data-on-<event> actions — the scan is broken")
 
+    # Each pattern collects every name it defines in one pass (PASS-59-221:
+    # one search per action took tens of seconds).
+    _ASSIGNED = re.compile(r'(?:window|RetroDB)\.([A-Za-z_$][\w$]*)\s*=')
+    _GLOBAL_FN = re.compile(
+        r'(?:^|\n)\s*(?:async\s+)?function\s+([A-Za-z_$][\w$]*)\s*\(')
+    _MEMBER = re.compile(r'(?<![\w$])([A-Za-z_$][\w$]*)\s*(?::|\(|=|,|\n\s*\})')
+
     def test_every_action_is_defined(self):
         import build_js
         bundled = set(build_js.CORE_ORDER) | set(build_js.GAMES_ORDER)
-        everything = self._text(_iter_source_files())
+        texts = {p: p.read_text(encoding='utf-8') for p in _iter_source_files()}
+        everything = "\n".join(texts.values())
         # Where a top-level `function X` is a global: page scripts and the
         # static/js files loaded on their own.
-        globals_text = self._text(
-            [p for p in _iter_source_files() if p.name not in bundled])
+        globals_text = "\n".join(t for p, t in texts.items() if p.name not in bundled)
+        roots = (set(self._ASSIGNED.findall(everything))
+                 | set(self._GLOBAL_FN.findall(globals_text)) | {'window'})
+        members_seen = set(self._MEMBER.findall(everything))
         missing = []
         for name in sorted(set(self._ACTION.findall(everything))):
             root, *members = name.split('.')
-            r = re.escape(root)
-            root_defined = root == 'window' or re.search(
-                rf'window\.{r}\s*=|RetroDB\.{r}\s*=', everything) or re.search(
-                rf'(?:^|\n)\s*(?:async\s+)?function\s+{r}\s*\(', globals_text)
-            members_defined = all(
-                re.search(rf'\b{re.escape(m)}\s*(?::|\(|=|,|\n\s*\}})', everything)
-                for m in members)
+            root_defined = root in roots
+            members_defined = all(m in members_seen for m in members)
             if not (root_defined and members_defined):
                 missing.append(name)
         assert not missing, (

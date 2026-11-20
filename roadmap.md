@@ -854,7 +854,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Numbers and file sizes are written the way your language writes them.
   Kind: implement.
 
-- 📋 [PASS-59-221] **The slowest test runs real image work: speed up test_screenshot_duplicates_are_dropped (test, S).**
+- ✅ [PASS-59-221] **The slowest test runs real image work: speed up test_screenshot_duplicates_are_dropped (test, S).**
   - **Status**: todo
   - **Source**: measured 2026-10-31, while aligning the local gate with GitHub CI.
   - **Problem**: in the gate's environment, which has the CPU onnxruntime from the lockfile, `tests/test_upload_image_pipeline.py::test_screenshot_duplicates_are_dropped` took 66 to 148 s of a suite that takes 79 to 198 s, depending on machine load. The whole suite on the system Python took 61 s. `test_fu1_csp.py::test_every_action_is_defined` is next, at 37 to 55 s.
@@ -868,6 +868,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     reading files twice. Other slow and timing tests: PASS-59-293.
 
   ---
+  **Done** (2026-11-20): `tests/test_upload_image_pipeline.py` stubs
+  `_get_upscaler`, and `test_every_action_is_defined` collects defined
+  names in one pass per pattern. The two files took 66.85 s before and
+  5.06 s after, on this machine. A probe page with two made-up actions
+  still failed the test.
   **Layman:** The slowest test runs faster.
   Kind: implement.
 
