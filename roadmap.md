@@ -3622,7 +3622,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: feature.
   Source: user, 2026-11-21.
 
-- 📋 [PASS-59-328] **ScreenScraper's disc and cartridge pictures inside the open box (FEATURE, S).**
+- ✅ [PASS-59-328] **ScreenScraper's disc and cartridge pictures inside the open box (FEATURE, S).**
   - **Target**: ScreenScraper's `support-2D` picture (the disc or
     cartridge) stored as a second key in `games.box_scans`
     (PASS-59-183 spec §4.5: one key per source), kind `media`, so
@@ -3636,6 +3636,16 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     on disk, e.g. Krusty's Super Fun House on Mega Drive. Read it as a
     `media` source too, so a game with no MobyGames scan shows its
     cartridge in the open box. `scrape_esde.py` already lists the folder.
+  **Built** 2026-11-21 (in the open 4.0.0). Open question answered:
+  box_scans is now fill-only per source (box_scans.with_source), so
+  MobyGames merges into a record ScreenScraper or ES-DE filled, and the
+  reverse. ScreenScraper (support-2D, nearest the game's region) and
+  ES-DE (physicalmedia, re-encoded to WebP) add one `media` item only
+  while no source has one; the open box shows MobyGames' disc first
+  (box_scans.SOURCES). Checked on :5001 with a scratch DB, headless
+  Chrome at desktop and 375 px: Krusty's Super Fun House with MobyGames'
+  cartridge removed got ES-DE's cartridge in the open box. ScreenScraper's
+  live download was not run (unit test only).
   **Layman:** Show the real disc or cartridge inside the open box for games MobyGames has no picture of, using ScreenScraper's.
   Kind: feature.
   Source: split from PASS-59-325, 2026-11-21.

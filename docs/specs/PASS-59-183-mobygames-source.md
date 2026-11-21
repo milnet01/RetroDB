@@ -171,9 +171,12 @@ and `games.box_scans TEXT` (NULL = none). The record:
                           "width": 804, "height": 800}]}}
 ```
 
-- One key per source. Only `mobygames` exists after this spec; another
-  source adds its own key. PASS-59-325 adds ScreenScraper's disc and
-  cartridge pictures that way.
+- One key per source. Besides `mobygames`, `screenscraper` (its
+  `support-2D`) and `esde` (its `physicalmedia` folder) each hold one
+  `media` item, the disc or cartridge, written only while no source has
+  a `media` item (PASS-59-328). The open box shows one disc: from
+  `mobygames` if its file is on disk, else the next source in
+  `box_scans.SOURCES`.
 - `kind` comes from the image's `type.name`: Front Cover `front`,
   Back Cover `back`, Spine/Sides `spine`, Media `media`, Manual
   `manual`, Inside Cover `inside`, Full Cover `full`, Extras `extras`,
@@ -190,7 +193,8 @@ and `games.box_scans TEXT` (NULL = none). The record:
   ScreenScraper's except `es` (`sp`) and `ww` (`wor`). On a tie, take
   the group with a `Spine/Sides` image, then the one with more images,
   then the first listed.
-- Fill-only: written only while `box_scans` is NULL, or by Full
+- Fill-only per source: a source's key is written only while the
+  record has none, merged into what other sources wrote, or by Full
   Re-scrape (`scrapers.md` §3), which deletes the old record's files
   once the new one is saved. `clear_scraped_data` and the edit modal's
   Clear empty it and delete its files; Clear leaves `box_faces` and its

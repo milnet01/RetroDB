@@ -1028,7 +1028,6 @@ def apply_mobygames_to_metadata(metadata, moby_data, db_game_id, result, fill_on
                                 platform_id=None, own_region=None):
     """Apply one MobyGames record, fill-only (spec §4.4). The covers come from one
     cover group for this platform, so front, back and scans are one box."""
-    import json as _json
     from services import box_scans
     label = 'MobyGames'
 
@@ -1068,10 +1067,11 @@ def apply_mobygames_to_metadata(metadata, moby_data, db_game_id, result, fill_on
                 result['filled_fields'].append(f'{field} ({label})')
                 if field == 'boxart':
                     metadata['_boxart_source'] = 'mobygames'
-    if group and not metadata.get('box_scans'):
+    if group and not box_scans.has_source(metadata.get('box_scans'), 'mobygames'):
         record = _download_box_scans(db_game_id, group)
         if record:
-            metadata['box_scans'] = _json.dumps(record)
+            metadata['box_scans'] = box_scans.with_source(
+                metadata.get('box_scans'), 'mobygames', record['mobygames'])
             result['filled_fields'].append(f"box_scans +{len(record['mobygames']['items'])} ({label})")
 
     shots = next((s for s in moby_data.get('screenshots') or []
@@ -1567,6 +1567,22 @@ def apply_screenscraper_to_metadata(metadata, ss_data, db_game_id, result, fill_
             if download_ss_media(back_url, local_path, image_type='boxart_back'):
                 metadata['boxart_back'] = filename
                 result['filled_fields'].append('boxart_back (ScreenScraper)')
+
+    # The disc or cartridge, for the open box, while no source has one
+    # (PASS-59-328). A record with no box_scans slot (the wishlist's) keeps none.
+    from services import box_scans
+    if 'box_scans' in metadata and not box_scans.has_kind(metadata['box_scans'], 'media'):
+        media_url, _ext = _pick_media(medias, ('support-2D',), 'png', own_region)
+        if media_url:
+            import secrets
+            name = box_scans.media_name(db_game_id, secrets.token_hex(3))
+            if download_ss_media(media_url, os.path.join(IMAGE_PATH, 'box_scans', name),
+                                 image_type='box_scans'):
+                entry = box_scans.media_entry(name)
+                if entry:
+                    metadata['box_scans'] = box_scans.with_source(
+                        metadata.get('box_scans'), 'screenscraper', entry)
+                    result['filled_fields'].append('box_scans +1 (ScreenScraper)')
 
     # Screenshots - ALWAYS append, never replace
     existing_screenshots = metadata['screenshots'].split(',') if metadata['screenshots'] else []

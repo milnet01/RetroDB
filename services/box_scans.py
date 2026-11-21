@@ -2,8 +2,10 @@
 # BOX SCANS (PASS-59-183)
 # =============================================================================
 # Every scan of one real release of a game, kept in games.box_scans for the 3D
-# box (PASS-59-326) and the open box (PASS-59-325). One key per source; only
-# MobyGames writes one so far. Files live in <IMAGE_PATH>/box_scans/, named
+# box (PASS-59-326) and the open box (PASS-59-325). One key per source:
+# MobyGames' cover group, and the disc or cartridge picture of ScreenScraper or
+# ES-DE where no source has one yet (PASS-59-328). Files live in
+# <IMAGE_PATH>/box_scans/, named
 # <game_id>_<kind>_<n>_<token>.webp. A scrape writes the record
 # (metadata_merger.apply_mobygames_to_metadata); this module chooses the cover
 # group, and deletes files, never outside the folder.
@@ -97,17 +99,75 @@ def _scan_path(name):
     return safe_path(joined, base)
 
 
-def _items(value):
-    """Every item of a stored record, all sources in order; none for NULL or
-    an unreadable one."""
+# Sources in the order the open box takes their pictures: MobyGames' scans are
+# of one real release, so its disc wins over a picture from another source.
+SOURCES = ('mobygames', 'screenscraper', 'esde')
+
+
+def _record(value):
+    """A stored record as a dict; {} for NULL or an unreadable one."""
     try:
         record = json.loads(value) if value else None
     except (TypeError, ValueError):
-        return []
-    if not isinstance(record, dict):
-        return []
-    return [i for source in record.values() if isinstance(source, dict)
-            for i in source.get('items') or [] if isinstance(i, dict)]
+        return {}
+    return record if isinstance(record, dict) else {}
+
+
+def _sourced_items(value):
+    """(source, item) for every item of a stored record, MobyGames' first,
+    then each other source in SOURCES order, then any unknown one."""
+    record = _record(value)
+    order = sorted(record, key=lambda k: SOURCES.index(k) if k in SOURCES else len(SOURCES))
+    return [(key, i) for key in order if isinstance(record[key], dict)
+            for i in record[key].get('items') or [] if isinstance(i, dict)]
+
+
+def _items(value):
+    return [item for _source, item in _sourced_items(value)]
+
+
+def has_source(value, source):
+    return isinstance(_record(value).get(source), dict)
+
+
+def has_kind(value, kind):
+    return any(i.get('kind') == kind for i in _items(value))
+
+
+def with_source(value, source, entry):
+    """The stored record with `source`'s entry added, as JSON. A record that
+    already holds that source is returned unchanged: box_scans is fill-only
+    per source, so a new source merges into a row another one filled."""
+    record = _record(value)
+    if isinstance(record.get(source), dict):
+        return value
+    record.setdefault('version', VERSION)
+    record[source] = entry
+    return json.dumps(record)
+
+
+def media_name(game_id, token):
+    """The file name of a source's one disc or cartridge picture."""
+    return f'{game_id}_media_0_{token}.webp'
+
+
+def media_entry(name):
+    """A source entry holding one stored disc or cartridge picture, with its
+    size read from the file's header; None, and the file deleted, when it is
+    unreadable."""
+    from PIL import Image
+    path = _scan_path(name)
+    if path is None:
+        return None
+    try:
+        with Image.open(path) as image:
+            width, height = image.size
+    except Exception as e:  # noqa: BLE001 - any unreadable picture is skipped
+        logger.warning(f'Box scan {name!r} unreadable: {e}')
+        _delete_files([name])
+        return None
+    return {'items': [{'kind': 'media', 'caption': None, 'file': name,
+                       'width': width, 'height': height}]}
 
 
 def _files(value):
@@ -117,9 +177,11 @@ def _files(value):
 
 def delete_scans(value, keep=()):
     """Delete the files a stored record names, except those in `keep`."""
-    for name in _files(value):
-        if name in keep:
-            continue
+    _delete_files(name for name in _files(value) if name not in keep)
+
+
+def _delete_files(names):
+    for name in names:
         path = _scan_path(name)
         if path is None:
             logger.warning(f'Box scan {name!r} not deleted: outside {scans_dir()} or a symlink')
@@ -145,19 +207,24 @@ INSIDE_KINDS = ('media', 'manual', 'inside', 'extras', 'other')
 
 
 def scans_for(game_row):
-    """The scans the open box shows, in stored order, as
+    """The scans the open box shows, MobyGames' first, as
     [{kind, caption, url, width, height}], only those whose file is on disk."""
     try:
         value = game_row['box_scans']
     except (KeyError, IndexError):  # a row without the column
         return []
-    found = []
-    for item in _items(value):
+    found, media_from = [], None
+    for source, item in _sourced_items(value):
         if item.get('kind') not in INSIDE_KINDS:
+            continue
+        # One disc: from the first source that has one on disk.
+        if item['kind'] == 'media' and media_from not in (None, source):
             continue
         path = _scan_path(item.get('file'))
         if path is None or not os.path.isfile(path):
             continue
+        if item['kind'] == 'media':
+            media_from = source
         found.append({'kind': item['kind'], 'caption': item.get('caption'),
                       'url': f"images/box_scans/{item['file']}",
                       'width': item.get('width'), 'height': item.get('height')})

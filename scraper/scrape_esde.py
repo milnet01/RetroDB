@@ -776,7 +776,8 @@ def copy_esde_media(db_game_id, game_data, system_folder=None, existing=None,
     has really supplied a replacement.
 
     Returns the names copied in this run only: {field: filename} for single
-    media, and {'screenshots': [new names]} when any were added.
+    media, {'box_scans_media': name} for the disc or cartridge picture, and
+    {'screenshots': [new names]} when any were added.
     """
     existing = existing or {}
     copied = {}
@@ -918,6 +919,29 @@ def copy_esde_media(db_game_id, game_data, system_folder=None, existing=None,
                     filename = copy_media(folder_src, dest_folder, folder_stem)
             if filename:
                 copied[field] = filename
+
+        # The disc or cartridge, for the open box, while no source has one
+        # (PASS-59-328). Re-encoded to WebP like a downloaded scan.
+        from services import box_scans
+        if not box_scans.has_kind(existing.get('box_scans'), 'media'):
+            src = (resolve_media_path(esde_data.get('physicalmedia', ''))
+                   or find_media_by_rom_name('physicalmedia'))
+            cap = getattr(config, 'MAX_MEDIA_DOWNLOAD_BYTES', 50 * 1024 * 1024)
+            if src and os.path.getsize(src) <= cap:
+                import secrets
+                from services.image_utils import finalize_downloaded_image
+                name = box_scans.media_name(db_game_id, secrets.token_hex(3))
+                dest = os.path.join(box_scans.scans_dir(), name)
+                os.makedirs(box_scans.scans_dir(), exist_ok=True)
+                try:
+                    shutil.copyfile(src, dest)
+                    finalize_downloaded_image(dest, 'box_scans')
+                    copied['box_scans_media'] = name
+                    logger.info(f"  Copied physical media: {os.path.basename(src)}")
+                except OSError as e:
+                    logger.error(f"  Failed to copy physical media: {e}")
+                    if os.path.exists(dest):
+                        os.remove(dest)
 
         # Old box art goes only once its replacement is really here.
         if force_overwrite:

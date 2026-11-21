@@ -126,7 +126,7 @@ def test_mobygames_keeps_stored_values(moby_downloads):
                   genre='RPG', perspective='Top-Down', release_date='1997-01-31',
                   boxart='curated_box.webp', boxart_back='curated_back.webp',
                   screenshots='old_ss.webp', moby_score=1.0, mobygames_id=5,
-                  box_scans='{"version": 1}')
+                  box_scans='{"version": 1, "mobygames": {"items": []}}')
     metadata = _metadata(**stored)
     metadata_merger.apply_mobygames_to_metadata(metadata, _moby_answer(), 1, {'filled_fields': []},
                                                 fill_only=True, platform_id=6, own_region='Europe')

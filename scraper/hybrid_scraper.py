@@ -1317,6 +1317,12 @@ def _merge_esde(metadata, details, result, db_game_id, system_folder,
         fill(field, copied.get(field))
     if copied.get('boxart'):
         metadata['_boxart_source'] = 'esde'
+    if copied.get('box_scans_media'):
+        from services import box_scans
+        entry = box_scans.media_entry(copied['box_scans_media'])
+        if entry:
+            metadata['box_scans'] = box_scans.with_source(metadata.get('box_scans'), 'esde', entry)
+            result['filled_fields'].append('box_scans +1 (ES-DE)')
     if copied.get('screenshots'):
         listed = [s.strip() for s in (metadata['screenshots'] or '').split(',') if s.strip()]
         metadata['screenshots'] = ','.join(listed + copied['screenshots'])
