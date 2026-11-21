@@ -525,6 +525,27 @@ CASE_TYPES: dict[str, CaseType] = {
     ),
 }
 
+# Working shapes for the keep cases nobody has measured (RetroDB PASS-59-325;
+# user, 2026-11-21: a case must show the seam where it opens). DVD and Blu-ray
+# cases take the PS5's corners, edges, lip and seam without its finger recess;
+# the handheld cases rounder corners and a finer seam for their size; a
+# clamshell heavier corners, edges and seam. All judged by eye, unmeasured.
+# Each case's lip is its own rim. A measured shape replaces one per case.
+_NO_RECESS = {"recess_length": 0.0, "recess_height": 0.0, "recess_depth": 0.0}
+_FAMILY_SHAPES: dict[str, CaseShape] = {
+    "dvd": replace(_PS5_SHAPE, **_NO_RECESS),
+    "bluray": replace(_PS5_SHAPE, **_NO_RECESS),
+    "ds": replace(_PS5_SHAPE, corner_radius=2.5, seam_width=0.6, seam_depth=0.3, **_NO_RECESS),
+    "psp": replace(_PS5_SHAPE, corner_radius=2.5, seam_width=0.6, seam_depth=0.3, **_NO_RECESS),
+    "switch": replace(_PS5_SHAPE, corner_radius=2.5, seam_width=0.6, seam_depth=0.3, **_NO_RECESS),
+    "clamshell": CaseShape(corner_radius=4.0, edge_radius=2.0, lip_height=0.8,
+                           seam_width=1.2, seam_depth=0.6),
+}
+for _name, _case in CASE_TYPES.items():
+    if _case.shape is None and _case.texture in _FAMILY_SHAPES:
+        CASE_TYPES[_name] = replace(
+            _case, shape=replace(_FAMILY_SHAPES[_case.texture], lip_width=_case.rim_mm))
+
 # Edition and special-colour cases, picked by hand (SLIP-0113): the
 # standard case in another plastic. Colours from Wikipedia, Keep case,
 # per docs/research/SLIP-0113-edition-cases.md; every RGB is judged by eye.

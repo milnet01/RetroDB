@@ -37,6 +37,7 @@ from services.game_query import (
 )
 from services.analytics import invalidate_analytics_cache
 from services.box_faces import faces_for
+from services.box_scans import scans_for
 from services.release_dates import display_release_dates
 from services.launch_resolver import (has_achievements, keyboard_core, launch_checker,
                                      launch_emulator_name, rom_launch_problem)
@@ -933,7 +934,9 @@ def game_detail(game_id):
                              # PASS-59-153 — its images still await upscaling.
                              upscale_pending=upscale_queue.pending_status(game_id)[1],
                              # PASS-59-142 — imported Slipcase faces, or None.
-                             box_faces=faces_for(game))
+                             box_faces=faces_for(game),
+                             # PASS-59-325 — what the open box shows inside.
+                             box_scans=scans_for(game))
     except Exception as e:
         logger.error(f"Game detail error: {e}", exc_info=True)
         abort(500)

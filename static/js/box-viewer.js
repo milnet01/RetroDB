@@ -16,7 +16,23 @@
  * No WebGL2 → show() returns false and the zoom shows the picture.
  *
  * Controls: drag turns (pitch held to -89..89 degrees), the wheel and + / -
- * zoom, the arrow keys turn, Home and a double-click reset.
+ * zoom, the arrow keys turn, Home and a double-click reset, O opens.
+ *
+ * Opening (PASS-59-325). The case name picks one of three kinds. A keep case
+ * or clamshell opens like a book: the shell is cut at the seam and the front
+ * half turns on the spine. A jewel case is cut just under its lid. A cardboard
+ * carton swings its top flap back and lifts what it holds. Inside, built here
+ * from simple solids: a disc on its hub with a ridge round it, or a cartridge
+ * or card in its holder; the manual under two clips in the lid, or with no
+ * manual a PS2 case's memory-card holder. Pictures come from the game's box scans
+ * (services/box_scans.py::scans_for): the first `media` scan on the disc or
+ * cartridge, the first `manual` on the booklet, the first `inside` as the
+ * paper inside (a wide scan spread over both halves). The inside of the shell
+ * is drawn in the case's plastic, cardboard for a carton.
+ *
+ * Cost: it draws only when something changes, the opening runs frames only
+ * while it moves, the scans load the first time the box opens, and the canvas
+ * stops at twice the screen's pixel size.
  *
  * Contract: Slipcase docs/specs/SLIP-0104-turnable-3d-box.md § 4.1 (format,
  * orientation), § 4.5 (lighting, controls), INV-11, INV-12;
@@ -32,12 +48,20 @@
     const ZOOM_MAX = 3;
     const KEY_STEP = 10;        // degrees per arrow press
     const DRAG_SLOP = 3;        // px a press may move and still count as a click
+    const MAX_DPR = 2;          // canvas pixels per CSS pixel, at most
+    const OPEN_MS = 700;
 
     // Brightness = 0.45 + 0.55 × max(0, normal · light), § 4.5. The light is
     // in view space (y up, z towards the viewer): upper left, in front.
     const AMBIENT = 0.45;
     const DIFFUSE = 0.55;
     const LIGHT = unit([-0.35, 0.5, 1]);
+    // RetroDB adds to § 4.5 for bare plastic only (PASS-59-325): a soft shine,
+    // so rounded edges and the lips beside the seam catch the light, and a
+    // shadow in the seam's groove. Without them a dark case's seam is lost.
+    const SHEEN = 0.18;
+    const SHININESS = 20;
+    const GROOVE = 0.35;        // the groove's colour, as a share of the plastic's
 
     // --- The solid (Slipcase core/box_shape.py) ----------------------------
     // Millimetres, the box centred on the origin: x across the front, y up,
@@ -281,38 +305,277 @@
         return patches;
     }
 
+    // --- Opening (PASS-59-325) -----------------------------------------------
+    // Every patch below is {corners, uv, tex, colour, inner, part, slide}:
+    // `part` is 'base' (stays), 'lid' (turns on the hinge) or 'slide' (rises
+    // `slide` mm as a carton opens); `inner` is the colour of its back side.
+
+    const JEWEL_LID_MM = 3;     // a jewel case's lid, cut this far under the front
+    const PAPER_MM = 0.4;       // paper and parts sit this far off the plastic
+    const SILVER = [0.80, 0.82, 0.85];
+    const CARDBOARD = [0.72, 0.66, 0.56];
+    const CARTRIDGE = [0.12, 0.12, 0.13];   // a cartridge's bare plastic
+    const DISC_CASES = /PS[2-5]|DVD|Blu-ray|Xbox|Wii|GameCube|Jewel|Long Box/;
+    // Cards and small cartridges held in a keep case: [name, width, height, thickness] in mm.
+    const CARDS = [[/Switch/, 21, 31, 3.3], [/3DS|DS Case/, 35, 33, 3.8], [/Vita/, 22, 30, 2],
+        [/PSP/, 64, 65, 4.2], [/HuCard/, 54, 85, 1]];
+
+    function caseKind(name) {
+        const n = String(name || '');
+        if (/Jewel/.test(n)) return 'jewel';
+        if (/Cartridge Box|Game Boy Box|GBA Box|Game Gear Box|Atari 2600 Box/.test(n)) return 'carton';
+        return 'keep';
+    }
+
+    // Where the shell is cut and what turns: a book's lid on the spine (axis
+    // y), a carton's flap on its top back edge (axis x). `max` is in degrees.
+    function hingeOf(kind, c) {
+        const w = c.width_mm / 2, h = c.height_mm / 2, d = c.depth_mm / 2;
+        if (kind === 'carton') return {axis: 'x', pivot: [0, h, -d], at: h, max: 115};
+        const at = kind === 'jewel' ? d - JEWEL_LID_MM : 0;
+        return {axis: 'y', pivot: [-w, 0, at], at, max: 170};
+    }
+
+    // The part of a patch where side(p) >= 0, its picture places carried
+    // along; null where none of it is.
+    function clipPatch(p, side) {
+        const corners = [], uv = [], n = p.corners.length;
+        const uvOf = i => (p.uv ? p.uv[i] : [0, 0]);
+        for (let i = 0; i < n; i++) {
+            const j = (i + 1) % n, a = side(p.corners[i]), b = side(p.corners[j]);
+            if (a >= 0) { corners.push(p.corners[i]); uv.push(uvOf(i)); }
+            if ((a > 0 && b < 0) || (a < 0 && b > 0)) {
+                const t = a / (a - b), mix = (x, y) => x.map((v, k) => v + (y[k] - v) * t);
+                corners.push(mix(p.corners[i], p.corners[j]));
+                uv.push(mix(uvOf(i), uvOf(j)));
+            }
+        }
+        if (corners.length < 3 || patchNormal(corners).every(x => x === 0)) return null;
+        return {...p, corners, uv: p.uv ? uv : null};
+    }
+
+    // The closed shell's patches, each given to the base or the lid.
+    function splitShell(patches, hinge) {
+        const out = [];
+        for (const p of patches) {
+            if (hinge.axis === 'x') {
+                const top = p.corners.every(q => q[1] >= hinge.at - SAME_MM);
+                out.push({...p, part: top ? 'lid' : 'base'});
+                continue;
+            }
+            for (const [part, sign] of [['lid', 1], ['base', -1]]) {
+                const piece = clipPatch(p, q => sign * (q[2] - hinge.at));
+                if (piece) out.push({...piece, part});
+            }
+        }
+        return out;
+    }
+
+    function part(corners, outward, name, colour, tex = null, uv = null, slide = 0) {
+        if (dot(patchNormal(corners), outward) < 0) {
+            corners = corners.slice().reverse();
+            uv = uv && uv.slice().reverse();
+        }
+        return {corners, uv, tex, colour, inner: colour, part: name, slide};
+    }
+
+    // A box of the given centre and size; `tex` maps a face name to a picture.
+    function cuboid(centre, size, name, colour, tex = {}, slide = 0) {
+        const faces = faceCorners({width_mm: size[0], height_mm: size[1], depth_mm: size[2]});
+        return Object.entries(faces).map(([face, cs]) => ({
+            corners: cs.map(q => q.map((v, k) => v + centre[k])),
+            uv: tex[face] ? FULL_PICTURE : null, tex: tex[face] || null,
+            colour, inner: colour, part: name, slide,
+        }));
+    }
+
+    // A flat ring (a disc when r0 is small) standing from z0 to z1 round
+    // (cx, cy); `tex` covers its top, the picture's square fitted to r1.
+    function annulus(cx, cy, z0, z1, r0, r1, name, colour, tex = null, segments = 48) {
+        const out = [];
+        const at = (r, a, z) => [cx + r * Math.cos(a), cy + r * Math.sin(a), z];
+        const uvOf = q => [0.5 + (q[0] - cx) / (2 * r1), 0.5 - (q[1] - cy) / (2 * r1)];
+        for (let i = 0; i < segments; i++) {
+            const a0 = 2 * Math.PI * i / segments, a1 = 2 * Math.PI * (i + 1) / segments;
+            const mid = (a0 + a1) / 2, radial = [Math.cos(mid), Math.sin(mid), 0];
+            const top = [at(r0, a0, z1), at(r1, a0, z1), at(r1, a1, z1), at(r0, a1, z1)];
+            out.push(part(top, [0, 0, 1], name, colour, tex, tex ? top.map(uvOf) : null));
+            out.push(part([at(r0, a0, z0), at(r1, a0, z0), at(r1, a1, z0), at(r0, a1, z0)],
+                [0, 0, -1], name, colour));
+            out.push(part([at(r1, a0, z1), at(r1, a1, z1), at(r1, a1, z0), at(r1, a0, z0)],
+                radial, name, colour));
+            out.push(part([at(r0, a0, z1), at(r0, a1, z1), at(r0, a1, z0), at(r0, a0, z0)],
+                radial.map(v => -v), name, colour));
+        }
+        return out;
+    }
+
+    // The disc hub: a ring of teeth round the centre, as on a real tray.
+    function rosette(cx, cy, z0, z1, name, colour, teeth = 12) {
+        const out = [], points = [];
+        for (let i = 0; i < teeth * 2; i++) {
+            const a = Math.PI * i / teeth, r = i % 2 ? 6.2 : 7.4;
+            points.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]);
+        }
+        points.forEach(([x0, y0], i) => {
+            const [x1, y1] = points[(i + 1) % points.length];
+            out.push(part([[cx, cy, z1], [x0, y0, z1], [x1, y1, z1]], [0, 0, 1], name, colour));
+            out.push(part([[x0, y0, z1], [x1, y1, z1], [x1, y1, z0], [x0, y0, z0]],
+                [(x0 + x1) / 2 - cx, (y0 + y1) / 2 - cy, 0], name, colour));
+        });
+        return out;
+    }
+
+    // A quad of paper facing `outward` at depth z, the picture's [u0, u1]
+    // across it; `flip` mirrors it, for paper read from inside the lid.
+    function paper(x0, x1, y0, y1, z, outward, name, tex, u0, u1, flip) {
+        const [l, r] = flip ? [x1, x0] : [x0, x1];
+        const corners = [[l, y1, z], [r, y1, z], [r, y0, z], [l, y0, z]];
+        return part(corners, outward, name, [1, 1, 1], tex, [[u0, 0], [u1, 0], [u1, 1], [u0, 1]]);
+    }
+
+    const firstOf = (scans, kind) => scans.find(s => s.kind === kind) || null;
+    const aspectOf = s => (s && s.width > 0 && s.height > 0 ? s.width / s.height : null);
+    const scanUrl = s => (s ? `/static/${encodeURI(s.url)}` : null);
+
+    // What sits inside the case, placed as it sits when the case is closed.
+    function insideParts(kind, c, shape, plastic, scans) {
+        const out = [];
+        const w = c.width_mm / 2, h = c.height_mm / 2, d = c.depth_mm / 2;
+        const sheet = (shape && shape.lip_height_mm) || 0;
+        const floor = -d + sheet + PAPER_MM;      // the tray's inside
+        const media = firstOf(scans, 'media'), manual = firstOf(scans, 'manual');
+        const inside = firstOf(scans, 'inside');
+
+        if (kind === 'carton') {
+            const ch = 0.75 * c.height_mm, ct = Math.min(0.6 * c.depth_mm, 22);
+            const cw = Math.min(c.width_mm - 8, ch * (aspectOf(media) || 0.8));
+            out.push(...cuboid([0, -h + ch / 2 + 1, d - ct / 2 - 2], [cw, ch, ct], 'slide', CARTRIDGE,
+                {front: scanUrl(media)}, 0.45 * ch));
+            if (manual) {
+                out.push(...cuboid([0, 0, -d + 2], [c.width_mm - 6, c.height_mm - 6, 1.5], 'slide', [1, 1, 1],
+                    {front: scanUrl(manual)}, 0.25 * c.height_mm));
+            }
+            return out;
+        }
+
+        const lidInside = d - sheet - PAPER_MM;   // the lid's inside, facing -z
+        const spread = aspectOf(inside) > 1.2;
+        if (inside) {
+            out.push(paper(-w + 2, w - 2, -h + 2, h - 2, floor, [0, 0, 1], 'base', scanUrl(inside),
+                spread ? 0.5 : 0, 1, false));
+            if (spread) {
+                out.push(paper(-w + 2, w - 2, -h + 2, h - 2, lidInside, [0, 0, -1], 'lid', scanUrl(inside),
+                    0, 0.5, true));
+            }
+        }
+
+        const name = c.name || '';
+        if (DISC_CASES.test(name)) {
+            const r = Math.min(/GameCube/.test(name) ? 40 : 60, w - 3, h - 3);
+            out.push(...annulus(0, 0, floor, floor + 1.2, r + 1, r + 2.5, 'base', plastic));
+            out.push(...rosette(0, 0, floor, floor + 5, 'base', plastic));
+            out.push(...annulus(0, 0, floor + 2, floor + 3.2, 7.5, r, 'base', SILVER, scanUrl(media)));
+        } else {
+            const card = CARDS.find(([pattern]) => pattern.test(name));
+            let [cw, ch, ct] = card ? card.slice(1) : [0.75 * c.width_mm, 0.55 * c.height_mm,
+                Math.min(c.depth_mm - 3, 18)];
+            if (!card && aspectOf(media)) cw = Math.min(c.width_mm - 10, ch * aspectOf(media));
+            const cy = card ? h * 0.25 : 0, wall = 1.5, high = Math.min(ct + 1, c.depth_mm - 2);
+            out.push(...cuboid([0, cy, floor + ct / 2], [cw, ch, ct], 'base', CARTRIDGE,
+                {front: scanUrl(media)}));
+            for (const [x, y, sx, sy] of [[0, ch / 2 + wall, cw + 4 * wall, wall], [0, -ch / 2 - wall, cw + 4 * wall, wall],
+                [cw / 2 + wall, 0, wall, ch], [-cw / 2 - wall, 0, wall, ch]]) {
+                out.push(...cuboid([x, cy + y, floor + high / 2], [sx, sy, high], 'base', plastic));
+            }
+        }
+
+        if (kind === 'jewel') {
+            // Two tabs on the lid's opening side hold the booklet.
+            for (const y of [h * 0.4, -h * 0.4]) {
+                out.push(...cuboid([w - 3, y, lidInside - 1], [4, 10, 2], 'lid', plastic));
+            }
+            return out;
+        }
+        if (/PS2/.test(name) && !manual) {
+            // The memory-card holder: a low frame. A manual lies over it, so
+            // it is drawn only without one: its walls, edge-on under the
+            // manual, would show through in streaks.
+            const [mx, my, mw, mh] = [w - 40, -h + 35, 60, 44];
+            for (const [x, y, sx, sy] of [[0, mh / 2, mw, 1.5], [0, -mh / 2, mw, 1.5],
+                [mw / 2, 0, 1.5, mh], [-mw / 2, 0, 1.5, mh]]) {
+                out.push(...cuboid([mx + x, my + y, lidInside - 1.5], [sx, sy, 3], 'lid', plastic));
+            }
+        }
+        if (manual) {
+            const aspect = aspectOf(manual) || 0.7;
+            let bh = c.height_mm - 16, bw = bh * aspect;
+            if (bw > c.width_mm - 14) { bw = c.width_mm - 14; bh = bw / aspect; }
+            const z = lidInside - 4;
+            out.push(...cuboid([0, 0, z], [bw, bh, 1.5], 'lid', [1, 1, 1], {back: scanUrl(manual)}));
+            // The clips at its top and bottom edges.
+            for (const y of [bh / 2 - 1, -bh / 2 + 1]) {
+                out.push(...cuboid([0, y, z - 1.5], [14, 4, 1.5], 'lid', plastic));
+            }
+        }
+        return out;
+    }
+
+    // The lid's turn and a slide's rise at `open` (0 shut, 1 open), as
+    // {rot: column-major mat3, shift}. Turning about y takes +z towards -x.
+    function partTransform(name, hinge, open, slide) {
+        if (name !== 'lid') return {rot: [1, 0, 0, 0, 1, 0, 0, 0, 1], shift: [0, slide * open, 0]};
+        const a = -rad(hinge.max * open), c = Math.cos(a), s = Math.sin(a);
+        const rot = hinge.axis === 'y' ? [c, 0, -s, 0, 1, 0, s, 0, c] : [1, 0, 0, 0, c, s, 0, -s, c];
+        return {rot, shift: [0, 0, 0]};
+    }
+
     // --- Drawing ----------------------------------------------------------
 
+    // u_part turns a part about u_pivot (the lid on its hinge), then u_shift
+    // moves it. A back side is seen only inside an opened shell: it shows
+    // u_inner, lit from its own side.
     const VERTEX = `#version 300 es
         in vec3 a_pos; in vec3 a_normal; in vec2 a_uv;
-        uniform mat3 u_rot; uniform float u_scale, u_persp, u_near, u_far;
-        uniform vec2 u_half; uniform vec3 u_light;
-        out vec2 v_uv; out float v_bright;
+        uniform mat3 u_rot, u_part; uniform vec3 u_pivot, u_shift;
+        uniform float u_scale, u_persp, u_near, u_far; uniform vec2 u_half;
+        out vec2 v_uv; out vec3 v_normal;
         void main() {
-            vec3 v = u_rot * a_pos * u_scale;
+            vec3 p = u_part * (a_pos - u_pivot) + u_pivot + u_shift;
+            vec3 v = u_rot * p * u_scale;
             float w = u_persp - v.z;
             float z = w * (u_far + u_near) / (u_far - u_near) - 2.0 * u_far * u_near / (u_far - u_near);
             gl_Position = vec4(v.x * u_persp / u_half.x, v.y * u_persp / u_half.y, z, w);
             v_uv = a_uv;
-            v_bright = ${AMBIENT} + ${DIFFUSE} * max(0.0, dot(normalize(u_rot * a_normal), u_light));
+            v_normal = u_rot * (u_part * a_normal);
         }`;
     const FRAGMENT = `#version 300 es
         precision mediump float;
-        in vec2 v_uv; in float v_bright;
-        uniform sampler2D u_tex; uniform bool u_use_tex; uniform vec3 u_colour;
+        in vec2 v_uv; in vec3 v_normal;
+        uniform sampler2D u_tex; uniform bool u_use_tex; uniform vec3 u_colour, u_inner, u_light;
+        uniform float u_shine;
         out vec4 colour;
         void main() {
-            vec3 base = u_use_tex ? texture(u_tex, v_uv).rgb : u_colour;
-            colour = vec4(base * v_bright, 1.0);
+            vec3 n = normalize(v_normal);
+            vec3 base = u_inner;
+            if (gl_FrontFacing) base = u_use_tex ? texture(u_tex, v_uv).rgb : u_colour;
+            else n = -n;
+            float lit = ${AMBIENT} + ${DIFFUSE} * max(0.0, dot(n, u_light));
+            vec3 half_way = normalize(u_light + vec3(0.0, 0.0, 1.0));
+            float shine = u_shine * ${SHEEN} * pow(max(0.0, dot(n, half_way)), ${SHININESS}.0);
+            colour = vec4(base * lit + shine, 1.0);
         }`;
 
     let root, stage, canvas, gl = null, prog = null, loc = {};
+    let openButton = null, strip = null, scanView = null;
     let record = null;
-    let groups = [];            // [{face, colour, first, count}], one draw each
+    let scans = [];             // services/box_scans.py::scans_for
+    let groups = [];            // [{tex, colour, inner, part, slide, first, count}], one draw each
     let buffer = null, vao = null;
     const textures = {};        // url → {tex, ready}
-    let fit = 1, persp = 1, radius = 1;
+    let fitShut = 1, fitOpen = 1, radius = 1, hinge = null, kind = 'keep';
     let yaw = START_YAW, pitch = START_PITCH, zoom = 1;
+    let open = 0, tween = null; // 0 shut .. 1 open; tween runs frames while it moves
 
     const rad = deg => deg * Math.PI / 180;
 
@@ -349,8 +612,8 @@
         gl.attachShader(prog, shader(gl.FRAGMENT_SHADER, FRAGMENT));
         gl.linkProgram(prog);
         if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
-        for (const name of ['u_rot', 'u_scale', 'u_persp', 'u_near', 'u_far', 'u_half',
-            'u_light', 'u_tex', 'u_use_tex', 'u_colour']) {
+        for (const name of ['u_rot', 'u_part', 'u_pivot', 'u_shift', 'u_scale', 'u_persp', 'u_near',
+            'u_far', 'u_half', 'u_light', 'u_tex', 'u_use_tex', 'u_colour', 'u_inner', 'u_shine']) {
             loc[name] = gl.getUniformLocation(prog, name);
         }
         buffer = gl.createBuffer();
@@ -364,7 +627,6 @@
             gl.vertexAttribPointer(at, size, gl.FLOAT, false, stride, offset);
         });
         gl.enable(gl.DEPTH_TEST);
-        gl.enable(gl.CULL_FACE);
         gl.frontFace(gl.CW);
         return true;
     }
@@ -394,29 +656,66 @@
         return entry;
     }
 
-    // Triangles for every patch, grouped by what fills them.
+    // Triangles for the shell, cut for opening, and the parts inside,
+    // grouped by what fills them and how they move.
     function buildMesh() {
         const shape = record.shape && typeof record.shape === 'object' ? record.shape : null;
-        const byKey = new Map();
-        for (const p of boxPatches(record.case, shape)) {
-            const key = `${p.face}|${p.colour}`;
-            if (!byKey.has(key)) byKey.set(key, {face: p.face, colour: p.colour, data: []});
-            const out = byKey.get(key).data;
-            const normal = patchNormal(p.corners);
-            const uv = p.source || p.corners.map(() => [0, 0]);
-            // A fan: every patch is convex.
-            for (let i = 1; i < p.corners.length - 1; i++) {
-                for (const j of [0, i, i + 1]) out.push(...p.corners[j], ...normal, ...uv[j]);
+        kind = caseKind(record.case.name);
+        hinge = hingeOf(kind, record.case);
+        const plastic = hexColour(record.colours.edge);
+        const inner = kind === 'carton' ? CARDBOARD : plastic;
+        const faceUrl = face => {
+            const url = face && record.urls && record.urls[face];
+            return url ? `/static/${encodeURI(url)}` : null;
+        };
+        // The seam's groove: plastic within its width of the middle.
+        const groove = shape && shape.seam_width_mm > 0 ? shape.seam_width_mm / 2 + SAME_MM : -1;
+        const shell = boxPatches(record.case, shape).map(p => {
+            let colour = hexColour(record.colours[p.colour]);
+            if (p.face === null && p.corners.every(q => Math.abs(q[2]) <= groove)) {
+                colour = colour.map(v => v * GROOVE);
             }
+            return {corners: p.corners, uv: p.source, tex: faceUrl(p.face), colour, inner,
+                slide: 0, shell: true};
+        });
+        // Bare plastic shines; pictures, paper and cardboard do not.
+        const shines = p => !p.tex && !(p.shell && kind === 'carton');
+        const patches = splitShell(shell, hinge)
+            .concat(insideParts(kind, record.case, shape, plastic, scans));
+
+        const byKey = new Map();
+        let floats = 0;
+        for (const p of patches) {
+            const key = [p.tex, p.colour, p.inner, p.part, p.slide, !!p.shell].join('|');
+            if (!byKey.has(key)) {
+                byKey.set(key, {tex: p.tex, colour: p.colour, inner: p.inner, part: p.part,
+                    slide: p.slide, shell: !!p.shell, shine: shines(p), patches: []});
+            }
+            byKey.get(key).patches.push(p);
+            floats += (p.corners.length - 2) * 3 * 8;
         }
-        const all = [];
+        // One typed array, filled in place: no per-vertex garbage.
+        const all = new Float32Array(floats);
+        let at = 0;
         groups = [];
         for (const g of byKey.values()) {
-            groups.push({face: g.face, colour: g.colour, first: all.length / 8, count: g.data.length / 8});
-            for (const x of g.data) all.push(x);
+            const first = at / 8;
+            for (const p of g.patches) {
+                const normal = patchNormal(p.corners);
+                // A fan: every patch is convex.
+                for (let i = 1; i < p.corners.length - 1; i++) {
+                    for (const j of [0, i, i + 1]) {
+                        const q = p.corners[j], uv = p.uv ? p.uv[j] : [0, 0];
+                        all.set([q[0], q[1], q[2], normal[0], normal[1], normal[2], uv[0], uv[1]], at);
+                        at += 8;
+                    }
+                }
+            }
+            groups.push({tex: g.tex, colour: g.colour, inner: g.inner, part: g.part, slide: g.slide,
+                shell: g.shell, shine: g.shine ? 1 : 0, first, count: at / 8 - first});
         }
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(all), gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, all, gl.STATIC_DRAW);
     }
 
     // The box's rotation: pitch about x after yaw about y (column-major).
@@ -436,7 +735,16 @@
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.useProgram(prog);
         gl.bindVertexArray(vao);
+        // Shut, the inside cannot be seen: cull the back sides and skip the
+        // parts, so their pictures are not even fetched until it opens.
+        if (open > 0) gl.disable(gl.CULL_FACE);
+        else gl.enable(gl.CULL_FACE);
+        const fit = fitShut + (fitOpen - fitShut) * open;
         const scale = fit * zoom, reach = radius * scale * 1.05;
+        const persp = record.case.height_mm * fit * 4;
+        // The opened box, kept in the middle of the stage.
+        const centre = hinge.axis === 'y' ? [record.case.width_mm / 2 * open, 0, 0]
+            : [0, -0.2 * record.case.height_mm * open, 0];
         gl.uniformMatrix3fv(loc.u_rot, false, rotation());
         gl.uniform1f(loc.u_scale, scale);
         gl.uniform1f(loc.u_persp, persp);
@@ -444,50 +752,146 @@
         gl.uniform1f(loc.u_far, persp + reach);
         gl.uniform2f(loc.u_half, canvas.clientWidth / 2, canvas.clientHeight / 2);
         gl.uniform3fv(loc.u_light, LIGHT);
+        gl.uniform3fv(loc.u_pivot, hinge.pivot);
         gl.uniform1i(loc.u_tex, 0);
         for (const g of groups) {
-            const url = g.face && record.urls && record.urls[g.face];
-            const tex = url ? texture(`/static/${encodeURI(url)}`) : null;
+            if (!g.shell && open === 0) continue;
+            const tex = g.tex ? texture(g.tex) : null;
+            const move = partTransform(g.part, hinge, open, g.slide);
+            gl.uniformMatrix3fv(loc.u_part, false, move.rot);
+            gl.uniform3fv(loc.u_shift, move.shift.map((v, k) => v + centre[k]));
             gl.uniform1i(loc.u_use_tex, tex && tex.ready ? 1 : 0);
             if (tex && tex.ready) gl.bindTexture(gl.TEXTURE_2D, tex.tex);
-            gl.uniform3fv(loc.u_colour, hexColour(record.colours[g.colour]));
+            gl.uniform3fv(loc.u_colour, g.colour);
+            gl.uniform3fv(loc.u_inner, g.inner);
+            gl.uniform1f(loc.u_shine, g.shine);
             gl.drawArrays(gl.TRIANGLES, g.first, g.count);
         }
     }
 
+    const ease = t => (t < 0.5 ? 2 * t * t : 1 - 2 * (1 - t) * (1 - t));
+
+    // Opens (1) or shuts (0) the box, turning the view to face the inside
+    // as it opens and back as it shuts. Frames run only until it arrives.
+    function setOpen(target) {
+        const view = target ? (hinge.axis === 'y' ? [0, 20] : [15, 40]) : [START_YAW, START_PITCH];
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        yaw = ((yaw + 180) % 360 + 360) % 360 - 180;    // turn back the short way
+        tween = {from: [open, yaw, pitch], to: [target, ...view], start: performance.now(),
+            ms: reduce ? 0 : OPEN_MS * Math.abs(target - open), view: true};
+        const step = now => {
+            if (!tween) return;
+            const t = tween.ms ? Math.min(1, (now - tween.start) / tween.ms) : 1, k = ease(t);
+            const at = i => tween.from[i] + (tween.to[i] - tween.from[i]) * k;
+            open = at(0);
+            if (tween.view) { yaw = at(1); pitch = at(2); }
+            draw();
+            if (t < 1) requestAnimationFrame(step);
+            else tween = null;
+        };
+        requestAnimationFrame(step);
+        updateOpenControls(target);
+    }
+
+    // Back to the first view, the box still as open as it is.
     function reset() {
-        yaw = START_YAW;
-        pitch = START_PITCH;
+        tween = null;
+        const shut = open < 0.5;
+        yaw = shut ? START_YAW : (hinge.axis === 'y' ? 0 : 15);
+        pitch = shut ? START_PITCH : (hinge.axis === 'y' ? 20 : 40);
         zoom = 1;
         draw();
     }
 
     // Sizes the box so its height, and its widest turn (the diagonal of
-    // front and spine), each fill most of the stage.
-    function build() {
+    // front and spine), each fill most of the stage; opened, so the open
+    // book's two halves or the carton's lifted contents do.
+    function sizeToStage() {
         const {width_mm: wmm, height_mm: hmm, depth_mm: dmm} = record.case;
         const rect = stage.getBoundingClientRect();
-        const dpr = window.devicePixelRatio || 1;
+        const dpr = Math.min(MAX_DPR, window.devicePixelRatio || 1);
         canvas.width = Math.round(rect.width * dpr);
         canvas.height = Math.round(rect.height * dpr);
-        fit = Math.min(rect.height * 0.8 / hmm, rect.width * 0.8 / Math.hypot(wmm, dmm));
-        persp = hmm * fit * 4;
-        radius = Math.hypot(wmm, hmm, dmm) / 2;
-        buildMesh();
+        fitShut = Math.min(rect.height * 0.8 / hmm, rect.width * 0.8 / Math.hypot(wmm, dmm));
+        fitOpen = caseKind(record.case.name) === 'carton'
+            ? Math.min(rect.height * 0.8 / (hmm * 1.45), rect.width * 0.8 / Math.hypot(wmm, dmm))
+            : Math.min(rect.height * 0.8 / hmm, rect.width * 0.85 / (2 * wmm + dmm));
+        radius = Math.hypot(2 * wmm + dmm, 1.5 * hmm, wmm) / 2;
     }
 
-    // Shows the box in place of the zoomed picture; call it once the zoom is
-    // open, so the stage has its size. False when the game has no faces or
-    // the browser has no WebGL2, and the caller zooms the picture instead.
+    // Shows the box in place of the zoomed picture, shut; call it once the
+    // zoom is open, so the stage has its size. False when the game has no
+    // faces or the browser has no WebGL2, and the caller zooms the picture.
     function show() {
         if (!root) return false;
         root.hidden = true;
         if (!record || !initGl()) return false;
         root.hidden = false;
-        build();
+        closeScan();
+        open = 0;
+        sizeToStage();
+        buildMesh();
+        updateOpenControls(0);
         reset();
         stage.focus({preventScroll: true});
         return true;
+    }
+
+    // --- The Open button and the scans strip --------------------------------
+
+    function updateOpenControls(target) {
+        if (!openButton) return;
+        openButton.textContent = target ? openButton.dataset.closeLabel : openButton.dataset.openLabel;
+        openButton.setAttribute('aria-pressed', target ? 'true' : 'false');
+        strip.hidden = !target || !scans.length;
+    }
+
+    function toggleOpen() {
+        if (!gl || !record || root.hidden) return;
+        setOpen(open < 0.5 || (tween && tween.to[0] === 0) ? 1 : 0);
+    }
+
+    // The strip of the inside's scans, built once per page; thumbnails load
+    // only when the strip first shows.
+    function buildStrip() {
+        strip.replaceChildren();
+        let labels = {};
+        try { labels = JSON.parse(strip.dataset.kindLabels || '{}'); } catch (e) { labels = {}; }
+        for (const scan of scans) {
+            const label = [labels[scan.kind] || scan.kind, scan.caption].filter(Boolean).join(' — ');
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'box-viewer-thumb';
+            button.title = label;
+            const img = document.createElement('img');
+            img.src = scanUrl(scan);
+            img.alt = label;
+            img.loading = 'lazy';
+            img.decoding = 'async';
+            button.append(img);
+            button.addEventListener('click', () => openScan(scan, label));
+            strip.append(button);
+        }
+    }
+
+    function openScan(scan, label) {
+        scanView.querySelector('img').src = scanUrl(scan);
+        scanView.querySelector('img').alt = label;
+        scanView.querySelector('figcaption').textContent = label;
+        stage.hidden = true;
+        strip.hidden = true;
+        scanView.hidden = false;
+        scanView.querySelector('button').focus({preventScroll: true});
+    }
+
+    function closeScan() {
+        if (!scanView || scanView.hidden) return;
+        scanView.hidden = true;
+        scanView.querySelector('img').removeAttribute('src');   // let the browser drop it
+        stage.hidden = false;
+        updateOpenControls(open >= 0.5 ? 1 : 0);
+        stage.focus({preventScroll: true});
+        draw();
     }
 
     // game-box-faces.js hands over the record after an import, null after
@@ -498,7 +902,7 @@
 
     function onResize() {
         if (root && !root.hidden && record && gl) {
-            build();
+            sizeToStage();
             draw();
         }
     }
@@ -515,6 +919,7 @@
             const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
             if (!drag.moved && Math.hypot(dx, dy) < DRAG_SLOP) return;
             drag.moved = true;
+            if (tween) tween.view = false;   // the hand takes the view; the lid keeps moving
             yaw += dx * 0.5;
             pitch = Math.max(-PITCH_LIMIT, Math.min(PITCH_LIMIT, pitch + dy * 0.5));
             drag.x = e.clientX;
@@ -539,7 +944,9 @@
             draw();
         }, {passive: false});
         stage.addEventListener('keydown', e => {
+            if (tween && e.key.startsWith('Arrow')) tween.view = false;
             switch (e.key) {
+                case 'o': case 'O': toggleOpen(); return e.preventDefault();
                 case 'ArrowLeft': yaw -= KEY_STEP; break;
                 case 'ArrowRight': yaw += KEY_STEP; break;
                 case 'ArrowUp': pitch = Math.max(-PITCH_LIMIT, pitch - KEY_STEP); break;
@@ -570,11 +977,24 @@
         } catch (e) {
             record = null;
         }
+        try {
+            scans = JSON.parse(root.dataset.scans || '[]') || [];
+        } catch (e) {
+            scans = [];
+        }
+        openButton = root.querySelector('.box-viewer-open');
+        strip = root.querySelector('.box-viewer-scans');
+        scanView = root.querySelector('.box-viewer-scan');
+        if (openButton) {
+            openButton.addEventListener('click', toggleOpen);
+            scanView.querySelector('button').addEventListener('click', closeScan);
+            buildStrip();
+        }
         wireControls();
         window.addEventListener('resize', debounce(onResize, 150));
     }
 
-    window.BoxViewer = {show, setRecord, boxPatches};
+    window.BoxViewer = {show, setRecord, boxPatches, caseKind, splitShell, insideParts};
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);

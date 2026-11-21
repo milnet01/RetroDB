@@ -155,6 +155,10 @@ def inputs(row):
 def _signature(case, row, found):
     """What a build depends on, so an unchanged game is not rebuilt."""
     parts = [str(BUILD_VERSION), case.name, row['title'] or '', row['disc_serial'] or '']
+    if case.shape is not None:
+        # Left out when there is none, so a case without one keeps its old
+        # signature; a new or changed shape rebuilds (it changes the faces).
+        parts.append(repr(case.shape))
     for face in ('front', 'full', 'back', 'spine', 'edge', 'top', 'bottom'):
         path = found[face]
         parts.append(f'{face}={os.path.basename(path)}:{os.path.getsize(path)}' if path else f'{face}=')

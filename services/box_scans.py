@@ -97,19 +97,22 @@ def _scan_path(name):
     return safe_path(joined, base)
 
 
-def _files(value):
-    """Every file name a stored record names; none for NULL or an unreadable one."""
+def _items(value):
+    """Every item of a stored record, all sources in order; none for NULL or
+    an unreadable one."""
     try:
         record = json.loads(value) if value else None
     except (TypeError, ValueError):
         return []
     if not isinstance(record, dict):
         return []
-    names = []
-    for source in record.values():
-        if isinstance(source, dict):
-            names.extend(i.get('file') for i in source.get('items') or [] if isinstance(i, dict))
-    return [n for n in names if n]
+    return [i for source in record.values() if isinstance(source, dict)
+            for i in source.get('items') or [] if isinstance(i, dict)]
+
+
+def _files(value):
+    """Every file name a stored record names."""
+    return [i['file'] for i in _items(value) if i.get('file')]
 
 
 def delete_scans(value, keep=()):
@@ -134,6 +137,31 @@ def drop_replaced(old_value, new_value):
     The orphan sweep keeps a live game's files, so nothing else would."""
     if old_value and new_value and old_value != new_value:
         delete_scans(old_value, keep=set(_files(new_value)))
+
+
+# What the open box (PASS-59-325) shows inside: the disc or cartridge, the
+# manual and leaflets. The outside of the box is box_faces' job.
+INSIDE_KINDS = ('media', 'manual', 'inside', 'extras', 'other')
+
+
+def scans_for(game_row):
+    """The scans the open box shows, in stored order, as
+    [{kind, caption, url, width, height}], only those whose file is on disk."""
+    try:
+        value = game_row['box_scans']
+    except (KeyError, IndexError):  # a row without the column
+        return []
+    found = []
+    for item in _items(value):
+        if item.get('kind') not in INSIDE_KINDS:
+            continue
+        path = _scan_path(item.get('file'))
+        if path is None or not os.path.isfile(path):
+            continue
+        found.append({'kind': item['kind'], 'caption': item.get('caption'),
+                      'url': f"images/box_scans/{item['file']}",
+                      'width': item.get('width'), 'height': item.get('height')})
+    return found
 
 
 def delete_scans_of(row):

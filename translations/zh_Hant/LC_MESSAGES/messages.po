@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-21 14:05+0200\n"
+"POT-Creation-Date: 2026-11-21 16:21+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hant\n"
@@ -196,8 +196,8 @@ msgstr "未找到系統，或該系統沒有包含成就的遊戲"
 #: routes/achievements.py:177 routes/achievements.py:468
 #: routes/bonus_discs.py:276 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
-#: routes/emulators.py:315 routes/emulators.py:329 routes/games.py:407
-#: routes/games.py:958 routes/games.py:1077 routes/games.py:1161
+#: routes/emulators.py:315 routes/emulators.py:329 routes/games.py:408
+#: routes/games.py:961 routes/games.py:1080 routes/games.py:1164
 #: routes/games_ai.py:43 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
 #: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:706
@@ -589,8 +589,8 @@ msgstr "附贈光碟與主遊戲必須屬於同一系統"
 msgid "A bonus disc links to a main game, one level only"
 msgstr "額外光碟可連結到一款主遊戲,且僅限一層"
 
-#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1431
-#: routes/games.py:1461 routes/platform_import.py:358
+#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1434
+#: routes/games.py:1464 routes/platform_import.py:358
 #: routes/platform_import.py:663 routes/platform_import.py:1047
 #: routes/scrape_logs.py:89 routes/scrape_logs.py:174 routes/scrape_logs.py:187
 #: routes/scrape_logs.py:225 routes/scraper.py:213 routes/scraper.py:573
@@ -820,90 +820,90 @@ msgstr "RetroDB 僅為 DuckStation、PCSX2 和 RPCS3 管理個別遊戲的設定
 msgid "Emulator not found"
 msgstr "未找到模擬器"
 
-#: routes/games.py:276 routes/games.py:314
+#: routes/games.py:277 routes/games.py:315
 msgid "No IDs provided"
 msgstr "未提供 ID"
 
-#: routes/games.py:322
+#: routes/games.py:323
 msgid "Provide 1-50 valid IDs"
 msgstr "請提供 1-50 個有效 ID"
 
-#: routes/games.py:598
+#: routes/games.py:599
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr "影片未儲存：必須是不超過 %(mb)s MB 的 MP4、WebM 或 OGG 檔案。"
 
-#: routes/games.py:611
+#: routes/games.py:612
 #, python-format
 msgid ""
 "Screenshots not added because they match ones the game already has: "
 "%(count)s"
 msgstr "因與該遊戲已有的截圖相同而未新增的截圖：%(count)s"
 
-#: routes/games.py:762
+#: routes/games.py:763
 msgid "Game not found after update"
 msgstr "更新後未找到該遊戲"
 
-#: routes/games.py:1081
+#: routes/games.py:1084
 msgid "No game selected."
 msgstr "未選擇遊戲。"
 
-#: routes/games.py:1105
+#: routes/games.py:1108
 msgid "This metadata apply is no longer running."
 msgstr "此中繼資料套用已不再執行。"
 
-#: routes/games.py:1114
+#: routes/games.py:1117
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
 " still missing)"
 msgstr "已從 %(sources)s 套用中繼資料！（已填寫 %(filled)d 個欄位，仍缺少 %(missing)d 個）"
 
-#: routes/games.py:1123
+#: routes/games.py:1126
 msgid "Failed to apply metadata."
 msgstr "套用中繼資料失敗。"
 
-#: routes/games.py:1197 routes/games.py:1246
+#: routes/games.py:1200 routes/games.py:1249
 msgid "No fields to update"
 msgstr "沒有可更新的欄位"
 
-#: routes/games.py:1239 routes/platform_import.py:264
+#: routes/games.py:1242 routes/platform_import.py:264
 #: routes/platform_import.py:569 routes/platform_import.py:933
 #: routes/trophies.py:1928 templates/game_imports.html:579
 #: templates/game_imports.html:852
 msgid "No games selected"
 msgstr "未選擇任何遊戲"
 
-#: routes/games.py:1243
+#: routes/games.py:1246
 msgid "Invalid game selection"
 msgstr "遊戲選擇無效"
 
-#: routes/games.py:1255
+#: routes/games.py:1258
 msgid "Invalid completion status"
 msgstr "完成狀態無效"
 
-#: routes/games.py:1293 services/api_helpers.py:114
+#: routes/games.py:1296 services/api_helpers.py:114
 #, python-format
 msgid "%(field)s must be text"
 msgstr "%(field)s 必須是文字"
 
-#: routes/games.py:1305
+#: routes/games.py:1308
 msgid "No valid fields to update"
 msgstr "沒有可更新的有效欄位"
 
-#: routes/games.py:1424
+#: routes/games.py:1427
 msgid "Invalid status"
 msgstr "狀態無效"
 
-#: routes/games.py:1449
+#: routes/games.py:1452
 msgid "Not authenticated"
 msgstr "未通過身分驗證"
 
-#: routes/games.py:1480
+#: routes/games.py:1483
 msgid "Filter type and value required"
 msgstr "需要篩選類型和值"
 
-#: routes/games.py:1493
+#: routes/games.py:1496
 msgid "Invalid filter type"
 msgstr "篩選類型無效"
 
@@ -1166,9 +1166,9 @@ msgstr "盒裝"
 msgid "3D box"
 msgstr "3D 盒裝"
 
-#: routes/maintenance.py:578 templates/_modals/manual_reader_modal.html:9
-#: templates/analytics.html:488 templates/analytics.html:2432
-#: templates/game_detail.html:125
+#: routes/maintenance.py:578 templates/_modals/boxart_zoom_modal.html:20
+#: templates/_modals/manual_reader_modal.html:9 templates/analytics.html:488
+#: templates/analytics.html:2432 templates/game_detail.html:125
 msgid "Manual"
 msgstr "說明書"
 
@@ -3722,7 +3722,7 @@ msgstr "操作已完成"
 msgid "Operation failed"
 msgstr "操作失敗"
 
-#: services/js_i18n_strings.py:919
+#: services/js_i18n_strings.py:919 templates/_modals/boxart_zoom_modal.html:20
 msgid "Other"
 msgstr "其他"
 
@@ -9051,11 +9051,11 @@ msgid ""
 "undone."
 msgstr "要重設所有中繼資料(包括封面和螢幕截圖)嗎?此操作無法復原。"
 
-#: templates/game_detail.html:4068 templates/game_detail.html:5889
+#: templates/game_detail.html:4068 templates/game_detail.html:5890
 msgid "Session expired — please log in again"
 msgstr "工作階段已過期,請重新登入"
 
-#: templates/game_detail.html:4069 templates/game_detail.html:5892
+#: templates/game_detail.html:4069 templates/game_detail.html:5893
 msgid "Server error — please try again"
 msgstr "伺服器錯誤,請再試一次"
 
@@ -9168,32 +9168,32 @@ msgstr "清除 HLTB 資料"
 msgid "Failed to clear HLTB data"
 msgstr "清除 HLTB 資料失敗"
 
-#: templates/game_detail.html:5875
+#: templates/game_detail.html:5876
 msgid "Delete Screenshot"
 msgstr "刪除螢幕截圖"
 
-#: templates/game_detail.html:5876
+#: templates/game_detail.html:5877
 msgid "Are you sure you want to delete this screenshot?"
 msgstr "確定要刪除這張螢幕截圖嗎?"
 
-#: templates/game_detail.html:5920
+#: templates/game_detail.html:5921
 msgid "Screenshot deleted"
 msgstr "螢幕截圖已刪除"
 
-#: templates/game_detail.html:5922
+#: templates/game_detail.html:5923
 msgid "Failed to delete screenshot"
 msgstr "刪除螢幕截圖失敗"
 
-#: templates/game_detail.html:5926
+#: templates/game_detail.html:5927
 #, python-brace-format
 msgid "Failed to delete screenshot: {error}"
 msgstr "刪除螢幕截圖失敗:{error}"
 
-#: templates/game_detail.html:5963
+#: templates/game_detail.html:5964
 msgid "No similar games found in library"
 msgstr "收藏庫中未找到相似遊戲"
 
-#: templates/game_detail.html:5967
+#: templates/game_detail.html:5968
 msgid "Could not load similar games."
 msgstr "無法載入相似遊戲。"
 
@@ -14230,11 +14230,40 @@ msgstr "在 Patreon 上支持"
 msgid "Game Cover"
 msgstr "遊戲封面"
 
-#: templates/_modals/boxart_zoom_modal.html:9
+#: templates/_modals/boxart_zoom_modal.html:10
 msgid "3D box. Drag or use the arrow keys to turn it."
 msgstr "3D 包裝盒。拖曳或使用方向鍵來轉動它。"
 
-#: templates/_modals/boxart_zoom_modal.html:12
+#: templates/_modals/boxart_zoom_modal.html:17
+#, fuzzy
+msgid "Back to the box"
+msgstr "盒子背面"
+
+#: templates/_modals/boxart_zoom_modal.html:20
+msgid "Disc or cartridge"
+msgstr ""
+
+#: templates/_modals/boxart_zoom_modal.html:20
+#, fuzzy
+msgid "Inside cover"
+msgstr "Side-Scroller"
+
+#: templates/_modals/boxart_zoom_modal.html:20
+#, fuzzy
+msgid "Extra"
+msgstr "下一頁"
+
+#: templates/_modals/boxart_zoom_modal.html:23
+#, fuzzy
+msgid "Open the box"
+msgstr "盒子背面"
+
+#: templates/_modals/boxart_zoom_modal.html:23
+#, fuzzy
+msgid "Close the box"
+msgstr "盒子背面"
+
+#: templates/_modals/boxart_zoom_modal.html:24
 msgid "Drag to turn. Scroll or press + and - to zoom. Double-click to reset."
 msgstr "拖曳以轉動。捲動或按 + 和 - 縮放。按兩下可重設。"
 

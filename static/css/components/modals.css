@@ -171,7 +171,7 @@
 .box-viewer-stage {
     position: relative;
     width: min(90vw, 80vh);
-    height: 80vh;
+    height: 72vh;
     cursor: grab;
     touch-action: none;
     user-select: none;
@@ -193,9 +193,75 @@
     height: 100%;
 }
 
+.box-viewer-stage[hidden] {
+    display: none;
+}
+
 .box-viewer-hint {
-    margin: var(--spacing-sm) 0 0;
+    margin: 0;
     font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* PASS-59-325 — the Open button, the strip of inside scans, one scan large. */
+.box-viewer-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-sm);
+}
+
+.box-viewer-scans {
+    display: flex;
+    gap: var(--spacing-sm);
+    max-width: 90vw;
+    overflow-x: auto;
+    padding: var(--spacing-xs);
+}
+
+.box-viewer-scans[hidden],
+.box-viewer-scan[hidden] {
+    display: none;
+}
+
+.box-viewer-thumb {
+    flex: none;
+    padding: 0;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: none;
+    cursor: pointer;
+}
+
+.box-viewer-thumb img {
+    display: block;
+    height: 64px;
+    width: auto;
+    border-radius: var(--radius-sm);
+}
+
+.box-viewer-thumb:focus-visible {
+    outline: 2px solid var(--primary-cyan);
+    outline-offset: 2px;
+}
+
+.box-viewer-scan {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin: 0;
+}
+
+.box-viewer-scan img {
+    max-width: 90vw;
+    max-height: 72vh;
+    object-fit: contain;
+}
+
+.box-viewer-scan figcaption {
     color: var(--text-secondary);
 }
 

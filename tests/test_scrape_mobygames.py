@@ -304,3 +304,26 @@ def test_settings_and_dashboard_show_mobygames(admin_test_client, monkeypatch):
     assert home.status_code == 200 and 'id="status-mobygames"' in home.get_data(as_text=True)
     check = client.get('/api/check-scraper/mobygames').get_json()
     assert check['online'] is False and sent == []
+
+
+# PASS-59-325 — the open box shows the inside scans whose file is on disk.
+def test_open_box_lists_inside_scans_on_disk(psx_library):
+    folder = os.path.join(psx_library.images, 'box_scans')
+    os.makedirs(folder, exist_ok=True)
+    for name in ('1_media_0_ab.webp', '1_front_0_ab.webp', '1_manual_0_ab.webp'):
+        open(os.path.join(folder, name), 'wb').close()
+    record = {'version': 1, 'mobygames': {'items': [
+        {'kind': 'front', 'file': '1_front_0_ab.webp'},
+        {'kind': 'media', 'caption': 'Disc 1', 'file': '1_media_0_ab.webp', 'width': 800, 'height': 790},
+        {'kind': 'manual', 'file': '../boxart/x.webp'},
+        {'kind': 'manual', 'file': '1_manual_1_gone.webp'},
+        {'kind': 'manual', 'file': '1_manual_0_ab.webp'}]}}
+    scans = box_scans.scans_for({'box_scans': json.dumps(record)})
+    assert scans == [
+        {'kind': 'media', 'caption': 'Disc 1', 'url': 'images/box_scans/1_media_0_ab.webp',
+         'width': 800, 'height': 790},
+        {'kind': 'manual', 'caption': None, 'url': 'images/box_scans/1_manual_0_ab.webp',
+         'width': None, 'height': None}]
+    assert box_scans.scans_for({'box_scans': None}) == []
+    assert box_scans.scans_for({'box_scans': 'not json'}) == []
+    assert box_scans.scans_for({}) == []

@@ -252,3 +252,31 @@ def test_the_job_builds_only_games_without_an_imported_box(make_game, images):
     assert _record(to_build)['source'] == 'auto'
     assert _record(imported) == kept
     assert _record(arcade) is None
+
+
+# PASS-59-325 — every keep case shows the seam where it opens (user, 2026-11-21).
+@pytest.mark.parametrize('name', ['PS2 DVD Case', 'Genesis Clamshell', 'Master System Case',
+                                  'DS Case', 'Switch Case', 'PS2 Platinum Case (PAL)'])
+def test_keep_cases_have_a_seam(name):
+    from services.box3d.cases import CASE_TYPES
+    case = CASE_TYPES[name]
+    assert case.shape is not None and case.shape.seam_width > 0
+    assert case.shape.lip_width == case.rim_mm
+
+
+def test_a_built_ps2_box_carries_its_shape(make_game, images):
+    gid = make_game()
+    assert build.build_for_game(gid) == 'built'
+    assert _record(gid)['shape']['seam_width_mm'] > 0
+
+
+def test_a_new_shape_rebuilds_the_box(make_game, images, monkeypatch):
+    from dataclasses import replace
+    from services.box3d import cases
+    gid = make_game()
+    assert build.build_for_game(gid) == 'built'
+    case = cases.CASE_TYPES['PS2 DVD Case']
+    monkeypatch.setitem(cases.CASE_TYPES, 'PS2 DVD Case',
+                        replace(case, shape=replace(case.shape, corner_radius=5.0)))
+    assert build.build_for_game(gid) == 'built'
+    assert _record(gid)['shape']['corner_radius_mm'] == 5.0

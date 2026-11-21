@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=327 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=328 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -3561,7 +3561,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: feature.
   Source: user, 2026-11-21.
 
-- 📋 [PASS-59-325] **Open the 3D box and view its contents (FEATURE, M).**
+- ✅ [PASS-59-325] **Open the 3D box and view its contents (FEATURE, M).**
   - **Target**: the rotating 3D box opens; inside are the disc or
     cartridge picture (ScreenScraper physical media), the inside-cover
     scans and the manual and leaflet scans (MobyGames Manual, Inside
@@ -3581,9 +3581,36 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   static/js/box-viewer.js (WebGL2, no library), per case type, from
   reference photos. Box faces come from PASS-59-326. Tell the Slipcase
   session the design, since SLIP-0109 wants the same lid and parts.
+  Built 2026-11-21 (open 4.0.0): static/js/box-viewer.js opens keep
+  cases and clamshells like a book (shell cut at the seam), jewel cases
+  under the lid, cartons by the top flap; disc on a toothed hub with a
+  ridge, cartridge or card in a holder, manual under clips, PS2
+  memory-card holder when no manual; scans from box_scans.scans_for;
+  Open button, O key, a strip of scans and a large view. User,
+  2026-11-21: a case must show the seam where it opens, so unmeasured
+  keep cases got working shapes by family (services/box3d/cases.py), the
+  build signature includes the shape, and bare plastic gets a sheen and
+  a shaded groove. Checked headless on :5001 with a scratch DB: PS2, PS1
+  jewel, SNES carton, Switch, Mega Drive clamshell, 1400 and 375 px.
+  ScreenScraper's disc pictures split to PASS-59-328. Still owed: the
+  new strings and help line in the translation batch; existing built
+  boxes need Build 3D Boxes again to get their shape.
   **Layman:** Open a game's box on screen and look at the disc or cartridge, the manual and the leaflets inside.
   Kind: feature.
   Source: user, 2026-11-21.
+
+- 📋 [PASS-59-328] **ScreenScraper's disc and cartridge pictures inside the open box (FEATURE, S).**
+  - **Target**: ScreenScraper's `support-2D` picture (the disc or
+    cartridge) stored as a second key in `games.box_scans`
+    (PASS-59-183 spec §4.5: one key per source), kind `media`, so
+    `box_scans.scans_for` hands it to the open box.
+  - **Open question**: box_scans is fill-only (`COALESCE`), so a game
+    MobyGames already filled needs the new key merged in, not skipped.
+  - **Verify**: a game with only ScreenScraper media shows its disc in
+    the open box.
+  **Layman:** Show the real disc or cartridge inside the open box for games MobyGames has no picture of, using ScreenScraper's.
+  Kind: feature.
+  Source: split from PASS-59-325, 2026-11-21.
 
 ## 4.0.x — Fixes and new features for the web version
 

@@ -5763,11 +5763,12 @@ function openBoxartZoom(imageUrl, plainPicture) {
 
 function closeBoxartZoom(event) {
     if (event) {
-        // Prevent event bubbling
-        event.stopPropagation();
-        // Only close if clicking on background or close button
-        if (event.target === document.getElementById('boxartZoomModal') || 
+        // Only close if clicking on background or close button. Stop only that
+        // click: the page's click listener runs first, so stopping every click
+        // here would starve the controls inside the zoom (PASS-59-325).
+        if (event.target === document.getElementById('boxartZoomModal') ||
             event.target.classList.contains('modal-close')) {
+            event.stopPropagation();
             document.getElementById('boxartZoomModal').classList.remove('active');
         }
     } else {
