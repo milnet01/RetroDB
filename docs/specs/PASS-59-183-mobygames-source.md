@@ -43,6 +43,9 @@ inside the box.
 - **A bulk scrape waits its turn for MobyGames.** It skips MobyGames
   only once the hour's allowance is spent (user, 2026-11-21: a game
   takes longer than five seconds to scrape anyway).
+- **Skipped games catch up by themselves.** A game a scrape passed over
+  because the hour was spent is asked about again after the reset, with
+  no re-scrape by hand (user, 2026-11-21).
 - **Read the pace from each reply**, not from a fixed number, so a
   faster allowance takes effect by itself (2026-11-21, after the user's
   plan page and the server disagreed).
@@ -193,6 +196,23 @@ and `games.box_scans TEXT` (NULL = none). The record:
   modal's Clear empty it and delete its files.
   `media_cleanup.find_orphaned_media` learns the folder.
 
+### 4.6 Catching up after the hour runs out
+
+Migration 046 also adds `mobygames_pending (game_id INTEGER PRIMARY KEY
+REFERENCES games(id) ON DELETE CASCADE, added_at TEXT)`.
+
+- A fallback run that finds MobyGames stopped for `LIMIT_REACHED` adds
+  the game. A stop for a refused key adds nothing: waiting will not
+  help.
+- A background job, `MobyGamesCatchUpJob`, takes pending games in
+  `added_at` order once the stop ends. For each it runs the MobyGames
+  fallback alone through `_apply_fallback` and the same fill-only
+  save. It ends when the list is empty or MobyGames stops again.
+- It starts when a scrape ends with games pending, and when the app
+  starts with games pending. Only one runs at a time.
+- A game leaves the list once asked, whether MobyGames found it or not.
+  A game deleted from the library leaves with its row.
+
 ## 5. Invariants
 
 - **INV-1** — A game MobyGames finds costs one API request.
@@ -244,12 +264,25 @@ and `games.box_scans TEXT` (NULL = none). The record:
   *Breaks when:* a download skips `_download_and_finalize`, or a clear
   joins a record's name without the folder check.
 
+- **INV-8** — A game skipped because the hour was spent is asked about
+  once after the stop ends, and then leaves the list. A game skipped for
+  a refused key is not listed.
+  *Test:* `tests/test_scrape_mobygames.py`: stop MobyGames with
+  `LIMIT_REACHED`, run a fallback, and `mobygames_pending` holds the
+  game. Clear the stop and run the job with a counting `http_get`: one
+  request, and the list is empty. Repeat with `KEY_REFUSED`, and the
+  list stays empty.
+  *Breaks when:* the job never runs the pending game, runs it twice, or
+  lists a game whose key was refused.
+
 ## 6. Failure modes
 
 - **A refused key.** A 401 or 403 stops MobyGames for an hour. The
   Settings check says the key was refused. Other sources go on.
 - **The hour spent mid-run.** Games after that get no MobyGames data in
-  this run. A later scrape of the game fills them (§15, question 2).
+  this run. The catch-up job fills them after the reset (§4.6).
+- **The app stops during a catch-up.** The list is in the database, so
+  the job carries on at the next start.
 - **No group for this platform, or no spine.** `box_scans` holds what
   there is. PASS-59-326 paints a spine where none was scanned.
 - **A scan that fails to download.** It is left out of `items`. The
@@ -261,7 +294,7 @@ and `games.box_scans TEXT` (NULL = none). The record:
 ## 7. Tests
 
 `tests/test_scrape_mobygames.py` is new and uses saved replies, with no
-network. It locks INV-1, INV-2, INV-3, INV-5, INV-6 and INV-7.
+network. It locks INV-1, INV-2, INV-3, INV-5, INV-6, INV-7 and INV-8.
 `tests/test_scrape_fill_only.py`
 locks INV-4. The security test gains MobyGames' downloads (INV-7). Each
 test is seen failing before its code exists.
@@ -296,6 +329,7 @@ test is seen failing before its code exists.
 | INV-5 | `tests/test_scrape_mobygames.py` |
 | INV-6 | `tests/test_scrape_mobygames.py` |
 | INV-7 | `tests/test_pass40_9_16_security.py`, `tests/test_scrape_mobygames.py` |
+| INV-8 | `tests/test_scrape_mobygames.py` |
 | Help text names the source in every locale | **nothing** — read by hand |
 
 ## 11. Cross-doc impact
@@ -317,14 +351,11 @@ Scans are about 800 px tall and up to 40 per game. No new dependency.
 
 ## 14. Migration / compatibility
 
-Migration 046 adds three nullable columns; existing rows read NULL. A
+Migration 046 adds three nullable columns and the empty
+`mobygames_pending` table; existing rows read NULL. A
 saved scraper priority list gains `mobygames` at its end. The source
 stays off until a key is saved.
 
 ## 15. Open questions
 
-1. **Keep MobyGames' scans as JPEG or convert to WebP?** The draft says
-   WebP, as every other picture RetroDB keeps.
-2. **Catching up after the hour runs out.** The draft fills a skipped
-   game only on its next scrape. A later pass could remember skipped
-   games and ask again after the reset.
+None. Scans are stored as WebP, as every other picture RetroDB keeps.
