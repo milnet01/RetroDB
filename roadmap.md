@@ -3469,6 +3469,27 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: test.
   Source: PASS-59-280 close 2026-11-20.
 
+- 📋 [PASS-59-183] **MobyGames as a scrape source (FEATURE, M).**
+  - **Target**: RetroDB fetches game details from MobyGames. The user
+    has no API key.
+  - **Research first** (unverified): whether MobyGames' API needs a
+    paid or approved key, its rate limits and terms, and whether any
+    keyless route is allowed. Scraping its web pages may breach its
+    terms. Fits PASS-59-162's source review.
+  - **Status**: todo.
+  - **Source**: user, 2026-10-29.
+
+  ---
+  User, 2026-11-21: has a MobyGames API key now; build it into 4.0.0.
+  Take everything MobyGames offers, including spine scans so the 3D box
+  is built from the real box (logos included). Order: last among online
+  sources, before AI Fill. API v2 (api.mobygames.com/v2), key as the
+  api_key query argument, URL-encoded; non-commercial limit 720 requests
+  an hour, at most one a second (MobyGames API page, pasted by the user
+  2026-11-21).
+  **Layman:** MobyGames as another place to look up game details.
+  Kind: implement.
+
 ## 4.0.x — Security and data-loss fixes for the web version
 
 After 4.0.0 the web version gets security and data-loss fixes only, always as 4.0.x: the 4.0 updater treats 4.1.0 and up as the desktop app.
@@ -3592,20 +3613,6 @@ Editing games and filling them from the online sources. Port plan phase 3.
     with the setup wizard's optional-API-key step (Pass 53.8).
   - **Est.**: S — a targeted link in the failure message / toast.
   **Layman:** A scrape that fails for a missing key takes you straight to where you enter it.
-  Kind: implement.
-
-- 📋 [PASS-59-183] **MobyGames as a scrape source (FEATURE, M).**
-  - **Target**: RetroDB fetches game details from MobyGames. The user
-    has no API key.
-  - **Research first** (unverified): whether MobyGames' API needs a
-    paid or approved key, its rate limits and terms, and whether any
-    keyless route is allowed. Scraping its web pages may breach its
-    terms. Fits PASS-59-162's source review.
-  - **Status**: todo.
-  - **Source**: user, 2026-10-29.
-
-  ---
-  **Layman:** MobyGames as another place to look up game details.
   Kind: implement.
 
 - 📋 [PASS-59-185] **One AI Fill tool in ROM Tools, with a switch for each kind of fill (UX, M).**
