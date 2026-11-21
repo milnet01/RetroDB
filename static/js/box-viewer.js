@@ -143,8 +143,8 @@
     const recessOffset = s => s.recess_offset_mm ?? 0;
 
     // The rings, front sheet to back sheet, `d` being half the depth. Each
-    // ring: [[inset, height] on the lip sides, [inset, height] on the spine
-    // side, how far the finger recess's cut reaches each way from the middle
+    // ring: [[inset, height, inset on the opening side where it differs] on
+    // the lip sides, [inset, height] on the spine side, how far the finger recess's cut reaches each way from the middle
     // at that height, or null where the ring runs above or below the slot].
     function profiles(s, d) {
         const r = s.edge_radius_mm, sw = s.seam_width_mm;
@@ -154,8 +154,10 @@
         if (lip) {
             // The lip's inner wall, bottom then top; on the spine side the
             // sheet runs straight to the rounding, so these sit where it starts.
-            front.push([[s.lip_width_mm, d - t], [r, d - t]]);
-            front.push([[s.lip_width_mm, d], [r, d - t]]);
+            // A record stored before PASS-59-329 has no lip_side_width_mm.
+            const side = s.lip_side_width_mm || s.lip_width_mm;
+            front.push([[s.lip_width_mm, d - t, side], [r, d - t]]);
+            front.push([[s.lip_width_mm, d, side], [r, d - t]]);
         }
         const steps = r > 0 ? EDGE_SEGMENTS : 0;
         for (let k = steps; k >= 0; k--) {
@@ -164,7 +166,7 @@
             const rise = k !== steps ? r * Math.sin(theta) : r;
             front.push([[inset, d - r + rise], [inset, d - t - r + rise]]);
         }
-        const back = front.slice().reverse().map(([[li, lz], [si, sz]]) => [[li, -lz], [si, -sz]]);
+        const back = front.slice().reverse().map(([[li, lz, lx], [si, sz]]) => [[li, -lz, lx], [si, -sz]]);
         // The straight run between the two roundings: the seam, and the slot.
         const seam = sw > 0 ? [[[0, sw / 2], [0, sw / 2]], [[s.seam_depth_mm, 0], [0, 0]],
             [[0, -sw / 2], [0, -sw / 2]]] : [];
@@ -215,7 +217,7 @@
         const points = [];
         // [x sign, y sign, does the arc run from the x side to the y side?]
         for (const [sx, sy, xFirst] of [[1, 1, true], [-1, 1, false], [-1, -1, true], [1, -1, false]]) {
-            const [ix, zx] = sx < 0 ? spineSide : lipSide;
+            const [ix, zx] = sx < 0 ? spineSide : [lipSide[2] ?? lipSide[0], lipSide[1]];
             const [iy, zy] = lipSide;
             const cx = sx * (w - Math.max(radius, ix));
             const cy = sy * (h - Math.max(radius, iy));
@@ -228,7 +230,7 @@
             }
         }
         if (hasRecess(s)) {
-            const x = w - lipSide[0], z = lipSide[1];
+            const x = w - (lipSide[2] ?? lipSide[0]), z = lipSide[1];
             let floor = x - s.recess_depth_mm;
             if (reach === null) {
                 // Uncut: the points sit where the slot's straight edges end.
@@ -521,21 +523,61 @@
         return out;
     }
 
-    // A shop's hanging tab (RetroDB, from the user's photos of a Mega Drive
-    // case): a thin plate standing above the top edge, flush with the back
-    // half, with a slot for the peg. Sizes judged by eye, as shares of the case.
+    // A shop's hanging tab (RetroDB, PASS-59-329): a thin plate with rounded
+    // corners standing above the top edge, flush with the back half, centred.
+    // Its slot is the shop-peg kind: a long rounded slot with a round bump up
+    // its middle. Width and height are the user's reading of a PAL Mega Drive
+    // case by eye (2026-11-21); the rest is judged from their photos.
+    const TAB = {width: 50, height: 20, thick: 2, corner: 3, sink: 2,
+        slotMid: 9, slotLength: 27, slotHeight: 5.3, bump: 4.5, bumpRise: 3.7, steps: 128};
+
     function hangingTab(c, plastic) {
-        const h = c.height_mm / 2, d = c.depth_mm / 2;
-        const tw = 0.36 * c.width_mm, th = 0.09 * c.height_mm, tt = 3;
-        const sw = 0.48 * tw, sh = 5, slotMid = h + th - 6;
-        const z = -d + tt / 2, post = (tw - sw) / 2;
-        const below = slotMid - sh / 2 - h, above = h + th - (slotMid + sh / 2);
-        return [
-            ...cuboid([0, h + below / 2, z], [tw, below, tt], 'base', plastic),
-            ...cuboid([0, h + th - above / 2, z], [tw, above, tt], 'base', plastic),
-            ...cuboid([-(sw + post) / 2, slotMid, z], [post, sh, tt], 'base', plastic),
-            ...cuboid([(sw + post) / 2, slotMid, z], [post, sh, tt], 'base', plastic),
-        ].map(p => ({...p, shell: true}));
+        const h = c.height_mm / 2, d = c.depth_mm / 2, t = TAB;
+        // The plate runs `sink` mm down into the case, so no gap shows
+        // where the top edge rounds off.
+        const bottom = h - t.sink, plateMid = (bottom + h + t.height) / 2;
+        const halfW = t.width / 2, halfH = (t.height + t.sink) / 2;
+        const cy = h + t.slotMid, slotR = t.slotHeight / 2;
+        const bumpY = cy + slotR + t.bumpRise - t.bump;
+        // Inside tests for the plate and the hole; both are star-shaped
+        // round (0, cy), so one ray per step meets each edge once.
+        const inPlate = (x, y) => {
+            const qx = Math.max(Math.abs(x) - (halfW - t.corner), 0);
+            const qy = Math.max(Math.abs(y - plateMid) - (halfH - t.corner), 0);
+            return qx * qx + qy * qy <= t.corner * t.corner;
+        };
+        const inHole = (x, y) => {
+            const qx = Math.max(Math.abs(x) - (t.slotLength / 2 - slotR), 0);
+            return qx * qx + (y - cy) ** 2 <= slotR * slotR
+                || x * x + (y - bumpY) ** 2 <= t.bump * t.bump;
+        };
+        const edge = (inside, a) => {
+            let lo = 0, hi = t.width;
+            for (let k = 0; k < 30; k++) {
+                const mid = (lo + hi) / 2;
+                if (inside(mid * Math.cos(a), cy + mid * Math.sin(a))) lo = mid; else hi = mid;
+            }
+            return [lo * Math.cos(a), cy + lo * Math.sin(a)];
+        };
+        const zf = -d + t.thick, zb = -d, out = [];
+        const outer = [], inner = [];
+        for (let i = 0; i < t.steps; i++) {
+            const a = 2 * Math.PI * i / t.steps;
+            outer.push(edge(inPlate, a));
+            inner.push(edge(inHole, a));
+        }
+        for (let i = 0; i < t.steps; i++) {
+            const j = (i + 1) % t.steps;
+            const [o0, o1, n0, n1] = [outer[i], outer[j], inner[i], inner[j]];
+            const at = (p, z) => [p[0], p[1], z];
+            const mid = Math.PI * 2 * (i + 0.5) / t.steps;
+            const radial = [Math.cos(mid), Math.sin(mid), 0];
+            out.push(part([at(o0, zf), at(o1, zf), at(n1, zf), at(n0, zf)], [0, 0, 1], 'base', plastic));
+            out.push(part([at(o0, zb), at(o1, zb), at(n1, zb), at(n0, zb)], [0, 0, -1], 'base', plastic));
+            out.push(part([at(o0, zf), at(o1, zf), at(o1, zb), at(o0, zb)], radial, 'base', plastic));
+            out.push(part([at(n0, zf), at(n1, zf), at(n1, zb), at(n0, zb)], radial.map(v => -v), 'base', plastic));
+        }
+        return out.map(p => ({...p, shell: true}));
     }
 
     // The lid's turn and a slide's rise at `open` (0 shut, 1 open), as

@@ -42,6 +42,8 @@ class CaseShape:
     edge_radius: float          # the edges where the front and back meet the sides
     lip_width: float = 0.0      # the raised lip along top, bottom and opening side
     lip_height: float = 0.0     # how far the sheet lies below the lip's top
+    # RetroDB: the lip down the opening side, where it is wider; 0 is lip_width.
+    lip_side_width: float = 0.0
     seam_width: float = 0.0     # the V groove where the halves meet, at the surface
     seam_depth: float = 0.0     # how far in its deepest line lies
     recess_length: float = 0.0  # the finger recess in the opening side, top to bottom
@@ -69,10 +71,13 @@ _PC_RIM_MM = 1.5
 _CLAMSHELL_RIM_MM = 1.5
 # RetroDB: the Mega Drive / Master System case from the user's photos of a
 # PAL Sonic case (2026-11-21): a raised lip round the sheet and a deep step
-# where the halves meet, both plain to see. Judged by eye, not measured.
+# where the halves meet. The lip's widths are the user's reading by eye; its
+# height and the step are judged from the photos.
 _SEGA_CLAMSHELL_RIM_MM = 2.0
+_SEGA_CLAMSHELL_SIDE_RIM_MM = 3.0
 _SEGA_CLAMSHELL_SHAPE = CaseShape(corner_radius=4.0, edge_radius=2.0,
-                                  lip_width=_SEGA_CLAMSHELL_RIM_MM, lip_height=1.5,
+                                  lip_width=_SEGA_CLAMSHELL_RIM_MM, lip_height=2.5,
+                                  lip_side_width=_SEGA_CLAMSHELL_SIDE_RIM_MM,
                                   seam_width=2.5, seam_depth=1.5)
 _KEEP_TEXTURES = frozenset({"dvd", "bluray", "switch", "ds", "psp", "clamshell"})
 
@@ -115,6 +120,8 @@ class CaseType:
     clear: bool = False
     # Width of a keep case's plastic lip; `rim_mm` says whether it has one.
     keep_rim: float = KEEP_RIM_MM
+    # RetroDB: the lip down the opening side, where wider; 0 is keep_rim.
+    keep_side_rim: float = 0.0
     # The real shape the 3D viewer draws; None for a flat box (SLIP-0125).
     shape: CaseShape | None = None
 
@@ -129,6 +136,11 @@ class CaseType:
         if self.layout == "wrap" and self.texture in _KEEP_TEXTURES:
             return self.keep_rim
         return 0.0
+
+    @property
+    def side_rim_mm(self) -> float:
+        """Width of the lip down the opening side, 0 for none."""
+        return (self.keep_side_rim or self.rim_mm) if self.rim_mm else 0.0
 
     @property
     def aspect_ratio(self) -> float:
@@ -406,7 +418,7 @@ CASE_TYPES: dict[str, CaseType] = {
         width=128, height=179, depth=26,
         platforms=("Genesis", "Mega Drive"),
         plastic=_BLACK_KEEP, texture="clamshell", keep_rim=_SEGA_CLAMSHELL_RIM_MM,
-        shape=_SEGA_CLAMSHELL_SHAPE,
+        keep_side_rim=_SEGA_CLAMSHELL_SIDE_RIM_MM, shape=_SEGA_CLAMSHELL_SHAPE,
         hanging_tab=True,
     ),
     "Master System Case": CaseType(
@@ -414,7 +426,7 @@ CASE_TYPES: dict[str, CaseType] = {
         width=128, height=179, depth=26,
         platforms=("Master System",),
         plastic=_BLACK_KEEP, texture="clamshell", keep_rim=_SEGA_CLAMSHELL_RIM_MM,
-        shape=_SEGA_CLAMSHELL_SHAPE,
+        keep_side_rim=_SEGA_CLAMSHELL_SIDE_RIM_MM, shape=_SEGA_CLAMSHELL_SHAPE,
         hanging_tab=True,
     ),
     # A protector's size. LaunchBox's images show the tab in every region.

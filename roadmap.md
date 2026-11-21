@@ -3631,6 +3631,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     MobyGames already filled needs the new key merged in, not skipped.
   - **Verify**: a game with only ScreenScraper media shows its disc in
     the open box.
+  - **Also ES-DE** (user, 2026-11-21): ES-DE's `physicalmedia` folder
+    holds the same cartridge or disc picture (ScreenScraper's), already
+    on disk, e.g. Krusty's Super Fun House on Mega Drive. Read it as a
+    `media` source too, so a game with no MobyGames scan shows its
+    cartridge in the open box. `scrape_esde.py` already lists the folder.
   **Layman:** Show the real disc or cartridge inside the open box for games MobyGames has no picture of, using ScreenScraper's.
   Kind: feature.
   Source: split from PASS-59-325, 2026-11-21.
@@ -3645,6 +3650,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     its recess, SLIP-0125); the Mega Drive case was done from the
     user's photos of a PAL Sonic case (2026-11-21).
   - **Verify**: each case drawn in the viewer next to its photo.
+  - **Mega Drive / Master System done** (2026-11-21, user's ruler by eye):
+    lip 2 mm top and bottom, 3 mm down the opening side (new
+    `lip_side_width`), 2.5 mm high (judged); hanging tab 50 x 20 mm,
+    centred, rounded corners, shop-peg slot with a round bump. The
+    remaining cases still need their photos.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.

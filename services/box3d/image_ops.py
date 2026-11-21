@@ -134,13 +134,14 @@ def inset_in_rim(
         return face
     width, height = face.size
     rim = max(1, round(case_type.rim_mm * height / case_type.height))
-    if height <= 2 * rim:
+    side = max(1, round(case_type.side_rim_mm * height / case_type.height))
+    if height <= 2 * rim or width <= side:
         return face
     plastic = _case_plastic(case_type, case_color)
     framed = Image.new("RGBA", face.size, (*plastic, 255))
 
-    left = rim if opening == "left" else 0
-    right = width - rim if opening == "right" else width
+    left = side if opening == "left" else 0
+    right = width - side if opening == "right" else width
     # The lip's inner wall, in shade, so the sheet reads as sunk below it. A
     # one-pixel lip has no room for one and must still read as the plastic.
     band = round(rim * _RIM_WALL_SHARE) if wall and rim > 1 else 0

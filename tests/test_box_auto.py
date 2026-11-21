@@ -264,6 +264,24 @@ def test_keep_cases_have_a_seam(name):
     assert case.shape.lip_width == case.rim_mm
 
 
+def test_the_sega_case_lip_is_wider_down_the_opening_side():
+    # PASS-59-329, from the user's measure of a PAL Sonic case (2026-11-21).
+    from PIL import Image
+    from services.box3d.cases import CASE_TYPES
+    from services.box3d.image_ops import inset_in_rim
+    case = CASE_TYPES['Genesis Clamshell']
+    assert (case.shape.lip_width, case.shape.lip_side_width) == (2.0, 3.0)
+    assert case.side_rim_mm == case.shape.lip_side_width
+    face = Image.new('RGB', (case.width * 10, case.height * 10), (255, 255, 255))
+    framed = inset_in_rim(face, case, None, 'right', wall=False)
+    mid_x, mid_y = framed.width // 2, framed.height // 2
+    # 2 mm of plastic above the sheet, 3 mm beside it: 20 px and 30 px here.
+    assert framed.getpixel((mid_x, 19))[:3] != (255, 255, 255)
+    assert framed.getpixel((mid_x, 21))[:3] == (255, 255, 255)
+    assert framed.getpixel((framed.width - 29, mid_y))[:3] != (255, 255, 255)
+    assert framed.getpixel((framed.width - 31, mid_y))[:3] == (255, 255, 255)
+
+
 def test_a_built_ps2_box_carries_its_shape(make_game, images):
     gid = make_game()
     assert build.build_for_game(gid) == 'built'

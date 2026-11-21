@@ -35,7 +35,9 @@ SIZES = ('width_mm', 'height_mm', 'depth_mm')
 # The case's shape (Slipcase SLIP-0125 § 4.1): the first two keys are
 # required; a missing lip, seam or recess key means 0, but a missing
 # recess_end_radius_mm means half the recess's height: half-round ends.
+# lip_side_width_mm is RetroDB's (PASS-59-329): 0 means lip_width_mm.
 SHAPE_KEYS = ('corner_radius_mm', 'edge_radius_mm', 'lip_width_mm', 'lip_height_mm',
+              'lip_side_width_mm',
               'seam_width_mm', 'seam_depth_mm', 'recess_length_mm',
               'recess_height_mm', 'recess_depth_mm', 'recess_end_radius_mm',
               'recess_offset_mm')
@@ -187,10 +189,11 @@ def _shape(data, case):
     side = min(width, height) / 4
     corner, edge = s['corner_radius_mm'], s['edge_radius_mm']
     lip_w, lip_h = s['lip_width_mm'], s['lip_height_mm']
-    if (corner > side or lip_w > side or edge > depth / 4
+    lip_side = s['lip_side_width_mm'] or lip_w
+    if (corner > side or lip_w > side or lip_side > side or edge > depth / 4
             or lip_h > depth / 8 or s['seam_width_mm'] > depth / 8
             or s['seam_depth_mm'] > s['seam_width_mm']
-            or (lip_h > 0 and (lip_w == 0 or lip_w < edge))
+            or (lip_h > 0 and (lip_w == 0 or lip_w < edge or lip_side < edge))
             or (s['recess_length_mm'] + 2 * abs(s['recess_offset_mm'])
                 >= height - 2 * max(corner, lip_w))
             or s['recess_end_radius_mm'] > s['recess_height_mm'] / 2
