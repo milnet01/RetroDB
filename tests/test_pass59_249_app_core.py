@@ -99,3 +99,19 @@ def test_region_tags_are_not_publishers(name):
 def test_a_real_publisher_tag_still_reads():
     from services.game_utils import extract_filename_hints
     assert extract_filename_hints('/roms/amiga/Cabal (1989) (Ocean).adf')['publisher'] == 'Ocean'
+
+
+def test_changelog_shows_kinds_at_the_top_and_changes_as_text():
+    # The header names each kind of change once; the changes are a plain
+    # list grouped by kind. An older entry whose list already covers its
+    # tags (each tag a title of one item) is not listed twice.
+    from app import _changelog_view
+    new = _changelog_view({'version': '9.0.0', 'body': '<ul><li>Highlight</li></ul>', 'tags': [
+        {'type': 'fix', 'label': 'A fixed thing'}, {'type': 'feature', 'label': 'A new thing'},
+        {'type': 'bugfix', 'label': 'Another fix'}, {'type': 'hardening', 'label': 'Safer'}]})
+    assert [k for k, _ in new['kinds']] == ['feature', 'fix', 'security']
+    assert [(k, items) for k, _, items in new['groups']] == [
+        ('feature', ['A new thing']), ('fix', ['A fixed thing', 'Another fix']), ('security', ['Safer'])]
+    old = _changelog_view({'version': '1.0.0', 'body': '<ul><li>One</li><li>Two</li></ul>', 'tags': [
+        {'type': 'ui', 'label': 'One'}, {'type': 'fix', 'label': 'Two'}]})
+    assert [k for k, _ in old['kinds']] == ['improvement', 'fix'] and old['groups'] == []

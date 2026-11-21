@@ -1629,6 +1629,41 @@ def _changelog_file(path):
     return data
 
 
+# Each tag type the changelog has used, by the kind of change it names, in
+# the order the page shows them; an unknown type counts as "other".
+_CHANGE_KINDS = {
+    'feature': ('feature', 'new', 'added', 'feat', 'minor', 'major', 'initial'),
+    'improvement': ('enhancement', 'improvement', 'ui', 'ux', 'performance', 'accessibility',
+                    'a11y', 'refactor', 'cleanup', 'reliability'),
+    'fix': ('fix', 'bugfix', 'patch', 'correctness'),
+    'security': ('security', 'hardening', 'privacy'),
+    'other': (),
+}
+_KIND_OF_TYPE = {t: kind for kind, types in _CHANGE_KINDS.items() for t in types}
+
+
+def _changelog_view(entry):
+    """What the changelog page shows for one entry: each kind of change once,
+    for the header, and the tags as plain text grouped by kind. Older entries
+    whose body has an item per tag (the tag was its title) list nothing more."""
+    from flask_babel import lazy_gettext
+    badge = {'feature': lazy_gettext('New feature'), 'improvement': lazy_gettext('Improvement'),
+             'fix': lazy_gettext('Bug fix'), 'security': lazy_gettext('Security'),
+             'other': lazy_gettext('Other')}
+    heading = {'feature': lazy_gettext('New features'), 'improvement': lazy_gettext('Improvements'),
+               'fix': lazy_gettext('Fixes'), 'security': lazy_gettext('Security'),
+               'other': lazy_gettext('Other changes')}
+    tags = entry.get('tags') or []
+    by_kind = {kind: [] for kind in _CHANGE_KINDS}
+    for tag in tags:
+        by_kind[_KIND_OF_TYPE.get(tag.get('type'), 'other')].append(tag.get('label', ''))
+    present = [kind for kind, items in by_kind.items() if items]
+    listed = len(tags) > str(entry.get('body') or '').count('<li')
+    return {**entry,
+            'kinds': [(kind, badge[kind]) for kind in present],
+            'groups': [(kind, heading[kind], by_kind[kind]) for kind in present] if listed else []}
+
+
 @app.route('/changelog')
 def changelog():
     """Changelog page showing version history (paginated — Pass 49.1)"""
@@ -1654,7 +1689,7 @@ def changelog():
         offset = max(0, int(request.args.get('offset', 0)))
     except (TypeError, ValueError):
         offset = 0
-    page = entries[offset:offset + CHANGELOG_PAGE_SIZE]
+    page = [_changelog_view(e) for e in entries[offset:offset + CHANGELOG_PAGE_SIZE]]
     has_more = offset + CHANGELOG_PAGE_SIZE < len(entries)
     next_offset = offset + CHANGELOG_PAGE_SIZE
     # Pass literal .html template names (not a variable) so Flask's autoescape

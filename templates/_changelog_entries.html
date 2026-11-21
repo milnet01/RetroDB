@@ -7,12 +7,18 @@
     <div class="changelog-header">
         <h2 class="changelog-version">v{{ entry.version }}</h2>
         <span class="changelog-date">{{ entry.date }}</span>
-        {% for tag in entry.tags %}
-        <span class="changelog-tag tag-{{ tag.type }}">{{ tag.label }}</span>
+        {% for kind, name in entry.kinds %}
+        <span class="changelog-tag kind-{{ kind }}">{{ name }}</span>
         {% endfor %}
     </div>
     <div class="changelog-body">
         {{ entry.body | safe }} {# nosemgrep: template-unescaped-with-safe -- body is HTML authored in data/changelog.yaml, in-repo #}
+        {% for kind, heading, items in entry.groups %}
+        <h3 class="changelog-group kind-{{ kind }}">{{ heading }}</h3>
+        <ul>
+            {% for item in items %}<li>{{ item }}</li>{% endfor %}
+        </ul>
+        {% endfor %}
     </div>
 </article>
 {% endfor %}

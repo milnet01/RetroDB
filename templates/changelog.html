@@ -25,9 +25,28 @@
 
 {% block styles %}
 <style>
-    /* PASS-59-104 — release notes keep about 75 characters a line. */
+    /* PASS-59-104 — release notes; widened from 75 characters a line (user, 2026-11-21). */
     .changelog-page {
-        --page-max: calc(75ch + 2 * var(--spacing-lg));
+        --page-max: calc(110ch + 2 * var(--spacing-lg));
+    }
+
+    /* One badge per kind of change in the header; the changes themselves
+       are plain text under a heading of the same colour (user, 2026-11-21). */
+    .kind-feature { --kind: var(--primary-cyan); }
+    .kind-improvement { --kind: var(--neon-green); }
+    .kind-fix { --kind: var(--neon-red); }
+    .kind-security { --kind: var(--secondary-magenta); }
+    .kind-other { --kind: var(--neon-purple); }
+
+    .changelog-tag[class*="kind-"] {
+        color: var(--kind);
+        border: 1px solid var(--kind);
+        background: color-mix(in srgb, var(--kind) 15%, transparent);
+    }
+
+    .changelog-body h3.changelog-group {
+        color: var(--kind);
+        margin-top: var(--spacing-lg);
     }
 
     /* Load More button wrapper (Pass 49.1) */
