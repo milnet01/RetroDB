@@ -955,6 +955,13 @@
         </div>
     </div>
     {% endif %}
+
+    {# MobyGames' API terms ask for a credit wherever its data is shown. #}
+    {% if game.mobygames_id %}
+    <p class="source-credit">
+        <a href="https://www.mobygames.com/game/{{ game.mobygames_id|int }}/" target="_blank" rel="noopener noreferrer" class="credit-link">{{ _('Data by MobyGames.com') }}</a>
+    </p>
+    {% endif %}
 </div>
 
 {% include '_modals/rename_modal.html' %}
@@ -3678,6 +3685,13 @@ body:has(.game-fanart-bg.active)::before {
     border: 1px solid var(--card-border);
     border-radius: var(--radius-md);
     padding: 1rem;
+}
+
+.source-credit {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-align: right;
 }
 
 .scrape-history-section .section-title-sm {
