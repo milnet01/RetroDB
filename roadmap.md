@@ -3487,6 +3487,32 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   api_key query argument, URL-encoded; non-commercial limit 720 requests
   an hour, at most one a second (MobyGames API page, pasted by the user
   2026-11-21).
+  Research 2026-11-21 with the user's key (stored at
+  ~/.config/retrodb-mobygames.key, mode 600; never print it). Hobbyist
+  tier. Server pace is 0.2 requests a second (header ratelimit-policy
+  "0.2;w=1, 720;w=3600"; 429 carries retry-after); headers
+  ratelimit-remaining and ratelimit-reset give the hourly allowance. GET
+  /v2/games returns only id, title and moby_url unless include= names
+  fields. Hobbyist fields: covers, description (HTML), developers,
+  publishers (each with platforms[]), genres (with category), moby_score
+  (0-10), official_url, platforms (per-platform release_date),
+  release_date, screenshots (per platform_id). Bronze-and-up fields
+  (alternate_titles, critic/player score, ratings, releases,
+  product_codes, promo images) are silently omitted, not refused. One
+  search with title=, platform=<id> and the full include list returns
+  whole records: one request per game. title= is a substring match (VII
+  also matches VIII); fuzzy=true found nothing for "final fantasy 7".
+  Covers: groups per release, each with countries[], platforms[] and
+  attributes (packaging: Box, Jewel Case, Keep Case, Slipcase, Sleeve);
+  images[] carry type.name (Front Cover, Back Cover, Spine/Sides, Media,
+  Manual, Inside Cover, Full Cover, Other) and a caption; image_url is
+  about 800 px tall. Spine scans exist for some releases only and
+  captions vary (Back Left, Left 1, Front Cover - Spine Left). The 3D
+  viewer (static/js/box-viewer.js) uses case mm only as proportions, so
+  a box's size can come from scan pixel ratios. Probe answers kept in
+  /mnt/Emulators/.claude/Scratchpad/RetroDB/moby/. Next: write-spec
+  draft (Q1 yes: new columns, 3+ subsystems, the box_faces rule in
+  PASS-59-142 §3 that only imports write faces changes).
   **Layman:** MobyGames as another place to look up game details.
   Kind: implement.
 
