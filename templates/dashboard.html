@@ -603,6 +603,16 @@
         </span>
     </div>
 
+    <div class="status-item" id="status-mobygames">
+        <div class="status-info">
+            <span class="status-indicator {{ 'checking' if api_status.mobygames else 'offline' }}"></span>
+            <span class="status-name">MobyGames API</span>
+        </div>
+        <span class="status-badge {{ 'checking' if api_status.mobygames else 'offline' }}">
+            {{ _('Checking...') if api_status.mobygames else (_('Disabled') if api_status._disabled.mobygames else _('Not Configured')) }}
+        </span>
+    </div>
+
     <div class="status-item" id="status-igdb">
         <div class="status-info">
             <span class="status-indicator {{ 'checking' if api_status.igdb else 'offline' }}"></span>
@@ -1256,7 +1266,7 @@ function randomGame() {
 
 // Async API status checking + warning banner
 document.addEventListener('DOMContentLoaded', function() {
-    const scrapers = ['tgdb', 'igdb', 'rawg', 'screenscraper'];
+    const scrapers = ['tgdb', 'igdb', 'rawg', 'mobygames', 'screenscraper'];
     let offlineCount = 0;
     let checkedCount = 0;
     const totalToCheck = scrapers.filter(s => {

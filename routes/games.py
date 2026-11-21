@@ -721,6 +721,7 @@ def game_detail(game_id):
                             perspective = NULL, dimension = NULL, game_structure = NULL,
                             campaign = NULL, edition = NULL, other_platforms = NULL,
                             alternate_titles = NULL, sort_title = NULL,
+                            moby_score = NULL, mobygames_id = NULL, box_scans = NULL,
                             scraped = 0, title_locked = 0
                         WHERE id = ?
                     """, (game_id,))
@@ -728,7 +729,7 @@ def game_detail(game_id):
                     # still uses one; and the lists see the change
                     # (PASS-59-242), as after an edit.
                     from services.media_cleanup import delete_unshared_media
-                    delete_unshared_media(game)
+                    delete_unshared_media(game, box_faces=False)
                     invalidate_filter_cache()
                     invalidate_analytics_cache()
                     upscale_queue.forget_cleared()

@@ -104,3 +104,43 @@ def test_source_ids_fill_only(force_overwrite, expected_igdb):
         force_overwrite=force_overwrite)
     assert conn.execute("SELECT igdb_id, screenscraper_id FROM games").fetchone() \
         == (expected_igdb, 77)
+
+
+# PASS-59-183 INV-4 — MobyGames fills only what is empty, box scans included.
+def _moby_answer():
+    import json
+    import pathlib
+    path = pathlib.Path(__file__).parent / 'fixtures' / 'mobygames' / 'ff7_search.json'
+    return json.loads(path.read_text())['games'][0]
+
+
+@pytest.fixture
+def moby_downloads(downloads, monkeypatch):  # noqa: F811
+    monkeypatch.setattr('scraper.ss_regions.readable_regions', lambda: ['uk'])
+    monkeypatch.setattr('services.version_groups.preferred_regions', lambda: [])
+    return downloads
+
+
+def test_mobygames_keeps_stored_values(moby_downloads):
+    stored = dict(title='Curated Game', description='Mine.', developer='Me', publisher='Me',
+                  genre='RPG', perspective='Top-Down', release_date='1997-01-31',
+                  boxart='curated_box.webp', boxart_back='curated_back.webp',
+                  screenshots='old_ss.webp', moby_score=1.0, mobygames_id=5,
+                  box_scans='{"version": 1}')
+    metadata = _metadata(**stored)
+    metadata_merger.apply_mobygames_to_metadata(metadata, _moby_answer(), 1, {'filled_fields': []},
+                                                fill_only=True, platform_id=6, own_region='Europe')
+    for field, value in stored.items():
+        if field != 'screenshots':
+            assert metadata[field] == value, field
+    assert metadata['screenshots'].split(',')[0] == 'old_ss.webp'
+
+
+def test_mobygames_fills_empty_fields(moby_downloads):
+    metadata = _metadata(title='Blank Game')
+    metadata_merger.apply_mobygames_to_metadata(metadata, _moby_answer(), 1, {'filled_fields': []},
+                                                fill_only=True, platform_id=6, own_region='Europe')
+    for field in ('description', 'developer', 'publisher', 'genre', 'release_date', 'boxart',
+                  'boxart_back', 'screenshots', 'moby_score', 'mobygames_id', 'box_scans'):
+        assert metadata[field], field
+    assert metadata['title'] == 'Blank Game'

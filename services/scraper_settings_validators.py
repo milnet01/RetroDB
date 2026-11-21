@@ -16,7 +16,7 @@
 
 # Includes 'ai' alongside the metadata scrapers — scraper_settings.priority
 # embeds the AI-fill provider as a pseudo-scraper.
-_ALLOWED_SCRAPER_NAMES = {'esde', 'tgdb', 'igdb', 'screenscraper', 'rawg', 'ai'}
+_ALLOWED_SCRAPER_NAMES = {'esde', 'tgdb', 'igdb', 'screenscraper', 'rawg', 'mobygames', 'ai'}
 
 _ALLOWED_MATCH_MODES = {'score', 'criteria'}
 _ALLOWED_TITLE_QUALITIES = {'exact', 'close', 'partial', 'any'}
@@ -29,6 +29,7 @@ _ALLOWED_API_KEY_FIELDS = {
     'tgdb', 'tgdb_public',
     'igdb_client_id', 'igdb_client_secret',
     'rawg',
+    'mobygames_apikey',
     'screenscraper_username', 'screenscraper_password',
     'screenscraper_devid', 'screenscraper_devpassword',
     'ra_username', 'ra_apikey',

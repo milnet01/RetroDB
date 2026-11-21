@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 _PROGRESS_SOURCE_LABELS = {
     'esde': 'ES-DE', 'tgdb': 'TheGamesDB', 'igdb': 'IGDB', 'rawg': 'RAWG',
     'screenscraper': 'ScreenScraper', 'ai': 'AI', 'steam': 'Steam',
+    'mobygames': 'MobyGames',
 }
 
 # Import individual scrapers
@@ -50,6 +51,7 @@ from scraper.metadata_merger import (
     apply_tgdb_to_metadata,
     apply_igdb_to_metadata,
     apply_rawg_to_metadata,
+    apply_mobygames_to_metadata,
     apply_screenscraper_to_metadata,
     apply_steam_to_metadata,
     apply_ai_to_metadata,
@@ -63,6 +65,8 @@ from scraper.match_scorer import MIN_TITLE_SCORE, calculate_title_match_score
 from scraper.scraper_manager import DEFAULT_SCRAPER_PRIORITY
 from scraper.ss_regions import own_region as game_own_region
 from scraper.scrape_rawg import platform_id as rawg_platform_id
+from scraper.scrape_mobygames import platform_id as moby_platform_id
+from scraper import service_limits
 
 # Try to import AI scraper
 AI_AVAILABLE = False
@@ -797,6 +801,9 @@ def _save_game_row(c, metadata, scrape_history_json, db_game_id, mark_scraped=Tr
             units_sold = COALESCE(?, units_sold),
             release_dates = COALESCE(?, release_dates),
             alternate_titles = COALESCE(?, alternate_titles),
+            moby_score = COALESCE(?, moby_score),
+            mobygames_id = COALESCE(?, mobygames_id),
+            box_scans = COALESCE(?, box_scans),
             scrape_history = ?,
             scraped = COALESCE(?, scraped)
         WHERE id = ?
@@ -846,6 +853,9 @@ def _save_game_row(c, metadata, scrape_history_json, db_game_id, mark_scraped=Tr
         metadata.get('units_sold'),
         metadata.get('release_dates'),
         alt_titles_json,
+        metadata.get('moby_score'),
+        metadata.get('mobygames_id'),
+        metadata.get('box_scans'),
         scrape_history_json,
         1 if mark_scraped else None,
         db_game_id
@@ -869,7 +879,8 @@ def _fallback_order(primary_source, sources_data, restrict_to_selected,
         'tgdb': 'tgdb',
         'thegamesdb': 'tgdb',
         'igdb': 'igdb',
-        'rawg': 'rawg'
+        'rawg': 'rawg',
+        'mobygames': 'mobygames',
     }
     primary_normalized = source_name_map.get(primary_source, primary_source)
 
@@ -893,7 +904,7 @@ def _fallback_order(primary_source, sources_data, restrict_to_selected,
 
 def _run_fallbacks(metadata, result, sources_data, game, db_game_id,
                    primary_source, system_folder, secondary_sources,
-                   restrict_to_selected, force_overwrite, c):
+                   restrict_to_selected, force_overwrite, c, only_source=None):
     """Fill still-empty metadata fields from secondary scrapers.
 
     Iterates the user's configured scraper priority (minus the primary and
@@ -958,6 +969,9 @@ def _run_fallbacks(metadata, result, sources_data, game, db_game_id,
         fallback_enabled = fallback_settings.get('enabled', {})
         fallback_scrapers = _fallback_order(
             primary_source, sources_data, restrict_to_selected, secondary_sources)
+        if only_source:
+            # The MobyGames catch-up asks that source alone (PASS-59-183 §4.6).
+            fallback_scrapers = [s for s in fallback_scrapers if s == only_source]
 
         logger.info(f"Primary source: {primary_source} -> Fallback scrapers in priority order: {fallback_scrapers}")
 
@@ -1111,6 +1125,29 @@ def _fetch_rawg(lookup):
     return fetch_rawg(rawg_id) if rawg_id else None
 
 
+def _fetch_mobygames(lookup):
+    """MobyGames' record for the game, or None. A game passed over because the
+    hour's allowance is spent, or the server is not answering, goes on the
+    catch-up list (PASS-59-183 §4.6)."""
+    if not lookup['api_keys'].get('mobygames_apikey'):
+        logger.info("MobyGames fallback skipped: missing API key")
+        return None
+    from scraper.scrape_mobygames import search_games as search_moby, fetch_game_details as fetch_moby
+    title, folder = lookup['title'], lookup['system_folder']
+    record = None
+    if not service_limits.stopped(service_limits.MOBYGAMES):
+        logger.info(f"Trying MobyGames fallback for: '{title}'")
+        moby_id = _fallback_id('mobygames', 'MobyGames', lookup,
+                               lambda: search_moby(title, folder, limit=5))
+        record = fetch_moby(moby_id, folder) if moby_id else None
+    stop = service_limits.stopped(service_limits.MOBYGAMES)
+    if record is None and stop and stop['reason'] in (service_limits.LIMIT_REACHED,
+                                                      service_limits.UNAVAILABLE):
+        from services.jobs.mobygames_catch_up import add_pending
+        add_pending(lookup['game_id'])
+    return record
+
+
 def _ss_record_by_id(ss_id, keys):
     """ScreenScraper's whole record for "gameid:systemid": the one kept from the
     search when it is still cached, else asked for by id, so a pick is never
@@ -1205,6 +1242,7 @@ _FALLBACK_BREAKERS = {
     'igdb': '_igdb_breaker',
     'rawg': '_rawg_breaker',
     'screenscraper': '_screenscraper_breaker',
+    'mobygames': '_mobygames_breaker',
 }
 
 _FALLBACK_FETCHERS = {
@@ -1213,6 +1251,7 @@ _FALLBACK_FETCHERS = {
     'igdb': _fetch_igdb,
     'screenscraper': _fetch_screenscraper,
     'rawg': _fetch_rawg,
+    'mobygames': _fetch_mobygames,
 }
 
 
@@ -1304,6 +1343,11 @@ def _apply_fallback(source, data, metadata, result, sources_data, db_game_id,
         apply_screenscraper_to_metadata(metadata, data, db_game_id, result, fill_only=True,
                                         own_region=own_region)
         label = 'ScreenScraper'
+    elif source == 'mobygames':
+        apply_mobygames_to_metadata(metadata, data, db_game_id, result, fill_only=True,
+                                    platform_id=moby_platform_id(system_folder),
+                                    own_region=own_region)
+        label = 'MobyGames'
     else:
         apply_rawg_to_metadata(metadata, data, db_game_id, result, fill_only=True,
                                platform_id=rawg_platform_id(system_folder))
@@ -1348,7 +1392,8 @@ def _run_ai_fallback(metadata, result, sources_data, db_game_id, lookup,
 def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                           secondary_sources=None, fill_gaps=True, force_overwrite=False,
                           primary_data=None, restrict_to_selected=False,
-                          keep_media=False, automatic_pick=False, mark_scraped=True):
+                          keep_media=False, automatic_pick=False, mark_scraped=True,
+                          only_source=None):
     """
     Apply metadata from primary source, then fill gaps from secondary sources.
 
@@ -1442,6 +1487,9 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             'units_sold': None,
             'release_dates': None,
             'alternate_titles': None,
+            'moby_score': None,
+            'mobygames_id': None,
+            'box_scans': None,
         }
 
         # The file name says which copy this is, so it comes before every source
@@ -1713,6 +1761,20 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 logger.warning(f"Primary RAWG fetch/apply failed for {primary_id}: {e}; "
                                "falling through to gap-fill")
 
+        elif primary_source == 'mobygames':
+            try:
+                from scraper.scrape_mobygames import fetch_game_details as fetch_moby
+                moby_data = fetch_moby(primary_id, system_folder)
+                if moby_data:
+                    sources_data['mobygames'] = moby_data
+                    apply_mobygames_to_metadata(metadata, moby_data, db_game_id, result,
+                                                platform_id=moby_platform_id(system_folder),
+                                                own_region=game_own_region(game))
+                    result['sources_used'].append('MobyGames')
+            except Exception as e:
+                logger.warning(f"Primary MobyGames fetch/apply failed for {primary_id}: {e}; "
+                               "falling through to gap-fill")
+
         elif primary_source == 'screenscraper':
             try:
                 api_keys = load_scraper_settings().get('api_keys', {})
@@ -1756,7 +1818,7 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
             _run_fallbacks(
                 metadata, result, sources_data, game, db_game_id,
                 primary_source, system_folder, secondary_sources,
-                restrict_to_selected, media_force, c,
+                restrict_to_selected, media_force, c, only_source=only_source,
             )
         _use_esde_rating(metadata, result)
 
@@ -1864,6 +1926,10 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         _save_source_ids(c, db_game_id, sources_data, force_overwrite)
 
         conn.commit()
+        # Full Re-scrape may replace the scans; the old files go once the new
+        # record is saved.
+        from services.box_scans import drop_replaced
+        drop_replaced(game.get('box_scans'), to_write.get('box_scans'))
         apply_progress.step_done()
 
         # Pass 38.1 — RA-check extracted to _apply_retroachievements_check.

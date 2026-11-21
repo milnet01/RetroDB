@@ -306,6 +306,7 @@ __all__ = [
     'apply_tgdb_to_metadata',
     'apply_igdb_to_metadata',
     'apply_rawg_to_metadata',
+    'apply_mobygames_to_metadata',
     'apply_steam_to_metadata',
     'apply_screenscraper_to_metadata',
     'apply_ai_to_metadata',
@@ -958,6 +959,145 @@ def apply_rawg_to_metadata(metadata, rawg_data, db_game_id, result, fill_only=Fa
         if downloaded:
             metadata['screenshots'] = ','.join(existing_ss + downloaded)
             result['filled_fields'].append('screenshots (RAWG)')
+
+
+# =============================================================================
+# MOBYGAMES METADATA APPLICATION (PASS-59-183)
+# =============================================================================
+
+_MOBY_SCREENSHOTS = 5
+
+
+def _moby_description(text):
+    """MobyGames' HTML description as plain paragraphs."""
+    import html
+    text = _HTML_TAG.sub('', _STEAM_LINE_BREAK.sub('\n', text or ''))
+    return re.sub(r'\n{3,}', '\n\n', clean_description(html.unescape(text))).strip()
+
+
+def _moby_credits(companies, platform_name):
+    """The companies credited on this platform, joined. A record covers every
+    platform, so a credit for none named is left for another source."""
+    names = [c['name'] for c in companies or []
+             if c.get('name') and platform_name and platform_name in (c.get('platforms') or [])]
+    return ', '.join(dict.fromkeys(names)) or None
+
+
+def _download_box_scans(db_game_id, group):
+    """Download every image of one cover group into box_scans/; its record, or
+    None when the front did not arrive (the downloads made are then deleted)."""
+    import json as _json
+    import secrets
+    from services import box_scans
+    images = (group.get('images') or [])[:box_scans.MAX_ITEMS]
+    counts, jobs = {}, []
+    for image in images:
+        kind = box_scans.kind_of(image)
+        n = counts.get(kind, 0)
+        counts[kind] = n + 1
+        name = f'{db_game_id}_{kind}_{n}_{secrets.token_hex(3)}.webp'
+        jobs.append((image, kind, name))
+
+    def fetch(job):
+        image, _kind, name = job
+        path = os.path.join(IMAGE_PATH, 'box_scans', name)
+        return _download_and_finalize(image.get('image_url'), path, 'box_scans', timeout=15)
+
+    with ThreadPoolExecutor(max_workers=_MEDIA_DOWNLOAD_WORKERS, thread_name_prefix='scan-dl') as ex:
+        arrived = list(ex.map(lambda job: contextvars.copy_context().run(fetch, job), jobs))
+    items = [{'kind': kind, 'caption': image.get('caption'), 'file': name,
+              'width': image.get('width'), 'height': image.get('height')}
+             for (image, kind, name), ok in zip(jobs, arrived) if ok]
+    record = {'version': box_scans.VERSION, 'mobygames': {
+        'group': group.get('cover_group_id'), 'countries': box_scans.countries(group),
+        'packaging': box_scans.packaging(group), 'items': items}}
+    if not any(item['kind'] == 'front' for item in items):
+        box_scans.delete_scans(_json.dumps(record))
+        return None
+    return record
+
+
+def _moby_cover(group, type_name):
+    for image in (group or {}).get('images') or []:
+        if (image.get('type') or {}).get('name') == type_name and image.get('image_url'):
+            return image['image_url']
+    return None
+
+
+def apply_mobygames_to_metadata(metadata, moby_data, db_game_id, result, fill_only=False,
+                                platform_id=None, own_region=None):
+    """Apply one MobyGames record, fill-only (spec §4.4). The covers come from one
+    cover group for this platform, so front, back and scans are one box."""
+    import json as _json
+    from services import box_scans
+    label = 'MobyGames'
+
+    def fill(field, value):
+        if value and not metadata.get(field):
+            metadata[field] = value
+            result['filled_fields'].append(f'{field} ({label})')
+
+    if moby_data.get('title') and (not metadata['title'] or not fill_only):
+        metadata['title'] = normalize_title(moby_data['title'])
+        result['filled_fields'].append(f'title ({label})')
+    fill('description', _moby_description(moby_data.get('description')))
+
+    entry = next((p for p in moby_data.get('platforms') or []
+                  if platform_id and p.get('platform_id') == platform_id), None)
+    platform_name = (entry or {}).get('name')
+    fill('developer', _moby_credits(moby_data.get('developers'), platform_name))
+    fill('publisher', _moby_credits(moby_data.get('publishers'), platform_name))
+    for field, category in (('genre', 'Basic Genres'), ('perspective', 'Perspective')):
+        names = [g['name'] for g in moby_data.get('genres') or []
+                 if g.get('category') == category and g.get('name')]
+        if names and not metadata.get(field):
+            fill_labels(metadata, result, field, ', '.join(names), label)
+    if entry:
+        _fill_release_date(metadata, source_date(entry.get('release_date')), label, result)
+    fill('moby_score', moby_data.get('moby_score'))
+    fill('mobygames_id', moby_data.get('game_id'))
+
+    group = box_scans.choose_group(moby_data.get('covers'), platform_id, own_region) if platform_id else None
+    for field, type_name, folder in (('boxart', 'Front Cover', 'boxart'),
+                                     ('boxart_back', 'Back Cover', 'boxart_back')):
+        url = _moby_cover(group, type_name)
+        if url and not metadata.get(field):
+            filename = f"{db_game_id}_moby_{field}{preferred_image_extension(field, _url_ext(url, 'jpg'))}"
+            if _download_and_finalize(url, os.path.join(IMAGE_PATH, folder, filename), field, timeout=15):
+                metadata[field] = filename
+                result['filled_fields'].append(f'{field} ({label})')
+                if field == 'boxart':
+                    metadata['_boxart_source'] = 'mobygames'
+    if group and not metadata.get('box_scans'):
+        record = _download_box_scans(db_game_id, group)
+        if record:
+            metadata['box_scans'] = _json.dumps(record)
+            result['filled_fields'].append(f"box_scans +{len(record['mobygames']['items'])} ({label})")
+
+    shots = next((s for s in moby_data.get('screenshots') or []
+                  if platform_id and s.get('platform_id') == platform_id), None)
+    urls = [i.get('image_url') for i in (shots or {}).get('images') or [] if i.get('image_url')]
+    if urls:
+        screenshot_dir = os.path.join(IMAGE_PATH, 'screenshots')
+        os.makedirs(screenshot_dir, exist_ok=True)
+        existing_ss = [s.strip() for s in (metadata.get('screenshots') or '').split(',') if s.strip()]
+        existing_hashes = get_existing_screenshot_hashes(existing_ss, db_game_id)
+        start_num = len(existing_ss) + 1
+        jobs, relisted = [], []
+        for i, url in enumerate(urls[:_MOBY_SCREENSHOTS]):
+            filename = (f"{db_game_id}_moby_ss{start_num + i}"
+                        f"{preferred_image_extension('screenshots', _url_ext(url, 'png'))}")
+            local_path = os.path.join(screenshot_dir, filename)
+            if _skip_screenshot(filename, local_path, existing_ss, relisted):
+                continue
+            jobs.append(lambda u=url, p=local_path, f=filename:
+                        f if _download_and_finalize(u, p, 'screenshots', timeout=15,
+                                                    screenshot_of=db_game_id) else None)
+        existing_hashes.extend(get_existing_screenshot_hashes(relisted))
+        downloaded = relisted + _download_screenshots_parallel(jobs, existing_hashes, label)
+        if downloaded:
+            metadata['screenshots'] = ','.join(existing_ss + downloaded)
+            result['filled_fields'].append(f'screenshots ({label})')
 
 
 # =============================================================================

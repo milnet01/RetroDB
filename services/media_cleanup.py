@@ -176,9 +176,11 @@ def delete_game_images(games):
     return deleted
 
 
-def delete_unshared_media(row):
+def delete_unshared_media(row, box_faces=True):
     """Delete the media files a just-deleted games or wishlist row named,
     except any file another row still names (PASS-59-238). Returns the count.
+    The game page's Clear passes box_faces=False: a Slipcase box is never
+    scraped data (PASS-59-142).
 
     Call after the row's DELETE, so a failure here strands only files the
     orphan sweep can reclaim, never a reference to a missing file.
@@ -195,9 +197,11 @@ def delete_unshared_media(row):
         if field in keys and row[field]:
             entries = [e.strip() for e in row[field].split(',') if e.strip()]
             own[field] = ','.join(e for e in entries if os.path.basename(e) not in still_named)
-    if 'box_faces' in keys:
+    if box_faces and 'box_faces' in keys:
         from services.box_faces import delete_faces_of
         delete_faces_of(row)
+    from services.box_scans import delete_scans_of
+    delete_scans_of(row)
     return delete_game_images([own])
 
 
@@ -268,6 +272,9 @@ def find_orphaned_media(games, wishlist=()):
         # The prefix rule below sweeps a deleted game's; an import deletes
         # the files it replaces, so none is referenced only by the column.
         (os.path.join(config.IMAGE_PATH, 'box_faces'),   'box_faces',   image_base),
+        # PASS-59-183 — MobyGames box scans, <game_id>_<kind>_<n>_<token>.
+        # A replaced record's files are deleted when it is replaced.
+        (os.path.join(config.IMAGE_PATH, 'box_scans'),   'box_scans',   image_base),
     )
 
     orphaned = []

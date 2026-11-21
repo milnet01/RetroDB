@@ -202,3 +202,29 @@ def test_clz_keeps_a_year_as_a_year():
     assert clz_release_date('Nov 09, 2018') == '2018-11-09'
     assert clz_release_date('Jan 01, 2018') == '2018'
     assert clz_release_date('') is None
+
+
+def test_reset_keeps_slipcase_faces_and_clears_box_scans(page_game):
+    """Clear never touches a Slipcase box (PASS-59-142); it empties the MobyGames
+    scans and deletes their files (PASS-59-183 §4.5)."""
+    import json
+    import config
+    client, csrf, gid, conn = page_game
+    face = os.path.join(config.IMAGE_PATH, 'box_faces', f'{gid}_front_ab12.webp')
+    scan = os.path.join(config.IMAGE_PATH, 'box_scans', f'{gid}_front_0_ab12.webp')
+    for path in (face, scan):
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        open(path, 'wb').close()
+    faces = json.dumps({'faces': {'front': os.path.basename(face)}})
+    scans = json.dumps({'version': 1, 'mobygames': {'items': [
+        {'kind': 'front', 'file': os.path.basename(scan)}]}})
+    conn.execute("UPDATE games SET box_faces = ?, box_scans = ?, mobygames_id = 858 WHERE id = ?",
+                 (faces, scans, gid))
+    conn.commit()
+    client.post(f'/game/{gid}', data={'action': 'reset', 'csrf_token': csrf},
+                headers={'X-CSRF-Token': csrf})
+    row = conn.execute("SELECT box_faces, box_scans, mobygames_id FROM games WHERE id = ?",
+                       (gid,)).fetchone()
+    assert os.path.exists(face)
+    assert row == (faces, None, None)
+    assert not os.path.exists(scan)

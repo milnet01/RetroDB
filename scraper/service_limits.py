@@ -21,6 +21,7 @@ SCREENSCRAPER = 'screenscraper'
 THEGAMESDB = 'tgdb'
 RAWG = 'rawg'
 IGDB = 'igdb'
+MOBYGAMES = 'mobygames'
 HOWLONGTOBEAT = 'hltb'
 STEAM_STORE = 'steam_store'
 GEMINI = 'gemini'
@@ -32,6 +33,7 @@ NAMES = {
     THEGAMESDB: 'TheGamesDB',
     RAWG: 'RAWG',
     IGDB: 'IGDB',
+    MOBYGAMES: 'MobyGames',
     HOWLONGTOBEAT: 'HowLongToBeat',
     STEAM_STORE: 'Steam',
     GEMINI: 'Gemini',
@@ -40,7 +42,7 @@ NAMES = {
 }
 
 # The services a game scrape searches.
-SCRAPE_SOURCES = (SCREENSCRAPER, THEGAMESDB, RAWG, IGDB)
+SCRAPE_SOURCES = (SCREENSCRAPER, THEGAMESDB, RAWG, IGDB, MOBYGAMES)
 # The AI providers, named as scraper_settings.json's ai_provider names them.
 AI_SOURCES = (GEMINI, OPENAI, CLAUDE)
 
@@ -49,16 +51,20 @@ LIMIT_REACHED = 'limit_reached'
 KEY_REFUSED = 'key_refused'
 KEY_REJECTED = 'key_rejected'
 PAYMENT_NEEDED = 'payment_needed'
+UNAVAILABLE = 'unavailable'  # not answering; waiting will help
 
 # Seconds between calls. IGDB's limit is 4 a second. ScreenScraper's replies
 # state the account's own rate, which replaces this figure. RAWG and
 # HowLongToBeat publish no rate. TheGamesDB limits only the month's total.
 # Steam's store documents neither the call nor a limit; about 200 calls in five
 # minutes is the figure usually reported, unchecked, and this keeps within it.
+# MobyGames states its rate in every reply (PASS-59-183); five seconds is what
+# it gave a Hobbyist key on 2026-11-21, used until the first reply says more.
 _DEFAULT_PACE = {
     SCREENSCRAPER: 0.1,
     RAWG: 0.3,
     IGDB: 0.26,
+    MOBYGAMES: 5.0,
     HOWLONGTOBEAT: 1.0,
     STEAM_STORE: 1.5,
 }

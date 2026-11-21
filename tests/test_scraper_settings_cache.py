@@ -38,7 +38,7 @@ def settings_file(tmp_path, monkeypatch):
     """
     path = tmp_path / 'scraper_settings.json'
     path.write_text(json.dumps({
-        'priority': ['igdb', 'tgdb'],
+        'priority': ['igdb', 'tgdb', 'mobygames'],
         'enabled': {'igdb': True, 'tgdb': False},
         'api_keys': {'tgdb': 'REAL-KEY-1234'},
     }))
@@ -62,7 +62,7 @@ class TestReturnsACopy:
 
         second = sm.load_scraper_settings()
         assert second['api_keys']['tgdb'] == 'REAL-KEY-1234'
-        assert second['priority'] == ['igdb', 'tgdb']
+        assert second['priority'] == ['igdb', 'tgdb', 'mobygames']
         assert second['enabled']['igdb'] is True
 
     def test_nested_containers_are_copied_not_shared(self, settings_file):
@@ -83,15 +83,15 @@ class TestInvalidation:
     def test_cached_read_does_not_see_a_file_change(self, settings_file):
         """The TTL is real — this is the behaviour invalidation exists to fix,
         asserted so the next test is not vacuously true."""
-        assert sm.load_scraper_settings()['priority'] == ['igdb', 'tgdb']
-        settings_file.write_text(json.dumps({'priority': ['rawg']}))
-        assert sm.load_scraper_settings()['priority'] == ['igdb', 'tgdb']
+        assert sm.load_scraper_settings()['priority'] == ['igdb', 'tgdb', 'mobygames']
+        settings_file.write_text(json.dumps({'priority': ['rawg', 'mobygames']}))
+        assert sm.load_scraper_settings()['priority'] == ['igdb', 'tgdb', 'mobygames']
 
     def test_invalidate_forces_a_reread(self, settings_file):
-        assert sm.load_scraper_settings()['priority'] == ['igdb', 'tgdb']
-        settings_file.write_text(json.dumps({'priority': ['rawg']}))
+        assert sm.load_scraper_settings()['priority'] == ['igdb', 'tgdb', 'mobygames']
+        settings_file.write_text(json.dumps({'priority': ['rawg', 'mobygames']}))
         sm.invalidate_scraper_settings_cache()
-        assert sm.load_scraper_settings()['priority'] == ['rawg']
+        assert sm.load_scraper_settings()['priority'] == ['rawg', 'mobygames']
 
     def test_both_writers_invalidate(self):
         """Every `atomic_write_json` of the settings file is followed by an
@@ -110,6 +110,14 @@ class TestInvalidation:
             f'{writes} writers but {invalidations} invalidations — '
             'every write of scraper_settings.json must bust the cache'
         )
+
+
+class TestOlderSavedOrder:
+    def test_a_list_saved_before_mobygames_asks_it_last(self, settings_file):
+        """PASS-59-183 §14: a saved order without MobyGames gets it at the end."""
+        settings_file.write_text(json.dumps({'priority': ['igdb', 'tgdb']}))
+        sm.invalidate_scraper_settings_cache()
+        assert sm.load_scraper_settings()['priority'] == ['igdb', 'tgdb', 'mobygames']
 
 
 class TestPathAgreement:

@@ -912,14 +912,15 @@
                     {% endif %}
                     <span class="history-sources">
                         {% set primary = entry.get('primary_source', '') | lower %}
-                        {% set source_name_map = {'esde': 'ES-DE', 'tgdb': 'TheGamesDB', 'igdb': 'IGDB', 'screenscraper': 'ScreenScraper', 'rawg': 'RAWG'} %}
+                        {% set source_name_map = {'esde': 'ES-DE', 'tgdb': 'TheGamesDB', 'igdb': 'IGDB', 'screenscraper': 'ScreenScraper', 'rawg': 'RAWG', 'mobygames': 'MobyGames'} %}
                         {% for source in entry['sources_used'] %}
                             {% set source_lower = source | lower | replace(' ', '') | replace('-', '') %}
                             {% set is_primary = (source_lower == primary) or 
                                                (source == 'ES-DE' and primary == 'esde') or 
                                                (source == 'TheGamesDB' and primary == 'tgdb') or 
                                                (source == 'ScreenScraper' and primary == 'screenscraper') or
-                                               (source == 'RAWG' and primary == 'rawg') %}
+                                               (source == 'RAWG' and primary == 'rawg') or
+                                               (source == 'MobyGames' and primary == 'mobygames') %}
                             {% if is_primary %}
                             <span class="source-badge source-{{ source | lower | replace(' ', '-') }} primary-source" title="{{ _('Primary scraper') }}">{{ source }}</span>
                             {% else %}
@@ -3042,6 +3043,7 @@ body:has(.game-fanart-bg.active)::before {
 .result-badge.thegamesdb { background: rgba(76, 201, 240, 0.2); color: var(--neon-cyan); }
 .result-badge.igdb { background: rgba(156, 39, 176, 0.2); color: #ce93d8; }
 .result-badge.rawg { background: rgba(30, 175, 90, 0.2); color: #4caf50; }
+.result-badge.mobygames { background: rgba(255, 112, 67, 0.2); color: #ff8a65; }
 .result-badge.screenscraper { background: rgba(255, 193, 7, 0.2); color: #ffca28; }
 
 .result-platform {
@@ -3119,6 +3121,12 @@ body:has(.game-fanart-bg.active)::before {
     background: rgba(30, 175, 90, 0.15);
     border-color: #4caf50;
     color: #4caf50;
+}
+
+.scrape-column-header.mobygames {
+    background: rgba(255, 112, 67, 0.15);
+    border-color: #ff8a65;
+    color: #ff8a65;
 }
 
 .scrape-column-header.screenscraper {
@@ -3780,6 +3788,7 @@ body:has(.game-fanart-bg.active)::before {
 .source-badge.source-thegamesdb { background: rgba(76, 201, 240, 0.2); color: var(--neon-cyan); }
 .source-badge.source-igdb { background: rgba(247, 37, 133, 0.2); color: var(--secondary-magenta); }
 .source-badge.source-rawg { background: rgba(30, 175, 90, 0.2); color: #4caf50; }
+.source-badge.source-mobygames { background: rgba(255, 112, 67, 0.2); color: #ff8a65; }
 .source-badge.source-screenscraper { background: rgba(255, 193, 7, 0.2); color: #ffca28; }
 
 .history-fields {
@@ -5143,7 +5152,7 @@ async function performSearch(event) {
         const settingsResponse = await fetch('/api/scraper-settings');
         const scraperSettings = await settingsResponse.json();
         
-        const priority = scraperSettings.priority || ['screenscraper', 'esde', 'tgdb', 'igdb', 'rawg'];
+        const priority = scraperSettings.priority || ['screenscraper', 'esde', 'tgdb', 'igdb', 'rawg', 'mobygames'];
         const enabled = scraperSettings.enabled || {};
         
         // Update subtitle with enabled scrapers
@@ -5152,6 +5161,7 @@ async function performSearch(event) {
             'tgdb': 'TheGamesDB',
             'igdb': 'IGDB',
             'rawg': 'RAWG',
+            'mobygames': 'MobyGames',
             'screenscraper': 'ScreenScraper'
         };
         const enabledNames = priority.filter(s => enabled[s]).map(s => scraperNames[s] || s);
@@ -5170,6 +5180,7 @@ async function performSearch(event) {
                 'tgdb': { icon: '🎮', title: 'TheGamesDB', headerClass: 'tgdb', sourceMatch: ['thegamesdb', 'tgdb'] },
                 'igdb': { icon: '🌐', title: 'IGDB', headerClass: 'igdb', sourceMatch: ['igdb'] },
                 'rawg': { icon: '🎲', title: 'RAWG', headerClass: 'rawg', sourceMatch: ['rawg'] },
+                'mobygames': { icon: '🕹️', title: 'MobyGames', headerClass: 'mobygames', sourceMatch: ['mobygames'] },
                 'screenscraper': { icon: '🖥️', title: 'ScreenScraper', headerClass: 'screenscraper', sourceMatch: ['screenscraper'] }
             };
             

@@ -123,6 +123,7 @@ def settings():
                 'tgdb': config.SCRAPER_TGDB_ENABLED,
                 'igdb': config.SCRAPER_IGDB_ENABLED,
                 'rawg': config.SCRAPER_RAWG_ENABLED,
+                'mobygames': True,
                 # Same default as scraper_manager, which scrapes with it on.
                 'screenscraper': getattr(config, 'SCRAPER_SCREENSCRAPER_ENABLED', True),
                 'ai': False
@@ -132,6 +133,7 @@ def settings():
                 'igdb_client_id': getattr(config, 'IGDB_CLIENT_ID', ''),
                 'igdb_client_secret': getattr(config, 'IGDB_CLIENT_SECRET', ''),
                 'rawg': getattr(config, 'RAWG_API_KEY', ''),
+                'mobygames_apikey': '',
                 'ra_username': getattr(config, 'RETROACHIEVEMENTS_USERNAME', ''),
                 'ra_apikey': getattr(config, 'RETROACHIEVEMENTS_API_KEY', ''),
                 'ai_provider': getattr(config, 'AI_METADATA_PROVIDER', ''),

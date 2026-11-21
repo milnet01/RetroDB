@@ -70,6 +70,7 @@ SECRET_API_KEY_FIELDS = frozenset({
     'tgdb_public',
     'igdb_client_secret',
     'rawg',
+    'mobygames_apikey',
     'ra_apikey',
     'ai_gemini_api_key',
     'ai_openai_api_key',
@@ -124,6 +125,7 @@ def get_saved_api_keys():
         'igdb_client_id': getattr(config, 'IGDB_CLIENT_ID', ''),
         'igdb_client_secret': getattr(config, 'IGDB_CLIENT_SECRET', ''),
         'rawg': getattr(config, 'RAWG_API_KEY', ''),
+        'mobygames_apikey': '',
         'ra_username': getattr(config, 'RETROACHIEVEMENTS_USERNAME', ''),
         'ra_apikey': getattr(config, 'RETROACHIEVEMENTS_API_KEY', ''),
         'ai_provider': getattr(config, 'AI_METADATA_PROVIDER', ''),
@@ -187,6 +189,13 @@ def api_get_scraper_settings():
             else:
                 priority.append('rawg')
             settings['priority'] = priority
+
+        # Add MobyGames if missing: last in priority, on by default (only
+        # asked once a key is saved).
+        if 'mobygames' not in settings.get('enabled', {}):
+            settings.setdefault('enabled', {})['mobygames'] = True
+        if 'mobygames' not in settings.get('priority', []):
+            settings.setdefault('priority', []).append('mobygames')
 
         # Add AI if missing (for older settings files)
         if 'ai' not in settings.get('enabled', {}):
@@ -436,7 +445,36 @@ def api_check_scraper(scraper):
                     return jsonify({'online': False, 'scraper': scraper, 'reason': 'Connection error'})
             else:
                 return jsonify({'online': False, 'scraper': scraper, 'reason': 'No API key'})
-        
+
+        elif scraper == 'mobygames':
+            # One request only; the key goes in params so it is URL-encoded
+            # and never logged.
+            moby_key = api_keys.get('mobygames_apikey', '')
+            if not moby_key:
+                return jsonify({'online': False, 'scraper': scraper, 'reason': 'No API key'})
+            try:
+                r = requests.get(
+                    'https://api.mobygames.com/v2/games',
+                    params={'title': 'Tetris', 'limit': 1, 'api_key': moby_key},
+                    headers={'User-Agent': 'RetroDB/1.0'},
+                    timeout=timeout,
+                )
+            except (requests.RequestException, OSError):
+                return jsonify({'online': False, 'scraper': scraper, 'reason': 'Connection error'})
+            # A check does not wait its turn (scrapers.md §10), but what the reply
+            # says of the key and the hour applies to scrapes too.
+            from scraper.scrape_mobygames import read_limits
+            read_limits(r)
+            if r.status_code == 200:
+                return jsonify({'online': True, 'scraper': scraper})
+            if r.status_code in (401, 403):
+                reason = 'Invalid API key'
+            elif r.status_code == 429:
+                reason = 'Rate limit exceeded'
+            else:
+                reason = f'HTTP {r.status_code}'
+            return jsonify({'online': False, 'scraper': scraper, 'reason': reason})
+
         elif scraper == 'screenscraper':
             # Check ScreenScraper - needs longer timeout as their API can be slow
             ss_username = api_keys.get('screenscraper_username', '')

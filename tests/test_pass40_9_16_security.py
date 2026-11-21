@@ -140,7 +140,7 @@ class TestPass40_10ShutdownAwareSleep:
         repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         offenders = []
         for name in ('psn_refresh', 'platform_sync', 'ra_sync',
-                     'ra_refresh', 'museum'):
+                     'ra_refresh', 'museum', 'mobygames_catch_up'):
             path = os.path.join(repo, 'services', 'jobs', f'{name}.py')
             with open(path, encoding='utf-8') as f:
                 src = f.read()
@@ -156,10 +156,35 @@ class TestPass40_10ShutdownAwareSleep:
 
     def test_each_job_imports_shutdown_event(self):
         for name in ('psn_refresh', 'platform_sync', 'ra_sync',
-                     'ra_refresh', 'museum'):
+                     'ra_refresh', 'museum', 'mobygames_catch_up'):
             mod = __import__(f'services.jobs.{name}', fromlist=['*'])
             assert hasattr(mod, 'shutdown_requested'), \
                 f'{name}.py must import shutdown_requested (Pass 40.10)'
+
+
+class TestMobyGamesDownloads:
+    """PASS-59-183 INV-7: MobyGames' pictures go through the SSRF-gated
+    helper, and its sender never calls requests directly."""
+
+    def test_sender_uses_base_scraper(self):
+        from scraper import scrape_mobygames as mod
+        src = read_module_source(mod)
+        assert 'import requests' not in src and 'requests.' not in src
+        assert 'http_get(' in src
+
+    def test_every_scan_download_is_gated(self, monkeypatch, tmp_path):
+        from scraper import metadata_merger
+        seen = []
+        monkeypatch.setattr(metadata_merger, 'IMAGE_PATH', str(tmp_path))
+        monkeypatch.setattr(metadata_merger, '_download_and_finalize',
+                            lambda url, path, kind, **k: seen.append((url, kind)) or False)
+        group = {'cover_group_id': 1, 'platforms': [{'id': 6}], 'countries': [],
+                 'attributes': [], 'images': [
+                     {'image_url': 'http://169.254.169.254/x.jpg', 'type': {'name': 'Front Cover'}},
+                     {'image_url': 'https://cdn.mobygames.com/b.jpg', 'type': {'name': 'Spine/Sides'}}]}
+        assert metadata_merger._download_box_scans(1, group) is None
+        assert sorted(u for u, _ in seen) == ['http://169.254.169.254/x.jpg',
+                                              'https://cdn.mobygames.com/b.jpg']
 
 
 # -----------------------------------------------------------------------------

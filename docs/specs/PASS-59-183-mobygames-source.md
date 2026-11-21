@@ -1,7 +1,7 @@
 <!-- ants-spec-format: 1 -->
 # PASS-59-183 — Scrape game details and box scans from MobyGames
 
-**Status:** spec draft (2026-11-21).
+**Status:** built (2026-11-21).
 **Kind:** implement.
 **Source:** ROADMAP PASS-59-183 (user, 2026-10-29; scope 2026-11-21).
 **Blocker for:** PASS-59-326, PASS-59-325.
@@ -69,21 +69,19 @@ One endpoint, `GET https://api.mobygames.com/v2/games`, through
 INCLUDE = ('title,moby_url,description,developers,publishers,genres,'
            'moby_score,official_url,platforms,release_date,covers,screenshots')
 
-def search_games(title, system_name=None, limit=10) -> list[dict]
-    # One request: title=, platform=<id>, include=INCLUDE.
-    # Each result carries the whole record under '_record'.
-def fetch_game_details(game_id, system_name=None) -> dict | None
-    # The record a search already returned, else one request:
-    # id=<game_id>, platform=<id>, include=INCLUDE.
+def search_games(title, system_folder=None, limit=10) -> list[dict]
+    # One light request: title=, platform=<id>, include=SEARCH_INCLUDE.
+def fetch_game_details(game_id, system_folder=None) -> dict | None
+    # One request: id=<game_id>, platform=<id>, include=INCLUDE.
+    # Each whole record is kept for 10 minutes, by game id.
 PLATFORM_MAP: dict[str, int]   # system folder -> MobyGames platform id
 ```
 
-- **One request per game found.** A search with `include=` returns
-  whole records, and the fallback walk applies the record it found
-  without asking again. `fetch_game_details` asks only for a game a
-  person picked from an earlier search, whose record has left the
-  10-minute cache (`scrapers.md` §11). `id=` returns the record by
-  number (tried 2026-11-21).
+- **Two requests per game found**: a light search, then the record by
+  `id=`. Measured 2026-11-21: a search asking for whole records took 12
+  to 50 seconds, a light search under a second, the record by id about
+  one. Applying the record asks nothing more, and a record fetched in
+  the last 10 minutes is not asked for again.
 - `title=` matches part of a title: `Final Fantasy VII` also returns
   VIII and VII International. `match_scorer` gains
   `calculate_mobygames_score`, which scores like the other sources'
@@ -102,7 +100,8 @@ with a default pace of 5.0 seconds. After every reply the sender reads:
 | `ratelimit-policy`, first entry `<rate>;w=1` | `set_pace(MOBYGAMES, 1 / rate)` |
 | `ratelimit-remaining: 0` | `stop(MOBYGAMES, ratelimit-reset seconds)` |
 | 429 | `stop(MOBYGAMES, retry-after seconds)`, else one hour |
-| 401 or 403 | `stop(MOBYGAMES, 3600, KEY_REFUSED)` |
+| 401 or 403 | `stop(MOBYGAMES, 3600, KEY_REJECTED)`, worded as a refused key |
+| No reply, or a 5xx | `stop(MOBYGAMES, 600, UNAVAILABLE)`, worded as not answering |
 
 `http_get` is called with `retries=0`. Its 429 retry would wait up to
 60 seconds, where the stop already says how long to wait.
@@ -192,34 +191,42 @@ and `games.box_scans TEXT` (NULL = none). The record:
   the group with a `Spine/Sides` image, then the one with more images,
   then the first listed.
 - Fill-only: written only while `box_scans` is NULL, or by Full
-  Re-scrape (`scrapers.md` §3). `clear_scraped_data` and the edit
-  modal's Clear empty it and delete its files.
-  `media_cleanup.find_orphaned_media` learns the folder.
+  Re-scrape (`scrapers.md` §3), which deletes the old record's files
+  once the new one is saved. `clear_scraped_data` and the edit modal's
+  Clear empty it and delete its files; Clear leaves `box_faces` and its
+  files alone. `media_cleanup.find_orphaned_media` learns the folder.
 
 ### 4.6 Catching up after the hour runs out
 
 Migration 046 also adds `mobygames_pending (game_id INTEGER PRIMARY KEY
 REFERENCES games(id) ON DELETE CASCADE, added_at TEXT)`.
 
-- A fallback run that finds MobyGames stopped for `LIMIT_REACHED` adds
-  the game. A stop for a refused key adds nothing: waiting will not
-  help.
+- A fallback run that finds MobyGames stopped for `LIMIT_REACHED` or
+  `UNAVAILABLE` adds
+  the game. A stop for any other reason, such as a refused key, adds
+  nothing: waiting will not help.
 - A background job, `MobyGamesCatchUpJob`, takes pending games in
-  `added_at` order once the stop ends. For each it runs the MobyGames
-  fallback alone through `_apply_fallback` and the same fill-only
-  save. It ends when the list is empty or MobyGames stops again.
-- It starts when a scrape ends with games pending, and when the app
-  starts with games pending. Only one runs at a time.
+  `added_at` order once the stop ends. For each it runs the scrape with
+  MobyGames as its only source (`only_source='mobygames'`), so the
+  same fill-only save. It waits out a later hour's stop and carries on,
+  so a long list empties by itself. It ends when the list is empty,
+  when MobyGames refuses the key, or at shutdown.
+- It starts when a scrape ends with games pending
+  (`game_metadata_service.apply_hybrid_metadata_to_game`), and when the
+  app starts with games pending. Only one runs at a time.
 - A game leaves the list once asked, whether MobyGames found it or not.
   A game deleted from the library leaves with its row.
 
 ## 5. Invariants
 
-- **INV-1** — A game MobyGames finds costs one API request.
-  *Test:* `tests/test_scrape_mobygames.py`, a fallback run for one game
-  with `http_get` replaced by a counter that returns a saved search
-  reply; the counter reads 1.
-  *Breaks when:* the apply step fetches the found game again by id.
+- **INV-1** — A game MobyGames finds costs two API requests: a light
+  search and the record by id. Applying it, or fetching it again within
+  10 minutes, costs none.
+  *Test:* `tests/test_scrape_mobygames.py`, a fallback run and apply
+  for one game with `http_get` replaced by a counter that returns a
+  saved reply; the counter reads 2, and a second fetch leaves it at 2.
+  *Breaks when:* the search asks for whole records, or the apply step
+  or a repeat fetch asks again.
 
 - **INV-2** — The pace follows the reply. `0.2;w=1, 720;w=3600` sets a
   5-second gap and `1;w=1, 720;w=3600` a 1-second gap.
@@ -270,13 +277,17 @@ REFERENCES games(id) ON DELETE CASCADE, added_at TEXT)`.
   *Test:* `tests/test_scrape_mobygames.py`: stop MobyGames with
   `LIMIT_REACHED`, run a fallback, and `mobygames_pending` holds the
   game. Clear the stop and run the job with a counting `http_get`: one
-  request, and the list is empty. Repeat with `KEY_REFUSED`, and the
+  game's two requests (INV-1), and the list is empty. Repeat with `KEY_REJECTED`, and the
   list stays empty.
   *Breaks when:* the job never runs the pending game, runs it twice, or
   lists a game whose key was refused.
 
 ## 6. Failure modes
 
+- **A server not answering.** On 2026-11-21 the API answered 502, 504
+  and 60-second timeouts for a while. A timeout or a 5xx pauses
+  MobyGames for 10 minutes, so later games do not each wait out the
+  timeout; the game goes on the catch-up list (§4.6).
 - **A refused key.** A 401 or 403 stops MobyGames for an hour. The
   Settings check says the key was refused. Other sources go on.
 - **The hour spent mid-run.** Games after that get no MobyGames data in
@@ -301,8 +312,9 @@ test is seen failing before its code exists.
 
 ## 8. Alternatives considered (and rejected)
 
-- **Search, then fetch the chosen game.** That is two requests and ten
-  seconds per game. The search already returns the whole record.
+- **One search that returns whole records.** One request per game,
+  but it took 12 to 50 seconds where a light search and a fetch by id
+  took about two (measured 2026-11-21), so fewer games an hour.
 - **Skip MobyGames in every bulk scrape.** The user rejected it: a game
   takes more than five seconds anyway (2026-11-21).
 - **A fixed pace of five seconds.** It would keep RetroDB slow after

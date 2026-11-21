@@ -1227,6 +1227,7 @@ def get_api_status():
         'database': True,  # Always online since we got here
         'esde': True,  # Local filesystem - always available
         'rawg': False,
+        'mobygames': False,
         'igdb': False,
         'retroachievements': False,
         'screenscraper': False,
@@ -1264,6 +1265,9 @@ def get_api_status():
     rawg_key = api_keys.get('rawg') or api_keys.get('rawg_api_key') or getattr(config, 'RAWG_API_KEY', '')
     status['rawg'] = bool(rawg_key and enabled.get('rawg', True))
 
+    moby_key = api_keys.get('mobygames_apikey', '')
+    status['mobygames'] = bool(moby_key and enabled.get('mobygames', True))
+
     ra_key = api_keys.get('ra_apikey') or getattr(config, 'RETROACHIEVEMENTS_API_KEY', '')
     ra_user = api_keys.get('ra_username') or getattr(config, 'RETROACHIEVEMENTS_USERNAME', '')
     status['retroachievements'] = bool(ra_key and ra_user)
@@ -1274,6 +1278,7 @@ def get_api_status():
         'igdb': bool((igdb_client and igdb_secret) and not enabled.get('igdb', True)),
         'screenscraper': bool((ss_user and ss_pass) and not enabled.get('screenscraper', True)),
         'rawg': bool(rawg_key and not enabled.get('rawg', True)),
+        'mobygames': bool(moby_key and not enabled.get('mobygames', True)),
     }
 
     return status
@@ -1391,7 +1396,7 @@ def dashboard():
 
         # Check for offline configured APIs (for warning banner)
         api_warning = False
-        for key in ['rawg', 'igdb', 'screenscraper', 'tgdb']:
+        for key in ['rawg', 'mobygames', 'igdb', 'screenscraper', 'tgdb']:
             if api_status.get(key):
                 api_warning = True  # At least one configured; JS will check online status
                 break
@@ -1804,6 +1809,7 @@ def setup_api():
         'igdb_client_id': 'igdb_client_id',
         'igdb_client_secret': 'igdb_client_secret',
         'rawg_key': 'rawg',
+        'mobygames_key': 'mobygames_apikey',
         'ss_username': 'screenscraper_username',
         'ss_password': 'screenscraper_password',
         'ss_devid': 'screenscraper_devid',
@@ -1821,7 +1827,7 @@ def setup_api():
         from scraper.scraper_manager import DEFAULT_SCRAPER_PRIORITY
         scraper_settings['priority'] = list(DEFAULT_SCRAPER_PRIORITY)
     if 'enabled' not in scraper_settings:
-        scraper_settings['enabled'] = {'esde': True, 'tgdb': True, 'igdb': True, 'rawg': True, 'screenscraper': True}
+        scraper_settings['enabled'] = {'esde': True, 'tgdb': True, 'igdb': True, 'rawg': True, 'mobygames': True, 'screenscraper': True}
 
     try:
         atomic_write_json(scraper_path, scraper_settings)
@@ -2094,6 +2100,10 @@ if __name__ == '__main__':
             start_upscale_worker()
         except Exception as _uq_err:
             logger.warning(f"Upscale queue worker failed to start: {_uq_err}")
+        # PASS-59-183 — ask MobyGames about games a scrape passed over when
+        # the hour's allowance ran out.
+        from services.jobs import mobygames_catch_up_job
+        mobygames_catch_up_job.start_if_pending()
 
     host = config.SERVER_HOST
     local_ip = get_local_ip()

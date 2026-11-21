@@ -291,3 +291,20 @@ def calculate_rawg_score(result, search_title):
         f"platform_match={result.get('platform_match')}, total={score}"
     )
     return score
+
+
+def calculate_mobygames_score(result, search_title):
+    """MobyGames relevance score, as RAWG's. Mutates result['title_score'].
+    Its title search matches part of a name, so the title score decides."""
+    title_score = calculate_title_match_score(result.get('name', ''), search_title)
+    result['title_score'] = title_score
+    score = title_score
+    if result.get('release_date'):
+        score += 10
+    if result.get('platform_match'):
+        score += 150
+    logger.info(
+        f"MobyGames Score for '{result.get('name', '')}': title={title_score}, "
+        f"platform_match={result.get('platform_match')}, total={score}"
+    )
+    return score

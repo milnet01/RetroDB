@@ -34,7 +34,7 @@ _SCRAPED_FIELDS = (
     'franchise', 'similar_games', 'playtime_estimate', 'controller_support',
     'save_type', 'critic_score', 'critic_score_count', 'user_score',
     'user_score_count', 'units_sold', 'release_dates', 'boxart', 'boxart_3d', 'screenshots', 'fanart',
-    'game_logo', 'boxart_back', 'video', 'manual',
+    'game_logo', 'boxart_back', 'video', 'manual', 'moby_score', 'mobygames_id', 'box_scans',
 )
 
 
@@ -175,14 +175,14 @@ def clear_scraped_data(system_id=None, delete_images=False):
     # is the promise this function is measured against.
     if system_id:
         games = query(
-            "SELECT id, boxart, boxart_3d, screenshots, fanart, game_logo, boxart_back, video, manual "
-            "FROM games WHERE system_id = ? AND scraped = 1",
+            "SELECT id, boxart, boxart_3d, screenshots, fanart, game_logo, boxart_back, video, manual, "
+            "box_scans FROM games WHERE system_id = ? AND scraped = 1",
             (system_id,),
         )
     else:
         games = query(
-            "SELECT id, boxart, boxart_3d, screenshots, fanart, game_logo, boxart_back, video, manual "
-            "FROM games WHERE scraped = 1"
+            "SELECT id, boxart, boxart_3d, screenshots, fanart, game_logo, boxart_back, video, manual, "
+            "box_scans FROM games WHERE scraped = 1"
         )
 
     game_ids_to_reset = [g['id'] for g in games]
@@ -206,6 +206,11 @@ def clear_scraped_data(system_id=None, delete_images=False):
 
     if delete_images:
         images_deleted = delete_game_images(games)
+    # The scans go with their record whatever delete_images says: the orphan
+    # sweep keeps a live game's files, so nothing else would remove them.
+    from services.box_scans import delete_scans_of
+    for game in games:
+        delete_scans_of(game)
 
     if game_ids_to_reset:
         # try/finally so a raise inside reset_game_title_from_filename can't

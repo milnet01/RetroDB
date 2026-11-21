@@ -241,6 +241,11 @@ PERSPECTIVE_NORMALIZATION = {
     'side view': 'Side-Scroller',
     'bird view': 'Isometric',
     'top down': 'Top-Down',
+    # MobyGames' perspective names (PASS-59-183).
+    '1st-person': 'First-Person',
+    '3rd-person (other)': 'Third-Person',
+    'behind view': 'Third-Person',
+    'diagonal-down': 'Isometric',
 }
 
 GAME_STRUCTURE_NORMALIZATION = {

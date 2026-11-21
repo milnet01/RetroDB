@@ -109,9 +109,27 @@
                 </label>
             </div>
 
-            <div class="scraper-priority-item" data-scraper="ai" draggable="true">
+            <!-- MobyGames -->
+            <div class="scraper-priority-item" data-scraper="mobygames" draggable="true">
                 <div class="scraper-drag-handle">⋮⋮</div>
                 <div class="scraper-priority-rank">6</div>
+                <div class="scraper-info">
+                    <span class="scraper-name">🕹️ MobyGames</span>
+                    <p class="text-muted">{{ _('Game database with credits, ratings and box scans; needs your own API key') }}</p>
+                </div>
+                <div class="scraper-online-status" id="status-mobygames">
+                    <span class="status-dot checking"></span>
+                    <span class="status-text">{{ _('Checking...') }}</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-mobygames" aria-label="{{ _('Enable MobyGames scraper') }}" {{ 'checked' if scraper_settings.enabled.mobygames else '' }} data-on-change="toggleScraper" data-args='["mobygames", "$this.checked", "$this"]'>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+
+            <div class="scraper-priority-item" data-scraper="ai" draggable="true">
+                <div class="scraper-drag-handle">⋮⋮</div>
+                <div class="scraper-priority-rank">7</div>
                 <div class="scraper-info">
                     <span class="scraper-name">🤖 {{ _('AI Metadata') }}</span>
                     <p class="text-muted">{{ _('AI-powered gap-filler (Gemini, OpenAI, or Claude) — fills text fields only') }}</p>
@@ -243,6 +261,18 @@
                        placeholder="{{ _('Enter RAWG.io API key') }}">
             </div>
             
+            <!-- MobyGames -->
+            <div class="api-key-item">
+                <div class="api-key-header">
+                    <span class="api-key-name">🕹️ {{ _('MobyGames API Key') }}</span>
+                    <a href="https://www.mobygames.com/info/api/" target="_blank" rel="noopener noreferrer" class="api-key-link">{{ _('Get API Key →') }}</a>
+                </div>
+                <input type="password" autocomplete="off" id="apikey-mobygames" class="api-key-input"
+                       value="{{ scraper_settings.api_keys.mobygames_apikey }}"
+                       placeholder="{{ _('Enter MobyGames API key') }}">
+                <p class="text-muted">{{ _('MobyGames needs your own API key. It allows a few hundred requests an hour. Games skipped when the hour runs out are asked about again by themselves later.') }}</p>
+            </div>
+
             <!-- ScreenScraper -->
             <div class="api-key-item" style="border-top: 1px solid rgba(76, 201, 240, 0.2); padding-top: var(--spacing-md); margin-top: var(--spacing-md);">
                 <div class="api-key-header">

@@ -8,3 +8,5 @@ Reviews); an empty table means no review has run.
 
 | Loop | Date | Lanes | Q1 | Q2 | Q3 | Q4 | Outcome |
 |------|------|-------|----|----|----|----|---------|
+| impl | 2026-11-21 | none: no reviewer dispatched | - | - | - | - | Build fold-back: a refused key uses KEY_REJECTED (worded as a refused key); the catch-up waits out later stops; records kept by id, not in results; search takes a system folder; Clear keeps box_faces |
+| impl | 2026-11-21 | none: no reviewer dispatched | - | - | - | - | Live timing moved a premise: whole-record search 12-50 s vs light search + record by id about 2 s, so INV-1 is two requests; §4.1 and §8 rewritten |

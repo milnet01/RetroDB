@@ -846,6 +846,8 @@ def standardize_downloaded_image(path, image_type, still_wanted=None):
         return
     if image_type == 'game_logo':
         return  # PASS-59-224: a logo is shown at its own size, never resized
+    if image_type == 'box_scans':
+        return  # PASS-59-183: a scan is a texture for the 3D box, kept as scanned
 
     if image_type in ('controllers', 'hardware'):
         target = config.IMAGE_TARGET_LONGEST_EDGE

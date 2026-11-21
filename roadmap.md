@@ -3473,7 +3473,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: test.
   Source: PASS-59-280 close 2026-11-20.
 
-- 📋 [PASS-59-183] **MobyGames as a scrape source (FEATURE, M).**
+- ✅ [PASS-59-183] **MobyGames as a scrape source (FEATURE, M).**
   - **Target**: RetroDB fetches game details from MobyGames. The user
     has no API key.
   - **Research first** (unverified): whether MobyGames' API needs a
@@ -3529,6 +3529,14 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   than fixing it. A bulk scrape waits its turn per game and skips
   MobyGames only once the hour's 720 are spent. ScreenScraper side or
   flat-box media: unconfirmed; check from inside the app.
+  **Built** 2026-11-21 (in the open 4.0.0). Live timing changed the
+  request plan: a light search then the record by id (2 requests, about
+  2 s) beat one whole-record search (12-50 s). A timeout or 5xx pauses
+  MobyGames 10 minutes and lists the game for the catch-up job. Also
+  fixed: the game page's Clear deleted an imported Slipcase box's face
+  files. Not yet done: a browser walk of Settings > Scraping; whether
+  MobyGames' terms ask for a credit link (its API page refuses automated
+  reads).
   **Layman:** MobyGames as another place to look up game details.
   Kind: implement.
 

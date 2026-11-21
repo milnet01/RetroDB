@@ -289,6 +289,7 @@ _SOURCE_NAME_MAP = {
     'esde': 'esde',
     'rawg': 'rawg',
     'screenscraper': 'screenscraper',
+    'mobygames': 'mobygames',
     'ai': 'ai',
 }
 
@@ -378,3 +379,6 @@ def apply_hybrid_metadata_to_game(db_game_id, primary_source, primary_id, system
     finally:
         if owns_timer:
             apply_progress.timing_end()
+        # A game MobyGames passed over waits for the hour's reset (PASS-59-183).
+        from services.jobs import mobygames_catch_up_job
+        mobygames_catch_up_job.start_if_pending()

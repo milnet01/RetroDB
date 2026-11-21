@@ -70,6 +70,7 @@ MIGRATIONS = [
     '043_not_bonus_disc',
     '044_ss_region_checked',
     '045_imported_system_defaults',
+    '046_mobygames',
 ]
 
 

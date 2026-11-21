@@ -53,6 +53,7 @@ from scraper.match_scorer import (
     calculate_tgdb_score,
     calculate_igdb_score,
     calculate_rawg_score,
+    calculate_mobygames_score,
 )
 
 # Settings file path.
@@ -74,9 +75,10 @@ SCRAPER_SETTINGS_FILE = getattr(config, 'SCRAPER_SETTINGS_FILE', None) or os.pat
 MIN_MATCH_SCORE = 200
 
 # Source order when the user has saved none. ScreenScraper first as preferred by
-# the user; RAWG last, having no covers and no per-version data. The Reset button
+# the user; RAWG next to last, having no covers and no per-version data;
+# MobyGames last, the slowest to ask (PASS-59-183). The Reset button
 # in templates/settings.html and templates/game_detail.html's fallback repeat it.
-DEFAULT_SCRAPER_PRIORITY = ['screenscraper', 'esde', 'tgdb', 'igdb', 'rawg']
+DEFAULT_SCRAPER_PRIORITY = ['screenscraper', 'esde', 'tgdb', 'igdb', 'rawg', 'mobygames']
 
 _settings_cache = None
 _settings_cache_time = 0
@@ -128,6 +130,8 @@ def _load_scraper_settings_locked():
             'tgdb': getattr(config, 'SCRAPER_TGDB_ENABLED', True) if config else True,
             'igdb': getattr(config, 'SCRAPER_IGDB_ENABLED', True) if config else True,
             'rawg': getattr(config, 'SCRAPER_RAWG_ENABLED', True) if config else True,
+            # Asked only once a key is saved.
+            'mobygames': True,
             'screenscraper': getattr(config, 'SCRAPER_SCREENSCRAPER_ENABLED', True) if config else True
         },
         'api_keys': {}
@@ -139,7 +143,10 @@ def _load_scraper_settings_locked():
                 saved = json.load(f)
                 # Merge saved settings with defaults
                 if 'priority' in saved:
-                    defaults['priority'] = saved['priority']
+                    defaults['priority'] = list(saved['priority'])
+                    # A list saved before MobyGames existed asks it last.
+                    if 'mobygames' not in defaults['priority']:
+                        defaults['priority'].append('mobygames')
                 if 'enabled' in saved:
                     defaults['enabled'].update(saved['enabled'])
                 if 'api_keys' in saved:
@@ -282,6 +289,11 @@ try:
 except ImportError:
     logger.warning("RAWG.io scraper module not available")
 
+from .scrape_mobygames import (
+    search_games as search_mobygames,
+    fetch_game_details as fetch_mobygames,
+)
+
 # Try to import ScreenScraper scraper
 SCREENSCRAPER_AVAILABLE = False
 try:
@@ -313,6 +325,7 @@ if _CB_AVAILABLE:
     _tgdb_breaker = circuit(failure_threshold=5, recovery_timeout=120, expected_exception=Exception)
     _igdb_breaker = circuit(failure_threshold=5, recovery_timeout=120, expected_exception=Exception)
     _rawg_breaker = circuit(failure_threshold=5, recovery_timeout=120, expected_exception=Exception)
+    _mobygames_breaker = circuit(failure_threshold=5, recovery_timeout=120, expected_exception=Exception)
     _screenscraper_breaker = circuit(failure_threshold=5, recovery_timeout=120, expected_exception=Exception)
     _ai_breaker = circuit(failure_threshold=5, recovery_timeout=120, expected_exception=Exception)
 else:
@@ -322,6 +335,7 @@ else:
     _tgdb_breaker = _noop_breaker
     _igdb_breaker = _noop_breaker
     _rawg_breaker = _noop_breaker
+    _mobygames_breaker = _noop_breaker
     _screenscraper_breaker = _noop_breaker
     _ai_breaker = _noop_breaker
 
@@ -429,6 +443,20 @@ class ScraperManager:
                     logger.error(f"RAWG search failed: {e}")
             return results
 
+        def _src_mobygames():
+            results = []
+            if enabled.get('mobygames', True) and get_api_key('mobygames_apikey'):
+                try:
+                    moby_results = _mobygames_breaker(search_mobygames)(title, system_folder, limit)
+                    for result in moby_results:
+                        result['score'] = calculate_mobygames_score(result, title)
+                    results = moby_results
+                except CircuitBreakerError:
+                    logger.info("MobyGames circuit breaker open — skipping (recent failures)")
+                except Exception as e:
+                    logger.error(f"MobyGames search failed: {e}")
+            return results
+
         def _src_screenscraper():
             results = []
             logger.info(f"ScreenScraper check: available={SCREENSCRAPER_AVAILABLE}, enabled={enabled.get('screenscraper', False)}, folder={system_folder}")
@@ -484,6 +512,7 @@ class ScraperManager:
             ('igdb', _src_igdb),
             ('rawg', _src_rawg),
             ('screenscraper', _src_screenscraper),
+            ('mobygames', _src_mobygames),
         ]
         _results_by_name = {}
         with ThreadPoolExecutor(max_workers=len(_source_workers),
@@ -510,6 +539,7 @@ class ScraperManager:
             'igdb': 'igdb',
             'rawg': 'rawg',
             'screenscraper': 'screenscraper',
+            'mobygames': 'mobygames',
             'ai': 'ai'
         }
 
@@ -638,6 +668,8 @@ class ScraperManager:
                 return fetch_esde(game_id, system_folder)
             elif source == 'rawg' and RAWG_AVAILABLE:
                 return fetch_rawg(game_id)
+            elif source == 'mobygames':
+                return fetch_mobygames(game_id, system_folder)
             else:
                 logger.error(f"Unknown source: {source}")
                 return None

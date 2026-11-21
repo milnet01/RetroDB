@@ -43,6 +43,7 @@ from services.jobs.player_cores import PlayerCoresJob
 from services.jobs.ai_fill_bulk import AiFillBulkJob
 from services.jobs.mame_names import MameNamesJob
 from services.jobs.ss_region_repair import SsRegionRepairJob
+from services.jobs.mobygames_catch_up import MobyGamesCatchUpJob
 from services.jobs.ra_queue import RAQueue
 
 # =============================================================================
@@ -67,6 +68,7 @@ player_cores_job = PlayerCoresJob()
 ai_fill_bulk_job = AiFillBulkJob()
 mame_names_job = MameNamesJob()
 ss_region_repair_job = SsRegionRepairJob()
+mobygames_catch_up_job = MobyGamesCatchUpJob()
 
 __all__ = [
     # Helpers
@@ -117,4 +119,5 @@ __all__ = [
     'ai_fill_bulk_job',
     'mame_names_job',
     'ss_region_repair_job',
+    'mobygames_catch_up_job',
 ]

@@ -2111,6 +2111,7 @@ let scraperSettings = {
         tgdb: {{ 'true' if scraper_settings.enabled.tgdb else 'false' }},
         igdb: {{ 'true' if scraper_settings.enabled.igdb else 'false' }},
         rawg: {{ 'true' if scraper_settings.enabled.rawg else 'false' }},
+        mobygames: {{ 'true' if scraper_settings.enabled.mobygames else 'false' }},
         screenscraper: {{ 'true' if scraper_settings.enabled.screenscraper else 'false' }},
         ai: {{ 'true' if scraper_settings.enabled.ai else 'false' }}
     },
@@ -2251,7 +2252,7 @@ function toggleScraper(scraper, enabled, checkbox) {
         if (data.success) {
             savedScraperSettings.enabled[scraper] = enabled;
             scraperSettings.enabled[scraper] = enabled;
-            const names = { esde: 'ES-DE', tgdb: 'TheGamesDB', igdb: 'IGDB', rawg: 'RAWG', screenscraper: 'ScreenScraper', ai: {{ _('AI Metadata')|tojson }} };
+            const names = { esde: 'ES-DE', tgdb: 'TheGamesDB', igdb: 'IGDB', rawg: 'RAWG', mobygames: 'MobyGames', screenscraper: 'ScreenScraper', ai: {{ _('AI Metadata')|tojson }} };
             showNotification(t(enabled ? {{ _('{name} enabled')|tojson }} : {{ _('{name} disabled')|tojson }}, {name: names[scraper] || scraper}), 'success');
         } else {
             refuse(data.error);
@@ -2263,7 +2264,7 @@ function toggleScraper(scraper, enabled, checkbox) {
 async function checkScraperStatus() {
     if (!window.IS_ADMIN) return;  // admin-only route (PASS-59-297)
     // Set all to checking first
-    ['tgdb', 'igdb', 'rawg', 'screenscraper', 'ai'].forEach(scraper => {
+    ['tgdb', 'igdb', 'rawg', 'mobygames', 'screenscraper', 'ai'].forEach(scraper => {
         const statusEl = document.getElementById(`status-${scraper}`);
         if (statusEl) {
             const dot = statusEl.querySelector('.status-dot');
@@ -2277,6 +2278,7 @@ async function checkScraperStatus() {
     checkApiStatus('tgdb', '/api/check-scraper/tgdb');
     checkApiStatus('igdb', '/api/check-scraper/igdb');
     checkApiStatus('rawg', '/api/check-scraper/rawg');
+    checkApiStatus('mobygames', '/api/check-scraper/mobygames');
     checkApiStatus('screenscraper', '/api/check-scraper/screenscraper');
     checkApiStatus('ai', '/api/check-scraper/ai');
 }
@@ -2711,6 +2713,7 @@ async function saveApiKeys() {
         igdb_client_id: document.getElementById('apikey-igdb-client-id').value.trim(),
         igdb_client_secret: document.getElementById('apikey-igdb-client-secret').value.trim(),
         rawg: document.getElementById('apikey-rawg').value.trim(),
+        mobygames_apikey: document.getElementById('apikey-mobygames').value.trim(),
         screenscraper_username: document.getElementById('apikey-screenscraper-username').value.trim(),
         screenscraper_password: document.getElementById('apikey-screenscraper-password').value.trim(),
         screenscraper_devid: document.getElementById('apikey-screenscraper-devid').value.trim(),
@@ -2761,7 +2764,7 @@ async function saveApiKeys() {
 
 // Reset priority to default
 function resetScraperPriority() {
-    scraperSettings.priority = ['screenscraper', 'esde', 'tgdb', 'igdb', 'rawg', 'ai'];
+    scraperSettings.priority = ['screenscraper', 'esde', 'tgdb', 'igdb', 'rawg', 'mobygames', 'ai'];
     reorderScraperList();
 
     // Reset match filter settings to defaults

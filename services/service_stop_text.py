@@ -30,6 +30,9 @@ def stop_sentences(sources=None):
             said.append(_('%(service)s asks for payment: the account has no credit left or '
                           'no billing set up. RetroDB will not ask it again until %(when)s, '
                           'or until the keys are saved.', **words))
+        elif entry['reason'] == service_limits.UNAVAILABLE:
+            said.append(_('%(service)s is not answering. RetroDB will try again after %(when)s.',
+                          **words))
         elif entry['reason'] == service_limits.KEY_REFUSED:
             said.append(_('%(service)s refused every saved key, which usually means their '
                           'limit is reached. RetroDB will not ask it again until %(when)s.',

@@ -570,6 +570,8 @@ your migration — not in the runner.
 | 042 | `042_drop_xbox_oauth_tokens.py` | Delete `user_platform_tokens` rows for `xbox` that hold no `api_key`. | PASS-59-261. Xbox moved to a per-user OpenXBL key; rows from the retired Microsoft sign-in held unusable OAuth tokens. |
 | 043 | `043_not_bonus_disc.py` | Add `games.not_bonus_disc` (INTEGER, 0 by default): 1 when a person unlinked or unmarked the disc. | PASS-59-262. Auto-link skips it; a manual link or mark clears it. |
 | 044 | `044_ss_region_checked.py` | Add `games.ss_region_checked` (INTEGER, 0 by default): 1 when the box and manual region fix has settled the game. | PASS-59-202. The fix asks ScreenScraper about a game once, not on every run. |
+| 045 | `045_imported_system_defaults.py` | Give systems the Steam, Xbox, PSN and CLZ imports created bare their name, logo and type from `game_utils.system_defaults`. | Only a name still the folder in capitals, and only an empty logo or type, is changed. |
+| 046 | `046_mobygames.py` | Add `games.mobygames_id` (INTEGER), `games.moby_score` (REAL) and `games.box_scans` (TEXT JSON, NULL = none); create `mobygames_pending` with a delete trigger. | PASS-59-183. Additive; filled fill-only by a scrape. The list holds games a scrape passed over for the hour. |
 
 ---
 
