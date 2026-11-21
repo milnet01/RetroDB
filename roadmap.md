@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=324 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=325 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -3513,6 +3513,18 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   /mnt/Emulators/.claude/Scratchpad/RetroDB/moby/. Next: write-spec
   draft (Q1 yes: new columns, 3+ subsystems, the box_faces rule in
   PASS-59-142 §3 that only imports write faces changes).
+  User, 2026-11-21 (later): the box should build itself, with no Slipcase
+  work for most games. Fetch front, back and spine from one MobyGames
+  cover group; with no spine scan, paint one from the front cover's edge
+  colour plus the title. An imported box (PASS-59-142) always wins. Also
+  fetch and keep, for PASS-59-325's open-box viewer: ScreenScraper's
+  physical media picture and MobyGames' Media, Manual, Inside Cover and
+  Other scans. Pace: the user's Hobbyist plan page says 1 request a
+  second, but the server still answers "0.2;w=1, 720;w=3600" (checked
+  twice 2026-11-21), so read the pace from each reply's headers rather
+  than fixing it. A bulk scrape waits its turn per game and skips
+  MobyGames only once the hour's 720 are spent. ScreenScraper side or
+  flat-box media: unconfirmed; check from inside the app.
   **Layman:** MobyGames as another place to look up game details.
   Kind: implement.
 
@@ -3609,6 +3621,19 @@ pages, and launching games. Port plan phases 0 to 2
   ---
   **Layman:** Arcade flyers on the game page.
   Kind: implement.
+
+- 📋 [PASS-59-325] **Open the 3D box and view its contents (FEATURE, M).**
+  - **Target**: the rotating 3D box opens; inside are the disc or
+    cartridge picture (ScreenScraper physical media), the inside-cover
+    scans and the manual and leaflet scans (MobyGames Manual, Inside
+    Cover, Other).
+  - **Depends on**: PASS-59-183, which downloads and keeps those scans
+    in 4.0.0.
+  - **Decision** (user, 2026-11-21): collect the scans in 4.0.0, build
+    the viewer once, in the desktop app, not in the web version.
+  **Layman:** Open a game's box on screen and look at the disc or cartridge, the manual and the leaflets inside.
+  Kind: feature.
+  Source: user, 2026-11-21.
 
 ## 4.2.0 — Desktop app: edit and scrape
 
