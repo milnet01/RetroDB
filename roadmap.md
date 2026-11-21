@@ -3540,7 +3540,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** MobyGames as another place to look up game details.
   Kind: implement.
 
-- 📋 [PASS-59-326] **Build a real-looking 3D box automatically from scraped scans (FEATURE, L).**
+- ✅ [PASS-59-326] **Build a real-looking 3D box automatically from scraped scans (FEATURE, L).**
   - **Target**: from a game's front, back and spine scans (PASS-59-183,
     ScreenScraper, TheGamesDB, ES-DE), RetroDB builds box_faces itself,
     on the real case for the console: keep case with clear sleeve and
@@ -3554,6 +3554,9 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     community flat images with no licence (research 2026-11-21).
   - **Changes**: PASS-59-142's rule that only imports write faces.
   - **Order**: after PASS-59-183, before PASS-59-325.
+  Shipped 2026-11-21 (67a48c5c). Spec:
+  docs/specs/PASS-59-326-auto-3d-box.md. ROM Tools > Build 3D Boxes for
+  games scraped before.
   **Layman:** Every scraped game gets a turning 3D box that looks like its real case, with no Slipcase work.
   Kind: feature.
   Source: user, 2026-11-21.
