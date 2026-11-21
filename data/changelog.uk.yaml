@@ -1,6 +1,18 @@
 - version: 4.0.0
   date: '2026-11-21'
   tags:
+  - type: fix
+    label: "MobyGames тепер знаходить гру, назва якої написана трохи інакше, наприклад «Castlevania Bloodlines» замість «Castlevania: Bloodlines», а коли повна назва нічого не знаходить, пробує головне слово назви. Пошук одразу після відкриття Панелі керування чи Налаштувань більше не повертається порожнім, а статус MobyGames там більше не показує Помилка з'єднання, коли MobyGames працює повільно"
+    en: "MobyGames now finds a game whose name is written a little differently, such as 'Castlevania Bloodlines' for 'Castlevania: Bloodlines', and tries the name's main word when the whole name finds nothing. A search just after opening the Dashboard or Settings no longer comes back empty, and the MobyGames status there no longer says Connection error when MobyGames is slow"
+  - type: feature
+    label: "Тепер кожен користувач може очистити свій власний прогрес RetroAchievements для однієї консолі кнопкою Clear My Progress («Очистити мій прогрес») на сторінці Досягнення. В інших користувачів прогрес залишається; очищення даних усіх, як і раніше, лишається за адміністратором"
+    en: "Every user can now clear their own RetroAchievements progress for one console, with Clear My Progress on its Achievements page. Other users keep theirs; clearing everyone's data stays with the admin"
+  - type: fix
+    label: "Ряд Схожі ігри на сторінці гри більше не зникає, коли сервер відповідає швидко"
+    en: "The Similar Games row on a game page no longer fails to show when the server answers quickly"
+  - type: fix
+    label: "Вікно Пошук метаданих тепер розширюється, щоб вмістити кожне ввімкнене вами джерело, а на меншому екрані ділить джерела на рівні рядки замість того, щоб стискати їх"
+    en: "The Search Metadata window now widens to fit every source you have switched on, and on a smaller screen splits the sources into even rows instead of squeezing them"
   - type: feature
     label: "MobyGames — нове джерело скрапінгу, яке опитується останнім, перед ШІ, щойно ви збережете власний ключ API MobyGames. Воно заповнює порожні дані, лицьову й зворотну сторони коробки та скріншоти й зберігає кожен скан справжньої коробки, корінця, диска та посібника для 3D-коробки. MobyGames дозволяє кілька сотень запитів на годину; гра, пропущена, коли годинний ліміт вичерпано, запитується знову сама після скидання"
     en: "MobyGames is a new scrape source, asked last before the AI once you save your own MobyGames API key. It fills empty details, the box front and back and screenshots, and keeps every scan of the real box, spine, disc and manual for the 3D box. MobyGames allows a few hundred requests an hour; a game skipped when the hour runs out is asked about again by itself after the reset"

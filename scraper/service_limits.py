@@ -102,9 +102,16 @@ def wait_for_turn(source):
     """Hold a call until its turn. False when the service has said stop."""
     if stopped(source):
         return False
+    take_turn(source)
+    return True
+
+
+def take_turn(source):
+    """Hold a call until its turn, whatever stop is in force. For the Settings
+    and Dashboard checks, which must not make the next scrape too soon."""
     gap = _pace.get(source, 0)
     if gap <= 0:
-        return True
+        return
     # Take the next free slot under the lock and sleep outside it, so one
     # service's wait never holds up another's.
     with _lock:
@@ -113,7 +120,6 @@ def wait_for_turn(source):
         _next_turn[source] = turn + gap
     if turn > now:
         time.sleep(turn - now)
-    return True
 
 
 def set_pace(source, seconds):

@@ -163,6 +163,17 @@
             </span>
         </div>
         {% endif %}
+        {% if current_user %}
+        <div class="ra-tool">
+            <button type="button" data-on-click="clearMyRAProgress" data-args='{{ [system.id, system.name]|tojson }}' class="btn btn-secondary btn-sm" id="clearMyRABtn">
+                <span class="btn-icon">🧹</span>
+                <span class="btn-text">{{ _('Clear My Progress') }}</span>
+            </button>
+            <p class="text-muted ra-tool-note">
+                {% trans system=system.name %}Forgets which achievements you have earned in your {{ system }} games. Other users keep theirs.{% endtrans %}
+            </p>
+        </div>
+        {% endif %}
         {% if _is_admin %}
         {{ ra_find_games() }}
         <div class="ra-tool">

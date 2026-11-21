@@ -3327,7 +3327,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Source: user-report-2026-11-20.
   Evidence: /home/ants/Pictures/ClaudePaste/paste_20261120_153019_666_be249f57.png
 
-- 📋 [PASS-49-8] **Job resume off-by-one silently drops the in-progress game (MEDIUM, S)**
+- ✅ [PASS-49-8] **Job resume off-by-one silently drops the in-progress game (MEDIUM, S)**
   - **Status**: deferred — pre-existing (predates the Pass 49 per-game-commit fix);
     surfaced by the Loop-2 cold re-review.
   - **Lane**: background jobs (Lane 7).
@@ -3343,6 +3343,9 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
 
   ---
   Moved into 4.0.0 (user, 2026-11-20).
+  Already fixed by PASS-59-59 (commit 37cf46e7): every game-walking job
+  saves the finished count, and tests/test_pass59_jobs_resume.py pins
+  it. Re-checked 2026-11-21: tests pass.
   **Layman:** A resumed job could skip the game it was on.
   Kind: implement.
 
@@ -3433,7 +3436,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** A bundle of small, low-risk code notes from a review.
   Kind: implement.
 
-- 📋 [PASS-49-9] **`clear-ra-data` library-wide vs per-user semantics (MEDIUM, S)**
+- ✅ [PASS-49-9] **`clear-ra-data` library-wide vs per-user semantics (MEDIUM, S)**
   - **Status**: deferred — design decision, not a silent fix.
   - **Lane**: collections/achievements/trophies (Lane 10).
   - **Finding**: `routes/ra_sync.py` `api_clear_ra_data_all` / `_system` DELETE
@@ -3448,6 +3451,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Decision (user, 2026-11-20): both. An admin can still clear all
   RetroAchievements data for everyone; every user can also clear their
   own progress only, scoped by user id.
+  Shipped 2026-11-21: POST /api/clear-ra-progress[/<system_id>]
+  (login_required) deletes only the caller's RA rows; links and other
+  users' rows stay. Clear My Progress button on
+  achievements_system.html. Admin clear-all unchanged. Test:
+  tests/test_pass59_trophy_dataloss.py::test_a_user_clears_only_their_own_ra_progress.
   **Layman:** Decide whether clearing RetroAchievements data clears everyone's or only yours.
   Kind: implement.
 
@@ -3537,6 +3545,16 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   files. Not yet done: a browser walk of Settings > Scraping; whether
   MobyGames' terms ask for a credit link (its API page refuses automated
   reads).
+  2026-11-21 user report "MobyGames finds nothing": (1) its title filter
+  is letter-for-letter, '%' is its wildcard; search_games now joins
+  words with '%' and, if still empty, asks by the longest word. (2) The
+  Settings/Dashboard online check skipped the 5-second pace, so a search
+  right after it got 429; it now takes its turn
+  (service_limits.take_turn) but still ignores a stop. (3) The check
+  asked for whole records (4.6 s, up to 50 s) against a 5 s timeout,
+  showing "Connection error"; it now asks include=game_id (0.4 s).
+  Live-checked on :5001: "Castlevania Bloodlines" finds Castlevania:
+  Bloodlines.
   **Layman:** MobyGames as another place to look up game details.
   Kind: implement.
 
@@ -3616,7 +3634,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
 
 After 4.0.0 the web version still gets bug fixes and, now and then, a good new feature (user, 2026-11-21), always as 4.0.x: the 4.0 updater treats 4.1.0 and up as the desktop app. Most work after 4.0.0 goes to the desktop app.
 
-- 📋 [PASS-59-327] **Similar games on the game page can fail with "escapeHtml is not defined" (FIX, S).**
+- ✅ [PASS-59-327] **Similar games on the game page can fail with "escapeHtml is not defined" (FIX, S).**
   - **Seen**: headless Chrome on :5001, /game/4479, console error
     "Similar games failed to load: ReferenceError: escapeHtml is not
     defined" from loadSimilarGames in templates/game_detail.html.
@@ -3626,6 +3644,9 @@ After 4.0.0 the web version still gets bug fixes and, now and then, a good new f
     wait for DOMContentLoaded.
   - **Fix**: start it on DOMContentLoaded; check the page's other
     parse-time scripts for the same race.
+  Shipped 2026-11-21: loadSimilarGames starts on DOMContentLoaded. No
+  other parse-time script on game_detail.html. Headless Chrome on :5001
+  at 1920/1440/1280/375: 8 similar links, no console errors.
   **Layman:** On a fast server the Similar Games row on a game page can fail to show.
   Kind: fix.
   Source: PASS-59-326 browser walk, 2026-11-21.

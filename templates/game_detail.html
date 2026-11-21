@@ -2886,10 +2886,7 @@ body:has(.game-fanart-bg.active)::before {
 .scrape-modal {
     display: none;
     position: fixed;
-    top: 0;
-    left: var(--sidebar-width, 260px);
-    width: calc(100% - var(--sidebar-width, 260px));
-    height: 100%;
+    inset: 0;
     background: rgba(0, 0, 0, 0.8);
     z-index: 2000;
     align-items: center;
@@ -2900,21 +2897,12 @@ body:has(.game-fanart-bg.active)::before {
     display: flex;
 }
 
-/* The sidebar hides at this width (layout/responsive.css), so the modal
-   takes the whole screen. */
-@media (max-width: 992px) {
-    .scrape-modal {
-        left: 0;
-        width: 100%;
-    }
-}
-
 .scrape-modal-content {
     background: var(--bg-medium);
     border: 1px solid var(--card-border);
     border-radius: var(--radius-lg);
     width: 95%;
-    max-width: 1400px;
+    max-width: 1760px;
     max-height: 85vh;
     display: flex;
     flex-direction: column;
@@ -3074,10 +3062,10 @@ body:has(.game-fanart-bg.active)::before {
     color: var(--text-secondary);
 }
 
-/* 4-Column Scrape Results Grid */
+/* One column per search source; the search script sets the columns per row */
 .scrape-results-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: var(--spacing-md);
     min-height: 200px;
 }
@@ -3273,17 +3261,11 @@ body:has(.game-fanart-bg.active)::before {
     flex-shrink: 0;
 }
 
-@media (max-width: 1100px) {
-    .scrape-results-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-    }
-}
-
 @media (max-width: 700px) {
     .scrape-results-grid {
         grid-template-columns: 1fr !important;
     }
-    
+
     .scrape-column-results {
         max-height: 200px;
     }
@@ -5164,7 +5146,7 @@ async function performSearch(event) {
             'mobygames': 'MobyGames',
             'screenscraper': 'ScreenScraper'
         };
-        const enabledNames = priority.filter(s => enabled[s]).map(s => scraperNames[s] || s);
+        const enabledNames = priority.filter(s => enabled[s] && scraperNames[s]).map(s => scraperNames[s]);
         document.getElementById('scrapeModalSubtitle').textContent = 
             t({{ _('Search {sources} for metadata and boxart.')|tojson }}, {sources: enabledNames.join(', ')});
         
@@ -5322,11 +5304,14 @@ async function performSearch(event) {
             const enabledScrapers = priority.filter(s => enabled[s] && scraperConfig[s]);
             const columnCount = enabledScrapers.length;
 
-            // Dynamically adjust modal width based on number of enabled scrapers
+            // One row of columns at least 260px wide where the screen has room,
+            // else even rows (3 + 3, not 5 + 1); the window fits what it holds.
+            const room = Math.min(window.innerWidth * 0.95, 1760) - 80;
+            const perRow = Math.max(1, Math.min(columnCount, Math.floor(room / 260)));
+            const gridColumns = Math.ceil(columnCount / Math.ceil(columnCount / perRow));
             const modalContent = document.querySelector('#scrapeModal .scrape-modal-content');
             if (modalContent) {
-                const widthMap = { 1: '500px', 2: '750px', 3: '1050px', 4: '1250px', 5: '1400px' };
-                modalContent.style.maxWidth = widthMap[columnCount] || '1400px';
+                modalContent.style.maxWidth = `${Math.max(gridColumns, 2) * 280 + 80}px`;
             }
 
             let columnsHtml = '';
@@ -5348,7 +5333,7 @@ async function performSearch(event) {
             }
 
             resultsDiv.innerHTML = `
-                <div class="scrape-results-grid" style="grid-template-columns: repeat(${columnCount}, 1fr);">
+                <div class="scrape-results-grid" style="grid-template-columns: repeat(${gridColumns}, 1fr);">
                     ${columnsHtml}
                 </div>
             `;
@@ -5943,7 +5928,8 @@ document.querySelectorAll('.filter-link').forEach(link => {
 });
 
 // Fetch similar game recommendations
-(async function loadSimilarGames() {
+// After DOMContentLoaded: core.bundle.js (escapeHtml) loads deferred (PASS-59-327).
+document.addEventListener('DOMContentLoaded', async function loadSimilarGames() {
     const grid = document.getElementById('similarGamesGrid');
     if (!grid) return;
     try {
@@ -5967,7 +5953,7 @@ document.querySelectorAll('.filter-link').forEach(link => {
         console.error('Similar games failed to load:', e);
         grid.innerHTML = '<span style="color: var(--text-muted); font-size: 0.85rem;">' + escapeHtml({{ _('Could not load similar games.')|tojson }}) + '</span>';
     }
-})();
+});
 </script>
 
 <!-- Pass 44 — multi-emulator launch -->

@@ -1,6 +1,18 @@
 - version: 4.0.0
   date: '2026-11-21'
   tags:
+  - type: fix
+    label: "MobyGames ahora encuentra un juego cuyo nombre está escrito de forma algo distinta, como «Castlevania Bloodlines» en vez de «Castlevania: Bloodlines», y prueba con la palabra principal del nombre cuando el nombre completo no encuentra nada. Una búsqueda justo después de abrir el Panel o los Ajustes ya no vuelve vacía, y el estado de MobyGames allí ya no dice Error de conexión cuando MobyGames va lento"
+    en: "MobyGames now finds a game whose name is written a little differently, such as 'Castlevania Bloodlines' for 'Castlevania: Bloodlines', and tries the name's main word when the whole name finds nothing. A search just after opening the Dashboard or Settings no longer comes back empty, and the MobyGames status there no longer says Connection error when MobyGames is slow"
+  - type: feature
+    label: "Ahora cada usuario puede borrar su propio progreso de RetroAchievements de una consola, con Clear My Progress («Borrar mi progreso») en su página de Logros. Los demás usuarios conservan el suyo; borrar los datos de todos sigue siendo cosa del administrador"
+    en: "Every user can now clear their own RetroAchievements progress for one console, with Clear My Progress on its Achievements page. Other users keep theirs; clearing everyone's data stays with the admin"
+  - type: fix
+    label: "La fila Juegos similares de la página de un juego ya no deja de mostrarse cuando el servidor responde rápido"
+    en: "The Similar Games row on a game page no longer fails to show when the server answers quickly"
+  - type: fix
+    label: "La ventana Buscar metadatos ahora se ensancha para que quepan todas las fuentes que has activado y, en una pantalla más pequeña, reparte las fuentes en filas iguales en vez de apretarlas"
+    en: "The Search Metadata window now widens to fit every source you have switched on, and on a smaller screen splits the sources into even rows instead of squeezing them"
   - type: feature
     label: "MobyGames es una nueva fuente de scrapeo, consultada en último lugar antes de la IA una vez que guardas tu propia clave de API de MobyGames. Rellena detalles vacíos, el frontal y el reverso de la caja y capturas, y conserva cada escaneo de la caja real, el lomo, el disco y el manual para la caja 3D. MobyGames permite unos pocos cientos de solicitudes por hora; un juego omitido cuando se agota la hora se vuelve a consultar solo tras el reinicio"
     en: "MobyGames is a new scrape source, asked last before the AI once you save your own MobyGames API key. It fills empty details, the box front and back and screenshots, and keeps every scan of the real box, spine, disc and manual for the 3D box. MobyGames allows a few hundred requests an hour; a game skipped when the hour runs out is asked about again by itself after the reset"

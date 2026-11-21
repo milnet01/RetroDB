@@ -133,3 +133,28 @@ def test_clear_ra_data_keeps_steam_and_xbox_rows(ra_db, admin_test_client, per_s
         "SELECT source FROM game_achievement_progress WHERE game_id IN (?, ?, ?)",
         list(ids.values()))}
     assert left == {'steam', 'xbox'}
+
+
+@pytest.mark.parametrize('per_system', [False, True])
+def test_a_user_clears_only_their_own_ra_progress(ra_db, admin_test_client, per_system):
+    """PASS-49-9: any signed-in user may forget their own RA progress. The
+    other user's rows, the Steam and Xbox rows and the shared links stay."""
+    conn, sys_id, ids = ra_db
+    conn.execute("INSERT OR IGNORE INTO users (id, username, password_hash, role) "
+                 "VALUES (2, 'viewer-4909', 'x', 'viewer')")
+    conn.execute("INSERT INTO game_achievement_progress (game_id, user_id, source) "
+                 "VALUES (?, 2, 'ra')", (ids['ra'],))
+    conn.commit()
+    client, csrf = admin_test_client(user={'id': 2, 'username': 'viewer-4909',
+                                           'role': 'viewer'})
+    assert client.post('/api/clear-ra-data', headers={'X-CSRF-Token': csrf}).status_code == 403
+    url = f'/api/clear-ra-progress/{sys_id}' if per_system else '/api/clear-ra-progress'
+    reply = client.post(url, headers={'X-CSRF-Token': csrf})
+    assert reply.status_code == 200 and reply.get_json()['cleared'] == 1
+    left = {(r['user_id'], r['source']) for r in conn.execute(
+        "SELECT user_id, source FROM game_achievement_progress WHERE game_id IN (?, ?, ?)",
+        list(ids.values()))}
+    assert left == {(1, 'ra'), (1, 'steam'), (1, 'xbox')}
+    assert _ra_link(conn, ids['ra'])[0] == 751
+    conn.execute("DELETE FROM users WHERE id = 2")
+    conn.commit()

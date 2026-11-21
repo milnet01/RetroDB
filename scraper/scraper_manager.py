@@ -579,7 +579,8 @@ class ScraperManager:
         igdb_count = sum(1 for r in final_results if r.get('source') == 'igdb')
         rawg_count = sum(1 for r in final_results if r.get('source') == 'rawg')
         ss_count = sum(1 for r in final_results if r.get('source') == 'screenscraper')
-        logger.info(f"Returning {len(final_results)} results (ES-DE: {esde_count}, TGDB: {tgdb_count}, IGDB: {igdb_count}, RAWG: {rawg_count}, SS: {ss_count})")
+        moby_count = sum(1 for r in final_results if r.get('source') == 'mobygames')
+        logger.info(f"Returning {len(final_results)} results (ES-DE: {esde_count}, TGDB: {tgdb_count}, IGDB: {igdb_count}, RAWG: {rawg_count}, SS: {ss_count}, MobyGames: {moby_count})")
         logger.info(f"Using scraper priority: {priority}")
 
         return final_results

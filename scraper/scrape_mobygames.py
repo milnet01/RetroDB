@@ -36,6 +36,8 @@ _MAX_BYTES = getattr(_config, 'MAX_API_RESPONSE_BYTES', 10 * 1024 * 1024)
 # A search the server has not seen lately took up to 50 seconds; a repeat
 # took under one (2026-11-21). A record by id took about one.
 _SEARCH_TIMEOUT = 60
+# Results asked for when searching by one word, which matches more games.
+_WORD_SEARCH_LIMIT = 25
 
 # Waits used when a refusal does not say how long.
 _KEY_REFUSED_SECONDS = 3600
@@ -186,8 +188,19 @@ def search_games(title, system_folder=None, limit=10):
     if not moby_platform:
         logger.info(f"MobyGames: no platform for system folder '{system_folder}', not searched")
         return []
-    data = _request({'title': title, 'platform': moby_platform, 'limit': limit},
+    # MobyGames matches the title letter for letter, but '%' stands for any
+    # letters, so 'Castlevania%Bloodlines' finds 'Castlevania: Bloodlines'
+    # (2026-11-21). A title it files under another name ('Castlevania: The
+    # New Generation') is asked once more by its longest word; the scorer
+    # ranks what comes back.
+    words = re.findall(r'\w+', title or '')
+    data = _request({'title': '%'.join(words) or title, 'platform': moby_platform,
+                     'limit': limit},
                     include=SEARCH_INCLUDE, timeout=_SEARCH_TIMEOUT)
+    if data is not None and not data.get('games') and len(words) > 1:
+        data = _request({'title': max(words, key=len), 'platform': moby_platform,
+                         'limit': _WORD_SEARCH_LIMIT},
+                        include=SEARCH_INCLUDE, timeout=_SEARCH_TIMEOUT)
     results = []
     for record in (data or {}).get('games') or []:
         if not record.get('game_id'):

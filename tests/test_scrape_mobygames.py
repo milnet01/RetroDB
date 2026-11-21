@@ -327,3 +327,58 @@ def test_open_box_lists_inside_scans_on_disk(psx_library):
     assert box_scans.scans_for({'box_scans': None}) == []
     assert box_scans.scans_for({'box_scans': 'not json'}) == []
     assert box_scans.scans_for({}) == []
+
+
+def test_a_title_is_searched_with_wildcards_then_by_its_longest_word(moby, monkeypatch):
+    """MobyGames matches the title letter for letter, with '%' for any letters
+    (2026-11-21): words are joined by '%'. A search that still finds nothing
+    is asked once more by the title's longest word."""
+    calls = []
+
+    def fake_get(url, params=None, **kwargs):
+        calls.append(params['title'])
+        games = [] if params['title'] != 'Castlevania' else [
+            {'game_id': 6639, 'title': 'Castlevania: Bloodlines', 'platforms': []}]
+        return Reply({'games': games})
+
+    monkeypatch.setattr(scrape_mobygames, 'http_get', fake_get)
+    found = scrape_mobygames.search_games('Castlevania: The New Generation', 'megadrive')
+    assert [g['name'] for g in found] == ['Castlevania: Bloodlines']
+    assert calls == ['Castlevania%The%New%Generation', 'Castlevania']
+    # A one-word title that found nothing is not asked twice.
+    calls.clear()
+    assert scrape_mobygames.search_games('Contra', 'megadrive') == []
+    assert calls == ['Contra']
+
+
+def test_the_online_check_takes_a_place_in_line(moby, monkeypatch, admin_test_client):
+    """MobyGames allows one request per five seconds. The Dashboard's online
+    check skipped the line, so a search just after it was refused with 429 and
+    showed nothing (2026-11-21). The check still ignores a stop (§10)."""
+    import requests
+    import routes.scraper as scraper_routes
+    service_limits.set_pace(service_limits.MOBYGAMES, 5.0)
+    monkeypatch.setattr(scraper_routes, 'get_saved_api_keys', lambda: {'mobygames_apikey': KEY})
+    monkeypatch.setattr(requests, 'get', lambda *a, **k: Reply({'games': []}))
+    sleeps = []
+    monkeypatch.setattr(service_limits.time, 'sleep', sleeps.append)
+    client, _csrf = admin_test_client()
+    assert client.get('/api/check-scraper/mobygames').get_json()['online'] is True
+    scrape_mobygames.search_games('Final Fantasy VII', 'psx')
+    assert sleeps and sleeps[-1] > 4
+    # A stop does not hold the check back.
+    service_limits.stop(service_limits.MOBYGAMES, 600)
+    assert client.get('/api/check-scraper/mobygames').get_json()['online'] is True
+
+
+def test_the_online_check_asks_for_the_light_reply(moby, monkeypatch, admin_test_client):
+    """A whole-record search took up to 50 seconds, so the five-second check
+    showed 'Connection error' (2026-11-21). It asks for the game id alone."""
+    import requests
+    import routes.scraper as scraper_routes
+    monkeypatch.setattr(scraper_routes, 'get_saved_api_keys', lambda: {'mobygames_apikey': KEY})
+    sent = []
+    monkeypatch.setattr(requests, 'get', lambda url, params=None, **k: sent.append(params) or Reply({'games': []}))
+    client, _csrf = admin_test_client()
+    assert client.get('/api/check-scraper/mobygames').get_json()['online'] is True
+    assert sent[0]['include'] == 'game_id'

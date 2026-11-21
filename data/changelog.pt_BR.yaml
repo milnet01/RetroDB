@@ -1,6 +1,18 @@
 - version: 4.0.0
   date: '2026-11-21'
   tags:
+  - type: fix
+    label: "O MobyGames agora encontra um jogo cujo nome está escrito de um jeito um pouco diferente, como 'Castlevania Bloodlines' para 'Castlevania: Bloodlines', e tenta a palavra principal do nome quando o nome inteiro não encontra nada. Uma busca logo depois de abrir o Painel ou as Configurações não volta mais vazia, e o status do MobyGames ali não diz mais Erro de conexão quando o MobyGames está lento"
+    en: "MobyGames now finds a game whose name is written a little differently, such as 'Castlevania Bloodlines' for 'Castlevania: Bloodlines', and tries the name's main word when the whole name finds nothing. A search just after opening the Dashboard or Settings no longer comes back empty, and the MobyGames status there no longer says Connection error when MobyGames is slow"
+  - type: feature
+    label: "Agora cada usuário pode apagar o próprio progresso do RetroAchievements de um console, com Clear My Progress ('Apagar meu progresso') na página de Conquistas dele. Os outros usuários mantêm o deles; apagar os dados de todos continua com o administrador"
+    en: "Every user can now clear their own RetroAchievements progress for one console, with Clear My Progress on its Achievements page. Other users keep theirs; clearing everyone's data stays with the admin"
+  - type: fix
+    label: "A linha Jogos Semelhantes na página de um jogo não deixa mais de aparecer quando o servidor responde rápido"
+    en: "The Similar Games row on a game page no longer fails to show when the server answers quickly"
+  - type: fix
+    label: "A janela Buscar metadados agora se alarga para caber todas as fontes que você ativou e, em uma tela menor, divide as fontes em linhas iguais em vez de espremê-las"
+    en: "The Search Metadata window now widens to fit every source you have switched on, and on a smaller screen splits the sources into even rows instead of squeezing them"
   - type: feature
     label: "O MobyGames é uma nova fonte de busca de metadados, consultada por último antes da IA quando você salva sua própria chave de API do MobyGames. Ela preenche detalhes vazios, a frente e o verso da caixa e capturas de tela, e guarda cada digitalização da caixa real, da lombada, do disco e do manual para a caixa 3D. O MobyGames permite algumas centenas de requisições por hora; um jogo pulado quando a hora acaba é consultado de novo sozinho depois da reinicialização"
     en: "MobyGames is a new scrape source, asked last before the AI once you save your own MobyGames API key. It fills empty details, the box front and back and screenshots, and keeps every scan of the real box, spine, disc and manual for the 3D box. MobyGames allows a few hundred requests an hour; a game skipped when the hour runs out is asked about again by itself after the reset"

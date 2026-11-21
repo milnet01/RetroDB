@@ -196,6 +196,25 @@ def api_clear_ra_data_system(system_id):
     )
 
 
+@bp.route('/api/clear-ra-progress', methods=['POST'])
+@bp.route('/api/clear-ra-progress/<int:system_id>', methods=['POST'])
+@login_required
+@handle_api_errors
+def api_clear_my_ra_progress(system_id=None):
+    """Forget the signed-in user's own RA progress, on one console or all
+    (PASS-49-9). The games stay linked: those links are everyone's."""
+    where = f"user_id = ? AND {_RA_ROWS}"
+    params = [g.user['id']]
+    if system_id is not None:
+        where += " AND game_id IN (SELECT id FROM games WHERE system_id = ?)"
+        params.append(system_id)
+    cleared = query(f"SELECT COUNT(*) AS c FROM game_achievement_progress WHERE {where}",
+                    params, one=True)['c']
+    execute(f"DELETE FROM game_achievement_progress WHERE {where}", params)
+    invalidate_analytics_cache()
+    return success(cleared=cleared)
+
+
 @bp.route('/api/clear-ra-data', methods=['POST'])
 @admin_required
 @handle_api_errors

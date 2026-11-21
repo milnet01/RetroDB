@@ -196,6 +196,32 @@ const RASync = {
     },
 
     /**
+     * Forget the signed-in user's own progress on one system (PASS-49-9).
+     * The games stay linked for everyone.
+     */
+    clearMyProgress(systemId, systemName) {
+        showConfirm(
+            '🧹 ' + t('Clear My Progress'),
+            t('This forgets which achievements you have earned in your {system} games. Sync Progress downloads them again. Continue?', {system: systemName}),
+            async () => {
+                try {
+                    const data = await API.post(`/api/clear-ra-progress/${systemId}`);
+                    if (data.success) {
+                        showNotification(t('Cleared your progress for {count} games', {count: formatNumber(data.cleared)}), 'success');
+                        setTimeout(() => window.location.reload(), 1500);
+                    } else {
+                        showNotification(data.error || t('Failed to clear RA data'), 'error');
+                    }
+                } catch (error) {
+                    console.error('Error clearing RA progress:', error);
+                    showNotification(t('Failed to clear RA data'), 'error');
+                }
+            },
+            {danger: true}
+        );
+    },
+
+    /**
      * Clear RA data for a system
      * @param {number} systemId - System ID
      * @param {string} systemName - System name for display
@@ -363,4 +389,5 @@ window.addEventListener('beforeunload', () => {
 // Legacy function exports
 window.syncRAForSystem = (systemId, systemName, options) => RASync.syncSystem(systemId, systemName, options);
 window.clearSystemRAData = (systemId, systemName) => RASync.clearSystemData(systemId, systemName);
+window.clearMyRAProgress = (systemId, systemName) => RASync.clearMyProgress(systemId, systemName);
 window.pollSyncStatus = (options) => RASync.pollStatus(options);

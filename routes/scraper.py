@@ -452,10 +452,16 @@ def api_check_scraper(scraper):
             moby_key = api_keys.get('mobygames_apikey', '')
             if not moby_key:
                 return jsonify({'online': False, 'scraper': scraper, 'reason': 'No API key'})
+            # Its place in line, not its stop (scrapers.md §10): MobyGames
+            # refuses a request sooner than its pace allows.
+            from scraper import service_limits
+            service_limits.take_turn(service_limits.MOBYGAMES)
             try:
                 r = requests.get(
                     'https://api.mobygames.com/v2/games',
-                    params={'title': 'Tetris', 'limit': 1, 'api_key': moby_key},
+                    # The id alone: whole records took up to 50 s (2026-11-21).
+                    params={'title': 'Tetris', 'limit': 1, 'include': 'game_id',
+                            'api_key': moby_key},
                     headers={'User-Agent': 'RetroDB/1.0'},
                     timeout=timeout,
                 )

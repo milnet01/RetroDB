@@ -1,6 +1,18 @@
 - version: 4.0.0
   date: '2026-11-21'
   tags:
+  - type: fix
+    label: "MobyGames は、名前の表記が少し違うゲーム（たとえば「Castlevania: Bloodlines」に対する「Castlevania Bloodlines」）も見つけられるようになり、名前全体で見つからないときは名前の主要な単語で試します。ダッシュボードや設定を開いた直後の検索が空で返ってくることもなくなり、MobyGames が遅いときにそこの MobyGames の状態が「接続エラー」と表示されることもなくなりました"
+    en: "MobyGames now finds a game whose name is written a little differently, such as 'Castlevania Bloodlines' for 'Castlevania: Bloodlines', and tries the name's main word when the whole name finds nothing. A search just after opening the Dashboard or Settings no longer comes back empty, and the MobyGames status there no longer says Connection error when MobyGames is slow"
+  - type: feature
+    label: "各ユーザーが、実績ページの Clear My Progress（「自分の進捗を消去」）で、1 つのコンソールについて自分の RetroAchievements の進捗を消去できるようになりました。ほかのユーザーの進捗はそのまま残り、全員のデータの消去は引き続き管理者だけが行えます"
+    en: "Every user can now clear their own RetroAchievements progress for one console, with Clear My Progress on its Achievements page. Other users keep theirs; clearing everyone's data stays with the admin"
+  - type: fix
+    label: "サーバーの応答が速いときに、ゲームページの「類似ゲーム」の行が表示されないことがなくなりました"
+    en: "The Similar Games row on a game page no longer fails to show when the server answers quickly"
+  - type: fix
+    label: "「メタデータを検索」ウィンドウが、オンにしたすべてのソースが収まるよう広がるようになり、画面が小さいときはソースを押し込めずに均等な行に分けて表示します"
+    en: "The Search Metadata window now widens to fit every source you have switched on, and on a smaller screen splits the sources into even rows instead of squeezing them"
   - type: feature
     label: "MobyGames は新しいスクレイピングの取得元で、ご自身の MobyGames API キーを保存すると AI の直前、最後に問い合わせられます。空の詳細、ボックスの表と裏、スクリーンショットを埋め、3D ボックス用に実物のボックス・背表紙・ディスク・マニュアルのスキャンをすべて保持します。MobyGames は 1 時間あたり数百件のリクエストを許可しており、時間枠を使い切ってスキップされたゲームは、リセット後に自動的にもう一度問い合わせられます"
     en: "MobyGames is a new scrape source, asked last before the AI once you save your own MobyGames API key. It fills empty details, the box front and back and screenshots, and keeps every scan of the real box, spine, disc and manual for the 3D box. MobyGames allows a few hundred requests an hour; a game skipped when the hour runs out is asked about again by itself after the reset"
