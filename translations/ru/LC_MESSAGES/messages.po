@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-20 19:17+0200\n"
+"POT-Creation-Date: 2026-11-21 11:56+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -204,7 +204,7 @@ msgstr "Система не найдена или не содержит игр �
 #: routes/achievements.py:177 routes/achievements.py:468
 #: routes/bonus_discs.py:276 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
-#: routes/emulators.py:312 routes/emulators.py:326 routes/games.py:407
+#: routes/emulators.py:315 routes/emulators.py:329 routes/games.py:407
 #: routes/games.py:954 routes/games.py:1073 routes/games.py:1157
 #: routes/games_ai.py:43 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
@@ -794,7 +794,7 @@ msgstr "Контроллер не найден"
 msgid "Another controller named \"%(name)s\" already exists"
 msgstr "Другой контроллер с названием «%(name)s» уже существует"
 
-#: routes/emulators.py:108
+#: routes/emulators.py:114
 msgid "name, binary_name, args_template are required"
 msgstr "Требуются name, binary_name, args_template"
 
@@ -802,37 +802,37 @@ msgstr "Требуются name, binary_name, args_template"
 msgid "nothing to update"
 msgstr "нечего обновлять"
 
-#: routes/emulators.py:246
+#: routes/emulators.py:247
 msgid "system_id and emulator_id required"
 msgstr "Требуются system_id и emulator_id"
 
-#: routes/emulators.py:249
+#: routes/emulators.py:250
 msgid "No such system or emulator."
 msgstr ""
 
-#: routes/emulators.py:289
+#: routes/emulators.py:292
 msgid "Send at least one setting."
 msgstr "Отправьте хотя бы одну настройку."
 
-#: routes/emulators.py:294
+#: routes/emulators.py:297
 msgid "RetroDB does not manage that setting for this emulator."
 msgstr "RetroDB не управляет этой настройкой для данного эмулятора."
 
-#: routes/emulators.py:296
+#: routes/emulators.py:299
 msgid "Fullscreen is set per system, in Settings > Emulators."
 msgstr "Полноэкранный режим задаётся для каждой системы в Настройки > Эмуляторы."
 
-#: routes/emulators.py:298
+#: routes/emulators.py:301
 msgid "That value is not one of the choices."
 msgstr "Это значение не входит в список вариантов."
 
-#: routes/emulators.py:328 services/standalone_settings.py:372
+#: routes/emulators.py:331 services/standalone_settings.py:372
 msgid "RetroDB manages per-game settings for DuckStation, PCSX2 and RPCS3 only."
 msgstr ""
 "RetroDB управляет настройками для отдельных игр только для DuckStation, "
 "PCSX2 и RPCS3."
 
-#: routes/emulators.py:341 routes/emulators.py:352
+#: routes/emulators.py:344 routes/emulators.py:355
 msgid "Emulator not found"
 msgstr "Эмулятор не найден"
 
@@ -5099,7 +5099,7 @@ msgstr "Ядро RetroArch не найдено: %(path)s"
 msgid "The player cannot use a path containing '|': %(path)s"
 msgstr "Плеер не может использовать путь, содержащий '|': %(path)s"
 
-#: services/player_cores.py:546
+#: services/player_cores.py:573
 #, python-format
 msgid "Player core not found: %(path)s"
 msgstr "Ядро плеера не найдено: %(path)s"
@@ -16635,15 +16635,16 @@ msgstr "Это RetroDB %(version)s."
 
 #: templates/_settings_tabs/system.html:165
 msgid ""
-"Version 4.0 is the last web version of RetroDB. New versions will be a "
-"desktop app for Windows, Linux and macOS, and an Android app. They will "
-"open your existing library. Until then, version 4.0 gets only security "
-"fixes and fixes for bugs that lose data."
+"Version 4.0 is the last big web version of RetroDB. New versions will be "
+"a desktop app for Windows, Linux and macOS, and an Android app, and will "
+"open your existing library. The web version stays available and still "
+"gets bug fixes, and now and then a new feature."
 msgstr ""
-"Версия 4.0 — последняя веб-версия RetroDB. Новые версии будут настольным "
-"приложением для Windows, Linux и macOS, а также приложением для Android. "
-"Они откроют вашу существующую библиотеку. До тех пор в версии 4.0 будут "
-"только исправления безопасности и ошибок, приводящих к потере данных."
+"Версия 4.0 — последняя большая веб-версия RetroDB. Новые версии будут "
+"настольным приложением для Windows, Linux и macOS, а также приложением "
+"для Android, и откроют вашу существующую библиотеку. Веб-версия остаётся "
+"доступной и по-прежнему получает исправления ошибок, а иногда и новые "
+"функции."
 
 #: templates/_settings_tabs/system.html:168
 msgid "Download the desktop app"

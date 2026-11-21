@@ -16,14 +16,14 @@ carve-outs, response helpers, etc.).
 
 Open work, by the version it ships in:
 
-- [4.0.0 — The last web version](#400--the-last-web-version) — the PASS-59-113 plan and every fix before release
-- [4.0.x — Security and data-loss fixes](#40x--security-and-data-loss-fixes-for-the-web-version) — the web version after 4.0.0
-- [4.1.0 — Desktop app: browse and play](#410--desktop-app-browse-and-play) — the native app's first piece
-- [4.2.0 — Desktop app: edit and scrape](#420--desktop-app-edit-and-scrape)
-- [4.3.0 — Desktop app: tools, cheats and statistics](#430--desktop-app-tools-cheats-and-statistics)
-- [4.4.0 — Desktop app: looks and languages](#440--desktop-app-looks-and-languages)
-- [4.5.0 — The Android app](#450--the-android-app)
-- [5.0.0 — The full desktop app](#500--the-full-desktop-app) — the native app does everything
+- [4.0.0 — The last big web version](#400--the-last-big-web-version) — the PASS-59-113 plan and every fix before release
+- [4.0.x — Fixes and new features for the web version](#40x--fixes-and-new-features-for-the-web-version) — the web version after 4.0.0
+- [Desktop milestone 1 — browse and play](#desktop-milestone-1--browse-and-play) — the native app's first stage
+- [Desktop milestone 2 — edit and scrape](#desktop-milestone-2--edit-and-scrape)
+- [Desktop milestone 3 — tools, cheats and statistics](#desktop-milestone-3--tools-cheats-and-statistics)
+- [Desktop milestone 4 — looks and languages](#desktop-milestone-4--looks-and-languages)
+- [Desktop milestone 5 — the Android app](#desktop-milestone-5--the-android-app)
+- [5.0.0 — The desktop app release](#500--the-desktop-app-release) — the desktop app ships once, when finished
 - [Ideas, not planned](#ideas-not-planned) — considered or dropped
 
 Reference:
@@ -39,9 +39,9 @@ per minor version (for example `docs/roadmap/3.5.md`). Finished items
 whose version is not known are in `docs/roadmap/unversioned.md`. The notes from the old "Active" section are in
 [docs/history/roadmap-old-active-notes.md](docs/history/roadmap-old-active-notes.md).
 
-## 4.0.0 — The last web version
+## 4.0.0 — The last big web version
 
-Everything in the PASS-59-113 plan, every fix the reviews found, and the work finished since 3.35.4. RetroDB is a web app up to here, and 4.0.0 stays downloadable after the desktop app ships.
+Everything in the PASS-59-113 plan, every fix the reviews found, and the work finished since 3.35.4. The web version stays downloadable after the desktop app ships, and keeps getting 4.0.x updates.
 
 - 📋 [PASS-59-113] **v4.0.0 release plan: what ships before the major bump (HIGH, L)**
   - **Why**: the user set the v4.0.0 scope on 2026-10-17. v4.0.0 ships when
@@ -2437,6 +2437,10 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - **Status**: done.
 
   ---
+  **Changed** (user, 2026-11-21): the web version keeps getting bug
+  fixes and, now and then, a new feature, all as 4.0.x. The desktop app
+  ships once, as 5.0.0, when finished. The README, Help, Settings >
+  System and the 4.0.0 changelog now say so.
   Kind: implement.
 
 - ✅ [PASS-59-273] **Museum background removal runs in a helper that closes when idle, like the upscaler (perf, M).**
@@ -3570,11 +3574,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: feature.
   Source: user, 2026-11-21.
 
-## 4.0.x — Security and data-loss fixes for the web version
+## 4.0.x — Fixes and new features for the web version
 
-After 4.0.0 the web version gets security and data-loss fixes only, always as 4.0.x: the 4.0 updater treats 4.1.0 and up as the desktop app.
+After 4.0.0 the web version still gets bug fixes and, now and then, a good new feature (user, 2026-11-21), always as 4.0.x: the 4.0 updater treats 4.1.0 and up as the desktop app. Most work after 4.0.0 goes to the desktop app.
 
-## 4.1.0 — Desktop app: browse and play
+## Desktop milestone 1 — browse and play
 
 The first piece of the native app (Rust + Slint): the Library, console and game
 pages, and launching games. Port plan phases 0 to 2
@@ -3594,6 +3598,10 @@ pages, and launching games. Port plan phases 0 to 2
   - Every other part: one section per subsystem the web app has.
   Blocked by: PASS-59-113 (4.0.0 released). Blocks: PASS-59-270
   phase 0.
+  **Also decide** (user, 2026-11-21): what counts as "finished" for the
+  desktop app. It ships once, as 5.0.0, with no public releases in
+  stages; the milestones are stages of the work. The user may still
+  rethink the 5.0.0 number.
   **Layman:** Before building the desktop app, write down exactly how every part of it will work.
   Kind: research.
   Source: user-request-2026-11-18.
@@ -3664,7 +3672,7 @@ pages, and launching games. Port plan phases 0 to 2
   **Layman:** Arcade flyers on the game page.
   Kind: implement.
 
-## 4.2.0 — Desktop app: edit and scrape
+## Desktop milestone 2 — edit and scrape
 
 Editing games and filling them from the online sources. Port plan phase 3.
 
@@ -3719,7 +3727,7 @@ Editing games and filling them from the online sources. Port plan phase 3.
   **Layman:** Sales figures for 8-bit games, with their sources.
   Kind: implement.
 
-## 4.3.0 — Desktop app: tools, cheats and statistics
+## Desktop milestone 3 — tools, cheats and statistics
 
 Everything else the web version does: long tasks, the image upscaler,
 achievements and trophies, cheats, imports, ROM tools, analytics and the museum.
@@ -3928,7 +3936,7 @@ Port plan phase 4.
   **Layman:** Find a fix for the graphics-card library that crashes every program using it when it closes.
   Kind: implement.
 
-## 4.4.0 — Desktop app: looks and languages
+## Desktop milestone 4 — looks and languages
 
 Themes, layouts, plugins and new languages. Port plan phase 5.
 
@@ -4001,14 +4009,14 @@ Themes, layouts, plugins and new languages. Port plan phase 5.
   **Layman:** TV mode: a big-text Library you steer with a game controller.
   Kind: implement.
 
-## 4.5.0 — The Android app
+## Desktop milestone 5 — the Android app
 
 RetroDB on an Android phone: on its own, or as a companion to the PC over home
 Wi-Fi, with ROMs copied to the phone. Port plan phase 6. Nothing filed here yet.
 
-## 5.0.0 — The full desktop app
+## 5.0.0 — The desktop app release
 
-The native app does everything the web version did, on Windows, Linux, macOS and Android.
+The desktop app ships once, as 5.0.0, when it is finished (user, 2026-11-21). The milestones above are stages of the work, not releases. What "finished" means is decided in the PASS-59-322 plan.
 
 - 📋 [PASS-59-270] **Port RetroDB to a native app in Rust + Slint for Windows, Linux, macOS and Android (feature, XL).**
   - **Status**: todo
