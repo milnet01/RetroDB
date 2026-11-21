@@ -164,7 +164,9 @@ it at once, with `apply=true`.
   (`settings_manager.default_scan_paths`): `~\Emulators`, `~\Downloads` and
   `C:\Emulators` on Windows; `/Applications`, `~/Applications` and
   `~/Downloads` on macOS. Names come from each emulator's release files,
-  read 2026-11-20; none is verified on a real Windows or macOS install.
+  read 2026-11-20. A Windows 10 unpack (2026-11-21, PASS-59-324) found
+  DuckStation, PCSX2, PPSSPP and Azahar by these names, with RetroArch's
+  read from its archive's file list; the macOS names are unverified.
 - **Flatpak:** for each adapter's `flatpak_ids`, the exported launcher
   `/var/lib/flatpak/exports/bin/<id>` or
   `~/.local/share/flatpak/exports/bin/<id>`, whichever exists and is

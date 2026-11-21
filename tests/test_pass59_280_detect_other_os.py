@@ -119,3 +119,25 @@ def test_retroarch_probe_per_os(monkeypatch, platform, binary, cores):
     monkeypatch.setattr(sys, 'platform', platform)
     assert binary in ls._bin_chain()
     assert cores in ls._cores_chain()
+
+
+def test_azahar_is_found_on_windows_linux_and_flatpak(tmp_path, monkeypatch):
+    """PASS-59-324: Azahar's names, read from its 2126.2 release files and a
+    Windows unpack.  azahar-room.exe beside it is a netplay server, never the
+    emulator."""
+    from routes import launch_settings as ls
+    win = tmp_path / 'win'
+    az = _touch(win / 'azahar-windows-msvc-2126.2' / 'azahar.exe')
+    _touch(win / 'azahar-windows-msvc-2126.2' / 'azahar-room.exe')
+    monkeypatch.setattr('routes.launch_settings._flatpak_bin_dirs', lambda: [])
+    monkeypatch.setattr(sys, 'platform', 'win32')
+    assert ls._detect_emulators([win])['citra-qt']['preferred'] == str(az)
+
+    monkeypatch.setattr(sys, 'platform', 'linux')
+    appimage = _touch(tmp_path / 'linux' / 'azahar.AppImage')
+    assert ls._detect_emulators([tmp_path / 'linux'])['citra-qt']['preferred'] == str(appimage)
+
+    bin_dir = tmp_path / 'exports'
+    launcher = _touch(bin_dir / 'org.azahar_emu.Azahar')
+    monkeypatch.setattr('routes.launch_settings._flatpak_bin_dirs', lambda: [bin_dir])
+    assert ls._detect_emulators([])['citra-qt']['preferred'] == str(launcher)

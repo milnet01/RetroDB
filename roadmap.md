@@ -3447,7 +3447,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Decide whether clearing RetroAchievements data clears everyone's or only yours.
   Kind: implement.
 
-- 📋 [PASS-59-324] **Try emulator Detect on the Windows test PC with portable emulators.**
+- ✅ [PASS-59-324] **Try emulator Detect on the Windows test PC with portable emulators.**
   PASS-59-280 matched each emulator's exact .exe from release files,
   but no Windows run has tried it. The test PC (ssh wintest; the user
   does not use Windows, so this is ours to run) has no emulators. Unpack
@@ -3456,6 +3456,15 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   with that folder listed, and compare against the expected matches.
   Also settles Azahar/Citra's Windows .exe name, which has no pattern
   yet. Remove the scratch folder after.
+  Done 2026-11-21 on Windows 10 (ssh wintest). Real downloads of
+  DuckStation, PCSX2 2.8.2, PPSSPP 1.20.4 and Azahar 2126.2 were
+  unpacked, and Detect's scan was run from a source checkout: each was
+  found at its main program, with updater.exe, uninstaller.exe and
+  azahar-room.exe skipped. RetroArch 1.22.2 could not be unpacked there
+  (BCJ2 .7z), so its retroarch.exe came from the archive's file list.
+  Azahar was missing on every OS and was added: azahar.exe,
+  azahar*.AppImage, Flatpak org.azahar_emu.Azahar. Not run: the Detect
+  button over HTTP, and macOS. Scratch removed.
   **Layman:** Check that Settings > Emulators really finds emulators on a Windows computer, not just in tests.
   Kind: test.
   Source: PASS-59-280 close 2026-11-20.

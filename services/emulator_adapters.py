@@ -278,6 +278,8 @@ def app_program(bundle: Path) -> Optional[Path]:
 ADAPTERS = {a.binary_name: a for a in (
     # Windows and macOS names: each emulator's official release files
     # (read 2026-11-20); mame.exe is the probable name, unconfirmed.
+    # DuckStation, PCSX2, PPSSPP, RetroArch and Azahar were confirmed on a
+    # Windows unpack (PASS-59-324).
     # RetroArch lists no systems: which core runs a system is PASS-59-81's.
     # Its Flatpak keeps its own probe (routes/launch_settings.py).
     EmulatorAdapter('retroarch', _pat(r'.*retroarch.*\.appimage$', r'retroarch\.exe$',
@@ -308,8 +310,10 @@ ADAPTERS = {a.binary_name: a for a in (
     EmulatorAdapter('melonDS', _pat(r'melonds.*\.appimage$', r'melonds\.exe$',
                                              r'melonds\.app$'), 'melonds',
                     ('net.kuribo64.melonDS',), ('nds',)),
-    EmulatorAdapter('citra-qt', _pat(r'citra.*\.appimage$', None, r'azahar\.app$'), 'citra',
-                    ('org.citra_emu.citra',), ('n3ds',)),
+    # Azahar carries on Citra; azahar-room.exe beside it is a netplay server.
+    EmulatorAdapter('citra-qt', _pat(r'(citra|azahar).*\.appimage$', r'azahar\.exe$',
+                                     r'azahar\.app$'), 'citra',
+                    ('org.azahar_emu.Azahar', 'org.citra_emu.citra'), ('n3ds',)),
     EmulatorAdapter('scummvm', _pat(r'scummvm.*\.appimage$', r'scummvm\.exe$',
                                              r'scummvm\.app$'), 'scummvm',
                     ('org.scummvm.ScummVM',), ('scummvm',)),
