@@ -303,25 +303,30 @@ def _rom_size(path):
 @bp.route('/api/calculate-storage', methods=['POST'])
 @admin_required
 def api_calculate_storage():
-    """Calculate and update file sizes for all games"""
+    """Calculate and update file sizes for all games. Imported games have no
+    file, so they are counted apart rather than looked for."""
+    from services.game_cleanup import _VIRTUAL_ROM_PREFIXES
     try:
         games = query("SELECT id, rom_path FROM games WHERE file_size IS NULL OR file_size = 0")
         # One batched write (one commit) instead of a commit per game.
         sizes = []
+        missing = imported = 0
         for game in games:
-            if game['rom_path'] and os.path.exists(game['rom_path']):
+            path = game['rom_path'] or ''
+            if path.startswith(_VIRTUAL_ROM_PREFIXES):
+                imported += 1
+            elif path and os.path.exists(path):
                 try:
-                    sizes.append((_rom_size(game['rom_path']), game['id']))
+                    sizes.append((_rom_size(path), game['id']))
                 except Exception as e:
-                    logger.warning(f"Could not get size for {game['rom_path']}: {e}")
+                    missing += 1
+                    logger.warning(f"Could not get size for {path}: {e}")
+            else:
+                missing += 1
         if sizes:
             execute_many("UPDATE games SET file_size = ? WHERE id = ?", sizes)
-        updated = len(sizes)
 
-        return success(
-            updated=updated,
-            message=f'Updated file sizes for {updated} games',
-        )
+        return success(updated=len(sizes), missing=missing, imported=imported)
     except Exception as e:
         logger.error(f"Storage calculation error: {e}")
         return error(_('An internal error occurred'), 500)

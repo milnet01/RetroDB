@@ -2044,18 +2044,34 @@ function restoreBackup(filename) {
     );
 }
 
-function calculateStorage() {
-    showNotification({{ _('Calculating file sizes...')|tojson }}, 'info');
-    fetch('/api/calculate-storage', { method: 'POST' })
-        .then(r => r.json())
-        .then(data => {
-            if (data.success) {
-                showNotification(data.message, 'success');
-            } else {
-                showNotification(t({{ _('Calculation failed: {error}')|tojson }}, {error: data.error}), 'error');
-            }
-        })
-        .catch(e => showNotification(t({{ _('Error: {error}')|tojson }}, {error: e}), 'error'));
+// The answer stays under the button: a toast that fades read as "nothing happened".
+async function calculateStorage() {
+    const btn = document.getElementById('calculateStorageBtn');
+    const resultDiv = document.getElementById('calculateStorageResult');
+    const label = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="btn-icon">⏳</span> ' + escapeHtml({{ _('Calculating...')|tojson }});
+    resultDiv.style.display = 'none';
+    let lines = [], kind = 'success';
+    try {
+        const data = await (await fetch('/api/calculate-storage', { method: 'POST' })).json();
+        if (!data.success) throw new Error(data.error);
+        if (data.updated) lines.push(t({{ _('Found the size of {count} game(s).')|tojson }}, {count: data.updated}));
+        if (data.missing) {
+            kind = 'warning';
+            lines.push(t({{ _('{count} game(s) were skipped because their file is not on disk.')|tojson }}, {count: data.missing}));
+        }
+        if (data.imported) lines.push(t({{ _('{count} imported game(s) have no file, so they have no size.')|tojson }}, {count: data.imported}));
+        if (!data.updated && !data.missing) lines.unshift({{ _('Every game with a file already has a size.')|tojson }});
+    } catch (e) {
+        kind = 'danger';
+        lines = [t({{ _('Calculation failed: {error}')|tojson }}, {error: e.message || e})];
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = label;
+    }
+    resultDiv.innerHTML = `<div class="alert alert-${kind}">${lines.map(escapeHtml).join('<br>')}</div>`;
+    resultDiv.style.display = 'block';
 }
 
 // Load backups on page load

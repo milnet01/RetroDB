@@ -131,10 +131,11 @@
             {{ _('Finds the size on disk of every game that does not have one yet.') }}
         </p>
         <div>
-            <button type="button" data-on-click="calculateStorage" class="btn btn-secondary">
+            <button type="button" data-on-click="calculateStorage" class="btn btn-secondary" id="calculateStorageBtn">
                 <span class="btn-icon">📊</span> {{ _('Calculate File Sizes') }}
             </button>
         </div>
+        <div id="calculateStorageResult" role="status" style="margin-top: var(--spacing-md); display: none;"></div>
 
         <!-- Database Optimization Section -->
         <h3 class="section-title" style="margin-top: var(--spacing-xl); margin-bottom: var(--spacing-md);">
@@ -228,7 +229,7 @@
 
         <div class="form-group mb-lg">
             <div class="form-label">{{ _('Database Location') }}</div>
-            <span class="detail-value" style="font-family: var(--font-mono);">{{ config.DB_PATH }}</span>
+            <span class="detail-value" style="font-family: var(--font-mono); overflow-wrap: anywhere;">{{ config.DB_PATH }}</span>
         </div>
 
         <p class="text-muted" style="font-size: 0.85rem;">

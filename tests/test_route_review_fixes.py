@@ -130,6 +130,19 @@ def test_calculate_storage_batches_writes(rom_client, monkeypatch):  # noqa: F81
     assert batches == [[(2, 1), (4, 2)]]
 
 
+def test_calculate_storage_counts_imported_and_missing_apart(rom_client, monkeypatch):  # noqa: F811
+    # An imported game has no file: it is counted, never looked for on disk.
+    import routes.systems as systems
+    post, roms = rom_client
+    monkeypatch.setattr(systems, 'query', lambda *_a, **_k: [
+        {'id': 1, 'rom_path': 'clz_import/psp/EchoShift'},
+        {'id': 2, 'rom_path': 'steam_import/440'},
+        {'id': 3, 'rom_path': str(roms / 'gone.nes')}])
+    monkeypatch.setattr(systems, 'execute_many', lambda *_a: None)
+    data = post('/api/calculate-storage', {}).get_json()
+    assert (data['updated'], data['missing'], data['imported']) == (0, 1, 2)
+
+
 # --- /api/games/find: limit floored ---------------------------------------
 
 def test_local_search_floors_negative_limit(rom_client, monkeypatch):  # noqa: F811
