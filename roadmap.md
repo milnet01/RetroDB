@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=328 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=329 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -3349,7 +3349,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** A resumed job could skip the game it was on.
   Kind: implement.
 
-- 📋 [PASS-49-2] **bulk-scrape swap/demote counter corruption after join timeout (MEDIUM, M)**
+- ✅ [PASS-49-2] **bulk-scrape swap/demote counter corruption after join timeout (MEDIUM, M)**
   - **Status**: deferred — needs careful concurrency design.
   - **Lane**: background jobs (Lane 7).
   - **Finding**: `services/jobs/bulk_scrape.py` `swap_with_running` /
@@ -3359,6 +3359,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - **Decision**: block or hard-fail the swap when the old thread is still alive
     rather than "proceed with state mixing possible".
   Moved into 4.0.0 (user, 2026-11-20).
+  Already fixed (checked 2026-11-21): PASS-59-243 gave each job a run
+  token and PASS-59-259 made `_count` drop a replaced worker's counts
+  under the lock; the index, title and finish writes check the same
+  token. Pinned by
+  tests/test_pass59_259_bulk_handoff.py::test_a_replaced_worker_does_not_count_its_game_in_flight.
   **Layman:** Swapping a running bulk scrape could mix up its counts.
   Kind: implement.
 
@@ -3629,6 +3634,20 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Show the real disc or cartridge inside the open box for games MobyGames has no picture of, using ScreenScraper's.
   Kind: feature.
   Source: split from PASS-59-325, 2026-11-21.
+
+- 📋 [PASS-59-329] **Every 3D case type checked against photos of the real case: lips, seams, tabs, finger holes.**
+  - **Ask**: for each case in `services/box3d/cases.py`, compare with
+    photos of the real case (blank and with a game), found through
+    Google Images in Chrome, and set its `CaseShape` and features:
+    raised lip, seam step, hanging tab, finger recess. The user names
+    the finger holes on PS3, PS4, PS5 and GameCube cases.
+  - **Start from**: Slipcase already has some shapes (the PS5's, with
+    its recess, SLIP-0125); the Mega Drive case was done from the
+    user's photos of a PAL Sonic case (2026-11-21).
+  - **Verify**: each case drawn in the viewer next to its photo.
+  **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
+  Kind: research.
+  Source: user-request-2026-11-21.
 
 ## 4.0.x — Fixes and new features for the web version
 
