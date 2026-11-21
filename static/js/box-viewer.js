@@ -321,6 +321,12 @@
     // Cards and small cartridges held in a keep case: [name, width, height, thickness] in mm.
     const CARDS = [[/Switch/, 21, 31, 3.3], [/3DS|DS Case/, 35, 33, 3.8], [/Vita/, 22, 30, 2],
         [/PSP/, 64, 65, 4.2], [/HuCard/, 54, 85, 1]];
+    // Cartridges held by a clip at each end, not walled round: [name, long
+    // side, short side, thickness] in mm. Its scan's shape says which way it
+    // lies: on its side in a PAL case, across in others. The Mega Drive's is
+    // the user's ruler on a PAL Sonic cartridge (2026-11-21); the thickness
+    // is judged.
+    const CLIPPED_CARTRIDGES = [[/Genesis Clamshell/, 108, 70, 18]];
 
     function caseKind(name) {
         const n = String(name || '');
@@ -478,6 +484,17 @@
             out.push(...annulus(0, 0, floor, floor + 1.2, r + 1, r + 2.5, 'base', plastic));
             out.push(...rosette(0, 0, floor, floor + 5, 'base', plastic));
             out.push(...annulus(0, 0, floor + 2, floor + 3.2, 7.5, r, 'base', SILVER, scanUrl(media)));
+        } else if (CLIPPED_CARTRIDGES.some(([pattern]) => pattern.test(name))) {
+            const [, long, short, ct] = CLIPPED_CARTRIDGES.find(([pattern]) => pattern.test(name));
+            // No scan: on its side, as in the user's PAL case.
+            const across = (aspectOf(media) || 0) > 1;
+            const [cw, ch] = across ? [long, short] : [short, long];
+            const high = Math.min(ct + 1, c.depth_mm - 2), clip = 3;
+            out.push(...cuboid([0, 0, floor + ct / 2], [cw, ch, ct], 'base', CARTRIDGE,
+                {front: scanUrl(media)}));
+            for (const y of [ch / 2 + clip / 2, -ch / 2 - clip / 2]) {
+                out.push(...cuboid([0, y, floor + high / 2], [14, clip, high], 'base', plastic));
+            }
         } else {
             const card = CARDS.find(([pattern]) => pattern.test(name));
             let [cw, ch, ct] = card ? card.slice(1) : [0.75 * c.width_mm, 0.55 * c.height_mm,
