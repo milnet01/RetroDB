@@ -323,10 +323,10 @@
         [/PSP/, 64, 65, 4.2], [/HuCard/, 54, 85, 1]];
     // Cartridges held by a clip at each end, not walled round: [name, long
     // side, short side, thickness] in mm. Its scan's shape says which way it
-    // lies: on its side in a PAL case, across in others. The Mega Drive's is
-    // the user's ruler on a PAL Sonic cartridge (2026-11-21); the thickness
-    // is judged.
-    const CLIPPED_CARTRIDGES = [[/Genesis Clamshell/, 108, 70, 18]];
+    // lies: on its side in a PAL case, across in others. The Mega Drive's:
+    // ConsoleMods' "Dimensions for Game Cartridges" gives 109 x 70 x 17 mm,
+    // one mould for Genesis and PAL; the user's ruler read 108 x 70 (2026-11-21).
+    const CLIPPED_CARTRIDGES = [[/Genesis Clamshell/, 109, 70, 17]];
 
     function caseKind(name) {
         const n = String(name || '');
