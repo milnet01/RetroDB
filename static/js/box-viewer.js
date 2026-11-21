@@ -521,6 +521,23 @@
         return out;
     }
 
+    // A shop's hanging tab (RetroDB, from the user's photos of a Mega Drive
+    // case): a thin plate standing above the top edge, flush with the back
+    // half, with a slot for the peg. Sizes judged by eye, as shares of the case.
+    function hangingTab(c, plastic) {
+        const h = c.height_mm / 2, d = c.depth_mm / 2;
+        const tw = 0.36 * c.width_mm, th = 0.09 * c.height_mm, tt = 3;
+        const sw = 0.48 * tw, sh = 5, slotMid = h + th - 6;
+        const z = -d + tt / 2, post = (tw - sw) / 2;
+        const below = slotMid - sh / 2 - h, above = h + th - (slotMid + sh / 2);
+        return [
+            ...cuboid([0, h + below / 2, z], [tw, below, tt], 'base', plastic),
+            ...cuboid([0, h + th - above / 2, z], [tw, above, tt], 'base', plastic),
+            ...cuboid([-(sw + post) / 2, slotMid, z], [post, sh, tt], 'base', plastic),
+            ...cuboid([(sw + post) / 2, slotMid, z], [post, sh, tt], 'base', plastic),
+        ].map(p => ({...p, shell: true}));
+    }
+
     // The lid's turn and a slide's rise at `open` (0 shut, 1 open), as
     // {rot: column-major mat3, shift}. Turning about y takes +z towards -x.
     function partTransform(name, hinge, open, slide) {
@@ -682,6 +699,7 @@
         const shines = p => !p.tex && !(p.shell && kind === 'carton');
         const patches = splitShell(shell, hinge)
             .concat(insideParts(kind, record.case, shape, plastic, scans));
+        if (record.hanging_tab) patches.push(...hangingTab(record.case, plastic));
 
         const byKey = new Map();
         let floats = 0;

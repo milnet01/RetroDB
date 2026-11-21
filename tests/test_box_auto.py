@@ -280,3 +280,16 @@ def test_a_new_shape_rebuilds_the_box(make_game, images, monkeypatch):
                         replace(case, shape=replace(case.shape, corner_radius=5.0)))
     assert build.build_for_game(gid) == 'built'
     assert _record(gid)['shape']['corner_radius_mm'] == 5.0
+
+
+def test_a_clamshell_with_a_shop_tab_says_so_to_the_viewer(make_game, images):
+    # The viewer draws the hanging tab from the case type, read as the page
+    # loads, so a box built or imported before still gets it.
+    gid = make_game()
+    build.build_for_game(gid)
+    record = _record(gid)
+    assert box_faces.faces_for({'box_faces': json.dumps(record)})['hanging_tab'] is False
+    record['case']['name'] = 'Genesis Clamshell'
+    assert box_faces.faces_for({'box_faces': json.dumps(record)})['hanging_tab'] is True
+    record['case']['name'] = 'A case Slipcase added later'
+    assert box_faces.faces_for({'box_faces': json.dumps(record)})['hanging_tab'] is False

@@ -122,6 +122,12 @@ def faces_for(game_row):
         face: f'images/box_faces/{faces[face]}' if faces.get(face) else None
         for face in FACES
     }
+    # The shop's hanging tab, for the viewer to draw: looked up by case name
+    # as the page loads, so boxes built or imported before have it too.
+    from services.box3d.cases import CASE_TYPES
+    case = record.get('case')
+    known = CASE_TYPES.get(case.get('name')) if isinstance(case, dict) else None
+    record['hanging_tab'] = bool(known and known.hanging_tab)
     return record
 
 

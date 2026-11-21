@@ -67,6 +67,13 @@ _PS2_RIM_MM = 2.0
 _PC_RIM_MM = 1.5
 # Judged from LaunchBox's Genesis and Master System images (2026-10-30).
 _CLAMSHELL_RIM_MM = 1.5
+# RetroDB: the Mega Drive / Master System case from the user's photos of a
+# PAL Sonic case (2026-11-21): a raised lip round the sheet and a deep step
+# where the halves meet, both plain to see. Judged by eye, not measured.
+_SEGA_CLAMSHELL_RIM_MM = 2.0
+_SEGA_CLAMSHELL_SHAPE = CaseShape(corner_radius=4.0, edge_radius=2.0,
+                                  lip_width=_SEGA_CLAMSHELL_RIM_MM, lip_height=1.5,
+                                  seam_width=2.5, seam_depth=1.5)
 _KEEP_TEXTURES = frozenset({"dvd", "bluray", "switch", "ds", "psp", "clamshell"})
 
 
@@ -398,14 +405,16 @@ CASE_TYPES: dict[str, CaseType] = {
         name="Genesis Clamshell",
         width=128, height=179, depth=26,
         platforms=("Genesis", "Mega Drive"),
-        plastic=_BLACK_KEEP, texture="clamshell", keep_rim=_CLAMSHELL_RIM_MM,
+        plastic=_BLACK_KEEP, texture="clamshell", keep_rim=_SEGA_CLAMSHELL_RIM_MM,
+        shape=_SEGA_CLAMSHELL_SHAPE,
         hanging_tab=True,
     ),
     "Master System Case": CaseType(
         name="Master System Case",
         width=128, height=179, depth=26,
         platforms=("Master System",),
-        plastic=_BLACK_KEEP, texture="clamshell", keep_rim=_CLAMSHELL_RIM_MM,
+        plastic=_BLACK_KEEP, texture="clamshell", keep_rim=_SEGA_CLAMSHELL_RIM_MM,
+        shape=_SEGA_CLAMSHELL_SHAPE,
         hanging_tab=True,
     ),
     # A protector's size. LaunchBox's images show the tab in every region.
