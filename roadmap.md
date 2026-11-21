@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=325 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=326 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -3528,6 +3528,24 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** MobyGames as another place to look up game details.
   Kind: implement.
 
+- 📋 [PASS-59-326] **Build a real-looking 3D box automatically from scraped scans (FEATURE, L).**
+  - **Target**: from a game's front, back and spine scans (PASS-59-183,
+    ScreenScraper, TheGamesDB, ES-DE), RetroDB builds box_faces itself,
+    on the real case for the console: keep case with clear sleeve and
+    rim, jewel case, cardboard cartridge box, clamshell. No spine scan:
+    generate one. An imported Slipcase box always wins.
+  - **Reuse**: Slipcase (the user's MIT app) has the case table
+    core/case_types.py::CASE_TYPES, face builders core/case_texture.py,
+    core/jewel.py, core/spine_generator.py; RetroDB's box-viewer.js
+    already ports core/box_shape.py. Port to RetroDB's server side.
+  - **Not usable**: LaunchBox 3D boxes are closed built-in meshes and
+    community flat images with no licence (research 2026-11-21).
+  - **Changes**: PASS-59-142's rule that only imports write faces.
+  - **Order**: after PASS-59-183, before PASS-59-325.
+  **Layman:** Every scraped game gets a turning 3D box that looks like its real case, with no Slipcase work.
+  Kind: feature.
+  Source: user, 2026-11-21.
+
 - 📋 [PASS-59-325] **Open the 3D box and view its contents (FEATURE, M).**
   - **Target**: the rotating 3D box opens; inside are the disc or
     cartridge picture (ScreenScraper physical media), the inside-cover
@@ -3538,6 +3556,16 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - **Decision** (user, 2026-11-21): build the viewer in 4.0.0, since
     it is the last web version; the desktop app rebuilds it later.
     Built after PASS-59-183, as its own item.
+  User, 2026-11-21: it must look like the real case, not paper covers:
+  a PS2 game is the plastic keep case with the paper sleeve under clear
+  plastic; inside, the disc hub, manual clips and memory-card holder as
+  on the real case. The lid opens on its hinge. Nothing exists yet:
+  Slipcase plans opening only (SLIP-0109, no spec) and has no interior
+  parts; no openable model with a usable licence was found
+  (2026-11-21). Build the lid and interior parts procedurally in
+  static/js/box-viewer.js (WebGL2, no library), per case type, from
+  reference photos. Box faces come from PASS-59-326. Tell the Slipcase
+  session the design, since SLIP-0109 wants the same lid and parts.
   **Layman:** Open a game's box on screen and look at the disc or cartridge, the manual and the leaflets inside.
   Kind: feature.
   Source: user, 2026-11-21.
