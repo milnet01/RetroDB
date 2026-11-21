@@ -20,7 +20,7 @@ from services.security import safe_path
 logger = logging.getLogger(__name__)
 
 # Bump when a change here or in the port should rebuild every built box.
-BUILD_VERSION = 1
+BUILD_VERSION = 2
 
 # System folder -> Slipcase's platform name (spec §4.3). Any other folder
 # gets no box: arcade sets and home computers came in boxes Slipcase has no

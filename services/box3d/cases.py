@@ -410,12 +410,13 @@ CASE_TYPES: dict[str, CaseType] = {
         platforms=(),
         texture="cardboard",
     ),
-    # One clamshell for both consoles; the size is a box protector's, as no
-    # measured case was found. Sega Retro: Mega Drive boxes "use the same
-    # dimensions as Western Master System games".
+    # One clamshell for both consoles. Sega Retro: Mega Drive boxes "use the
+    # same dimensions as Western Master System games". No published size was
+    # found: width and height are a box protector's; the depth is the user's
+    # ruler on a PAL Sonic case (2026-11-21), which read 124 x 177 x 24 mm.
     "Genesis Clamshell": CaseType(
         name="Genesis Clamshell",
-        width=128, height=179, depth=26,
+        width=128, height=179, depth=24,
         platforms=("Genesis", "Mega Drive"),
         plastic=_BLACK_KEEP, texture="clamshell", keep_rim=_SEGA_CLAMSHELL_RIM_MM,
         keep_side_rim=_SEGA_CLAMSHELL_SIDE_RIM_MM, shape=_SEGA_CLAMSHELL_SHAPE,
@@ -423,7 +424,7 @@ CASE_TYPES: dict[str, CaseType] = {
     ),
     "Master System Case": CaseType(
         name="Master System Case",
-        width=128, height=179, depth=26,
+        width=128, height=179, depth=24,
         platforms=("Master System",),
         plastic=_BLACK_KEEP, texture="clamshell", keep_rim=_SEGA_CLAMSHELL_RIM_MM,
         keep_side_rim=_SEGA_CLAMSHELL_SIDE_RIM_MM, shape=_SEGA_CLAMSHELL_SHAPE,
