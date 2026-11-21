@@ -3528,6 +3528,20 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** MobyGames as another place to look up game details.
   Kind: implement.
 
+- 📋 [PASS-59-325] **Open the 3D box and view its contents (FEATURE, M).**
+  - **Target**: the rotating 3D box opens; inside are the disc or
+    cartridge picture (ScreenScraper physical media), the inside-cover
+    scans and the manual and leaflet scans (MobyGames Manual, Inside
+    Cover, Other).
+  - **Depends on**: PASS-59-183, which downloads and keeps those scans
+    in 4.0.0.
+  - **Decision** (user, 2026-11-21): build the viewer in 4.0.0, since
+    it is the last web version; the desktop app rebuilds it later.
+    Built after PASS-59-183, as its own item.
+  **Layman:** Open a game's box on screen and look at the disc or cartridge, the manual and the leaflets inside.
+  Kind: feature.
+  Source: user, 2026-11-21.
+
 ## 4.0.x — Security and data-loss fixes for the web version
 
 After 4.0.0 the web version gets security and data-loss fixes only, always as 4.0.x: the 4.0 updater treats 4.1.0 and up as the desktop app.
@@ -3621,19 +3635,6 @@ pages, and launching games. Port plan phases 0 to 2
   ---
   **Layman:** Arcade flyers on the game page.
   Kind: implement.
-
-- 📋 [PASS-59-325] **Open the 3D box and view its contents (FEATURE, M).**
-  - **Target**: the rotating 3D box opens; inside are the disc or
-    cartridge picture (ScreenScraper physical media), the inside-cover
-    scans and the manual and leaflet scans (MobyGames Manual, Inside
-    Cover, Other).
-  - **Depends on**: PASS-59-183, which downloads and keeps those scans
-    in 4.0.0.
-  - **Decision** (user, 2026-11-21): collect the scans in 4.0.0, build
-    the viewer once, in the desktop app, not in the web version.
-  **Layman:** Open a game's box on screen and look at the disc or cartridge, the manual and the leaflets inside.
-  Kind: feature.
-  Source: user, 2026-11-21.
 
 ## 4.2.0 — Desktop app: edit and scrape
 
