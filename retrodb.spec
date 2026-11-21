@@ -161,6 +161,9 @@ DATAS = [
     # Emulator definitions seeded into a fresh database at startup
     # (app.py); without it a standalone install has no emulators (PASS-59-123).
     ('data/emulator_seeds.json', 'data'),
+    # PASS-59-326 — the console colours a built 3D box's spine is printed in;
+    # without it every generated spine falls back to grey.
+    ('services/box3d/case_colors.json', 'services/box3d'),
     # Per-locale changelog translations (Pass 43.6) — the /changelog route merges
     # these over changelog.yaml by version; bundle them or non-English users see
     # English release notes. (help.<locale>.html ride the templates/ dir above.)

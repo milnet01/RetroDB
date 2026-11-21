@@ -1930,6 +1930,11 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
         # record is saved.
         from services.box_scans import drop_replaced
         drop_replaced(game.get('box_scans'), to_write.get('box_scans'))
+        # The 3D box, from the scans just saved (PASS-59-326). It never
+        # raises, and does nothing when the inputs are unchanged.
+        from services.box3d.build import build_for_game
+        if build_for_game(db_game_id) == 'built':
+            result['filled_fields'].append('box_faces')
         apply_progress.step_done()
 
         # Pass 38.1 — RA-check extracted to _apply_retroachievements_check.

@@ -63,6 +63,15 @@ const ToastTypes = {
         completedColor: 'var(--neon-green)',
         pausedColor: 'var(--neon-orange)'
     },
+    BOX_BUILD: {
+        id: 'box-build',
+        name: 'Build 3D Boxes',
+        icon: '📦',
+        activeColor: 'var(--neon-green)',
+        queuedColor: 'color-mix(in srgb, var(--neon-green) 80%, black)',
+        completedColor: 'var(--neon-green)',
+        pausedColor: 'var(--neon-orange)'
+    },
     AI_FILL: {
         id: 'ai-fill',
         name: 'AI Fill',
@@ -83,7 +92,7 @@ const ThemeIcons = {
     cyberpunk: {
         // Job types
         'bulk-scrape': '⏳', 'ra-sync': '🏆', 'ra-refresh': '🔄',
-        'psn-refresh': '🏆', 'image-resize': '🖼️', 'ai-fill': '🤖',
+        'psn-refresh': '🏆', 'image-resize': '🖼️', 'box-build': '📦', 'ai-fill': '🤖',
         // Job states
         paused: '⏸️', resume: '▶️', complete: '✅', queued: '📋',
         cancelled: '❌', background: '🔽',
@@ -97,7 +106,7 @@ const ThemeIcons = {
     },
     matrix: {
         'bulk-scrape': '⟩⟩', 'ra-sync': '◈', 'ra-refresh': '⟳',
-        'psn-refresh': '◈', 'image-resize': '⊞', 'ai-fill': '◎',
+        'psn-refresh': '◈', 'image-resize': '⊞', 'box-build': '⊞', 'ai-fill': '◎',
         paused: '▮▮', resume: '▶', complete: '✓', queued: '≡',
         cancelled: '✗', background: '▼',
         success: '✓', error: '✗', warning: '▲', info: '◆',
@@ -107,7 +116,7 @@ const ThemeIcons = {
     },
     amber: {
         'bulk-scrape': '►', 'ra-sync': '★', 'ra-refresh': '↻',
-        'psn-refresh': '★', 'image-resize': '▦', 'ai-fill': '◘',
+        'psn-refresh': '★', 'image-resize': '▦', 'box-build': '▦', 'ai-fill': '◘',
         paused: '‖', resume: '►', complete: '●', queued: '░',
         cancelled: '■', background: '▾',
         success: '●', error: '■', warning: '▲', info: '◦',
@@ -117,7 +126,7 @@ const ThemeIcons = {
     },
     ocean: {
         'bulk-scrape': '≋', 'ra-sync': '⚓', 'ra-refresh': '↺',
-        'psn-refresh': '⚓', 'image-resize': '◇', 'ai-fill': '❂',
+        'psn-refresh': '⚓', 'image-resize': '◇', 'box-build': '◇', 'ai-fill': '❂',
         paused: '∿', resume: '▶', complete: '◉', queued: '⊕',
         cancelled: '⊘', background: '▿',
         success: '◉', error: '⊘', warning: '◈', info: '◎',
@@ -127,7 +136,7 @@ const ThemeIcons = {
     },
     christian: {
         'bulk-scrape': '✦', 'ra-sync': '☩', 'ra-refresh': '❋',
-        'psn-refresh': '☩', 'image-resize': '✥', 'ai-fill': '✺',
+        'psn-refresh': '☩', 'image-resize': '✥', 'box-build': '✥', 'ai-fill': '✺',
         paused: '◆', resume: '▶', complete: '✧', queued: '⚜',
         cancelled: '✘', background: '▽',
         success: '✧', error: '✘', warning: '◈', info: '✦',
@@ -137,7 +146,7 @@ const ThemeIcons = {
     },
     bladerunner: {
         'bulk-scrape': '▸▸', 'ra-sync': '◆', 'ra-refresh': '⟲',
-        'psn-refresh': '◆', 'image-resize': '⬡', 'ai-fill': '◬',
+        'psn-refresh': '◆', 'image-resize': '⬡', 'box-build': '⬡', 'ai-fill': '◬',
         paused: '▪▪', resume: '▶', complete: '◉', queued: '▫',
         cancelled: '✕', background: '▾',
         success: '◉', error: '✕', warning: '◈', info: '◇',
@@ -147,7 +156,7 @@ const ThemeIcons = {
     },
     elite: {
         'bulk-scrape': '>>>', 'ra-sync': '*', 'ra-refresh': '~',
-        'psn-refresh': '*', 'image-resize': '#', 'ai-fill': 'AI',
+        'psn-refresh': '*', 'image-resize': '#', 'box-build': '#', 'ai-fill': 'AI',
         paused: '||', resume: '>', complete: 'OK', queued: '...',
         cancelled: 'X', background: 'v',
         success: 'OK', error: 'X', warning: '!', info: '>',
@@ -552,6 +561,7 @@ const UnifiedToastController = {
         this.pollingEndpoints.set('ra-refresh', '/api/refresh-retroachievements/status');
         this.pollingEndpoints.set('psn-refresh', '/api/psn/bulk-refresh/status');
         this.pollingEndpoints.set('image-resize', '/api/maintenance/image-resize/status');
+        this.pollingEndpoints.set('box-build', '/api/maintenance/box-build/status');
         // Editor-only route: a viewer's poll would only log a 403 (PASS-59-297).
         if (window.IS_EDITOR) {
             this.pollingEndpoints.set('ai-fill', '/api/ai-fill-bulk/status');
@@ -917,6 +927,7 @@ const UnifiedToastController = {
             case 'ra-refresh': return ToastTypes.RA_REFRESH;
             case 'psn-refresh': return ToastTypes.PSN_REFRESH;
             case 'image-resize': return ToastTypes.IMAGE_RESIZE;
+            case 'box-build': return ToastTypes.BOX_BUILD;
             case 'ai-fill': return ToastTypes.AI_FILL;
             default: return null;
         }
@@ -1003,6 +1014,14 @@ const UnifiedToastController = {
                     <span class="stat success">${getThemedIcon('ra-sync')} <span class="stat-value" data-stat="success">${fmt(data.success)}</span> ${this.escapeHtml(t('found'))}</span>
                 </div>
             `;
+        } else if (type === 'box-build') {
+            statsHTML = `
+                <div class="toast-stats">
+                    <span class="stat success">${si.s} <span class="stat-value" data-stat="success">${fmt(this.successCount(data))}</span></span>
+                    <span class="stat failed">${si.f} <span class="stat-value" data-stat="failed">${fmt(data.failed)}</span></span>
+                    <span class="stat skipped">${si.k} <span class="stat-value" data-stat="skipped">${fmt(data.skipped)}</span></span>
+                </div>
+            `;
         } else if (type === 'psn-refresh' || type === 'ai-fill') {
             statsHTML = `
                 <div class="toast-stats">
@@ -1035,7 +1054,7 @@ const UnifiedToastController = {
             systemNameValue = data.system_name;
         } else if ((type === 'ra-sync' || type === 'ai-fill') && data.system_name) {
             systemNameValue = data.system_name;
-        } else if (type === 'ra-refresh' && data.current_system) {
+        } else if ((type === 'ra-refresh' || type === 'box-build') && data.current_system) {
             systemNameValue = data.current_system;
         } else if (type === 'image-resize' && data.current_type) {
             systemNameValue = data.current_system
@@ -1137,7 +1156,7 @@ const UnifiedToastController = {
             systemNameValue = data.system_name;
         } else if ((type === 'ra-sync' || type === 'ai-fill') && data.system_name) {
             systemNameValue = data.system_name;
-        } else if (type === 'ra-refresh' && data.current_system) {
+        } else if ((type === 'ra-refresh' || type === 'box-build') && data.current_system) {
             systemNameValue = data.current_system;
         } else if (type === 'image-resize' && data.current_type) {
             systemNameValue = data.current_system
@@ -1196,12 +1215,12 @@ const UnifiedToastController = {
         if (percentEl) percentEl.textContent = percent;
 
         // Update stats (bulk scrape, ra-sync, ra-refresh, psn-refresh)
-        if (type === 'bulk-scrape' || type === 'ra-sync' || type === 'ra-refresh' || type === 'psn-refresh' || type === 'ai-fill') {
+        if (type === 'bulk-scrape' || type === 'ra-sync' || type === 'ra-refresh' || type === 'psn-refresh' || type === 'ai-fill' || type === 'box-build') {
             const successEl = toast.querySelector('[data-stat="success"]');
             if (successEl) successEl.textContent = this.fmtNum(this.successCount(data));
         }
 
-        if (type === 'bulk-scrape' || type === 'ra-sync' || type === 'psn-refresh' || type === 'ai-fill') {
+        if (type === 'bulk-scrape' || type === 'ra-sync' || type === 'psn-refresh' || type === 'ai-fill' || type === 'box-build') {
             const failedEl = toast.querySelector('[data-stat="failed"]');
             if (failedEl) failedEl.textContent = this.fmtNum(data.failed);
 
@@ -1461,6 +1480,9 @@ const UnifiedToastController = {
                     break;
                 case 'image-resize':
                     endpoint = '/api/maintenance/image-resize/cancel';
+                    break;
+                case 'box-build':
+                    endpoint = '/api/maintenance/box-build/cancel';
                     break;
                 case 'ai-fill':
                     endpoint = '/api/ai-fill-bulk/cancel';

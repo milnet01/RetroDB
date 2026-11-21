@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=326 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=327 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -3585,6 +3585,20 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
 ## 4.0.x — Fixes and new features for the web version
 
 After 4.0.0 the web version still gets bug fixes and, now and then, a good new feature (user, 2026-11-21), always as 4.0.x: the 4.0 updater treats 4.1.0 and up as the desktop app. Most work after 4.0.0 goes to the desktop app.
+
+- 📋 [PASS-59-327] **Similar games on the game page can fail with "escapeHtml is not defined" (FIX, S).**
+  - **Seen**: headless Chrome on :5001, /game/4479, console error
+    "Similar games failed to load: ReferenceError: escapeHtml is not
+    defined" from loadSimilarGames in templates/game_detail.html.
+  - **Cause (likely)**: the async IIFE runs at parse time; its fetch can
+    resolve before the deferred core.bundle.js defines escapeHtml. The
+    load-order contract (.claude/rules/js-template-contracts.md) says to
+    wait for DOMContentLoaded.
+  - **Fix**: start it on DOMContentLoaded; check the page's other
+    parse-time scripts for the same race.
+  **Layman:** On a fast server the Similar Games row on a game page can fail to show.
+  Kind: fix.
+  Source: PASS-59-326 browser walk, 2026-11-21.
 
 ## Desktop milestone 1 — browse and play
 

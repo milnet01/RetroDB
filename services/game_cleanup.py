@@ -176,13 +176,13 @@ def clear_scraped_data(system_id=None, delete_images=False):
     if system_id:
         games = query(
             "SELECT id, boxart, boxart_3d, screenshots, fanart, game_logo, boxart_back, video, manual, "
-            "box_scans FROM games WHERE system_id = ? AND scraped = 1",
+            "box_scans, box_faces FROM games WHERE system_id = ? AND scraped = 1",
             (system_id,),
         )
     else:
         games = query(
             "SELECT id, boxart, boxart_3d, screenshots, fanart, game_logo, boxart_back, video, manual, "
-            "box_scans FROM games WHERE scraped = 1"
+            "box_scans, box_faces FROM games WHERE scraped = 1"
         )
 
     game_ids_to_reset = [g['id'] for g in games]
@@ -208,9 +208,13 @@ def clear_scraped_data(system_id=None, delete_images=False):
         images_deleted = delete_game_images(games)
     # The scans go with their record whatever delete_images says: the orphan
     # sweep keeps a live game's files, so nothing else would remove them.
+    # A 3D box built from those scans goes too; an imported one stays
+    # (PASS-59-326 §4.6).
+    from services.box_faces import remove_if_built
     from services.box_scans import delete_scans_of
     for game in games:
         delete_scans_of(game)
+        remove_if_built(game)
 
     if game_ids_to_reset:
         # try/finally so a raise inside reset_game_title_from_filename can't

@@ -118,6 +118,8 @@ detail)` on the first failure.
 6. **The game exists.** Code: `not_found`.
 7. **Fill-only.** When `faces_for` already returns a record for the game
    and `replace` is false, nothing is written. Code: `exists`.
+   A box RetroDB built itself (`source: auto`) is not protected this way:
+   an import replaces it without asking (PASS-59-326 §4.6).
 
 Conversion, still before any write:
 
@@ -195,8 +197,8 @@ replies with 400.
 - `services/media_cleanup.py::find_orphaned_media` gains the `box_faces`
   folder. Its existing `<game_id>_` prefix rule then sweeps the faces of a
   deleted game.
-- `clear_scraped_data` does not touch `box_faces`. The faces are imported by
-  hand, not scraped.
+- `clear_scraped_data` does not touch an imported box. The faces are
+  imported by hand, not scraped. A built box is removed (PASS-59-326 §4.6).
 - The image jobs (`image_resize`, `webp_migrate`, `upscale_queue`) do not
   learn the folder. The faces are already final WebP.
 - `build_dist.py` ships only the `static/images/` subfolders on its
@@ -225,6 +227,7 @@ replies with 400.
   row.
   *Test:* `tests/test_box_faces.py`, two imports in a row.
   *Breaks when:* the `exists` check is skipped or runs after the writes.
+  A built box (PASS-59-326) is outside this rule: its INV-2 replaces it.
 
 - **INV-4** — A replace leaves only the new import's files for that game,
   and the row names them.

@@ -42,9 +42,16 @@
         const status = document.getElementById('boxFacesStatus');
         if (!status) return;
         document.getElementById('boxFacesCase').textContent = record ? record.case.name : '';
+        // A box RetroDB built from the scans says so (PASS-59-326).
+        const label = document.getElementById('boxFacesLabel');
+        if (label) label.textContent = record && record.source === 'auto'
+            ? t('3D box built from the scans:') : t('3D box imported:');
         status.hidden = !record;
-        const remove = document.getElementById('boxFacesRemoveBtn');
-        if (remove) remove.hidden = !record;
+        const removeBtn = document.getElementById('boxFacesRemoveBtn');
+        if (removeBtn) {
+            removeBtn.hidden = !record;
+            removeBtn.dataset.built = record && record.source === 'auto' ? '1' : '';
+        }
     }
 
     async function upload(gameId, files, replace) {
@@ -75,13 +82,15 @@
                 if (files.length) upload(button.dataset.gameId, files, false);
             });
         }
-        const remove = document.getElementById('boxFacesRemoveBtn');
-        if (remove) {
-            remove.addEventListener('click', () => {
+        const removeBtn = document.getElementById('boxFacesRemoveBtn');
+        if (removeBtn) {
+            removeBtn.addEventListener('click', () => {
                 showConfirm(t('Remove the 3D box?'),
-                    t('The imported faces are deleted. Your Slipcase files are not touched.'),
+                    removeBtn.dataset.built
+                        ? t('The built box is deleted. The next scrape, or Build 3D Boxes in ROM Tools, builds it again.')
+                        : t('The imported faces are deleted. Your Slipcase files are not touched.'),
                     async () => {
-                        const {data} = await send(remove.dataset.gameId, 'DELETE');
+                        const {data} = await send(removeBtn.dataset.gameId, 'DELETE');
                         if (data.success) {
                             showNote(null);
                             showNotification(t('3D box removed.'), 'success');

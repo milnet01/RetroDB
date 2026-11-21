@@ -730,6 +730,9 @@ def game_detail(game_id):
                     # (PASS-59-242), as after an edit.
                     from services.media_cleanup import delete_unshared_media
                     delete_unshared_media(game, box_faces=False)
+                    # A box built from the scans goes; an imported one stays.
+                    from services.box_faces import remove_if_built
+                    remove_if_built(game)
                     invalidate_filter_cache()
                     invalidate_analytics_cache()
                     upscale_queue.forget_cleared()

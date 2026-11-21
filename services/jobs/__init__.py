@@ -34,6 +34,7 @@ from services.jobs.ra_refresh import RARefreshJob
 from services.jobs.psn_refresh import PSNRefreshJob
 from services.jobs.museum import MuseumGenerateJob
 from services.jobs.image_resize import ImageResizeJob
+from services.jobs.box_build import BoxBuildJob
 from services.jobs.webp_migrate import WebPMigrateJob
 from services.jobs.platform_sync import SteamSyncJob, XboxSyncJob
 from services.jobs.alt_titles_backfill import AltTitlesBackfillJob
@@ -58,6 +59,7 @@ ra_queue = RAQueue(ra_sync_job, ra_refresh_job)
 psn_refresh_job = PSNRefreshJob()
 museum_generate_job = MuseumGenerateJob()
 image_resize_job = ImageResizeJob()
+box_build_job = BoxBuildJob()
 webp_migrate_job = WebPMigrateJob()
 steam_sync_job = SteamSyncJob()
 xbox_sync_job = XboxSyncJob()
@@ -93,6 +95,7 @@ __all__ = [
     'PSNRefreshJob',
     'MuseumGenerateJob',
     'ImageResizeJob',
+    'BoxBuildJob',
     'WebPMigrateJob',
     'SteamSyncJob',
     'XboxSyncJob',
@@ -109,6 +112,7 @@ __all__ = [
     'psn_refresh_job',
     'museum_generate_job',
     'image_resize_job',
+    'box_build_job',
     'webp_migrate_job',
     'steam_sync_job',
     'xbox_sync_job',

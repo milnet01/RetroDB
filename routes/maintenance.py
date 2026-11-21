@@ -259,6 +259,37 @@ def api_database_optimize():
 
 
 # =============================================================================
+# BUILD 3D BOXES (PASS-59-326)
+# =============================================================================
+
+@bp.route('/api/maintenance/box-build/start', methods=['POST'])
+@admin_required
+@handle_api_errors
+def api_box_build_start():
+    """Start building the 3D box of every scraped game that has none."""
+    from services.jobs import box_build_job
+    return job_reply(box_build_job.start())
+
+
+@bp.route('/api/maintenance/box-build/status', methods=['GET'])
+@login_required
+@handle_api_errors
+def api_box_build_status():
+    from services.jobs import box_build_job
+    status = box_build_job.get_status()
+    status['success'] = True
+    return jsonify(status)
+
+
+@bp.route('/api/maintenance/box-build/cancel', methods=['POST'])
+@admin_required
+@handle_api_errors
+def api_box_build_cancel():
+    from services.jobs import box_build_job
+    return job_reply(box_build_job.cancel())
+
+
+# =============================================================================
 # IMAGE RESIZE / STANDARDIZATION
 # =============================================================================
 

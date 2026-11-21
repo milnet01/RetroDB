@@ -6,6 +6,11 @@ An editor imports a Slipcase box file (`S.box.json`, format
 (SLIP-0125 § 4.1, PASS-59-231). The faces are stored as WebP in
 `<IMAGE_PATH>/box_faces/` and described by the JSON in `games.box_faces`.
 `boxart_3d` is never touched. Contract: `docs/specs/PASS-59-142-box-file-import.md`.
+
+RetroDB also builds a record itself from a game's scans (PASS-59-326,
+`services/box3d/build.py`), marked `source: auto`. An import replaces a built
+record without asking, and Clear removes one; an imported record is never
+written over by a build.
 """
 
 import io
@@ -42,6 +47,7 @@ MAX_BOX_FILE_SIZE = 64 * 1024
 TARGET_HEIGHT = 1080          # the front's height after import; never enlarged
 WEBP_QUALITY = 85             # services/image_utils.py stores WebP at 85
 RECORD_VERSION = 1            # this record's own version, not the box file's
+BUILT_SOURCE = 'auto'         # `source` of a record RetroDB built (PASS-59-326)
 
 _COLOUR_RE = re.compile(r'^#[0-9A-Fa-f]{6}$')
 
@@ -56,6 +62,12 @@ class BoxImportError(Exception):
         self.detail = detail
 
 
+def is_built(record):
+    """Whether a stored record was built by RetroDB from scans (PASS-59-326),
+    not imported from Slipcase. A record without `source` is an import."""
+    return isinstance(record, dict) and record.get('source') == BUILT_SOURCE
+
+
 def faces_dir():
     return os.path.join(config.IMAGE_PATH, 'box_faces')
 
@@ -64,7 +76,7 @@ def faces_dir():
 # Reading the stored record
 # ---------------------------------------------------------------------------
 
-def _stored_record(value):
+def stored_record(value):
     """The parsed games.box_faces value, or None when NULL or unreadable."""
     if not value:
         return None
@@ -98,7 +110,7 @@ def faces_for(game_row):
         value = game_row['box_faces']
     except (KeyError, IndexError):  # a dict / sqlite3.Row without the column
         value = None
-    record = _stored_record(value)
+    record = stored_record(value)
     if record is None:
         return None
     faces = record['faces']
@@ -265,10 +277,15 @@ def _encode_faces(pictures, colours):
         if scale < 1.0:
             size = (max(1, round(im.width * scale)), max(1, round(im.height * scale)))
             im = im.resize(size, Image.LANCZOS)
-        buf = io.BytesIO()
-        im.save(buf, 'WEBP', quality=WEBP_QUALITY)
-        encoded[face] = buf.getvalue()
+        encoded[face] = to_webp(im)
     return encoded
+
+
+def to_webp(im):
+    """One face picture as stored WebP bytes."""
+    buf = io.BytesIO()
+    im.save(buf, 'WEBP', quality=WEBP_QUALITY)
+    return buf.getvalue()
 
 
 # ---------------------------------------------------------------------------
@@ -322,10 +339,25 @@ def import_box_file(game_id, uploads, replace=False):
     game = query('SELECT id, box_faces FROM games WHERE id = ?', (game_id,), one=True)
     if not game:
         raise BoxImportError('not_found')
-    old = _stored_record(game['box_faces'])
-    if faces_for(game) is not None and not replace:
+    old = stored_record(game['box_faces'])
+    # A box RetroDB built from scans is replaced without asking (PASS-59-326 §4.6).
+    if faces_for(game) is not None and not replace and not is_built(old):
         raise BoxImportError('exists')
 
+    record = {'version': RECORD_VERSION, 'case': case, 'colours': colours}
+    if shape is not None:
+        record['shape'] = shape
+    record = store_faces(game_id, encoded, record, old)
+    logger.info(f'Imported box faces for game {game_id}: '
+                f'{", ".join(f for f in FACES if record["faces"][f])}')
+    return faces_for({'box_faces': json.dumps(record)})
+
+
+def store_faces(game_id, encoded, record, old):
+    """Write `encoded` (face -> WebP bytes) under a new token, store `record`
+    with their names as the game's row, then delete the files of `old`, the
+    record it replaces. A failed write deletes what it wrote, leaves the row
+    unchanged and raises BoxImportError('write_failed'). Returns the record."""
     from services.atomic_io import atomic_write_bytes
     token = secrets.token_hex(4)
     stored = {face: None for face in FACES}
@@ -338,9 +370,7 @@ def import_box_file(game_id, uploads, replace=False):
             atomic_write_bytes(path, data)
             written.append(path)
             stored[face] = filename
-        record = {'version': RECORD_VERSION, 'case': case, 'colours': colours, 'faces': stored}
-        if shape is not None:
-            record['shape'] = shape
+        record = {**record, 'faces': stored}
         execute('UPDATE games SET box_faces = ? WHERE id = ?', (json.dumps(record), game_id))
     except Exception as e:
         for path in written:
@@ -348,15 +378,14 @@ def import_box_file(game_id, uploads, replace=False):
                 os.remove(path)
             except OSError:
                 pass
-        logger.error(f'Box face import for game {game_id} failed while writing: {e}')
+        logger.error(f'Box faces for game {game_id} failed while writing: {e}')
         raise BoxImportError('write_failed', str(e)) from e
 
     # Only now, with the row pointing at the new files, drop the old ones.
     # A failed delete leaks a file under a live game's prefix; it never
     # leaves the row naming a missing face.
     _delete_faces(old)
-    logger.info(f'Imported box faces for game {game_id}: {", ".join(f for f in FACES if stored[f])}')
-    return faces_for({'box_faces': json.dumps(record)})
+    return record
 
 
 def remove_box_faces(game_id):
@@ -374,13 +403,26 @@ def remove_box_faces(game_id):
     return True
 
 
+def remove_if_built(row):
+    """Clear (PASS-59-326 §4.6): remove the box RetroDB built for a games row,
+    its column then its files, and leave an imported one. The UPDATE matches
+    the value read, so a box imported since is kept."""
+    value = row['box_faces'] if 'box_faces' in row.keys() else None
+    record = stored_record(value)
+    if not is_built(record):
+        return False
+    execute('UPDATE games SET box_faces = NULL WHERE id = ? AND box_faces = ?', (row['id'], value))
+    _delete_faces(record)
+    return True
+
+
 def delete_faces_of(row):
     """Delete the face files of a games row that has just been deleted. A new
     game may be given the same id, and its prefix would hide them from the
     orphan sweep."""
     if 'box_faces' not in row.keys() or row['box_faces'] is None:
         return
-    old = _stored_record(row['box_faces'])
+    old = stored_record(row['box_faces'])
     if old is None:
         for name in _faces_of_game(row['id']):
             _delete_faces({'faces': {name.split('_')[1]: name}})

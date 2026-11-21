@@ -281,6 +281,21 @@
         </div>
     </button>
 
+    {% if current_user and current_user.role == 'admin' %}
+    <button type="button" class="tool-card" data-on-click="startBoxBuild">
+        <div class="tool-card-header">
+            <div class="tool-card-icon">&#128230;</div>
+            <div class="tool-card-title">{{ _('Build 3D Boxes') }}</div>
+        </div>
+        <div class="tool-card-desc">
+            {{ _('Builds a turning 3D box, on the real case for its console, for every scraped game with a cover. A scrape now does this by itself; this is for games scraped before. A box imported from Slipcase is never changed.') }}
+        </div>
+        <div class="tool-card-status">
+            <span class="status-dot no-deps"></span> {{ _('No dependencies required') }}
+        </div>
+    </button>
+    {% endif %}
+
     <button type="button" class="tool-card" data-on-click="startAltTitlesBackfill">
         <div class="tool-card-header">
             <div class="tool-card-icon">&#127760;</div>
@@ -680,6 +695,33 @@ async function refreshHltbPendingCount() {
 }
 
 document.addEventListener('DOMContentLoaded', refreshHltbPendingCount);
+
+function startBoxBuild() {
+    showConfirm(
+        '📦 ' + {{ _('Build 3D Boxes')|tojson }},
+        {{ _('Build a 3D box for every scraped game that has a cover and no box yet.\n\nIt works through one game at a time in the background, so you can keep using RetroDB or leave the page. Games whose box is already up to date are passed over.')|tojson }},
+        function() {
+            fetch('/api/maintenance/box-build/start', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}',
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.success) {
+                    showNotification(data.error || {{ _('Failed to start')|tojson }}, 'error');
+                    return;
+                }
+                showNotification({{ _('Building 3D boxes started')|tojson }}, 'success');
+                if (typeof UnifiedToastController !== 'undefined') {
+                    UnifiedToastController.adjustPollingSpeed('box-build', true);
+                    UnifiedToastController.broadcast('job-started', 'box-build', {
+                        running: true, completed: false, total: 0, current: 0, percent: 0
+                    });
+                }
+            })
+            .catch(() => showNotification({{ _('Failed to start')|tojson }}, 'error'));
+        }
+    );
+}
 
 function startImageResize() {
     showConfirm(

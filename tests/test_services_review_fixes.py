@@ -22,7 +22,7 @@ def db_path(tmp_path, monkeypatch):
 def test_clear_scraped_data_commits_title_reset(db_path):
     from services.game_cleanup import _SCRAPED_FIELDS
     cols = ', '.join(f"{c} TEXT" for c in dict.fromkeys(
-        tuple(_SCRAPED_FIELDS) + ('scrape_history',)))
+        tuple(_SCRAPED_FIELDS) + ('scrape_history', 'box_faces')))
     conn = sqlite3.connect(str(db_path))
     with conn:
         conn.execute("CREATE TABLE systems (id INTEGER PRIMARY KEY, folder TEXT)")

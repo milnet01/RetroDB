@@ -383,11 +383,11 @@
                             <label for="boxFacesImportBtn">{{ _('3D box from Slipcase') }}</label>
                             <div class="box-faces-note">
                                 <button type="button" class="btn btn-sm btn-secondary" id="boxFacesImportBtn" data-game-id="{{ game.id }}">{{ _('Import 3D box') }}</button>
-                                <button type="button" class="btn btn-sm btn-danger" id="boxFacesRemoveBtn" data-game-id="{{ game.id }}"{% if not box_faces %} hidden{% endif %}>🗑️ {{ _('Remove') }}</button>
+                                <button type="button" class="btn btn-sm btn-danger" id="boxFacesRemoveBtn" data-game-id="{{ game.id }}" data-built="{{ '1' if box_faces and box_faces.source == 'auto' else '' }}"{% if not box_faces %} hidden{% endif %}>🗑️ {{ _('Remove') }}</button>
                                 <input type="file" id="boxFacesInput" multiple accept=".json,.png,.webp,.jpg,.jpeg" hidden>
                             </div>
                             <span class="field-tip">{{ _('Pick the .box.json file Slipcase saved, together with its pictures.') }} {{ _('This saves straight away, without Save Changes.') }}</span>
-                            <span class="current-file" id="boxFacesStatus" role="status"{% if not box_faces %} hidden{% endif %}>{{ _('3D box imported:') }} <span id="boxFacesCase">{{ box_faces.case.name if box_faces else '' }}</span></span>
+                            <span class="current-file" id="boxFacesStatus" role="status"{% if not box_faces %} hidden{% endif %}><span id="boxFacesLabel">{% if box_faces and box_faces.source == 'auto' %}{{ _('3D box built from the scans:') }}{% else %}{{ _('3D box imported:') }}{% endif %}</span> <span id="boxFacesCase">{{ box_faces.case.name if box_faces else '' }}</span></span>
                         </div>
                         {% endif %}
                         <div class="edit-field">

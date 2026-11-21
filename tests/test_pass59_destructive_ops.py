@@ -32,7 +32,7 @@ def _scraped_cols():
     # column list alone would make the table lack it and every test in this
     # module error on the schema instead of failing on the behaviour.
     return tuple(dict.fromkeys(
-        tuple(_SCRAPED_FIELDS) + ('boxart_3d', 'scrape_history')))
+        tuple(_SCRAPED_FIELDS) + ('boxart_3d', 'scrape_history', 'box_faces')))
 
 
 @pytest.fixture
