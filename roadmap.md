@@ -561,7 +561,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Get RetroArch downloads a newer version, and its remote-control commands only listen on this computer.
   Kind: implement.
 
-- 📋 [PASS-59-275] **Keyboard and screen readers: the remaining controls with no focus or no name (accessibility, M).**
+- ✅ [PASS-59-275] **Keyboard and screen readers: the remaining controls with no focus or no name (accessibility, M).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **After**: PASS-59-274, which adds the standard these follow.
@@ -584,6 +584,20 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - Open questions (answer first): static/js/main.js:861-864; static/js/utils.js:549; templates/base.html:707; static/js/toast-controller.js:1052; static/js/game-modals.js (_createTag); templates/base.html (showConfirm)…; docs/RETRODB_DESIGN_STANDARDS.md §11; ModalFocusTrap; templates/archive_scanner.html (archive and…; templates/logs.html (level/view/filter/category toggle…; templates/psn_trophies.html (platform buttons); templates/psn_trophies.html (syncTrophies, startBulkRefresh); templates/reports.html (batchRenameModal onescape); templates/systems.html:26-41; pages.css:915,929; _tab_bar.html:29-31; reports.html:287-296
 
   ---
+  Shipped 2026-11-22 (commits 49510d98, 1ef0cdfe; in the open 4.0.0
+  entry). The off-repo ledger.json was gone, so the roadmap summaries
+  were confirmed against source; open-question text was rebuilt from the
+  cited code. Fixed: M2a, M4, M9, M10, M12, M13 and every Low but two;
+  same controls fixed on other pages (row tick boxes, every symbol-only
+  button). Dismissed as fixed by PASS-59-274: M1, M2b, M3, M5, M6, M7,
+  M8, M11. Dismissed as sound: archive modal, the focus-ring CSS rules,
+  folder browser and confirm dialog roles, scroll observer (dead code),
+  _tab_bar.html (no such file), dashboard banner role. Queued: reports
+  empty-state English strings, on PASS-59-278. §11 gained role=button,
+  symbol-button and DOM.keepFocus lines. Proof in headless Chrome: 13
+  keyboard checks 0/13 old, 13/13 new; accessibility-tree scan of 29
+  pages. Not run in a browser: PSN sync announcements (need PSN sign-in).
+  New aria-label strings untranslated in the catalogs.
   **Layman:** The last buttons a keyboard can't reach, or a screen reader can't name, get fixed.
   Kind: implement.
 
@@ -615,6 +629,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - M `templates/xbox_achievement_game.html:104,212…`: UTC ISO strings cut at 16 chars show a literal 'T' in UTC, ignoring user timezone and the date format…
 
   ---
+  From PASS-59-275 (2026-11-22): templates/reports.html builds its
+  naming and mismatch empty-state messages in English in the page script;
+  wrap them with {{ _()|tojson }}. Also: the two 4.0.0 changelog lines
+  added that day name Reports, Logs, Analytics and Delete in each locale
+  file with a helper's own wording; match them to the UI catalog names.
   **Layman:** The Lists, Settings, achievements, trophies, reports and dashboard pages show in your language.
   Kind: implement.
 
