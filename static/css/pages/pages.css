@@ -1065,7 +1065,8 @@
     margin-bottom: var(--spacing-md);
 }
 
-.tag {
+/* Game and achievement pages' quick tags; :where() keeps .tag.tag-* above it. */
+:where(.quick-tags) .tag {
     padding: 4px 10px;
     border-radius: 4px;
     font-size: 0.8rem;
@@ -1533,6 +1534,12 @@
     background: rgba(76, 201, 240, 0.3);
     border-color: var(--primary-cyan);
     color: var(--primary-cyan);
+}
+
+.alphabet-btn.alphabet-all {
+    width: auto;
+    min-width: 32px;
+    padding: 0 var(--spacing-sm);
 }
 
 .alphabet-btn.disabled {

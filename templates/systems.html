@@ -989,7 +989,13 @@ function layoutSystemMasonry() {
     const wrappers = Array.from(grid.querySelectorAll('.system-card-wrapper:not(.hidden)'));
     if (wrappers.length === 0) return;
 
+    // Clear the last layout first: cards left in columns 2+ keep those
+    // columns alive and the count below would read them.
+    wrappers.forEach(w => { w.style.gridColumn = w.style.gridRowStart = w.style.gridRowEnd = ''; });
     const columns = getComputedStyle(grid).gridTemplateColumns.split(' ').length;
+    // One column: no packing. Inline rows would beat the <=480px
+    // auto-rows rule and leave a card-tall gap under every card.
+    if (columns <= 1) return;
     const columnEnds = new Array(columns).fill(1);
     let itemCount = 0;
 
@@ -1010,6 +1016,10 @@ function layoutSystemMasonry() {
     });
 }
 // Run masonry after images have a chance to load
-window.addEventListener('load', layoutSystemMasonry);
+window.addEventListener('load', () => {
+    layoutSystemMasonry();
+    // Card heights and the column count change with the window width.
+    window.addEventListener('resize', debounce(layoutSystemMasonry, 150));
+});
 </script>
 {% endblock %}

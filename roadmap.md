@@ -741,7 +741,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Faint grey text becomes easier to read in every theme.
   Kind: implement.
 
-- 📋 [PASS-59-282] **Layout: phone gaps, hidden sticky headers and duplicated CSS (ux, M).**
+- 🚧 [PASS-59-282] **Layout: phone gaps, hidden sticky headers and duplicated CSS (ux, M).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **Check**: desktop and 375px after each fix.
@@ -763,6 +763,28 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   2026-11-12 (PASS-59-179 walk, German, 375px): Settings > System card
   heading "📋 PROTOKOLLEINSTELLUNGEN" (`h2.card-title`) ends 3px past the
   screen; a long one-word title has no wrap rule.
+  2026-11-22, first run (close-findings, phone gaps and CSS copies):
+  - Fixed H systems.html masonry: layoutSystemMasonry clears its inline
+    rows, then counts columns; one column returns. Re-runs on resize.
+    375px grid: old code 412920px tall, now 17515px; 1400 -> 375 -> 1400
+    gives 5690 / 17415 / 5690.
+  - Fixed M .alphabet-nav: game-list.css copy deleted (pages.css loads
+    after it and already won); its .alphabet-all rule moved to pages.css.
+    No visual change.
+  - Fixed M unscoped .tag: now :where(.quick-tags) .tag in pages.css.
+  - Fixed 2026-11-12 card-title: .card-title wraps long words. German
+    "Protokolleinstellungen" at 375px: right edge 378 -> 318.
+  - Dismissed M game-list.css:807 A-Z strip: all-games-controller sets
+    its top from the filter bar's measured height; the 80px was dead CSS.
+  - Dismissed M scrape modal 260px offset: .scrape-modal is inset:0 now.
+  - Dismissed 2026-11-11 Settings .detail-value: no element past 375px on
+    any Settings tab, de and en (DB path already has overflow-wrap).
+  - Still open M tables.css sticky th top:0. Hazard: many data-tables sit
+    in their own scroll or overflow box (reports, analytics, imports,
+    archive scanner, multi-disc, page-box at <=600px), where
+    top:var(--sticky-top) would push the header down inside the table.
+  - Still open M game_detail.html inline style copies; the Low list and
+    the open questions.
   **Layman:** Fixes for empty gaps and hidden headers on phones, and for duplicated page styles.
   Kind: implement.
 
