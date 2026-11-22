@@ -712,7 +712,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Fixes for emulator setup on Windows and macOS, the installer, and the image helpers that use the graphics card.
   Kind: implement.
 
-- 📋 [PASS-59-281] **Text contrast and brand colours: raise --text-muted, and name the brand colours (accessibility, M).**
+- ✅ [PASS-59-281] **Text contrast and brand colours: raise --text-muted, and name the brand colours (accessibility, M).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **User decisions 2026-11-10**: (1) raise `--text-muted` in the six failing themes and drop the "documented acceptable" note in `docs/theme_contrast.md`; (3) brand colours (Steam, Xbox, PSN, rating boards, system badges) become named tokens, with a written exemption from "no hard-coded colours".
@@ -727,6 +727,17 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - Open questions (answer first): static/css/components/badges.css:116-246; static/css/core/variables.css:41; game-list.css:1086-1179,1288-1320,1464-1555; core/variables.css (--text-muted, --neon-gray); game_detail.html:1232-1266,2058-2061,2090-2093
 
   ---
+  **Done** (2026-11-22): --text-muted and --neon-gray raised in all seven
+  themes; the audit has no NOTE status, checks both greys on three
+  backgrounds and exits 1 on a FAIL (0 FAIL). Brand colours are named
+  tokens in variables.css, exemption in design standards §2. Console
+  badges name one colour each, text lifted 30% toward white. System-type
+  badge colours live once in badges.css. PEGI card badge, rename button
+  and RA badge take dark text; Cathedral's red raised to #d07272.
+  **Not confirmed**: the Low items in cards.css, utilities.css (gone),
+  game-list.css and pages.css, since the triage ledger was not found
+  and their line numbers had moved. PS platform badges still differ
+  across three files: PASS-59-282.
   **Layman:** Faint grey text becomes easier to read in every theme.
   Kind: implement.
 

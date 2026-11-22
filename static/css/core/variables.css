@@ -38,7 +38,9 @@
     /* Text Colors */
     --text-primary: #e8eaed;
     --text-secondary: #9aa0a6;
-    --text-muted: #6e7378;
+    /* --text-muted and --neon-gray carry small text: keep them at 4.5:1 on
+       every background (scripts/audit_contrast.py fails below). */
+    --text-muted: #80858a;
     --text-accent: var(--primary-cyan);
 
     /* Border Color Alias */
@@ -107,12 +109,37 @@
     --neon-orange: #f59e0b;
     --neon-red: #ef4444;
     --neon-purple: #a855f7;
-    --neon-gray: #64748b;
+    --neon-gray: #76869d;
     --neon-blue: #3b82f6;
-    --accent-psn: #0070d1;  /* PlayStation's own blue, the same in every theme */
+    /* Brand colours: a company's or rating board's own colour, the same in
+       every theme, so no theme overrides them. The RPCS3, trophy and rating
+       blocks below are brand colours too. A brand colour is written here
+       once and used by name (design standards §2). */
+    --accent-psn: #0070d1;       /* PlayStation blue */
+    --brand-psn-deep: #003087;
+    --brand-psn-light: #6ca8d9;
+    --brand-steam: #66c0f4;
+    --brand-steam-mid: #2a6dab;
+    --brand-steam-navy: #1b2838;
+    --brand-xbox: #107c10;
+    --brand-xbox-light: #52b043;
+    --brand-ra: #4a90d9;         /* RetroAchievements blue */
+    --brand-ra-gold: #d4a017;
+    /* Age-rating steps shared by ESRB, PEGI and the boards mapped to them:
+       all ages → older children → teens → adults → adults only */
+    --rating-age-all: #20b2aa;
+    --rating-age-child: #22c55e;
+    --rating-age-teen: #eab308;
+    --rating-age-mature: #f97316;
+    --rating-age-adult: #ef4444;
+    --rating-pegi-green: #8dc63f; /* PEGI's own label green */
+    /* System types without a theme colour of their own */
+    --system-arcade: #f97316;
+    --system-engine: #eab308;
 
     /* Monochrome text-on-colored-background tokens (not theme-dependent). */
     --text-on-color: #fff;
+    --text-on-light: #111;
 
     /* Aliases for cross-template references */
     --font-display: var(--font-heading);

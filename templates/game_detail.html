@@ -1231,21 +1231,21 @@ body:has(.game-fanart-bg.active)::before {
 }
 
 .platform-import-badge.steam {
-    background: rgba(102, 192, 244, 0.15);
-    border: 1px solid #66c0f4;
-    color: #66c0f4;
+    background: color-mix(in srgb, var(--brand-steam) 15%, transparent);
+    border: 1px solid var(--brand-steam);
+    color: var(--brand-steam);
 }
 
 .platform-import-badge.xbox {
-    background: rgba(16, 124, 16, 0.15);
-    border: 1px solid #107c10;
-    color: #2ecc40;
+    background: color-mix(in srgb, var(--brand-xbox) 15%, transparent);
+    border: 1px solid var(--brand-xbox);
+    color: var(--brand-xbox-light);
 }
 
 .platform-import-badge.psn {
-    background: rgba(0, 112, 209, 0.15);
-    border: 1px solid #0070d1;
-    color: #4da6ff;
+    background: color-mix(in srgb, var(--accent-psn) 15%, transparent);
+    border: 1px solid var(--accent-psn);
+    color: var(--brand-psn-light);
 }
 
 .platform-import-icon {
@@ -1975,27 +1975,27 @@ body:has(.game-fanart-bg.active)::before {
 }
 
 .achievement-item.steam {
-    background: linear-gradient(135deg, rgba(102, 192, 244, 0.1) 0%, rgba(27, 40, 56, 0.15) 100%);
-    border-color: rgba(102, 192, 244, 0.3);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--brand-steam) 10%, transparent) 0%, color-mix(in srgb, var(--brand-steam-navy) 15%, transparent) 100%);
+    border-color: color-mix(in srgb, var(--brand-steam) 30%, transparent);
 }
 .achievement-item.steam:hover {
-    background: linear-gradient(135deg, rgba(102, 192, 244, 0.2) 0%, rgba(27, 40, 56, 0.25) 100%);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--brand-steam) 20%, transparent) 0%, color-mix(in srgb, var(--brand-steam-navy) 25%, transparent) 100%);
 }
 
 .achievement-item.xbox {
-    background: linear-gradient(135deg, rgba(16, 124, 16, 0.12) 0%, rgba(0, 80, 0, 0.08) 100%);
-    border-color: rgba(16, 124, 16, 0.35);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--brand-xbox) 12%, transparent) 0%, color-mix(in srgb, var(--brand-xbox) 8%, transparent) 100%);
+    border-color: color-mix(in srgb, var(--brand-xbox) 35%, transparent);
 }
 .achievement-item.xbox:hover {
-    background: linear-gradient(135deg, rgba(16, 124, 16, 0.22) 0%, rgba(0, 80, 0, 0.15) 100%);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--brand-xbox) 22%, transparent) 0%, color-mix(in srgb, var(--brand-xbox) 15%, transparent) 100%);
 }
 
 .achievement-item.psn {
-    background: linear-gradient(135deg, rgba(0, 112, 210, 0.1) 0%, rgba(0, 55, 145, 0.08) 100%);
-    border-color: rgba(0, 112, 210, 0.3);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent-psn) 10%, transparent) 0%, color-mix(in srgb, var(--brand-psn-deep) 8%, transparent) 100%);
+    border-color: color-mix(in srgb, var(--accent-psn) 30%, transparent);
 }
 .achievement-item.psn:hover {
-    background: linear-gradient(135deg, rgba(0, 112, 210, 0.2) 0%, rgba(0, 55, 145, 0.15) 100%);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent-psn) 20%, transparent) 0%, color-mix(in srgb, var(--brand-psn-deep) 15%, transparent) 100%);
 }
 
 .achievement-item.rpcs3 {
@@ -2057,8 +2057,8 @@ body:has(.game-fanart-bg.active)::before {
 }
 
 .ra-fill { background: linear-gradient(90deg, #ffd700, #ff8c00); }
-.steam-fill { background: linear-gradient(90deg, #66c0f4, #1b2838); }
-.xbox-fill { background: linear-gradient(90deg, #107c10, #00b800); }
+.steam-fill { background: linear-gradient(90deg, var(--brand-steam), var(--brand-steam-navy)); }
+.xbox-fill { background: linear-gradient(90deg, var(--brand-xbox), var(--brand-xbox-light)); }
 .psn-fill { background: linear-gradient(90deg, #0070d2, #003791); }
 .rpcs3-fill { background: linear-gradient(90deg, var(--primary-cyan), #9333ea); }
 
@@ -2089,8 +2089,8 @@ body:has(.game-fanart-bg.active)::before {
 }
 
 .achievement-item.ra .achievement-arrow { color: #ffd700; }
-.achievement-item.steam .achievement-arrow { color: #66c0f4; }
-.achievement-item.xbox .achievement-arrow { color: #107c10; }
+.achievement-item.steam .achievement-arrow { color: var(--brand-steam); }
+.achievement-item.xbox .achievement-arrow { color: var(--brand-xbox-light); }
 .achievement-item.psn .achievement-arrow { color: #0070d2; }
 .achievement-item.rpcs3 .achievement-arrow { color: var(--primary-cyan); }
 
@@ -3926,9 +3926,9 @@ body:has(.game-fanart-bg.active)::before {
 }
 
 .rename-modal .btn-rename-confirm {
-    background: linear-gradient(135deg, var(--primary-cyan), var(--secondary-magenta));
+    background: var(--primary-cyan);
     border: none;
-    color: white;
+    color: var(--bg-darkest);
     padding: 0.6rem 1.5rem;
     border-radius: var(--radius-sm);
     cursor: pointer;
@@ -3940,9 +3940,9 @@ body:has(.game-fanart-bg.active)::before {
 }
 
 .rename-modal .error-message {
-    background: rgba(220, 53, 69, 0.1);
-    border: 1px solid rgba(220, 53, 69, 0.3);
-    color: #dc3545;
+    background: color-mix(in srgb, var(--status-error) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--status-error) 30%, transparent);
+    color: var(--status-error);
     padding: 0.75rem 1rem;
     border-radius: var(--radius-sm);
     margin-bottom: 1rem;

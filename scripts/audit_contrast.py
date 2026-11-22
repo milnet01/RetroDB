@@ -11,9 +11,8 @@ RetroDB actually uses, per theme, per WCAG 2.2 AA thresholds:
     4.5:1  — normal text (body, labels, buttons)
     3.0:1  — large text (>= 18pt regular or 14pt bold), and graphical UI controls
 
-Writes a markdown report to docs/theme_contrast.md with PASS / FAIL / NOTE rows.
-
-Exit code 0 regardless; this is a report, not a gate. CI can grep the output.
+Writes a markdown report to docs/theme_contrast.md with PASS / FAIL rows,
+and exits 1 when any row fails.
 """
 from __future__ import annotations
 
@@ -34,8 +33,11 @@ PAIRS = [
     ('body text (medium bg)', '--text-primary', '--bg-medium',  4.5, 'body text on panels'),
     ('secondary text',   '--text-secondary', '--bg-darkest',   4.5, 'captions, metadata'),
     ('secondary text (card)', '--text-secondary', '--card-bg', 4.5, 'metadata inside cards'),
-    ('muted text',       '--text-muted',     '--bg-darkest',   4.5, 'muted labels; 3.0 acceptable'),
-    ('muted text (card)', '--text-muted',    '--card-bg',      4.5, 'muted labels; 3.0 acceptable'),
+    ('muted text',       '--text-muted',     '--bg-darkest',   4.5, 'hints, placeholders, small labels'),
+    ('muted text (card)', '--text-muted',    '--card-bg',      4.5, 'small labels inside cards'),
+    ('muted text (medium bg)', '--text-muted', '--bg-medium',  4.5, 'small labels on panels'),
+    ('grey text',        '--neon-gray',      '--bg-darkest',   4.5, 'small informative text'),
+    ('grey text (card)', '--neon-gray',      '--card-bg',      4.5, 'small informative text inside cards'),
     ('accent cyan (UI)', '--primary-cyan',   '--bg-darkest',   3.0, 'primary controls (large text / UI)'),
     ('accent magenta (UI)', '--secondary-magenta', '--bg-darkest', 3.0, 'secondary controls'),
     ('success (UI)',     '--status-success', '--bg-darkest',   3.0, 'success badges'),
@@ -155,9 +157,6 @@ def audit_theme(theme: str, base_vars: dict[str, str], theme_vars: dict[str, str
         ratio = contrast_ratio(fg_rgb, bg_rgb)
         if ratio >= threshold:
             status = 'PASS'
-        elif ratio >= 3.0 and 'muted' in label:
-            # Muted text is inherently lower-priority; 3:1 is acceptable by docs.
-            status = 'NOTE'
         else:
             status = 'FAIL'
         rows.append({
@@ -183,20 +182,18 @@ def render_report(results: dict[str, list[dict]]) -> str:
     lines.append('Statuses:')
     lines.append('')
     lines.append('- `PASS` — meets the threshold.')
-    lines.append('- `NOTE` — below 4.5:1 but >= 3.0:1 on a pair marked low-priority (e.g. muted text). Documented acceptable.')
-    lines.append('- `FAIL` — below threshold; should be fixed or the token should be re-purposed.')
+    lines.append('- `FAIL` — below threshold; fix the colour.')
     lines.append('')
 
-    # Summary table (count of PASS/FAIL/NOTE per theme).
+    # Summary table (count of PASS/FAIL per theme).
     lines.append('## Summary')
     lines.append('')
-    lines.append('| Theme | Pass | Note | Fail |')
-    lines.append('| --- | ---: | ---: | ---: |')
+    lines.append('| Theme | Pass | Fail |')
+    lines.append('| --- | ---: | ---: |')
     for theme, rows in results.items():
         passes = sum(1 for r in rows if r['status'] == 'PASS')
-        notes = sum(1 for r in rows if r['status'] == 'NOTE')
         fails = sum(1 for r in rows if r['status'] == 'FAIL')
-        lines.append(f'| {theme} | {passes} | {notes} | {fails} |')
+        lines.append(f'| {theme} | {passes} | {fails} |')
     lines.append('')
 
     # Per-theme detail.
@@ -237,7 +234,7 @@ def main() -> int:
 
     total_fails = sum(1 for rows in results.values() for r in rows if r['status'] == 'FAIL')
     print(f'Total FAIL: {total_fails}')
-    return 0
+    return 1 if total_fails else 0
 
 
 if __name__ == '__main__':

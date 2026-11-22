@@ -10,20 +10,19 @@ Thresholds:
 Statuses:
 
 - `PASS` — meets the threshold.
-- `NOTE` — below 4.5:1 but >= 3.0:1 on a pair marked low-priority (e.g. muted text). Documented acceptable.
-- `FAIL` — below threshold; should be fixed or the token should be re-purposed.
+- `FAIL` — below threshold; fix the colour.
 
 ## Summary
 
-| Theme | Pass | Note | Fail |
-| --- | ---: | ---: | ---: |
-| cyberpunk | 10 | 2 | 0 |
-| matrix | 11 | 1 | 0 |
-| amber | 10 | 2 | 0 |
-| ocean | 10 | 2 | 0 |
-| christian | 10 | 2 | 0 |
-| bladerunner | 12 | 0 | 0 |
-| elite | 11 | 1 | 0 |
+| Theme | Pass | Fail |
+| --- | ---: | ---: |
+| cyberpunk | 15 | 0 |
+| matrix | 15 | 0 |
+| amber | 15 | 0 |
+| ocean | 15 | 0 |
+| christian | 15 | 0 |
+| bladerunner | 15 | 0 |
+| elite | 15 | 0 |
 
 ## cyberpunk
 
@@ -34,8 +33,11 @@ Statuses:
 | body text (medium bg) | `--text-primary` | `--bg-medium` | `#e8eaed` | `#151b24` | 14.35:1 | 4.5 | **PASS** | body text on panels |
 | secondary text | `--text-secondary` | `--bg-darkest` | `#9aa0a6` | `#0a0e17` | 7.31:1 | 4.5 | **PASS** | captions, metadata |
 | secondary text (card) | `--text-secondary` | `--card-bg` | `#9aa0a6` | `#141a23` | 6.62:1 | 4.5 | **PASS** | metadata inside cards |
-| muted text | `--text-muted` | `--bg-darkest` | `#6e7378` | `#0a0e17` | 4.03:1 | 4.5 | **NOTE** | muted labels; 3.0 acceptable |
-| muted text (card) | `--text-muted` | `--card-bg` | `#6e7378` | `#141a23` | 3.65:1 | 4.5 | **NOTE** | muted labels; 3.0 acceptable |
+| muted text | `--text-muted` | `--bg-darkest` | `#80858a` | `#0a0e17` | 5.18:1 | 4.5 | **PASS** | hints, placeholders, small labels |
+| muted text (card) | `--text-muted` | `--card-bg` | `#80858a` | `#141a23` | 4.69:1 | 4.5 | **PASS** | small labels inside cards |
+| muted text (medium bg) | `--text-muted` | `--bg-medium` | `#80858a` | `#151b24` | 4.65:1 | 4.5 | **PASS** | small labels on panels |
+| grey text | `--neon-gray` | `--bg-darkest` | `#76869d` | `#0a0e17` | 5.21:1 | 4.5 | **PASS** | small informative text |
+| grey text (card) | `--neon-gray` | `--card-bg` | `#76869d` | `#141a23` | 4.72:1 | 4.5 | **PASS** | small informative text inside cards |
 | accent cyan (UI) | `--primary-cyan` | `--bg-darkest` | `#4cc9f0` | `#0a0e17` | 10.04:1 | 3.0 | **PASS** | primary controls (large text / UI) |
 | accent magenta (UI) | `--secondary-magenta` | `--bg-darkest` | `#f72585` | `#0a0e17` | 5.11:1 | 3.0 | **PASS** | secondary controls |
 | success (UI) | `--status-success` | `--bg-darkest` | `#00e676` | `#0a0e17` | 11.56:1 | 3.0 | **PASS** | success badges |
@@ -51,8 +53,11 @@ Statuses:
 | body text (medium bg) | `--text-primary` | `--bg-medium` | `#c0ffc0` | `#111111` | 16.46:1 | 4.5 | **PASS** | body text on panels |
 | secondary text | `--text-secondary` | `--bg-darkest` | `#80c080` | `#000000` | 9.77:1 | 4.5 | **PASS** | captions, metadata |
 | secondary text (card) | `--text-secondary` | `--card-bg` | `#80c080` | `#0a0a0a` | 9.21:1 | 4.5 | **PASS** | metadata inside cards |
-| muted text | `--text-muted` | `--bg-darkest` | `#508050` | `#000000` | 4.54:1 | 4.5 | **PASS** | muted labels; 3.0 acceptable |
-| muted text (card) | `--text-muted` | `--card-bg` | `#508050` | `#0a0a0a` | 4.28:1 | 4.5 | **NOTE** | muted labels; 3.0 acceptable |
+| muted text | `--text-muted` | `--bg-darkest` | `#578b57` | `#000000` | 5.24:1 | 4.5 | **PASS** | hints, placeholders, small labels |
+| muted text (card) | `--text-muted` | `--card-bg` | `#578b57` | `#0a0a0a` | 4.94:1 | 4.5 | **PASS** | small labels inside cards |
+| muted text (medium bg) | `--text-muted` | `--bg-medium` | `#578b57` | `#111111` | 4.71:1 | 4.5 | **PASS** | small labels on panels |
+| grey text | `--neon-gray` | `--bg-darkest` | `#5f885f` | `#000000` | 5.17:1 | 4.5 | **PASS** | small informative text |
+| grey text (card) | `--neon-gray` | `--card-bg` | `#5f885f` | `#0a0a0a` | 4.88:1 | 4.5 | **PASS** | small informative text inside cards |
 | accent cyan (UI) | `--primary-cyan` | `--bg-darkest` | `#00ff41` | `#000000` | 15.38:1 | 3.0 | **PASS** | primary controls (large text / UI) |
 | accent magenta (UI) | `--secondary-magenta` | `--bg-darkest` | `#008f11` | `#000000` | 4.94:1 | 3.0 | **PASS** | secondary controls |
 | success (UI) | `--status-success` | `--bg-darkest` | `#00ff41` | `#000000` | 15.38:1 | 3.0 | **PASS** | success badges |
@@ -68,8 +73,11 @@ Statuses:
 | body text (medium bg) | `--text-primary` | `--bg-medium` | `#ffe0a0` | `#151008` | 14.80:1 | 4.5 | **PASS** | body text on panels |
 | secondary text | `--text-secondary` | `--bg-darkest` | `#c09050` | `#0a0800` | 7.01:1 | 4.5 | **PASS** | captions, metadata |
 | secondary text (card) | `--text-secondary` | `--card-bg` | `#c09050` | `#120e04` | 6.74:1 | 4.5 | **PASS** | metadata inside cards |
-| muted text | `--text-muted` | `--bg-darkest` | `#806030` | `#0a0800` | 3.47:1 | 4.5 | **NOTE** | muted labels; 3.0 acceptable |
-| muted text (card) | `--text-muted` | `--card-bg` | `#806030` | `#120e04` | 3.33:1 | 4.5 | **NOTE** | muted labels; 3.0 acceptable |
+| muted text | `--text-muted` | `--bg-darkest` | `#9e763b` | `#0a0800` | 4.88:1 | 4.5 | **PASS** | hints, placeholders, small labels |
+| muted text (card) | `--text-muted` | `--card-bg` | `#9e763b` | `#120e04` | 4.69:1 | 4.5 | **PASS** | small labels inside cards |
+| muted text (medium bg) | `--text-muted` | `--bg-medium` | `#9e763b` | `#151008` | 4.60:1 | 4.5 | **PASS** | small labels on panels |
+| grey text | `--neon-gray` | `--bg-darkest` | `#8f7c57` | `#0a0800` | 4.95:1 | 4.5 | **PASS** | small informative text |
+| grey text (card) | `--neon-gray` | `--card-bg` | `#8f7c57` | `#120e04` | 4.76:1 | 4.5 | **PASS** | small informative text inside cards |
 | accent cyan (UI) | `--primary-cyan` | `--bg-darkest` | `#ffb000` | `#0a0800` | 10.94:1 | 3.0 | **PASS** | primary controls (large text / UI) |
 | accent magenta (UI) | `--secondary-magenta` | `--bg-darkest` | `#ff6600` | `#0a0800` | 6.83:1 | 3.0 | **PASS** | secondary controls |
 | success (UI) | `--status-success` | `--bg-darkest` | `#ffcc00` | `#0a0800` | 13.26:1 | 3.0 | **PASS** | success badges |
@@ -85,8 +93,11 @@ Statuses:
 | body text (medium bg) | `--text-primary` | `--bg-medium` | `#dce4f0` | `#0a1220` | 14.64:1 | 4.5 | **PASS** | body text on panels |
 | secondary text | `--text-secondary` | `--bg-darkest` | `#8899b0` | `#040810` | 6.90:1 | 4.5 | **PASS** | captions, metadata |
 | secondary text (card) | `--text-secondary` | `--card-bg` | `#8899b0` | `#081018` | 6.59:1 | 4.5 | **PASS** | metadata inside cards |
-| muted text | `--text-muted` | `--bg-darkest` | `#5a6a80` | `#040810` | 3.64:1 | 4.5 | **NOTE** | muted labels; 3.0 acceptable |
-| muted text (card) | `--text-muted` | `--card-bg` | `#5a6a80` | `#081018` | 3.47:1 | 4.5 | **NOTE** | muted labels; 3.0 acceptable |
+| muted text | `--text-muted` | `--bg-darkest` | `#6f8199` | `#040810` | 5.04:1 | 4.5 | **PASS** | hints, placeholders, small labels |
+| muted text (card) | `--text-muted` | `--card-bg` | `#6f8199` | `#081018` | 4.81:1 | 4.5 | **PASS** | small labels inside cards |
+| muted text (medium bg) | `--text-muted` | `--bg-medium` | `#6f8199` | `#0a1220` | 4.71:1 | 4.5 | **PASS** | small labels on panels |
+| grey text | `--neon-gray` | `--bg-darkest` | `#6f8199` | `#040810` | 5.04:1 | 4.5 | **PASS** | small informative text |
+| grey text (card) | `--neon-gray` | `--card-bg` | `#6f8199` | `#081018` | 4.81:1 | 4.5 | **PASS** | small informative text inside cards |
 | accent cyan (UI) | `--primary-cyan` | `--bg-darkest` | `#4dabf7` | `#040810` | 8.10:1 | 3.0 | **PASS** | primary controls (large text / UI) |
 | accent magenta (UI) | `--secondary-magenta` | `--bg-darkest` | `#20c997` | `#040810` | 9.42:1 | 3.0 | **PASS** | secondary controls |
 | success (UI) | `--status-success` | `--bg-darkest` | `#40c057` | `#040810` | 8.49:1 | 3.0 | **PASS** | success badges |
@@ -102,13 +113,16 @@ Statuses:
 | body text (medium bg) | `--text-primary` | `--bg-medium` | `#f0e8d8` | `#16101f` | 15.28:1 | 4.5 | **PASS** | body text on panels |
 | secondary text | `--text-secondary` | `--bg-darkest` | `#b0a090` | `#0c0810` | 7.82:1 | 4.5 | **PASS** | captions, metadata |
 | secondary text (card) | `--text-secondary` | `--card-bg` | `#b0a090` | `#120e1a` | 7.50:1 | 4.5 | **PASS** | metadata inside cards |
-| muted text | `--text-muted` | `--bg-darkest` | `#706050` | `#0c0810` | 3.29:1 | 4.5 | **NOTE** | muted labels; 3.0 acceptable |
-| muted text (card) | `--text-muted` | `--card-bg` | `#706050` | `#120e1a` | 3.15:1 | 4.5 | **NOTE** | muted labels; 3.0 acceptable |
+| muted text | `--text-muted` | `--bg-darkest` | `#8f7b66` | `#0c0810` | 4.91:1 | 4.5 | **PASS** | hints, placeholders, small labels |
+| muted text (card) | `--text-muted` | `--card-bg` | `#8f7b66` | `#120e1a` | 4.71:1 | 4.5 | **PASS** | small labels inside cards |
+| muted text (medium bg) | `--text-muted` | `--bg-medium` | `#8f7b66` | `#16101f` | 4.60:1 | 4.5 | **PASS** | small labels on panels |
+| grey text | `--neon-gray` | `--bg-darkest` | `#907a6d` | `#0c0810` | 4.91:1 | 4.5 | **PASS** | small informative text |
+| grey text (card) | `--neon-gray` | `--card-bg` | `#907a6d` | `#120e1a` | 4.70:1 | 4.5 | **PASS** | small informative text inside cards |
 | accent cyan (UI) | `--primary-cyan` | `--bg-darkest` | `#d4a843` | `#0c0810` | 8.96:1 | 3.0 | **PASS** | primary controls (large text / UI) |
 | accent magenta (UI) | `--secondary-magenta` | `--bg-darkest` | `#7b4db0` | `#0c0810` | 3.34:1 | 3.0 | **PASS** | secondary controls |
 | success (UI) | `--status-success` | `--bg-darkest` | `#d4a843` | `#0c0810` | 8.96:1 | 3.0 | **PASS** | success badges |
 | warning (UI) | `--status-warning` | `--bg-darkest` | `#e8a030` | `#0c0810` | 8.98:1 | 3.0 | **PASS** | warning badges |
-| error (UI) | `--status-error` | `--bg-darkest` | `#c04040` | `#0c0810` | 3.83:1 | 3.0 | **PASS** | error badges |
+| error (UI) | `--status-error` | `--bg-darkest` | `#d07272` | `#0c0810` | 5.99:1 | 3.0 | **PASS** | error badges |
 
 ## bladerunner
 
@@ -119,8 +133,11 @@ Statuses:
 | body text (medium bg) | `--text-primary` | `--bg-medium` | `#d8dce8` | `#0e121c` | 13.66:1 | 4.5 | **PASS** | body text on panels |
 | secondary text | `--text-secondary` | `--bg-darkest` | `#8892a8` | `#06080e` | 6.41:1 | 4.5 | **PASS** | captions, metadata |
 | secondary text (card) | `--text-secondary` | `--card-bg` | `#8892a8` | `#0a0e16` | 6.18:1 | 4.5 | **PASS** | metadata inside cards |
-| muted text | `--text-muted` | `--bg-darkest` | `#78809a` | `#06080e` | 5.10:1 | 4.5 | **PASS** | muted labels; 3.0 acceptable |
-| muted text (card) | `--text-muted` | `--card-bg` | `#78809a` | `#0a0e16` | 4.92:1 | 4.5 | **PASS** | muted labels; 3.0 acceptable |
+| muted text | `--text-muted` | `--bg-darkest` | `#78809a` | `#06080e` | 5.10:1 | 4.5 | **PASS** | hints, placeholders, small labels |
+| muted text (card) | `--text-muted` | `--card-bg` | `#78809a` | `#0a0e16` | 4.92:1 | 4.5 | **PASS** | small labels inside cards |
+| muted text (medium bg) | `--text-muted` | `--bg-medium` | `#78809a` | `#0e121c` | 4.77:1 | 4.5 | **PASS** | small labels on panels |
+| grey text | `--neon-gray` | `--bg-darkest` | `#747f9c` | `#06080e` | 5.01:1 | 4.5 | **PASS** | small informative text |
+| grey text (card) | `--neon-gray` | `--card-bg` | `#747f9c` | `#0a0e16` | 4.84:1 | 4.5 | **PASS** | small informative text inside cards |
 | accent cyan (UI) | `--primary-cyan` | `--bg-darkest` | `#1a9fff` | `#06080e` | 7.10:1 | 3.0 | **PASS** | primary controls (large text / UI) |
 | accent magenta (UI) | `--secondary-magenta` | `--bg-darkest` | `#ff2d7c` | `#06080e` | 5.64:1 | 3.0 | **PASS** | secondary controls |
 | success (UI) | `--status-success` | `--bg-darkest` | `#22cc88` | `#06080e` | 9.59:1 | 3.0 | **PASS** | success badges |
@@ -136,8 +153,11 @@ Statuses:
 | body text (medium bg) | `--text-primary` | `--bg-medium` | `#d0ffd0` | `#080808` | 18.02:1 | 4.5 | **PASS** | body text on panels |
 | secondary text | `--text-secondary` | `--bg-darkest` | `#80cc80` | `#000000` | 10.87:1 | 4.5 | **PASS** | captions, metadata |
 | secondary text (card) | `--text-secondary` | `--card-bg` | `#80cc80` | `#050505` | 10.55:1 | 4.5 | **PASS** | metadata inside cards |
-| muted text | `--text-muted` | `--bg-darkest` | `#508050` | `#000000` | 4.54:1 | 4.5 | **PASS** | muted labels; 3.0 acceptable |
-| muted text (card) | `--text-muted` | `--card-bg` | `#508050` | `#050505` | 4.41:1 | 4.5 | **NOTE** | muted labels; 3.0 acceptable |
+| muted text | `--text-muted` | `--bg-darkest` | `#538553` | `#000000` | 4.85:1 | 4.5 | **PASS** | hints, placeholders, small labels |
+| muted text (card) | `--text-muted` | `--card-bg` | `#538553` | `#050505` | 4.70:1 | 4.5 | **PASS** | small labels inside cards |
+| muted text (medium bg) | `--text-muted` | `--bg-medium` | `#538553` | `#080808` | 4.62:1 | 4.5 | **PASS** | small labels on panels |
+| grey text | `--neon-gray` | `--bg-darkest` | `#5c845c` | `#000000` | 4.91:1 | 4.5 | **PASS** | small informative text |
+| grey text (card) | `--neon-gray` | `--card-bg` | `#5c845c` | `#050505` | 4.77:1 | 4.5 | **PASS** | small informative text inside cards |
 | accent cyan (UI) | `--primary-cyan` | `--bg-darkest` | `#00ff00` | `#000000` | 15.30:1 | 3.0 | **PASS** | primary controls (large text / UI) |
 | accent magenta (UI) | `--secondary-magenta` | `--bg-darkest` | `#cccccc` | `#000000` | 13.08:1 | 3.0 | **PASS** | secondary controls |
 | success (UI) | `--status-success` | `--bg-darkest` | `#00ff00` | `#000000` | 15.30:1 | 3.0 | **PASS** | success badges |

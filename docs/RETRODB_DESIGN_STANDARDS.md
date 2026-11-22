@@ -70,7 +70,7 @@
 ```css
 --text-primary: #e8eaed      /* Main text */
 --text-secondary: #9aa0a6    /* Supporting text */
---text-muted: #6e7378        /* Disabled/subtle text */
+--text-muted: #80858a        /* Hints, placeholders, small labels */
 --text-accent: var(--primary-cyan)
 ```
 
@@ -96,8 +96,29 @@ decorative highlights — they aren't interchangeable with the status set).
 --neon-green:  #22c55e
 --neon-orange: #f59e0b
 --neon-red:    #ef4444
---neon-gray:   #64748b
+--neon-gray:   #76869d
 ```
+
+`--text-muted` and `--neon-gray` carry small text, so each theme keeps them at
+4.5:1 on its backgrounds; `scripts/audit_contrast.py` fails below that.
+
+#### Brand Colours — the one exemption from "no hard-coded colours"
+
+A brand colour is a company's or rating board's own colour: Steam, Xbox,
+PlayStation, RetroAchievements, RPCS3, the ESRB and PEGI age steps, a console
+maker's badge colour, a system type with no theme colour. It stays the same in
+every theme, so no theme overrides it.
+
+- A brand colour shared by more than one rule is a named token in
+  `variables.css`, under "Brand colours", and is used by name:
+  `var(--brand-steam)`, `var(--rating-age-teen)`.
+- A colour one badge alone uses is written once, as that badge's own custom
+  property: `.system-badge.nes { --badge: #e53935; }`, drawn by the shared
+  `.system-badge` rule.
+- Tints come from the token, never a second copy of its value:
+  `color-mix(in srgb, var(--brand-xbox) 15%, transparent)`.
+- Text in a brand colour still clears 4.5:1, where the theme's own colours
+  must. Nothing checks this automatically.
 
 ---
 
@@ -855,30 +876,22 @@ For semi-transparent overlays with blur:
 
 ## 16. System Type Badges
 
-Color-coded pill badges indicating the platform type of a gaming system. Used on the dashboard, systems page, and settings page. All use 0.2 alpha background with matching border and text color.
+Color-coded pill badges indicating the platform type of a gaming system. Used on the dashboard, systems page, and settings page. Their colours live once in `static/css/components/badges.css` ("System type badges"); each page sets only the size. The background is the type's colour at 20%, the border at 40%, and an unknown type takes `--text-muted`.
 
 **HTML Structure**:
 ```html
 <span class="system-type-badge {{ system.system_type|lower }}">{{ system.system_type }}</span>
 ```
 
-**Canonical class**: `.system-type-badge` (dashboard + settings). The legacy `.system-type-tag` class is still wired up in `templates/systems.html` for the systems page and JS-rendered cards within it; consolidating onto `.system-type-badge` is a known follow-up. Both follow the same color scheme.
+**Canonical class**: `.system-type-badge` (dashboard + settings). The legacy `.system-type-tag` class is still wired up in `templates/systems.html` for the systems page and JS-rendered cards within it; consolidating onto `.system-type-badge` is a known follow-up. Both take the same colours.
 
 | Class | Color | CSS Variable | System Type |
 |-------|-------|-------------|-------------|
 | `.console` | Cyan | `--primary-cyan` | Home consoles (NES, SNES, PlayStation, etc.) |
 | `.handheld` | Green | `--neon-green` | Portable systems (Game Boy, PSP, DS, etc.) |
 | `.computer` | Purple | `--neon-purple` | Home computers (C64, Amiga, DOS, etc.) |
-| `.arcade` | Orange | `#f97316` | Arcade systems |
-| `.engine` | Gold | `#eab308` | Game engines & frameworks (ScummVM, PICO-8, Doom, etc.) |
-
-```css
-.system-type-badge.console  { background: rgba(76, 201, 240, 0.2);  color: var(--primary-cyan); border: 1px solid rgba(76, 201, 240, 0.4); }
-.system-type-badge.handheld { background: rgba(34, 197, 94, 0.2);   color: var(--neon-green);   border: 1px solid rgba(34, 197, 94, 0.4); }
-.system-type-badge.computer { background: rgba(168, 85, 247, 0.2);  color: var(--neon-purple);  border: 1px solid rgba(168, 85, 247, 0.4); }
-.system-type-badge.arcade   { background: rgba(249, 115, 22, 0.2);  color: #f97316;             border: 1px solid rgba(249, 115, 22, 0.4); }
-.system-type-badge.engine   { background: rgba(234, 179, 8, 0.2);   color: #eab308;             border: 1px solid rgba(234, 179, 8, 0.4); }
-```
+| `.arcade` | Orange | `--system-arcade` | Arcade systems |
+| `.engine` | Gold | `--system-engine` | Game engines & frameworks (ScummVM, PICO-8, Doom, etc.) |
 
 ---
 

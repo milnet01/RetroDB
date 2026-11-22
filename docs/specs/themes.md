@@ -381,17 +381,18 @@ reset every user back to cyberpunk — don't.
 ## 9. Accessibility / contrast
 
 Themes must satisfy WCAG 2.2 AA contrast ratios for body text, secondary text,
-muted text, and primary UI controls.
+muted and grey text, and primary UI controls. Muted and grey text carry hints,
+placeholders and small labels, so they get the body-text ratio.
 
 Tooling: `scripts/audit_contrast.py` parses `variables.css` and `themes.css`,
 computes relative-luminance contrast for the text/background pairs each theme
 actually uses, and writes a markdown report to `docs/theme_contrast.md` with
-PASS / FAIL / NOTE rows.
+PASS / FAIL rows.
 
 Thresholds applied:
 
 - **4.5:1** — normal body text (`--text-primary`, `--text-secondary`,
-  `--text-muted` over backgrounds)
+  `--text-muted`, `--neon-gray` over backgrounds)
 - **3.0:1** — large text (≥ 18pt regular or 14pt bold) and graphical UI
   controls (`--primary-cyan`, `--secondary-magenta` for buttons / icons)
 
@@ -405,13 +406,11 @@ When to run:
 python3 scripts/audit_contrast.py   # writes docs/theme_contrast.md
 ```
 
-The script exits 0 regardless — it's a report, not a CI gate. CI can grep the
-output for `FAIL` lines.
+The script exits 1 when any row fails.
 
-Known fix-from-audit example: blade runner `--text-muted` was bumped from
-`#505868` to `#78809a` to clear 4.5:1 on both `--bg-darkest` (5.10) and
-`--card-bg` (4.92). Comment in `themes.css` records the change so it isn't
-"cleaned up" later.
+A new theme's muted and grey text must pass on `--bg-darkest`, `--card-bg` and
+`--bg-medium`; a comment beside `--text-muted` in `variables.css` says why, so
+the colours are not darkened later.
 
 ---
 

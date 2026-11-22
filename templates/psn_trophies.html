@@ -334,13 +334,13 @@
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #0070d1, #00439c);
+    background: linear-gradient(135deg, var(--accent-psn), var(--brand-psn-deep));
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.4rem;
-    border: 2px solid #0070d1;
-    box-shadow: 0 0 12px rgba(0, 112, 209, 0.4);
+    border: 2px solid var(--accent-psn);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent-psn) 40%, transparent);
     overflow: hidden;
 }
 
@@ -683,15 +683,15 @@
 }
 
 .platform-ps3 {
-    background: rgba(0, 112, 209, 0.2);
-    color: #4da6ff;
-    border: 1px solid rgba(0, 112, 209, 0.3);
+    background: color-mix(in srgb, var(--accent-psn) 20%, transparent);
+    color: var(--brand-psn-light);
+    border: 1px solid color-mix(in srgb, var(--accent-psn) 30%, transparent);
 }
 
 .platform-ps4 {
-    background: rgba(0, 55, 145, 0.2);
+    background: color-mix(in srgb, var(--brand-psn-deep) 20%, transparent);
     color: #6699ff;
-    border: 1px solid rgba(0, 55, 145, 0.3);
+    border: 1px solid color-mix(in srgb, var(--brand-psn-deep) 30%, transparent);
 }
 
 .platform-ps5 {

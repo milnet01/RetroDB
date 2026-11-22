@@ -109,79 +109,28 @@
 }
 
 /* =============================================================================
-   ESRB RATING BADGES
-   E(sea green) → E10+(green) → T(yellow) → M(orange) → AO(red)
+   ESRB AND PEGI RATING BADGES
+   E / 3 (sea green) → E10+ / 7 (green) → T / 12 (yellow) → M / 16 (orange) → AO / 18 (red)
    ============================================================================= */
 
-.game-badge.esrb-e {
-    background: rgba(32, 178, 170, 0.15);
-    border-color: #20b2aa;
-    color: #20b2aa;
+.game-badge.esrb-e, .game-badge.pegi-3 { --rating-color: var(--rating-age-all); }
+.game-badge.esrb-e10, .game-badge.pegi-7 { --rating-color: var(--rating-age-child); }
+.game-badge.esrb-t, .game-badge.pegi-12 { --rating-color: var(--rating-age-teen); }
+.game-badge.esrb-m, .game-badge.pegi-16 { --rating-color: var(--rating-age-mature); }
+.game-badge.esrb-ao, .game-badge.pegi-18 { --rating-color: var(--rating-age-adult); }
+
+.game-badge.esrb-e, .game-badge.esrb-e10, .game-badge.esrb-t, .game-badge.esrb-m, .game-badge.esrb-ao,
+.game-badge.pegi-3, .game-badge.pegi-7, .game-badge.pegi-12, .game-badge.pegi-16, .game-badge.pegi-18 {
+    background: color-mix(in srgb, var(--rating-color) 15%, transparent);
+    border-color: var(--rating-color);
+    color: var(--rating-color);
 }
 
-.game-badge.esrb-e10 {
-    background: rgba(34, 197, 94, 0.15);
-    border-color: #22c55e;
-    color: #22c55e;
-}
-
-.game-badge.esrb-t {
-    background: rgba(234, 179, 8, 0.15);
-    border-color: #eab308;
-    color: #eab308;
-}
-
-.game-badge.esrb-m {
-    background: rgba(249, 115, 22, 0.15);
-    border-color: #f97316;
-    color: #f97316;
-}
-
-.game-badge.esrb-ao {
-    background: rgba(239, 68, 68, 0.15);
-    border-color: #ef4444;
-    color: #ef4444;
-}
-
+/* Rating pending: no board colour yet, so the theme's grey */
 .game-badge.esrb-rp {
-    background: rgba(100, 116, 139, 0.15);
-    border-color: #64748b;
-    color: #94a3b8;
-}
-
-/* =============================================================================
-   PEGI RATING BADGES
-   3(sea green) → 7(green) → 12(yellow) → 16(orange) → 18(red)
-   ============================================================================= */
-
-.game-badge.pegi-3 {
-    background: rgba(32, 178, 170, 0.15);
-    border-color: #20b2aa;
-    color: #20b2aa;
-}
-
-.game-badge.pegi-7 {
-    background: rgba(34, 197, 94, 0.15);
-    border-color: #22c55e;
-    color: #22c55e;
-}
-
-.game-badge.pegi-12 {
-    background: rgba(234, 179, 8, 0.15);
-    border-color: #eab308;
-    color: #eab308;
-}
-
-.game-badge.pegi-16 {
-    background: rgba(249, 115, 22, 0.15);
-    border-color: #f97316;
-    color: #f97316;
-}
-
-.game-badge.pegi-18 {
-    background: rgba(239, 68, 68, 0.15);
-    border-color: #ef4444;
-    color: #ef4444;
+    background: color-mix(in srgb, var(--neon-gray) 15%, transparent);
+    border-color: var(--neon-gray);
+    color: var(--text-secondary);
 }
 
 /* =============================================================================
@@ -440,7 +389,26 @@
 }
 
 .platform-ps3 { background: rgba(205,154,42,0.15); color: #cd9a2a; border-color: rgba(205,154,42,0.3); }
-.platform-ps4 { background: rgba(0,112,209,0.15); color: #4da6ff; border-color: rgba(0,112,209,0.3); }
+.platform-ps4 { background: color-mix(in srgb, var(--accent-psn) 15%, transparent); color: var(--brand-psn-light); border-color: color-mix(in srgb, var(--accent-psn) 30%, transparent); }
 .platform-ps5 { background: rgba(76,201,240,0.15); color: #4cc9f0; border-color: rgba(76,201,240,0.3); }
 .platform-psvita,
 .platform-vita { background: rgba(168,85,247,0.15); color: #a855f7; border-color: rgba(168,85,247,0.3); }
+
+/* =============================================================================
+   SYSTEM TYPE BADGES
+   .system-type-badge (dashboard, settings) and .system-type-tag (systems
+   page). Each page sets the size; the colours live here.
+   ============================================================================= */
+
+.system-type-badge, .system-type-tag {
+    --type-color: var(--text-muted);
+    background: color-mix(in srgb, var(--type-color) 20%, transparent);
+    color: var(--type-color);
+    border: 1px solid color-mix(in srgb, var(--type-color) 40%, transparent);
+}
+
+.system-type-badge.console, .system-type-tag.console { --type-color: var(--primary-cyan); }
+.system-type-badge.handheld, .system-type-tag.handheld { --type-color: var(--neon-green); }
+.system-type-badge.computer, .system-type-tag.computer { --type-color: var(--neon-purple); }
+.system-type-badge.arcade, .system-type-tag.arcade { --type-color: var(--system-arcade); }
+.system-type-badge.engine, .system-type-tag.engine { --type-color: var(--system-engine); }
