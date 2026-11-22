@@ -729,7 +729,13 @@ Every control works from the keyboard alone (WCAG 2.1.1) and gives a screen
 reader its name and role (WCAG 4.1.2). Whatever a click does, Tab and then
 Enter or Space does too.
 - Use a real `<button type="button">` or `<a href>`. Never put a click handler
-  on a `div`, `span`, `img`, `td` or `tr`.
+  on a `div`, `span`, `img`, `td` or `tr`. Where a control holds blocks or is
+  an image, mark it `role="button" tabindex="0"`; `main.js` makes Enter and
+  Space click it.
+- A button showing only a symbol (×, ✎, 🗑️) gets an `aria-label`: a screen
+  reader speaks the symbol, not the `title`.
+- Code that rebuilds a list holding the focused control runs the rebuild
+  through `DOM.keepFocus` (`utils.js`), so focus stays in place.
 - Hide a styled input with `.visually-hidden` (`utilities.css`), never
   `display: none`, which takes it out of the Tab order.
 - When the input is hidden, the part the user sees shows the focus ring:
