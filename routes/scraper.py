@@ -289,7 +289,7 @@ def api_save_api_keys():
         return error(_('invalid api keys: %(reason)s') % {'reason': reason}, 400)
 
     # New keys may be what a stopped service was waiting for.
-    service_limits.clear()
+    service_limits.clear_stops()
 
     # Update API keys
     existing['api_keys'] = data

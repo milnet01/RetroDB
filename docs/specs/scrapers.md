@@ -69,7 +69,7 @@ The single UPDATE is **not** wrapped in a try/except fallback: a failure means `
 
 ## 4. Merge priority
 
-Priority is the user's configured scraper order (Settings -> Scrapers, `fallback_settings['priority']`, default `scraper_manager.DEFAULT_SCRAPER_PRIORITY`: `screenscraper -> esde -> tgdb -> igdb -> rawg -> mobygames`; a saved list without `mobygames` gets it at the end). There is no per-field allow-list. Within a hybrid run:
+Priority is the user's configured scraper order (Settings -> Scrapers, `fallback_settings['priority']`, default `scraper_manager.DEFAULT_SCRAPER_PRIORITY`: `screenscraper -> esde -> tgdb -> igdb -> rawg -> mobygames`; a saved list without `mobygames` gets it just before `ai`, else at the end). There is no per-field allow-list. Within a hybrid run:
 
 1. The **primary** source applies first, wherever it sits in that list.
 2. The remaining enabled scrapers then run in the user's order, minus the primary and any disabled one (`_run_fallbacks`).
@@ -284,7 +284,7 @@ Hand-off points:
 
 `scraper/base_scraper.py` is the only sanctioned HTTP layer for the `scraper/` package. Every adapter (TGDB, IGDB, RAWG, ScreenScraper, AI, RA, Steam, Xbox) goes through it (Pass 41.5 / 41.5.B closed most carry-overs; Xbox followed in Pass 59.26). The key and status probes in `routes/scraper.py` (`api_check_scraper`, `api_scraper_allowance`) call `requests` directly and are outside this contract: a probe must not wait out a 429 backoff.
 
-`scraper/service_limits.py` (PASS-59-215) sets the gap between calls to each service and holds each service's stop. A stopped service's sender returns its usual nothing without calling, and a caller that must tell "no answer" from "no such game" asks `stopped()`. A stop lives in memory: a restart forgets it, and saving API keys clears it. The Settings and Dashboard checks (`routes/scraper.py`) do not wait out a stop (decided 2026-11-05, PASS-59-247): a check is how a person learns whether a stop has cleared, so holding it behind that stop would defeat it. MobyGames' check still takes its place in line (`take_turn`), because MobyGames refuses a request sooner than its pace and the next search would then find nothing.
+`scraper/service_limits.py` (PASS-59-215) sets the gap between calls to each service and holds each service's stop. A stopped service's sender returns its usual nothing without calling, and a caller that must tell "no answer" from "no such game" asks `stopped()`. A stop lives in memory: a restart forgets it, and saving API keys lifts it (`clear_stops`) but keeps each call waiting its turn. The Settings and Dashboard checks (`routes/scraper.py`) do not wait out a stop (decided 2026-11-05, PASS-59-247): a check is how a person learns whether a stop has cleared, so holding it behind that stop would defeat it. MobyGames' check still takes its place in line (`take_turn`), because MobyGames refuses a request sooner than its pace and the next search would then find nothing.
 
 | Service | Gap between calls | Stops when | For |
 |---|---|---|---|
@@ -292,7 +292,7 @@ Hand-off points:
 | TheGamesDB | None; the limit is monthly | A reply shows a key spent, or a 403 or 429: that key is passed over. All keys passed over stops the service | The reply's refresh timer, or one day |
 | RAWG | 0.3 s | A 401, 403 or 429 naming a limit, or `X-RateLimit-Remaining` at zero | One day |
 | IGDB | 0.26 s: its limit is 4 a second | Never; a 429 raises, as other errors do | - |
-| MobyGames | The reply's `ratelimit-policy` rate; 5 s until a reply says | `ratelimit-remaining: 0` or a 429; a 401 or 403 is a refused key; no reply or a 5xx is not answering (10 minutes) | The reply's `ratelimit-reset` or `retry-after`, else one hour. A game passed over for the hour is listed in `mobygames_pending`, and `MobyGamesCatchUpJob` asks about it after the reset (PASS-59-183 §4.6) |
+| MobyGames | The reply's `ratelimit-policy` rate plus half a second, counted from the reply; 5.5 s until a reply says | `ratelimit-remaining: 0` or a 429; a 401 or 403 is a refused key; no reply or a 5xx is not answering (10 minutes) | The reply's `ratelimit-reset` or `retry-after`, else one hour. A game passed over for the hour is listed in `mobygames_pending`, and `MobyGamesCatchUpJob` asks about it after the reset (PASS-59-183 §4.6) |
 | HowLongToBeat | 1 s, token requests included | A 429 after `http_post`'s retries | 15 minutes |
 | Steam store | 1.5 s: its limit is undocumented, about 200 calls in five minutes as usually reported | A 403 or 429 | Five minutes; the sync carries on, and the next one asks about games it missed |
 | OpenXBL (Xbox), per key | None. A free key allows 150 calls an hour, and every call counts, so none is retried | A 429 | One hour; the bulk Xbox sync stops, and its next run starts with the games not synced yet |

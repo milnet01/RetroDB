@@ -42,6 +42,8 @@ def moby(monkeypatch):
     """A saved key, a clean record cache and no pacing; returns the request log."""
     service_limits.clear()
     service_limits.set_pace(service_limits.MOBYGAMES, 0)
+    # The saved replies state the real pace, which would then be waited out.
+    monkeypatch.setattr(service_limits.time, 'sleep', lambda seconds: None)
     scrape_mobygames._records.clear()
     monkeypatch.setattr(scrape_mobygames, '_get_api_key', lambda: KEY)
     calls = []
@@ -130,13 +132,52 @@ def test_unmapped_system_sends_nothing(moby):
     assert moby == []
 
 
-# INV-2
-@pytest.mark.parametrize('policy, gap', [('0.2;w=1, 720;w=3600', 5.0),
-                                         ('1;w=1, 720;w=3600', 1.0)])
+# INV-2. Half a second over the stated gap: two checks sent exactly 5.0 s
+# apart got a 429 (2026-11-22), as the network's delay varies.
+@pytest.mark.parametrize('policy, gap', [('0.2;w=1, 720;w=3600', 5.5),
+                                         ('1;w=1, 720;w=3600', 1.5)])
 def test_pace_follows_the_reply(moby, policy, gap):
     scrape_mobygames.read_limits(Reply({}, headers={'ratelimit-policy': policy,
                                                     'ratelimit-remaining': '10'}))
     assert service_limits._pace[service_limits.MOBYGAMES] == pytest.approx(gap)
+
+
+def test_the_gap_starts_when_the_reply_arrives(moby, monkeypatch):
+    """A check sent 5.7 s after one whose reply took 2 s was refused
+    (2026-11-22): MobyGames counts from the reply, not from the send."""
+    clock = [100.0]
+    monkeypatch.setattr(service_limits.time, 'monotonic', lambda: clock[0])
+    sleeps = []
+    monkeypatch.setattr(service_limits.time, 'sleep', sleeps.append)
+    service_limits.set_pace(service_limits.MOBYGAMES, 5.5)
+    service_limits.take_turn(service_limits.MOBYGAMES)  # sent at 100
+    clock[0] = 102.0                                    # reply at 102
+    scrape_mobygames.read_limits(Reply({}, headers={'ratelimit-remaining': '10'}))
+    service_limits.take_turn(service_limits.MOBYGAMES)
+    assert sleeps == [pytest.approx(5.5)]
+
+
+def test_the_default_pace_has_the_margin_too():
+    assert service_limits._DEFAULT_PACE[service_limits.MOBYGAMES] == pytest.approx(5.5)
+
+
+@pytest.mark.parametrize('saved, expected', [
+    (['esde', 'rawg', 'ai'], ['esde', 'rawg', 'mobygames', 'ai']),
+    (['esde', 'rawg'], ['esde', 'rawg', 'mobygames']),
+    (['ai', 'mobygames', 'esde'], ['ai', 'mobygames', 'esde']),
+])
+def test_an_old_saved_order_asks_mobygames_before_ai(saved, expected, tmp_path, monkeypatch):
+    """A list saved before MobyGames existed asked it after AI Fill, so the AI
+    filled what MobyGames knew (2026-11-22). A place the user chose is kept."""
+    from scraper import scraper_manager
+    path = tmp_path / 'scraper_settings.json'
+    path.write_text(json.dumps({'priority': saved}))
+    monkeypatch.setattr(scraper_manager, 'SCRAPER_SETTINGS_FILE', str(path))
+    scraper_manager.invalidate_scraper_settings_cache()
+    try:
+        assert scraper_manager.load_scraper_settings()['priority'] == expected
+    finally:
+        scraper_manager.invalidate_scraper_settings_cache()
 
 
 # INV-3

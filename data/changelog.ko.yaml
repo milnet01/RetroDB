@@ -2,6 +2,12 @@
   date: '2026-11-22'
   tags:
   - type: fix
+    label: "소스 순서가 MobyGames 추가 전에 저장된 경우에도 계획대로 MobyGames를 AI보다 먼저 조회하므로, MobyGames가 아는 내용을 AI가 채우지 않습니다. MobyGames가 RetroDB의 요청을 거절하는 일도 줄었습니다. RetroDB가 요청 사이에 조금 더 기다리고, API 키를 저장해도 요청이 새치기하지 않습니다"
+    en: "MobyGames is now asked before the AI, as planned, even where the order of sources was saved before MobyGames was added, so the AI no longer fills in what MobyGames knows. MobyGames also refuses RetroDB's requests less often: RetroDB now waits a little longer between them, and saving your API keys no longer lets a request jump the queue"
+  - type: fix
+    label: "휴대폰에서 설정 > 스크래핑의 소스 목록을 다시 읽기 쉬워졌습니다. 각 이름과 설명이 전체 너비를 쓰고, 상태와 켜기/끄기 스위치는 아래 줄에 있습니다. 전에는 글자가 한 줄에 한 단어씩 눌리고 스위치가 잘렸습니다"
+    en: "On a phone, the list of sources in Settings > Scraping is readable again: each name and description uses the full width, with its status and on/off switch on the line below. Before, the text was squeezed to one word a line and the switch was cut off"
+  - type: fix
     label: "RetroDB의 더 많은 부분을 키보드만으로 사용할 수 있습니다. 보고서의 열은 Enter로 정렬되고, 스크린샷 삭제 버튼은 Tab이 닿으면 나타납니다. 태그나 라이브러리 필터를 지우거나, 변경 기록에서 Load More를 누르거나, 스크랩 중에 위시리스트를 새로 고쳐도 이제 페이지 맨 위로 돌아가지 않고 보던 자리를 유지합니다"
     en: "More of RetroDB now works with the keyboard alone. Report columns sort with Enter, and the screenshot Delete button appears when Tab reaches it. Removing a tag or a library filter, pressing Load More on the Changelog, or a wishlist refresh during a scrape now keeps your place instead of sending you back to the top of the page"
   - type: fix

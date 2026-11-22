@@ -376,6 +376,14 @@
     margin-bottom: 2px;
 }
 
+/* On a phone the name and text take the first line, the status and switch
+   the second; on one line they squeezed the text a word wide. */
+@media (max-width: 600px) {
+    .scraper-priority-item { flex-wrap: wrap; }
+    .scraper-info { flex-basis: calc(100% - 120px); }
+    .scraper-online-status { margin-left: auto; }
+}
+
 .scraper-info .text-muted {
     font-size: 0.8rem;
     margin: 0;

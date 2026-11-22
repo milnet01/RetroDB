@@ -3579,6 +3579,17 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   showing "Connection error"; it now asks include=game_id (0.4 s).
   Live-checked on :5001: "Castlevania Bloodlines" finds Castlevania:
   Bloodlines.
+  Settings > Scraping walked 2026-11-22 in headless Chrome at 1400 and
+  375 px on a :5001 scratch copy. Found and fixed: (1) a list saved
+  before MobyGames gave it the place after AI; it now goes before
+  `ai`. (2) MobyGames refused checks sent at its stated 5 s gap; the
+  gap is now 5.5 s, counted from each reply. (3) Saving API keys
+  forgot whose turn was next, so a fresh check jumped the queue and
+  got a 429; it now lifts stops only (`clear_stops`). (4) On a phone
+  the source rows squeezed their text a word wide and cut the switch
+  off; status and switch now wrap to a second line. Re-walked: no
+  MobyGames refusals, order ends mobygames, ai. Still open: whether
+  MobyGames' terms ask for a credit link.
   **Layman:** MobyGames as another place to look up game details.
   Kind: implement.
 

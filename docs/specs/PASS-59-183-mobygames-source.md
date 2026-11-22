@@ -93,15 +93,17 @@ PLATFORM_MAP: dict[str, int]   # system folder -> MobyGames platform id
 ### 4.2 The pace and the hourly allowance
 
 `service_limits` gains `MOBYGAMES = 'mobygames'`, named `MobyGames`,
-with a default pace of 5.0 seconds. After every reply the sender reads:
+with a default pace of 5.5 seconds: the stated 5 plus `PACE_MARGIN`. After every reply the sender reads:
 
 | Header or status | Effect |
 |---|---|
-| `ratelimit-policy`, first entry `<rate>;w=1` | `set_pace(MOBYGAMES, 1 / rate)` |
+| `ratelimit-policy`, first entry `<rate>;w=1` | `set_pace(MOBYGAMES, 1 / rate + PACE_MARGIN)`; half a second, since two requests sent exactly 5.0 s apart got a 429 (2026-11-22) |
 | `ratelimit-remaining: 0` | `stop(MOBYGAMES, ratelimit-reset seconds)` |
 | 429 | `stop(MOBYGAMES, retry-after seconds)`, else one hour |
 | 401 or 403 | `stop(MOBYGAMES, 3600, KEY_REJECTED)`, worded as a refused key |
 | No reply, or a 5xx | `stop(MOBYGAMES, 600, UNAVAILABLE)`, worded as not answering |
+
+The gap runs from each reply's arrival (`service_limits.gap_from_now`), not from the send: a request 5.7 s after the last was sent, but 3.6 s after its slow reply, got a 429 (2026-11-22).
 
 `http_get` is called with `retries=0`. Its 429 retry would wait up to
 60 seconds, where the stop already says how long to wait.
@@ -124,7 +126,7 @@ The checklist in `scrapers.md` §13, plus:
   `mobygames`. `_apply_fallback` gains a `mobygames` branch before its
   final `else`, which applies RAWG to anything unnamed.
 - `DEFAULT_SCRAPER_PRIORITY` ends with `mobygames`. A saved priority
-  list without it gets it appended at the end. The source is off until
+  list without it gets it just before `ai`, else at the end. The source is off until
   a key is saved.
 - Settings: key field `mobygames_apikey` in
   `scraper_settings_validators._ALLOWED_API_KEY_FIELDS` and
@@ -233,7 +235,7 @@ REFERENCES games(id) ON DELETE CASCADE, added_at TEXT)`.
   or a repeat fetch asks again.
 
 - **INV-2** — The pace follows the reply. `0.2;w=1, 720;w=3600` sets a
-  5-second gap and `1;w=1, 720;w=3600` a 1-second gap.
+  5.5-second gap and `1;w=1, 720;w=3600` a 1.5-second gap (`PACE_MARGIN` added).
   *Test:* `tests/test_scrape_mobygames.py`, both headers fed to the
   reply reader, `service_limits._pace['mobygames']` read after each.
   *Breaks when:* the pace stays at the default whatever the header says.
@@ -369,7 +371,7 @@ Scans are about 800 px tall and up to 40 per game. No new dependency.
 
 Migration 046 adds three nullable columns and the empty
 `mobygames_pending` table; existing rows read NULL. A
-saved scraper priority list gains `mobygames` at its end. The source
+saved scraper priority list gains `mobygames` just before `ai`, else at its end. The source
 stays off until a key is saved.
 
 ## 15. Open questions

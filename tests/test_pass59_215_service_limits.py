@@ -351,6 +351,19 @@ class TestRoutes:
         assert reply_.status_code == 200, reply_.get_data(as_text=True)
         assert limits.stopped(limits.THEGAMESDB) is None
 
+    def test_saving_keys_keeps_the_line(self, admin_test_client, monkeypatch, tmp_path):
+        """A save forgot whose turn was next, so a check sent at once got
+        MobyGames' 429 for the one already waiting (2026-11-22)."""
+        import routes.scraper as mod
+        monkeypatch.setattr(mod, 'SCRAPER_SETTINGS_FILE', str(tmp_path / 'scraper_settings.json'))
+        sleeps = []
+        monkeypatch.setattr(limits.time, 'sleep', sleeps.append)
+        limits.take_turn(limits.MOBYGAMES)
+        client, csrf = admin_test_client()
+        client.post('/api/scraper-api-keys', json={}, headers={'X-CSRF-Token': csrf})
+        limits.take_turn(limits.MOBYGAMES)
+        assert sleeps and sleeps[-1] > 4
+
     def test_the_allowance_check_uses_the_free_call_and_invents_no_date(self, admin_test_client, monkeypatch):
         import routes.scraper as mod
         urls = []

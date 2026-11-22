@@ -144,9 +144,12 @@ def _load_scraper_settings_locked():
                 # Merge saved settings with defaults
                 if 'priority' in saved:
                     defaults['priority'] = list(saved['priority'])
-                    # A list saved before MobyGames existed asks it last.
-                    if 'mobygames' not in defaults['priority']:
-                        defaults['priority'].append('mobygames')
+                    # A list saved before MobyGames existed asks it last
+                    # among the online sources, before AI Fill.
+                    order = defaults['priority']
+                    if 'mobygames' not in order:
+                        order.insert(order.index('ai') if 'ai' in order else len(order),
+                                     'mobygames')
                 if 'enabled' in saved:
                     defaults['enabled'].update(saved['enabled'])
                 if 'api_keys' in saved:

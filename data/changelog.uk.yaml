@@ -2,6 +2,12 @@
   date: '2026-11-22'
   tags:
   - type: fix
+    label: "MobyGames тепер, як і задумано, опитується раніше за ШІ, навіть якщо порядок джерел було збережено до появи MobyGames, тож ШІ більше не заповнює те, що знає MobyGames. MobyGames також рідше відхиляє запити RetroDB: RetroDB тепер трохи довше чекає між ними, а збереження ключів API більше не дає запиту пролізти поза чергою"
+    en: "MobyGames is now asked before the AI, as planned, even where the order of sources was saved before MobyGames was added, so the AI no longer fills in what MobyGames knows. MobyGames also refuses RetroDB's requests less often: RetroDB now waits a little longer between them, and saving your API keys no longer lets a request jump the queue"
+  - type: fix
+    label: "На телефоні список джерел у Налаштування > Скрапінг знову читається: назва й опис займають усю ширину, а стан і перемикач увімк./вимк. стоять рядком нижче. Раніше текст стискався до одного слова в рядку, а перемикач обрізався"
+    en: "On a phone, the list of sources in Settings > Scraping is readable again: each name and description uses the full width, with its status and on/off switch on the line below. Before, the text was squeezed to one word a line and the switch was cut off"
+  - type: fix
     label: "Тепер більше можливостей RetroDB працює лише з клавіатури. Стовпці у звітах сортуються клавішею Enter, а кнопка «Видалити» біля знімків екрана з'являється, коли до неї доходить Tab. Якщо прибрати тег або фільтр бібліотеки, натиснути Load More на сторінці журналу змін чи оновити список бажань під час скрейпінгу, ви лишаєтеся на своєму місці, а не повертаєтеся на початок сторінки"
     en: "More of RetroDB now works with the keyboard alone. Report columns sort with Enter, and the screenshot Delete button appears when Tab reaches it. Removing a tag or a library filter, pressing Load More on the Changelog, or a wishlist refresh during a scrape now keeps your place instead of sending you back to the top of the page"
   - type: fix

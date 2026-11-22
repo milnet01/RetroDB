@@ -2,6 +2,12 @@
   date: '2026-11-22'
   tags:
   - type: fix
+    label: "现在即使来源顺序是在加入 MobyGames 之前保存的，也会按计划先询问 MobyGames 再询问 AI，因此 AI 不会再填写 MobyGames 已知的内容。MobyGames 拒绝 RetroDB 请求的情况也更少了：RetroDB 现在在两次请求之间多等一会儿，保存 API 密钥也不会再让请求插队"
+    en: "MobyGames is now asked before the AI, as planned, even where the order of sources was saved before MobyGames was added, so the AI no longer fills in what MobyGames knows. MobyGames also refuses RetroDB's requests less often: RetroDB now waits a little longer between them, and saving your API keys no longer lets a request jump the queue"
+  - type: fix
+    label: "在手机上，设置 > 抓取 中的来源列表又能看清了：每个名称和说明占满整行宽度，状态和开关在下一行。以前文字被挤成每行一个词，开关也被截掉"
+    en: "On a phone, the list of sources in Settings > Scraping is readable again: each name and description uses the full width, with its status and on/off switch on the line below. Before, the text was squeezed to one word a line and the switch was cut off"
+  - type: fix
     label: "RetroDB 的更多地方现在只用键盘就能操作。报告中的列按 Enter 排序，截图的“删除”按钮在 Tab 移到它时才会出现。移除标签或资料库筛选、在更新日志页面按 Load More，或在抓取期间刷新愿望清单，现在都会让你留在原来的位置，而不是回到页面顶部"
     en: "More of RetroDB now works with the keyboard alone. Report columns sort with Enter, and the screenshot Delete button appears when Tab reaches it. Removing a tag or a library filter, pressing Load More on the Changelog, or a wishlist refresh during a scrape now keeps your place instead of sending you back to the top of the page"
   - type: fix

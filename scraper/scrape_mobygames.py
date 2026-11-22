@@ -45,6 +45,9 @@ _LIMIT_SECONDS = 3600
 # A timeout or a server error pauses MobyGames, so a sick server does not
 # make every later game wait out the timeout too.
 _UNAVAILABLE_SECONDS = 600
+# Seconds added to the stated gap: two requests sent exactly 5.0 s apart got a
+# 429 (2026-11-22), since the network's delay differs from one to the next.
+PACE_MARGIN = 0.5
 
 # System folder -> MobyGames platform id, from its /v2/platforms list
 # (fetched 2026-11-21). A folder missing here is not searched.
@@ -129,7 +132,11 @@ def read_limits(response):
     # "0.2;w=1, 720;w=3600": the first entry is the rate per second.
     match = re.match(r'\s*([\d.]+)\s*;\s*w=1\b', headers.get('ratelimit-policy', ''))
     if match and float(match.group(1)) > 0:
-        service_limits.set_pace(service_limits.MOBYGAMES, 1 / float(match.group(1)))
+        service_limits.set_pace(service_limits.MOBYGAMES,
+                                1 / float(match.group(1)) + PACE_MARGIN)
+    # MobyGames counts the gap from its reply: a request 5.7 s after the last
+    # was sent, but 3.6 s after its slow reply, got a 429 (2026-11-22).
+    service_limits.gap_from_now(service_limits.MOBYGAMES)
     if headers.get('ratelimit-remaining', '').strip() == '0':
         service_limits.stop(service_limits.MOBYGAMES,
                             _seconds(headers.get('ratelimit-reset'), _LIMIT_SECONDS))

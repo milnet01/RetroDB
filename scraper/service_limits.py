@@ -59,12 +59,13 @@ UNAVAILABLE = 'unavailable'  # not answering; waiting will help
 # Steam's store documents neither the call nor a limit; about 200 calls in five
 # minutes is the figure usually reported, unchecked, and this keeps within it.
 # MobyGames states its rate in every reply (PASS-59-183); five seconds is what
-# it gave a Hobbyist key on 2026-11-21, used until the first reply says more.
+# it gave a Hobbyist key on 2026-11-21, used until the first reply says more,
+# plus the half-second margin scrape_mobygames.PACE_MARGIN explains.
 _DEFAULT_PACE = {
     SCREENSCRAPER: 0.1,
     RAWG: 0.3,
     IGDB: 0.26,
-    MOBYGAMES: 5.0,
+    MOBYGAMES: 5.5,
     HOWLONGTOBEAT: 1.0,
     STEAM_STORE: 1.5,
 }
@@ -122,6 +123,14 @@ def take_turn(source):
         time.sleep(turn - now)
 
 
+def gap_from_now(source):
+    """Start the next call's gap now, for a service that counts it from the
+    reply (MobyGames, PASS-59-183 §4.2) rather than from when the call left."""
+    with _lock:
+        now = time.monotonic()
+        _next_turn[source] = max(_next_turn.get(source, 0.0), now + _pace.get(source, 0))
+
+
 def set_pace(source, seconds):
     """Use the pace a service states, unless it has since said too fast."""
     with _lock:
@@ -136,8 +145,15 @@ def slow_down(source):
         _pace[source] = min(max(_pace.get(source, 0) * 2, 0.5), SLOWEST_PACE)
 
 
+def clear_stops():
+    """Lift every stop, after keys are saved. The line stays: a call already
+    waiting its turn would otherwise be refused for one sent at once."""
+    with _lock:
+        _stops.clear()
+
+
 def clear():
-    """Forget every stop and pace. For tests, and after a key is changed."""
+    """Forget every stop and pace. For tests."""
     with _lock:
         _pace.clear()
         _pace.update(_DEFAULT_PACE)
