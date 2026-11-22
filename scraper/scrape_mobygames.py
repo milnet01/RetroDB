@@ -199,13 +199,17 @@ def search_games(title, system_folder=None, limit=10):
     # letters, so 'Castlevania%Bloodlines' finds 'Castlevania: Bloodlines'
     # (2026-11-21). A title it files under another name ('Castlevania: The
     # New Generation') is asked once more by its longest word; the scorer
-    # ranks what comes back.
+    # ranks what comes back. A first word in capitals is asked letter by
+    # letter instead: MobyGames files MUSHA as 'M.U.S.H.A.' (2026-11-22).
     words = re.findall(r'\w+', title or '')
     data = _request({'title': '%'.join(words) or title, 'platform': moby_platform,
                      'limit': limit},
                     include=SEARCH_INCLUDE, timeout=_SEARCH_TIMEOUT)
     if data is not None and not data.get('games') and len(words) > 1:
-        data = _request({'title': max(words, key=len), 'platform': moby_platform,
+        first = words[0]
+        retry = ('%'.join(first) if first.isalpha() and first.isupper() and len(first) > 1
+                 else max(words, key=len))
+        data = _request({'title': retry, 'platform': moby_platform,
                          'limit': _WORD_SEARCH_LIMIT},
                         include=SEARCH_INCLUDE, timeout=_SEARCH_TIMEOUT)
     results = []

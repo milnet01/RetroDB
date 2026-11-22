@@ -392,6 +392,25 @@ def test_a_title_is_searched_with_wildcards_then_by_its_longest_word(moby, monke
     assert calls == ['Contra']
 
 
+def test_a_title_starting_with_capitals_is_asked_again_letter_by_letter(moby, monkeypatch):
+    """MobyGames files MUSHA as 'M.U.S.H.A.' (2026-11-22), which neither the
+    whole title nor its longest word finds. A title whose first word is in
+    capitals is asked again with '%' between those letters instead."""
+    calls = []
+
+    def fake_get(url, params=None, **kwargs):
+        calls.append(params['title'])
+        games = [] if params['title'] != 'M%U%S%H%A' else [
+            {'game_id': 7000, 'title': 'M.U.S.H.A.', 'platforms': []}]
+        return Reply({'games': games})
+
+    monkeypatch.setattr(scrape_mobygames, 'http_get', fake_get)
+    found = scrape_mobygames.search_games(
+        'MUSHA: Metallic Uniframe Super Hybrid Armor', 'megadrive')
+    assert [g['name'] for g in found] == ['M.U.S.H.A.']
+    assert calls == ['MUSHA%Metallic%Uniframe%Super%Hybrid%Armor', 'M%U%S%H%A']
+
+
 def test_the_online_check_takes_a_place_in_line(moby, monkeypatch, admin_test_client):
     """MobyGames allows one request per five seconds. The Dashboard's online
     check skipped the line, so a search just after it was refused with 429 and
