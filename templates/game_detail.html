@@ -1041,22 +1041,9 @@
     cursor: help;
 }
 
-.score-badge.score-good {
-    background: rgba(34, 197, 94, 0.15);
-    border-color: var(--neon-green);
-    color: var(--neon-green);
-}
-
 .score-badge.score-mixed {
-    background: rgba(234, 179, 8, 0.15);
     border-color: #eab308;
     color: #eab308;
-}
-
-.score-badge.score-bad {
-    background: rgba(239, 68, 68, 0.15);
-    border-color: var(--neon-red);
-    color: var(--neon-red);
 }
 
 .critic-score {
@@ -1073,28 +1060,14 @@
 /* ============================================== */
 
 .game-fanart-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
     z-index: 0;
-    background-size: cover;
     background-position: center top;
     background-repeat: no-repeat;
-    opacity: 0;
-    transition: opacity 0.5s ease;
     pointer-events: none;
 }
 
 /* Gradient overlay */
 .game-fanart-bg::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
     background: linear-gradient(
         to bottom,
         rgba(10, 14, 20, 0.5) 0%,
@@ -1129,31 +1102,11 @@ body:has(.game-fanart-bg.active)::before {
 /* GAME PAGE LAYOUT - COMPACT */
 /* ============================================== */
 
-/* Title and buttons share a line when they fit, else the buttons wrap below. */
-.game-page-header {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-sm);
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--spacing-lg);
-    position: relative;
-    z-index: 1;
-}
-
 .game-title-row {
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
     flex-wrap: wrap;
-}
-
-.game-page-title {
-    font-family: var(--font-display);
-    font-size: 2rem;
-    color: var(--primary-cyan);
-    text-shadow: 0 0 30px rgba(76, 201, 240, 0.3);
-    margin: 0;
 }
 
 /* Also Known As card: the game's other titles, on the card background so
@@ -1338,11 +1291,6 @@ body:has(.game-fanart-bg.active)::before {
 }
 
 /* PASS-59-91 §4.6 — per-game emulator settings */
-.emu-settings-section {
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-md);
-}
 
 .emu-settings-section[hidden] {
     display: none;
@@ -1384,9 +1332,6 @@ body:has(.game-fanart-bg.active)::before {
 
 /* PASS-59-155 §4.6 — cheats */
 .cheats-section {
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-md);
     margin-bottom: var(--spacing-lg);
 }
 
@@ -1449,11 +1394,6 @@ body:has(.game-fanart-bg.active)::before {
     color: var(--text-secondary);
 }
 
-.versions-section {
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-md);
-}
 
 .versions-table-wrap {
     overflow-x: auto;
@@ -1620,12 +1560,6 @@ body:has(.game-fanart-bg.active)::before {
     font-size: 1rem;
 }
 
-.header-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-sm);
-}
-
 .game-compact-layout {
     position: relative;
     z-index: 1;
@@ -1681,26 +1615,8 @@ body:has(.game-fanart-bg.active)::before {
 
 /* Hero Section - Boxart + Core Info */
 .game-hero {
-    display: flex;
-    gap: var(--spacing-xl);
     background: rgba(20, 25, 35, 0.85);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
     margin-bottom: var(--spacing-lg);
-}
-
-.hero-boxart {
-    flex-shrink: 0;
-    width: 200px;
-}
-
-.game-boxart-image {
-    width: 100%;
-    height: auto;
-    border-radius: var(--radius-md);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .game-boxart-image.clickable {
@@ -1724,11 +1640,6 @@ body:has(.game-fanart-bg.active)::before {
     justify-content: center;
     font-size: 3rem;
     color: var(--text-muted);
-}
-
-/* Boxart 3D Toggle Button */
-.hero-boxart {
-    position: relative;
 }
 
 .boxart-toggle-btn,
@@ -1767,15 +1678,6 @@ body:has(.game-fanart-bg.active)::before {
 .boxart-back-btn {
     left: 10px;
     right: auto;
-}
-
-/* Age Ratings (bottom of hero-info) */
-.hero-age-ratings {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-top: auto;
-    padding-top: var(--spacing-sm);
 }
 
 .hero-rating-item img {
@@ -1823,16 +1725,11 @@ body:has(.game-fanart-bg.active)::before {
 }
 
 .hero-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
     gap: var(--spacing-md);
 }
 
 /* Quick Tags */
 .quick-tags {
-    display: flex;
-    flex-wrap: wrap;
     gap: var(--spacing-xs);
 }
 
@@ -1840,9 +1737,6 @@ body:has(.game-fanart-bg.active)::before {
     padding: 4px 10px;
     font-size: 0.8rem;
     border-radius: var(--radius-sm);
-    background: rgba(76, 201, 240, 0.1);
-    border: 1px solid rgba(76, 201, 240, 0.3);
-    color: var(--text-secondary);
 }
 
 .tag-system { background: rgba(76, 201, 240, 0.15); color: var(--primary-cyan); }
@@ -1853,8 +1747,6 @@ body:has(.game-fanart-bg.active)::before {
 /* Description */
 .hero-description {
     max-width: 75ch;
-    color: var(--text-secondary);
-    line-height: 1.6;
     font-size: 0.95rem;
     max-height: 100px;
     overflow: hidden;
@@ -1867,28 +1759,17 @@ body:has(.game-fanart-bg.active)::before {
 
 /* Key Details */
 .key-details {
-    display: flex;
-    flex-wrap: wrap;
     gap: var(--spacing-md) var(--spacing-xl);
-}
-
-.kd-item {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
 }
 
 .kd-label {
     font-size: 0.7rem;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: var(--text-muted);
 }
 
 .kd-value {
     color: var(--primary-cyan);
     text-decoration: none;
-    font-size: 0.9rem;
 }
 
 .kd-value:hover {
@@ -2237,56 +2118,8 @@ body:has(.game-fanart-bg.active)::before {
     transform: scale(1.1);
 }
 
-/* HLTB Section - page-specific layout */
-.hltb-section {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-sm);
-}
-
-.hltb-search-input {
-    width: 100%;
-    padding: 10px 14px;
-    background: var(--bg-dark);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-md);
-    color: var(--text-primary);
-    font-family: var(--font-primary);
-    font-size: 0.9rem;
-    margin-bottom: var(--spacing-sm);
-}
-
 .hltb-search-input:focus {
-    outline: none;
-    border-color: var(--primary-cyan);
     box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.15);
-}
-
-.btn-hltb {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing-sm);
-    padding: 10px 16px;
-    background: rgba(76, 201, 240, 0.1);
-    border: 1px solid var(--primary-cyan);
-    border-radius: var(--radius-md);
-    color: var(--primary-cyan);
-    font-family: var(--font-primary);
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-}
-
-.btn-hltb:hover {
-    background: rgba(76, 201, 240, 0.2);
-}
-
-.btn-hltb:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
 }
 
 /* Additional HLTB styles in features/hltb.css */
@@ -2340,21 +2173,14 @@ body:has(.game-fanart-bg.active)::before {
 
 /* Bottom Row */
 .bottom-row {
-    display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-lg);
     margin-bottom: var(--spacing-lg);
 }
 
 .bottom-section {
-    flex: 1;
     display: flex;
     flex-direction: column;
     background: rgba(20, 25, 35, 0.85);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-md);
 }
 
 /* The comparison table's cells don't wrap: it gets a line of its own and
@@ -2365,8 +2191,6 @@ body:has(.game-fanart-bg.active)::before {
 }
 
 .section-title-sm {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
     margin-bottom: var(--spacing-sm);
 }
 
@@ -2424,10 +2248,6 @@ body:has(.game-fanart-bg.active)::before {
 
 /* Responsive */
 @media (max-width: 900px) {
-    .game-hero {
-        flex-direction: column;
-        align-items: center;
-    }
     
     .hero-boxart {
         width: 180px;
@@ -2479,7 +2299,6 @@ body:has(.game-fanart-bg.active)::before {
 }
 
 .game-boxart-image {
-    width: 100%;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
 }
@@ -2549,7 +2368,6 @@ body:has(.game-fanart-bg.active)::before {
     font-family: var(--font-heading);
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--text-primary);
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: var(--spacing-md);
@@ -2616,15 +2434,11 @@ body:has(.game-fanart-bg.active)::before {
 .detail-label {
     display: block;
     font-size: 0.7rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 1px;
     margin-bottom: var(--spacing-xs);
 }
 
 .detail-value {
     display: block;
-    color: var(--text-primary);
     font-size: 0.9rem;
 }
 
@@ -2652,8 +2466,6 @@ body:has(.game-fanart-bg.active)::before {
 }
 
 .sort-label {
-    color: var(--text-muted);
-    font-size: 0.85rem;
     margin-right: var(--spacing-xs);
 }
 
@@ -2868,7 +2680,6 @@ body:has(.game-fanart-bg.active)::before {
 
 /* Screenshots */
 .screenshots-grid {
-    display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: var(--spacing-sm);
 }
@@ -3294,20 +3105,11 @@ body:has(.game-fanart-bg.active)::before {
 
 /* Screenshot Modal */
 .modal {
-    display: none;
-    position: fixed;
     z-index: 3000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
     background-color: rgba(0, 0, 0, 0.95);
-    align-items: center;
-    justify-content: center;
 }
 
 .modal.active {
-    display: flex;
     flex-direction: column;
 }
 
@@ -3381,13 +3183,6 @@ body:has(.game-fanart-bg.active)::before {
     font-size: 0.8rem;
 }
 
-/* Edit Modal Styles */
-.edit-section {
-    margin-bottom: var(--spacing-xl);
-    padding-bottom: var(--spacing-lg);
-    border-bottom: 1px solid var(--card-border);
-}
-
 .edit-section:last-of-type {
     border-bottom: none;
     margin-bottom: var(--spacing-md);
@@ -3396,11 +3191,9 @@ body:has(.game-fanart-bg.active)::before {
 .edit-section-title {
     font-size: 1.1rem;
     margin-bottom: var(--spacing-md);
-    color: var(--primary-cyan);
 }
 
 .edit-grid {
-    display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: var(--spacing-md);
 }
@@ -3501,12 +3294,6 @@ body:has(.game-fanart-bg.active)::before {
     margin-top: var(--spacing-lg);
     padding-top: var(--spacing-lg);
     border-top: 1px solid var(--card-border);
-}
-
-.header-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacing-sm);
 }
 
 /* Responsive */
@@ -3622,15 +3409,7 @@ body:has(.game-fanart-bg.active)::before {
 /* Modal Overlay (for HLTB, etc.) */
 .modal-overlay {
     display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.85);
     z-index: 2500;
-    justify-content: center;
-    align-items: center;
 }
 
 .modal-overlay.active {
@@ -3783,8 +3562,6 @@ body:has(.game-fanart-bg.active)::before {
     padding: 0.2rem 0.6rem;
     border-radius: 12px;
     font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
 }
 
 .source-badge.source-es-de { background: rgba(46, 213, 115, 0.2); color: #2ed573; }
