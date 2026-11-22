@@ -551,9 +551,12 @@ async function loadWishlist() {
         const resp = await fetch('/api/wishlist');
         const data = await resp.json();
         if (data.success) {
-            allItems = data.items || [];
+            const items = data.items || [];
+            // The poll repeats every 3 s while a scrape runs; most replies match
+            const same = loadWishlistShown && JSON.stringify(items) === JSON.stringify(allItems);
+            allItems = items;
             loadWishlistShown = true;
-            renderWishlist();
+            if (!same) renderWishlist();
             maybeStartPolling();
         } else {
             loadWishlistFailed(data.error);
@@ -598,7 +601,7 @@ function renderWishlist() {
     grid.style.display = '';
     empty.style.display = 'none';
 
-    grid.innerHTML = filtered.map(renderWishlistCard).join('');
+    DOM.keepFocus(grid, () => { grid.innerHTML = filtered.map(renderWishlistCard).join(''); });
 
     // Refresh the "Scrape All" button's enabled state
     updateScrapeAllBtn();
@@ -652,9 +655,9 @@ function renderWishlistCard(item) {
                 ${date ? '<div class="wishlist-item-date">' + escapeHtml({{ _('Added {date}')|tojson }}.replace('{date}', () => date)) + '</div>' : ''}
             </div>
             <div class="wishlist-item-actions">
-                <button type="button" class="wishlist-action-btn" data-on-click="scrapeWishlistItem" data-args="${actionArgs(item.id)}" title="${escapeHtml(rescrapeTitle)}" ${rescrapeDisabled}>${rescrapeIcon}</button>
-                <button type="button" class="wishlist-action-btn" data-on-click="openEditWishlistModal" data-args="${actionArgs(item.id)}" title="${escapeHtml({{ _('Edit')|tojson }})}">&#9998;</button>
-                <button type="button" class="wishlist-action-btn danger" data-title="${escapeHtml(item.title)}" data-on-click="confirmDeleteWishlistItem" data-args="${actionArgs(item.id, '$this.dataset.title')}" title="${escapeHtml({{ _('Delete')|tojson }})}">&#10005;</button>
+                <button type="button" class="wishlist-action-btn" data-on-click="scrapeWishlistItem" data-args="${actionArgs(item.id)}" title="${escapeHtml(rescrapeTitle)}" ${rescrapeDisabled} aria-label="${escapeHtml(rescrapeTitle)}">${rescrapeIcon}</button>
+                <button type="button" class="wishlist-action-btn" data-on-click="openEditWishlistModal" data-args="${actionArgs(item.id)}" title="${escapeHtml({{ _('Edit')|tojson }})}" aria-label="${escapeHtml({{ _('Edit')|tojson }})}">&#9998;</button>
+                <button type="button" class="wishlist-action-btn danger" data-title="${escapeHtml(item.title)}" data-on-click="confirmDeleteWishlistItem" data-args="${actionArgs(item.id, '$this.dataset.title')}" title="${escapeHtml({{ _('Delete')|tojson }})}" aria-label="${escapeHtml({{ _('Delete')|tojson }})}">&#10005;</button>
             </div>
         </div>
     `;

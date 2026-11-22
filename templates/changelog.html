@@ -207,9 +207,16 @@
             const resp = await fetch('/changelog?partial=1&offset=' + encodeURIComponent(offset));
             if (!resp.ok) throw new Error('HTTP ' + resp.status);
             const html = await resp.text();
+            const shown = container.querySelectorAll('.changelog-entry').length;
             // The wrapper holds the current button; replacing its outerHTML drops
             // the fetched entries + next button into the same spot at the end.
             btn.closest('.changelog-load-more').outerHTML = html;
+            // The button is gone, so focus moves to the first new entry's heading
+            const heading = container.querySelectorAll('.changelog-entry')[shown]?.querySelector('.changelog-version');
+            if (heading) {
+                heading.tabIndex = -1;
+                heading.focus();
+            }
         } catch (err) {
             btn.disabled = false;
             btn.textContent = original;

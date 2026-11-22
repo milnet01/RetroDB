@@ -41,7 +41,7 @@
                    autocomplete="off"
                    aria-label="{{ _('Search games') }}"
                    style="padding-left: 36px;">
-            <button type="button" class="search-clear-btn" id="searchClearBtn" data-on-click="clearSearch" title="{{ _('Clear search') }}">×</button>
+            <button type="button" class="search-clear-btn" id="searchClearBtn" data-on-click="clearSearch" title="{{ _('Clear search') }}" aria-label="{{ _('Clear search') }}">×</button>
         </div>
         {% if ra_supported %}
         <button type="button" class="filter-btn refresh-ra-btn" data-on-click="refreshRAForSystem" data-args='{{ [system.id, system.name]|tojson }}' id="refreshRABtn" title="{{ _('Refresh RetroAchievements data for this system') }}">

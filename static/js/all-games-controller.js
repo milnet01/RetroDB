@@ -789,7 +789,7 @@ const AllGamesController = (function() {
 
         wrapper.innerHTML = `
             <div class="bulk-select-checkbox" style="display: ${checkboxDisplay};">
-                <input type="checkbox" class="game-checkbox" data-game-id="${game.id}" ${isSelected ? 'checked' : ''}
+                <input type="checkbox" class="game-checkbox" aria-label="${esc(t('Select {name}', {name: game.title}))}" data-game-id="${game.id}" ${isSelected ? 'checked' : ''}
                        data-on-click="AllGamesController.toggleGameSelection" data-args="${actionArgs(game.id)}" data-stop>
             </div>
             <div class="game-card-new glass-card${playHtml ? ' has-play' : ''}"
@@ -1269,9 +1269,9 @@ const AllGamesController = (function() {
                         <button type="button" class="filter-tag-remove btn-bare" aria-label="${esc(t('Remove {name}', {name: t('Unscraped')}))}" data-on-click="AllGamesController.toggleUnscrapedFilter">&#215;</button></span>`;
                 }
 
-                tags.innerHTML = html;
+                DOM.keepFocus(tags, () => { tags.innerHTML = html; }, document.getElementById('gameSearch'));
             } else {
-                tags.innerHTML = '';
+                DOM.keepFocus(tags, () => { tags.innerHTML = ''; }, document.getElementById('gameSearch'));
             }
         }
     }

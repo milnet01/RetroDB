@@ -53,6 +53,11 @@
         el = document.createElement('div');
         el.id = 'applyingOverlay';
         el.className = 'applying-overlay';
+        // It blocks the page while it runs, so it is a dialog that holds focus
+        el.setAttribute('role', 'alertdialog');
+        el.setAttribute('aria-modal', 'true');
+        el.setAttribute('aria-labelledby', 'applyingOverlayTitle');
+        el.tabIndex = -1;
         el.innerHTML = `
             <div class="applying-content">
                 <div class="applying-gauge" role="progressbar" aria-valuemin="0"
@@ -66,7 +71,7 @@
                     </svg>
                     <span class="applying-gauge-percent">0%</span>
                 </div>
-                <div class="applying-text">${escapeHtml(t('Applying Metadata'))}</div>
+                <div class="applying-text" id="applyingOverlayTitle">${escapeHtml(t('Applying Metadata'))}</div>
                 <div class="applying-subtext" aria-live="polite"></div>
             </div>
         `;
@@ -94,10 +99,15 @@
     async function run(gameId, gameSource, secondarySelections) {
         if (running) return;
         running = true;
+        const el = overlay();
+        ModalFocusTrap.activate(el, document.activeElement, {autoFocus: false});
+        el.focus();
         try {
             await start(gameId, gameSource, secondarySelections);
         } finally {
             running = false;
+            // Still shown means the page is reloading; leave focus on it
+            if (!el.classList.contains('active')) ModalFocusTrap.deactivate();
         }
     }
 

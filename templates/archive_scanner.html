@@ -806,6 +806,8 @@
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/rom-tools.js') }}?v={{ config.APP_VERSION }}"></script>
 <script nonce="{{ csp_nonce }}">
+const DELETE_LABEL = {{ _('Delete')|tojson }};
+const CREATE_M3U_LABEL = {{ _('Create M3U')|tojson }};
 let currentTaskId = null;
 let isPaused = false;
 let scanResults = [];
@@ -1028,7 +1030,7 @@ function renderExcludedBadges() {
     container.innerHTML = sorted.map(path => `
         <span class="excluded-badge">
             ${escapeHtml(path)}
-            <button type="button" class="remove-badge" data-path="${escapeHtml(path)}" data-on-click="removeExcludedPath" data-args="${actionArgs('$this.dataset.path')}" title="Remove">×</button>
+            <button type="button" class="remove-badge" data-path="${escapeHtml(path)}" data-on-click="removeExcludedPath" data-args="${actionArgs('$this.dataset.path')}" title="Remove" aria-label="Remove">×</button>
         </span>
     `).join('');
 }
@@ -1284,8 +1286,8 @@ function updateResultsTable() {
             <td class="path-cell" title="${escapeHtml(result.path)}" data-path="${escapeHtml(result.path)}" data-on-click="viewArchive" data-args="${actionArgs('$this.dataset.path', String(result.type))}">${escapeHtml(result.relative_path || result.path)}</td>
             <td class="action-cell">
                 <button type="button" class="action-btn" data-path="${escapeHtml(result.path)}" data-on-click="viewArchive" data-args="${actionArgs('$this.dataset.path', String(result.type))}">👁️ View</button>
-                ${result.type === 'unwanted' ? `<button type="button" class="action-btn danger" data-path="${escapeHtml(result.path)}" data-on-click="removeUnwanted" data-args="${actionArgs('$this.dataset.path')}">🗑️</button>` : ''}
-                ${result.type === 'multi-file' ? `<button type="button" class="action-btn" data-path="${escapeHtml(result.path)}" data-on-click="createM3U" data-args="${actionArgs('$this.dataset.path')}">💿</button>` : ''}
+                ${result.type === 'unwanted' ? `<button type="button" class="action-btn danger" data-path="${escapeHtml(result.path)}" data-on-click="removeUnwanted" data-args="${actionArgs('$this.dataset.path')}" aria-label="${escapeHtml(DELETE_LABEL)}" title="${escapeHtml(DELETE_LABEL)}">🗑️</button>` : ''}
+                ${result.type === 'multi-file' ? `<button type="button" class="action-btn" data-path="${escapeHtml(result.path)}" data-on-click="createM3U" data-args="${actionArgs('$this.dataset.path')}" aria-label="${escapeHtml(CREATE_M3U_LABEL)}" title="${escapeHtml(CREATE_M3U_LABEL)}">💿</button>` : ''}
             </td>
         </tr>
     `}).join('');
@@ -1349,7 +1351,7 @@ async function viewArchive(path, type) {
                     const unwanted = isUnwantedFile(file.name);
                     return `
                         <li class="archive-file-item">
-                            <input type="checkbox" id="file_${index}" value="${escapeHtml(file.name)}" ${unwanted ? 'checked' : ''}>
+                            <input type="checkbox" id="file_${index}" value="${escapeHtml(file.name)}" aria-label="${escapeHtml(file.name)}" ${unwanted ? 'checked' : ''}>
                             <span class="file-name ${unwanted ? 'file-unwanted' : ''}">${escapeHtml(file.name)}</span>
                             <span class="file-size">${formatBytes(file.size)}</span>
                         </li>

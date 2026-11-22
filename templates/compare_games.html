@@ -21,7 +21,7 @@
             <img src="{{ '/static/images/boxart/' + games[0].boxart|urlencode if games[0].boxart else '/static/images/placeholder.png' }}"
                  alt="" class="slot-thumb">
             <span class="slot-title">{{ games[0].title }}</span>
-            <button type="button" class="slot-remove" data-on-click="removeSlot" data-args='[0]' title="{{ _('Remove') }}">&times;</button>
+            <button type="button" class="slot-remove" data-on-click="removeSlot" data-args='[0]' title="{{ _('Remove') }}" aria-label="{{ _('Remove') }}">&times;</button>
         </div>
         {% else %}
         <button type="button" class="slot-empty" data-on-click="openSearchModal" data-args='[0]'>
@@ -37,7 +37,7 @@
             <img src="{{ '/static/images/boxart/' + games[1].boxart|urlencode if games[1].boxart else '/static/images/placeholder.png' }}"
                  alt="" class="slot-thumb">
             <span class="slot-title">{{ games[1].title }}</span>
-            <button type="button" class="slot-remove" data-on-click="removeSlot" data-args='[1]' title="{{ _('Remove') }}">&times;</button>
+            <button type="button" class="slot-remove" data-on-click="removeSlot" data-args='[1]' title="{{ _('Remove') }}" aria-label="{{ _('Remove') }}">&times;</button>
         </div>
         {% else %}
         <button type="button" class="slot-empty" data-on-click="openSearchModal" data-args='[1]'>

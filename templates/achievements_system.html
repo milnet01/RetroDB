@@ -158,7 +158,7 @@
                 {% trans system=system.name %}Downloads which achievements you have earned in your {{ system }} games. Run it after playing.{% endtrans %}
             </p>
             {% endif %}
-            <span class="cache-status text-muted ra-tool-note" id="cacheStatus" data-last-synced="{{ system.last_synced or '' }}">
+            <span class="cache-status text-muted ra-tool-note" id="cacheStatus" role="status" data-last-synced="{{ system.last_synced or '' }}">
                 {% if system.last_synced %}{{ _('Loading...') }}{% else %}{{ _('Never synced') }}{% endif %}
             </span>
         </div>
@@ -195,11 +195,11 @@
 <div class="filter-bar glass-panel" style="padding: var(--spacing-md); margin-bottom: var(--spacing-lg);">
     <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-md); align-items: center;">
         <div class="form-group" style="margin: 0; flex: 1; min-width: 200px;">
-            <input type="text" class="form-input" id="gameSearch" placeholder="🔍 {{ _('Search games...') }}" data-on-keyup="filterGames">
+            <input type="text" class="form-input" id="gameSearch" aria-label="{{ _('Search games') }}" placeholder="🔍 {{ _('Search games...') }}" data-on-keyup="filterGames">
         </div>
         {% if ra_configured %}
         <div class="form-group" style="margin: 0;">
-            <select class="form-select" id="progressFilter" data-on-change="filterGames">
+            <select class="form-select" id="progressFilter" aria-label="{{ _('Filter by progress') }}" data-on-change="filterGames">
                 <option value="">{{ _('All Games') }}</option>
                 <option value="in-progress">{{ _('In Progress') }}</option>
                 <option value="not-started">{{ _('Not Started') }}</option>

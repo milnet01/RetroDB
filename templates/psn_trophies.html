@@ -120,24 +120,24 @@
                aria-label="{{ _('Search trophy games') }}"
                autocomplete="off"
                style="padding-left: 36px;">
-        <button type="button" class="search-clear-btn" id="searchClearBtn" title="{{ _('Clear search') }}">×</button>
+        <button type="button" class="search-clear-btn" id="searchClearBtn" title="{{ _('Clear search') }}" aria-label="{{ _('Clear search') }}">×</button>
     </div>
 
     <!-- Platform Filter Buttons -->
     <div class="psn-platform-filters" role="group" aria-label="{{ _('Filter by platform') }}">
-        <button class="platform-filter-btn active" data-platform="all" aria-label="{{ _('All platforms') }}">
+        <button type="button" class="platform-filter-btn active" aria-pressed="true" data-platform="all">
             {{ _('All') }}<span class="filter-count">({{ total_games|format_number }})</span>
         </button>
-        <button class="platform-filter-btn" data-platform="ps5" aria-label="{{ _('PlayStation 5') }}">
+        <button type="button" class="platform-filter-btn" aria-pressed="false" data-platform="ps5">
             PS5<span class="filter-count">({{ platform_counts.ps5|default(0) }})</span>
         </button>
-        <button class="platform-filter-btn" data-platform="ps4" aria-label="{{ _('PlayStation 4') }}">
+        <button type="button" class="platform-filter-btn" aria-pressed="false" data-platform="ps4">
             PS4<span class="filter-count">({{ platform_counts.ps4|default(0) }})</span>
         </button>
-        <button class="platform-filter-btn" data-platform="ps3" aria-label="{{ _('PlayStation 3') }}">
+        <button type="button" class="platform-filter-btn" aria-pressed="false" data-platform="ps3">
             PS3<span class="filter-count">({{ platform_counts.ps3|default(0) }})</span>
         </button>
-        <button class="platform-filter-btn" data-platform="vita" aria-label="{{ _('PlayStation Vita') }}">
+        <button type="button" class="platform-filter-btn" aria-pressed="false" data-platform="vita">
             PS Vita<span class="filter-count">({{ platform_counts.vita|default(0) }})</span>
         </button>
     </div>
@@ -862,6 +862,7 @@
 
 {% block scripts %}
 <script nonce="{{ csp_nonce }}">
+const SELECT_ROW_LABEL = {{ _('Select {name}')|tojson }};
 // ============================================
 // SERVER DATA
 // ============================================
@@ -935,6 +936,7 @@ const PSNTrophyController = (function() {
                 const dataVal = apiVal === 'psvita' ? 'vita' : apiVal;
                 document.querySelectorAll('.platform-filter-btn').forEach(b => {
                     b.classList.toggle('active', b.dataset.platform === dataVal);
+                    b.setAttribute('aria-pressed', b.dataset.platform === dataVal ? 'true' : 'false');
                 });
             }
 
@@ -998,8 +1000,12 @@ const PSNTrophyController = (function() {
     function setupPlatformFilter() {
         document.querySelectorAll('.platform-filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.platform-filter-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.platform-filter-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-pressed', 'false');
+                });
                 btn.classList.add('active');
+                btn.setAttribute('aria-pressed', 'true');
                 const platform = btn.dataset.platform;
                 if (platform && platform !== 'all') {
                     // Map 'vita' to 'psvita' for the API
@@ -1248,7 +1254,7 @@ const PSNTrophyController = (function() {
 
         wrapper.innerHTML =
             '<div class="bulk-select-checkbox" style="display: ' + checkboxDisplay + ';">' +
-                '<input type="checkbox" class="game-checkbox" data-npwr-id="' + escapeHtml(game.npwr_id) + '"' +
+                '<input type="checkbox" class="game-checkbox" aria-label="' + escapeHtml(SELECT_ROW_LABEL.replace('{name}', () => game.title || '')) + '" data-npwr-id="' + escapeHtml(game.npwr_id) + '"' +
                 (isSelected ? ' checked' : '') +
                 ' data-on-click="PSNTrophyController.toggleGameSelection" data-args="' + actionArgs(String(game.npwr_id)) + '" data-stop>' +
             '</div>' +

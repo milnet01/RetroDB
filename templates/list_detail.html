@@ -62,7 +62,7 @@
                         <span class="list-game-system">{{ game.system_name or '' }}</span>
                     </td>
                     <td>
-                        <button type="button" class="list-action-btn danger" data-title="{{ game.title }}" data-on-click="confirmRemoveGame" data-args='[{{ game.id|tojson }}, "$this.dataset.title"]' title="{{ _('Remove from list') }}">&#10005;</button>
+                        <button type="button" class="list-action-btn danger" data-title="{{ game.title }}" data-on-click="confirmRemoveGame" data-args='[{{ game.id|tojson }}, "$this.dataset.title"]' title="{{ _('Remove from list') }}" aria-label="{{ _('Remove from list') }}">&#10005;</button>
                     </td>
                 </tr>
                 {% endfor %}

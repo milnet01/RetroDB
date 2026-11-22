@@ -397,8 +397,10 @@
     cursor: pointer;
     padding: 0 4px;
     line-height: 1;
+    /* Hidden, not just transparent, so Tab skips it while the box is empty */
     opacity: 0;
-    transition: opacity 0.2s, color 0.2s;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s, color 0.2s;
     z-index: 1;
 }
 
@@ -408,6 +410,7 @@
 
 .search-box-integrated:has(.search-input-integrated:not(:placeholder-shown)) .search-clear-btn {
     opacity: 1;
+    visibility: visible;
 }
 
 .search-input-integrated:focus {

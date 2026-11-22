@@ -125,6 +125,7 @@
         } catch (err) {
             if (signal.aborted) return;
             list.innerHTML = `<div class="global-search-empty" role="presentation">${escapeHtml(t('Search failed. Try again.'))}</div>`;
+            status.textContent = t('Search failed. Try again.');
             open();
         }
     }

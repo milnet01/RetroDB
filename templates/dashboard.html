@@ -26,7 +26,7 @@
     <span class="api-warning-icon">⚠️</span>
     <span class="api-warning-text">{{ _('One or more configured APIs are offline') }}</span>
     <a href="{{ url_for('settings.settings') }}" class="api-warning-link">{{ _('Check Settings →') }}</a>
-    <button type="button" class="api-warning-close" data-on-click="hideParent" data-args='["$this"]'>✕</button>
+    <button type="button" class="api-warning-close" data-on-click="hideParent" data-args='["$this"]' aria-label="{{ _('Close') }}">✕</button>
 </div>
 
 {% if current_user and current_user.role == 'admin' %}

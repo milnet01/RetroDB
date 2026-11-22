@@ -286,6 +286,7 @@ void main() {
     _createCanvas(id, gl = false) {
         const canvas = document.createElement('canvas');
         canvas.id = id;
+        canvas.setAttribute('aria-hidden', 'true');  // background decoration
         canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:-3;pointer-events:none;';
         document.body.appendChild(canvas);
         this._canvas = canvas;

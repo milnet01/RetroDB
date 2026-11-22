@@ -1575,7 +1575,7 @@ function addRegionOption() {
     const badge = document.createElement('span');
     badge.className = 'badge badge-info';
     badge.style.cssText = 'display:inline-flex;align-items:center;gap:4px;padding:4px 10px;font-size:0.85rem;';
-    badge.innerHTML = `${escapeHtml(val)}<button type="button" class="btn-icon-only" data-region="${escapeHtml(val)}" data-on-click="removeRegionOption" data-args="${actionArgs('$this', '$this.dataset.region')}" title="${escapeHtml({{ _('Remove')|tojson }})}" style="background:none;border:none;color:var(--neon-red);cursor:pointer;font-size:1rem;padding:0 2px;">&times;</button>`;
+    badge.innerHTML = `${escapeHtml(val)}<button type="button" class="btn-icon-only" data-region="${escapeHtml(val)}" data-on-click="removeRegionOption" data-args="${actionArgs('$this', '$this.dataset.region')}" title="${escapeHtml({{ _('Remove')|tojson }})}" style="background:none;border:none;color:var(--neon-red);cursor:pointer;font-size:1rem;padding:0 2px;" aria-label="${escapeHtml({{ _('Remove')|tojson }})}">&times;</button>`;
     container.appendChild(badge);
     // Also add to default region dropdown
     const sel = document.getElementById('defaultRegionSelect');
@@ -2822,7 +2822,7 @@ async function loadDropdownOptions(category, containerId) {
             container.innerHTML = data.options.map(opt => `
                 <span class="option-tag">
                     ${escapeHtml(opt.value)}
-                    <button type="button" class="delete-btn" data-on-click="deleteDropdownOption" data-args="${actionArgs(opt.id, String(category), String(containerId))}" title="Delete">×</button>
+                    <button type="button" class="delete-btn" data-on-click="deleteDropdownOption" data-args="${actionArgs(opt.id, String(category), String(containerId))}" title="Delete" aria-label="Delete">×</button>
                 </span>
             `).join('');
         } else {
@@ -3647,7 +3647,7 @@ async function loadLogFiles() {
                             <button type="button" data-on-click="downloadLogFile" data-args="${actionArgs(String(file.filename))}" class="btn btn-sm btn-primary">
                                 📥 ${escapeHtml({{ _('Download')|tojson }})}
                             </button>
-                            <button type="button" data-on-click="deleteLogFile" data-args="${actionArgs(String(file.filename))}" class="btn btn-sm btn-danger">
+                            <button type="button" data-on-click="deleteLogFile" data-args="${actionArgs(String(file.filename))}" class="btn btn-sm btn-danger" title="${escapeHtml({{ _('Delete')|tojson }})}" aria-label="${escapeHtml({{ _('Delete')|tojson }})}">
                                 🗑️
                             </button>
                         </td>

@@ -881,7 +881,7 @@ const UnifiedToastController = {
                     </div>
                 </div>
                 <div class="toast-controls">
-                    <button class="toast-btn cancel" data-toast-action="cancel-ra-queued" data-ra-queue-id="${this.escapeHtml(String(item.id))}" title="${this.escapeHtml(t('Remove from queue'))}">
+                    <button class="toast-btn cancel" data-toast-action="cancel-ra-queued" data-ra-queue-id="${this.escapeHtml(String(item.id))}" title="${this.escapeHtml(t('Remove from queue'))}" aria-label="${this.escapeHtml(t('Remove from queue'))}">
                         ✕
                     </button>
                 </div>
@@ -1094,7 +1094,7 @@ const UnifiedToastController = {
                         <span data-pause-icon>${isPaused ? '▶️' : '⏸️'}</span>
                     </button>
                     ` : ''}
-                    <button class="toast-btn cancel" data-toast-action="cancel" data-toast-type="${this.escapeHtml(type)}" title="${this.escapeHtml(t('Cancel'))}">
+                    <button class="toast-btn cancel" data-toast-action="cancel" data-toast-type="${this.escapeHtml(type)}" title="${this.escapeHtml(t('Cancel'))}" aria-label="${this.escapeHtml(t('Cancel'))}">
                         ✕
                     </button>
                 </div>

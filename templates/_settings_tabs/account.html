@@ -500,7 +500,7 @@
             <input type="text" id="tzSearchInput" class="form-input"
                    placeholder="{{ _('Search timezones...') }}" autocomplete="off"
                    style="margin-bottom: var(--spacing-sm);">
-            <select id="tzSelect" class="form-input" size="8" style="font-family: var(--font-mono); font-size: 0.85rem;"></select>
+            <select id="tzSelect" class="form-input" size="8" aria-label="{{ _('Timezone') }}" style="font-family: var(--font-mono); font-size: 0.85rem;"></select>
             <span class="field-tip">
                 {{ _('Browser detected:') }} <span id="detectedTimezone"></span>
                 — <a href="#" data-on-click="useDetectedTimezone" data-prevent style="color: var(--primary-cyan);">{{ _('Use detected') }}</a>
@@ -580,9 +580,9 @@
                     </td>
                     <td>
                         <div style="display: flex; gap: 0.5rem;">
-                            <button type="button" class="btn btn-secondary btn-sm" data-on-click="editUser" data-args='[{{ user.id|tojson }}]' title="{{ _('Edit') }}">✏️</button>
+                            <button type="button" class="btn btn-secondary btn-sm" data-on-click="editUser" data-args='[{{ user.id|tojson }}]' title="{{ _('Edit') }}" aria-label="{{ _('Edit') }}">✏️</button>
                             {% if user.id != current_user.id %}
-                            <button type="button" class="btn btn-danger btn-sm" data-username="{{ user.username }}" data-on-click="deleteUser" data-args='[{{ user.id|tojson }}, "$this.dataset.username"]' title="{{ _('Delete') }}">🗑️</button>
+                            <button type="button" class="btn btn-danger btn-sm" data-username="{{ user.username }}" data-on-click="deleteUser" data-args='[{{ user.id|tojson }}, "$this.dataset.username"]' title="{{ _('Delete') }}" aria-label="{{ _('Delete') }}">🗑️</button>
                             {% endif %}
                         </div>
                     </td>

@@ -526,7 +526,7 @@
                     <div class="screenshot-thumb" data-filename="{{ ss.strip() }}">
                         <img src="{{ url_for('static', filename='images/screenshots/' + ss.strip()) }}"
                              alt="{{ _('Screenshot %(n)s', n=loop.index) }}" loading="lazy" decoding="async">
-                        <button type="button" class="screenshot-delete-btn" data-filename="{{ ss.strip() }}" data-on-click="deleteScreenshot" data-args='["$this.dataset.filename"]' data-stop title="{{ _('Delete screenshot') }}">×</button>
+                        <button type="button" class="screenshot-delete-btn" data-filename="{{ ss.strip() }}" data-on-click="deleteScreenshot" data-args='["$this.dataset.filename"]' data-stop title="{{ _('Delete screenshot') }}" aria-label="{{ _('Delete screenshot') }}">×</button>
                     </div>
                     {% endfor %}
                 </div>
@@ -591,7 +591,8 @@
                        id="hltbSearchQuery"
                        class="hltb-search-input"
                        value="{{ game.title }}"
-                       placeholder="{{ _('Search game title...') }}">
+                       placeholder="{{ _('Search game title...') }}"
+                       aria-label="{{ _('Game title to look up') }}">
 
                 <button type="button" class="btn-hltb" id="hltbLookupBtn" data-on-click="lookupHLTB">
                     🔍 {{ _('Lookup HLTB') }}
@@ -691,7 +692,7 @@
                 <div class="ed-row">
                     <span class="ed-label">{{ _('File:') }}</span>
                     <span class="ed-value mono" id="currentFilename">{{ game.rom_path.split('/')[-1] }}</span>
-                    <button type="button" class="btn-rename" data-on-click="openRenameModal" title="{{ _('Rename ROM file') }}">✏️</button>
+                    <button type="button" class="btn-rename" data-on-click="openRenameModal" title="{{ _('Rename ROM file') }}" aria-label="{{ _('Rename ROM file') }}">✏️</button>
                 </div>
                 <div class="ed-row">
                     <span class="ed-label">{{ _('Path:') }}</span>
@@ -2195,8 +2196,14 @@ body:has(.game-fanart-bg.active)::before {
     border-color: var(--primary-cyan);
 }
 
-.screenshot-thumb:hover .screenshot-delete-btn {
+/* Shown on hover, to the keyboard, and always on a touch screen (§11 "Keyboard") */
+.screenshot-thumb:hover .screenshot-delete-btn,
+.screenshot-thumb:focus-within .screenshot-delete-btn {
     opacity: 1;
+}
+
+@media (hover: none) {
+    .screenshot-delete-btn { opacity: 1; }
 }
 
 .screenshot-thumb img {
@@ -4124,12 +4131,14 @@ function renderGameStructureTags() {
     const container = document.getElementById('gameStructureContainer');
     if (!container) return;
 
-    container.innerHTML = selectedGameStructures.map(structure => `
-        <span class="genre-tag">
-            ${escapeHtml(structure)}
-            <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', structure))}" data-value="${escapeHtml(structure)}" data-on-click="removeGameStructure" data-args="${actionArgs('$this.dataset.value')}">×</button>
-        </span>
-    `).join('');
+    DOM.keepFocus(container, () => {
+        container.innerHTML = selectedGameStructures.map(structure => `
+            <span class="genre-tag">
+                ${escapeHtml(tField(structure))}
+                <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', () => tField(structure)))}" data-value="${escapeHtml(structure)}" data-on-click="removeGameStructure" data-args="${actionArgs('$this.dataset.value')}">×</button>
+            </span>
+        `).join('');
+    }, container.parentElement.querySelector('select, input:not([type="hidden"])'));
 
     // Update hidden input
     const hiddenInput = document.getElementById('edit_game_structure_hidden');
@@ -4315,12 +4324,14 @@ function renderPerspectiveTags() {
     const container = document.getElementById('perspectiveContainer');
     if (!container) return;
 
-    container.innerHTML = selectedPerspectives.map(perspective => `
-        <span class="genre-tag">
-            ${escapeHtml(perspective)}
-            <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', perspective))}" data-value="${escapeHtml(perspective)}" data-on-click="removePerspective" data-args="${actionArgs('$this.dataset.value')}">×</button>
-        </span>
-    `).join('');
+    DOM.keepFocus(container, () => {
+        container.innerHTML = selectedPerspectives.map(perspective => `
+            <span class="genre-tag">
+                ${escapeHtml(tField(perspective))}
+                <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', () => tField(perspective)))}" data-value="${escapeHtml(perspective)}" data-on-click="removePerspective" data-args="${actionArgs('$this.dataset.value')}">×</button>
+            </span>
+        `).join('');
+    }, container.parentElement.querySelector('select, input:not([type="hidden"])'));
 
     const hiddenInput = document.getElementById('edit_perspective_hidden');
     if (hiddenInput) {
@@ -4395,12 +4406,14 @@ function renderDimensionTags() {
     const container = document.getElementById('dimensionContainer');
     if (!container) return;
 
-    container.innerHTML = selectedDimensions.map(dimension => `
-        <span class="genre-tag">
-            ${escapeHtml(dimension)}
-            <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', dimension))}" data-value="${escapeHtml(dimension)}" data-on-click="removeDimension" data-args="${actionArgs('$this.dataset.value')}">×</button>
-        </span>
-    `).join('');
+    DOM.keepFocus(container, () => {
+        container.innerHTML = selectedDimensions.map(dimension => `
+            <span class="genre-tag">
+                ${escapeHtml(tField(dimension))}
+                <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', () => tField(dimension)))}" data-value="${escapeHtml(dimension)}" data-on-click="removeDimension" data-args="${actionArgs('$this.dataset.value')}">×</button>
+            </span>
+        `).join('');
+    }, container.parentElement.querySelector('select, input:not([type="hidden"])'));
 
     const hiddenInput = document.getElementById('edit_dimension_hidden');
     if (hiddenInput) {
@@ -4647,12 +4660,14 @@ function renderGenreTags() {
     const container = document.getElementById('genreContainer');
     if (!container) return;
     
-    container.innerHTML = selectedGenres.map(genre => `
-        <span class="genre-tag">
-            ${escapeHtml(genre)}
-            <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', genre))}" data-value="${escapeHtml(genre)}" data-on-click="removeGenre" data-args="${actionArgs('$this.dataset.value')}">×</button>
-        </span>
-    `).join('');
+    DOM.keepFocus(container, () => {
+        container.innerHTML = selectedGenres.map(genre => `
+            <span class="genre-tag">
+                ${escapeHtml(tField(genre))}
+                <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', () => tField(genre)))}" data-value="${escapeHtml(genre)}" data-on-click="removeGenre" data-args="${actionArgs('$this.dataset.value')}">×</button>
+            </span>
+        `).join('');
+    }, container.parentElement.querySelector('select, input:not([type="hidden"])'));
     
     // Update hidden input
     const hiddenInput = document.getElementById('edit_genre_hidden');
@@ -4731,12 +4746,14 @@ function renderModesTags() {
     const container = document.getElementById('modesContainer');
     if (!container) return;
 
-    container.innerHTML = selectedModes.map(mode => `
-        <span class="genre-tag">
-            ${escapeHtml(mode)}
-            <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', mode))}" data-value="${escapeHtml(mode)}" data-on-click="removeMode" data-args="${actionArgs('$this.dataset.value')}">×</button>
-        </span>
-    `).join('');
+    DOM.keepFocus(container, () => {
+        container.innerHTML = selectedModes.map(mode => `
+            <span class="genre-tag">
+                ${escapeHtml(tField(mode))}
+                <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', () => tField(mode)))}" data-value="${escapeHtml(mode)}" data-on-click="removeMode" data-args="${actionArgs('$this.dataset.value')}">×</button>
+            </span>
+        `).join('');
+    }, container.parentElement.querySelector('select, input:not([type="hidden"])'));
 
     // Update hidden input
     const hiddenInput = document.getElementById('edit_modes_hidden');
@@ -4815,12 +4832,14 @@ function renderControllerTags() {
     const container = document.getElementById('controllerContainer');
     if (!container) return;
     
-    container.innerHTML = selectedControllers.map(controller => `
-        <span class="controller-tag">
-            ${escapeHtml(controller)}
-            <button type="button" class="remove-controller" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', controller))}" data-value="${escapeHtml(controller)}" data-on-click="removeController" data-args="${actionArgs('$this.dataset.value')}">×</button>
-        </span>
-    `).join('');
+    DOM.keepFocus(container, () => {
+        container.innerHTML = selectedControllers.map(controller => `
+            <span class="controller-tag">
+                ${escapeHtml(tField(controller))}
+                <button type="button" class="remove-controller" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', () => tField(controller)))}" data-value="${escapeHtml(controller)}" data-on-click="removeController" data-args="${actionArgs('$this.dataset.value')}">×</button>
+            </span>
+        `).join('');
+    }, container.parentElement.querySelector('select, input:not([type="hidden"])'));
     
     // Update hidden input
     const hiddenInput = document.getElementById('edit_controller_hidden');
@@ -4943,12 +4962,14 @@ function renderSaveTypeTags() {
     const container = document.getElementById('saveTypeContainer');
     if (!container) return;
 
-    container.innerHTML = selectedSaveTypes.map(saveType => `
-        <span class="genre-tag">
-            ${escapeHtml(saveType)}
-            <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', saveType))}" data-value="${escapeHtml(saveType)}" data-on-click="removeSaveType" data-args="${actionArgs('$this.dataset.value')}">×</button>
-        </span>
-    `).join('');
+    DOM.keepFocus(container, () => {
+        container.innerHTML = selectedSaveTypes.map(saveType => `
+            <span class="genre-tag">
+                ${escapeHtml(tField(saveType))}
+                <button type="button" class="remove-genre" aria-label="${escapeHtml({{ _('Remove {name}')|tojson }}.replace('{name}', () => tField(saveType)))}" data-value="${escapeHtml(saveType)}" data-on-click="removeSaveType" data-args="${actionArgs('$this.dataset.value')}">×</button>
+            </span>
+        `).join('');
+    }, container.parentElement.querySelector('select, input:not([type="hidden"])'));
 
     // Update hidden input
     const hiddenInput = document.getElementById('edit_save_type_hidden');

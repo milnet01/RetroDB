@@ -370,8 +370,8 @@ function renderLists() {
                         ${date ? `<span class="list-card-date">${date}</span>` : ''}
                     </div>
                     <div class="list-card-actions">
-                        <button type="button" class="list-action-btn" data-on-click="openEditListModal" data-args="${actionArgs(list.id)}" title="Edit list">&#9998;</button>
-                        <button type="button" class="list-action-btn danger" data-name="${escapeHtml(list.name)}" data-on-click="confirmDeleteList" data-args="${actionArgs(list.id, '$this.dataset.name')}" title="Delete list">&#10005;</button>
+                        <button type="button" class="list-action-btn" data-on-click="openEditListModal" data-args="${actionArgs(list.id)}" title="Edit list" aria-label="Edit list">&#9998;</button>
+                        <button type="button" class="list-action-btn danger" data-name="${escapeHtml(list.name)}" data-on-click="confirmDeleteList" data-args="${actionArgs(list.id, '$this.dataset.name')}" title="Delete list" aria-label="Delete list">&#10005;</button>
                     </div>
                 </div>
             </div>

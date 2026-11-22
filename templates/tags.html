@@ -437,8 +437,8 @@ function renderTags() {
             <div class="tag-card-top">
                 <button type="button" class="tag-pill" aria-controls="tagGamesPanel" style="background: ${escapeHtml(tag.color || '#4cc9f0')};">${escapeHtml(tag.name)}</button>
                 <div class="tag-card-actions" data-on-click data-stop>
-                    <button type="button" class="tag-action-btn" data-on-click="openEditTagModal" data-args="${actionArgs(tag.id)}" title="${escapeHtml({{ _('Edit tag')|tojson }})}">&#9998;</button>
-                    <button type="button" class="tag-action-btn danger" data-name="${escapeHtml(tag.name)}" data-on-click="confirmDeleteTag" data-args="${actionArgs(tag.id, '$this.dataset.name')}" title="${escapeHtml({{ _('Delete tag')|tojson }})}">&#10005;</button>
+                    <button type="button" class="tag-action-btn" data-on-click="openEditTagModal" data-args="${actionArgs(tag.id)}" title="${escapeHtml({{ _('Edit tag')|tojson }})}" aria-label="${escapeHtml({{ _('Edit tag')|tojson }})}">&#9998;</button>
+                    <button type="button" class="tag-action-btn danger" data-name="${escapeHtml(tag.name)}" data-on-click="confirmDeleteTag" data-args="${actionArgs(tag.id, '$this.dataset.name')}" title="${escapeHtml({{ _('Delete tag')|tojson }})}" aria-label="${escapeHtml({{ _('Delete tag')|tojson }})}">&#10005;</button>
                 </div>
             </div>
             <div class="tag-card-count">${formatNumber(tag.game_count || 0)}</div>

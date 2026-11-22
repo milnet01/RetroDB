@@ -38,6 +38,8 @@
 </head>
 <body data-mist-enabled="{{ user_settings.get('enable_mist_effect', true)|lower }}">
     <a href="#main-content" class="skip-link">{{ _('Skip to main content') }}</a>
+    {# Present from the start: a live region added at the moment it speaks is often not read (Notifications.announce) #}
+    <div id="a11y-progress-announce" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></div>
     <div class="app-container">
         <!-- Sidebar Navigation -->
         {% if not setup_mode %}
@@ -1071,7 +1073,7 @@
                             <label for="gemSortTitle">{{ _('Sort Title') }}</label>
                             <div class="gem-field-row">
                                 <input type="text" id="gemSortTitle" placeholder="{{ _('Auto-generated from title') }}">
-                                <button type="button" class="btn btn-secondary btn-sm" data-on-click="generateModalSortTitle">⚡</button>
+                                <button type="button" class="btn btn-secondary btn-sm" data-on-click="generateModalSortTitle" title="{{ _('Generate from title') }}" aria-label="{{ _('Generate from title') }}">⚡</button>
                             </div>
                         </div>
                         <div class="gem-field">
@@ -1104,7 +1106,7 @@
                             <div style="display:flex; gap:4px; align-items:center;">
                                 <input type="text" id="gemReleaseDate" placeholder="{{ _('YYYY-MM-DD') }}" style="flex:1;">
                                 <input type="date" id="gemReleaseDatePicker" tabindex="-1" aria-hidden="true" style="position:absolute; opacity:0; width:0; height:0; pointer-events:none;">
-                                <button type="button" class="btn btn-sm btn-secondary" data-on-click="openDatePicker" data-args='["gemReleaseDatePicker", "gemReleaseDate"]' title="{{ _('Pick date') }}" style="padding:4px 8px; font-size:1rem;">📅</button>
+                                <button type="button" class="btn btn-sm btn-secondary" data-on-click="openDatePicker" data-args='["gemReleaseDatePicker", "gemReleaseDate"]' title="{{ _('Pick date') }}" style="padding:4px 8px; font-size:1rem;" aria-label="{{ _('Pick date') }}">📅</button>
                             </div>
                         </div>
                         <div class="gem-field">

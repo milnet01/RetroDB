@@ -127,7 +127,7 @@ const NormalizationManager = {
             html += `<tr data-idx="${idx}" style="${borderStyle} ${isHidden ? 'display: none;' : ''}">`;
 
             // Checkbox (row-selection checkboxes are standard table UI, not boolean toggles)
-            html += `<td><input type="checkbox" class="norm-row-check" data-idx="${idx}" data-on-change="NormalizationManager.updateApplyButton" ${item.needs_change ? 'checked' : ''}></td>`;
+            html += `<td><input type="checkbox" class="norm-row-check" aria-label="${escapeHtml(t('Select {name}', {name: item.value}))}" data-idx="${idx}" data-on-change="NormalizationManager.updateApplyButton" ${item.needs_change ? 'checked' : ''}></td>`;
 
             // Current value — escapeHtml from utils.js per security standards
             html += `<td><code>${escapeHtml(item.value)}</code></td>`;

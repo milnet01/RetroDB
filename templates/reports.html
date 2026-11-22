@@ -61,6 +61,19 @@
     color: var(--primary-cyan);
 }
 
+/* The header's click target is a real button (design standards §11 "Keyboard") */
+.data-table th.sortable .sort-btn {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    text-align: inherit;
+    text-transform: inherit;
+    letter-spacing: inherit;
+    cursor: pointer;
+}
+
 .data-table th.sortable.active {
     color: var(--primary-cyan);
 }
@@ -285,12 +298,12 @@
 
 <!-- Report Tabs -->
 <div class="report-tabs">
-    <button type="button" class="report-tab active" data-on-click="switchTab" data-args='["naming"]' id="tab-naming">
+    <button type="button" class="report-tab active" aria-pressed="true" data-on-click="switchTab" data-args='["naming"]' id="tab-naming">
         <span class="tab-icon">📝</span>
         <span class="tab-label">{{ _('Non-Standard Names') }}</span>
         <span class="tab-count" id="count-naming">-</span>
     </button>
-    <button type="button" class="report-tab" data-on-click="switchTab" data-args='["mismatch"]' id="tab-mismatch">
+    <button type="button" class="report-tab" aria-pressed="false" data-on-click="switchTab" data-args='["mismatch"]' id="tab-mismatch">
         <span class="tab-icon">⚠️</span>
         <span class="tab-label">{{ _('Name Mismatches') }}</span>
         <span class="tab-count" id="count-mismatch">-</span>
@@ -359,15 +372,15 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th class="sortable" style="width: 100px;" data-sort="system" data-tab="naming" data-on-click="sortColumn" data-args='["naming", "system", "$event"]'>
-                        {{ _('System') }} <span class="sort-indicator"></span>
+                    <th class="sortable" style="width: 100px;" data-sort="system" data-tab="naming" aria-sort="none">
+                        <button type="button" class="sort-btn" data-on-click="sortColumn" data-args='["naming", "system", "$event"]'>{{ _('System') }} <span class="sort-indicator" aria-hidden="true"></span></button>
                     </th>
-                    <th class="sortable active" data-sort="filename" data-tab="naming" data-on-click="sortColumn" data-args='["naming", "filename", "$event"]'>
-                        {{ _('Current Filename') }} <span class="sort-indicator">▲</span>
+                    <th class="sortable active" data-sort="filename" data-tab="naming" aria-sort="ascending">
+                        <button type="button" class="sort-btn" data-on-click="sortColumn" data-args='["naming", "filename", "$event"]'>{{ _('Current Filename') }} <span class="sort-indicator" aria-hidden="true">▲</span></button>
                     </th>
                     <th style="width: 150px;">{{ _('Issues') }}</th>
-                    <th class="sortable" data-sort="suggested" data-tab="naming" data-on-click="sortColumn" data-args='["naming", "suggested", "$event"]'>
-                        {{ _('Suggested Name') }} <span class="sort-indicator"></span>
+                    <th class="sortable" data-sort="suggested" data-tab="naming" aria-sort="none">
+                        <button type="button" class="sort-btn" data-on-click="sortColumn" data-args='["naming", "suggested", "$event"]'>{{ _('Suggested Name') }} <span class="sort-indicator" aria-hidden="true"></span></button>
                     </th>
                     <th style="width: 100px;">{{ _('Actions') }}</th>
                 </tr>
@@ -436,20 +449,20 @@
         <table class="data-table">
             <thead>
                 <tr>
-                    <th class="sortable" style="width: 100px;" data-sort="system" data-tab="mismatch" data-on-click="sortColumn" data-args='["mismatch", "system", "$event"]'>
-                        {{ _('System') }} <span class="sort-indicator"></span>
+                    <th class="sortable" style="width: 100px;" data-sort="system" data-tab="mismatch" aria-sort="none">
+                        <button type="button" class="sort-btn" data-on-click="sortColumn" data-args='["mismatch", "system", "$event"]'>{{ _('System') }} <span class="sort-indicator" aria-hidden="true"></span></button>
                     </th>
-                    <th class="sortable active" data-sort="filename" data-tab="mismatch" data-on-click="sortColumn" data-args='["mismatch", "filename", "$event"]'>
-                        {{ _('Current Filename') }} <span class="sort-indicator">▲</span>
+                    <th class="sortable active" data-sort="filename" data-tab="mismatch" aria-sort="ascending">
+                        <button type="button" class="sort-btn" data-on-click="sortColumn" data-args='["mismatch", "filename", "$event"]'>{{ _('Current Filename') }} <span class="sort-indicator" aria-hidden="true">▲</span></button>
                     </th>
-                    <th class="sortable" data-sort="scraped_title" data-tab="mismatch" data-on-click="sortColumn" data-args='["mismatch", "scraped_title", "$event"]'>
-                        {{ _('Scraped Title') }} <span class="sort-indicator"></span>
+                    <th class="sortable" data-sort="scraped_title" data-tab="mismatch" aria-sort="none">
+                        <button type="button" class="sort-btn" data-on-click="sortColumn" data-args='["mismatch", "scraped_title", "$event"]'>{{ _('Scraped Title') }} <span class="sort-indicator" aria-hidden="true"></span></button>
                     </th>
-                    <th class="sortable" style="width: 100px;" data-sort="region" data-tab="mismatch" data-on-click="sortColumn" data-args='["mismatch", "region", "$event"]'>
-                        {{ _('Region') }} <span class="sort-indicator"></span>
+                    <th class="sortable" style="width: 100px;" data-sort="region" data-tab="mismatch" aria-sort="none">
+                        <button type="button" class="sort-btn" data-on-click="sortColumn" data-args='["mismatch", "region", "$event"]'>{{ _('Region') }} <span class="sort-indicator" aria-hidden="true"></span></button>
                     </th>
-                    <th class="sortable" style="width: 80px;" data-sort="year" data-tab="mismatch" data-on-click="sortColumn" data-args='["mismatch", "year", "$event"]'>
-                        {{ _('Year') }} <span class="sort-indicator"></span>
+                    <th class="sortable" style="width: 80px;" data-sort="year" data-tab="mismatch" aria-sort="none">
+                        <button type="button" class="sort-btn" data-on-click="sortColumn" data-args='["mismatch", "year", "$event"]'>{{ _('Year') }} <span class="sort-indicator" aria-hidden="true"></span></button>
                     </th>
                     <th style="width: 120px;">{{ _('Mismatch') }}</th>
                     <th style="width: 100px;">{{ _('Actions') }}</th>
@@ -540,6 +553,8 @@
 
 {% block scripts %}
 <script nonce="{{ csp_nonce }}">
+const VIEW_LABEL = {{ _('View')|tojson }};
+const RENAME_LABEL = {{ _('Rename ROM file')|tojson }};
 let namingIssues = [];
 let mismatchIssues = [];
 let allSystems = [];
@@ -723,10 +738,14 @@ function updateLastScanIndicator(timestamp) {
 
 // Tab switching
 function switchTab(tab) {
-    document.querySelectorAll('.report-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.report-tab').forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-pressed', 'false');
+    });
     document.querySelectorAll('.report-panel').forEach(p => p.classList.remove('active'));
 
     document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('tab-' + tab).setAttribute('aria-pressed', 'true');
     document.getElementById('panel-' + tab).classList.add('active');
 
     // Persist active tab
@@ -934,6 +953,8 @@ function updateSortIndicators(tab) {
         const indicator = header.querySelector('.sort-indicator');
         const idx = sorts.findIndex(s => s.column === col);
 
+        header.setAttribute('aria-sort', idx === 0
+            ? (sorts[0].direction === 'asc' ? 'ascending' : 'descending') : 'none');
         if (idx !== -1) {
             header.classList.add('active');
             const arrow = sorts[idx].direction === 'asc' ? '▲' : '▼';
@@ -984,8 +1005,8 @@ function renderNamingTable(items) {
             <td>${(item.issues || []).map(i => `<span class="issue-badge ${escapeHtml(i)}">${escapeHtml(formatIssue(i))}</span>`).join(' ')}</td>
             <td class="suggested-name" title="${escapeHtml(item.suggested || '')}">${escapeHtml(item.suggested || '-')}</td>
             <td class="action-cell">
-                <button type="button" class="action-btn" data-on-click="viewGame" data-args="${actionArgs(item.game_id)}">👁️</button>
-                ${CAN_RENAME && item.suggested ? `<button type="button" class="action-btn rename" data-game-id="${item.game_id}" data-filename="${escapeHtml(item.filename)}" data-suggested="${escapeHtml(item.suggested)}">✏️</button>` : ''}
+                <button type="button" class="action-btn" data-on-click="viewGame" data-args="${actionArgs(item.game_id)}" title="${escapeHtml(VIEW_LABEL)}" aria-label="${escapeHtml(VIEW_LABEL)}">👁️</button>
+                ${CAN_RENAME && item.suggested ? `<button type="button" class="action-btn rename" data-game-id="${item.game_id}" data-filename="${escapeHtml(item.filename)}" data-suggested="${escapeHtml(item.suggested)}" title="${escapeHtml(RENAME_LABEL)}" aria-label="${escapeHtml(RENAME_LABEL)}">✏️</button>` : ''}
             </td>
         </tr>
     `).join('');
@@ -1104,8 +1125,8 @@ function renderMismatchTable(items) {
             <td>${escapeHtml(year)}</td>
             <td>${(item.mismatch_types || (item.mismatch_type ? [item.mismatch_type] : [])).map(t => `<span class="issue-badge name-mismatch">${escapeHtml(t)}</span>`).join(' ')}</td>
             <td class="action-cell">
-                <button type="button" class="action-btn" data-on-click="viewGame" data-args="${actionArgs(item.game_id)}">👁️</button>
-                ${CAN_RENAME ? `<button type="button" class="action-btn rename" data-game-id="${item.game_id}">✏️</button>` : ''}
+                <button type="button" class="action-btn" data-on-click="viewGame" data-args="${actionArgs(item.game_id)}" title="${escapeHtml(VIEW_LABEL)}" aria-label="${escapeHtml(VIEW_LABEL)}">👁️</button>
+                ${CAN_RENAME ? `<button type="button" class="action-btn rename" data-game-id="${item.game_id}" title="${escapeHtml(RENAME_LABEL)}" aria-label="${escapeHtml(RENAME_LABEL)}">✏️</button>` : ''}
             </td>
         </tr>`;
     }).join('');

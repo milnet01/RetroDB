@@ -213,6 +213,8 @@
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/rom-tools.js') }}?v={{ config.APP_VERSION }}"></script>
 <script nonce="{{ csp_nonce }}">
+const SELECT_ROW_LABEL = {{ _('Select {name}')|tojson }};
+const SELECT_ALL_LABEL = {{ _('Select all')|tojson }};
 let foundFiles = [];
 const ROM_PATH = {{ rom_path|tojson }};
 
@@ -270,7 +272,7 @@ function renderFileList() {
     
     let html = `
         <div class="file-list-header">
-            <span><input type="checkbox" checked data-on-click="toggleAll" data-args="${actionArgs('$this')}"></span>
+            <span><input type="checkbox" checked aria-label="${escapeHtml(SELECT_ALL_LABEL)}" data-on-click="toggleAll" data-args="${actionArgs('$this')}"></span>
             <span>Filename</span>
             <span>Size</span>
             <span>Type</span>
@@ -281,7 +283,7 @@ function renderFileList() {
     foundFiles.forEach((f, i) => {
         html += `
             <div class="file-list-item">
-                <input type="checkbox" checked data-index="${i}">
+                <input type="checkbox" checked aria-label="${escapeHtml(SELECT_ROW_LABEL.replace('{name}', () => f.name))}" data-index="${i}">
                 <span class="filename" title="${escapeHtml(f.path)}">${escapeHtml(f.name)}</span>
                 <span class="filesize">${formatBytes(f.size)}</span>
                 <span class="filetype">${escapeHtml(f.type)}</span>

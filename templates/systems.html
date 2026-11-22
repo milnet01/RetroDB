@@ -27,10 +27,11 @@
                id="systemSearch"
                class="search-input"
                placeholder="{{ _('Search systems...') }}"
+               aria-label="{{ _('Search systems') }}"
                autocomplete="off">
     </div>
     <div class="filter-buttons">
-        <select id="systemTypeFilter" class="filter-select" data-on-change="applySystemFilters">
+        <select id="systemTypeFilter" class="filter-select" aria-label="{{ _('Filter by type') }}" data-on-change="applySystemFilters">
             <option value="">{{ _('All Types') }}</option>
             <option value="Console">🎮 {{ _('Console') }}</option>
             <option value="Handheld">📱 {{ _('Handheld') }}</option>
@@ -38,7 +39,7 @@
             <option value="Arcade">🕹️ {{ _('Arcade') }}</option>
             <option value="Engine">⚙️ {{ _('Engine') }}</option>
         </select>
-        <select id="featureFilter" class="filter-select" data-on-change="applySystemFilters">
+        <select id="featureFilter" class="filter-select" aria-label="{{ _('Filter by feature') }}" data-on-change="applySystemFilters">
             <option value="">{{ _('All Features') }}</option>
             <option value="ra">🏆 {{ _('RetroAchievements') }}</option>
             <option value="trophies">🏅 {{ _('Local Trophies') }}</option>

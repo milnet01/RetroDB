@@ -514,7 +514,7 @@ const Notifications = {
         notification.innerHTML = `
             <span class="notification-icon">${icon}</span>
             <span class="notification-message">${escapeHtml(message)}</span>
-            <button class="notification-close" data-on-click="removeParent" data-args="${actionArgs('$this')}">×</button>
+            <button type="button" class="notification-close" aria-label="${escapeHtml(t('Close'))}" data-on-click="removeParent" data-args="${actionArgs('$this')}">×</button>
         `;
 
         container.appendChild(notification);
@@ -762,6 +762,42 @@ const DOM = {
                 handler.call(target, e, target);
             }
         });
+    },
+
+    /**
+     * Run change(), which rebuilds or removes part of container, without
+     * dropping keyboard focus to the page top (design standards §11
+     * "Keyboard"). Focus goes back to the same control if it still exists
+     * (same data-id / data-value and name), else to the control now in the
+     * same place, else to fallback. Does nothing extra when focus is elsewhere.
+     * @param {Element} container - Element whose contents change() replaces
+     * @param {Function} change - The rebuild or removal
+     * @param {Element} [fallback] - Focused when container has no control left
+     */
+    keepFocus(container, change, fallback) {
+        const active = document.activeElement;
+        if (!container || !active || active === document.body || !container.contains(active)) {
+            change();
+            return;
+        }
+        const controls = () => [...container.querySelectorAll(
+            'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])')]
+            .filter(el => !el.disabled && el.getClientRects().length);
+        const keyOf = el => {
+            const owner = el.closest('[data-id], [data-value]');
+            return owner && container.contains(owner) ? (owner.dataset.id ?? owner.dataset.value) : null;
+        };
+        const index = controls().indexOf(active);
+        const key = keyOf(active);
+        const name = active.getAttribute('aria-label');
+        change();
+        const now = controls();
+        const next = (key != null && now.find(el => keyOf(el) === key && el.tagName === active.tagName
+                                         && el.getAttribute('aria-label') === name))
+            || (name && now.find(el => el.getAttribute('aria-label') === name))
+            || now[Math.min(Math.max(index, 0), now.length - 1)]
+            || fallback;
+        if (next && next.isConnected) next.focus();
     }
 };
 
@@ -1068,7 +1104,9 @@ const ModalFocusTrap = {
             if (e.key !== 'Tab') return;
 
             const focusables = Array.from(modalEl.querySelectorAll(_FOCUSABLE_SELECTOR))
-                .filter(el => el.offsetParent !== null || el === document.activeElement);
+                // checkVisibility also counts position:fixed controls, whose offsetParent is null
+                .filter(el => (el.checkVisibility ? el.checkVisibility() : el.offsetParent !== null)
+                              || el === document.activeElement);
             if (focusables.length === 0) {
                 e.preventDefault();
                 return;
@@ -1113,9 +1151,31 @@ const ModalFocusTrap = {
         const entry = this._stack.pop();
         if (!entry) return;
         document.removeEventListener('keydown', entry.keyHandler, true);
-        if (entry.triggerEl && typeof entry.triggerEl.focus === 'function') {
-            try { entry.triggerEl.focus(); } catch (e) { /* element removed from DOM */ }
+        const target = this._findTrigger(entry.triggerEl);
+        if (target) {
+            try { target.focus(); } catch (e) { /* not focusable */ }
         }
+    },
+
+    // The trigger itself, or, when a list rebuilt it while the dialog was
+    // open, its replacement (same id, or same card and class), else <main>.
+    _findTrigger(el) {
+        if (!el || typeof el.focus !== 'function') return null;
+        if (el.isConnected) return el;
+        if (el.id) {
+            const byId = document.getElementById(el.id);
+            if (byId) return byId;
+        }
+        const owner = el.closest('[data-game-id], [data-id]');
+        if (owner && el.classList.length) {
+            const attr = owner.dataset.gameId !== undefined ? 'data-game-id' : 'data-id';
+            const card = document.querySelector('[' + attr + '="' + CSS.escape(owner.getAttribute(attr)) + '"]');
+            const twin = card && card.querySelector('.' + [...el.classList].map(c => CSS.escape(c)).join('.'));
+            if (twin) return twin;
+        }
+        const main = document.querySelector('main');
+        if (main && !main.hasAttribute('tabindex')) main.tabIndex = -1;
+        return main;
     },
 
     /**

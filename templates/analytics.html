@@ -2583,6 +2583,22 @@ function refreshAnalytics() {
     location.reload();
 }
 
+// Each chart is a picture to a screen reader, named by the heading above it
+// (design standards §11: every control and image has a name).
+document.querySelectorAll('canvas').forEach((canvas, i) => {
+    if (canvas.hasAttribute('aria-label') || canvas.hasAttribute('aria-labelledby')) return;
+    for (let n = canvas; n && n !== document.body; n = n.parentElement) {
+        for (let s = n.previousElementSibling; s; s = s.previousElementSibling) {
+            const heading = s.matches('h2, h3, h4') ? s : s.querySelector('h2, h3, h4');
+            if (!heading) continue;
+            if (!heading.id) heading.id = 'chartHeading' + i;
+            canvas.setAttribute('role', 'img');
+            canvas.setAttribute('aria-labelledby', heading.id);
+            return;
+        }
+    }
+});
+
 // Analytics Nav Scroll Spy (wait for bundle to load so StickyScroll is available)
 document.addEventListener('DOMContentLoaded', function initAnalyticsNav() {
     if (typeof StickyScroll === 'undefined') return;

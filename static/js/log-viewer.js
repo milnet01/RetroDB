@@ -87,6 +87,7 @@ const LogViewer = {
         // Update tab active state
         document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
         btn.classList.add('active');
+        this.syncPressed();
 
         // Re-populate file dropdown with filtered files
         this.populateFileDropdown();
@@ -408,7 +409,14 @@ const LogViewer = {
     // RENDERING
     // =========================================================================
 
+    // A screen reader hears which filter buttons are on (design standards §11)
+    syncPressed() {
+        document.querySelectorAll('.category-tab, .level-btn, .view-btn').forEach(b =>
+            b.setAttribute('aria-pressed', b.classList.contains('active') ? 'true' : 'false'));
+    },
+
     render() {
+        this.syncPressed();
         if (this.currentView === 'grouped') {
             this.renderGrouped();
         } else {

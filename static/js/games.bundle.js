@@ -2242,7 +2242,8 @@ const GameEditModal = {
         btn.textContent = '×';
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            onRemove();
+            DOM.keepFocus(container, onRemove,
+                container.parentElement.querySelector('select, input:not([type="hidden"])'));
         });
         tag.appendChild(btn);
         container.appendChild(tag);
