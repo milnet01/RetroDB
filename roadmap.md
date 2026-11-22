@@ -783,8 +783,14 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     in their own scroll or overflow box (reports, analytics, imports,
     archive scanner, multi-disc, page-box at <=600px), where
     top:var(--sticky-top) would push the header down inside the table.
-  - Still open M game_detail.html inline style copies; the Low list and
-    the open questions.
+    - Still open: the Low list and the open questions.
+    2026-11-22, second run (game page style copies):
+    - Fixed M game_detail.html inline copies: 18 rules and 152 lines that
+      repeated shared CSS removed; the block keeps only where the game
+      page differs from the trophy-page layout. pages.css's copy of the
+      hltb.css search box and button removed. Computed styles of three
+      game pages and one achievement page, 1400 and 375px, pop-ups open
+      and shut, match before and after.
   **Layman:** Fixes for empty gaps and hidden headers on phones, and for duplicated page styles.
   Kind: implement.
 
