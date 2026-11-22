@@ -783,7 +783,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     in their own scroll or overflow box (reports, analytics, imports,
     archive scanner, multi-disc, page-box at <=600px), where
     top:var(--sticky-top) would push the header down inside the table.
-    - Still open: the Low list and the open questions.
+    - Still open: the Low list and the open questions. The off-repo
+      ledger is gone (not found on any drive 2026-11-22). User,
+      2026-11-22: check each cited spot, fix clear faults, close the rest
+      as "wording lost". Cites are as of commit 2643a346; read them there
+      with git show, then find the same code now.
     2026-11-22, second run (game page style copies):
     - Fixed M game_detail.html inline copies: 18 rules and 152 lines that
       repeated shared CSS removed; the block keeps only where the game
