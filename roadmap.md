@@ -634,6 +634,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   wrap them with {{ _()|tojson }}. Also: the two 4.0.0 changelog lines
   added that day name Reports, Logs, Analytics and Delete in each locale
   file with a helper's own wording; match them to the UI catalog names.
+  - **Found 2026-11-23**: in every locale's catalog, msgid "Build 3D
+  Boxes" is translated as just "3D box" (de "3D-Verpackung", fr "Boîte
+  3D", ja "3Dボックス"), so the ROM Tools button names the wrong thing. The
+  changelogs already use the right name (e.g. de "3D-Boxen bauen"); fix
+  the catalog to match.
   **Layman:** The Lists, Settings, achievements, trophies, reports and dashboard pages show in your language.
   Kind: implement.
 
