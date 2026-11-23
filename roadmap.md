@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=330 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=331 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -3795,9 +3795,37 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     `lip_side_width`), 2.5 mm high (judged); hanging tab 50 x 20 mm,
     centred, rounded corners, shop-peg slot with a round bump. The
     remaining cases still need their photos.
+  - **User request 2026-11-23**: cases differ by region (e.g. US PS1
+  jewel thin like a music CD, PAL much thicker). Research every
+  console's case per region (size, depth, colour, special features),
+  using Gemini in Chrome and cross-checking other sources, then compare
+  with services/box3d/cases.py (already per region for several consoles,
+  from Slipcase). Report differences for the user to decide before
+  changing the table.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.
+
+- 📋 [PASS-59-331] **The 3D viewer shows the same release as the downloaded 3D box picture (enhancement, M).**
+  - **Seen 2026-11-23**: game 4363 (Clockwork Knight 2, Saturn, region
+    USA). boxart_3d is ES-DE's US box; ES-DE's flat cover and back and
+    MobyGames' only group (57546) are the European box, so the built box
+    is European.
+  - **User decision 2026-11-23**: the downloaded 3D picture is the truth
+    and stays; the viewer must match it (drawing boxart_3d from the model
+    was declined).
+  - **Plan (user chose all three)**: compare the built front with the
+    front in boxart_3d; on a mismatch try another MobyGames group whose
+    front matches; failing that, cut the front and spine out of boxart_3d
+    and straighten them. Back: another release's back scan (user chose
+    this over a plain back).
+  - **Facts**: boxart_3d files are 1080 px tall (sample of 400).
+  - **Verify**: game 4363's viewer shows the US front and spine.
+  - **Correction 2026-11-23**: cutting the front out of 4363's boxart_3d showed it IS the European cover the viewer uses. The real differences: the spine (MobyGames has no spine scan, so the builder drew a text spine; boxart_3d has the printed one) and the grey hinge strip the viewer adds. So the main fix is: with no spine scan, take the spine from boxart_3d. Keep the front comparison for real mismatches.
+  - **Prototype**: /mnt/Emulators/.claude/Scratchpad/RetroDB/p331/cut.py finds the fold where the top edge of the opaque outline peaks, fits lines to the top and bottom edges, and straightens each face with PIL QUAD. 300 of 300 sampled boxart_3d pictures (both sources) have a transparent background with the spine on the left.
+  **Layman:** The turning 3D box shows the same front and spine as the 3D box picture on the game page.
+  Kind: enhancement.
+  Source: user-request-2026-11-23.
 
 ## 4.0.x — Fixes and new features for the web version
 
