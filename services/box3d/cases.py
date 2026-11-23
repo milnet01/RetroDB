@@ -412,11 +412,11 @@ CASE_TYPES: dict[str, CaseType] = {
     ),
     # One clamshell for both consoles. Sega Retro: Mega Drive boxes "use the
     # same dimensions as Western Master System games". No published size was
-    # found: width and height are a box protector's; the depth is the user's
-    # ruler on a PAL Sonic case (2026-11-21), which read 124 x 177 x 24 mm.
+    # found; RetroDB: the size is the user's ruler on a PAL Sonic case
+    # (2026-11-21), in place of a box protector's 128 x 179 (PASS-59-329).
     "Genesis Clamshell": CaseType(
         name="Genesis Clamshell",
-        width=128, height=179, depth=24,
+        width=124, height=177, depth=24,
         platforms=("Genesis", "Mega Drive"),
         plastic=_BLACK_KEEP, texture="clamshell", keep_rim=_SEGA_CLAMSHELL_RIM_MM,
         keep_side_rim=_SEGA_CLAMSHELL_SIDE_RIM_MM, shape=_SEGA_CLAMSHELL_SHAPE,
@@ -424,7 +424,7 @@ CASE_TYPES: dict[str, CaseType] = {
     ),
     "Master System Case": CaseType(
         name="Master System Case",
-        width=128, height=179, depth=24,
+        width=124, height=177, depth=24,
         platforms=("Master System",),
         plastic=_BLACK_KEEP, texture="clamshell", keep_rim=_SEGA_CLAMSHELL_RIM_MM,
         keep_side_rim=_SEGA_CLAMSHELL_SIDE_RIM_MM, shape=_SEGA_CLAMSHELL_SHAPE,
@@ -568,6 +568,20 @@ for _name, _case in CASE_TYPES.items():
         CASE_TYPES[_name] = replace(
             _case, shape=replace(_FAMILY_SHAPES[_case.texture], lip_width=_case.rim_mm))
 
+# RetroDB: cases that differ from another in one way, each picked by
+# build.case_for_game (PASS-59-329). Sources, in Slipcase's
+# docs/research/SLIP-0108-cartridge-boxes.md and SLIP-0106-real-cases.md:
+# Japanese Mega Drive cases had no hang tab until a few very late games;
+# US NES boxes had one from October 1985 to September 1987; early US
+# PlayStation games came in the Saturn's long box.
+_VARIANTS: dict[str, tuple[str, dict]] = {
+    "Genesis Clamshell (NTSC-J)": ("Genesis Clamshell", {"hanging_tab": False}),
+    "NES Cartridge Box (hang tab)": ("NES Cartridge Box", {"hanging_tab": True}),
+    "PS1 Long Box": ("Sega Long Box", {}),
+}
+for _name, (_base, _changes) in _VARIANTS.items():
+    CASE_TYPES[_name] = replace(CASE_TYPES[_base], name=_name, platforms=(), **_changes)
+
 # Edition and special-colour cases, picked by hand (SLIP-0113): the
 # standard case in another plastic. Colours from Wikipedia, Keep case,
 # per docs/research/SLIP-0113-edition-cases.md; every RGB is judged by eye.
@@ -628,6 +642,8 @@ REGIONAL_CASES: dict[tuple[str, str], str] = {
     ("Game Boy Color", "NTSC-J"): "Game Boy Box (NTSC-J)",
     ("GBA", "NTSC-J"): "GBA Box (NTSC-J)",
     ("NES", "NTSC-J"): "Famicom Cartridge Box",
+    ("Genesis", "NTSC-J"): "Genesis Clamshell (NTSC-J)",
+    ("Mega Drive", "NTSC-J"): "Genesis Clamshell (NTSC-J)",
     ("Saturn", "NTSC-J"): "CD Jewel Case",
     ("Sega CD", "NTSC-J"): "CD Jewel Case",
     # PAL Sega CD cases look double thick in a small sample; how thick is unsourced.

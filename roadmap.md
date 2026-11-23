@@ -3807,6 +3807,18 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   with services/box3d/cases.py (already per region for several consoles,
   from Slipcase). Report differences for the user to decide before
   changing the table.
+  **Region research, first round (2026-11-23).** Web research and
+  comparison: /mnt/Emulators/.claude/Scratchpad/RetroDB/case-research/
+  (comparison.md; delete when 4.0.0 ships). Slipcase's
+  docs/research/SLIP-0106/0108 are the sources cases.py cites. Done: Mega
+  Drive / Master System 124 x 177 (user's ruler); Japanese Mega Drive no
+  tab; tall US PS1 front gets PS1 Long Box; US NES 1985-10 to 1987-09 gets
+  the hang-tab box. Still open, for Gemini (needs Claude in Chrome):
+  Japanese Master System cardboard box size; early Japanese PS1 18 mm
+  case (no clear date to choose by); New 3DS EU 14 mm case (no signal
+  per game); multi-disc cases (Dreamcast/PC 24 mm, US PS1 double, PS one
+  Books 5 mm); PAL Mega CD thickness; PAL Saturn case; PS5 blue darker
+  than PS4; Game Gear JP size and tab; Genesis cardboard and EA cases.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.

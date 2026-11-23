@@ -139,6 +139,10 @@ converted to RGB.
    cardboard box, which Slipcase has no case for.
 4. **A jewel case's back card** picks the regional case it fits, as
    Slipcase's `jewel.card_case` does.
+5. **A tall front or a release date** (PASS-59-329): a US PS1 front nearer
+   the long box's shape than the jewel case's gets `PS1 Long Box`; a US
+   NES game released from October 1985 to September 1987 gets the box
+   with a hang tab. A year alone counts only when all of it falls inside.
 
 ### 4.4 The record
 

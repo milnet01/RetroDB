@@ -20,7 +20,7 @@ from services.security import safe_path
 logger = logging.getLogger(__name__)
 
 # Bump when a change here or in the port should rebuild every built box.
-BUILD_VERSION = 3
+BUILD_VERSION = 4
 
 # System folder -> Slipcase's platform name (spec §4.3). Any other folder
 # gets no box: arcade sets and home computers came in boxes Slipcase has no
@@ -51,6 +51,13 @@ _FOLDER_REGIONS = {'famicom': 'NTSC-J', 'sfc': 'NTSC-J', 'saturnjp': 'NTSC-J',
 # Most PC games came in a large cardboard box, which Slipcase has no case for;
 # only these packagings are built.
 _PC_PACKAGING = {'Keep Case': 'PC DVD Case', 'Jewel Case': 'CD Jewel Case'}
+
+# (platform, region) -> a tall box the scanned front's shape can pick over
+# the usual case (PASS-59-329).
+_TALL_BOXES = {('PS1', 'NTSC-U'): 'PS1 Long Box'}
+# (platform, region) -> (first month, last month, case) for a case used only
+# by games released in those months (PASS-59-329).
+_DATED_CASES = {('NES', 'NTSC-U'): ('1985-10', '1987-09', 'NES Cartridge Box (hang tab)')}
 
 OUTCOMES = ('built', 'unchanged', 'imported', 'no_case', 'no_front', 'failed')
 
@@ -85,11 +92,11 @@ def region_for(folder, countries, game_region):
     return _region_of(codes[0]) if codes else 'NTSC-U'
 
 
-def case_for_game(folder, region, packaging=None, front_aspect=None):
+def case_for_game(folder, region, packaging=None, front_aspect=None, released=None):
     """The case for a game, or None for no box (spec §4.3). `region` is
     Slipcase's (NTSC-U, PAL, NTSC-J); `packaging` the scans' MobyGames
     packaging, if any; `front_aspect` the scanned front's width / height,
-    if known."""
+    if known; `released` the game's `release_date`, if any."""
     from services.box3d import cases
     platform = PLATFORMS.get(folder)
     if platform is None:
@@ -104,7 +111,25 @@ def case_for_game(folder, region, packaging=None, front_aspect=None):
         # the scanned front's shape says which it was.
         if front_aspect is None or _nearer(front_aspect, jewel, case):
             case = jewel
+    tall = _TALL_BOXES.get((platform, region))
+    if case is not None and tall and front_aspect is not None:
+        if _nearer(front_aspect, cases.CASE_TYPES[tall], case):
+            case = cases.CASE_TYPES[tall]
+    dated = _DATED_CASES.get((platform, region))
+    if dated and _released_within(released, dated[0], dated[1]):
+        case = cases.CASE_TYPES[dated[2]]
     return case
+
+
+def _released_within(released, first, last):
+    """Whether a `release_date` (YYYY, YYYY-MM or YYYY-MM-DD) falls in the
+    months `first` to `last` (YYYY-MM). A year alone counts only when all
+    of it does."""
+    if not released:
+        return False
+    if len(released) == 4:
+        return first <= f'{released}-01' and f'{released}-12' <= last
+    return first <= released[:7] <= last
 
 
 def _nearer(aspect, case, other):
@@ -270,7 +295,7 @@ def _shape(case):
 
 def _game(game_id):
     return query("""
-        SELECT g.id, g.title, g.region, g.disc_serial, g.boxart, g.boxart_3d, g.boxart_back,
+        SELECT g.id, g.title, g.region, g.release_date, g.disc_serial, g.boxart, g.boxart_3d, g.boxart_back,
                g.box_scans, g.box_faces, s.folder
         FROM games g JOIN systems s ON s.id = g.system_id WHERE g.id = ?
     """, (game_id,), one=True)
@@ -291,7 +316,8 @@ def build_for_game(game_id):
         if found['front'] is None and found['full'] is None:
             return 'no_front'
         region = region_for(row['folder'], found['countries'], row['region'])
-        case = case_for_game(row['folder'], region, found['packaging'], _front_aspect(found))
+        case = case_for_game(row['folder'], region, found['packaging'], _front_aspect(found),
+                             row['release_date'])
         if case is None:
             return 'no_case'
         signature = _signature(case, row, found)

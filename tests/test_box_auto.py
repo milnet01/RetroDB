@@ -409,6 +409,35 @@ def test_a_jewel_case_label_follows_the_scanned_fronts_shape(aspect, expected):
     assert build.case_for_game('saturn', 'PAL', 'Jewel Case', aspect).name == expected
 
 
+# PASS-59-329: an early US PlayStation game came in a long box; its tall front says so.
+@pytest.mark.parametrize('aspect, expected', [
+    (144 / 207, 'PS1 Long Box'),
+    (1.0, 'PS1 Jewel Case (NTSC-U)'),
+    (None, 'PS1 Jewel Case (NTSC-U)'),
+])
+def test_a_tall_us_playstation_front_gets_the_long_box(aspect, expected):
+    assert build.case_for_game('psx', 'NTSC-U', None, aspect).name == expected
+
+
+# PASS-59-329: US NES boxes had a hang tab from October 1985 to September 1987.
+@pytest.mark.parametrize('folder, region, released, tab', [
+    ('nes', 'NTSC-U', '1985-10-18', True),
+    ('nes', 'NTSC-U', '1986', True),
+    ('nes', 'NTSC-U', '1987-09', True),
+    ('nes', 'NTSC-U', '1987-10-01', False),
+    ('nes', 'NTSC-U', '1987', False),     # the year alone cannot say which side
+    ('nes', 'NTSC-U', None, False),
+    ('nes', 'PAL', '1986-05', False),
+])
+def test_us_nes_boxes_carry_a_hang_tab_in_its_years(folder, region, released, tab):
+    assert build.case_for_game(folder, region, released=released).hanging_tab is tab
+
+
+def test_a_japanese_mega_drive_case_has_no_hang_tab():
+    assert build.case_for_game('megadrivejp', 'NTSC-J').hanging_tab is False
+    assert build.case_for_game('megadrive', 'PAL').hanging_tab is True
+
+
 def test_a_belgian_box_is_pal():
     assert build.region_for('psx', ['be', 'fr'], 'USA') == 'PAL'
 
