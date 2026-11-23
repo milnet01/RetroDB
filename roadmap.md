@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=332 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=333 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -1138,7 +1138,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** On an achievements console page, the console tabs stop sliding under the section tabs.
   Kind: implement.
 
-- 📋 [PASS-59-167] **On a phone, some sticky filter bars fill a third or more of the screen (UX, S).**
+- ✅ [PASS-59-167] **On a phone, some sticky filter bars fill a third or more of the screen (UX, S).**
   - **Status**: todo
   - **Seen 2026-10-23** (Firefox, 500x900): sticky bar heights at phone
     width were Library filter bar 273px plus alphabet bar 61px, Logs
@@ -1150,6 +1150,14 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     of the screen.
 
   ---
+  Done 2026-11-23. At 768px and narrower (layout/responsive.css): Library,
+  Systems and Logs filter bars scroll away; tab strips and letter rows
+  stay pinned as one sideways row, the current tab scrolled into view
+  (main.js). StickyScroll.isPinned() keeps stacking and letter jumps from
+  counting an un-pinned bar. build_css.py no longer drops the space
+  before a ':' in a selector. Measured at 375x812 on a scratch copy: worst
+  page went from 61% of the screen pinned (Logs) to 22% (Settings);
+  desktop bars unchanged on every page.
   **Layman:** On a phone, filter bars stop taking up a third of the screen.
   Kind: implement.
 
@@ -3915,6 +3923,17 @@ After 4.0.0 the web version still gets bug fixes and, now and then, a good new f
   **Layman:** After you really play a game from RetroDB, it marks the game In Progress for you and remembers how long you played.
   Kind: feature.
   Source: user-request-2026-11-23.
+
+- 📋 [PASS-59-333] **A letter jump to games not yet loaded leaves the first match at the bottom of the screen.**
+  Seen 2026-11-23 at 375x812: on Library, pressing C, M or S reloads
+  the list from that letter but leaves the page at the top, so the first
+  match starts at the bottom edge, behind the phone's bottom bar. The
+  reload branch of the letter handler in `static/js/all-games-controller.js`
+  never scrolls; the branch for games already loaded does. Fix: after the
+  reload, scroll as that branch does.
+  **Layman:** Pressing a letter in the Library's A-Z bar should bring that letter's first game into view, even on a phone.
+  Kind: fix.
+  Source: PASS-59-167-walk-2026-11-23.
 
 ## Desktop milestone 1 — browse and play
 

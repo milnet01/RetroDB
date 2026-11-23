@@ -178,7 +178,9 @@ def minify_css(css_text):
     css_text = re.sub(r'\s*{\s*', '{', css_text)
     css_text = re.sub(r'\s*}\s*', '}', css_text)
     css_text = re.sub(r'\s*;\s*', ';', css_text)
-    css_text = re.sub(r'\s*:\s*', ':', css_text)
+    # Only after a colon: a space before one is a descendant combinator
+    # (`html :is(...)`), and dropping it changes what the selector matches.
+    css_text = re.sub(r':\s*', ':', css_text)
     css_text = re.sub(r'\s*,\s*', ',', css_text)
     # Remove trailing semicolons before closing braces
     css_text = css_text.replace(';}', '}')

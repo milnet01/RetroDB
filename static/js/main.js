@@ -97,6 +97,17 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
+
+    // A phone shows each tab strip as one row you swipe sideways
+    // (PASS-59-167): bring the current tab into view.
+    document.querySelectorAll('.tool-tabs, .report-tabs, .settings-tabs, .tab-subnav, ' +
+                              '.dashboard-nav, .analytics-nav, .help-nav').forEach(row => {
+        const active = row.querySelector('.active');
+        if (!active || row.scrollWidth <= row.clientWidth) return;
+        const a = active.getBoundingClientRect();
+        const r = row.getBoundingClientRect();
+        row.scrollLeft += (a.left - r.left) - (r.width - a.width) / 2;
+    });
 });
 
 // =============================================================================

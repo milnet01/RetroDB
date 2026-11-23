@@ -923,6 +923,17 @@ const StickyScroll = {
     },
 
     /**
+     * Whether a bar is shown and pinned now. Hidden bars (inactive tab
+     * panels) and bars a phone layout un-pins (PASS-59-167) take no room
+     * at the top of the window.
+     * @param {HTMLElement} nav
+     * @returns {boolean}
+     */
+    isPinned(nav) {
+        return !!nav && nav.offsetHeight > 0 && getComputedStyle(nav).position === 'sticky';
+    },
+
+    /**
      * Calculate the total height of stacked sticky navigation elements
      * that will be pinned above a given target when scrolled into view.
      * Uses each element's CSS `top` value + offsetHeight to correctly
@@ -934,8 +945,7 @@ const StickyScroll = {
         let maxBottom = this.baseTop();
 
         document.querySelectorAll('[data-sticky-nav]').forEach(nav => {
-            // Skip hidden elements (e.g. inside inactive tab panels)
-            if (!nav.offsetHeight) return;
+            if (!this.isPinned(nav)) return;
 
             // Only count sticky navs that precede the target in document order
             if (targetEl) {
@@ -994,8 +1004,7 @@ const StickyScroll = {
         let runningTop = this.baseTop();
 
         document.querySelectorAll('[data-sticky-nav]').forEach(nav => {
-            // Skip hidden elements (e.g. inside inactive tab panels)
-            if (!nav.offsetHeight) return;
+            if (!this.isPinned(nav)) return;
 
             nav.style.top = runningTop + 'px';
             runningTop += nav.offsetHeight;

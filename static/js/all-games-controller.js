@@ -1296,7 +1296,8 @@ const AllGamesController = (function() {
         const filterBar = document.querySelector('.filter-bar-new');
         if (filterBar && nav) {
             const updateNavTop = () => {
-                nav.style.top = (StickyScroll.baseTop() + filterBar.offsetHeight) + 'px';
+                nav.style.top = (StickyScroll.baseTop() +
+                    (StickyScroll.isPinned(filterBar) ? filterBar.offsetHeight : 0)) + 'px';
             };
             requestAnimationFrame(() => {
                 requestAnimationFrame(updateNavTop);
@@ -1370,7 +1371,7 @@ const AllGamesController = (function() {
                         // Found in DOM — smooth scroll to it
                         // baseTop: the phone's fixed header covers the top too.
                         const offset = (window.StickyScroll ? StickyScroll.baseTop() : 0) +
-                                       (filterBar ? filterBar.offsetHeight : 0) +
+                                       (StickyScroll.isPinned(filterBar) ? filterBar.offsetHeight : 0) +
                                        (nav ? nav.offsetHeight : 0) + 20;
                         const targetPos = targetCard.getBoundingClientRect().top +
                                          window.pageYOffset - offset;

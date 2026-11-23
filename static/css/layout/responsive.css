@@ -186,6 +186,29 @@
         flex-direction: column;
         text-align: center;
     }
+
+    /* Pinned bars on a phone (PASS-59-167). The `html` prefix outranks the
+       page templates' own <style> blocks, which load after this file. */
+
+    /* Filter bars and toolbars scroll away with the page. */
+    html :is(.filter-bar-new, .filter-bar, .log-toolbar) {
+        position: static;
+    }
+
+    /* Tab strips and letter rows stay pinned, as one row you swipe sideways. */
+    html :is(.tool-tabs, .report-tabs, .settings-tabs, .tab-subnav,
+             .dashboard-nav, .analytics-nav, .help-nav,
+             .alphabet-letters, .sticky-nav-letters) {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: thin;
+    }
+
+    html :is(.tool-tabs, .report-tabs, .settings-tabs, .tab-subnav,
+             .dashboard-nav, .analytics-nav, .help-nav,
+             .alphabet-letters, .sticky-nav-letters) > * {
+        flex: 0 0 auto;
+    }
 }
 
 /* =============================================================================

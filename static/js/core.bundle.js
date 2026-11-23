@@ -843,6 +843,17 @@ const StickyScroll = {
     },
 
     /**
+     * Whether a bar is shown and pinned now. Hidden bars (inactive tab
+     * panels) and bars a phone layout un-pins (PASS-59-167) take no room
+     * at the top of the window.
+     * @param {HTMLElement} nav
+     * @returns {boolean}
+     */
+    isPinned(nav) {
+        return !!nav && nav.offsetHeight > 0 && getComputedStyle(nav).position === 'sticky';
+    },
+
+    /**
      * Calculate the total height of stacked sticky navigation elements
      * that will be pinned above a given target when scrolled into view.
      * Uses each element's CSS `top` value + offsetHeight to correctly
@@ -854,7 +865,7 @@ const StickyScroll = {
         let maxBottom = this.baseTop();
 
         document.querySelectorAll('[data-sticky-nav]').forEach(nav => {
-            if (!nav.offsetHeight) return;
+            if (!this.isPinned(nav)) return;
 
             if (targetEl) {
                 const pos = nav.compareDocumentPosition(targetEl);
@@ -909,7 +920,7 @@ const StickyScroll = {
         let runningTop = this.baseTop();
 
         document.querySelectorAll('[data-sticky-nav]').forEach(nav => {
-            if (!nav.offsetHeight) return;
+            if (!this.isPinned(nav)) return;
 
             nav.style.top = runningTop + 'px';
             runningTop += nav.offsetHeight;
@@ -2794,6 +2805,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     }
+
+    document.querySelectorAll('.tool-tabs, .report-tabs, .settings-tabs, .tab-subnav, ' +
+                              '.dashboard-nav, .analytics-nav, .help-nav').forEach(row => {
+        const active = row.querySelector('.active');
+        if (!active || row.scrollWidth <= row.clientWidth) return;
+        const a = active.getBoundingClientRect();
+        const r = row.getBoundingClientRect();
+        row.scrollLeft += (a.left - r.left) - (r.width - a.width) / 2;
+    });
 });
 
 function initializeBackToTop() {

@@ -1058,7 +1058,8 @@ const PSNTrophyController = (function() {
         const filterBar = document.querySelector('.filter-bar-new');
         if (filterBar) {
             const updateNavTop = () => {
-                nav.style.top = (StickyScroll.baseTop() + filterBar.offsetHeight) + 'px';
+                nav.style.top = (StickyScroll.baseTop() +
+                    (StickyScroll.isPinned(filterBar) ? filterBar.offsetHeight : 0)) + 'px';
             };
             requestAnimationFrame(() => {
                 requestAnimationFrame(updateNavTop);
