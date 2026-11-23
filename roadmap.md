@@ -741,8 +741,8 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Faint grey text becomes easier to read in every theme.
   Kind: implement.
 
-- 🚧 [PASS-59-282] **Layout: phone gaps, hidden sticky headers and duplicated CSS (ux, M).**
-  - **Status**: todo
+- ✅ [PASS-59-282] **Layout: phone gaps, hidden sticky headers and duplicated CSS (ux, M).**
+  - **Status**: done 2026-11-23
   - **Source**: PASS-59-251 review 2026-11-09.
   - **Check**: desktop and 375px after each fix.
   - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
@@ -823,6 +823,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     is in its own scroll box, where top:0 is right. Those two stick
     under the page's own sticky menu at every width. Needs the user's
     choice.
+  2026-11-23: sticky th closed. User chose: the page-level tables
+  (Help, Settings users) scroll; tables.css sets them position:static.
+  All other data-tables keep sticky top:0 in their own scroll box.
+  Measured headless at 800 and 375px: only those two changed. Every
+  finding on this pass now has a disposition.
   **Layman:** Fixes for empty gaps and hidden headers on phones, and for duplicated page styles.
   Kind: implement.
 
