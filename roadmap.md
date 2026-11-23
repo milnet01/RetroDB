@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=331 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=332 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -3885,6 +3885,17 @@ After 4.0.0 the web version still gets bug fixes and, now and then, a good new f
   **Layman:** Small look-and-feel clean-ups where someone must first choose how it should look.
   Kind: ux.
   Source: PASS-59-282 Low list, checked 2026-11-23.
+
+- 📋 [PASS-59-332] **Real play moves a game from Not Started to In Progress, and Play-button sessions keep their play time.**
+  Today only Steam play time is saved (platform_play_time); a Play-button
+  session is not. Save each session's length per user.
+  Rule: a session of at least 10 minutes AND (a save file changed OR a
+  RetroAchievement was earned) moves Not Started to In Progress. A long
+  session with neither asks once, with one click. Never touches Played,
+  Completed or a status the user set by hand. Per user.
+  **Layman:** After you really play a game from RetroDB, it marks the game In Progress for you and remembers how long you played.
+  Kind: feature.
+  Source: user-request-2026-11-23.
 
 ## Desktop milestone 1 — browse and play
 
