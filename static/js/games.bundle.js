@@ -43,7 +43,7 @@ const AlphabetNav = {
         buttons.forEach(btn => {
             const letter = btn.dataset.letter;
             if (!letter) {  // "All": back to the first game
-                btn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+                btn.onclick = () => window.scrollTo({ top: 0, behavior: scrollMotion() });
                 return;
             }
             if (letterMap.has(letter)) {
@@ -69,7 +69,7 @@ const AlphabetNav = {
 
         window.scrollTo({
             top: offsetPosition,
-            behavior: 'smooth'
+            behavior: scrollMotion()
         });
 
         element.classList.add('highlight-jump');
@@ -906,7 +906,7 @@ const BackToTopController = {
      * Scroll to top of page
      */
     scrollToTop() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: scrollMotion() });
     },
 
     /**

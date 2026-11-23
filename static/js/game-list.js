@@ -105,7 +105,7 @@ const BackToTopController = {
      * Scroll to top of page
      */
     scrollToTop() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: scrollMotion() });
     },
 
     /**

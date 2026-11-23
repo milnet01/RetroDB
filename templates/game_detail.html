@@ -4274,7 +4274,7 @@ function scrollScreenshots(direction) {
     const row = document.getElementById('screenshotsRow');
     if (row) {
         const scrollAmount = 300;
-        row.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        row.scrollBy({ left: direction * scrollAmount, behavior: scrollMotion() });
     }
 }
 

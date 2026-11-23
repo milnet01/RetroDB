@@ -150,7 +150,7 @@ function initializeBackToTop() {
 // game-list.js (games bundle) only loads on game-centric pages. On those pages
 // game-list.js reassigns this to BackToTopController.scrollToTop (identical
 // behaviour). Without this, non-game pages threw "scrollToTop is not defined".
-window.scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+window.scrollToTop = () => window.scrollTo({ top: 0, behavior: scrollMotion() });
 
 // =============================================================================
 // DELEGATED IMAGE ERROR HANDLING (FU.1)

@@ -822,6 +822,15 @@ const DateUtils = {
     }
 };
 
+/**
+ * The `behavior` for a script's scroll: 'smooth', or 'auto' (instant) when the
+ * user asks for reduced motion. The CSS reduced-motion rule cannot stop a
+ * script that asks for 'smooth' itself.
+ */
+function scrollMotion() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+}
+
 const StickyScroll = {
     /**
      * Where the first sticky bar stops: the `--sticky-top` CSS variable,
@@ -885,7 +894,7 @@ const StickyScroll = {
 
         window.scrollTo({
             top: elementTop - offset - padding,
-            behavior: 'smooth'
+            behavior: scrollMotion()
         });
     },
 
@@ -1168,6 +1177,7 @@ window.LoadingState = LoadingState;
 window.DOM = DOM;
 window.DateUtils = DateUtils;
 window.StickyScroll = StickyScroll;
+window.scrollMotion = scrollMotion;
 window.ModalFocusTrap = ModalFocusTrap;
 
 })();
@@ -2824,7 +2834,7 @@ function initializeBackToTop() {
     }, 250), { passive: true });
 }
 
-window.scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+window.scrollToTop = () => window.scrollTo({ top: 0, behavior: scrollMotion() });
 
 function initializeImageErrorHandling() {
     function handle(target) {

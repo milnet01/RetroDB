@@ -1329,7 +1329,7 @@ const AllGamesController = (function() {
                     delete filters.letter;
                     nav.querySelectorAll('.alphabet-btn.active').forEach(b => b.classList.remove('active'));
                     if (wasFiltered) resetAndFetch();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    window.scrollTo({ top: 0, behavior: scrollMotion() });
                 });
                 return;
             }
@@ -1374,7 +1374,7 @@ const AllGamesController = (function() {
                                        (nav ? nav.offsetHeight : 0) + 20;
                         const targetPos = targetCard.getBoundingClientRect().top +
                                          window.pageYOffset - offset;
-                        window.scrollTo({ top: targetPos, behavior: 'smooth' });
+                        window.scrollTo({ top: targetPos, behavior: scrollMotion() });
 
                         // Add highlight animation
                         targetCard.classList.add('highlight-jump');

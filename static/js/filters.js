@@ -48,7 +48,7 @@ const AlphabetNav = {
         buttons.forEach(btn => {
             const letter = btn.dataset.letter;
             if (!letter) {  // "All": back to the first game
-                btn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+                btn.onclick = () => window.scrollTo({ top: 0, behavior: scrollMotion() });
                 return;
             }
             if (letterMap.has(letter)) {
@@ -76,7 +76,7 @@ const AlphabetNav = {
 
         window.scrollTo({
             top: offsetPosition,
-            behavior: 'smooth'
+            behavior: scrollMotion()
         });
 
         // Highlight the element briefly

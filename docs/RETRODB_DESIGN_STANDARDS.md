@@ -131,10 +131,8 @@ every theme, so no theme overrides it.
 --font-mono: 'Share Tech Mono', 'JetBrains Mono', monospace            /* Code/mono */
 ```
 
-### Font Loading (in HTML head)
-```html
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-```
+### Font Loading
+The fonts are served from `static/fonts/`, declared in `static/css/core/fonts.css`, which `base.html` links. Nothing loads a font from another site; the CSP's `font-src 'self'` would block it.
 
 ### Heading Hierarchy
 | Element | Font | Size | Weight | Transform | Letter Spacing |
@@ -775,6 +773,7 @@ Nothing checks this automatically. Walk a changed page with the keyboard alone.
     * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
 ```
+A script that scrolls passes `behavior: scrollMotion()` (`static/js/utils.js`), never `'smooth'`: the CSS rule cannot stop a script's own smooth scroll.
 
 ---
 

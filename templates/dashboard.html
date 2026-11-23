@@ -1372,7 +1372,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (typeof StickyScroll !== 'undefined') {
                 StickyScroll.to(targetId);
             } else {
-                document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth' });
+                document.getElementById(targetId)?.scrollIntoView({ behavior: scrollMotion() });
             }
         });
     });

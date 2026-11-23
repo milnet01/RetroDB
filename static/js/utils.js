@@ -895,6 +895,15 @@ const DateUtils = {
 
 // =============================================================================
 // STICKY SCROLL UTILITIES
+/**
+ * The `behavior` for a script's scroll: 'smooth', or 'auto' (instant) when the
+ * user asks for reduced motion. The CSS reduced-motion rule cannot stop a
+ * script that asks for 'smooth' itself.
+ */
+function scrollMotion() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+}
+
 // =============================================================================
 // Universal scroll offset calculation for pages with sticky nav/tab bars.
 // Mark any sticky navigation element with the `data-sticky-nav` attribute.
@@ -970,7 +979,7 @@ const StickyScroll = {
 
         window.scrollTo({
             top: elementTop - offset - padding,
-            behavior: 'smooth'
+            behavior: scrollMotion()
         });
     },
 
@@ -1295,4 +1304,5 @@ window.LoadingState = LoadingState;
 window.DOM = DOM;
 window.DateUtils = DateUtils;
 window.StickyScroll = StickyScroll;
+window.scrollMotion = scrollMotion;
 window.ModalFocusTrap = ModalFocusTrap;

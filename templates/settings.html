@@ -854,7 +854,7 @@ function switchSettingsTab(tabId, skipScroll) {
 
     // Scroll to top of content (skipped when restoring on page load)
     if (!skipScroll) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: scrollMotion() });
     }
     return true;
 }
@@ -3488,7 +3488,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const navRect = nav.getBoundingClientRect();
             
             if (linkRect.left < navRect.left || linkRect.right > navRect.right) {
-                activeSection.link.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                activeSection.link.scrollIntoView({ behavior: scrollMotion(), inline: 'center', block: 'nearest' });
             }
         }
     }
@@ -3512,7 +3512,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (section) {
                 const navHeight = document.querySelector('.settings-nav').offsetHeight;
                 const targetPos = section.offsetTop - navHeight - 10;
-                window.scrollTo({ top: targetPos, behavior: 'smooth' });
+                window.scrollTo({ top: targetPos, behavior: scrollMotion() });
             }
         });
     });
