@@ -3492,7 +3492,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Add an extra check on the multi-disc organiser, which is safe today.
   Kind: implement.
 
-- 📋 [PASS-49-3] **SSRF redirect-chain HEAD probes are unpinned (MEDIUM, M)**
+- ✅ [PASS-49-3] **SSRF redirect-chain HEAD probes are unpinned (MEDIUM, M)**
   - **Status**: deferred — hardening; the GET is now correctly pinned (Pass 49 port-0 fix).
   - **Lane**: core/SSRF (Lane 11).
   - **Finding**: `services/ssrf.py` `validate_redirect_chain` validates each hop
@@ -3501,6 +3501,12 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - **Decision**: wrap each HEAD hop in `pin_host_ip` (or re-validate the IP the
     HEAD resolved). Low live risk on a LAN with no internal SSRF targets.
   Moved into 4.0.0 (user, 2026-11-20).
+  Done 2026-11-23: each HEAD hop runs inside pin_host_ip with the
+  address validate_outbound_url just checked; a hop with no address is
+  refused. Test:
+  tests/test_pass59_247_scrapers.py::test_each_redirect_probe_goes_to_the_address_just_checked.
+  Smoke: http://github.com followed to https://github.com/; localhost
+  refused.
   **Layman:** A web-safety check on followed links could be tightened further.
   Kind: implement.
 
