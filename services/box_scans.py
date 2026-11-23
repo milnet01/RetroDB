@@ -61,18 +61,23 @@ def countries(group):
 
 
 def choose_group(covers, platform_id, own_region):
-    """The one cover group to take scans from, or None (spec §4.5).
+    """The one cover group to take scans from, or None (spec §4.5): the
+    first of ranked_groups."""
+    groups = ranked_groups(covers, platform_id, own_region)
+    return groups[0] if groups else None
 
-    A group for this platform that is a real box, nearest the game's region
-    by ss_regions' order; on a tie the one with a spine scanned, then the one
-    with more images, then the first listed.
+
+def ranked_groups(covers, platform_id, own_region):
+    """The cover groups for this platform that are a real box, best first:
+    nearest the game's region by ss_regions' order; on a tie the one with a
+    spine scanned, then the one with more images, then the first listed.
     """
     from scraper.ss_regions import rank_order
     groups = [g for g in covers or []
               if any(p.get('id') == platform_id for p in g.get('platforms') or [])
               and packaging(g) not in _NOT_A_BOX and g.get('images')]
     if not groups:
-        return None
+        return []
     rank = rank_order(own_region)
     unranked = len(rank)
 
@@ -83,8 +88,9 @@ def choose_group(covers, platform_id, own_region):
     def has_spine(group):
         return any(kind_of(i) == 'spine' for i in group['images'])
 
-    return min(enumerate(groups),
-               key=lambda ig: (nearest(ig[1]), not has_spine(ig[1]), -len(ig[1]['images']), ig[0]))[1]
+    order = sorted(enumerate(groups),
+                   key=lambda ig: (nearest(ig[1]), not has_spine(ig[1]), -len(ig[1]['images']), ig[0]))
+    return [group for _i, group in order]
 
 
 def _scan_path(name):

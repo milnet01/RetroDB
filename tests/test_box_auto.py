@@ -311,3 +311,145 @@ def test_a_clamshell_with_a_shop_tab_says_so_to_the_viewer(make_game, images):
     assert box_faces.faces_for({'box_faces': json.dumps(record)})['hanging_tab'] is True
     record['case']['name'] = 'A case Slipcase added later'
     assert box_faces.faces_for({'box_faces': json.dumps(record)})['hanging_tab'] is False
+
+
+# ---------------------------------------------------------------------------
+# PASS-59-331: the downloaded 3D box picture shows the box as it looks.
+# ---------------------------------------------------------------------------
+
+def _art(seed, size=(240, 360)):
+    """A front's artwork: blocks of colour no other seed repeats."""
+    rng = np.random.default_rng(seed)
+    blocks = rng.integers(0, 256, (9, 6, 3), dtype=np.uint8)
+    return Image.fromarray(blocks).resize(size, Image.Resampling.NEAREST)
+
+
+def _box_3d(path, art, opaque=False):
+    """A 3D box picture as ES-DE's look: a red spine on the left, `art` on
+    the front to its right, the fold the highest point of the outline."""
+    from PIL import ImageDraw
+    im = Image.new('RGBA', (400, 620), (255, 255, 255, 255) if opaque else (0, 0, 0, 0))
+    im.paste(art.convert('RGBA').resize((300, 560)), (80, 30))
+    mask = Image.new('L', im.size, 0)
+    ImageDraw.Draw(mask).polygon([(80, 30), (380, 50), (380, 570), (80, 590)], fill=255)
+    if not opaque:
+        im.putalpha(mask)
+    ImageDraw.Draw(im).polygon([(20, 60), (80, 30), (80, 590), (20, 560)], fill=(220, 0, 0, 255))
+    path.parent.mkdir(parents=True, exist_ok=True)
+    im.save(path, 'PNG')
+    return path.name
+
+
+def _game_with_3d(make_game, images, cover_seed, box_seed, opaque=False):
+    gid = make_game(folder='saturn', front=None)
+    cover = images / 'boxart' / f'{gid}_cover.webp'
+    cover.parent.mkdir(parents=True, exist_ok=True)
+    _art(cover_seed).save(cover, 'WEBP')
+    box = _box_3d(images / 'boxart_3d' / f'{gid}_3d.png', _art(box_seed), opaque)
+    execute("UPDATE games SET boxart = ?, boxart_3d = ? WHERE id = ?", (cover.name, box, gid))
+    return gid
+
+
+def _face(images, gid, face):
+    with Image.open(images / 'box_faces' / _record(gid)['faces'][face]) as im:
+        return im.convert('RGB')
+
+
+def test_a_3d_picture_is_cut_into_a_straight_front_and_spine(tmp_path):
+    from services.box3d import cut3d
+    path = tmp_path / 'box.png'
+    _box_3d(path, _art(1))
+    case = build.case_for_game('saturn', 'PAL')
+    front, spine = cut3d.cut_faces(str(path), case, 1080)
+    assert front.height == spine.height == 560   # the near edge; never enlarged
+    assert abs(front.width / front.height - case.width / case.height) < 0.01
+    r, g, b = spine.getpixel((spine.width // 2, spine.height // 2))
+    assert r > 180 and g < 60 and b < 60
+    assert cut3d.same_art(front, _art(1)) >= cut3d.SAME_ART
+    assert cut3d.same_art(front, _art(2)) < cut3d.SAME_ART
+
+
+def test_a_picture_with_no_transparent_background_is_not_cut(tmp_path):
+    from services.box3d import cut3d
+    path = tmp_path / 'box.png'
+    _box_3d(path, _art(1), opaque=True)
+    assert cut3d.cut_faces(str(path), None, 1080) is None
+
+
+def test_with_no_spine_scan_the_3d_pictures_spine_is_used(make_game, images):
+    gid = _game_with_3d(make_game, images, cover_seed=1, box_seed=1)
+    assert build.build_for_game(gid) == 'built'
+    r, g, b = _spine_colour(images, gid)
+    assert r > 180 and g < 60 and b < 60
+
+
+def test_another_releases_cover_gives_way_to_the_3d_pictures_front(make_game, images):
+    from services.box3d import cut3d
+    gid = _game_with_3d(make_game, images, cover_seed=2, box_seed=1)
+    assert build.build_for_game(gid) == 'built'
+    front = _face(images, gid, 'front')
+    assert cut3d.same_art(front, _art(1)) >= cut3d.SAME_ART
+    r, g, b = _spine_colour(images, gid)
+    assert r > 180 and g < 60 and b < 60
+
+
+def test_a_3d_picture_that_cannot_be_cut_leaves_the_generated_spine(make_game, images):
+    gid = _game_with_3d(make_game, images, cover_seed=1, box_seed=1, opaque=True)
+    assert build.build_for_game(gid) == 'built'
+    r, _g, _b = _spine_colour(images, gid)
+    assert r < 180
+
+
+@pytest.mark.parametrize('aspect, expected', [
+    (513 / 800, 'Sega Long Box'),    # MobyGames' "Jewel Case" for a tall PAL Saturn box
+    (1.12, 'CD Jewel Case'),
+    (None, 'CD Jewel Case'),         # a wrap: the label decides, as before
+])
+def test_a_jewel_case_label_follows_the_scanned_fronts_shape(aspect, expected):
+    assert build.case_for_game('saturn', 'PAL', 'Jewel Case', aspect).name == expected
+
+
+def test_a_belgian_box_is_pal():
+    assert build.region_for('psx', ['be', 'fr'], 'USA') == 'PAL'
+
+
+def _groups(*seeds):
+    return [{'cover_group_id': seed, 'images': [
+        {'type': {'name': 'Front Cover'}, 'thumbnail_url': f'https://cdn.example/{seed}.webp'}]}
+        for seed in seeds]
+
+
+@pytest.fixture
+def probes(tmp_path, monkeypatch):
+    """MobyGames' thumbnails, drawn from the seed in their URL; the URLs
+    asked for, in order."""
+    from scraper import metadata_merger
+    (tmp_path / 'box_scans').mkdir()
+    monkeypatch.setattr(metadata_merger, 'IMAGE_PATH', str(tmp_path))
+    asked = []
+
+    def fetch(url, path, image_type, **_kw):
+        asked.append(url)
+        _art(int(url.rsplit('/', 1)[1].split('.')[0]), (120, 180)).save(path, 'WEBP')
+        return True
+    monkeypatch.setattr(metadata_merger, '_download_and_finalize', fetch)
+    return tmp_path, asked
+
+
+def test_the_mobygames_group_the_3d_picture_shows_is_chosen(probes):
+    from scraper.metadata_merger import _group_like_3d_box
+    root, asked = probes
+    _box_3d(root / 'boxart_3d' / '7_3d.png', _art(5))
+    assert _group_like_3d_box(7, _groups(4, 5, 6), '7_3d.png')['cover_group_id'] == 5
+    assert len(asked) == 2                              # stops at the match
+    assert not list((root / 'box_scans').iterdir())     # the probes are deleted
+
+
+def test_with_no_match_or_no_3d_picture_the_best_ranked_group_stays(probes):
+    from scraper.metadata_merger import _group_like_3d_box
+    root, asked = probes
+    _box_3d(root / 'boxart_3d' / '7_3d.png', _art(5))
+    assert _group_like_3d_box(7, _groups(1, 2), '7_3d.png')['cover_group_id'] == 1
+    asked.clear()
+    assert _group_like_3d_box(7, _groups(1, 2), None)['cover_group_id'] == 1
+    assert asked == []

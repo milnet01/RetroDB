@@ -12,3 +12,4 @@ Reviews); an empty table means no review has run.
 | impl | 2026-11-21 | none: no reviewer dispatched | - | - | - | - | Live timing moved a premise: whole-record search 12-50 s vs light search + record by id about 2 s, so INV-1 is two requests; §4.1 and §8 rewritten |
 | impl | 2026-11-21 | none: no reviewer dispatched | - | - | - | - | PASS-59-328: §4.5 adds the `screenscraper` and `esde` disc keys; fill-only is per source, so a source merges into a record another filled |
 | impl | 2026-11-22 | none: no reviewer dispatched | - | - | - | - | Settings walk: a 429 at exactly the stated gap adds PACE_MARGIN (§4.2, INV-2); an old saved order gets `mobygames` before `ai`, as §2 already said (§4.3, §14); the gap runs from the reply (§4.2) |
+| impl | 2026-11-23 | none: no reviewer dispatched | - | - | - | - | PASS-59-331: §4.5 prefers the cover group whose front the 3D box picture shows; INV-9 added; §13 counts the probes |

@@ -195,6 +195,12 @@ and `games.box_scans TEXT` (NULL = none). The record:
   ScreenScraper's except `es` (`sp`) and `ww` (`wor`). On a tie, take
   the group with a `Spine/Sides` image, then the one with more images,
   then the first listed.
+- **Matching the 3D box picture** (PASS-59-331). When the game has a
+  `boxart_3d` picture and the scrape will download from MobyGames, the
+  best-ranked group whose front `cut3d.same_art` matches the picture's
+  front wins. At most `_MOBY_GROUP_PROBES` groups are tried, in rank
+  order, by downloading each one's front thumbnail; each is deleted once
+  compared. With no match, the best-ranked group stays.
 - Fill-only per source: a source's key is written only while the
   record has none, merged into what other sources wrote, or by Full
   Re-scrape (`scrapers.md` §3), which deletes the old record's files
@@ -288,6 +294,15 @@ REFERENCES games(id) ON DELETE CASCADE, added_at TEXT)`.
   *Breaks when:* the job never runs the pending game, runs it twice, or
   lists a game whose key was refused.
 
+- **INV-9** — The cover group whose front the 3D box picture shows wins
+  over a better-ranked one, and the probes leave no file.
+  *Test:* `tests/test_box_auto.py`, three groups whose second matches:
+  the second is chosen after two probes and `box_scans/` is empty. With
+  no match, or no 3D picture, the first is chosen, and with no picture
+  nothing is fetched.
+  *Breaks when:* a probe is not deleted, the probes run past a match, or
+  a game with no 3D picture fetches thumbnails.
+
 ## 6. Failure modes
 
 - **A server not answering.** On 2026-11-21 the API answered 502, 504
@@ -313,8 +328,9 @@ REFERENCES games(id) ON DELETE CASCADE, added_at TEXT)`.
 `tests/test_scrape_mobygames.py` is new and uses saved replies, with no
 network. It locks INV-1, INV-2, INV-3, INV-5, INV-6, INV-7 and INV-8.
 `tests/test_scrape_fill_only.py`
-locks INV-4. The security test gains MobyGames' downloads (INV-7). Each
-test is seen failing before its code exists.
+locks INV-4. The security test gains MobyGames' downloads (INV-7).
+`tests/test_box_auto.py` locks INV-9. Each test is seen failing before
+its code exists.
 
 ## 8. Alternatives considered (and rejected)
 
@@ -348,6 +364,7 @@ test is seen failing before its code exists.
 | INV-6 | `tests/test_scrape_mobygames.py` |
 | INV-7 | `tests/test_pass40_9_16_security.py`, `tests/test_scrape_mobygames.py` |
 | INV-8 | `tests/test_scrape_mobygames.py` |
+| INV-9 | `tests/test_box_auto.py` |
 | Help text names the source in every locale | **nothing** — read by hand |
 
 ## 11. Cross-doc impact
@@ -366,6 +383,8 @@ Rows live in `../reviews/PASS-59-183-mobygames-source-loop-log.md`.
 ## 13. Resource cost
 
 Scans are about 800 px tall and up to 40 per game. No new dependency.
+Matching the 3D box picture costs up to `_MOBY_GROUP_PROBES` thumbnail
+downloads per scrape.
 
 ## 14. Migration / compatibility
 

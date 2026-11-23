@@ -4,3 +4,4 @@
 
 | Loop | Date | Lanes | Q1 | Q2 | Q3 | Q4 | Outcome |
 |------|------|-------|----|----|----|----|---------|
+| impl | 2026-11-23 | none: no reviewer dispatched | - | - | - | - | PASS-59-331: the box follows the 3D box picture (§1, §4.2); more PAL country codes and a Jewel Case label checked against the front's shape (§4.3); INV-7 annotated; INV-11 to INV-13 added |

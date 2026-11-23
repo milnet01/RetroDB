@@ -15,7 +15,9 @@ case, built from its cover scans, with no Slipcase work.
 After this ships, a scrape that leaves a game with a cover builds the
 game's `box_faces` record itself, on the real case for its console and
 region: keep case with sleeve and rim, jewel case, cardboard box or
-clamshell. A missing spine is generated. Games scraped before this get
+clamshell. The box matches the game's downloaded 3D box picture
+(`boxart_3d`) where it can (§4.2); a spine found nowhere is generated.
+Games scraped before this get
 their box from a **Build 3D Boxes** tool in ROM Tools. A box imported from
 Slipcase is never overwritten by a built one.
 
@@ -82,8 +84,21 @@ copied across. Two changes only:
 |---|---|
 | front | MobyGames `front`; MobyGames `full` (a wrap, split by Slipcase's `split_full_cover`); `games.boxart` |
 | back | MobyGames `back`; `games.boxart_back` |
-| spine | MobyGames `spine` whose caption is empty, `Left`, or names neither `Right`, `Top` nor `Bottom`; else generated |
+| spine | MobyGames `spine` whose caption is empty, `Left`, or names neither `Right`, `Top` nor `Bottom`; else cut from `boxart_3d`; else generated |
 | edge, top, bottom | cardboard boxes only: MobyGames `spine` captioned `Right`, `Top`, `Bottom` |
+
+**The 3D box picture** (PASS-59-331). `games.boxart_3d` shows the box as
+it looks, so the built box follows it. `services/box3d/cut3d.py` cuts its
+front and spine out and straightens them to the case's shape. It cuts only
+a picture with a transparent background and the spine on the left; any
+other, such as a cartridge box lying flat, is left alone. When the front
+is a separate picture (not a `full` wrap):
+
+- `cut3d.same_art` compares the cut front with the chosen front. Under
+  `cut3d.SAME_ART` the chosen front is another release's artwork, so the
+  cut front and spine replace it and any spine scan.
+- Otherwise a game with no spine scan takes the cut spine.
+- The back stays the one chosen above, whichever release it is.
 
 A plastic case's edge, top and bottom are its plastic, as Slipcase draws
 them. A game with no front gets no box. Every source is a file under
@@ -113,12 +128,13 @@ converted to RGB.
    `saturnjp`, `megacdjp`, `megadrivejp` NTSC-J; `megacd` PAL). Otherwise
    the first country code of the MobyGames group the scans came from, as
    it is the box that was scanned, else of
-   `scraper/ss_regions.py::region_codes(games.region)`: `jp` is NTSC-J, a
-   European code, `au` or `nz` is PAL, anything else NTSC-U. Then
+   `scraper/ss_regions.py::region_codes(games.region)`: `jp` is NTSC-J; a
+   European code or one of `build._MORE_PAL` is PAL; anything else is NTSC-U. Then
    `cases.case_for(platform, region)`.
 3. **Packaging**, the MobyGames group's `packaging` when there is one.
    `Jewel Case` on a platform whose case is not a jewel case gives
-   `CD Jewel Case`. **A PC game is built only when the packaging is `Keep
+   `CD Jewel Case`, unless the scanned front's shape is nearer the
+   platform's case: MobyGames calls a tall PAL Saturn box a jewel case. **A PC game is built only when the packaging is `Keep
    Case` (PC DVD Case) or `Jewel Case`**: most PC games came in a large
    cardboard box, which Slipcase has no case for.
 4. **A jewel case's back card** picks the regional case it fits, as
@@ -227,6 +243,8 @@ like the image resizer, confirms and calls
   *Breaks when:* the build stores Slipcase's 1600 px faces, or enlarges.
 
 - **INV-7** — A scanned spine is used; with none, one is generated.
+  Amended by INV-11 and INV-12 (PASS-59-331): with none, the 3D box
+  picture's spine comes before a generated one.
   *Test:* `tests/test_box_auto.py`, a solid-red spine scan gives a red
   stored spine; without it the spine is the generated one's colour.
   *Breaks when:* §4.2's caption rule picks the wrong scan, or ignores it.
@@ -248,6 +266,28 @@ like the image resizer, confirms and calls
   *Test:* `tests/test_box_auto.py`.
   *Breaks when:* a decorator is dropped.
 
+- **INV-11** — With no spine scan, a cut 3D box picture's spine is used.
+  A picture that cannot be cut leaves the generated spine.
+  *Test:* `tests/test_box_auto.py`, a 3D picture with a red spine and the
+  cover's artwork gives a red stored spine; with an opaque background it
+  does not.
+  *Breaks when:* the cut is skipped, or a picture with no transparent
+  background is cut.
+
+- **INV-12** — A front that is another release's artwork gives way to the
+  3D box picture's front.
+  *Test:* `tests/test_box_auto.py`, a cover unlike the 3D picture's front
+  stores a front that `same_art` matches to the 3D picture.
+  *Breaks when:* the comparison is skipped, or `SAME_ART` is set where
+  the same artwork falls under it.
+
+- **INV-13** — A `Jewel Case` label follows the scanned front's shape.
+  *Test:* `tests/test_box_auto.py`, a PAL Saturn front 513 × 800 gets
+  `Sega Long Box`; a front 1.12 wide per 1 tall, or a wrap, gets
+  `CD Jewel Case`.
+  *Breaks when:* the label wins over the scan's shape, or a wrap's shape
+  is used.
+
 ## 6. Failure modes
 
 - **A source file is missing or unreadable**: that face falls back as §4.2
@@ -263,7 +303,7 @@ like the image resizer, confirms and calls
 
 ## 7. Tests
 
-`tests/test_box_auto.py` covers INV-1 to INV-10, with pictures made in the
+`tests/test_box_auto.py` covers INV-1 to INV-13, with pictures made in the
 test under the conftest media isolation. Each test is seen failing before
 its rule exists.
 
@@ -295,7 +335,8 @@ it again.
 
 | Rule | What catches a breach |
 |------|----------------------|
-| INV-1 to INV-10 | `tests/test_box_auto.py` |
+| INV-1 to INV-13 | `tests/test_box_auto.py` |
+| `cut3d.SAME_ART` | **nothing** automated — set from 279 library games (PASS-59-331); a new picture source would need measuring again |
 | §4.1 port parity | **nothing** automated — the hand check in §7; Slipcase is not in RetroDB's tree |
 | §4.5 thread priority | **nothing** — a server-speed effect no test measures |
 

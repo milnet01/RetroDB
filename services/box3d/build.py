@@ -20,7 +20,7 @@ from services.security import safe_path
 logger = logging.getLogger(__name__)
 
 # Bump when a change here or in the port should rebuild every built box.
-BUILD_VERSION = 2
+BUILD_VERSION = 3
 
 # System folder -> Slipcase's platform name (spec §4.3). Any other folder
 # gets no box: arcade sets and home computers came in boxes Slipcase has no
@@ -59,12 +59,16 @@ OUTCOMES = ('built', 'unchanged', 'imported', 'no_case', 'no_front', 'failed')
 # Choosing the case
 # ---------------------------------------------------------------------------
 
+# PAL countries MobyGames names by codes ScreenScraper's Europe list lacks.
+_MORE_PAL = ('au', 'nz', 'es', 'be', 'lu', 'at', 'ch', 'ie', 'ru', 'za')
+
+
 def _region_of(code):
     """Slipcase's region for one country code (ScreenScraper's or MobyGames')."""
     from scraper.ss_regions import _EUROPE
     if code == 'jp':
         return 'NTSC-J'
-    if code in _EUROPE or code in ('au', 'nz', 'es'):
+    if code in _EUROPE or code in _MORE_PAL:
         return 'PAL'
     return 'NTSC-U'
 
@@ -81,10 +85,11 @@ def region_for(folder, countries, game_region):
     return _region_of(codes[0]) if codes else 'NTSC-U'
 
 
-def case_for_game(folder, region, packaging=None):
+def case_for_game(folder, region, packaging=None, front_aspect=None):
     """The case for a game, or None for no box (spec §4.3). `region` is
     Slipcase's (NTSC-U, PAL, NTSC-J); `packaging` the scans' MobyGames
-    packaging, if any."""
+    packaging, if any; `front_aspect` the scanned front's width / height,
+    if known."""
     from services.box3d import cases
     platform = PLATFORMS.get(folder)
     if platform is None:
@@ -94,8 +99,20 @@ def case_for_game(folder, region, packaging=None):
         return cases.CASE_TYPES[name] if name else None
     case = cases.case_for(platform, region)
     if case is not None and packaging == 'Jewel Case' and case.layout != 'jewel':
-        case = cases.CASE_TYPES['CD Jewel Case']
+        jewel = cases.CASE_TYPES['CD Jewel Case']
+        # MobyGames also calls a tall Saturn or Sega CD box a jewel case;
+        # the scanned front's shape says which it was.
+        if front_aspect is None or _nearer(front_aspect, jewel, case):
+            case = jewel
     return case
+
+
+def _nearer(aspect, case, other):
+    """Whether `aspect` (width / height) is nearer `case`'s front than
+    `other`'s, by ratio."""
+    import math
+    off = lambda c: abs(math.log(aspect * c.height / c.width))  # noqa: E731
+    return off(case) <= off(other)
 
 
 # ---------------------------------------------------------------------------
@@ -126,10 +143,11 @@ def _side_of(caption):
 
 def inputs(row):
     """Each face's source file and the scans' MobyGames facts (spec §4.2):
-    {'front', 'full', 'back', 'spine', 'edge', 'top', 'bottom': path or None,
-     'packaging': str or None, 'countries': [codes]}."""
+    {'front', 'full', 'back', 'spine', 'edge', 'top', 'bottom', 'box3d': path
+     or None, 'packaging': str or None, 'countries': [codes]}. `box3d` is the
+    downloaded 3D box picture, which shows the box as it looks (PASS-59-331)."""
     found = {face: None for face in ('front', 'full', 'back', 'spine', 'edge', 'top', 'bottom')}
-    found.update(packaging=None, countries=[])
+    found.update(packaging=None, countries=[], box3d=_file('boxart_3d', row['boxart_3d']))
     try:
         record = json.loads(row['box_scans']) if row['box_scans'] else {}
     except (TypeError, ValueError):
@@ -159,7 +177,7 @@ def _signature(case, row, found):
         # Left out when there is none, so a case without one keeps its old
         # signature; a new or changed shape rebuilds (it changes the faces).
         parts.append(repr(case.shape))
-    for face in ('front', 'full', 'back', 'spine', 'edge', 'top', 'bottom'):
+    for face in ('front', 'full', 'back', 'spine', 'edge', 'top', 'bottom', 'box3d'):
         path = found[face]
         parts.append(f'{face}={os.path.basename(path)}:{os.path.getsize(path)}' if path else f'{face}=')
     return hashlib.sha1('\n'.join(parts).encode('utf-8')).hexdigest()[:8]
@@ -186,14 +204,39 @@ def _hex(rgb):
     return '#{:02X}{:02X}{:02X}'.format(*rgb)
 
 
-def _faces(case, row, found, platform):
-    """The built faces as PIL images, and the box model's colours."""
+def _front_aspect(found):
+    """The scanned front's width / height, or None (a wrap, or unreadable)."""
     from PIL import Image
-    from services.box3d import jewel
+    if found['front'] is None:
+        return None
+    try:
+        with Image.open(found['front']) as im:
+            return im.width / max(1, im.height)
+    except OSError:
+        return None
+
+
+def _faces(case, row, found, platform):
+    """The built faces as PIL images, and the box model's colours.
+
+    The downloaded 3D box picture shows the box as it looks (PASS-59-331):
+    with no spine scan its spine is used, and when its front is another
+    release's artwork, its front and spine both are. The back stays the
+    scanned one, from whichever release it is.
+    """
+    from PIL import Image
+    from services.box3d import cut3d, jewel
     from services.box3d.faces import build_box_model
     front = _open(found['front'] or found['full'])
     back = _open(found['back']) if found['back'] else None
     spine = _open(found['spine']) if found['spine'] else None
+    if found['box3d'] and found['front']:  # a wrap carries its own spine
+        cut = cut3d.cut_faces(found['box3d'], case, box_faces.TARGET_HEIGHT)
+        if cut is not None:
+            if cut3d.same_art(cut[0], front) < cut3d.SAME_ART:
+                front, spine = cut
+            elif spine is None:
+                spine = cut[1]
     if back is not None and case.layout == 'jewel':
         case = jewel.card_case(back, platform, case)
     model = build_box_model(
@@ -227,7 +270,7 @@ def _shape(case):
 
 def _game(game_id):
     return query("""
-        SELECT g.id, g.title, g.region, g.disc_serial, g.boxart, g.boxart_back,
+        SELECT g.id, g.title, g.region, g.disc_serial, g.boxart, g.boxart_3d, g.boxart_back,
                g.box_scans, g.box_faces, s.folder
         FROM games g JOIN systems s ON s.id = g.system_id WHERE g.id = ?
     """, (game_id,), one=True)
@@ -248,7 +291,7 @@ def build_for_game(game_id):
         if found['front'] is None and found['full'] is None:
             return 'no_front'
         region = region_for(row['folder'], found['countries'], row['region'])
-        case = case_for_game(row['folder'], region, found['packaging'])
+        case = case_for_game(row['folder'], region, found['packaging'], _front_aspect(found))
         if case is None:
             return 'no_case'
         signature = _signature(case, row, found)

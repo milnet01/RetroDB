@@ -1017,6 +1017,53 @@ def _download_box_scans(db_game_id, group):
     return record
 
 
+# Most cover groups whose front is fetched to find the one the 3D box
+# picture shows (PASS-59-331); each costs one small picture download.
+_MOBY_GROUP_PROBES = 4
+
+
+def _group_like_3d_box(db_game_id, groups, boxart_3d):
+    """The best-ranked cover group whose front is the artwork the game's 3D
+    box picture shows, trying at most _MOBY_GROUP_PROBES; the best-ranked
+    one when none is, there is no 3D picture, or there is one group."""
+    if len(groups) < 2 or not boxart_3d:
+        return groups[0] if groups else None
+    import secrets
+    from PIL import Image
+    from services import box_scans
+    from services.box3d import cut3d
+    from services.security import safe_path
+    base = os.path.join(IMAGE_PATH, 'boxart_3d')
+    path = safe_path(os.path.join(base, os.path.basename(boxart_3d)), base)
+    try:
+        cut = cut3d.cut_faces(path, None, 360) if path and os.path.isfile(path) else None
+    except Exception as e:  # matching is a nicety; it must never stop a scrape
+        logger.warning(f'Could not cut the 3D box picture of game {db_game_id}: {e}')
+        cut = None
+    if cut is None:
+        return groups[0]
+    for group in groups[:_MOBY_GROUP_PROBES]:
+        image = next((i for i in group.get('images') or [] if box_scans.kind_of(i) == 'front'), None)
+        url = (image or {}).get('thumbnail_url') or (image or {}).get('image_url')
+        if not url:
+            continue
+        probe = os.path.join(IMAGE_PATH, 'box_scans', f'{db_game_id}_probe_{secrets.token_hex(3)}.webp')
+        try:
+            if not _download_and_finalize(url, probe, 'box_scans', timeout=15):
+                continue
+            with Image.open(probe) as im:
+                score = cut3d.same_art(cut[0], im.convert('RGB'))
+        except Exception as e:  # as above
+            logger.warning(f'Could not compare a MobyGames front for game {db_game_id}: {e}')
+            continue
+        finally:
+            if os.path.isfile(probe):
+                os.remove(probe)
+        if score >= cut3d.SAME_ART:
+            return group
+    return groups[0]
+
+
 def _moby_cover(group, type_name):
     for image in (group or {}).get('images') or []:
         if (image.get('type') or {}).get('name') == type_name and image.get('image_url'):
@@ -1056,7 +1103,11 @@ def apply_mobygames_to_metadata(metadata, moby_data, db_game_id, result, fill_on
     fill('moby_score', moby_data.get('moby_score'))
     fill('mobygames_id', moby_data.get('game_id'))
 
-    group = box_scans.choose_group(moby_data.get('covers'), platform_id, own_region) if platform_id else None
+    groups = box_scans.ranked_groups(moby_data.get('covers'), platform_id, own_region) if platform_id else []
+    wanted = (not metadata.get('boxart') or not metadata.get('boxart_back')
+              or not box_scans.has_source(metadata.get('box_scans'), 'mobygames'))
+    group = (_group_like_3d_box(db_game_id, groups, metadata.get('boxart_3d')) if wanted
+             else groups[0] if groups else None)
     for field, type_name, folder in (('boxart', 'Front Cover', 'boxart'),
                                      ('boxart_back', 'Back Cover', 'boxart_back')):
         url = _moby_cover(group, type_name)
