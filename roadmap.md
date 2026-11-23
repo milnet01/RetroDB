@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=329 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=330 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -795,6 +795,34 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
       hltb.css search box and button removed. Computed styles of three
       game pages and one achievement page, 1400 and 375px, pop-ups open
       and shut, match before and after.
+  2026-11-23, third run (Low list and open questions, each cite read
+  at 2643a346 and found in the current tree):
+  - Fixed: 14 script scrolls asked for 'smooth' and so ignored reduced
+    motion (the CSS rule cannot stop them); they now use scrollMotion()
+    in utils.js. Checked headless: 'auto' under reduce, else 'smooth'.
+  - Fixed: dead Google Fonts @import in typography.css (after other
+    rules, and CSP font-src 'self'); unused .psn-sort-* rules in
+    trophies.css, filters.css and responsive.css; identical copies of
+    .section-title (rom_tools_settings.html) and .form-group
+    (lists.html); fixed colours of the Systems filter boxes now theme
+    variables. Computed styles of five pages, 1400 and 375px: only the
+    Systems filter boxes changed.
+  - Dismissed, measured at 375px with no sideways overflow: lightbox
+    hint (232px), .form-row, achievement link, confirm modal.
+  - Dismissed, no fault now: logs.html:508, game-list.css badges and
+    glow, pages.css museum-nav (JS sets top), archive_scanner z-index,
+    game_detail.html:64 and the .game-boxart-image copies,
+    stat-boxes/game-cards grids.
+  - Dismissed, wording lost: log-viewer.js:284, settings.html:156 and
+    527, lists.html:209, responsive.css:122, game-list.css:877,
+    achievements.css:16, game_detail.html:1715.
+  - Queued: fixed colours to PASS-59-255; contrast, drifted copies and
+    an opacity-only cue to PASS-59-330.
+  - Still open: tables.css sticky th. Measured: only Help's tables and
+    the Settings users table sit in the page; every other data-table
+    is in its own scroll box, where top:0 is right. Those two stick
+    under the page's own sticky menu at every width. Needs the user's
+    choice.
   **Layman:** Fixes for empty gaps and hidden headers on phones, and for duplicated page styles.
   Kind: implement.
 
@@ -945,6 +973,19 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     `trophies.css:364-367`. Contrast and brand colours: PASS-59-281.
 
   ---
+  2026-11-23, from PASS-59-282's Low list (checked against current
+  source): more fixed dark-theme colours that ignore the theme.
+  - `templates/analytics.html`: `Chart.defaults.color` and
+    `borderColor`, axis tick colours and the whole chart palette are
+    fixed values. Chart.js cannot read CSS variables; read them with
+    getComputedStyle when the charts are built.
+  - `rgba(20, 26, 35, …)` (the dark `--card-bg` with alpha) in page
+    styles, e.g. `achievements_system.html`; `color-mix` with
+    `var(--card-bg)` would follow the theme.
+  - `rom_tools_settings.html` `.success-message`: fixed green and white,
+    a page copy of a toast; the shared toast may replace it.
+  - `wishlist.html` priority badge: JS writes inline colours per item.
+  - `changelog.html` `.version-badge`: fixed cyan rgba.
   **Layman:** Every theme colours the whole page, with no leftover fixed blue-green.
   Kind: implement.
 
@@ -3762,6 +3803,25 @@ After 4.0.0 the web version still gets bug fixes and, now and then, a good new f
   **Layman:** On a fast server the Similar Games row on a game page can fail to show.
   Kind: fix.
   Source: PASS-59-326 browser walk, 2026-11-21.
+
+- 📋 [PASS-59-330] **Style leftovers from PASS-59-282 that need a design choice (ux, S).**
+  - **Why not fixed now**: each is real or likely, but the fix changes how
+    a page looks, so it needs a choice and a screen check.
+  - **Contrast** (measure first, as PASS-59-281 did): white text on a
+    user-picked tag colour (`tags.html` `.tag-pill`); white on
+    `--neon-red` (`achievement_game.html` `.trophy-type-label.hardcore`);
+    `opacity: 0.4` line numbers (`logs.html` `.log-line-number`).
+  - **Drifted copies**: `.section-title` in `typography.css`, `pages.css`
+    and `game_detail.html` differ on purpose or by accident; `settings.html`
+    page `.form-group` / `.form-label` differ from `forms.css`; two
+    `.screenshot-thumb` rules in `game_detail.html` (row and grid) should
+    be scoped to their containers.
+  - **Cue by opacity only**: `screenshot_dedup.html` `.dup-thumb.delete`
+    shows "will be deleted" by fading alone.
+  - **Check**: desktop and 375px after each.
+  **Layman:** Small look-and-feel clean-ups where someone must first choose how it should look.
+  Kind: ux.
+  Source: PASS-59-282 Low list, checked 2026-11-23.
 
 ## Desktop milestone 1 — browse and play
 
