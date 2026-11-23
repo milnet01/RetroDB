@@ -199,6 +199,25 @@ def test_organize_never_writes_over_a_file_in_the_folder(psx):
     assert (psx_dir / 'Game (Disc 2).chd').exists()
 
 
+@pytest.mark.parametrize('system, name', [
+    ('psx', '../saturn/Game'),   # stays under the ROM folder, leaves psx
+    ('../roms/psx', 'Game'),     # system that climbs out and back in
+])
+def test_organize_takes_one_folder_name_each(psx, system, name):
+    """PASS-49-4: system and name are each one folder name, not a path."""
+    post, psx_dir = psx
+    saturn = psx_dir.parent / 'saturn'
+    saturn.mkdir()
+    for n in (1, 2):
+        (psx_dir / f'Game (Disc {n}).chd').write_bytes(b'x')
+    resp = post('/api/reports/organize-multidisc', {
+        'system': system, 'name': name,
+        'files': ['Game (Disc 1).chd', 'Game (Disc 2).chd']})
+    assert resp.get_json()['success'] is False
+    assert not list(saturn.iterdir())
+    assert (psx_dir / 'Game (Disc 1).chd').exists()
+
+
 def test_organize_lists_sheets_not_their_tracks_and_moves_the_games(psx, vdb):  # noqa: F811
     post, psx_dir = psx
     names = []

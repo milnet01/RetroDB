@@ -605,6 +605,9 @@ def api_reports_organize_multidisc():
     
     if not system or not name or not files:
         return error(_('Missing required parameters'), 400)
+    # PASS-49-4 — each is one folder name; a path could leave the system folder.
+    if not safe_filename(system) or not safe_filename(name):
+        return error(_('Invalid path'), 400)
 
     rom_path = _get_rom_path()
     if not rom_path:
