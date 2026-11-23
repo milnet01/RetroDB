@@ -3695,6 +3695,15 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   off; status and switch now wrap to a second line. Re-walked: no
   MobyGames refusals, order ends mobygames, ai. Still open: whether
   MobyGames' terms ask for a credit link.
+  Terms checked 2026-11-23 in Chrome. The API page's FAQ
+  (mobygames.com/api/subscribe/) asks for the credit "Data by
+  MobyGames.com" wherever the data is used; no link is required. It also
+  forbids competing with MobyGames, reselling the data or claiming it.
+  The site's Terms of Use forbid using MobyGames content to ground an
+  AI. Done: the credit is no longer translated; AI Fill neither shows
+  the AI nor rewrites a field credited (MobyGames)
+  (services/ai_fill.py). Screenshots and box scans already come from one
+  platform's group.
   **Layman:** MobyGames as another place to look up game details.
   Kind: implement.
 
@@ -3819,6 +3828,16 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   per game); multi-disc cases (Dreamcast/PC 24 mm, US PS1 double, PS one
   Books 5 mm); PAL Mega CD thickness; PAL Saturn case; PS5 blue darker
   than PS4; Game Gear JP size and tab; Genesis cardboard and EA cases.
+  Gemini asked 2026-11-23 (Auto mode; the deeper mode is locked on the
+  free account). Reply and comparison: Scratchpad
+  case-research/gemini-reply.md and gemini-diff.md. Gemini gives no
+  links, and ten of its sizes clash with cited sources or the user's
+  ruler. User decision 2026-11-23: change nothing from Gemini alone; its
+  leads are search targets only: multi-disc depths (PS1 ~24, Saturn JP
+  and Dreamcast US 26-27), PAL Saturn ~140x215x16 card-wrapped early,
+  PAL Mega CD double 24, Game Gear JP ~92x115x20, Genesis cardboard
+  ~134x191x23, NES PAL early small box, PS2 JP colours, PS3 and Xbox One
+  moulded top band, eco cut-outs, Wii U green and red editions.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.

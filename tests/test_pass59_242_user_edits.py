@@ -111,6 +111,24 @@ def test_ai_fill_leaves_a_hand_edited_value(library, monkeypatch):
     assert row['developer'] == 'AI Dev'
 
 
+def test_ai_fill_is_not_shown_a_mobygames_value(library, monkeypatch):
+    """MobyGames' terms forbid feeding its content to an AI (user, 2026-11-23)."""
+    library.add_game(publisher='Moby Pub', developer='Scraped Dev',
+                     scrape_history=_history('publisher (MobyGames)', 'developer (igdb)'))
+    asked = {}
+
+    def answer(*a, **k):
+        asked.update(k)
+        return {'publisher': 'AI Pub'}
+    monkeypatch.setattr('scraper.scrape_ai.get_game_details', answer)
+    monkeypatch.setattr('scraper.hybrid_scraper.get_system_default_controller_name',
+                        lambda system_id: None)
+    ai_fill.fill_game(ai_fill.load_game(1))
+    assert 'publisher' not in asked['only_fields']
+    assert {'developer', 'title', 'genre'} <= asked['only_fields']
+    assert library.row()['publisher'] == 'Moby Pub'
+
+
 # --- 5. A typed controller beats the system default --------------------------------
 
 def test_a_scrape_keeps_a_typed_controller(library, monkeypatch):

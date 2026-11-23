@@ -32,6 +32,9 @@
     label: "现在即使来源顺序是在加入 MobyGames 之前保存的，也会按计划先询问 MobyGames 再询问 AI，因此 AI 不会再填写 MobyGames 已知的内容。MobyGames 拒绝 RetroDB 请求的情况也更少了：RetroDB 现在在两次请求之间多等一会儿，保存 API 密钥也不会再让请求插队"
     en: "MobyGames is now asked before the AI, as planned, even where the order of sources was saved before MobyGames was added, so the AI no longer fills in what MobyGames knows. MobyGames also refuses RetroDB's requests less often: RetroDB now waits a little longer between them, and saving your API keys no longer lets a request jump the queue"
   - type: fix
+    label: "AI 填充不再把 MobyGames 提供的任何内容给 AI 看，并让这些内容保持 MobyGames 给出的样子，因为 MobyGames 的条款禁止把它的数据交给 AI。按 MobyGames 的要求，“Data by MobyGames.com” 这条署名现在在所有语言中都完全一样"
+    en: "AI Fill no longer shows the AI anything MobyGames supplied, and leaves those details as MobyGames gave them, because MobyGames' terms forbid passing its data to an AI. The \"Data by MobyGames.com\" credit now reads the same in every language, as MobyGames asks"
+  - type: fix
     label: "在手机上，设置 > 抓取 中的来源列表又能看清了：每个名称和说明占满整行宽度，状态和开关在下一行。以前文字被挤成每行一个词，开关也被截掉"
     en: "On a phone, the list of sources in Settings > Scraping is readable again: each name and description uses the full width, with its status and on/off switch on the line below. Before, the text was squeezed to one word a line and the switch was cut off"
   - type: fix

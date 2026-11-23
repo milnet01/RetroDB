@@ -340,7 +340,7 @@ check_api_status() -> dict
 
 Text-only. AI never returns images, screenshots, videos, or manuals — `AI_FILLABLE_FIELDS` is the explicit allowlist.
 
-**What AI Fill corrects** (PASS-59-242). In `VALIDATE_FIELDS` it replaces a stored value it disagrees with, once both are in stored form (`1-4` players is 4; a list compares as a set). A value credited `manual` is never replaced (user, 2026-11-04). Every edit path credits a person for each changed field of `field_sources.HAND_EDITED_FIELDS` through `routes/games.py::_note_hand_edits`.
+**What AI Fill corrects** (PASS-59-242). In `VALIDATE_FIELDS` it replaces a stored value it disagrees with, once both are in stored form (`1-4` players is 4; a list compares as a set). A value credited `manual` is never replaced (user, 2026-11-04). A value credited `MobyGames` is neither shown to the AI nor replaced, because MobyGames' Terms of Use forbid grounding an AI with its content (user, 2026-11-23); pinned by `tests/test_pass59_242_user_edits.py`. Every edit path credits a person for each changed field of `field_sources.HAND_EDITED_FIELDS` through `routes/games.py::_note_hand_edits`.
 
 **`FIELD_SCHEMAS`** pins canonical values for every dropdown-style field (`genre`, `game_structure`, `perspective`, `dimension`, `modes`, `save_type`, `other_platforms`, every rating system). The AI prompt presents these allowlists to the model; the response validator enforces them post-call (drops or maps unknown values). The full schema and prompt construction live in `scraper/scrape_ai.py` — do not duplicate the strings here, they drift.
 

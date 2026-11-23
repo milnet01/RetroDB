@@ -32,6 +32,9 @@
     label: "ソースの順番が MobyGames 追加前に保存されていた場合でも、予定どおり MobyGames が AI より先に問い合わせられるようになり、MobyGames が知っている情報を AI が埋めることはなくなりました。また MobyGames が RetroDB のリクエストを断ることも減りました。RetroDB はリクエストの間隔を少し長く取るようになり、API キーを保存してもリクエストが順番を飛ばさなくなりました"
     en: "MobyGames is now asked before the AI, as planned, even where the order of sources was saved before MobyGames was added, so the AI no longer fills in what MobyGames knows. MobyGames also refuses RetroDB's requests less often: RetroDB now waits a little longer between them, and saving your API keys no longer lets a request jump the queue"
   - type: fix
+    label: "AI補完は、MobyGames が提供した情報を AI に見せなくなり、その項目は MobyGames が与えたままになります。MobyGames の利用規約が、そのデータを AI に渡すことを禁じているためです。「Data by MobyGames.com」のクレジットは、MobyGames の要望どおり、どの言語でも同じ表記になりました"
+    en: "AI Fill no longer shows the AI anything MobyGames supplied, and leaves those details as MobyGames gave them, because MobyGames' terms forbid passing its data to an AI. The \"Data by MobyGames.com\" credit now reads the same in every language, as MobyGames asks"
+  - type: fix
     label: "スマートフォンで 設定 > スクレイピング のソース一覧が再び読みやすくなりました。名前と説明が横幅いっぱいに表示され、状態とオン/オフのスイッチはその下の行に並びます。以前は文字が1行に1語まで詰め込まれ、スイッチが切れていました"
     en: "On a phone, the list of sources in Settings > Scraping is readable again: each name and description uses the full width, with its status and on/off switch on the line below. Before, the text was squeezed to one word a line and the switch was cut off"
   - type: fix

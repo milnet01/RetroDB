@@ -957,10 +957,10 @@
     </div>
     {% endif %}
 
-    {# MobyGames' API terms ask for a credit wherever its data is shown. #}
+    {# MobyGames' API terms ask for this exact credit wherever its data is shown, so it is not translated. #}
     {% if game.mobygames_id %}
     <p class="source-credit">
-        <a href="https://www.mobygames.com/game/{{ game.mobygames_id|int }}/" target="_blank" rel="noopener noreferrer" class="credit-link">{{ _('Data by MobyGames.com') }}</a>
+        <a href="https://www.mobygames.com/game/{{ game.mobygames_id|int }}/" target="_blank" rel="noopener noreferrer" class="credit-link">Data by MobyGames.com</a>
     </p>
     {% endif %}
 </div>

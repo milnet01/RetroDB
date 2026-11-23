@@ -108,8 +108,16 @@ def fill_game(game, fields=None):
     # Always re-fetch similar_games (scraper data unreliable)
     existing_metadata['similar_games'] = ''
     # User, 2026-11-04: what a person typed is never corrected by the AI.
-    hand_edited = {f for f, src in field_credits(game.get('scrape_history')).items()
-                   if src == 'manual'}
+    credited = field_credits(game.get('scrape_history'))
+    hand_edited = {f for f, src in credited.items() if src == 'manual'}
+    # MobyGames' terms forbid feeding its content to an AI, so a value it
+    # supplied is neither shown to the AI nor checked by it.
+    from_moby = {f for f, src in credited.items()
+                 if src == 'MobyGames' and existing_metadata.get(f, '').strip()}
+    ask_fields = fields
+    if from_moby:
+        ask_fields = (set(fields) if fields is not None
+                      else set(ai_fields) | {'title'}) - from_moby
     if ((existing_metadata.get('other_platforms', '') or '').strip().lower() == 'exclusive'
             and 'other_platforms' not in hand_edited):
         existing_metadata['other_platforms'] = ''
@@ -128,7 +136,7 @@ def fill_game(game, fields=None):
     ai_data = ai_get_details(
         game_id, game['title'], game['system_name'],
         game['system_folder'], existing_metadata=existing_metadata,
-        only_fields=fields,
+        only_fields=ask_fields,
     )
 
     if not ai_data:
@@ -140,7 +148,8 @@ def fill_game(game, fields=None):
     # earlier assignment instead of appending a duplicate `col = ?`.
     sets = {}
     for field, value in ai_data.items():
-        if field not in ai_fields or not value or (field == 'region' and file_region):
+        if (field not in ai_fields or not value or field in from_moby
+                or (field == 'region' and file_region)):
             continue
         current = str(game.get(field, '') or '').strip()
         # A count belongs to its score, so it is written only with an AI score.
