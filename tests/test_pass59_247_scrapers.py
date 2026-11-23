@@ -19,18 +19,40 @@ def test_only_global_addresses_are_public(ip, public):
 
 
 def test_a_relative_redirect_is_followed_from_where_it_came(monkeypatch):
-    monkeypatch.setattr(ssrf, 'validate_outbound_url', lambda url, **k: (True, url, None))
-
-    class Resp:
-        def __init__(self, status, location=None):
-            self.status_code = status
-            self.headers = {'Location': location} if location else {}
+    monkeypatch.setattr(ssrf, 'validate_outbound_url',
+                        lambda url, **k: (True, url, ['203.0.113.1']))
 
     class Session:
         def head(self, url, **k):
-            return Resp(302, '/next') if url == 'https://example.com/start' else Resp(200)
+            return _Resp(302, '/next') if url == 'https://example.com/start' else _Resp(200)
     final, err = ssrf.validate_redirect_chain(Session(), 'https://example.com/start')
     assert (final, err) == ('https://example.com/next', None)
+
+
+class _Resp:
+    def __init__(self, status, location=None):
+        self.status_code = status
+        self.headers = {'Location': location} if location else {}
+
+
+def test_each_redirect_probe_goes_to_the_address_just_checked(monkeypatch):
+    """PASS-49-3: the HEAD connects to the checked address; a second lookup
+    could be answered with a private one (DNS rebinding)."""
+    import socket
+    checked = {'https://a.example/start': '203.0.113.1',
+               'https://b.example/end': '203.0.113.2'}
+    monkeypatch.setattr(ssrf, 'validate_outbound_url',
+                        lambda url, **k: (True, url, [checked[url]]))
+    seen = []
+
+    class Session:
+        def head(self, url, **k):
+            host = ssrf.urlparse(url).hostname
+            seen.append(socket.getaddrinfo(host, 443)[0][4][0])
+            return _Resp(302, 'https://b.example/end') if 'a.example' in url else _Resp(200)
+    final, err = ssrf.validate_redirect_chain(Session(), 'https://a.example/start')
+    assert (final, err) == ('https://b.example/end', None)
+    assert seen == ['203.0.113.1', '203.0.113.2']
 
 
 @pytest.mark.parametrize('release_date', ['TBA', '199?', 'Unknown', ''])

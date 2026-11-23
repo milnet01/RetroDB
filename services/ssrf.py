@@ -196,11 +196,16 @@ def validate_redirect_chain(session, start_url, *, max_redirects=3, timeout=5):
     """
     current = start_url
     for _ in range(max_redirects + 1):
-        ok, result, _ = validate_outbound_url(current)
+        ok, result, ips = validate_outbound_url(current)
         if not ok:
             return None, result
+        if not ips:
+            return None, 'no address to pin'
         try:
-            head = session.head(current, allow_redirects=False, timeout=timeout)
+            # PASS-49-3 — connect to the address just checked; a second
+            # lookup could be answered with a private one (DNS rebinding).
+            with pin_host_ip(urlparse(current).hostname, ips[0]):
+                head = session.head(current, allow_redirects=False, timeout=timeout)
         except Exception as e:  # requests may raise many flavors here
             return None, f'HEAD failed: {e}'
         if head.status_code in (301, 302, 303, 307, 308):
