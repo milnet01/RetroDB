@@ -3806,7 +3806,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: research.
   Source: user-request-2026-11-21.
 
-- 📋 [PASS-59-331] **The 3D viewer shows the same release as the downloaded 3D box picture (enhancement, M).**
+- ✅ [PASS-59-331] **The 3D viewer shows the same release as the downloaded 3D box picture (enhancement, M).**
   - **Seen 2026-11-23**: game 4363 (Clockwork Knight 2, Saturn, region
     USA). boxart_3d is ES-DE's US box; ES-DE's flat cover and back and
     MobyGames' only group (57546) are the European box, so the built box
@@ -3823,6 +3823,8 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - **Verify**: game 4363's viewer shows the US front and spine.
   - **Correction 2026-11-23**: cutting the front out of 4363's boxart_3d showed it IS the European cover the viewer uses. The real differences: the spine (MobyGames has no spine scan, so the builder drew a text spine; boxart_3d has the printed one) and the grey hinge strip the viewer adds. So the main fix is: with no spine scan, take the spine from boxart_3d. Keep the front comparison for real mismatches.
   - **Prototype**: /mnt/Emulators/.claude/Scratchpad/RetroDB/p331/cut.py finds the fold where the top edge of the opaque outline peaks, fits lines to the top and bottom edges, and straightens each face with PIL QUAD. 300 of 300 sampled boxart_3d pictures (both sources) have a transparent background with the spine on the left.
+  - **Done 2026-11-23** (61c6d8ad): with no spine scan the spine is cut from boxart_3d; a front that is another release's artwork gives way to boxart_3d's front and spine (same_art under 0.5; on 279 library games about one in ten covers was another release); MobyGames picks the cover group whose front matches, at most four thumbnail probes. Two more causes on 4363: MobyGames' "Jewel Case" label squashed the tall PAL Saturn box into a CD case (now checked against the front's shape), and Belgium was not a PAL code. Dry build of 4363 shows the tall Saturn box with the printed spine. Wide SNES/N64 pictures lie flat and are not cut; they keep the generated spine.
+  - **Live check is the user's**: press Restart, run Build 3D Boxes (BUILD_VERSION 3 rebuilds built boxes), then open game 4363.
   **Layman:** The turning 3D box shows the same front and spine as the 3D box picture on the game page.
   Kind: enhancement.
   Source: user-request-2026-11-23.
