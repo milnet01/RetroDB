@@ -88,6 +88,13 @@
     z-index: 10;
 }
 
+/* top: 0 is right inside a table's own scroll box. These tables sit in the
+   page, where the page's sticky menu would cover the header, so it scrolls. */
+.help-page .data-table th,
+#tab-account .data-table th {
+    position: static;
+}
+
 .data-table td {
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--card-border);
