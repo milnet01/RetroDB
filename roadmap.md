@@ -3475,7 +3475,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Swapping a running bulk scrape could mix up its counts.
   Kind: implement.
 
-- 📋 [PASS-49-4] **`organize-multidisc` relies on incidental path-nesting (MEDIUM, S)**
+- ✅ [PASS-49-4] **`organize-multidisc` relies on incidental path-nesting (MEDIUM, S)**
   - **Status**: deferred — currently safe; explicit hardening.
   - **Lane**: maintenance/reports (Lane 9).
   - **Finding**: `routes/reports.py` move branch blocks a traversing `system`
@@ -3484,6 +3484,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     like the multidisc-scan path has.
   - **Decision**: add an explicit `system` validation mirroring `reports.py:405`.
   Moved into 4.0.0 (user, 2026-11-20).
+  Done 2026-11-23: system and name must each be one folder name
+  (safe_filename), which also closes a cross-system move through name.
+  No DB lookup: the scan offers built-in folders with no systems row.
+  Test:
+  tests/test_pass59_237_disc_files.py::test_organize_takes_one_folder_name_each.
   **Layman:** Add an extra check on the multi-disc organiser, which is safe today.
   Kind: implement.
 
