@@ -149,7 +149,7 @@
 }
 
 .filter-tab.active {
-    background: rgba(76, 201, 240, 0.15);
+    background: color-mix(in srgb, var(--primary-cyan) 15%, transparent);
     border-color: var(--primary-cyan);
     color: var(--primary-cyan);
 }
@@ -333,7 +333,7 @@
 
 .wishlist-item-meta .meta-chip.score {
     color: var(--primary-cyan);
-    border-color: rgba(76, 201, 240, 0.3);
+    border-color: color-mix(in srgb, var(--primary-cyan) 30%, transparent);
 }
 
 .wishlist-item-description {
@@ -369,9 +369,9 @@
 }
 
 .scrape-status.scraping {
-    background: rgba(76, 201, 240, 0.15);
+    background: color-mix(in srgb, var(--primary-cyan) 15%, transparent);
     color: var(--primary-cyan);
-    border: 1px solid rgba(76, 201, 240, 0.4);
+    border: 1px solid color-mix(in srgb, var(--primary-cyan) 40%, transparent);
 }
 
 .scrape-status.scraped {
@@ -431,7 +431,7 @@
 
 .priority-option.active {
     border-color: var(--primary-cyan);
-    background: rgba(76, 201, 240, 0.1);
+    background: color-mix(in srgb, var(--primary-cyan) 10%, transparent);
     color: var(--text-primary);
 }
 
@@ -638,7 +638,7 @@ function renderWishlistCard(item) {
 
     return `
         <div class="wishlist-item" data-priority="${p}" data-id="${item.id}">
-            <div class="wishlist-priority-badge" style="background: ${color}20; color: ${color}; border: 1px solid ${color}40;">
+            <div class="wishlist-priority-badge" style="background: color-mix(in srgb, ${color} 12%, transparent); color: ${color}; border: 1px solid color-mix(in srgb, ${color} 25%, transparent);">
                 <span class="priority-dot" style="background: ${color};"></span>
                 ${label}
             </div>

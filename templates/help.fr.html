@@ -2086,9 +2086,9 @@
     margin: 0 calc(-1 * var(--spacing-lg));
     margin-bottom: var(--spacing-xl);
     padding: var(--spacing-md) var(--spacing-lg);
-    background: linear-gradient(135deg, rgba(20, 26, 35, 0.98), rgba(15, 20, 25, 0.98));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--card-bg) 98%, transparent), color-mix(in srgb, var(--bg-dark) 98%, transparent));
     border-bottom: 2px solid var(--primary-cyan);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(76, 201, 240, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 15px color-mix(in srgb, var(--primary-cyan) 20%, transparent);
 }
 
 .help-nav-item {
@@ -2223,8 +2223,8 @@ kbd {
 }
 
 .help-tip {
-    background: rgba(76, 201, 240, 0.1);
-    border: 1px solid rgba(76, 201, 240, 0.3);
+    background: color-mix(in srgb, var(--primary-cyan) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--primary-cyan) 30%, transparent);
     border-left: 4px solid var(--primary-cyan);
     border-radius: var(--radius-md);
     padding: var(--spacing-md);
@@ -2261,7 +2261,7 @@ kbd {
 }
 
 .data-table tbody tr:hover {
-    background: rgba(76, 201, 240, 0.05);
+    background: color-mix(in srgb, var(--primary-cyan) 5%, transparent);
 }
 </style>
 {% endblock %}

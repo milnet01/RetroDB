@@ -58,39 +58,39 @@
 .glass-card,
 .card.glass,
 .glass-panel {
-    background: rgba(20, 26, 35, 0.8);
+    background: color-mix(in srgb, var(--card-bg) 80%, transparent);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(76, 201, 240, 0.2);
+    border: 1px solid color-mix(in srgb, var(--primary-cyan) 20%, transparent);
 }
 
 /* Glass Variations */
 .glass-light,
 .glass-panel-light {
-    background: rgba(20, 26, 35, 0.6) !important;
+    background: color-mix(in srgb, var(--card-bg) 60%, transparent) !important;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
 }
 
 .glass-medium,
 .glass-panel-medium {
-    background: rgba(20, 26, 35, 0.8) !important;
+    background: color-mix(in srgb, var(--card-bg) 80%, transparent) !important;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 }
 
 .glass-dark,
 .glass-panel-dark {
-    background: rgba(20, 26, 35, 0.9) !important;
+    background: color-mix(in srgb, var(--card-bg) 90%, transparent) !important;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
 }
 
 /* Glass Hover Effect */
 .glass-panel-hover:hover {
-    background: rgba(20, 26, 35, 0.85);
+    background: color-mix(in srgb, var(--card-bg) 85%, transparent);
     border-color: var(--card-border-hover);
-    box-shadow: var(--shadow-lg), 0 0 20px rgba(76, 201, 240, 0.1);
+    box-shadow: var(--shadow-lg), 0 0 20px color-mix(in srgb, var(--primary-cyan) 10%, transparent);
 }
 
 /* =============================================================================
@@ -119,7 +119,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(180deg, transparent 60%, rgba(76, 201, 240, 0.05) 100%);
+    background: linear-gradient(180deg, transparent 60%, color-mix(in srgb, var(--primary-cyan) 5%, transparent) 100%);
     opacity: 0;
     transition: opacity var(--transition-normal);
 }
@@ -127,7 +127,7 @@
 .system-card:hover {
     border-color: var(--primary-cyan);
     transform: translateY(-4px);
-    box-shadow: var(--shadow-lg), 0 0 20px rgba(76, 201, 240, 0.1);
+    box-shadow: var(--shadow-lg), 0 0 20px color-mix(in srgb, var(--primary-cyan) 10%, transparent);
 }
 
 .system-card:hover::before {
@@ -195,7 +195,7 @@
    ============================================================================= */
 
 .section {
-    background: rgba(20, 26, 35, 0.8);
+    background: color-mix(in srgb, var(--card-bg) 80%, transparent);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid var(--card-border);
@@ -272,9 +272,9 @@
 }
 
 .status-badge.connected {
-    background: rgba(76, 201, 240, 0.15);
+    background: color-mix(in srgb, var(--primary-cyan) 15%, transparent);
     color: var(--primary-cyan);
-    border: 1px solid rgba(76, 201, 240, 0.3);
+    border: 1px solid color-mix(in srgb, var(--primary-cyan) 30%, transparent);
 }
 
 .status-badge.offline {
@@ -320,8 +320,8 @@
 }
 
 .system-controller-card:hover {
-    border-color: rgba(76, 201, 240, 0.3);
-    box-shadow: 0 0 10px rgba(76, 201, 240, 0.1);
+    border-color: color-mix(in srgb, var(--primary-cyan) 30%, transparent);
+    box-shadow: 0 0 10px color-mix(in srgb, var(--primary-cyan) 10%, transparent);
 }
 
 .controller-item {
@@ -329,7 +329,7 @@
 }
 
 .controller-item:hover {
-    background: rgba(76, 201, 240, 0.1) !important;
+    background: color-mix(in srgb, var(--primary-cyan) 10%, transparent) !important;
     transform: translateX(4px);
 }
 

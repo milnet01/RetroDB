@@ -85,7 +85,7 @@ body:has(.sidebar.collapsed) .unified-toast-container {
 .toast-content {
     display: flex;
     align-items: stretch;
-    background: linear-gradient(135deg, var(--toast-bg-from, rgba(20, 26, 35, 0.95)), var(--toast-bg-to, rgba(30, 40, 55, 0.95)));
+    background: linear-gradient(135deg, var(--toast-bg-from, color-mix(in srgb, var(--card-bg) 95%, transparent)), var(--toast-bg-to, rgba(30, 40, 55, 0.95)));
     border: 2px solid var(--toast-color, var(--primary-cyan));
     border-radius: var(--radius-lg);
     box-shadow: 0 0 20px color-mix(in srgb, var(--toast-color, var(--primary-cyan)) 30%, transparent),
@@ -95,7 +95,7 @@ body:has(.sidebar.collapsed) .unified-toast-container {
 
 /* Active Toast Styles */
 .active-toast .toast-content {
-    background: linear-gradient(135deg, var(--toast-bg-from, rgba(20, 26, 35, 0.95)), var(--toast-bg-to, rgba(30, 40, 55, 0.95)));
+    background: linear-gradient(135deg, var(--toast-bg-from, color-mix(in srgb, var(--card-bg) 95%, transparent)), var(--toast-bg-to, rgba(30, 40, 55, 0.95)));
 }
 
 /* Queued Toast Styles */

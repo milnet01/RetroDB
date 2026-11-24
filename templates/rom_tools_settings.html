@@ -91,8 +91,8 @@
 }
 
 .info-banner {
-    background: linear-gradient(135deg, rgba(76, 201, 240, 0.1), rgba(114, 9, 183, 0.1));
-    border: 1px solid rgba(76, 201, 240, 0.3);
+    background: linear-gradient(135deg, color-mix(in srgb, var(--primary-cyan) 10%, transparent), rgba(114, 9, 183, 0.1));
+    border: 1px solid color-mix(in srgb, var(--primary-cyan) 30%, transparent);
     border-radius: 8px;
     padding: 1rem 1.25rem;
     margin-bottom: 1.5rem;
@@ -136,7 +136,7 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.35rem 0.75rem;
-    background: rgba(76, 201, 240, 0.2);
+    background: color-mix(in srgb, var(--primary-cyan) 20%, transparent);
     border: 1px solid var(--accent-cyan);
     border-radius: 16px;
     font-size: 0.85rem;
@@ -170,30 +170,6 @@
     margin-top: 2rem;
     padding-top: 1.5rem;
     border-top: 1px solid var(--border-color);
-}
-
-.success-message {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    padding: 1rem 1.5rem;
-    background: rgba(46, 213, 115, 0.9);
-    color: white;
-    border-radius: 8px;
-    font-weight: 600;
-    z-index: 10000;
-    animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
 }
 
 .form-help {
@@ -423,9 +399,6 @@
     </div>
 </form>
 
-<div id="successMessage" class="success-message" style="display: none;">
-    ✓ {{ _('Settings saved successfully!') }}
-</div>
 </div>
 {% endblock %}
 
@@ -564,9 +537,7 @@ document.getElementById('settingsForm').addEventListener('submit', async functio
         const data = await response.json();
         
         if (data.success) {
-            const msg = document.getElementById('successMessage');
-            msg.style.display = 'block';
-            setTimeout(() => { msg.style.display = 'none'; }, 3000);
+            showNotification({{ _('Settings saved successfully!')|tojson }}, 'success');
         } else {
             showModal('❌ ' + {{ _('Error')|tojson }}, t({{ _('Error saving settings: {error}')|tojson }}, {error: data.error || {{ _('Unknown error')|tojson }}}));
         }

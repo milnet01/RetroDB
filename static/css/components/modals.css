@@ -40,7 +40,7 @@
     max-width: 90%;
     max-height: 90vh;
     overflow: auto;
-    box-shadow: 0 0 50px rgba(76, 201, 240, 0.2);
+    box-shadow: 0 0 50px color-mix(in srgb, var(--primary-cyan) 20%, transparent);
 }
 
 .modal-header {
@@ -399,14 +399,14 @@
 }
 
 .about-modal {
-    background: linear-gradient(135deg, rgba(20, 26, 35, 0.98), rgba(15, 20, 25, 0.98));
+    background: linear-gradient(135deg, color-mix(in srgb, var(--card-bg) 98%, transparent), color-mix(in srgb, var(--bg-dark) 98%, transparent));
     border: 1px solid var(--primary-cyan);
     border-radius: var(--radius-lg);
     max-width: 560px;
     width: 90%;
     max-height: 90vh;
     overflow-y: auto;
-    box-shadow: 0 0 40px rgba(76, 201, 240, 0.3),
+    box-shadow: 0 0 40px color-mix(in srgb, var(--primary-cyan) 30%, transparent),
                 0 20px 40px rgba(0, 0, 0, 0.5);
     animation: modalSlideIn 0.3s ease;
 }
@@ -444,7 +444,7 @@
 
 .about-logo-icon {
     font-size: 3rem;
-    filter: drop-shadow(0 0 10px rgba(76, 201, 240, 0.5));
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--primary-cyan) 50%, transparent));
 }
 
 .about-logo-text {
@@ -530,7 +530,7 @@
 }
 
 .folder-item:hover {
-    background: rgba(76, 201, 240, 0.1);
+    background: color-mix(in srgb, var(--primary-cyan) 10%, transparent);
 }
 
 .folder-item.folder-parent {

@@ -665,13 +665,13 @@
 }
 
 .analytics-nav-link:hover {
-    background: rgba(76, 201, 240, 0.05);
-    border-color: rgba(76, 201, 240, 0.3);
+    background: color-mix(in srgb, var(--primary-cyan) 5%, transparent);
+    border-color: color-mix(in srgb, var(--primary-cyan) 30%, transparent);
     color: var(--text-primary);
 }
 
 .analytics-nav-link.active {
-    background: rgba(76, 201, 240, 0.15);
+    background: color-mix(in srgb, var(--primary-cyan) 15%, transparent);
     border-color: var(--primary-cyan);
     color: var(--primary-cyan);
 }
@@ -1044,7 +1044,7 @@ tr:nth-child(3) .rank-badge {
 }
 
 .score-list-item:hover {
-    background: rgba(76, 201, 240, 0.1);
+    background: color-mix(in srgb, var(--primary-cyan) 10%, transparent);
     border-color: var(--primary-cyan);
 }
 
@@ -1525,9 +1525,29 @@ function fieldLabels(values) {
     return values.map(value => labels[value] || value);
 }
 
-// Chart.js default config for cyberpunk theme
-Chart.defaults.color = '#9aa0a6';
-Chart.defaults.borderColor = 'rgba(42, 53, 66, 0.5)';
+// Chart.js draws on a canvas, which cannot read CSS variables, so take the
+// chosen theme's colours as the charts are built (PASS-59-255). Every theme
+// writes these tokens as #rrggbb.
+const themeCss = getComputedStyle(document.documentElement);
+const themeColor = name => themeCss.getPropertyValue(name).trim();
+const withAlpha = (hex, a) => {
+    const n = parseInt(hex.slice(1), 16);
+    return `rgba(${n >> 16}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+};
+const theme = {
+    accent: themeColor('--primary-cyan'),
+    magenta: themeColor('--secondary-magenta'),
+    text: themeColor('--text-primary'),
+    textSoft: themeColor('--text-secondary'),
+    muted: themeColor('--text-muted'),
+    border: themeColor('--border-color'),
+    page: themeColor('--bg-darkest'),
+    panel: themeColor('--bg-medium'),
+};
+
+// Chart.js defaults, in the theme's colours
+Chart.defaults.color = theme.textSoft;
+Chart.defaults.borderColor = withAlpha(theme.border, 0.5);
 Chart.defaults.plugins.legend.labels.usePointStyle = true;
 Chart.defaults.plugins.legend.labels.padding = 20;
 // The CSS reduced-motion rule does not reach canvas drawing; Chart.js needs telling.
@@ -1535,10 +1555,10 @@ if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').m
     Chart.defaults.animation = false;
 }
 
-// Color palette matching the cyberpunk theme
+// Color palette: the theme's two colours first, then fixed data colours
 const chartColors = {
-    cyan: 'rgba(76, 201, 240, 0.8)',
-    magenta: 'rgba(247, 37, 133, 0.8)',
+    cyan: withAlpha(theme.accent, 0.8),
+    magenta: withAlpha(theme.magenta, 0.8),
     purple: 'rgba(114, 9, 183, 0.8)',
     green: 'rgba(34, 197, 94, 0.8)',
     orange: 'rgba(245, 158, 11, 0.8)',
@@ -1562,7 +1582,7 @@ if (manufacturerCtx) {
                 data: {{ manufacturer_data|tojson }},
                 backgroundColor: colorArray,
                 borderWidth: 2,
-                borderColor: '#0a0e17'
+                borderColor: theme.page
             }]
         },
         options: {
@@ -1588,7 +1608,7 @@ if (decadeCtx) {
                 label: {{ _('Games')|tojson }},
                 data: {{ decade_data|tojson }},
                 backgroundColor: chartColors.cyan,
-                borderColor: '#4cc9f0',
+                borderColor: theme.accent,
                 borderWidth: 1,
                 borderRadius: 4
             }]
@@ -1605,7 +1625,7 @@ if (decadeCtx) {
                 y: {
                     beginAtZero: true,
                     grid: {
-                        color: 'rgba(42, 53, 66, 0.3)'
+                        color: withAlpha(theme.border, 0.3)
                     }
                 },
                 x: {
@@ -1646,7 +1666,7 @@ if (genreCtx) {
                 x: {
                     beginAtZero: true,
                     grid: {
-                        color: 'rgba(42, 53, 66, 0.3)'
+                        color: withAlpha(theme.border, 0.3)
                     }
                 },
                 y: {
@@ -1673,10 +1693,10 @@ if (completionCtx) {
                     'rgba(245, 158, 11, 0.8)',
                     'rgba(59, 130, 246, 0.8)',
                     'rgba(34, 197, 94, 0.8)',
-                    'rgba(76, 201, 240, 0.8)'
+                    withAlpha(theme.accent, 0.8)
                 ],
                 borderWidth: 2,
-                borderColor: '#0a0e17'
+                borderColor: theme.page
             }]
         },
         options: {
@@ -1701,13 +1721,13 @@ if (yearTimelineCtx) {
             datasets: [{
                 label: {{ _('Games Released')|tojson }},
                 data: {{ year_data|tojson }},
-                borderColor: '#4cc9f0',
-                backgroundColor: 'rgba(76, 201, 240, 0.15)',
+                borderColor: theme.accent,
+                backgroundColor: withAlpha(theme.accent, 0.15),
                 borderWidth: 2,
                 fill: true,
                 tension: 0.3,
-                pointBackgroundColor: '#4cc9f0',
-                pointBorderColor: '#0a0e17',
+                pointBackgroundColor: theme.accent,
+                pointBorderColor: theme.page,
                 pointBorderWidth: 2,
                 pointRadius: 3,
                 pointHoverRadius: 6
@@ -1725,7 +1745,7 @@ if (yearTimelineCtx) {
                 y: {
                     beginAtZero: true,
                     grid: {
-                        color: 'rgba(42, 53, 66, 0.3)'
+                        color: withAlpha(theme.border, 0.3)
                     }
                 },
                 x: {
@@ -1753,7 +1773,7 @@ if (storageCtx) {
                 label: {{ _('Storage (GB)')|tojson }},
                 data: {{ storage_data|tojson }},
                 backgroundColor: chartColors.magenta,
-                borderColor: '#f72585',
+                borderColor: theme.magenta,
                 borderWidth: 1,
                 borderRadius: 4
             }]
@@ -1771,7 +1791,7 @@ if (storageCtx) {
                 x: {
                     beginAtZero: true,
                     grid: {
-                        color: 'rgba(42, 53, 66, 0.3)'
+                        color: withAlpha(theme.border, 0.3)
                     },
                     title: {
                         display: true,
@@ -1817,7 +1837,7 @@ if (raCtx) {
                 x: {
                     beginAtZero: true,
                     grid: {
-                        color: 'rgba(42, 53, 66, 0.3)'
+                        color: withAlpha(theme.border, 0.3)
                     }
                 },
                 y: {
@@ -1859,12 +1879,12 @@ if (scoreDistCtx) {
                     'rgba(132, 204, 22, 0.6)',  // 60-69 (lime)
                     'rgba(34, 197, 94, 0.6)',   // 70-79 (green)
                     'rgba(34, 197, 94, 0.7)',   // 80-89
-                    'rgba(76, 201, 240, 0.8)'   // 90-100 (cyan - exceptional)
+                    withAlpha(theme.accent, 0.8)   // 90-100 (cyan - exceptional)
                 ],
                 borderColor: [
                     '#ef4444', '#ef4444', '#f59e0b', '#f59e0b',
                     '#eab308', '#eab308', '#84cc16', '#22c55e',
-                    '#22c55e', '#4cc9f0'
+                    '#22c55e', theme.accent
                 ],
                 borderWidth: 1,
                 borderRadius: 4
@@ -1879,7 +1899,7 @@ if (scoreDistCtx) {
             scales: {
                 y: {
                     beginAtZero: true,
-                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                    grid: { color: withAlpha(theme.border, 0.3) }
                 },
                 x: {
                     grid: { display: false },
@@ -1901,8 +1921,8 @@ if (scoreSystemCtx) {
                 {
                     label: {{ _('Critic Score')|tojson }},
                     data: {{ score_system_critic|tojson }},
-                    backgroundColor: 'rgba(76, 201, 240, 0.7)',
-                    borderColor: '#4cc9f0',
+                    backgroundColor: withAlpha(theme.accent, 0.7),
+                    borderColor: theme.accent,
                     borderWidth: 1,
                     borderRadius: 4
                 },
@@ -1930,7 +1950,7 @@ if (scoreSystemCtx) {
                 x: {
                     beginAtZero: true,
                     max: 100,
-                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                    grid: { color: withAlpha(theme.border, 0.3) }
                 },
                 y: {
                     grid: { display: false },
@@ -1950,8 +1970,8 @@ if (scoreScatterCtx) {
             datasets: [{
                 label: {{ _('Games')|tojson }},
                 data: {{ score_scatter|tojson }},
-                backgroundColor: 'rgba(76, 201, 240, 0.5)',
-                borderColor: '#4cc9f0',
+                backgroundColor: withAlpha(theme.accent, 0.5),
+                borderColor: theme.accent,
                 borderWidth: 1,
                 pointRadius: 4,
                 pointHoverRadius: 7
@@ -1979,7 +1999,7 @@ if (scoreScatterCtx) {
                         display: true,
                         text: {{ _('Critic Score')|tojson }}
                     },
-                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                    grid: { color: withAlpha(theme.border, 0.3) }
                 },
                 y: {
                     beginAtZero: true,
@@ -1988,7 +2008,7 @@ if (scoreScatterCtx) {
                         display: true,
                         text: {{ _('User Score')|tojson }}
                     },
-                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                    grid: { color: withAlpha(theme.border, 0.3) }
                 }
             }
         }
@@ -2104,7 +2124,7 @@ if (ageSystemCtx) {
                 y: {
                     stacked: true,
                     beginAtZero: true,
-                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                    grid: { color: withAlpha(theme.border, 0.3) }
                 }
             }
         }
@@ -2126,7 +2146,7 @@ if (devCtx) {
                 label: {{ _('Games')|tojson }},
                 data: {{ dev_data|tojson }},
                 backgroundColor: chartColors.cyan,
-                borderColor: '#4cc9f0',
+                borderColor: theme.accent,
                 borderWidth: 1,
                 borderRadius: 4
             }]
@@ -2141,7 +2161,7 @@ if (devCtx) {
             scales: {
                 x: {
                     beginAtZero: true,
-                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                    grid: { color: withAlpha(theme.border, 0.3) }
                 },
                 y: {
                     grid: { display: false },
@@ -2163,7 +2183,7 @@ if (pubCtx) {
                 label: {{ _('Games')|tojson }},
                 data: {{ pub_data|tojson }},
                 backgroundColor: chartColors.magenta,
-                borderColor: '#f72585',
+                borderColor: theme.magenta,
                 borderWidth: 1,
                 borderRadius: 4
             }]
@@ -2178,7 +2198,7 @@ if (pubCtx) {
             scales: {
                 x: {
                     beginAtZero: true,
-                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                    grid: { color: withAlpha(theme.border, 0.3) }
                 },
                 y: {
                     grid: { display: false },
@@ -2215,7 +2235,7 @@ if (franchiseCtx) {
             scales: {
                 x: {
                     beginAtZero: true,
-                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                    grid: { color: withAlpha(theme.border, 0.3) }
                 },
                 y: {
                     grid: { display: false },
@@ -2241,7 +2261,7 @@ if (perspCtx) {
                 data: {{ persp_data|tojson }},
                 backgroundColor: colorArray,
                 borderWidth: 2,
-                borderColor: '#0a0e17'
+                borderColor: theme.page
             }]
         },
         options: {
@@ -2267,7 +2287,7 @@ if (dimCtx) {
                 data: {{ dim_data|tojson }},
                 backgroundColor: [chartColors.cyan, chartColors.magenta, chartColors.green, chartColors.orange, chartColors.purple],
                 borderWidth: 2,
-                borderColor: '#0a0e17'
+                borderColor: theme.page
             }]
         },
         options: {
@@ -2307,7 +2327,7 @@ if (modesCtx) {
             scales: {
                 x: {
                     beginAtZero: true,
-                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                    grid: { color: withAlpha(theme.border, 0.3) }
                 },
                 y: {
                     grid: { display: false }
@@ -2342,7 +2362,7 @@ if (playerCtx) {
             scales: {
                 y: {
                     beginAtZero: true,
-                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                    grid: { color: withAlpha(theme.border, 0.3) }
                 },
                 x: {
                     grid: { display: false }
@@ -2363,7 +2383,7 @@ if (regionCtx) {
                 data: {{ region_data|tojson }},
                 backgroundColor: colorArray,
                 borderWidth: 2,
-                borderColor: '#0a0e17'
+                borderColor: theme.page
             }]
         },
         options: {
@@ -2407,7 +2427,7 @@ if (lengthCtx) {
             scales: {
                 y: {
                     beginAtZero: true,
-                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                    grid: { color: withAlpha(theme.border, 0.3) }
                 },
                 x: {
                     grid: { display: false },
@@ -2448,11 +2468,11 @@ if (metadataRadarCtx) {
                     mqData.modes || 0,
                     mqData.region || 0
                 ],
-                borderColor: '#4cc9f0',
-                backgroundColor: 'rgba(76, 201, 240, 0.15)',
+                borderColor: theme.accent,
+                backgroundColor: withAlpha(theme.accent, 0.15),
                 borderWidth: 2,
-                pointBackgroundColor: '#4cc9f0',
-                pointBorderColor: '#0a0e17',
+                pointBackgroundColor: theme.accent,
+                pointBorderColor: theme.page,
                 pointBorderWidth: 2,
                 pointRadius: 4
             }]
@@ -2468,17 +2488,17 @@ if (metadataRadarCtx) {
                     beginAtZero: true,
                     max: 100,
                     grid: {
-                        color: 'rgba(42, 53, 66, 0.3)'
+                        color: withAlpha(theme.border, 0.3)
                     },
                     angleLines: {
-                        color: 'rgba(42, 53, 66, 0.3)'
+                        color: withAlpha(theme.border, 0.3)
                     },
                     pointLabels: {
-                        color: '#9aa0a6',
+                        color: theme.textSoft,
                         font: { size: 10 }
                     },
                     ticks: {
-                        color: '#80858a',
+                        color: theme.muted,
                         backdropColor: 'transparent',
                         stepSize: 25
                     }
@@ -2513,7 +2533,7 @@ if (saveTypeCtx) {
             scales: {
                 y: {
                     beginAtZero: true,
-                    grid: { color: 'rgba(42, 53, 66, 0.3)' }
+                    grid: { color: withAlpha(theme.border, 0.3) }
                 },
                 x: {
                     grid: { display: false },
@@ -2544,7 +2564,7 @@ if (growthCtx) {
                 fill: true,
                 tension: 0.3,
                 pointBackgroundColor: '#22c55e',
-                pointBorderColor: '#0a0e17',
+                pointBorderColor: theme.page,
                 pointBorderWidth: 2,
                 pointRadius: 3,
                 pointHoverRadius: 6
@@ -2562,7 +2582,7 @@ if (growthCtx) {
                 y: {
                     beginAtZero: true,
                     grid: {
-                        color: 'rgba(42, 53, 66, 0.3)'
+                        color: withAlpha(theme.border, 0.3)
                     }
                 },
                 x: {
@@ -2690,23 +2710,23 @@ function exportAsPNG() {
     canvas.height = 500;
 
     // Background
-    ctx.fillStyle = '#0a0e17';
+    ctx.fillStyle = theme.page;
     ctx.fillRect(0, 0, 800, 500);
 
     // Header gradient bar
     const grad = ctx.createLinearGradient(0, 0, 800, 0);
-    grad.addColorStop(0, '#4cc9f0');
-    grad.addColorStop(1, '#f72585');
+    grad.addColorStop(0, theme.accent);
+    grad.addColorStop(1, theme.magenta);
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 800, 6);
 
     // Title
-    ctx.fillStyle = '#4cc9f0';
+    ctx.fillStyle = theme.accent;
     ctx.font = 'bold 28px Orbitron, sans-serif';
     ctx.fillText('RetroDB Collection Stats', 40, 55);
 
     // Date
-    ctx.fillStyle = '#80858a';
+    ctx.fillStyle = theme.muted;
     ctx.font = '14px Share Tech Mono, monospace';
     ctx.fillText(new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }), 40, 80);
 
@@ -2724,8 +2744,8 @@ function exportAsPNG() {
         const y = startY + row * rowH;
 
         // Stat box background
-        ctx.fillStyle = '#151b24';
-        ctx.strokeStyle = '#2a3542';
+        ctx.fillStyle = theme.panel;
+        ctx.strokeStyle = theme.border;
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.roundRect(x, y, colWidth - 20, 65, 8);
@@ -2733,20 +2753,20 @@ function exportAsPNG() {
         ctx.stroke();
 
         // Value
-        ctx.fillStyle = '#e8eaed';
+        ctx.fillStyle = theme.text;
         ctx.font = 'bold 24px Rajdhani, sans-serif';
         ctx.fillText(value, x + 15, y + 30);
 
         // Label
-        ctx.fillStyle = '#9aa0a6';
+        ctx.fillStyle = theme.textSoft;
         ctx.font = '12px Rajdhani, sans-serif';
         ctx.fillText(label.toUpperCase(), x + 15, y + 50);
     });
 
     // Footer
-    ctx.fillStyle = '#2a3542';
+    ctx.fillStyle = theme.border;
     ctx.fillRect(0, 470, 800, 30);
-    ctx.fillStyle = '#80858a';
+    ctx.fillStyle = theme.muted;
     ctx.font = '11px Share Tech Mono, monospace';
     ctx.fillText('Generated by RetroDB', 40, 490);
 

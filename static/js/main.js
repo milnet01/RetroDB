@@ -1104,7 +1104,7 @@ async function cleanMissingRoms() {
                             html += `</ul></div>`;
                             resultDiv.innerHTML = html;
                         } else {
-                            resultDiv.innerHTML = `<div class="glass-panel" style="padding: var(--spacing-md); background: rgba(76, 201, 240, 0.1);">
+                            resultDiv.innerHTML = `<div class="glass-panel" style="padding: var(--spacing-md); background: color-mix(in srgb, var(--primary-cyan) 10%, transparent);">
                                 <strong style="color: var(--primary-cyan);">✓ ${escapeHtml(t('All ROMs accounted for!'))}</strong>
                                 <p style="margin-top: var(--spacing-xs);">${escapeHtml(t('No missing ROM files found.'))}</p>
                             </div>`;
@@ -1161,7 +1161,7 @@ async function clearClzImports() {
                             html += `</ul></div>`;
                             resultDiv.innerHTML = html;
                         } else {
-                            resultDiv.innerHTML = `<div class="glass-panel" style="padding: var(--spacing-md); background: rgba(76, 201, 240, 0.1);">
+                            resultDiv.innerHTML = `<div class="glass-panel" style="padding: var(--spacing-md); background: color-mix(in srgb, var(--primary-cyan) 10%, transparent);">
                                 <strong style="color: var(--primary-cyan);">✓ ${escapeHtml(t('No CLZ Import games found'))}</strong>
                             </div>`;
                         }
@@ -1424,12 +1424,12 @@ styleSheet.textContent = `
     }
     
     .notification-info {
-        border-color: #4cc9f0;
-        background: linear-gradient(90deg, rgba(76, 201, 240, 0.1) 0%, var(--card-bg, #141a23) 100%);
+        border-color: var(--primary-cyan);
+        background: linear-gradient(90deg, color-mix(in srgb, var(--primary-cyan) 10%, transparent) 0%, var(--card-bg, #141a23) 100%);
     }
     
     .notification-info .notification-icon {
-        color: #4cc9f0;
+        color: var(--primary-cyan);
     }
     
     .notification-icon {
@@ -1586,7 +1586,7 @@ const KeyboardShortcuts = {
                 font-family: var(--font-mono, monospace);
                 font-size: 14px;
                 z-index: 10001;
-                box-shadow: 0 0 20px rgba(76, 201, 240, 0.3);
+                box-shadow: 0 0 20px color-mix(in srgb, var(--primary-cyan) 30%, transparent);
             `;
             document.body.appendChild(indicator);
         }

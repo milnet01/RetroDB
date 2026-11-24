@@ -91,7 +91,7 @@
     padding: 2rem;
     width: 100%;
     max-width: 480px;
-    box-shadow: 0 0 40px rgba(76, 201, 240, 0.2);
+    box-shadow: 0 0 40px color-mix(in srgb, var(--primary-cyan) 20%, transparent);
 }
 
 .avatar-grid {
@@ -126,7 +126,7 @@
 
 .avatar-option.selected {
     border-color: var(--primary-cyan);
-    box-shadow: 0 0 12px rgba(76, 201, 240, 0.4);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--primary-cyan) 40%, transparent);
 }
 
 .avatar-option img {
@@ -192,7 +192,7 @@
 }
 
 .log-badge.scraping {
-    background: rgba(76, 201, 240, 0.15);
+    background: color-mix(in srgb, var(--primary-cyan) 15%, transparent);
     color: var(--primary-cyan);
     border: 1px solid var(--primary-cyan);
 }
@@ -338,7 +338,7 @@
 
 .scraper-priority-item.drag-over {
     border-color: var(--primary-cyan);
-    background: rgba(76, 201, 240, 0.1);
+    background: color-mix(in srgb, var(--primary-cyan) 10%, transparent);
     transform: scale(1.02);
 }
 
@@ -581,7 +581,7 @@
 .api-key-input:focus {
     outline: none;
     border-color: var(--primary-cyan);
-    box-shadow: 0 0 0 2px rgba(76, 201, 240, 0.2);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary-cyan) 20%, transparent);
 }
 
 .api-key-input::placeholder {
@@ -606,8 +606,8 @@
     align-items: center;
     gap: var(--spacing-xs);
     padding: 6px 12px;
-    background: rgba(76, 201, 240, 0.2);
-    border: 1px solid rgba(76, 201, 240, 0.4);
+    background: color-mix(in srgb, var(--primary-cyan) 20%, transparent);
+    border: 1px solid color-mix(in srgb, var(--primary-cyan) 40%, transparent);
     border-radius: 16px;
     color: var(--text-primary);
     font-size: 0.9rem;
@@ -1433,8 +1433,8 @@ function renderNamingBuilder() {
             <!-- Selected tags (ordered) -->
             <div style="margin-bottom: 0.5rem;">
                 <span class="text-muted" style="font-size: 0.8rem; display: block; margin-bottom: 0.35rem;">${escapeHtml({{ _('Selected tags (in order):')|tojson }})}</span>
-                <div class="naming-selected" data-type="${st.key}" style="display: flex; flex-wrap: wrap; gap: 0.35rem; min-height: 32px; padding: 0.35rem; background: rgba(76,201,240,0.05); border: 1px dashed rgba(76,201,240,0.2); border-radius: var(--radius-sm);">
-                    <span style="padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; background: rgba(76,201,240,0.15); border: 1px solid rgba(76,201,240,0.3); color: var(--primary-cyan); cursor: default;">${escapeHtml({{ _('Title')|tojson }})}</span>
+                <div class="naming-selected" data-type="${st.key}" style="display: flex; flex-wrap: wrap; gap: 0.35rem; min-height: 32px; padding: 0.35rem; background: color-mix(in srgb, var(--primary-cyan) 5%, transparent); border: 1px dashed color-mix(in srgb, var(--primary-cyan) 20%, transparent); border-radius: var(--radius-sm);">
+                    <span style="padding: 0.25rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; background: color-mix(in srgb, var(--primary-cyan) 15%, transparent); border: 1px solid color-mix(in srgb, var(--primary-cyan) 30%, transparent); color: var(--primary-cyan); cursor: default;">${escapeHtml({{ _('Title')|tojson }})}</span>
                     ${selected.map((tagKey, idx) => {
                         const tag = NAMING_AVAILABLE_TAGS.find(t => t.key === tagKey);
                         const tagLabel = tag ? tag.label : tagKey;

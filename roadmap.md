@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=333 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=334 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -3934,6 +3934,19 @@ After 4.0.0 the web version still gets bug fixes and, now and then, a good new f
   **Layman:** Pressing a letter in the Library's A-Z bar should bring that letter's first game into view, even on a phone.
   Kind: fix.
   Source: PASS-59-167-walk-2026-11-23.
+
+- 📋 [PASS-59-334] **Drop-down arrows follow the theme colour instead of fixed cyan.**
+  - **Why**: the select arrows are SVG `data:` URLs with `fill='%234cc9f0'`
+    (`forms.css`, and page styles in `all_games.html`, `game_detail.html`,
+    `psn_trophies.html`, `settings.html`, `systems.html`). A CSS variable
+    cannot reach inside a `data:` URL, so PASS-59-255 left them cyan.
+  - **Fix idea**: draw the arrow with a `mask-image` on a pseudo-element
+    whose `background` is `var(--primary-cyan)`, or with two
+    `linear-gradient` triangles. Then drop the arrows from the exception in
+    `docs/specs/themes.md`.
+  **Layman:** The little arrow on each drop-down list turns the theme's colour, like the rest of the page.
+  Kind: ux.
+  Source: PASS-59-255 leftover 2026-11-24.
 
 ## Desktop milestone 1 — browse and play
 
