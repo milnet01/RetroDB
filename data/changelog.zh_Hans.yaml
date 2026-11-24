@@ -1,6 +1,12 @@
 - version: 4.0.0
   date: '2026-11-24'
   tags:
+  - type: enhancement
+    label: "生成的 3D 盒子现在支持更多真实的盒型。游戏的版本现在会选择它的盒型：Greatest Hits 的 PS3 游戏用红色盒，PlayStation Hits 的 PS4 游戏也用红色盒，欧版 Platinum 游戏用银色盒。三张或更多光盘的欧版 PlayStation 游戏用厚的多碟盒，New Super Luigi U 用它的绿色 Wii U 盒，日版 Game Gear 盒子不再有挂孔片。编辑窗口新增了 3D 盒型列表，可以手动选择任何其他盒型，比如正面压印有标志的早期 Xbox One 盒"
+    en: "Built 3D boxes come in more of the real cases. A game's Edition now picks its case: a Greatest Hits PS3 game gets the red case, a PlayStation Hits PS4 game the red one, and a European Platinum game the silver one. A European PlayStation game on three or more discs gets the thick multi-disc case, New Super Luigi U its green Wii U case, and Japanese Game Gear boxes lose the hanging tab. The Edit window has a new 3D box case list for picking any other case by hand, such as an early Xbox One case with the logo moulded into the front"
+  - type: fix
+    label: "PlayStation Network 同步现在向 Sony 发出请求的频率最多为每 3 秒一次，这是 PSN 库本身推荐的节奏，所以你的 PSN 账号更不容易被标记。大型库同步会稍微久一点"
+    en: "PlayStation Network syncs now ask Sony at most once every 3 seconds, the pace the PSN library itself recommends, so your PSN account is less likely to be flagged. Large libraries take a little longer to sync"
   - type: fix
     label: "ROM 工具中的“图片尺寸调整”现在会等图片转换为 WebP 完成后再运行，两者不再同时修改同一批盒子图片并留下多余的副本。Steam 和 Xbox 成就同步现在在服务没有数据的游戏之后也会暂停，和其他游戏之后一样"
     en: "The Image Resizer in ROM Tools now waits for a conversion of pictures to WebP to finish, so the two no longer change the same box pictures at once and leave a stray copy behind. Steam and Xbox achievement syncs now pause after a game the service had nothing for, as they do after every other game"

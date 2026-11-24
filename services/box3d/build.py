@@ -160,6 +160,23 @@ def case_for_game(folder, region, packaging=None, front_aspect=None, released=No
     return case
 
 
+def case_choices(folder):
+    """The cases a person may pick for a game in `folder`, in list order;
+    empty where no box is built."""
+    from services.box3d import cases
+    platform = PLATFORMS.get(folder)
+    if platform is None or platform == 'PC':
+        return [] if platform is None else list(_PC_PACKAGING.values())
+    return cases.cases_for_platform(platform)
+
+
+def chosen_case(folder, name):
+    """The case a person picked (`games.box_case`), or None for the
+    builder's own choice. A name no longer offered counts as none."""
+    from services.box3d import cases
+    return cases.CASE_TYPES[name] if name and name in case_choices(folder) else None
+
+
 def disc_count(rom_path):
     """How many discs a game has: the entries of its .m3u playlist, else 1."""
     if not rom_path or not rom_path.lower().endswith('.m3u'):
@@ -348,7 +365,7 @@ def _shape(case):
 def _game(game_id):
     return query("""
         SELECT g.id, g.title, g.region, g.release_date, g.disc_serial, g.edition, g.rom_path,
-               g.boxart, g.boxart_3d, g.boxart_back,
+               g.box_case, g.boxart, g.boxart_3d, g.boxart_back,
                g.box_scans, g.box_faces, s.folder
         FROM games g JOIN systems s ON s.id = g.system_id WHERE g.id = ?
     """, (game_id,), one=True)
@@ -369,9 +386,9 @@ def build_for_game(game_id):
         if found['front'] is None and found['full'] is None:
             return 'no_front'
         region = region_for(row['folder'], found['countries'], row['region'])
-        case = case_for_game(row['folder'], region, found['packaging'], _front_aspect(found),
-                             row['release_date'], disc_count(row['rom_path']),
-                             row['edition'], row['title'])
+        case = chosen_case(row['folder'], row['box_case']) or case_for_game(
+            row['folder'], region, found['packaging'], _front_aspect(found),
+            row['release_date'], disc_count(row['rom_path']), row['edition'], row['title'])
         if case is None:
             return 'no_case'
         signature = _signature(case, row, found)

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-24 10:08+0200\n"
+"POT-Creation-Date: 2026-11-24 11:33+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: af\n"
@@ -204,11 +204,11 @@ msgstr "Stelsel nie gevind nie of het geen speletjies met prestasies nie"
 #: routes/bonus_discs.py:276 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
 #: routes/emulators.py:315 routes/emulators.py:329 routes/games.py:408
-#: routes/games.py:961 routes/games.py:1080 routes/games.py:1164
+#: routes/games.py:979 routes/games.py:1098 routes/games.py:1188
 #: routes/games_ai.py:43 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
 #: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:709
-#: routes/reports.py:850 routes/trophies.py:1338 services/cheats.py:1061
+#: routes/reports.py:850 routes/trophies.py:1337 services/cheats.py:1061
 #: services/hltb_service.py:163
 msgid "Game not found"
 msgstr "Speletjie nie gevind nie"
@@ -600,8 +600,8 @@ msgstr "Bonusskyf en ouerspeletjie moet in dieselfde stelsel wees"
 msgid "A bonus disc links to a main game, one level only"
 msgstr "'n Bonusskyf skakel na 'n hoofspeletjie, slegs een vlak"
 
-#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1434
-#: routes/games.py:1464 routes/platform_import.py:358
+#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1464
+#: routes/games.py:1494 routes/platform_import.py:358
 #: routes/platform_import.py:663 routes/platform_import.py:1047
 #: routes/scrape_logs.py:89 routes/scrape_logs.py:174 routes/scrape_logs.py:187
 #: routes/scrape_logs.py:225 routes/scraper.py:213 routes/scraper.py:579
@@ -609,9 +609,9 @@ msgstr "'n Bonusskyf skakel na 'n hoofspeletjie, slegs een vlak"
 #: routes/settings.py:442 routes/settings.py:521 routes/settings.py:550
 #: routes/settings.py:594 routes/settings.py:607 routes/settings.py:643
 #: routes/steam_achievements.py:138 routes/systems.py:165 routes/systems.py:332
-#: routes/trophies.py:582 routes/trophies.py:780 routes/trophies.py:828
-#: routes/trophies.py:1629 routes/trophies.py:1653 routes/trophies.py:1698
-#: routes/trophies.py:1726 routes/trophies.py:1768 routes/trophies.py:1835
+#: routes/trophies.py:581 routes/trophies.py:779 routes/trophies.py:827
+#: routes/trophies.py:1628 routes/trophies.py:1652 routes/trophies.py:1697
+#: routes/trophies.py:1725 routes/trophies.py:1767 routes/trophies.py:1834
 #: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "'n Interne fout het voorgekom"
@@ -843,14 +843,14 @@ msgstr "Geen ID's verskaf nie"
 msgid "Provide 1-50 valid IDs"
 msgstr "Verskaf 1-50 geldige ID's"
 
-#: routes/games.py:599
+#: routes/games.py:609
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
 "Video nie gestoor nie: dit moet 'n MP4-, WebM- of OGG-lêer van tot %(mb)s"
 " MB wees."
 
-#: routes/games.py:612
+#: routes/games.py:622
 #, python-format
 msgid ""
 "Screenshots not added because they match ones the game already has: "
@@ -859,19 +859,19 @@ msgstr ""
 "Skermkiekies nie bygevoeg nie omdat hulle ooreenstem met dié wat die "
 "speletjie reeds het: %(count)s"
 
-#: routes/games.py:763
+#: routes/games.py:779
 msgid "Game not found after update"
 msgstr "Speletjie nie gevind na bywerking nie"
 
-#: routes/games.py:1084
+#: routes/games.py:1102
 msgid "No game selected."
 msgstr "Geen speletjie gekies nie."
 
-#: routes/games.py:1108
+#: routes/games.py:1126
 msgid "This metadata apply is no longer running."
 msgstr "Hierdie metadata-toepassing loop nie meer nie."
 
-#: routes/games.py:1117
+#: routes/games.py:1135
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -880,51 +880,51 @@ msgstr ""
 "Metadata toegepas vanaf %(sources)s! (%(filled)d velde ingevul, "
 "%(missing)d ontbreek steeds)"
 
-#: routes/games.py:1126
+#: routes/games.py:1144
 msgid "Failed to apply metadata."
 msgstr "Kon nie metadata toepas nie."
 
-#: routes/games.py:1200 routes/games.py:1249
+#: routes/games.py:1224 routes/games.py:1279
 msgid "No fields to update"
 msgstr "Geen velde om by te werk nie"
 
-#: routes/games.py:1242 routes/platform_import.py:264
+#: routes/games.py:1272 routes/platform_import.py:264
 #: routes/platform_import.py:569 routes/platform_import.py:933
-#: routes/trophies.py:1917 templates/game_imports.html:580
+#: routes/trophies.py:1916 templates/game_imports.html:580
 #: templates/game_imports.html:853
 msgid "No games selected"
 msgstr "Geen speletjies gekies nie"
 
-#: routes/games.py:1246
+#: routes/games.py:1276
 msgid "Invalid game selection"
 msgstr "Ongeldige speletjiekeuse"
 
-#: routes/games.py:1258
+#: routes/games.py:1288
 msgid "Invalid completion status"
 msgstr "Ongeldige voltooiingstatus"
 
-#: routes/games.py:1296 services/api_helpers.py:114
+#: routes/games.py:1326 services/api_helpers.py:114
 #, python-format
 msgid "%(field)s must be text"
 msgstr "%(field)s moet teks wees"
 
-#: routes/games.py:1308
+#: routes/games.py:1338
 msgid "No valid fields to update"
 msgstr "Geen geldige velde om by te werk nie"
 
-#: routes/games.py:1427
+#: routes/games.py:1457
 msgid "Invalid status"
 msgstr "Ongeldige status"
 
-#: routes/games.py:1452
+#: routes/games.py:1482
 msgid "Not authenticated"
 msgstr "Nie geverifieer nie"
 
-#: routes/games.py:1483
+#: routes/games.py:1513
 msgid "Filter type and value required"
 msgstr "Filtertipe en -waarde vereis"
 
-#: routes/games.py:1496
+#: routes/games.py:1526
 msgid "Invalid filter type"
 msgstr "Ongeldige filtertipe"
 
@@ -1714,33 +1714,33 @@ msgstr "Hierdie stelsel het geen skermkiekie-kontrole nie"
 msgid "Keep at least one copy of each screenshot. Nothing was deleted."
 msgstr "Hou ten minste een kopie van elke skermkiekie. Niks is verwyder nie."
 
-#: routes/trophies.py:143 routes/trophies.py:1780
+#: routes/trophies.py:142 routes/trophies.py:1779
 msgid "PSNAWP library not installed. Run: pip install psnawp"
 msgstr "PSNAWP-biblioteek nie geïnstalleer nie. Voer uit: pip install psnawp"
 
-#: routes/trophies.py:146
+#: routes/trophies.py:145
 msgid "PSN NPSSO cookie not configured"
 msgstr "PSN NPSSO-koekie is nie opgestel nie"
 
-#: routes/trophies.py:169 routes/trophies.py:186
+#: routes/trophies.py:168 routes/trophies.py:185
 msgid "PSN refresh token expired"
 msgstr "PSN-verfrissingsteken het verval"
 
-#: routes/trophies.py:180
+#: routes/trophies.py:179
 #, python-format
 msgid "PSN cached-token refresh failed: %(error)s"
 msgstr "PSN-verfrissing van gekaste teken het misluk: %(error)s"
 
-#: routes/trophies.py:207
+#: routes/trophies.py:206
 msgid "PSN authentication failed. Your NPSSO may have expired."
 msgstr "PSN-verifikasie het misluk. Jou NPSSO het dalk verval."
 
-#: routes/trophies.py:210
+#: routes/trophies.py:209
 #, python-format
 msgid "PSN connection error: %(error)s"
 msgstr "PSN-verbindingsfout: %(error)s"
 
-#: routes/trophies.py:466
+#: routes/trophies.py:465
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
 "trophies"
@@ -1748,56 +1748,56 @@ msgstr ""
 "Stel asseblief jou RPCS3-trofeepad in jou profielinstellings op om trofeë"
 " te sien"
 
-#: routes/trophies.py:498
+#: routes/trophies.py:497
 msgid "Trophy set not found"
 msgstr "Trofeestel nie gevind nie"
 
-#: routes/trophies.py:546
+#: routes/trophies.py:545
 msgid "RPCS3_TROPHY_PATH not configured"
 msgstr "RPCS3_TROPHY_PATH nie opgestel nie"
 
-#: routes/trophies.py:549
+#: routes/trophies.py:548
 #, python-format
 msgid "Trophy path not found: %(path)s"
 msgstr "Trofeepad nie gevind nie: %(path)s"
 
-#: routes/trophies.py:841 routes/trophies.py:1751
+#: routes/trophies.py:840 routes/trophies.py:1750
 msgid "PSN game not found"
 msgstr "PSN-speletjie nie gevind nie"
 
-#: routes/trophies.py:1135
+#: routes/trophies.py:1134
 msgid "Sync already in progress"
 msgstr "Sinkronisasie is reeds aan die gang"
 
-#: routes/trophies.py:1356
+#: routes/trophies.py:1355
 msgid "Game not found in your PSN trophy list"
 msgstr "Speletjie nie in jou PSN-trofeelys gevind nie"
 
-#: routes/trophies.py:1626
+#: routes/trophies.py:1625
 msgid "Game not found on PSN"
 msgstr "Speletjie nie op PSN gevind nie"
 
-#: routes/trophies.py:1641 routes/trophies.py:1714
+#: routes/trophies.py:1640 routes/trophies.py:1713
 msgid "Missing npwr_id"
 msgstr "npwr_id ontbreek"
 
-#: routes/trophies.py:1739
+#: routes/trophies.py:1738
 msgid "Missing npwr_id or group_id"
 msgstr "npwr_id of group_id ontbreek"
 
-#: routes/trophies.py:1742
+#: routes/trophies.py:1741
 msgid "Name cannot be empty"
 msgstr "Naam kan nie leeg wees nie"
 
-#: routes/trophies.py:1867 routes/trophies.py:1879
+#: routes/trophies.py:1866 routes/trophies.py:1878
 msgid "No NPSSO token provided"
 msgstr "Geen NPSSO-token verskaf nie"
 
-#: routes/trophies.py:1899
+#: routes/trophies.py:1898
 msgid "Could not connect to PSN"
 msgstr "Kon nie aan PSN koppel nie"
 
-#: routes/trophies.py:1926
+#: routes/trophies.py:1925
 msgid "PSN NPSSO not configured"
 msgstr "PSN NPSSO nie opgestel nie"
 
@@ -15009,8 +15009,8 @@ msgid "Custom Boxart (2D)"
 msgstr "Pasgemaakte Bokskuns (2D)"
 
 #: templates/_modals/edit_modal.html:360 templates/_modals/edit_modal.html:372
-#: templates/_modals/edit_modal.html:397 templates/_modals/edit_modal.html:408
-#: templates/_modals/edit_modal.html:419 templates/_modals/edit_modal.html:444
+#: templates/_modals/edit_modal.html:410 templates/_modals/edit_modal.html:421
+#: templates/_modals/edit_modal.html:432 templates/_modals/edit_modal.html:457
 #, python-format
 msgid "Current: %(filename)s"
 msgstr "Huidig: %(filename)s"
@@ -15051,90 +15051,107 @@ msgstr "Voer 3D-boks in"
 msgid "This saves straight away, without Save Changes."
 msgstr "Dit stoor dadelik, sonder Stoor veranderinge."
 
-#: templates/_modals/edit_modal.html:394
+#: templates/_modals/edit_modal.html:396
+#, fuzzy
+msgid "3D box case"
+msgstr "3D-boks van Slipcase"
+
+#: templates/_modals/edit_modal.html:398
+#, fuzzy
+msgid "Automatic"
+msgstr "Aanpassing"
+
+#: templates/_modals/edit_modal.html:403
+msgid ""
+"The case a 3D box built from the scans is drawn on. Automatic picks it "
+"from the console, region, discs and edition. A box imported from Slipcase"
+" keeps its own."
+msgstr ""
+
+#: templates/_modals/edit_modal.html:407
 msgid "Custom Fanart"
 msgstr "Pasgemaakte Aanhangerskuns"
 
-#: templates/_modals/edit_modal.html:398 templates/_modals/edit_modal.html:399
+#: templates/_modals/edit_modal.html:411 templates/_modals/edit_modal.html:412
 msgid "Delete Fanart"
 msgstr "Skrap Aanhangerskuns"
 
-#: templates/_modals/edit_modal.html:398
+#: templates/_modals/edit_modal.html:411
 msgid "Delete fanart? You can re-scrape to get a new one."
 msgstr "Verwyder fankuns? Jy kan weer skraap om nuwe een te kry."
 
-#: templates/_modals/edit_modal.html:405
+#: templates/_modals/edit_modal.html:418
 msgid "Custom Logo"
 msgstr "Eie logo"
 
-#: templates/_modals/edit_modal.html:409 templates/_modals/edit_modal.html:410
+#: templates/_modals/edit_modal.html:422 templates/_modals/edit_modal.html:423
 msgid "Delete Logo"
 msgstr "Verwyder logo"
 
-#: templates/_modals/edit_modal.html:409
+#: templates/_modals/edit_modal.html:422
 msgid "Delete the logo? You can re-scrape to get a new one."
 msgstr "Verwyder die logo? Jy kan weer skraap om nuwe een te kry."
 
-#: templates/_modals/edit_modal.html:416
+#: templates/_modals/edit_modal.html:429
 msgid "Custom Box Back"
 msgstr "Eie boksagterkant"
 
-#: templates/_modals/edit_modal.html:420 templates/_modals/edit_modal.html:421
+#: templates/_modals/edit_modal.html:433 templates/_modals/edit_modal.html:434
 msgid "Delete Box Back"
 msgstr "Verwyder boksagterkant"
 
-#: templates/_modals/edit_modal.html:420
+#: templates/_modals/edit_modal.html:433
 msgid "Delete the back of the box? You can re-scrape to get a new one."
 msgstr ""
 "Verwyder die agterkant van die boks? Jy kan weer skraap om nuwe een te "
 "kry."
 
-#: templates/_modals/edit_modal.html:427
+#: templates/_modals/edit_modal.html:440
 msgid "Add Screenshots"
 msgstr "Voeg Skermkiekies By"
 
-#: templates/_modals/edit_modal.html:429
+#: templates/_modals/edit_modal.html:442
 msgid "Hold Ctrl/Cmd to select multiple files"
 msgstr "Hou Ctrl/Cmd om veelvuldige lêers te kies"
 
-#: templates/_modals/edit_modal.html:431
+#: templates/_modals/edit_modal.html:444
 #, python-format
 msgid "Current: %(count)s screenshots"
 msgstr "Huidig: %(count)s skermkiekies"
 
-#: templates/_modals/edit_modal.html:438
+#: templates/_modals/edit_modal.html:451
 msgid "Video / Trailer"
 msgstr "Video / Voorskou"
 
-#: templates/_modals/edit_modal.html:440
+#: templates/_modals/edit_modal.html:453
 msgid "Video File"
 msgstr "Videolêer"
 
-#: templates/_modals/edit_modal.html:442
+#: templates/_modals/edit_modal.html:455
 msgid "Supported formats: MP4, WebM, OGG"
 msgstr "Ondersteunde formate: MP4, WebM, OGG"
 
-#: templates/_modals/edit_modal.html:445 templates/_modals/edit_modal.html:446
+#: templates/_modals/edit_modal.html:458 templates/_modals/edit_modal.html:459
 msgid "Remove Video"
 msgstr "Verwyder Video"
 
-#: templates/_modals/edit_modal.html:445
+#: templates/_modals/edit_modal.html:458
 msgid "Remove video? You can upload a new one later."
 msgstr "Verwyder video? Jy kan later 'n nuwe een oplaai."
 
-#: templates/_modals/edit_modal.html:456
+#: templates/_modals/edit_modal.html:469
 msgid "Launch"
 msgstr "Lanseer"
 
-#: templates/_modals/edit_modal.html:458
+#: templates/_modals/edit_modal.html:471
 msgid "Emulator override"
 msgstr "Emulator-oorskrywing"
 
-#: templates/_modals/edit_modal.html:460
+#: templates/_modals/edit_modal.html:473
 msgid "(use system default)"
 msgstr "(gebruik stelselverstek)"
 
-#: templates/_modals/edit_modal.html:462
+#: templates/_modals/edit_modal.html:475
 msgid ""
 "Pick a specific emulator for this game.  Leave blank to use the per-"
 "system default."
@@ -15142,15 +15159,15 @@ msgstr ""
 "Kies 'n spesifieke emulator vir hierdie speletjie.  Laat leeg om die per-"
 "stelsel verstek te gebruik."
 
-#: templates/_modals/edit_modal.html:466
+#: templates/_modals/edit_modal.html:479
 msgid "Custom launch args"
 msgstr "Pasgemaakte lanseerargumente"
 
-#: templates/_modals/edit_modal.html:467
+#: templates/_modals/edit_modal.html:480
 msgid "e.g.  --renderer vulkan"
 msgstr "bv.  --renderer vulkan"
 
-#: templates/_modals/edit_modal.html:468
+#: templates/_modals/edit_modal.html:481
 msgid ""
 "Added after the emulator's command-line options. Put quotes around a "
 "value that contains spaces."

@@ -572,6 +572,7 @@ your migration — not in the runner.
 | 044 | `044_ss_region_checked.py` | Add `games.ss_region_checked` (INTEGER, 0 by default): 1 when the box and manual region fix has settled the game. | PASS-59-202. The fix asks ScreenScraper about a game once, not on every run. |
 | 045 | `045_imported_system_defaults.py` | Give systems the Steam, Xbox, PSN and CLZ imports created bare their name, logo and type from `game_utils.system_defaults`. | Only a name still the folder in capitals, and only an empty logo or type, is changed. |
 | 046 | `046_mobygames.py` | Add `games.mobygames_id` (INTEGER), `games.moby_score` (REAL) and `games.box_scans` (TEXT JSON, NULL = none); create `mobygames_pending` with a delete trigger. | PASS-59-183. Additive; filled fill-only by a scrape. The list holds games a scrape passed over for the hour. |
+| 047 | `047_box_case.py` | Add `games.box_case` (TEXT, NULL = chosen by the builder): the case a person picked for the game's built 3D box. | PASS-59-329. Set only from the Edit window. |
 
 ---
 

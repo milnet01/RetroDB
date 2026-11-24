@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-24 10:08+0200\n"
+"POT-Creation-Date: 2026-11-24 11:33+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: tr\n"
@@ -203,11 +203,11 @@ msgstr "Sistem bulunamadı veya başarım içeren oyunu yok"
 #: routes/bonus_discs.py:276 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
 #: routes/emulators.py:315 routes/emulators.py:329 routes/games.py:408
-#: routes/games.py:961 routes/games.py:1080 routes/games.py:1164
+#: routes/games.py:979 routes/games.py:1098 routes/games.py:1188
 #: routes/games_ai.py:43 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
 #: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:709
-#: routes/reports.py:850 routes/trophies.py:1338 services/cheats.py:1061
+#: routes/reports.py:850 routes/trophies.py:1337 services/cheats.py:1061
 #: services/hltb_service.py:163
 msgid "Game not found"
 msgstr "Oyun bulunamadı"
@@ -599,8 +599,8 @@ msgstr "Bonus disk ve ana oyun aynı sistemde olmalıdır"
 msgid "A bonus disc links to a main game, one level only"
 msgstr "Bonus disk, yalnızca bir seviye olacak şekilde bir ana Oyun'a bağlanır"
 
-#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1434
-#: routes/games.py:1464 routes/platform_import.py:358
+#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1464
+#: routes/games.py:1494 routes/platform_import.py:358
 #: routes/platform_import.py:663 routes/platform_import.py:1047
 #: routes/scrape_logs.py:89 routes/scrape_logs.py:174 routes/scrape_logs.py:187
 #: routes/scrape_logs.py:225 routes/scraper.py:213 routes/scraper.py:579
@@ -608,9 +608,9 @@ msgstr "Bonus disk, yalnızca bir seviye olacak şekilde bir ana Oyun'a bağlan�
 #: routes/settings.py:442 routes/settings.py:521 routes/settings.py:550
 #: routes/settings.py:594 routes/settings.py:607 routes/settings.py:643
 #: routes/steam_achievements.py:138 routes/systems.py:165 routes/systems.py:332
-#: routes/trophies.py:582 routes/trophies.py:780 routes/trophies.py:828
-#: routes/trophies.py:1629 routes/trophies.py:1653 routes/trophies.py:1698
-#: routes/trophies.py:1726 routes/trophies.py:1768 routes/trophies.py:1835
+#: routes/trophies.py:581 routes/trophies.py:779 routes/trophies.py:827
+#: routes/trophies.py:1628 routes/trophies.py:1652 routes/trophies.py:1697
+#: routes/trophies.py:1725 routes/trophies.py:1767 routes/trophies.py:1834
 #: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "Bir dahili hata oluştu"
@@ -842,14 +842,14 @@ msgstr "ID sağlanmadı"
 msgid "Provide 1-50 valid IDs"
 msgstr "1-50 arası geçerli ID sağlayın"
 
-#: routes/games.py:599
+#: routes/games.py:609
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
 "Video kaydedilmedi: en fazla %(mb)s MB boyutunda bir MP4, WebM veya OGG "
 "dosyası olmalıdır."
 
-#: routes/games.py:612
+#: routes/games.py:622
 #, python-format
 msgid ""
 "Screenshots not added because they match ones the game already has: "
@@ -858,19 +858,19 @@ msgstr ""
 "Oyunda zaten bulunanlarla eşleştiği için eklenmeyen ekran görüntüleri: "
 "%(count)s"
 
-#: routes/games.py:763
+#: routes/games.py:779
 msgid "Game not found after update"
 msgstr "Güncellemeden sonra oyun bulunamadı"
 
-#: routes/games.py:1084
+#: routes/games.py:1102
 msgid "No game selected."
 msgstr "Oyun seçilmedi."
 
-#: routes/games.py:1108
+#: routes/games.py:1126
 msgid "This metadata apply is no longer running."
 msgstr "Bu meta veri uygulaması artık çalışmıyor."
 
-#: routes/games.py:1117
+#: routes/games.py:1135
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -879,51 +879,51 @@ msgstr ""
 "Meta veriler %(sources)s kaynağından uygulandı! (%(filled)d alan "
 "dolduruldu, %(missing)d alan hâlâ eksik)"
 
-#: routes/games.py:1126
+#: routes/games.py:1144
 msgid "Failed to apply metadata."
 msgstr "Meta veriler uygulanamadı."
 
-#: routes/games.py:1200 routes/games.py:1249
+#: routes/games.py:1224 routes/games.py:1279
 msgid "No fields to update"
 msgstr "Güncellenecek alan yok"
 
-#: routes/games.py:1242 routes/platform_import.py:264
+#: routes/games.py:1272 routes/platform_import.py:264
 #: routes/platform_import.py:569 routes/platform_import.py:933
-#: routes/trophies.py:1917 templates/game_imports.html:580
+#: routes/trophies.py:1916 templates/game_imports.html:580
 #: templates/game_imports.html:853
 msgid "No games selected"
 msgstr "Oyun seçilmedi"
 
-#: routes/games.py:1246
+#: routes/games.py:1276
 msgid "Invalid game selection"
 msgstr "Geçersiz oyun seçimi"
 
-#: routes/games.py:1258
+#: routes/games.py:1288
 msgid "Invalid completion status"
 msgstr "Geçersiz tamamlanma durumu"
 
-#: routes/games.py:1296 services/api_helpers.py:114
+#: routes/games.py:1326 services/api_helpers.py:114
 #, python-format
 msgid "%(field)s must be text"
 msgstr "%(field)s metin olmalıdır"
 
-#: routes/games.py:1308
+#: routes/games.py:1338
 msgid "No valid fields to update"
 msgstr "Güncellenecek geçerli alan yok"
 
-#: routes/games.py:1427
+#: routes/games.py:1457
 msgid "Invalid status"
 msgstr "Geçersiz durum"
 
-#: routes/games.py:1452
+#: routes/games.py:1482
 msgid "Not authenticated"
 msgstr "Kimlik doğrulanmadı"
 
-#: routes/games.py:1483
+#: routes/games.py:1513
 msgid "Filter type and value required"
 msgstr "Filtre türü ve değeri gereklidir"
 
-#: routes/games.py:1496
+#: routes/games.py:1526
 msgid "Invalid filter type"
 msgstr "Geçersiz filtre türü"
 
@@ -1718,33 +1718,33 @@ msgstr "Bu sistem için ekran görüntüsü kontrolü yok"
 msgid "Keep at least one copy of each screenshot. Nothing was deleted."
 msgstr "Her ekran görüntüsünün en az bir kopyasını tutun. Hiçbir şey silinmedi."
 
-#: routes/trophies.py:143 routes/trophies.py:1780
+#: routes/trophies.py:142 routes/trophies.py:1779
 msgid "PSNAWP library not installed. Run: pip install psnawp"
 msgstr "PSNAWP kütüphanesi kurulu değil. Çalıştırın: pip install psnawp"
 
-#: routes/trophies.py:146
+#: routes/trophies.py:145
 msgid "PSN NPSSO cookie not configured"
 msgstr "PSN NPSSO çerezi yapılandırılmamış"
 
-#: routes/trophies.py:169 routes/trophies.py:186
+#: routes/trophies.py:168 routes/trophies.py:185
 msgid "PSN refresh token expired"
 msgstr "PSN yenileme jetonunun süresi doldu"
 
-#: routes/trophies.py:180
+#: routes/trophies.py:179
 #, python-format
 msgid "PSN cached-token refresh failed: %(error)s"
 msgstr "PSN önbellekteki jeton yenilenemedi: %(error)s"
 
-#: routes/trophies.py:207
+#: routes/trophies.py:206
 msgid "PSN authentication failed. Your NPSSO may have expired."
 msgstr "PSN kimlik doğrulaması başarısız oldu. NPSSO süresi dolmuş olabilir."
 
-#: routes/trophies.py:210
+#: routes/trophies.py:209
 #, python-format
 msgid "PSN connection error: %(error)s"
 msgstr "PSN bağlantı hatası: %(error)s"
 
-#: routes/trophies.py:466
+#: routes/trophies.py:465
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
 "trophies"
@@ -1752,56 +1752,56 @@ msgstr ""
 "Kupaları görüntülemek için profil ayarlarınızdan RPCS3 Kupa Yolunu "
 "yapılandırın"
 
-#: routes/trophies.py:498
+#: routes/trophies.py:497
 msgid "Trophy set not found"
 msgstr "Kupa seti bulunamadı"
 
-#: routes/trophies.py:546
+#: routes/trophies.py:545
 msgid "RPCS3_TROPHY_PATH not configured"
 msgstr "RPCS3_TROPHY_PATH yapılandırılmamış"
 
-#: routes/trophies.py:549
+#: routes/trophies.py:548
 #, python-format
 msgid "Trophy path not found: %(path)s"
 msgstr "Kupa yolu bulunamadı: %(path)s"
 
-#: routes/trophies.py:841 routes/trophies.py:1751
+#: routes/trophies.py:840 routes/trophies.py:1750
 msgid "PSN game not found"
 msgstr "PSN oyunu bulunamadı"
 
-#: routes/trophies.py:1135
+#: routes/trophies.py:1134
 msgid "Sync already in progress"
 msgstr "Senkronizasyon zaten devam ediyor"
 
-#: routes/trophies.py:1356
+#: routes/trophies.py:1355
 msgid "Game not found in your PSN trophy list"
 msgstr "Oyun PSN kupa listenizde bulunamadı"
 
-#: routes/trophies.py:1626
+#: routes/trophies.py:1625
 msgid "Game not found on PSN"
 msgstr "Oyun PSN'de bulunamadı"
 
-#: routes/trophies.py:1641 routes/trophies.py:1714
+#: routes/trophies.py:1640 routes/trophies.py:1713
 msgid "Missing npwr_id"
 msgstr "npwr_id eksik"
 
-#: routes/trophies.py:1739
+#: routes/trophies.py:1738
 msgid "Missing npwr_id or group_id"
 msgstr "npwr_id veya group_id eksik"
 
-#: routes/trophies.py:1742
+#: routes/trophies.py:1741
 msgid "Name cannot be empty"
 msgstr "Ad boş olamaz"
 
-#: routes/trophies.py:1867 routes/trophies.py:1879
+#: routes/trophies.py:1866 routes/trophies.py:1878
 msgid "No NPSSO token provided"
 msgstr "NPSSO token'ı sağlanmadı"
 
-#: routes/trophies.py:1899
+#: routes/trophies.py:1898
 msgid "Could not connect to PSN"
 msgstr "PSN'ye bağlanılamadı"
 
-#: routes/trophies.py:1926
+#: routes/trophies.py:1925
 msgid "PSN NPSSO not configured"
 msgstr "PSN NPSSO yapılandırılmamış"
 
@@ -15020,8 +15020,8 @@ msgid "Custom Boxart (2D)"
 msgstr "Özel Kutu Kapağı (2D)"
 
 #: templates/_modals/edit_modal.html:360 templates/_modals/edit_modal.html:372
-#: templates/_modals/edit_modal.html:397 templates/_modals/edit_modal.html:408
-#: templates/_modals/edit_modal.html:419 templates/_modals/edit_modal.html:444
+#: templates/_modals/edit_modal.html:410 templates/_modals/edit_modal.html:421
+#: templates/_modals/edit_modal.html:432 templates/_modals/edit_modal.html:457
 #, python-format
 msgid "Current: %(filename)s"
 msgstr "Mevcut: %(filename)s"
@@ -15062,90 +15062,107 @@ msgstr "3D kutu içe aktar"
 msgid "This saves straight away, without Save Changes."
 msgstr "Değişiklikleri Kaydet gerekmeden hemen kaydedilir."
 
-#: templates/_modals/edit_modal.html:394
+#: templates/_modals/edit_modal.html:396
+#, fuzzy
+msgid "3D box case"
+msgstr "Slipcase'den 3D kutu"
+
+#: templates/_modals/edit_modal.html:398
+#, fuzzy
+msgid "Automatic"
+msgstr "Özelleştirme"
+
+#: templates/_modals/edit_modal.html:403
+msgid ""
+"The case a 3D box built from the scans is drawn on. Automatic picks it "
+"from the console, region, discs and edition. A box imported from Slipcase"
+" keeps its own."
+msgstr ""
+
+#: templates/_modals/edit_modal.html:407
 msgid "Custom Fanart"
 msgstr "Özel Hayran Sanatı"
 
-#: templates/_modals/edit_modal.html:398 templates/_modals/edit_modal.html:399
+#: templates/_modals/edit_modal.html:411 templates/_modals/edit_modal.html:412
 msgid "Delete Fanart"
 msgstr "Hayran Sanatını Sil"
 
-#: templates/_modals/edit_modal.html:398
+#: templates/_modals/edit_modal.html:411
 msgid "Delete fanart? You can re-scrape to get a new one."
 msgstr "Hayran sanatı silinsin mi? Yenisini almak için yeniden kazıyabilirsiniz."
 
-#: templates/_modals/edit_modal.html:405
+#: templates/_modals/edit_modal.html:418
 msgid "Custom Logo"
 msgstr "Özel Logo"
 
-#: templates/_modals/edit_modal.html:409 templates/_modals/edit_modal.html:410
+#: templates/_modals/edit_modal.html:422 templates/_modals/edit_modal.html:423
 msgid "Delete Logo"
 msgstr "Logoyu Sil"
 
-#: templates/_modals/edit_modal.html:409
+#: templates/_modals/edit_modal.html:422
 msgid "Delete the logo? You can re-scrape to get a new one."
 msgstr "Logo silinsin mi? Yenisini almak için yeniden kazıyabilirsiniz."
 
-#: templates/_modals/edit_modal.html:416
+#: templates/_modals/edit_modal.html:429
 msgid "Custom Box Back"
 msgstr "Özel Kutu Arka Yüzü"
 
-#: templates/_modals/edit_modal.html:420 templates/_modals/edit_modal.html:421
+#: templates/_modals/edit_modal.html:433 templates/_modals/edit_modal.html:434
 msgid "Delete Box Back"
 msgstr "Kutu Arka Yüzünü Sil"
 
-#: templates/_modals/edit_modal.html:420
+#: templates/_modals/edit_modal.html:433
 msgid "Delete the back of the box? You can re-scrape to get a new one."
 msgstr ""
 "Kutunun arka yüzü silinsin mi? Yenisini almak için yeniden "
 "kazıyabilirsiniz."
 
-#: templates/_modals/edit_modal.html:427
+#: templates/_modals/edit_modal.html:440
 msgid "Add Screenshots"
 msgstr "Ekran Görüntüsü Ekle"
 
-#: templates/_modals/edit_modal.html:429
+#: templates/_modals/edit_modal.html:442
 msgid "Hold Ctrl/Cmd to select multiple files"
 msgstr "Birden fazla dosya seçmek için Ctrl/Cmd tuşunu basılı tutun"
 
-#: templates/_modals/edit_modal.html:431
+#: templates/_modals/edit_modal.html:444
 #, python-format
 msgid "Current: %(count)s screenshots"
 msgstr "Mevcut: %(count)s ekran görüntüsü"
 
-#: templates/_modals/edit_modal.html:438
+#: templates/_modals/edit_modal.html:451
 msgid "Video / Trailer"
 msgstr "Video / Fragman"
 
-#: templates/_modals/edit_modal.html:440
+#: templates/_modals/edit_modal.html:453
 msgid "Video File"
 msgstr "Video Dosyası"
 
-#: templates/_modals/edit_modal.html:442
+#: templates/_modals/edit_modal.html:455
 msgid "Supported formats: MP4, WebM, OGG"
 msgstr "Desteklenen formatlar: MP4, WebM, OGG"
 
-#: templates/_modals/edit_modal.html:445 templates/_modals/edit_modal.html:446
+#: templates/_modals/edit_modal.html:458 templates/_modals/edit_modal.html:459
 msgid "Remove Video"
 msgstr "Videoyu Kaldır"
 
-#: templates/_modals/edit_modal.html:445
+#: templates/_modals/edit_modal.html:458
 msgid "Remove video? You can upload a new one later."
 msgstr "Video kaldırılsın mı? Daha sonra yenisini yükleyebilirsiniz."
 
-#: templates/_modals/edit_modal.html:456
+#: templates/_modals/edit_modal.html:469
 msgid "Launch"
 msgstr "Başlat"
 
-#: templates/_modals/edit_modal.html:458
+#: templates/_modals/edit_modal.html:471
 msgid "Emulator override"
 msgstr "Emülatör geçersiz kılma"
 
-#: templates/_modals/edit_modal.html:460
+#: templates/_modals/edit_modal.html:473
 msgid "(use system default)"
 msgstr "(sistem varsayılanını kullan)"
 
-#: templates/_modals/edit_modal.html:462
+#: templates/_modals/edit_modal.html:475
 msgid ""
 "Pick a specific emulator for this game.  Leave blank to use the per-"
 "system default."
@@ -15153,15 +15170,15 @@ msgstr ""
 "Bu oyun için belirli bir emülatör seçin.  Sisteme özgü varsayılanı "
 "kullanmak için boş bırakın."
 
-#: templates/_modals/edit_modal.html:466
+#: templates/_modals/edit_modal.html:479
 msgid "Custom launch args"
 msgstr "Özel başlatma parametreleri"
 
-#: templates/_modals/edit_modal.html:467
+#: templates/_modals/edit_modal.html:480
 msgid "e.g.  --renderer vulkan"
 msgstr "örn.  --renderer vulkan"
 
-#: templates/_modals/edit_modal.html:468
+#: templates/_modals/edit_modal.html:481
 msgid ""
 "Added after the emulator's command-line options. Put quotes around a "
 "value that contains spaces."

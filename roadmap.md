@@ -3617,8 +3617,8 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   BEGIN); webp adopt verify, variant regen on skipped and RAWG
   players (already fixed); build_dist anchoring (git ls-files walk
   since Pass 59.13; anchoring would ship nested __pycache__/venv).
-  Open for the user: PSNAWP's own default pace is 1 request per 3 s,
-  per PSN guidance; RetroDB keeps its faster pace.
+  PSN pace: the user chose PSNAWP's own 1 request per 3 s
+    (2026-11-24); routes/trophies.py _PSN_RATE.
   **Layman:** A bundle of small, low-risk code notes from a review.
   Kind: implement.
 
@@ -3897,13 +3897,19 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   moulded top band, eco cut-outs, Wii U green and red editions.
   **Round 2 (2026-11-24)**: sourced search of Gemini's leads, in
   Scratchpad case-research/round2.md (links and certainty per lead).
-  Nothing changed yet. For the user: measure a PAL PS1 case's short
-  side (table 125, psxpaldb.com 129-130); look at own PS3 case for a
-  moulded top band and a PS4 case for a finger recess; choose whether
-  to add PS1 PAL multi-disc 142x125x25, PS1 PAL Maxibox 142x125x17,
-  early PS1 Japan 142x129x17, New 3DS EU 122x135x14, edition colours
-  (Wii U green/red/yellow, PS4 Hits red, 3DS red), Xbox One moulded
-  logo, GameCube square hole; drop the Game Gear JP hang tab. No
+  Done 2026-11-24 (user's choices): added PS1 PAL multiway
+  142x125x25 and Maxibox 142x125x17, early PS1 Japan 142x129x17, New
+  3DS EU black 14 mm, edition colours (Wii U green and red, PS4 Hits
+  red, 3DS red; yellow left out, one source), Xbox One / Series X
+  embossed front logo; Game Gear JP has no tab. The builder picks a
+  case from the Edition field, the title and a PAL PS1 game's disc
+  count; the Edit window's "3D box case" list picks any case by hand
+  (games.box_case, migration 047). Slipcase sent the list (inbox).
+  Waiting on the user's measurements: a PAL PS1 case's short side
+  (table 125, psxpaldb.com 129-130); own PS3 case for a moulded top
+  band; PS4 case for a finger recess; GameCube case for a square hole
+  and where; photos with a ruler of any Japanese Game Gear box, PS one
+  Books, PAL Saturn or PAL Mega CD case. No
   source found: US PS1, JP Saturn and Dreamcast multi-disc depths;
   PAL Saturn and Mega CD sizes; Game Gear JP, Mark III, Genesis
   cardboard and early PAL NES box sizes; PS2 JP colours.

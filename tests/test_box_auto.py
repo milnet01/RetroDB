@@ -558,3 +558,55 @@ def test_with_no_match_or_no_3d_picture_the_best_ranked_group_stays(probes):
     asked.clear()
     assert _group_like_3d_box(7, _groups(1, 2), None)['cover_group_id'] == 1
     assert asked == []
+
+
+# PASS-59-329: a case a person picks in the Edit window.
+def _built_case(gid):
+    record = query("SELECT box_faces FROM games WHERE id = ?", (gid,), one=True)['box_faces']
+    return json.loads(record)['case']['name']
+
+
+def test_a_picked_case_is_built_and_one_not_offered_is_ignored(make_game):
+    gid = make_game('ps3')
+    execute("UPDATE games SET box_case = 'PS3 Greatest Hits Case' WHERE id = ?", (gid,))
+    assert build.build_for_game(gid) == 'built'
+    assert _built_case(gid) == 'PS3 Greatest Hits Case'
+    execute("UPDATE games SET box_case = 'Switch Case' WHERE id = ?", (gid,))
+    assert build.build_for_game(gid) == 'built'
+    assert _built_case(gid) == 'PS3 Blu-ray Case'
+
+
+def test_the_edit_window_saves_the_case_and_rebuilds(make_game, admin_test_client):
+    from unittest.mock import patch
+    gid = make_game('ps3')
+    client, csrf = admin_test_client()
+    with patch('scraper.retroachievements.check_retroachievements', return_value=None):
+        page = client.get(f'/game/{gid}').get_data(as_text=True)
+    assert 'id="edit_box_case"' in page
+    assert '<option value="PS3 Greatest Hits Case">' in page
+
+    def save(**form):
+        return client.post(f'/game/{gid}', data={
+            'action': 'edit_metadata', 'edit_title': 'Box Probe', **form,
+        }, headers={'X-CSRF-Token': csrf}, content_type='multipart/form-data')
+
+    assert save(edit_box_case='PS3 Greatest Hits Case').status_code == 200
+    assert query("SELECT box_case FROM games WHERE id = ?", (gid,), one=True)['box_case'] \
+        == 'PS3 Greatest Hits Case'
+    assert _built_case(gid) == 'PS3 Greatest Hits Case'
+    save(edit_box_case='Switch Case')       # not a PS3 case: the choice stays
+    assert query("SELECT box_case FROM games WHERE id = ?", (gid,), one=True)['box_case'] \
+        == 'PS3 Greatest Hits Case'
+    save(edit_box_case='')                  # Automatic
+    assert query("SELECT box_case FROM games WHERE id = ?", (gid,), one=True)['box_case'] is None
+    assert _built_case(gid) == 'PS3 Blu-ray Case'
+
+
+def test_a_new_edition_in_the_quick_editor_rebuilds_the_box(make_game, admin_test_client):
+    gid = make_game('ps3')
+    assert build.build_for_game(gid) == 'built'
+    client, csrf = admin_test_client()
+    rv = client.post(f'/api/game/{gid}/edit', json={'edition': 'Greatest Hits'},
+                     headers={'X-CSRF-Token': csrf})
+    assert rv.status_code == 200
+    assert _built_case(gid) == 'PS3 Greatest Hits Case'

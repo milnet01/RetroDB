@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-24 10:08+0200\n"
+"POT-Creation-Date: 2026-11-24 11:33+0200\n"
 "PO-Revision-Date: 2026-07-05 16:56+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: uk\n"
@@ -204,11 +204,11 @@ msgstr "Систему не знайдено або вона не має іго�
 #: routes/bonus_discs.py:276 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
 #: routes/emulators.py:315 routes/emulators.py:329 routes/games.py:408
-#: routes/games.py:961 routes/games.py:1080 routes/games.py:1164
+#: routes/games.py:979 routes/games.py:1098 routes/games.py:1188
 #: routes/games_ai.py:43 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
 #: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:709
-#: routes/reports.py:850 routes/trophies.py:1338 services/cheats.py:1061
+#: routes/reports.py:850 routes/trophies.py:1337 services/cheats.py:1061
 #: services/hltb_service.py:163
 msgid "Game not found"
 msgstr "Гру не знайдено"
@@ -600,8 +600,8 @@ msgstr "Бонусний диск і батьківська гра мають н
 msgid "A bonus disc links to a main game, one level only"
 msgstr "Бонусний диск пов’язується з основною грою лише на один рівень"
 
-#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1434
-#: routes/games.py:1464 routes/platform_import.py:358
+#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1464
+#: routes/games.py:1494 routes/platform_import.py:358
 #: routes/platform_import.py:663 routes/platform_import.py:1047
 #: routes/scrape_logs.py:89 routes/scrape_logs.py:174 routes/scrape_logs.py:187
 #: routes/scrape_logs.py:225 routes/scraper.py:213 routes/scraper.py:579
@@ -609,9 +609,9 @@ msgstr "Бонусний диск пов’язується з основною 
 #: routes/settings.py:442 routes/settings.py:521 routes/settings.py:550
 #: routes/settings.py:594 routes/settings.py:607 routes/settings.py:643
 #: routes/steam_achievements.py:138 routes/systems.py:165 routes/systems.py:332
-#: routes/trophies.py:582 routes/trophies.py:780 routes/trophies.py:828
-#: routes/trophies.py:1629 routes/trophies.py:1653 routes/trophies.py:1698
-#: routes/trophies.py:1726 routes/trophies.py:1768 routes/trophies.py:1835
+#: routes/trophies.py:581 routes/trophies.py:779 routes/trophies.py:827
+#: routes/trophies.py:1628 routes/trophies.py:1652 routes/trophies.py:1697
+#: routes/trophies.py:1725 routes/trophies.py:1767 routes/trophies.py:1834
 #: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "Сталася внутрішня помилка"
@@ -845,14 +845,14 @@ msgstr "ID не надано"
 msgid "Provide 1-50 valid IDs"
 msgstr "Надайте від 1 до 50 дійсних ID"
 
-#: routes/games.py:599
+#: routes/games.py:609
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
 "Відео не збережено: це має бути файл MP4, WebM або OGG розміром до %(mb)s"
 " МБ."
 
-#: routes/games.py:612
+#: routes/games.py:622
 #, python-format
 msgid ""
 "Screenshots not added because they match ones the game already has: "
@@ -861,19 +861,19 @@ msgstr ""
 "Не додано знімків екрана, бо вони збігаються з тими, що вже є в гри: "
 "%(count)s"
 
-#: routes/games.py:763
+#: routes/games.py:779
 msgid "Game not found after update"
 msgstr "Гру не знайдено після оновлення"
 
-#: routes/games.py:1084
+#: routes/games.py:1102
 msgid "No game selected."
 msgstr "Гру не вибрано."
 
-#: routes/games.py:1108
+#: routes/games.py:1126
 msgid "This metadata apply is no longer running."
 msgstr "Це застосування метаданих більше не виконується."
 
-#: routes/games.py:1117
+#: routes/games.py:1135
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -882,51 +882,51 @@ msgstr ""
 "Метадані застосовано з %(sources)s! (заповнено полів: %(filled)d, ще "
 "бракує: %(missing)d)"
 
-#: routes/games.py:1126
+#: routes/games.py:1144
 msgid "Failed to apply metadata."
 msgstr "Не вдалося застосувати метадані."
 
-#: routes/games.py:1200 routes/games.py:1249
+#: routes/games.py:1224 routes/games.py:1279
 msgid "No fields to update"
 msgstr "Немає полів для оновлення"
 
-#: routes/games.py:1242 routes/platform_import.py:264
+#: routes/games.py:1272 routes/platform_import.py:264
 #: routes/platform_import.py:569 routes/platform_import.py:933
-#: routes/trophies.py:1917 templates/game_imports.html:580
+#: routes/trophies.py:1916 templates/game_imports.html:580
 #: templates/game_imports.html:853
 msgid "No games selected"
 msgstr "Не вибрано жодної гри"
 
-#: routes/games.py:1246
+#: routes/games.py:1276
 msgid "Invalid game selection"
 msgstr "Неправильний вибір гри"
 
-#: routes/games.py:1258
+#: routes/games.py:1288
 msgid "Invalid completion status"
 msgstr "Недійсний статус проходження"
 
-#: routes/games.py:1296 services/api_helpers.py:114
+#: routes/games.py:1326 services/api_helpers.py:114
 #, python-format
 msgid "%(field)s must be text"
 msgstr "%(field)s має бути текстом"
 
-#: routes/games.py:1308
+#: routes/games.py:1338
 msgid "No valid fields to update"
 msgstr "Немає дійсних полів для оновлення"
 
-#: routes/games.py:1427
+#: routes/games.py:1457
 msgid "Invalid status"
 msgstr "Недійсний статус"
 
-#: routes/games.py:1452
+#: routes/games.py:1482
 msgid "Not authenticated"
 msgstr "Не автентифіковано"
 
-#: routes/games.py:1483
+#: routes/games.py:1513
 msgid "Filter type and value required"
 msgstr "Потрібні тип і значення фільтра"
 
-#: routes/games.py:1496
+#: routes/games.py:1526
 msgid "Invalid filter type"
 msgstr "Недійсний тип фільтра"
 
@@ -1716,33 +1716,33 @@ msgstr ""
 "Залиште принаймні одну копію кожного знімка екрана. Нічого не було "
 "видалено."
 
-#: routes/trophies.py:143 routes/trophies.py:1780
+#: routes/trophies.py:142 routes/trophies.py:1779
 msgid "PSNAWP library not installed. Run: pip install psnawp"
 msgstr "Бібліотеку PSNAWP не встановлено. Виконайте: pip install psnawp"
 
-#: routes/trophies.py:146
+#: routes/trophies.py:145
 msgid "PSN NPSSO cookie not configured"
 msgstr "Cookie PSN NPSSO не налаштовано"
 
-#: routes/trophies.py:169 routes/trophies.py:186
+#: routes/trophies.py:168 routes/trophies.py:185
 msgid "PSN refresh token expired"
 msgstr "Термін дії токена оновлення PSN минув"
 
-#: routes/trophies.py:180
+#: routes/trophies.py:179
 #, python-format
 msgid "PSN cached-token refresh failed: %(error)s"
 msgstr "Не вдалося оновити кешований токен PSN: %(error)s"
 
-#: routes/trophies.py:207
+#: routes/trophies.py:206
 msgid "PSN authentication failed. Your NPSSO may have expired."
 msgstr "Помилка автентифікації PSN. Можливо, термін дії вашого NPSSO минув."
 
-#: routes/trophies.py:210
+#: routes/trophies.py:209
 #, python-format
 msgid "PSN connection error: %(error)s"
 msgstr "Помилка підключення до PSN: %(error)s"
 
-#: routes/trophies.py:466
+#: routes/trophies.py:465
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
 "trophies"
@@ -1750,56 +1750,56 @@ msgstr ""
 "Налаштуйте шлях до трофеїв RPCS3 у налаштуваннях профілю, щоб переглядати"
 " трофеї"
 
-#: routes/trophies.py:498
+#: routes/trophies.py:497
 msgid "Trophy set not found"
 msgstr "Набір трофеїв не знайдено"
 
-#: routes/trophies.py:546
+#: routes/trophies.py:545
 msgid "RPCS3_TROPHY_PATH not configured"
 msgstr "RPCS3_TROPHY_PATH не налаштовано"
 
-#: routes/trophies.py:549
+#: routes/trophies.py:548
 #, python-format
 msgid "Trophy path not found: %(path)s"
 msgstr "Шлях до трофеїв не знайдено: %(path)s"
 
-#: routes/trophies.py:841 routes/trophies.py:1751
+#: routes/trophies.py:840 routes/trophies.py:1750
 msgid "PSN game not found"
 msgstr "Гру PSN не знайдено"
 
-#: routes/trophies.py:1135
+#: routes/trophies.py:1134
 msgid "Sync already in progress"
 msgstr "Синхронізація вже виконується"
 
-#: routes/trophies.py:1356
+#: routes/trophies.py:1355
 msgid "Game not found in your PSN trophy list"
 msgstr "Гру не знайдено у вашому списку трофеїв PSN"
 
-#: routes/trophies.py:1626
+#: routes/trophies.py:1625
 msgid "Game not found on PSN"
 msgstr "Гру не знайдено в PSN"
 
-#: routes/trophies.py:1641 routes/trophies.py:1714
+#: routes/trophies.py:1640 routes/trophies.py:1713
 msgid "Missing npwr_id"
 msgstr "Відсутній npwr_id"
 
-#: routes/trophies.py:1739
+#: routes/trophies.py:1738
 msgid "Missing npwr_id or group_id"
 msgstr "Відсутній npwr_id або group_id"
 
-#: routes/trophies.py:1742
+#: routes/trophies.py:1741
 msgid "Name cannot be empty"
 msgstr "Назва не може бути порожньою"
 
-#: routes/trophies.py:1867 routes/trophies.py:1879
+#: routes/trophies.py:1866 routes/trophies.py:1878
 msgid "No NPSSO token provided"
 msgstr "Токен NPSSO не надано"
 
-#: routes/trophies.py:1899
+#: routes/trophies.py:1898
 msgid "Could not connect to PSN"
 msgstr "Не вдалося під'єднатися до PSN"
 
-#: routes/trophies.py:1926
+#: routes/trophies.py:1925
 msgid "PSN NPSSO not configured"
 msgstr "PSN NPSSO не налаштовано"
 
@@ -14984,8 +14984,8 @@ msgid "Custom Boxart (2D)"
 msgstr "Власна обкладинка (2D)"
 
 #: templates/_modals/edit_modal.html:360 templates/_modals/edit_modal.html:372
-#: templates/_modals/edit_modal.html:397 templates/_modals/edit_modal.html:408
-#: templates/_modals/edit_modal.html:419 templates/_modals/edit_modal.html:444
+#: templates/_modals/edit_modal.html:410 templates/_modals/edit_modal.html:421
+#: templates/_modals/edit_modal.html:432 templates/_modals/edit_modal.html:457
 #, python-format
 msgid "Current: %(filename)s"
 msgstr "Поточний: %(filename)s"
@@ -15026,88 +15026,105 @@ msgstr "Імпортувати 3D-коробку"
 msgid "This saves straight away, without Save Changes."
 msgstr "Зберігається одразу, без кнопки «Зберегти зміни»."
 
-#: templates/_modals/edit_modal.html:394
+#: templates/_modals/edit_modal.html:396
+#, fuzzy
+msgid "3D box case"
+msgstr "3D-коробка зі Slipcase"
+
+#: templates/_modals/edit_modal.html:398
+#, fuzzy
+msgid "Automatic"
+msgstr "Налаштування вигляду"
+
+#: templates/_modals/edit_modal.html:403
+msgid ""
+"The case a 3D box built from the scans is drawn on. Automatic picks it "
+"from the console, region, discs and edition. A box imported from Slipcase"
+" keeps its own."
+msgstr ""
+
+#: templates/_modals/edit_modal.html:407
 msgid "Custom Fanart"
 msgstr "Власний фан-арт"
 
-#: templates/_modals/edit_modal.html:398 templates/_modals/edit_modal.html:399
+#: templates/_modals/edit_modal.html:411 templates/_modals/edit_modal.html:412
 msgid "Delete Fanart"
 msgstr "Видалити фан-арт"
 
-#: templates/_modals/edit_modal.html:398
+#: templates/_modals/edit_modal.html:411
 msgid "Delete fanart? You can re-scrape to get a new one."
 msgstr "Видалити фан-арт? Щоб отримати новий, можна скрапити ще раз."
 
-#: templates/_modals/edit_modal.html:405
+#: templates/_modals/edit_modal.html:418
 msgid "Custom Logo"
 msgstr "Власний логотип"
 
-#: templates/_modals/edit_modal.html:409 templates/_modals/edit_modal.html:410
+#: templates/_modals/edit_modal.html:422 templates/_modals/edit_modal.html:423
 msgid "Delete Logo"
 msgstr "Видалити логотип"
 
-#: templates/_modals/edit_modal.html:409
+#: templates/_modals/edit_modal.html:422
 msgid "Delete the logo? You can re-scrape to get a new one."
 msgstr "Видалити логотип? Щоб отримати новий, можна скрапити ще раз."
 
-#: templates/_modals/edit_modal.html:416
+#: templates/_modals/edit_modal.html:429
 msgid "Custom Box Back"
 msgstr "Власна задня сторона коробки"
 
-#: templates/_modals/edit_modal.html:420 templates/_modals/edit_modal.html:421
+#: templates/_modals/edit_modal.html:433 templates/_modals/edit_modal.html:434
 msgid "Delete Box Back"
 msgstr "Видалити задню сторону коробки"
 
-#: templates/_modals/edit_modal.html:420
+#: templates/_modals/edit_modal.html:433
 msgid "Delete the back of the box? You can re-scrape to get a new one."
 msgstr "Видалити задню сторону коробки? Щоб отримати нову, можна скрапити ще раз."
 
-#: templates/_modals/edit_modal.html:427
+#: templates/_modals/edit_modal.html:440
 msgid "Add Screenshots"
 msgstr "Додати знімки екрана"
 
-#: templates/_modals/edit_modal.html:429
+#: templates/_modals/edit_modal.html:442
 msgid "Hold Ctrl/Cmd to select multiple files"
 msgstr "Утримуйте Ctrl/Cmd, щоб вибрати кілька файлів"
 
-#: templates/_modals/edit_modal.html:431
+#: templates/_modals/edit_modal.html:444
 #, python-format
 msgid "Current: %(count)s screenshots"
 msgstr "Поточно: %(count)s знімків екрана"
 
-#: templates/_modals/edit_modal.html:438
+#: templates/_modals/edit_modal.html:451
 msgid "Video / Trailer"
 msgstr "Відео / трейлер"
 
-#: templates/_modals/edit_modal.html:440
+#: templates/_modals/edit_modal.html:453
 msgid "Video File"
 msgstr "Відеофайл"
 
-#: templates/_modals/edit_modal.html:442
+#: templates/_modals/edit_modal.html:455
 msgid "Supported formats: MP4, WebM, OGG"
 msgstr "Підтримувані формати: MP4, WebM, OGG"
 
-#: templates/_modals/edit_modal.html:445 templates/_modals/edit_modal.html:446
+#: templates/_modals/edit_modal.html:458 templates/_modals/edit_modal.html:459
 msgid "Remove Video"
 msgstr "Видалити відео"
 
-#: templates/_modals/edit_modal.html:445
+#: templates/_modals/edit_modal.html:458
 msgid "Remove video? You can upload a new one later."
 msgstr "Видалити відео? Нове можна завантажити пізніше."
 
-#: templates/_modals/edit_modal.html:456
+#: templates/_modals/edit_modal.html:469
 msgid "Launch"
 msgstr "Запуск"
 
-#: templates/_modals/edit_modal.html:458
+#: templates/_modals/edit_modal.html:471
 msgid "Emulator override"
 msgstr "Перевизначення емулятора"
 
-#: templates/_modals/edit_modal.html:460
+#: templates/_modals/edit_modal.html:473
 msgid "(use system default)"
 msgstr "(використовувати за замовчуванням для системи)"
 
-#: templates/_modals/edit_modal.html:462
+#: templates/_modals/edit_modal.html:475
 msgid ""
 "Pick a specific emulator for this game.  Leave blank to use the per-"
 "system default."
@@ -15115,15 +15132,15 @@ msgstr ""
 "Виберіть конкретний емулятор для цієї гри. Залиште порожнім, щоб "
 "використовувати значення за замовчуванням для системи."
 
-#: templates/_modals/edit_modal.html:466
+#: templates/_modals/edit_modal.html:479
 msgid "Custom launch args"
 msgstr "Власні аргументи запуску"
 
-#: templates/_modals/edit_modal.html:467
+#: templates/_modals/edit_modal.html:480
 msgid "e.g.  --renderer vulkan"
 msgstr "напр. --renderer vulkan"
 
-#: templates/_modals/edit_modal.html:468
+#: templates/_modals/edit_modal.html:481
 msgid ""
 "Added after the emulator's command-line options. Put quotes around a "
 "value that contains spaces."

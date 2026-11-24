@@ -512,6 +512,16 @@ def game_detail(game_id):
                     similar_games = _normalized.get('similar_games') or ''
                     edition = _normalized.get('edition') or ''
                     description = _normalized.get('description') or ''
+                    # PASS-59-329 — the 3D box's case; '' lets the builder
+                    # choose. A form without the list keeps the stored one.
+                    from services.box3d import build as box_build
+                    box_case = game['box_case'] or ''
+                    if 'edit_box_case' in request.form:
+                        picked = request.form.get('edit_box_case', '').strip()
+                        if not picked or picked in box_build.case_choices(game['system_folder']):
+                            box_case = picked
+                    rebuild_box = (box_case != (game['box_case'] or '')
+                                   or edition != (game['edition'] or ''))
 
                     # Pass 44 — multi-emulator launch overrides. INTEGER column,
                     # parsed separately because normalize_game_edit() only
@@ -656,7 +666,8 @@ def game_detail(game_id):
                             video = NULLIF(?, ''),
                             emulator_override_id = ?,
                             launch_args_override = ?,
-                            title_locked = ?
+                            title_locked = ?,
+                            box_case = NULLIF(?, '')
                         WHERE id = ?
                     """, (
                         title or game['title'],
@@ -672,10 +683,15 @@ def game_detail(game_id):
                         emulator_override_id, launch_args_override,
                         edit_title_lock(game['title'], game['title_locked'], title,
                                         request.form.get('edit_title_locked') == '1'),
+                        box_case,
                         game_id
                     ))
                     for old_file, media_type in to_delete:
                         remove_media_file(old_file, media_type)
+                    # A built box follows a new case or edition at once; an
+                    # imported one is left alone (build_for_game never raises).
+                    if rebuild_box:
+                        box_build.build_for_game(game_id)
                     if upscale_after_save:
                         upscale_queue.enqueue(game_id)
 
@@ -723,7 +739,7 @@ def game_detail(game_id):
                             campaign = NULL, edition = NULL, other_platforms = NULL,
                             alternate_titles = NULL, sort_title = NULL,
                             moby_score = NULL, mobygames_id = NULL, box_scans = NULL,
-                            scraped = 0, title_locked = 0
+                            scraped = 0, title_locked = 0, box_case = NULL
                         WHERE id = ?
                     """, (game_id,))
                     # Its files go too, unless another game or wishlist item
@@ -935,6 +951,8 @@ def game_detail(game_id):
                              upscale_pending=upscale_queue.pending_status(game_id)[1],
                              # PASS-59-142 — imported Slipcase faces, or None.
                              box_faces=faces_for(game),
+                             # PASS-59-329 — the cases the Edit window offers.
+                             box_case_options=_box_case_options(game),
                              # PASS-59-325 — what the open box shows inside.
                              box_scans=scans_for(game))
     except Exception as e:
@@ -1127,6 +1145,12 @@ def api_apply_metadata_progress(task_id):
     return jsonify({'success': True, **snap})
 
 
+def _box_case_options(game):
+    """The cases the Edit window lists for the game's built 3D box."""
+    from services.box3d import build as box_build
+    return box_build.case_choices(game['system_folder'])
+
+
 def _note_hand_edits(game_id, new_values, conn=None):
     """Credit a person for the marked fields this edit changes, so a corrected
     AI rating stops showing as a guess (PASS-59-211). Pass `conn` to write
@@ -1159,7 +1183,7 @@ def api_game_edit(game_id):
     """Save game edits from modal"""
     data = request.get_json() or {}
 
-    game = query("SELECT id, title, title_locked FROM games WHERE id = ?", (game_id,), one=True)
+    game = query("SELECT id, title, title_locked, edition FROM games WHERE id = ?", (game_id,), one=True)
     if not game:
         return error(_('Game not found'), 404)
 
@@ -1221,6 +1245,12 @@ def api_game_edit(game_id):
 
     invalidate_filter_cache()
     invalidate_analytics_cache()
+
+    # PASS-59-329 — a built 3D box follows a new edition at once.
+    if 'edition' in payload and (str(payload['edition'] or '').strip()
+                                  != (game['edition'] or '')):
+        from services.box3d import build as box_build
+        box_build.build_for_game(game_id)
 
     return success()
 

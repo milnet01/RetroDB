@@ -71,6 +71,7 @@ MIGRATIONS = [
     '044_ss_region_checked',
     '045_imported_system_defaults',
     '046_mobygames',
+    '047_box_case',
 ]
 
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-24 10:08+0200\n"
+"POT-Creation-Date: 2026-11-24 11:33+0200\n"
 "PO-Revision-Date: 2026-06-12 20:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -210,11 +210,11 @@ msgstr "Système introuvable ou sans jeux à succès"
 #: routes/bonus_discs.py:276 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
 #: routes/emulators.py:315 routes/emulators.py:329 routes/games.py:408
-#: routes/games.py:961 routes/games.py:1080 routes/games.py:1164
+#: routes/games.py:979 routes/games.py:1098 routes/games.py:1188
 #: routes/games_ai.py:43 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
 #: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:709
-#: routes/reports.py:850 routes/trophies.py:1338 services/cheats.py:1061
+#: routes/reports.py:850 routes/trophies.py:1337 services/cheats.py:1061
 #: services/hltb_service.py:163
 msgid "Game not found"
 msgstr "Jeu introuvable"
@@ -610,8 +610,8 @@ msgstr "Le disque bonus et le jeu parent doivent appartenir au même système"
 msgid "A bonus disc links to a main game, one level only"
 msgstr "Un disque bonus est lié à un jeu principal, sur un seul niveau"
 
-#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1434
-#: routes/games.py:1464 routes/platform_import.py:358
+#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1464
+#: routes/games.py:1494 routes/platform_import.py:358
 #: routes/platform_import.py:663 routes/platform_import.py:1047
 #: routes/scrape_logs.py:89 routes/scrape_logs.py:174 routes/scrape_logs.py:187
 #: routes/scrape_logs.py:225 routes/scraper.py:213 routes/scraper.py:579
@@ -619,9 +619,9 @@ msgstr "Un disque bonus est lié à un jeu principal, sur un seul niveau"
 #: routes/settings.py:442 routes/settings.py:521 routes/settings.py:550
 #: routes/settings.py:594 routes/settings.py:607 routes/settings.py:643
 #: routes/steam_achievements.py:138 routes/systems.py:165 routes/systems.py:332
-#: routes/trophies.py:582 routes/trophies.py:780 routes/trophies.py:828
-#: routes/trophies.py:1629 routes/trophies.py:1653 routes/trophies.py:1698
-#: routes/trophies.py:1726 routes/trophies.py:1768 routes/trophies.py:1835
+#: routes/trophies.py:581 routes/trophies.py:779 routes/trophies.py:827
+#: routes/trophies.py:1628 routes/trophies.py:1652 routes/trophies.py:1697
+#: routes/trophies.py:1725 routes/trophies.py:1767 routes/trophies.py:1834
 #: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "Une erreur interne s'est produite"
@@ -853,14 +853,14 @@ msgstr "Aucun identifiant fourni"
 msgid "Provide 1-50 valid IDs"
 msgstr "Fournissez de 1 à 50 identifiants valides"
 
-#: routes/games.py:599
+#: routes/games.py:609
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr ""
 "Vidéo non enregistrée : elle doit être un fichier MP4, WebM ou OGG de "
 "%(mb)s Mo maximum."
 
-#: routes/games.py:612
+#: routes/games.py:622
 #, python-format
 msgid ""
 "Screenshots not added because they match ones the game already has: "
@@ -869,19 +869,19 @@ msgstr ""
 "Captures d'écran non ajoutées car identiques à celles que le jeu a déjà :"
 " %(count)s"
 
-#: routes/games.py:763
+#: routes/games.py:779
 msgid "Game not found after update"
 msgstr "Jeu introuvable après la mise à jour"
 
-#: routes/games.py:1084
+#: routes/games.py:1102
 msgid "No game selected."
 msgstr "Aucun jeu sélectionné."
 
-#: routes/games.py:1108
+#: routes/games.py:1126
 msgid "This metadata apply is no longer running."
 msgstr "Cette application de métadonnées n'est plus en cours d'exécution."
 
-#: routes/games.py:1117
+#: routes/games.py:1135
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
@@ -890,51 +890,51 @@ msgstr ""
 "Métadonnées appliquées depuis %(sources)s ! (%(filled)d champs remplis, "
 "%(missing)d encore manquants)"
 
-#: routes/games.py:1126
+#: routes/games.py:1144
 msgid "Failed to apply metadata."
 msgstr "Échec de l'application des métadonnées."
 
-#: routes/games.py:1200 routes/games.py:1249
+#: routes/games.py:1224 routes/games.py:1279
 msgid "No fields to update"
 msgstr "Aucun champ à mettre à jour"
 
-#: routes/games.py:1242 routes/platform_import.py:264
+#: routes/games.py:1272 routes/platform_import.py:264
 #: routes/platform_import.py:569 routes/platform_import.py:933
-#: routes/trophies.py:1917 templates/game_imports.html:580
+#: routes/trophies.py:1916 templates/game_imports.html:580
 #: templates/game_imports.html:853
 msgid "No games selected"
 msgstr "Aucun jeu sélectionné"
 
-#: routes/games.py:1246
+#: routes/games.py:1276
 msgid "Invalid game selection"
 msgstr "Sélection de jeux non valide"
 
-#: routes/games.py:1258
+#: routes/games.py:1288
 msgid "Invalid completion status"
 msgstr "Statut d'achèvement invalide"
 
-#: routes/games.py:1296 services/api_helpers.py:114
+#: routes/games.py:1326 services/api_helpers.py:114
 #, python-format
 msgid "%(field)s must be text"
 msgstr "%(field)s doit être du texte"
 
-#: routes/games.py:1308
+#: routes/games.py:1338
 msgid "No valid fields to update"
 msgstr "Aucun champ valide à mettre à jour"
 
-#: routes/games.py:1427
+#: routes/games.py:1457
 msgid "Invalid status"
 msgstr "Statut invalide"
 
-#: routes/games.py:1452
+#: routes/games.py:1482
 msgid "Not authenticated"
 msgstr "Non authentifié"
 
-#: routes/games.py:1483
+#: routes/games.py:1513
 msgid "Filter type and value required"
 msgstr "Type et valeur de filtre requis"
 
-#: routes/games.py:1496
+#: routes/games.py:1526
 msgid "Invalid filter type"
 msgstr "Type de filtre invalide"
 
@@ -1747,33 +1747,33 @@ msgstr ""
 "Conservez au moins une copie de chaque capture d'écran. Rien n'a été "
 "supprimé."
 
-#: routes/trophies.py:143 routes/trophies.py:1780
+#: routes/trophies.py:142 routes/trophies.py:1779
 msgid "PSNAWP library not installed. Run: pip install psnawp"
 msgstr "Bibliothèque PSNAWP non installée. Exécutez : pip install psnawp"
 
-#: routes/trophies.py:146
+#: routes/trophies.py:145
 msgid "PSN NPSSO cookie not configured"
 msgstr "Cookie PSN NPSSO non configuré"
 
-#: routes/trophies.py:169 routes/trophies.py:186
+#: routes/trophies.py:168 routes/trophies.py:185
 msgid "PSN refresh token expired"
 msgstr "Le jeton d'actualisation PSN a expiré"
 
-#: routes/trophies.py:180
+#: routes/trophies.py:179
 #, python-format
 msgid "PSN cached-token refresh failed: %(error)s"
 msgstr "Échec de l'actualisation du jeton PSN en cache : %(error)s"
 
-#: routes/trophies.py:207
+#: routes/trophies.py:206
 msgid "PSN authentication failed. Your NPSSO may have expired."
 msgstr "Échec de l'authentification PSN. Votre NPSSO a peut-être expiré."
 
-#: routes/trophies.py:210
+#: routes/trophies.py:209
 #, python-format
 msgid "PSN connection error: %(error)s"
 msgstr "Erreur de connexion PSN : %(error)s"
 
-#: routes/trophies.py:466
+#: routes/trophies.py:465
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
 "trophies"
@@ -1781,56 +1781,56 @@ msgstr ""
 "Veuillez configurer le chemin des trophées RPCS3 dans les paramètres de "
 "votre profil pour afficher les trophées"
 
-#: routes/trophies.py:498
+#: routes/trophies.py:497
 msgid "Trophy set not found"
 msgstr "Ensemble de trophées introuvable"
 
-#: routes/trophies.py:546
+#: routes/trophies.py:545
 msgid "RPCS3_TROPHY_PATH not configured"
 msgstr "RPCS3_TROPHY_PATH n'est pas configuré"
 
-#: routes/trophies.py:549
+#: routes/trophies.py:548
 #, python-format
 msgid "Trophy path not found: %(path)s"
 msgstr "Chemin des trophées introuvable : %(path)s"
 
-#: routes/trophies.py:841 routes/trophies.py:1751
+#: routes/trophies.py:840 routes/trophies.py:1750
 msgid "PSN game not found"
 msgstr "Jeu PSN introuvable"
 
-#: routes/trophies.py:1135
+#: routes/trophies.py:1134
 msgid "Sync already in progress"
 msgstr "Synchronisation déjà en cours"
 
-#: routes/trophies.py:1356
+#: routes/trophies.py:1355
 msgid "Game not found in your PSN trophy list"
 msgstr "Jeu introuvable dans votre liste de trophées PSN"
 
-#: routes/trophies.py:1626
+#: routes/trophies.py:1625
 msgid "Game not found on PSN"
 msgstr "Jeu introuvable sur PSN"
 
-#: routes/trophies.py:1641 routes/trophies.py:1714
+#: routes/trophies.py:1640 routes/trophies.py:1713
 msgid "Missing npwr_id"
 msgstr "npwr_id manquant"
 
-#: routes/trophies.py:1739
+#: routes/trophies.py:1738
 msgid "Missing npwr_id or group_id"
 msgstr "npwr_id ou group_id manquant"
 
-#: routes/trophies.py:1742
+#: routes/trophies.py:1741
 msgid "Name cannot be empty"
 msgstr "Le nom ne peut pas être vide"
 
-#: routes/trophies.py:1867 routes/trophies.py:1879
+#: routes/trophies.py:1866 routes/trophies.py:1878
 msgid "No NPSSO token provided"
 msgstr "Aucun jeton NPSSO fourni"
 
-#: routes/trophies.py:1899
+#: routes/trophies.py:1898
 msgid "Could not connect to PSN"
 msgstr "Impossible de se connecter au PSN"
 
-#: routes/trophies.py:1926
+#: routes/trophies.py:1925
 msgid "PSN NPSSO not configured"
 msgstr "Le NPSSO PSN n'est pas configuré"
 
@@ -15158,8 +15158,8 @@ msgid "Custom Boxart (2D)"
 msgstr "Jaquette personnalisée (2D)"
 
 #: templates/_modals/edit_modal.html:360 templates/_modals/edit_modal.html:372
-#: templates/_modals/edit_modal.html:397 templates/_modals/edit_modal.html:408
-#: templates/_modals/edit_modal.html:419 templates/_modals/edit_modal.html:444
+#: templates/_modals/edit_modal.html:410 templates/_modals/edit_modal.html:421
+#: templates/_modals/edit_modal.html:432 templates/_modals/edit_modal.html:457
 #, python-format
 msgid "Current: %(filename)s"
 msgstr "Actuel : %(filename)s"
@@ -15202,88 +15202,105 @@ msgstr ""
 "L'enregistrement est immédiat, sans passer par Enregistrer les "
 "modifications."
 
-#: templates/_modals/edit_modal.html:394
+#: templates/_modals/edit_modal.html:396
+#, fuzzy
+msgid "3D box case"
+msgstr "Boîte 3D de Slipcase"
+
+#: templates/_modals/edit_modal.html:398
+#, fuzzy
+msgid "Automatic"
+msgstr "Personnalisation"
+
+#: templates/_modals/edit_modal.html:403
+msgid ""
+"The case a 3D box built from the scans is drawn on. Automatic picks it "
+"from the console, region, discs and edition. A box imported from Slipcase"
+" keeps its own."
+msgstr ""
+
+#: templates/_modals/edit_modal.html:407
 msgid "Custom Fanart"
 msgstr "Fanart personnalisé"
 
-#: templates/_modals/edit_modal.html:398 templates/_modals/edit_modal.html:399
+#: templates/_modals/edit_modal.html:411 templates/_modals/edit_modal.html:412
 msgid "Delete Fanart"
 msgstr "Supprimer le fanart"
 
-#: templates/_modals/edit_modal.html:398
+#: templates/_modals/edit_modal.html:411
 msgid "Delete fanart? You can re-scrape to get a new one."
 msgstr "Supprimer le fanart ? Vous pourrez le récupérer à nouveau."
 
-#: templates/_modals/edit_modal.html:405
+#: templates/_modals/edit_modal.html:418
 msgid "Custom Logo"
 msgstr "Logo personnalisé"
 
-#: templates/_modals/edit_modal.html:409 templates/_modals/edit_modal.html:410
+#: templates/_modals/edit_modal.html:422 templates/_modals/edit_modal.html:423
 msgid "Delete Logo"
 msgstr "Supprimer le logo"
 
-#: templates/_modals/edit_modal.html:409
+#: templates/_modals/edit_modal.html:422
 msgid "Delete the logo? You can re-scrape to get a new one."
 msgstr "Supprimer le logo ? Vous pourrez le récupérer à nouveau."
 
-#: templates/_modals/edit_modal.html:416
+#: templates/_modals/edit_modal.html:429
 msgid "Custom Box Back"
 msgstr "Dos de boîte personnalisé"
 
-#: templates/_modals/edit_modal.html:420 templates/_modals/edit_modal.html:421
+#: templates/_modals/edit_modal.html:433 templates/_modals/edit_modal.html:434
 msgid "Delete Box Back"
 msgstr "Supprimer le dos de boîte"
 
-#: templates/_modals/edit_modal.html:420
+#: templates/_modals/edit_modal.html:433
 msgid "Delete the back of the box? You can re-scrape to get a new one."
 msgstr "Supprimer le dos de la boîte ? Vous pourrez le récupérer à nouveau."
 
-#: templates/_modals/edit_modal.html:427
+#: templates/_modals/edit_modal.html:440
 msgid "Add Screenshots"
 msgstr "Ajouter des captures d'écran"
 
-#: templates/_modals/edit_modal.html:429
+#: templates/_modals/edit_modal.html:442
 msgid "Hold Ctrl/Cmd to select multiple files"
 msgstr "Maintenez Ctrl/Cmd pour sélectionner plusieurs fichiers"
 
-#: templates/_modals/edit_modal.html:431
+#: templates/_modals/edit_modal.html:444
 #, python-format
 msgid "Current: %(count)s screenshots"
 msgstr "Actuel : %(count)s captures d'écran"
 
-#: templates/_modals/edit_modal.html:438
+#: templates/_modals/edit_modal.html:451
 msgid "Video / Trailer"
 msgstr "Vidéo / Bande-annonce"
 
-#: templates/_modals/edit_modal.html:440
+#: templates/_modals/edit_modal.html:453
 msgid "Video File"
 msgstr "Fichier vidéo"
 
-#: templates/_modals/edit_modal.html:442
+#: templates/_modals/edit_modal.html:455
 msgid "Supported formats: MP4, WebM, OGG"
 msgstr "Formats pris en charge : MP4, WebM, OGG"
 
-#: templates/_modals/edit_modal.html:445 templates/_modals/edit_modal.html:446
+#: templates/_modals/edit_modal.html:458 templates/_modals/edit_modal.html:459
 msgid "Remove Video"
 msgstr "Supprimer la vidéo"
 
-#: templates/_modals/edit_modal.html:445
+#: templates/_modals/edit_modal.html:458
 msgid "Remove video? You can upload a new one later."
 msgstr "Retirer la vidéo ? Vous pourrez en importer une nouvelle plus tard."
 
-#: templates/_modals/edit_modal.html:456
+#: templates/_modals/edit_modal.html:469
 msgid "Launch"
 msgstr "Lancer"
 
-#: templates/_modals/edit_modal.html:458
+#: templates/_modals/edit_modal.html:471
 msgid "Emulator override"
 msgstr "Émulateur spécifique"
 
-#: templates/_modals/edit_modal.html:460
+#: templates/_modals/edit_modal.html:473
 msgid "(use system default)"
 msgstr "(utiliser la valeur par défaut du système)"
 
-#: templates/_modals/edit_modal.html:462
+#: templates/_modals/edit_modal.html:475
 msgid ""
 "Pick a specific emulator for this game.  Leave blank to use the per-"
 "system default."
@@ -15291,15 +15308,15 @@ msgstr ""
 "Choisissez un émulateur spécifique pour ce jeu.  Laissez vide pour "
 "utiliser la valeur par défaut du système."
 
-#: templates/_modals/edit_modal.html:466
+#: templates/_modals/edit_modal.html:479
 msgid "Custom launch args"
 msgstr "Arguments de lancement personnalisés"
 
-#: templates/_modals/edit_modal.html:467
+#: templates/_modals/edit_modal.html:480
 msgid "e.g.  --renderer vulkan"
 msgstr "par ex.  --renderer vulkan"
 
-#: templates/_modals/edit_modal.html:468
+#: templates/_modals/edit_modal.html:481
 msgid ""
 "Added after the emulator's command-line options. Put quotes around a "
 "value that contains spaces."

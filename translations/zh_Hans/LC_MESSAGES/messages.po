@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-11-24 10:08+0200\n"
+"POT-Creation-Date: 2026-11-24 11:33+0200\n"
 "PO-Revision-Date: 2026-07-01 09:16+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh_Hans\n"
@@ -197,11 +197,11 @@ msgstr "未找到系统，或该系统没有包含成就的游戏"
 #: routes/bonus_discs.py:276 routes/bulk_scrape.py:48 routes/cheats.py:32
 #: routes/cheats.py:51 routes/collections.py:295 routes/collections.py:558
 #: routes/emulators.py:315 routes/emulators.py:329 routes/games.py:408
-#: routes/games.py:961 routes/games.py:1080 routes/games.py:1164
+#: routes/games.py:979 routes/games.py:1098 routes/games.py:1188
 #: routes/games_ai.py:43 routes/games_media.py:40 routes/games_media.py:89
 #: routes/games_media.py:156 routes/games_media.py:207
 #: routes/games_media.py:240 routes/launch.py:258 routes/reports.py:709
-#: routes/reports.py:850 routes/trophies.py:1338 services/cheats.py:1061
+#: routes/reports.py:850 routes/trophies.py:1337 services/cheats.py:1061
 #: services/hltb_service.py:163
 msgid "Game not found"
 msgstr "未找到游戏"
@@ -589,8 +589,8 @@ msgstr "附赠光盘与主游戏必须属于同一系统"
 msgid "A bonus disc links to a main game, one level only"
 msgstr "额外光盘只能关联到一个主游戏，仅限一级"
 
-#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1434
-#: routes/games.py:1464 routes/platform_import.py:358
+#: routes/bonus_discs.py:222 routes/bonus_discs.py:240 routes/games.py:1464
+#: routes/games.py:1494 routes/platform_import.py:358
 #: routes/platform_import.py:663 routes/platform_import.py:1047
 #: routes/scrape_logs.py:89 routes/scrape_logs.py:174 routes/scrape_logs.py:187
 #: routes/scrape_logs.py:225 routes/scraper.py:213 routes/scraper.py:579
@@ -598,9 +598,9 @@ msgstr "额外光盘只能关联到一个主游戏，仅限一级"
 #: routes/settings.py:442 routes/settings.py:521 routes/settings.py:550
 #: routes/settings.py:594 routes/settings.py:607 routes/settings.py:643
 #: routes/steam_achievements.py:138 routes/systems.py:165 routes/systems.py:332
-#: routes/trophies.py:582 routes/trophies.py:780 routes/trophies.py:828
-#: routes/trophies.py:1629 routes/trophies.py:1653 routes/trophies.py:1698
-#: routes/trophies.py:1726 routes/trophies.py:1768 routes/trophies.py:1835
+#: routes/trophies.py:581 routes/trophies.py:779 routes/trophies.py:827
+#: routes/trophies.py:1628 routes/trophies.py:1652 routes/trophies.py:1697
+#: routes/trophies.py:1725 routes/trophies.py:1767 routes/trophies.py:1834
 #: routes/xbox_achievements.py:157 services/api_helpers.py:46
 msgid "An internal error occurred"
 msgstr "发生内部错误"
@@ -828,82 +828,82 @@ msgstr "未提供 ID"
 msgid "Provide 1-50 valid IDs"
 msgstr "请提供 1-50 个有效 ID"
 
-#: routes/games.py:599
+#: routes/games.py:609
 #, python-format
 msgid "Video not saved: it must be an MP4, WebM or OGG file of up to %(mb)s MB."
 msgstr "视频未保存：必须是不超过 %(mb)s MB 的 MP4、WebM 或 OGG 文件。"
 
-#: routes/games.py:612
+#: routes/games.py:622
 #, python-format
 msgid ""
 "Screenshots not added because they match ones the game already has: "
 "%(count)s"
 msgstr "因与该游戏已有的截图相同而未添加的截图：%(count)s"
 
-#: routes/games.py:763
+#: routes/games.py:779
 msgid "Game not found after update"
 msgstr "更新后未找到该游戏"
 
-#: routes/games.py:1084
+#: routes/games.py:1102
 msgid "No game selected."
 msgstr "未选择游戏。"
 
-#: routes/games.py:1108
+#: routes/games.py:1126
 msgid "This metadata apply is no longer running."
 msgstr "此元数据应用已不再运行。"
 
-#: routes/games.py:1117
+#: routes/games.py:1135
 #, python-format
 msgid ""
 "Metadata applied from %(sources)s! (%(filled)d fields filled, %(missing)d"
 " still missing)"
 msgstr "已从 %(sources)s 应用元数据！（已填写 %(filled)d 个字段，仍缺少 %(missing)d 个）"
 
-#: routes/games.py:1126
+#: routes/games.py:1144
 msgid "Failed to apply metadata."
 msgstr "应用元数据失败。"
 
-#: routes/games.py:1200 routes/games.py:1249
+#: routes/games.py:1224 routes/games.py:1279
 msgid "No fields to update"
 msgstr "没有可更新的字段"
 
-#: routes/games.py:1242 routes/platform_import.py:264
+#: routes/games.py:1272 routes/platform_import.py:264
 #: routes/platform_import.py:569 routes/platform_import.py:933
-#: routes/trophies.py:1917 templates/game_imports.html:580
+#: routes/trophies.py:1916 templates/game_imports.html:580
 #: templates/game_imports.html:853
 msgid "No games selected"
 msgstr "未选择任何游戏"
 
-#: routes/games.py:1246
+#: routes/games.py:1276
 msgid "Invalid game selection"
 msgstr "游戏选择无效"
 
-#: routes/games.py:1258
+#: routes/games.py:1288
 msgid "Invalid completion status"
 msgstr "完成状态无效"
 
-#: routes/games.py:1296 services/api_helpers.py:114
+#: routes/games.py:1326 services/api_helpers.py:114
 #, python-format
 msgid "%(field)s must be text"
 msgstr "%(field)s 必须是文本"
 
-#: routes/games.py:1308
+#: routes/games.py:1338
 msgid "No valid fields to update"
 msgstr "没有可更新的有效字段"
 
-#: routes/games.py:1427
+#: routes/games.py:1457
 msgid "Invalid status"
 msgstr "状态无效"
 
-#: routes/games.py:1452
+#: routes/games.py:1482
 msgid "Not authenticated"
 msgstr "未通过身份验证"
 
-#: routes/games.py:1483
+#: routes/games.py:1513
 msgid "Filter type and value required"
 msgstr "需要筛选类型和值"
 
-#: routes/games.py:1496
+#: routes/games.py:1526
 msgid "Invalid filter type"
 msgstr "筛选类型无效"
 
@@ -1669,88 +1669,88 @@ msgstr "此系统没有截图检查"
 msgid "Keep at least one copy of each screenshot. Nothing was deleted."
 msgstr "每张截图至少要保留一份。没有任何内容被删除。"
 
-#: routes/trophies.py:143 routes/trophies.py:1780
+#: routes/trophies.py:142 routes/trophies.py:1779
 msgid "PSNAWP library not installed. Run: pip install psnawp"
 msgstr "未安装 PSNAWP 库。请运行：pip install psnawp"
 
-#: routes/trophies.py:146
+#: routes/trophies.py:145
 msgid "PSN NPSSO cookie not configured"
 msgstr "未配置 PSN NPSSO cookie"
 
-#: routes/trophies.py:169 routes/trophies.py:186
+#: routes/trophies.py:168 routes/trophies.py:185
 msgid "PSN refresh token expired"
 msgstr "PSN 刷新令牌已过期"
 
-#: routes/trophies.py:180
+#: routes/trophies.py:179
 #, python-format
 msgid "PSN cached-token refresh failed: %(error)s"
 msgstr "PSN 缓存令牌刷新失败:%(error)s"
 
-#: routes/trophies.py:207
+#: routes/trophies.py:206
 msgid "PSN authentication failed. Your NPSSO may have expired."
 msgstr "PSN 身份验证失败。您的 NPSSO 可能已过期。"
 
-#: routes/trophies.py:210
+#: routes/trophies.py:209
 #, python-format
 msgid "PSN connection error: %(error)s"
 msgstr "PSN 连接错误:%(error)s"
 
-#: routes/trophies.py:466
+#: routes/trophies.py:465
 msgid ""
 "Please configure your RPCS3 Trophy Path in your profile settings to view "
 "trophies"
 msgstr "请在您的个人资料设置中配置 RPCS3 奖杯路径以查看奖杯"
 
-#: routes/trophies.py:498
+#: routes/trophies.py:497
 msgid "Trophy set not found"
 msgstr "未找到奖杯组"
 
-#: routes/trophies.py:546
+#: routes/trophies.py:545
 msgid "RPCS3_TROPHY_PATH not configured"
 msgstr "未配置 RPCS3_TROPHY_PATH"
 
-#: routes/trophies.py:549
+#: routes/trophies.py:548
 #, python-format
 msgid "Trophy path not found: %(path)s"
 msgstr "未找到奖杯路径：%(path)s"
 
-#: routes/trophies.py:841 routes/trophies.py:1751
+#: routes/trophies.py:840 routes/trophies.py:1750
 msgid "PSN game not found"
 msgstr "未找到 PSN 游戏"
 
-#: routes/trophies.py:1135
+#: routes/trophies.py:1134
 msgid "Sync already in progress"
 msgstr "同步已在进行中"
 
-#: routes/trophies.py:1356
+#: routes/trophies.py:1355
 msgid "Game not found in your PSN trophy list"
 msgstr "在你的 PSN 奖杯列表中未找到该游戏"
 
-#: routes/trophies.py:1626
+#: routes/trophies.py:1625
 msgid "Game not found on PSN"
 msgstr "在 PSN 上未找到该游戏"
 
-#: routes/trophies.py:1641 routes/trophies.py:1714
+#: routes/trophies.py:1640 routes/trophies.py:1713
 msgid "Missing npwr_id"
 msgstr "缺少 npwr_id"
 
-#: routes/trophies.py:1739
+#: routes/trophies.py:1738
 msgid "Missing npwr_id or group_id"
 msgstr "缺少 npwr_id 或 group_id"
 
-#: routes/trophies.py:1742
+#: routes/trophies.py:1741
 msgid "Name cannot be empty"
 msgstr "名称不能为空"
 
-#: routes/trophies.py:1867 routes/trophies.py:1879
+#: routes/trophies.py:1866 routes/trophies.py:1878
 msgid "No NPSSO token provided"
 msgstr "未提供 NPSSO 令牌"
 
-#: routes/trophies.py:1899
+#: routes/trophies.py:1898
 msgid "Could not connect to PSN"
 msgstr "无法连接到 PSN"
 
-#: routes/trophies.py:1926
+#: routes/trophies.py:1925
 msgid "PSN NPSSO not configured"
 msgstr "未配置 PSN NPSSO"
 
@@ -14460,8 +14460,8 @@ msgid "Custom Boxart (2D)"
 msgstr "自定义封面（2D）"
 
 #: templates/_modals/edit_modal.html:360 templates/_modals/edit_modal.html:372
-#: templates/_modals/edit_modal.html:397 templates/_modals/edit_modal.html:408
-#: templates/_modals/edit_modal.html:419 templates/_modals/edit_modal.html:444
+#: templates/_modals/edit_modal.html:410 templates/_modals/edit_modal.html:421
+#: templates/_modals/edit_modal.html:432 templates/_modals/edit_modal.html:457
 #, python-format
 msgid "Current: %(filename)s"
 msgstr "当前：%(filename)s"
@@ -14502,102 +14502,119 @@ msgstr "导入 3D 盒子"
 msgid "This saves straight away, without Save Changes."
 msgstr "无需点“保存更改”，会立即保存。"
 
-#: templates/_modals/edit_modal.html:394
+#: templates/_modals/edit_modal.html:396
+#, fuzzy
+msgid "3D box case"
+msgstr "来自 Slipcase 的 3D 盒子"
+
+#: templates/_modals/edit_modal.html:398
+#, fuzzy
+msgid "Automatic"
+msgstr "自定义"
+
+#: templates/_modals/edit_modal.html:403
+msgid ""
+"The case a 3D box built from the scans is drawn on. Automatic picks it "
+"from the console, region, discs and edition. A box imported from Slipcase"
+" keeps its own."
+msgstr ""
+
+#: templates/_modals/edit_modal.html:407
 msgid "Custom Fanart"
 msgstr "自定义同人图"
 
-#: templates/_modals/edit_modal.html:398 templates/_modals/edit_modal.html:399
+#: templates/_modals/edit_modal.html:411 templates/_modals/edit_modal.html:412
 msgid "Delete Fanart"
 msgstr "删除同人图"
 
-#: templates/_modals/edit_modal.html:398
+#: templates/_modals/edit_modal.html:411
 msgid "Delete fanart? You can re-scrape to get a new one."
 msgstr "删除同人图?你可以重新抓取以获取新的同人图。"
 
-#: templates/_modals/edit_modal.html:405
+#: templates/_modals/edit_modal.html:418
 msgid "Custom Logo"
 msgstr "自定义徽标"
 
-#: templates/_modals/edit_modal.html:409 templates/_modals/edit_modal.html:410
+#: templates/_modals/edit_modal.html:422 templates/_modals/edit_modal.html:423
 msgid "Delete Logo"
 msgstr "删除徽标"
 
-#: templates/_modals/edit_modal.html:409
+#: templates/_modals/edit_modal.html:422
 msgid "Delete the logo? You can re-scrape to get a new one."
 msgstr "删除徽标?你可以重新抓取以获取新的徽标。"
 
-#: templates/_modals/edit_modal.html:416
+#: templates/_modals/edit_modal.html:429
 msgid "Custom Box Back"
 msgstr "自定义盒子背面"
 
-#: templates/_modals/edit_modal.html:420 templates/_modals/edit_modal.html:421
+#: templates/_modals/edit_modal.html:433 templates/_modals/edit_modal.html:434
 msgid "Delete Box Back"
 msgstr "删除盒子背面"
 
-#: templates/_modals/edit_modal.html:420
+#: templates/_modals/edit_modal.html:433
 msgid "Delete the back of the box? You can re-scrape to get a new one."
 msgstr "删除盒子背面图?你可以重新抓取以获取新的背面图。"
 
-#: templates/_modals/edit_modal.html:427
+#: templates/_modals/edit_modal.html:440
 msgid "Add Screenshots"
 msgstr "添加截图"
 
-#: templates/_modals/edit_modal.html:429
+#: templates/_modals/edit_modal.html:442
 msgid "Hold Ctrl/Cmd to select multiple files"
 msgstr "按住 Ctrl/Cmd 可选择多个文件"
 
-#: templates/_modals/edit_modal.html:431
+#: templates/_modals/edit_modal.html:444
 #, python-format
 msgid "Current: %(count)s screenshots"
 msgstr "当前：%(count)s 张截图"
 
-#: templates/_modals/edit_modal.html:438
+#: templates/_modals/edit_modal.html:451
 msgid "Video / Trailer"
 msgstr "视频 / 预告片"
 
-#: templates/_modals/edit_modal.html:440
+#: templates/_modals/edit_modal.html:453
 msgid "Video File"
 msgstr "视频文件"
 
-#: templates/_modals/edit_modal.html:442
+#: templates/_modals/edit_modal.html:455
 msgid "Supported formats: MP4, WebM, OGG"
 msgstr "支持的格式：MP4、WebM、OGG"
 
-#: templates/_modals/edit_modal.html:445 templates/_modals/edit_modal.html:446
+#: templates/_modals/edit_modal.html:458 templates/_modals/edit_modal.html:459
 msgid "Remove Video"
 msgstr "移除视频"
 
-#: templates/_modals/edit_modal.html:445
+#: templates/_modals/edit_modal.html:458
 msgid "Remove video? You can upload a new one later."
 msgstr "移除视频?你以后可以上传新的视频。"
 
-#: templates/_modals/edit_modal.html:456
+#: templates/_modals/edit_modal.html:469
 msgid "Launch"
 msgstr "启动"
 
-#: templates/_modals/edit_modal.html:458
+#: templates/_modals/edit_modal.html:471
 msgid "Emulator override"
 msgstr "模拟器覆盖"
 
-#: templates/_modals/edit_modal.html:460
+#: templates/_modals/edit_modal.html:473
 msgid "(use system default)"
 msgstr "（使用系统默认）"
 
-#: templates/_modals/edit_modal.html:462
+#: templates/_modals/edit_modal.html:475
 msgid ""
 "Pick a specific emulator for this game.  Leave blank to use the per-"
 "system default."
 msgstr "为此游戏选择特定的模拟器。留空则使用各系统的默认设置。"
 
-#: templates/_modals/edit_modal.html:466
+#: templates/_modals/edit_modal.html:479
 msgid "Custom launch args"
 msgstr "自定义启动参数"
 
-#: templates/_modals/edit_modal.html:467
+#: templates/_modals/edit_modal.html:480
 msgid "e.g.  --renderer vulkan"
 msgstr "例如  --renderer vulkan"
 
-#: templates/_modals/edit_modal.html:468
+#: templates/_modals/edit_modal.html:481
 msgid ""
 "Added after the emulator's command-line options. Put quotes around a "
 "value that contains spaces."

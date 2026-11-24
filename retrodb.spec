@@ -79,6 +79,7 @@ _MIGRATION_SCRIPTS = [
     'services.migrations.scripts.044_ss_region_checked',
     'services.migrations.scripts.045_imported_system_defaults',
     'services.migrations.scripts.046_mobygames',
+    'services.migrations.scripts.047_box_case',
 ]
 
 # Some pip packages have their own runtime imports that PyInstaller's

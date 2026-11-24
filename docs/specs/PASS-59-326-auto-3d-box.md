@@ -111,7 +111,9 @@ converted to RGB.
 
 ### 4.3 Choosing the case
 
-`build.case_for_game(system_folder, region, packaging)` returns a
+A case picked in the Edit window (`games.box_case`, PASS-59-329) wins
+when `build.case_choices` still offers it for the game's folder.
+Otherwise `build.case_for_game(system_folder, region, packaging)` returns a
 `cases.CaseType` or None (no box):
 
 1. **Platform.** `build.PLATFORMS` maps a system folder to Slipcase's

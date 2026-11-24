@@ -390,6 +390,19 @@
                             <span class="current-file" id="boxFacesStatus" role="status"{% if not box_faces %} hidden{% endif %}><span id="boxFacesLabel">{% if box_faces and box_faces.source == 'auto' %}{{ _('3D box built from the scans:') }}{% else %}{{ _('3D box imported:') }}{% endif %}</span> <span id="boxFacesCase">{{ box_faces.case.name if box_faces else '' }}</span></span>
                         </div>
                         {% endif %}
+                        {# PASS-59-329 — the case a built box is drawn on; saved with the form. #}
+                        {% if box_case_options %}
+                        <div class="edit-field">
+                            <label for="edit_box_case">{{ _('3D box case') }}</label>
+                            <select id="edit_box_case" name="edit_box_case">
+                                <option value="">{{ _('Automatic') }}</option>
+                                {% for name in box_case_options %}
+                                <option value="{{ name }}"{% if game.box_case == name %} selected{% endif %}>{{ name }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="field-tip">{{ _('The case a 3D box built from the scans is drawn on. Automatic picks it from the console, region, discs and edition. A box imported from Slipcase keeps its own.') }}</span>
+                        </div>
+                        {% endif %}
                         <div class="edit-field">
                             <label for="custom_fanart">{{ _('Custom Fanart') }}</label>
                             <input id="custom_fanart" type="file" name="custom_fanart" accept="image/*" />
