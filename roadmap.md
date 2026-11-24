@@ -962,7 +962,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Tests stop waiting longer than they need to.
   Kind: implement.
 
-- 📋 [PASS-59-255] **Every theme colours the whole page: the remaining fixed cyan becomes theme colours (ux, M).**
+- ✅ [PASS-59-255] **Every theme colours the whole page: the remaining fixed cyan becomes theme colours (ux, M).**
   - **Status**: todo
   - **Why**: component CSS still names the cyberpunk cyan directly
     (`rgba(76, 201, 240, …)`, `#4cc9f0`), so those parts stay cyan in the
@@ -996,6 +996,9 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     a page copy of a toast; the shared toast may replace it.
   - `wishlist.html` priority badge: JS writes inline colours per item.
   - `changelog.html` `.version-badge`: fixed cyan rgba.
+  Done 2026-11-24 (e0265075): CSS, page styles, main.js, analytics
+  charts, wishlist badges, ROM Tools success toast. Drop-down arrows
+  moved to PASS-59-334.
   **Layman:** Every theme colours the whole page, with no leftover fixed blue-green.
   Kind: implement.
 
