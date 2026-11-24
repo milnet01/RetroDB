@@ -130,6 +130,14 @@ def faces_for(game_row):
     case = record.get('case')
     known = CASE_TYPES.get(case.get('name')) if isinstance(case, dict) else None
     record['hanging_tab'] = bool(known and known.hanging_tab)
+    # How many discs the open case holds (a GameCube's flap, PASS-59-329),
+    # read from the game's .m3u playlist as the page loads.
+    from services.box3d.build import disc_count
+    try:
+        rom_path = game_row['rom_path']
+    except (KeyError, IndexError):
+        rom_path = None
+    record['discs'] = disc_count(rom_path)
     return record
 
 

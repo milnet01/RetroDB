@@ -3907,12 +3907,21 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   (games.box_case, migration 047). Slipcase sent the list (inbox).
   Waiting on the user's measurements: a PAL PS1 case's short side
   (table 125, psxpaldb.com 129-130); own PS3 case for a moulded top
-  band; PS4 case for a finger recess; GameCube case for a square hole
-  and where; photos with a ruler of any Japanese Game Gear box, PS one
+  band; PS4 case for a finger recess; photos with a ruler of any Japanese
+  Game Gear box, PS one
   Books, PAL Saturn or PAL Mega CD case. No
   source found: US PS1, JP Saturn and Dreamcast multi-disc depths;
   PAL Saturn and Mega CD sizes; Game Gear JP, Mark III, Genesis
   cardboard and early PAL NES box sizes; PS2 JP colours.
+  **GameCube done 2026-11-24** (user's photos of PAL Sonic Mega
+  Collection and two-disc Resident Evil 4; user's ruler 134 x 190 x 15):
+  finger groove 125 x 11.5 mm with a square latch hole in its middle
+  (read from an angled photo; user accepted the estimate); opened, a
+  raised hexagon tray, memory card holder, moulded logo, "MEMORY CARD
+  STORAGE" and handling pictures, and a two-disc flap (faces_for adds
+  `discs`). Left out, unreadable in the photos: the patent line along
+  the hinge, the model number and the CE mark. "INSTRUCTION BOOKLET" is
+  printed on the booklet, not the case.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.

@@ -24,7 +24,9 @@
  * carton swings its top flap back and lifts what it holds. Inside, built here
  * from simple solids: a disc on its hub with a ridge round it, or a cartridge
  * or card in its holder; the manual under two clips in the lid, or with no
- * manual a PS2 case's memory-card holder. Pictures come from the game's box scans
+ * manual a PS2 case's memory-card holder. A GameCube case has its own tray,
+ * holder, mouldings and latch hole (gamecubeBase, gamecubeLatch), and a
+ * two-disc flap when the record's `discs` says so. Pictures come from the game's box scans
  * (services/box_scans.py::scans_for): the first `media` scan on the disc or
  * cartridge, the first `manual` on the booklet, the first `inside` as the
  * paper inside (a wide scan spread over both halves). The inside of the shell
@@ -447,7 +449,7 @@
     const scanUrl = s => (s ? `/static/${encodeURI(s.url)}` : null);
 
     // What sits inside the case, placed as it sits when the case is closed.
-    function insideParts(kind, c, shape, plastic, scans) {
+    function insideParts(kind, c, shape, plastic, scans, discs = 1) {
         const out = [];
         const w = c.width_mm / 2, h = c.height_mm / 2, d = c.depth_mm / 2;
         const sheet = (shape && shape.lip_height_mm) || 0;
@@ -479,7 +481,10 @@
         }
 
         const name = c.name || '';
-        if (DISC_CASES.test(name)) {
+        const gamecube = GAMECUBE.test(name);
+        if (gamecube) {
+            out.push(...gamecubeBase(c, floor, plastic, scans, discs, !inside));
+        } else if (DISC_CASES.test(name)) {
             const r = Math.min(/GameCube/.test(name) ? 40 : 60, w - 3, h - 3);
             out.push(...annulus(0, 0, floor, floor + 1.2, r + 1, r + 2.5, 'base', plastic));
             out.push(...rosette(0, 0, floor, floor + 5, 'base', plastic));
@@ -532,12 +537,226 @@
             if (bw > c.width_mm - 14) { bw = c.width_mm - 14; bh = bw / aspect; }
             const z = lidInside - 4;
             out.push(...cuboid([0, 0, z], [bw, bh, 1.5], 'lid', [1, 1, 1], {back: scanUrl(manual)}));
-            // The clips at its top and bottom edges.
-            for (const y of [bh / 2 - 1, -bh / 2 + 1]) {
-                out.push(...cuboid([0, y, z - 1.5], [14, 4, 1.5], 'lid', plastic));
+            // The clips at its top and bottom edges; a GameCube's at the
+            // opening side's two corners, as in the user's photos.
+            const clips = gamecube
+                ? [[bw / 2 - 3, bh / 2 - 6, 12, 8], [bw / 2 - 3, -bh / 2 + 6, 12, 8]]
+                : [[0, bh / 2 - 1, 14, 4], [0, -bh / 2 + 1, 14, 4]];
+            for (const [x, y, sx, sy] of clips) {
+                out.push(...cuboid([x, y, z - 1.5], [sx, sy, 1.5], 'lid', plastic));
             }
         }
         return out;
+    }
+
+    // --- The GameCube case (PASS-59-329) --------------------------------------
+    // From the user's photos of two PAL cases, a single-disc Sonic Mega
+    // Collection and a two-disc Resident Evil 4 (2026-11-24); every place and
+    // size is read from those photos by eye. The tray is a raised hexagon,
+    // points to the top and bottom; a memory card holder sits in the corner by
+    // the spine at the bottom; two disc-handling pictures sit at the bottom by
+    // the opening side; "NINTENDO GAMECUBE" and its cube are moulded across
+    // the top. A two-disc case holds its first disc on a hinged hexagonal flap
+    // over the second. Not drawn, being unreadable in the photos: the patent
+    // line along the hinge, the model number and the CE mark.
+    const GAMECUBE = /^GameCube (DVD|Player's Choice) Case/;
+    const GC_TRAY = {x: 4, y: 1, halfW: 54, halfH: 53, flatH: 28, thick: 1.5};
+    const GC_HOLE = {length: 18, tongue: 10};       // the latch hole in the finger groove
+    const DARK = [0.04, 0.04, 0.045];
+    const lift = (colour, t) => colour.map(v => v + (1 - v) * t);
+
+    // A flat-topped solid: the convex outline `points` ([x, y], in order)
+    // raised from z0 to z1.
+    function prism(points, z0, z1, name, colour) {
+        const out = [];
+        const cx = points.reduce((s, p) => s + p[0], 0) / points.length;
+        const cy = points.reduce((s, p) => s + p[1], 0) / points.length;
+        out.push(part(points.map(([x, y]) => [x, y, z1]), [0, 0, 1], name, colour));
+        out.push(part(points.map(([x, y]) => [x, y, z0]), [0, 0, -1], name, colour));
+        points.forEach(([x0, y0], i) => {
+            const [x1, y1] = points[(i + 1) % points.length];
+            out.push(part([[x0, y0, z1], [x1, y1, z1], [x1, y1, z0], [x0, y0, z0]],
+                [(x0 + x1) / 2 - cx, (y0 + y1) / 2 - cy, 0], name, colour));
+        });
+        return out;
+    }
+
+    // A straight bar `width` wide from (x0, y0) to (x1, y1).
+    function bar([x0, y0], [x1, y1], width, z0, z1, name, colour) {
+        const len = Math.hypot(x1 - x0, y1 - y0), nx = -(y1 - y0) / len * width / 2,
+            ny = (x1 - x0) / len * width / 2;
+        return prism([[x0 + nx, y0 + ny], [x1 + nx, y1 + ny], [x1 - nx, y1 - ny], [x0 - nx, y0 - ny]],
+            z0, z1, name, colour);
+    }
+
+    function hexagon(t) {
+        return [[t.x, t.y + t.halfH], [t.x - t.halfW, t.y + t.flatH], [t.x - t.halfW, t.y - t.flatH],
+            [t.x, t.y - t.halfH], [t.x + t.halfW, t.y - t.flatH], [t.x + t.halfW, t.y + t.flatH]];
+    }
+
+    // Moulded relief, as a picture in the plastic's own colour: `paint`
+    // draws its shapes in mm, and each is drawn lit from the top left, in
+    // shadow below right, as the viewer's light falls.
+    const EMBOSS_PX = 16;       // picture pixels per mm
+    function embossed(wMm, hMm, plastic, paint) {
+        const cv = document.createElement('canvas');
+        cv.width = Math.ceil(wMm * EMBOSS_PX);
+        cv.height = Math.ceil(hMm * EMBOSS_PX);
+        const ctx = cv.getContext('2d');
+        const tone = (t, to) => `rgb(${plastic.map(v => Math.round(255 * (v + (to - v) * t))).join(',')})`;
+        ctx.fillStyle = tone(0, 0);
+        ctx.fillRect(0, 0, cv.width, cv.height);
+        for (const [dx, style] of [[0.2, tone(0.55, 0)], [-0.2, tone(0.45, 1)], [0, tone(0.08, 1)]]) {
+            ctx.save();
+            ctx.scale(EMBOSS_PX, EMBOSS_PX);
+            ctx.translate(dx, dx);
+            ctx.fillStyle = ctx.strokeStyle = style;
+            paint(ctx);
+            ctx.restore();
+        }
+        return cv.toDataURL('image/png');
+    }
+
+    // A moulded picture lying on the base's floor over x0..x1, y0..y1.
+    function moulding(x0, x1, y0, y1, z, plastic, paint) {
+        const tex = embossed(x1 - x0, y1 - y0, plastic, paint);
+        return part([[x0, y1, z], [x1, y1, z], [x1, y0, z], [x0, y0, z]], [0, 0, 1], 'base', plastic,
+            tex, FULL_PICTURE);
+    }
+
+    // `text` filling `width` mm from (x, y), its letters `size` mm tall.
+    function fitText(ctx, text, x, y, width, size, weight = 'bold') {
+        ctx.font = `${weight} ${size}px sans-serif`;
+        ctx.textBaseline = 'top';
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(width / ctx.measureText(text).width, 1);
+        ctx.fillText(text, 0, 0);
+        ctx.restore();
+    }
+
+    // The cube mark: a hexagon ring opened on the right, a small cube inside.
+    function paintCube(ctx, cx, cy, r) {
+        const hex = rr => Array.from({length: 6}, (_, i) => {
+            const a = Math.PI / 2 + i * Math.PI / 3;
+            return [cx + rr * Math.cos(a), cy - rr * Math.sin(a)];
+        });
+        const path = (pts, p = new Path2D()) => {
+            pts.forEach(([x, y], i) => (i ? p.lineTo(x, y) : p.moveTo(x, y)));
+            p.closePath();
+            return p;
+        };
+        const ring = path(hex(0.62 * r), path(hex(r)));
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(cx - r, cy - r, 2 * r, 2 * r);
+        ctx.rect(cx + 0.3 * r, cy - 0.1 * r, 0.8 * r, -0.6 * r);
+        ctx.clip('evenodd');
+        ctx.fill(ring, 'evenodd');
+        ctx.restore();
+        ctx.fill(path(hex(0.38 * r)));
+    }
+
+    // One disc-handling picture: a disc, and fingers on its rim (`right`)
+    // or a thumb on its face.
+    function paintHandling(ctx, x, y, size, right) {
+        const cx = x + size / 2, cy = y + size / 2;
+        ctx.lineWidth = 0.7;
+        ctx.strokeRect(x, y, size, size);
+        ctx.beginPath();
+        ctx.arc(cx, cy, 0.3 * size, 0, 2 * Math.PI);
+        ctx.moveTo(cx + 0.07 * size, cy);
+        ctx.arc(cx, cy, 0.07 * size, 0, 2 * Math.PI);
+        ctx.stroke();
+        const fingers = right ? [[cx - 0.33 * size, cy, 0.06, 0.12], [cx + 0.33 * size, cy, 0.06, 0.12]]
+            : [[cx + 0.08 * size, cy - 0.08 * size, 0.08, 0.14]];
+        for (const [fx, fy, rx, ry] of fingers) {
+            ctx.beginPath();
+            ctx.ellipse(fx, fy, rx * size, ry * size, right ? 0 : -0.6, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+        // The tick or cross above its right side.
+        const mx = x + size - 4, my = y - 5;
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        if (right) {
+            ctx.moveTo(mx - 1.5, my + 0.3);
+            ctx.lineTo(mx - 0.3, my + 1.8);
+            ctx.lineTo(mx + 2, my - 1.5);
+        } else {
+            ctx.moveTo(mx - 1.5, my - 1.5);
+            ctx.lineTo(mx + 1.5, my + 1.5);
+            ctx.moveTo(mx + 1.5, my - 1.5);
+            ctx.lineTo(mx - 1.5, my + 1.5);
+        }
+        ctx.stroke();
+    }
+
+    // The base half's tray, holder, mouldings and discs. `bare` is false
+    // when an inside scan covers the floor, which hides the mouldings.
+    function gamecubeBase(c, floor, plastic, scans, discs, bare) {
+        const out = [], w = c.width_mm / 2, h = c.height_mm / 2, t = GC_TRAY;
+        const media = scans.filter(s => s.kind === 'media');
+        const r = Math.min(40, w - 3, h - 3);
+        const top = floor + t.thick;
+        // Raised parts a shade lighter: lit head-on, their walls cast no
+        // shading, and in the photos their edges catch the light.
+        const raised = lift(plastic, 0.1), flapColour = lift(plastic, 0.2);
+        out.push(...prism(hexagon(t), floor, top, 'base', raised));
+        // A disc on its hub at `z`.
+        const disc = (z, scan) => {
+            out.push(...rosette(t.x, t.y, z - 2, z + 3, 'base', plastic));
+            out.push(...annulus(t.x, t.y, z, z + 1.2, 7.5, r, 'base', SILVER, scanUrl(scan)));
+        };
+        if (discs >= 2) {
+            // The flap: a hexagon like the tray's on two arms from a hinge
+            // bar by the spine; the first disc rides on it, the second under it.
+            disc(top + 0.5, media[1] || null);
+            const flap = top + 3.2, flapTop = flap + 1;
+            out.push(...prism(hexagon({...t, halfW: t.halfW - 2, halfH: t.halfH - 2, flatH: t.flatH - 1}),
+                flap, flapTop, 'base', flapColour));
+            out.push(...bar([-w + 3, -72], [-w + 3, 72], 4, flap, flapTop, 'base', flapColour));
+            for (const s of [1, -1]) {
+                out.push(...bar([-w + 4, s * 70], [t.x - t.halfW + 4, t.y + s * t.flatH], 6,
+                    flap, flapTop, 'base', flapColour));
+            }
+            disc(flapTop + 0.4, media[0] || null);
+        } else {
+            disc(top + 0.5, media[0] || null);
+        }
+        // The memory card holder: a low frame.
+        const [hx0, hx1, hy0, hy1] = [-w + 7, -w + 51, -h + 13, -h + 46];
+        for (const [a, b] of [[[hx0, hy0], [hx1, hy0]], [[hx1, hy0], [hx1, hy1]],
+            [[hx1, hy1], [hx0, hy1]], [[hx0, hy1], [hx0, hy0]]]) {
+            out.push(...bar(a, b, 1.5, floor, floor + 3, 'base', raised));
+        }
+        if (!bare) return out;
+        const z = floor + 0.05;
+        out.push(moulding(hx0 + 2, hx1 - 2, hy1 - 5, hy1 - 1.5, z, plastic,
+            ctx => fitText(ctx, 'MEMORY CARD STORAGE', 0, 0.3, hx1 - hx0 - 4, 3)));
+        out.push(moulding(-w + 15, w - 11, h - 31, h - 5, z, plastic, ctx => {
+            paintCube(ctx, 12, 13, 11);
+            fitText(ctx, 'N I N T E N D O', 28, 1, 76, 5, 'normal');
+            fitText(ctx, 'GAMECUBE', 27, 8, 78, 16);
+        }));
+        out.push(moulding(w - 61, w - 5, -h + 8, -h + 45, z, plastic, ctx => {
+            paintHandling(ctx, 1, 10, 25, true);
+            paintHandling(ctx, 29, 10, 25, false);
+        }));
+        return out;
+    }
+
+    // The square latch hole in the middle of the finger groove, seen shut:
+    // dark, with the base's latch tongue standing in it.
+    function gamecubeLatch(c, s) {
+        const x = c.width_mm / 2 - s.recess_depth_mm + 0.02, half = GC_HOLE.length / 2;
+        const z = s.recess_height_mm / 2 - 0.3, out = [];
+        for (const [name, z0, z1] of [['lid', 0, z], ['base', -z, 0]]) {
+            out.push(part([[x, half, z1], [x, -half, z1], [x, -half, z0], [x, half, z0]],
+                [1, 0, 0], name, DARK));
+        }
+        out.push(...cuboid([x - 0.2, 0, -z / 2], [0.8, GC_HOLE.tongue, z], 'base', [0.3, 0.3, 0.32]));
+        return out.map(p => ({...p, shell: true}));
     }
 
     // A shop's hanging tab (RetroDB, PASS-59-329): a thin plate with rounded
@@ -757,8 +976,11 @@
         // Bare plastic shines; pictures, paper and cardboard do not.
         const shines = p => !p.tex && !(p.shell && kind === 'carton');
         const patches = splitShell(shell, hinge)
-            .concat(insideParts(kind, record.case, shape, plastic, scans));
+            .concat(insideParts(kind, record.case, shape, plastic, scans, record.discs || 1));
         if (record.hanging_tab) patches.push(...hangingTab(record.case, plastic));
+        if (shape && hasRecess(shape) && GAMECUBE.test(record.case.name)) {
+            patches.push(...gamecubeLatch(record.case, shape));
+        }
 
         const byKey = new Map();
         let floats = 0;

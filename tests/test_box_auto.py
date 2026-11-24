@@ -313,6 +313,19 @@ def test_a_clamshell_with_a_shop_tab_says_so_to_the_viewer(make_game, images):
     assert box_faces.faces_for({'box_faces': json.dumps(record)})['hanging_tab'] is False
 
 
+def test_the_viewer_is_told_how_many_discs_the_case_holds(make_game, images, tmp_path):
+    # A two-disc GameCube case holds its first disc on a flap over the
+    # second (PASS-59-329); the count comes from the game's playlist.
+    gid = make_game()
+    build.build_for_game(gid)
+    stored = json.dumps(_record(gid))
+    playlist = tmp_path / 'Game (Europe).m3u'
+    playlist.write_text('Game (Disc 1).rvz\nGame (Disc 2).rvz\n')
+    assert box_faces.faces_for({'box_faces': stored, 'rom_path': str(playlist)})['discs'] == 2
+    assert box_faces.faces_for({'box_faces': stored, 'rom_path': str(tmp_path / 'Game.rvz')})['discs'] == 1
+    assert box_faces.faces_for({'box_faces': stored})['discs'] == 1
+
+
 # ---------------------------------------------------------------------------
 # PASS-59-331: the downloaded 3D box picture shows the box as it looks.
 # ---------------------------------------------------------------------------

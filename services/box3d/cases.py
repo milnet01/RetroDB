@@ -179,6 +179,12 @@ _PS3_SHAPE = replace(_PS5_SHAPE, recess_length=85.0, recess_height=7.0,
 # rough to measure, so they take the PS5's as working figures (SLIP-0130).
 _XBOX_ONE_SHAPE = replace(_PS5_SHAPE, recess_length=74.0, recess_height=6.0,
                           recess_depth=3.0, recess_end_radius=0.0)
+# RetroDB: GameCube (PASS-59-329). The groove down the opening side read from
+# the user's angled photo of a PAL Sonic Mega Collection case (2026-11-24):
+# about 125 mm long and 11.5 mm across, centred. Its depth and ends are judged.
+# The square latch hole in its middle is drawn by the viewer (box-viewer.js).
+_GAMECUBE_SHAPE = replace(_PS5_SHAPE, recess_length=125.0, recess_height=11.5,
+                          recess_depth=2.5, recess_end_radius=1.5)
 _BLACK_TRAY = (0x10, 0x10, 0x10)
 _BLACK_KEEP = (0x14, 0x14, 0x14)
 _WHITE_KEEP = (0xEE, 0xEE, 0xEE)
@@ -230,11 +236,12 @@ CASE_TYPES: dict[str, CaseType] = {
         platforms=("Wii U",),
         plastic=(0x16, 0x8E, 0xC4), texture="dvd",
     ),
+    # RetroDB: the user's ruler on their PAL cases, 2026-11-24.
     "GameCube DVD Case": CaseType(
         name="GameCube DVD Case",
-        width=135, height=190, depth=14,
+        width=134, height=190, depth=15,
         platforms=("GameCube",),
-        plastic=_BLACK_KEEP, texture="dvd",
+        plastic=_BLACK_KEEP, texture="dvd", shape=_GAMECUBE_SHAPE,
     ),
     "GameCube Case (NTSC-J)": CaseType(
         name="GameCube Case (NTSC-J)",
