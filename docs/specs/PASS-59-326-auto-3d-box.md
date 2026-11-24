@@ -143,6 +143,12 @@ converted to RGB.
    the long box's shape than the jewel case's gets `PS1 Long Box`; a US
    NES game released from October 1985 to September 1987 gets the box
    with a hang tab. A year alone counts only when all of it falls inside.
+6. **Discs, edition and title** (PASS-59-329 round 2), each over the one
+   before: a PAL PS1 game with 3 or more discs, or 2 released by October
+   1997, gets `PS1 Multiway Case (PAL)`, its disc count read from its
+   `.m3u` playlist; words in `games.edition` pick an edition case
+   (`build._EDITION_CASES`); a game every copy of which came in one
+   colour picks it by title (`build._TITLE_CASES`).
 
 ### 4.4 The record
 

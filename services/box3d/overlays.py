@@ -66,8 +66,49 @@ def generate_front_texture(case_type: CaseType, width: int, height: int,
     if case_type.clear and case_type.layout == "wrap":
         overlay.alpha_composite(generate_lid_shine(width, height))
         overlay.alpha_composite(_lid_streak(width, height))
+    if case_type.front_logo and case_type.layout == "wrap" and not back:
+        overlay.alpha_composite(_front_logo(case_type, width, height))
 
     return overlay
+
+
+# RetroDB (PASS-59-329): a logo embossed in a keep case's clear front, as on
+# early Xbox One and Series X cases. Its width and place are judged from
+# photos; the alphas by eye.
+FRONT_LOGO_MM = 40          # the text's width
+FRONT_LOGO_CENTRE_MM = 7    # its middle, below the top edge
+_EMBOSS_FACE = 26           # white over the letters' face
+_EMBOSS_HIGHLIGHT = 110     # white along their upper edges
+_EMBOSS_SHADOW = 70         # black along their lower edges
+
+
+def _front_logo(case_type: CaseType, w: int, h: int) -> Image.Image:
+    """An RGBA overlay with `case_type.front_logo` embossed in clear plastic,
+    centred across the front near its top."""
+    p = w / case_type.width
+    font = _get_font(max(4, round(10 * p)), bold=True)
+    left, top, right, bottom = font.getbbox(case_type.front_logo)
+    font = _get_font(max(4, round(font.size * FRONT_LOGO_MM * p / max(1, right - left))),
+                     bold=True)
+    left, top, right, bottom = font.getbbox(case_type.front_logo)
+    mask = Image.new("L", (w, h), 0)
+    ImageDraw.Draw(mask).text(
+        ((w - (right - left)) / 2 - left,
+         FRONT_LOGO_CENTRE_MM * p - (bottom - top) / 2 - top),
+        case_type.front_logo, font=font, fill=255)
+    m = np.asarray(mask, dtype=np.float32) / 255
+    step = max(1, round(0.2 * p))
+    above = np.zeros_like(m)
+    above[step:] = m[:-step]
+    below = np.zeros_like(m)
+    below[:-step] = m[step:]
+    light = np.clip(_EMBOSS_FACE * m + _EMBOSS_HIGHLIGHT * np.clip(m - above, 0, 1), 0, 255)
+    dark = np.clip(_EMBOSS_SHADOW * np.clip(m - below, 0, 1), 0, 255)
+    rgba = np.zeros((h, w, 4), dtype=np.uint8)
+    lit = light >= dark
+    rgba[..., :3] = np.where(lit[..., None], 255, 0).astype(np.uint8)
+    rgba[..., 3] = np.round(np.where(lit, light, dark)).astype(np.uint8)
+    return Image.fromarray(rgba, "RGBA")
 
 
 def generate_spine_texture(case_type: CaseType, width: int, height: int) -> Image.Image:

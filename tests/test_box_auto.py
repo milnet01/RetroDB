@@ -438,6 +438,82 @@ def test_a_japanese_mega_drive_case_has_no_hang_tab():
     assert build.case_for_game('megadrive', 'PAL').hanging_tab is True
 
 
+def test_a_japanese_game_gear_box_has_no_hang_tab():
+    assert build.case_for_game('gamegear', 'NTSC-J').hanging_tab is False
+    assert build.case_for_game('gamegear', 'NTSC-U').hanging_tab is True
+
+
+# PASS-59-329 round 2: PAL multi-disc PS1 games, the Edition field, and the
+# games every copy of which came in one colour.
+@pytest.mark.parametrize('region, discs, released, expected', [
+    ('PAL', 3, '1999-09-03', 'PS1 Multiway Case (PAL)'),
+    ('PAL', 2, '1997-10-01', 'PS1 Multiway Case (PAL)'),
+    ('PAL', 2, '1997-11-01', 'PS1 Jewel Case (PAL)'),
+    ('PAL', 2, None, 'PS1 Jewel Case (PAL)'),
+    ('PAL', 1, '1996-01-01', 'PS1 Jewel Case (PAL)'),
+    ('NTSC-U', 4, '1999-11-18', 'PS1 Jewel Case (NTSC-U)'),
+])
+def test_pal_multi_disc_playstation_games_get_the_multiway_case(region, discs, released, expected):
+    assert build.case_for_game('psx', region, released=released, discs=discs).name == expected
+
+
+@pytest.mark.parametrize('folder, region, edition, expected', [
+    ('ps3', 'NTSC-U', 'Greatest Hits', 'PS3 Greatest Hits Case'),
+    ('ps3', 'PAL', 'Platinum', 'PS3 Platinum Case (PAL)'),
+    ('ps4', 'PAL', 'PlayStation Hits', 'PS4 PlayStation Hits Case'),
+    ('ps2', 'PAL', 'Platinum', 'PS2 Platinum Case (PAL)'),
+    ('xbox360', 'NTSC-U', 'Platinum Hits', 'Xbox 360 Platinum Hits Case'),
+    ('gc', 'PAL', "Player's Choice", "GameCube Player's Choice Case (PAL)"),
+    ('gc', 'NTSC-U', "Player's Choice", 'GameCube DVD Case'),   # the US kept black
+    ('ps3', 'NTSC-U', 'Standard Edition', 'PS3 Blu-ray Case'),
+    ('ps3', 'NTSC-U', None, 'PS3 Blu-ray Case'),
+])
+def test_the_edition_field_picks_the_edition_case(folder, region, edition, expected):
+    assert build.case_for_game(folder, region, edition=edition).name == expected
+
+
+@pytest.mark.parametrize('region, title, expected', [
+    ('PAL', 'New Super Luigi U', 'Wii U Case (green)'),
+    ('NTSC-U', 'Mario Kart 8', 'Wii U Case (red)'),
+    ('PAL', 'Mario Kart 8', 'Wii U Case'),
+    ('NTSC-U', 'Super Mario Maker', 'Wii U Case (red)'),
+    ('NTSC-U', 'Mario Kart 8 Deluxe', 'Wii U Case'),
+])
+def test_games_sold_in_one_colour_get_it(region, title, expected):
+    assert build.case_for_game('wiiu', region, title=title).name == expected
+
+
+def test_disc_count_reads_the_playlist(tmp_path):
+    playlist = tmp_path / 'Game (Europe).m3u'
+    playlist.write_text('#EXTM3U\nGame (Disc 1).chd\n\nGame (Disc 2).chd\nGame (Disc 3).chd\n')
+    assert build.disc_count(str(playlist)) == 3
+    assert build.disc_count(str(tmp_path / 'missing.m3u')) == 1
+    assert build.disc_count(str(tmp_path / 'Game.chd')) == 1
+    assert build.disc_count(None) == 1
+
+
+def test_every_hand_picked_case_exists():
+    from services.box3d import cases
+    for platform, names in cases.EXTRA_CASES.items():
+        for name in names:
+            assert name in cases.CASE_TYPES, (platform, name)
+
+
+def test_an_embossed_front_logo_marks_only_the_top_of_the_front():
+    from services.box3d import cases, overlays
+    case = cases.CASE_TYPES['Xbox One Case (embossed logo)']
+    plain = overlays.generate_front_texture(cases.CASE_TYPES['Xbox One Case'], 540, 686)
+    logo = overlays.generate_front_texture(case, 540, 686)
+    changed = (np.asarray(plain, dtype=int) != np.asarray(logo, dtype=int)).any(axis=2)
+    rows = np.nonzero(changed.any(axis=1))[0]
+    assert rows.size
+    p = 540 / case.width
+    assert rows.max() < 14 * p                    # within the top 14 mm
+    assert overlays.generate_front_texture(case, 540, 686, back=True).getextrema() == \
+        overlays.generate_front_texture(cases.CASE_TYPES['Xbox One Case'], 540, 686,
+                                        back=True).getextrema()
+
+
 def test_a_belgian_box_is_pal():
     assert build.region_for('psx', ['be', 'fr'], 'USA') == 'PAL'
 

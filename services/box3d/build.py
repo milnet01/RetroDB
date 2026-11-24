@@ -58,6 +58,29 @@ _TALL_BOXES = {('PS1', 'NTSC-U'): 'PS1 Long Box'}
 # (platform, region) -> (first month, last month, case) for a case used only
 # by games released in those months (PASS-59-329).
 _DATED_CASES = {('NES', 'NTSC-U'): ('1985-10', '1987-09', 'NES Cartridge Box (hang tab)')}
+# (platform, region or None for any, words) -> the case for a game whose
+# Edition field holds those words (Slipcase's SLIP-0113 research; PASS-59-329).
+# US Player's Choice GameCube games kept the black case.
+_EDITION_CASES = (
+    ('PS2', None, 'platinum', 'PS2 Platinum Case (PAL)'),
+    ('PS3', None, 'greatest hits', 'PS3 Greatest Hits Case'),
+    ('PS3', None, 'platinum', 'PS3 Platinum Case (PAL)'),
+    ('PS4', None, 'playstation hits', 'PS4 PlayStation Hits Case'),
+    ('Xbox', None, 'platinum hits', 'Xbox Platinum Hits Case'),
+    ('Xbox 360', None, 'platinum hits', 'Xbox 360 Platinum Hits Case'),
+    ('GameCube', 'PAL', "player's choice", "GameCube Player's Choice Case (PAL)"),
+)
+# (platform, region or None for any, title) -> the case every copy of that
+# game came in (PASS-59-329, two sources each).
+_TITLE_CASES = (
+    ('Wii U', None, 'new super luigi u', 'Wii U Case (green)'),
+    ('Wii U', 'NTSC-U', 'mario kart 8', 'Wii U Case (red)'),
+    ('Wii U', 'NTSC-U', 'super mario maker', 'Wii U Case (red)'),
+)
+# PAL PS1 games on several discs came in the multiway case: two discs until
+# G-Police (October 1997), three or more always (PSXPALDB; PASS-59-329).
+_MULTIWAY = 'PS1 Multiway Case (PAL)'
+_MULTIWAY_TWO_DISCS_UNTIL = '1997-10'
 
 OUTCOMES = ('built', 'unchanged', 'imported', 'no_case', 'no_front', 'failed')
 
@@ -92,11 +115,13 @@ def region_for(folder, countries, game_region):
     return _region_of(codes[0]) if codes else 'NTSC-U'
 
 
-def case_for_game(folder, region, packaging=None, front_aspect=None, released=None):
+def case_for_game(folder, region, packaging=None, front_aspect=None, released=None,
+                  discs=1, edition=None, title=None):
     """The case for a game, or None for no box (spec §4.3). `region` is
     Slipcase's (NTSC-U, PAL, NTSC-J); `packaging` the scans' MobyGames
     packaging, if any; `front_aspect` the scanned front's width / height,
-    if known; `released` the game's `release_date`, if any."""
+    if known; `released` the game's `release_date`, if any; `discs` how
+    many discs it has; `edition` and `title` the game's own fields."""
     from services.box3d import cases
     platform = PLATFORMS.get(folder)
     if platform is None:
@@ -118,7 +143,34 @@ def case_for_game(folder, region, packaging=None, front_aspect=None, released=No
     dated = _DATED_CASES.get((platform, region))
     if dated and _released_within(released, dated[0], dated[1]):
         case = cases.CASE_TYPES[dated[2]]
+    if (platform, region) == ('PS1', 'PAL') and case is not None and case.layout == 'jewel' and (
+            discs >= 3 or (discs == 2 and released
+                           and released[:7] <= _MULTIWAY_TWO_DISCS_UNTIL)):
+        case = cases.CASE_TYPES[_MULTIWAY]
+    words = (edition or '').casefold()
+    for p, r, marker, name in _EDITION_CASES:
+        if p == platform and r in (None, region) and marker in words:
+            case = cases.CASE_TYPES[name]
+            break
+    name_of = (title or '').strip().casefold()
+    for p, r, game, name in _TITLE_CASES:
+        if p == platform and r in (None, region) and game == name_of:
+            case = cases.CASE_TYPES[name]
+            break
     return case
+
+
+def disc_count(rom_path):
+    """How many discs a game has: the entries of its .m3u playlist, else 1."""
+    if not rom_path or not rom_path.lower().endswith('.m3u'):
+        return 1
+    try:
+        with open(rom_path, encoding='utf-8', errors='replace') as playlist:
+            entries = [line for line in playlist
+                       if line.strip() and not line.lstrip().startswith('#')]
+    except OSError:
+        return 1
+    return max(1, len(entries))
 
 
 def _released_within(released, first, last):
@@ -295,7 +347,8 @@ def _shape(case):
 
 def _game(game_id):
     return query("""
-        SELECT g.id, g.title, g.region, g.release_date, g.disc_serial, g.boxart, g.boxart_3d, g.boxart_back,
+        SELECT g.id, g.title, g.region, g.release_date, g.disc_serial, g.edition, g.rom_path,
+               g.boxart, g.boxart_3d, g.boxart_back,
                g.box_scans, g.box_faces, s.folder
         FROM games g JOIN systems s ON s.id = g.system_id WHERE g.id = ?
     """, (game_id,), one=True)
@@ -317,7 +370,8 @@ def build_for_game(game_id):
             return 'no_front'
         region = region_for(row['folder'], found['countries'], row['region'])
         case = case_for_game(row['folder'], region, found['packaging'], _front_aspect(found),
-                             row['release_date'])
+                             row['release_date'], disc_count(row['rom_path']),
+                             row['edition'], row['title'])
         if case is None:
             return 'no_case'
         signature = _signature(case, row, found)

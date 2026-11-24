@@ -106,6 +106,8 @@ class CaseType:
     strip_logo: str | None = None
     # Text moulded into the plastic of the top and bottom edges (SLIP-0110).
     moulded_logo: str | None = None
+    # RetroDB: text embossed in a keep case's clear front, near the top.
+    front_logo: str | None = None
     # Overlay family for the wrap layout: "dvd", "bluray", "switch", "ds",
     # "psp", "cardboard", "clamshell" (SLIP-0108), or None for no overlay
     # (SLIP-0107).
@@ -344,6 +346,35 @@ CASE_TYPES: dict[str, CaseType] = {
         jewel=_STANDARD_PAPER, plastic=_BLACK_TRAY,
         tray_print=_PS1_NTSC_TRAY_PRINT,
     ),
+    # RetroDB (PASS-59-329): three older PS1 cases, sizes from PSXPALDB's
+    # case-type pages. They take the PAL case's paper, unmeasured. The black
+    # plastic frame round the Maxibox's and early Japanese case's front is
+    # not drawn.
+    # Multi-disc PAL games until G-Police (October 1997), then 3 discs and more.
+    "PS1 Multiway Case (PAL)": CaseType(
+        name="PS1 Multiway Case (PAL)",
+        width=142, height=125, depth=25,
+        platforms=(),
+        jewel=JewelGeometry(booklet=(120, 120), back_card=(158, 118), strip=13.5),
+        plastic=(0xC8, 0xCC, 0xD0),
+    ),
+    # Carthuplas' "Brilliant Maxibox", some PAL games of 1996 and 1997: no logos.
+    "PS1 Maxibox (PAL)": CaseType(
+        name="PS1 Maxibox (PAL)",
+        width=142, height=125, depth=17,
+        platforms=(),
+        jewel=JewelGeometry(booklet=(120, 120), back_card=(158, 118), strip=13.5),
+        plastic=_BLACK_TRAY, matte_hinge_strip=True,
+    ),
+    # "Full Jewel Black Bordered", more common in Japan; when it ended is unsourced.
+    "PS1 Jewel Case (NTSC-J, early)": CaseType(
+        name="PS1 Jewel Case (NTSC-J, early)",
+        width=142, height=129, depth=17,
+        platforms=(),
+        jewel=JewelGeometry(booklet=(120, 120), back_card=(158, 118), strip=13.5),
+        plastic=_BLACK_TRAY, matte_hinge_strip=True,
+        moulded_logo="PlayStation",
+    ),
     "Dreamcast Jewel Case (NTSC-U)": CaseType(
         name="Dreamcast Jewel Case (NTSC-U)",
         width=142, height=125, depth=10.4,
@@ -568,16 +599,24 @@ for _name, _case in CASE_TYPES.items():
         CASE_TYPES[_name] = replace(
             _case, shape=replace(_FAMILY_SHAPES[_case.texture], lip_width=_case.rim_mm))
 
-# RetroDB: cases that differ from another in one way, each picked by
-# build.case_for_game (PASS-59-329). Sources, in Slipcase's
+# RetroDB: cases that differ from another in one way, picked by
+# build.case_for_game or by hand (PASS-59-329). Sources, in Slipcase's
 # docs/research/SLIP-0108-cartridge-boxes.md and SLIP-0106-real-cases.md:
 # Japanese Mega Drive cases had no hang tab until a few very late games;
 # US NES boxes had one from October 1985 to September 1987; early US
-# PlayStation games came in the Saturn's long box.
+# PlayStation games came in the Saturn's long box. Round 2's web sources:
+# Japanese Game Gear boxes have no tab (k-retro); New 3DS-only games in Europe came in black, 14 mm deep
+# (Wikipedia, Keep case; Pocket Gamer); early Xbox One and Series X cases
+# have the logo embossed in the front, near the top (Wikipedia, Keep case;
+# Neowin; Gematsu). The logo's size and place are judged from photos.
 _VARIANTS: dict[str, tuple[str, dict]] = {
     "Genesis Clamshell (NTSC-J)": ("Genesis Clamshell", {"hanging_tab": False}),
     "NES Cartridge Box (hang tab)": ("NES Cartridge Box", {"hanging_tab": True}),
     "PS1 Long Box": ("Sega Long Box", {}),
+    "Game Gear Box (NTSC-J)": ("Game Gear Box", {"hanging_tab": False}),
+    "New 3DS Case (PAL)": ("3DS Case", {"plastic": _BLACK_KEEP, "depth": 14}),
+    "Xbox One Case (embossed logo)": ("Xbox One Case", {"front_logo": "XBOX ONE"}),
+    "Xbox Series X Case (embossed logo)": ("Xbox Series X Case", {"front_logo": "XBOX"}),
 }
 for _name, (_base, _changes) in _VARIANTS.items():
     CASE_TYPES[_name] = replace(CASE_TYPES[_base], name=_name, platforms=(), **_changes)
@@ -603,6 +642,14 @@ _EDITION_PLASTIC: dict[str, tuple[str, dict]] = {
     "Wii DVD Case (red)": ("Wii DVD Case", {"plastic": _RED_KEEP}),
     "Wii DVD Case (yellow)": ("Wii DVD Case", {"plastic": (0xF2, 0xC8, 0x14)}),
     "Wii DVD Case (black)": ("Wii DVD Case", {"plastic": _BLACK_KEEP}),
+    # RetroDB (PASS-59-329 round 2, two sources each): New Super Luigi U is
+    # green; US Mario Kart 8 and Super Mario Maker red; PlayStation Hits red;
+    # US re-releases of Mario Kart 7, Super Mario 3D Land and New Super
+    # Mario Bros. 2 red.
+    "Wii U Case (green)": ("Wii U Case", {"plastic": (0x3A, 0xA0, 0x3A)}),
+    "Wii U Case (red)": ("Wii U Case", {"plastic": _RED_KEEP}),
+    "PS4 PlayStation Hits Case": ("PS4 Blu-ray Case", {"plastic": (0xC8, 0x20, 0x20)}),
+    "3DS Case (red)": ("3DS Case", {"plastic": _RED_KEEP}),
 }
 # edition -> the standard case it recolours
 EDITIONS: dict[str, str] = {name: base for name, (base, _) in _EDITION_PLASTIC.items()}
@@ -643,6 +690,7 @@ REGIONAL_CASES: dict[tuple[str, str], str] = {
     ("GBA", "NTSC-J"): "GBA Box (NTSC-J)",
     ("NES", "NTSC-J"): "Famicom Cartridge Box",
     ("Genesis", "NTSC-J"): "Genesis Clamshell (NTSC-J)",
+    ("Game Gear", "NTSC-J"): "Game Gear Box (NTSC-J)",
     ("Mega Drive", "NTSC-J"): "Genesis Clamshell (NTSC-J)",
     ("Saturn", "NTSC-J"): "CD Jewel Case",
     ("Sega CD", "NTSC-J"): "CD Jewel Case",
@@ -670,6 +718,13 @@ _CARTRIDGE_PLATFORMS = ("NES", "SNES", "N64", "Genesis", "Mega Drive",
 EXTRA_CASES: dict[str, tuple[str, ...]] = {
     "PC": ("CD Jewel Case",),
     **{platform: ("Universal Cart Case",) for platform in _CARTRIDGE_PLATFORMS},
+    # RetroDB: the variants a rule picks only sometimes, or never (PASS-59-329).
+    "PS1": ("PS1 Long Box", "PS1 Multiway Case (PAL)", "PS1 Maxibox (PAL)",
+            "PS1 Jewel Case (NTSC-J, early)"),
+    "NES": ("NES Cartridge Box (hang tab)", "Universal Cart Case"),
+    "3DS": ("New 3DS Case (PAL)",),
+    "Xbox One": ("Xbox One Case (embossed logo)",),
+    "Xbox Series X": ("Xbox Series X Case (embossed logo)",),
 }
 for _name, _base in EDITIONS.items():
     _platform = CASE_TYPES[_base].platforms[0]
