@@ -744,6 +744,12 @@
                 ctx.rotate(Math.PI / 2);
                 fitText(ctx, GC_PATENTS, 0, 0, GC_PATENTS_MM, size, 'normal');
             }));
+            // The case's model number, in the same channel near the bottom.
+            out.push(moulding(-w + 1.5, -w + 1.5 + size + 0.6, -h + 8, -h + 26, z, plastic, ctx => {
+                ctx.translate(size + 0.3, 0);
+                ctx.rotate(Math.PI / 2);
+                fitText(ctx, 'DOL-007(EUR)', 0, 0, 18, size, 'normal');
+            }));
         }
         out.push(moulding(hx0 + 2, hx1 - 2, hy1 - 5, hy1 - 1.5, z, plastic,
             ctx => fitText(ctx, 'MEMORY CARD STORAGE', 0, 0.3, hx1 - hx0 - 4, 3)));
