@@ -449,7 +449,8 @@
     const scanUrl = s => (s ? `/static/${encodeURI(s.url)}` : null);
 
     // What sits inside the case, placed as it sits when the case is closed.
-    function insideParts(kind, c, shape, plastic, scans, discs = 1) {
+    // `game` is what the record says of the game: {discs, region}.
+    function insideParts(kind, c, shape, plastic, scans, game = {}) {
         const out = [];
         const w = c.width_mm / 2, h = c.height_mm / 2, d = c.depth_mm / 2;
         const sheet = (shape && shape.lip_height_mm) || 0;
@@ -483,7 +484,7 @@
         const name = c.name || '';
         const gamecube = GAMECUBE.test(name);
         if (gamecube) {
-            out.push(...gamecubeBase(c, floor, plastic, scans, discs, !inside));
+            out.push(...gamecubeBase(c, floor, plastic, scans, game, !inside));
         } else if (DISC_CASES.test(name)) {
             const r = Math.min(/GameCube/.test(name) ? 40 : 60, w - 3, h - 3);
             out.push(...annulus(0, 0, floor, floor + 1.2, r + 1, r + 2.5, 'base', plastic));
@@ -537,15 +538,12 @@
             if (bw > c.width_mm - 14) { bw = c.width_mm - 14; bh = bw / aspect; }
             const z = lidInside - 4;
             out.push(...cuboid([0, 0, z], [bw, bh, 1.5], 'lid', [1, 1, 1], {back: scanUrl(manual)}));
-            // The clips at its top and bottom edges; a GameCube's at the
-            // opening side's two corners, as in the user's photos.
-            const clips = gamecube
-                ? [[bw / 2 - 3, bh / 2 - 6, 12, 8], [bw / 2 - 3, -bh / 2 + 6, 12, 8]]
-                : [[0, bh / 2 - 1, 14, 4], [0, -bh / 2 + 1, 14, 4]];
-            for (const [x, y, sx, sy] of clips) {
-                out.push(...cuboid([x, y, z - 1.5], [sx, sy, 1.5], 'lid', plastic));
+            // The clips at its top and bottom edges; a GameCube's are its own.
+            for (const y of gamecube ? [] : [bh / 2 - 1, -bh / 2 + 1]) {
+                out.push(...cuboid([0, y, z - 1.5], [14, 4, 1.5], 'lid', plastic));
             }
         }
+        if (gamecube) out.push(...gamecubeLid(c, lidInside, plastic, !!manual, game.region, !inside));
         return out;
     }
 
@@ -564,6 +562,10 @@
     const GC_HOLE = {length: 18, tongue: 10};       // the latch hole in the finger groove
     const DARK = [0.04, 0.04, 0.045];
     const lift = (colour, t) => colour.map(v => v + (1 - v) * t);
+    // Moulded along the hinge of the user's European cases (photos, 2026-11-24);
+    // its length read from those photos against the disc.
+    const GC_PATENTS = 'EP0789914B / EP0896719 / PCT/GB01/04553 / PCT/GB01/05000 / GB2105020';
+    const GC_PATENTS_MM = 120;
 
     // A flat-topped solid: the convex outline `points` ([x, y], in order)
     // raised from z0 to z1.
@@ -694,7 +696,7 @@
 
     // The base half's tray, holder, mouldings and discs. `bare` is false
     // when an inside scan covers the floor, which hides the mouldings.
-    function gamecubeBase(c, floor, plastic, scans, discs, bare) {
+    function gamecubeBase(c, floor, plastic, scans, {discs = 1, region} = {}, bare = true) {
         const out = [], w = c.width_mm / 2, h = c.height_mm / 2, t = GC_TRAY;
         const media = scans.filter(s => s.kind === 'media');
         const r = Math.min(40, w - 3, h - 3);
@@ -705,7 +707,8 @@
         out.push(...prism(hexagon(t), floor, top, 'base', raised));
         // A disc on its hub at `z`.
         const disc = (z, scan) => {
-            out.push(...rosette(t.x, t.y, z - 2, z + 3, 'base', plastic));
+            // The hub stands 2 mm proud: a flap's disc sits high, under the manual.
+            out.push(...rosette(t.x, t.y, z - 2, z + 2, 'base', plastic));
             out.push(...annulus(t.x, t.y, z, z + 1.2, 7.5, r, 'base', SILVER, scanUrl(scan)));
         };
         if (discs >= 2) {
@@ -732,6 +735,16 @@
         }
         if (!bare) return out;
         const z = floor + 0.05;
+        if (region === 'PAL') {
+            // The European patent line in the hinge's channel, reading down
+            // the case with its letters' tops towards the tray.
+            const size = 2, half = GC_PATENTS_MM / 2;
+            out.push(moulding(-w + 1.5, -w + 1.5 + size + 0.6, -half, half, z, plastic, ctx => {
+                ctx.translate(size + 0.3, 0);
+                ctx.rotate(Math.PI / 2);
+                fitText(ctx, GC_PATENTS, 0, 0, GC_PATENTS_MM, size, 'normal');
+            }));
+        }
         out.push(moulding(hx0 + 2, hx1 - 2, hy1 - 5, hy1 - 1.5, z, plastic,
             ctx => fitText(ctx, 'MEMORY CARD STORAGE', 0, 0.3, hx1 - hx0 - 4, 3)));
         out.push(moulding(-w + 15, w - 11, h - 31, h - 5, z, plastic, ctx => {
@@ -743,6 +756,39 @@
             paintHandling(ctx, 1, 10, 25, true);
             paintHandling(ctx, 29, 10, 25, false);
         }));
+        return out;
+    }
+
+    // The lid's inside: a hooked clip from the opening side near the top
+    // and the bottom, which the booklet slides under; two short ridges by
+    // the spine; and on a European case the CE mark and "D-63760" (Nintendo
+    // of Europe's postcode) near the spine at the top. Read from the user's
+    // photos; lid x runs the other way once open, so its mouldings are mirrored.
+    function gamecubeLid(c, lidInside, plastic, manual, region, bare) {
+        const out = [], w = c.width_mm / 2, h = c.height_mm / 2;
+        const raised = lift(plastic, 0.1);
+        // Over the manual where there is one (it lies 4 mm off the lid).
+        const z = manual ? lidInside - 5.5 : lidInside - 3;
+        for (const s of [1, -1]) {
+            const y = s * (h - 20), outline = [[w - 1.5, y - 3.5], [w - 1.5, y + 3.5]];
+            for (let k = 0; k <= 6; k++) {
+                const a = Math.PI / 2 + Math.PI * k / 6;
+                outline.push([w - 30 + 3.5 * Math.cos(a), y + 3.5 * Math.sin(a)]);
+            }
+            out.push(...prism(outline.reverse(), z - 0.6, z + 0.6, 'lid', raised));
+        }
+        for (const [x, y0, y1] of [[-w + 10, h - 38, h - 15], [-w + 16, -h + 10, -h + 35]]) {
+            out.push(...bar([x, y0], [x, y1], 1, lidInside - 1.5, lidInside, 'lid', raised));
+        }
+        if (region === 'PAL' && bare) {
+            const zl = lidInside - 0.05, [x0, x1, y0, y1] = [-w + 4, -w + 18, h - 32, h - 20];
+            const tex = embossed(x1 - x0, y1 - y0, plastic, ctx => {
+                fitText(ctx, 'CE', 3, 0.5, 6, 5, 'normal');
+                fitText(ctx, 'D-63760', 1, 7.5, 12, 2, 'normal');
+            });
+            out.push(part([[x1, y1, zl], [x0, y1, zl], [x0, y0, zl], [x1, y0, zl]], [0, 0, -1], 'lid',
+                plastic, tex, FULL_PICTURE));
+        }
         return out;
     }
 
@@ -976,7 +1022,8 @@
         // Bare plastic shines; pictures, paper and cardboard do not.
         const shines = p => !p.tex && !(p.shell && kind === 'carton');
         const patches = splitShell(shell, hinge)
-            .concat(insideParts(kind, record.case, shape, plastic, scans, record.discs || 1));
+            .concat(insideParts(kind, record.case, shape, plastic, scans,
+                {discs: record.discs || 1, region: record.region}));
         if (record.hanging_tab) patches.push(...hangingTab(record.case, plastic));
         if (shape && hasRecess(shape) && GAMECUBE.test(record.case.name)) {
             patches.push(...gamecubeLatch(record.case, shape));

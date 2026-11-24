@@ -398,7 +398,7 @@ def build_for_game(game_id):
         case, faces, colours = _faces(case, row, found, PLATFORMS[row['folder']])
         encoded = {face: box_faces.to_webp(im) for face, im in faces.items() if im is not None}
         record = {'version': box_faces.RECORD_VERSION, 'source': box_faces.BUILT_SOURCE,
-                  'inputs': signature,
+                  'inputs': signature, 'region': region,
                   'case': {'name': case.name, 'width_mm': case.width,
                            'height_mm': case.height, 'depth_mm': case.depth},
                   'colours': colours}

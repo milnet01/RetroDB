@@ -313,6 +313,14 @@ def test_a_clamshell_with_a_shop_tab_says_so_to_the_viewer(make_game, images):
     assert box_faces.faces_for({'box_faces': json.dumps(record)})['hanging_tab'] is False
 
 
+def test_a_built_box_records_its_case_region(make_game, images):
+    # The viewer draws a European GameCube case's own mouldings from it.
+    for region, want in (('Europe', 'PAL'), ('USA', 'NTSC-U')):
+        gid = make_game(folder='gc', region=region)
+        assert build.build_for_game(gid) == 'built'
+        assert _record(gid)['region'] == want
+
+
 def test_the_viewer_is_told_how_many_discs_the_case_holds(make_game, images, tmp_path):
     # A two-disc GameCube case holds its first disc on a flap over the
     # second (PASS-59-329); the count comes from the game's playlist.

@@ -154,11 +154,11 @@ Otherwise `build.case_for_game(system_folder, region, packaging)` returns a
 
 ### 4.4 The record
 
-The record is PASS-59-142 §4.1's, with two more keys:
+The record is PASS-59-142 §4.1's, with three more keys:
 
 ```json
 {"version": 1, "source": "auto", "inputs": "3f9c0a21",
- "case": {...}, "colours": {...}, "faces": {...}, "shape": {...}}
+ "region": "PAL", "case": {...}, "colours": {...}, "faces": {...}, "shape": {...}}
 ```
 
 - `source` is `"auto"` on a built record. An imported record has no
@@ -167,6 +167,9 @@ The record is PASS-59-142 §4.1's, with two more keys:
   each source file's name and size, the game's title and disc serial (the
   generated spine prints them), and `build.BUILD_VERSION`. A build
   whose `inputs` matches the stored record writes nothing.
+- `region` is the case region the build chose (`build.region_for`):
+  `NTSC-U`, `PAL` or `NTSC-J`. The viewer draws a region's own mouldings
+  from it, such as a European GameCube case's patent line (PASS-59-329).
 - `shape` is written when the case has one (`cases.CaseType.shape`), with
   `box_faces.SHAPE_KEYS`' names.
 

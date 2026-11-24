@@ -3919,8 +3919,10 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   (read from an angled photo; user accepted the estimate); opened, a
   raised hexagon tray, memory card holder, moulded logo, "MEMORY CARD
   STORAGE" and handling pictures, and a two-disc flap (faces_for adds
-  `discs`). Left out, unreadable in the photos: the patent line along
-  the hinge, the model number and the CE mark. "INSTRUCTION BOOKLET" is
+  `discs`). From the user's close-ups (same day): the hook clips and lid
+  ridges, and on a PAL case only (built records now carry `region`) the
+  hinge's patent line and the lid's CE mark and "D-63760". The base's
+  model number ("DOL-001…") is still unread. "INSTRUCTION BOOKLET" is
   printed on the booklet, not the case.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
