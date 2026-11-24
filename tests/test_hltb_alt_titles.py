@@ -98,13 +98,17 @@ class TestAltTitleFallback:
 
     def test_no_results_anywhere_returns_none(self):
         """If neither primary nor alternates match, return None."""
-        with patch.object(hltb_lookup, '_search_hltb', return_value=[]):
+        with patch.object(hltb_lookup, '_search_hltb', return_value=[]) as search:
             result = hltb_lookup.lookup_playtime(
                 'Totally Unknown Game',
                 system_folder='nes',
                 alternate_titles=['Also Unknown'],
             )
         assert result is None
+        # lookup_playtime also returns None on any internal exception, so
+        # prove the searches really ran for the primary AND the alternate.
+        searched = {c.args[0] for c in search.call_args_list}
+        assert searched == {'Totally Unknown Game', 'Also Unknown'}
 
     def test_alternates_none_still_works(self):
         """Passing alternate_titles=None is equivalent to omitting it."""
@@ -166,7 +170,7 @@ class TestAltTitleFallback:
         def boom(title, platform='', year=None):
             raise RuntimeError('network down')
 
-        with patch.object(hltb_lookup, '_search_hltb', side_effect=boom):
+        with patch.object(hltb_lookup, '_search_hltb', side_effect=boom) as search:
             result = hltb_lookup.lookup_playtime(
                 'Anything',
                 system_folder='nes',
@@ -174,3 +178,6 @@ class TestAltTitleFallback:
             )
 
         assert result is None
+        # None is also what any other internal error gives; the search must
+        # really have been reached and raised.
+        assert search.called

@@ -104,6 +104,21 @@ def test_35_3_init_database_issues_foreign_keys_on():
     assert "PRAGMA foreign_keys = ON" in body
 
 
+def test_35_3_get_db_connection_has_foreign_keys_on(tmp_path, monkeypatch):
+    """PRAGMA foreign_keys is per-connection: a NEW get_db() connection must
+    have it on, which is what the request path actually uses."""
+    import config as cfg
+    monkeypatch.setattr(cfg, 'DB_PATH', str(tmp_path / 'fk.db'))
+    from services.database_init import init_database
+    init_database()
+    from services.database import get_db
+    conn = get_db()
+    try:
+        assert conn.execute("PRAGMA foreign_keys").fetchone()[0] == 1
+    finally:
+        conn.close()
+
+
 def test_35_4_get_db_no_longer_issues_journal_mode():
     """get_db() should leave journal_mode (a DB-header setting) to init.
     Codebase invariant: the pragma call must not appear in get_db's body

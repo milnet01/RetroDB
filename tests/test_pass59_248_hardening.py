@@ -18,6 +18,26 @@ import config
 PASSWORD = 'correct-horse-battery'
 
 
+_MADE_USERS = []
+
+
+@pytest.fixture(autouse=True)
+def _drop_made_users():
+    """Delete the users (and their settings rows) _make_user added."""
+    yield
+    ids, _MADE_USERS[:] = list(_MADE_USERS), []
+    if not ids:
+        return
+    conn = sqlite3.connect(config.DB_PATH)
+    try:
+        for uid in ids:
+            conn.execute("DELETE FROM user_settings WHERE user_id = ?", (uid,))
+            conn.execute("DELETE FROM users WHERE id = ?", (uid,))
+        conn.commit()
+    finally:
+        conn.close()
+
+
 def _make_user(name, role='admin', password=PASSWORD):
     from services.auth import hash_password
     conn = sqlite3.connect(config.DB_PATH)
@@ -27,6 +47,7 @@ def _make_user(name, role='admin', password=PASSWORD):
             (name, hash_password(password), role))
         conn.execute("INSERT INTO user_settings (user_id) VALUES (?)", (cur.lastrowid,))
         conn.commit()
+        _MADE_USERS.append(cur.lastrowid)
         return cur.lastrowid
     finally:
         conn.close()

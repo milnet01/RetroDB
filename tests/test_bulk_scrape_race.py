@@ -11,6 +11,7 @@ the new state is only written after the old worker actually exits.
 """
 
 import threading
+import time
 from unittest.mock import patch
 
 import pytest
@@ -188,7 +189,12 @@ class TestOneWorkerAfterHandoff:
                     assert job.swap_with_running(promoted)['success']
                 else:
                     assert job.demote_running()['success']
-                threading.Event().wait(0.3)
+                # Wait for the promoted worker to be up (poll, not a fixed
+                # sleep), then give a wrongly started second one time to show.
+                deadline = time.monotonic() + 5.0
+                while not alive and time.monotonic() < deadline:
+                    time.sleep(0.02)
+                time.sleep(0.3)
                 assert len(alive) == 1, f"{len(alive)} workers running"
                 # The promoted job runs; the displaced one waits in the queue.
                 assert job.game_ids == [200]

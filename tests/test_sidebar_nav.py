@@ -88,9 +88,30 @@ def test_trophy_page_has_the_tabs_and_highlights_achievements(client, page):
     assert _achievements_link(soup).get('aria-current') == 'page'
 
 
-def test_achievement_system_page_has_the_tabs():
-    src = open('templates/achievements_system.html', encoding='utf-8').read()
-    assert "achievement_tabs('retroachievements')" in src
+def test_achievement_system_page_has_the_tabs(client, monkeypatch):
+    # Renders the page (with stub data) and reads the tab strip from the HTML,
+    # so a comment or dead branch in the template cannot satisfy it.
+    stats = {'total_games': 1, 'total_achievements': 10, 'total_points': 100,
+             'earned_achievements': 2, 'earned_points': 20}
+    system = {'id': 1, 'name': 'Atari 2600', 'folder': 'atari2600', 'game_count': 1,
+              'total_achievements': 10, 'total_points': 100, 'earned_achievements': 2,
+              'earned_points': 20, 'last_synced': None}
+
+    def fake_query(sql, params=(), one=False):
+        if 'FROM systems s' in sql and 'WHERE s.id = ?' in sql:
+            return system
+        if one:
+            return stats
+        return []
+    monkeypatch.setattr('routes.achievements.query', fake_query)
+    monkeypatch.setattr('routes.achievements.get_user_ra_credentials',
+                        lambda: ('someone', 'key'))
+    soup = _soup(client, '/achievements/system/1')
+    tabs = soup.select('nav.achievement-tabs a.tool-tab')
+    assert [t.select_one('.tab-label').get_text(strip=True) for t in tabs] == [
+        'RetroAchievements', 'RPCS3', 'PSN', 'Steam', 'Xbox']
+    assert [t.get('aria-current') for t in tabs].count('page') == 1
+    assert tabs[0].get('aria-current') == 'page'
 
 
 def test_no_retroachievements_games_opens_the_rpcs3_tab(client, monkeypatch):

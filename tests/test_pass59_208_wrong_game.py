@@ -246,10 +246,11 @@ def test_esde_search_leaves_out_a_sequel(monkeypatch):
 
 def test_one_default_source_order_with_rawg_last():
     from pathlib import Path
+    from scraper.scraper_manager import DEFAULT_SCRAPER_PRIORITY
     root = Path(__file__).resolve().parent.parent
-    order = "['screenscraper', 'esde', 'tgdb', 'igdb', 'rawg'"
+    # The value itself: the five older sources in order, rawg last of them.
+    assert DEFAULT_SCRAPER_PRIORITY[:5] == ['screenscraper', 'esde', 'tgdb', 'igdb', 'rawg']
+    # The browser-side copies in the two templates must spell the same list.
+    order = "[" + ", ".join(repr(n) for n in DEFAULT_SCRAPER_PRIORITY[:5])
     assert order in (root / 'templates/game_detail.html').read_text(encoding='utf-8')
     assert order in (root / 'templates/settings.html').read_text(encoding='utf-8')
-    for path in ('app.py', 'routes/settings.py', 'routes/bulk_scrape.py', 'scraper/hybrid_scraper.py'):
-        text = (root / path).read_text(encoding='utf-8')
-        assert 'DEFAULT_SCRAPER_PRIORITY' in text, path

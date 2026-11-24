@@ -417,7 +417,7 @@ class TestApplyScreenScraper:
         assert meta['release_date'] == '1991-06-23'
         assert meta['developer'] == 'Sonic Team'
         assert meta['publisher'] == 'Sega'
-        assert meta['genre']
+        assert meta['genre'] == 'Platformer'
         assert meta['players'] == '1'
 
     def test_media_url_extension_ignores_query_string(self):

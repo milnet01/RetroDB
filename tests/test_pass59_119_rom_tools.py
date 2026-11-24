@@ -194,6 +194,16 @@ def test_paused_verify_waits_and_can_be_cancelled(rom_client, monkeypatch):  # n
             gate.wait(5)
         return type('R', (), {'returncode': 0})()
     monkeypatch.setattr(tools.subprocess, 'run', run)
+    # Signal when the worker is really parked in the pause wait, so the test
+    # needs no sleep: a slow worker cannot pass by simply not having run yet.
+    parked = threading.Event()
+    real_wait = tools._wait_if_paused
+
+    def spy(t):
+        if t.get('status') == 'paused':
+            parked.set()
+        return real_wait(t)
+    monkeypatch.setattr(tools, '_wait_if_paused', spy)
 
     task_id = post('/api/rom-tools/chd-verify/verify', {'files': files}).get_json()['task_id']
     task = tools._rom_tool_tasks[task_id]
@@ -201,7 +211,7 @@ def test_paused_verify_waits_and_can_be_cancelled(rom_client, monkeypatch):  # n
         assert _wait(lambda: len(calls) == 1)
         assert post(f'/api/rom-tools/task/{task_id}/pause', {}).status_code == 200
         gate.set()
-        time.sleep(0.3)
+        assert parked.wait(5), 'the worker never reached the pause wait'
         assert len(calls) == 1, 'a paused task went on to the next file'
         assert post(f'/api/rom-tools/task/{task_id}/cancel', {}).status_code == 200
         assert _wait(lambda: task.get('end_time') is not None)

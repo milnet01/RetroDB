@@ -171,7 +171,8 @@ def test_lock_set_and_cleared(db, admin_test_client):
     _form_post(client, csrf, gid2, action='reset')
     row = _row(db, gid2)
     assert row['title_locked'] == 0
-    assert row['title'] != LOCKED_NAME
+    # The title comes back from the file name ('Rockman 3 (Japan).nes').
+    assert row['title'] and row['title'].startswith('Rockman 3'), row['title']
 
 
 # ---------------------------------------------------------------------------

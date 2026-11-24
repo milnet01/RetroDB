@@ -91,8 +91,17 @@ class TestPass48_5DeleteVariantSiblings:
         fanart = static / 'images' / 'fanart' / '7_fanart.png'
         fanart.write_bytes(b'img')
 
+        # Look-alike variant files that only a wrongly-added fanart sibling
+        # rule would delete.
+        sm = static / 'images' / 'fanart' / '7_fanart-sm.png'
+        md = static / 'images' / 'fanart' / '7_fanart-md.png'
+        sm.write_bytes(b'img')
+        md.write_bytes(b'img')
+
         deleted = media_cleanup.delete_game_images([_empty_game(id=7, fanart='7_fanart.png')])
         assert deleted == 1
+        assert not fanart.exists()
+        assert sm.exists() and md.exists()
 
 
 # -----------------------------------------------------------------------------

@@ -180,29 +180,19 @@ def test_cli_prints_the_resolved_port():
     assert proc.stdout.strip() == '5999'
 
 
-def test_cli_prints_the_resolved_saved_port_when_the_environment_is_absent():
+def test_cli_prints_the_resolved_saved_port_when_the_environment_is_absent(tmp_path):
     """With PORT/RETRODB_PORT unset the CLI falls through to the saved tier.
 
-    Asserted against that same chain rather than a hardcoded 5000: the
-    subprocess runs with cwd=ROOT and settings_manager.SETTINGS_FILE is derived
-    from config.BASE_DIR, so it reads the *operator's* real data/settings.json,
-    which no test controls. This used to assert '5000' and passed only because
-    that file happens to hold 5000 (Pass 57.7 item 9). What the CLI actually
-    owes us is that its __main__ passes use_saved=True and prints the number —
-    the saved tier's own behaviour is pinned by the in-process tests below.
+    The subprocess reads the settings file named by RETRODB_SETTINGS_FILE, so
+    point it at a file of our own holding a port that is not the 5000 default.
+    Resolving against the default would then print 5000 and fail.
     """
-    import settings_manager
-
-    try:
-        expected = resolve_server_port(env={}, use_saved=True)
-    finally:
-        # The lookup above populated the settings cache from the operator's
-        # real file; don't leave that visible to the rest of the suite.
-        settings_manager._invalidate_cache()
-
-    proc = _cli()
-    assert proc.returncode == 0
-    assert proc.stdout.strip() == str(expected)
+    import json
+    settings = tmp_path / 'settings.json'
+    settings.write_text(json.dumps({'server_port': 5777}))
+    proc = _cli(RETRODB_SETTINGS_FILE=str(settings))
+    assert proc.returncode == 0, proc.stderr
+    assert proc.stdout.strip() == '5777'
 
 
 def test_cli_exits_non_zero_and_names_the_bad_value():

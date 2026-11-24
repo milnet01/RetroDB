@@ -39,6 +39,8 @@ def test_a_hostile_member_name_is_only_text(tmp_path):
     with zipfile.ZipFile(path, 'w') as z:
         z.writestr('../../escaped.bin', b'data')
     assert rom_identity.file_identity(str(path))['name'] == '../../escaped.bin'
+    # '../../escaped.bin' lands two levels above tmp_path if it escapes.
+    assert not (tmp_path / '..' / '..' / 'escaped.bin').resolve().exists()
     assert not (tmp_path.parent / 'escaped.bin').exists()
     assert sorted(os.listdir(tmp_path)) == ['evil.zip']
 

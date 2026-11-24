@@ -401,17 +401,22 @@ class TestPass40_15DownloadImageAtomic:
         """The hybrid_scraper stale-media UPDATE must include
         `AND {field} = ?` so a concurrent upload between stat and UPDATE
         doesn't get its new reference wiped."""
+        import ast
         from scraper import hybrid_scraper as mod
-        src = read_module_source(mod)
-        # Search the stale-clear region.
-        idx = src.index('Cleared') if 'Cleared' in src else None
-        # Get the surrounding ~600 chars for the UPDATE.
-        if idx is not None:
-            window = src[max(0, idx - 800):idx + 200]
-            assert 'AND ' in window and ' = ?' in window, \
-                'stale-clear UPDATE must bind observed filename (Pass 40.15)'
-        else:
-            assert False, 'stale-media block missing (Pass 40.15)'
+        tree = ast.parse(read_module_source(mod))
+        # The stale-clear UPDATE is an f-string; read its text from the AST
+        # (comments cannot match) and require the observed-name guard in the
+        # same statement as `SET {field} = NULL`.
+        found = []
+        for node in ast.walk(tree):
+            if isinstance(node, ast.JoinedStr):
+                text = ''.join(
+                    v.value if isinstance(v, ast.Constant) else '{}'
+                    for v in node.values)
+                found.append(text)
+        joined = ''.join(found)
+        assert 'UPDATE games SET {} = NULL WHERE id = ? AND {} = ?' in joined, \
+            'stale-clear UPDATE must bind observed filename (Pass 40.15)'
 
 
 # -----------------------------------------------------------------------------

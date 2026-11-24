@@ -7,6 +7,7 @@ RETRODB_DB_PATH at.
 """
 import json
 import os
+from tests._util import REPO_ROOT
 import sqlite3
 from types import SimpleNamespace
 
@@ -189,7 +190,8 @@ def test_job_is_drained_and_resumable():
     import app as app_module
     assert isinstance(ai_fill_bulk_job, AiFillBulkJob)
     assert 'ai_fill_bulk' in app_module._RESUMABLE_JOB_TYPES
-    src = open('services/jobs/base.py').read()
+    from tests._util import read_source
+    src = read_source('services/jobs/base.py')
     assert "getattr(_jobs_pkg, 'ai_fill_bulk_job', None)" in src
 
 
@@ -278,7 +280,7 @@ def test_status_reply_is_flat_for_the_toast(admin_test_client):
 
 
 def test_toast_knows_the_ai_fill_run():
-    src = open('static/js/toast-controller.js').read()
+    src = open(os.path.join(REPO_ROOT, 'static/js/toast-controller.js')).read()
     assert "this.pollingEndpoints.set('ai-fill', '/api/ai-fill-bulk/status');" in src
     assert "endpoint = '/api/ai-fill-bulk/cancel';" in src
     # Toast colours are theme variables, not fixed colours.
@@ -289,5 +291,5 @@ def test_toast_knows_the_ai_fill_run():
 def test_a_toast_without_a_paused_field_is_not_shown_paused():
     """classList.toggle('paused', undefined) flips the class, so a job whose
     status has no `paused` field drew its toast title as paused."""
-    src = open('static/js/toast-controller.js').read()
+    src = open(os.path.join(REPO_ROOT, 'static/js/toast-controller.js')).read()
     assert 'const isPaused = data.paused;' not in src

@@ -114,6 +114,8 @@ class TestInstallGlobalRedactor:
         import log_manager
 
         root = logging.getLogger()
+        saved_root = list(root.filters)
+        saved_handlers = [(h, list(h.filters)) for h in root.handlers]
         # Start clean so a prior test run doesn't taint the count.
         root.filters = [f for f in root.filters if not isinstance(f, SecretRedactor)]
 
@@ -124,9 +126,11 @@ class TestInstallGlobalRedactor:
             redactors = [f for f in root.filters if isinstance(f, SecretRedactor)]
             assert len(redactors) == 1
         finally:
-            # Strip whatever SecretRedactor instances this test installed so
-            # subsequent tests / files see a clean root logger.
-            root.filters = [f for f in root.filters if not isinstance(f, SecretRedactor)]
+            # Put back exactly what the root logger and its handlers held
+            # before (app import installs a redactor that later tests rely on).
+            root.filters = saved_root
+            for h, flt in saved_handlers:
+                h.filters = flt
 
     def test_install_covers_basicconfig_handler(self):
         # caplog removed — it was an unused fixture parameter (the assertion
@@ -138,6 +142,8 @@ class TestInstallGlobalRedactor:
         # and confirm install_global_redactor() attaches SecretRedactor to it.
         buf = io.StringIO()
         root = logging.getLogger()
+        saved_root = list(root.filters)
+        saved_handlers = [(h, list(h.filters)) for h in root.handlers]
         handler = logging.StreamHandler(buf)
         handler.setFormatter(logging.Formatter("%(message)s"))
         root.addHandler(handler)
@@ -150,9 +156,10 @@ class TestInstallGlobalRedactor:
             )
         finally:
             root.removeHandler(handler)
-            # Strip any redactor this call attached to the root logger so
-            # subsequent tests / files see a clean filter list.
-            root.filters = [f for f in root.filters if not isinstance(f, SecretRedactor)]
+            # Restore the root logger's and its handlers' filters as found.
+            root.filters = saved_root
+            for h, flt in saved_handlers:
+                h.filters = flt
 
     def test_filter_redacts_dict_args(self):
         """Coverage gap (audit MED): SecretRedactor.filter must also redact

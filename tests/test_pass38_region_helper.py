@@ -60,10 +60,11 @@ class TestNormalizeRegion:
             'region_options': ['USA', 'Europe', 'Japan', 'World'],
             'default_region': 'USA',
         })
-        metadata = {'region': 'World, Europe, USA'}
+        metadata = {'region': 'Mars, World, Europe'}
         result = {'filled_fields': []}
         hybrid_scraper._normalize_region(metadata, result)
-        # 'World' is first match in region_options (case-insensitive).
+        # The first PART that is a configured option wins: not the first
+        # part ('Mars', unlisted) and not the first option ('Europe').
         assert metadata['region'] == 'World'
         # No (default) tag — region was present, just multi-valued.
         assert 'region (default)' not in result['filled_fields']

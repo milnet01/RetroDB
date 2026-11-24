@@ -124,6 +124,9 @@ def fake_home(tmp_path, monkeypatch):
     monkeypatch.setenv('HOME', str(home))
     for var in ('XDG_CONFIG_HOME', 'XDG_DATA_HOME'):
         monkeypatch.delenv(var, raising=False)
+    # A system-wide Flatpak under /var/lib/flatpak would change the results.
+    monkeypatch.setattr('routes.launch_settings._flatpak_bin_dirs',
+                        lambda: [home / '.local' / 'share' / 'flatpak' / 'exports' / 'bin'])
     return home
 
 
@@ -348,15 +351,15 @@ def test_appimage_home_dirs_do_not_use_up_the_entry_cap(tmp_path, fake_home, mon
     assert 'pcsx2-qt' in _detect_emulators([root])
 
 
-@pytest.mark.parametrize('mine_first', [True, False])
-def test_a_copy_with_a_portable_script_beats_a_bare_one(tmp_path, fake_home, mine_first):
+@pytest.mark.parametrize('mine', ['0-Mine', 'zz-Mine'])
+def test_a_copy_with_a_portable_script_beats_a_bare_one(tmp_path, fake_home, mine):
     """/mnt/Emulators holds a bare RetroArch AppImage under ES-DE and the
     user's own beside retroarch-portable.sh; the portable one is theirs."""
     root = tmp_path / 'emus'
-    bare, mine = 'ES-DE', 'RetroArch'
-    # tmpfs lists a directory in creation order reversed, so creating the
-    # two in each order covers both walk orders.
-    for sub in ((mine, bare) if mine_first else (bare, mine)):
+    bare = 'ES-DE'
+    # The walk sorts folder names, so the folder names themselves decide the
+    # order: '0-Mine' is walked before ES-DE, 'zz-Mine' after it.
+    for sub in (mine, bare):
         (root / sub).mkdir(parents=True)
         app = root / sub / 'RetroArch-Linux-x86_64.AppImage'
         app.write_text('#!appimage')

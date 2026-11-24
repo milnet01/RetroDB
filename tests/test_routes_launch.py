@@ -164,10 +164,10 @@ class TestLaunchArgsOverrideNeedsManageSettings:
         execute("DELETE FROM games WHERE id = ?", (game_id,))
         execute("DELETE FROM systems WHERE id = ?", (sys_id,))
 
-    def _post_edit(self, client, game_id, value):
+    def _post_edit(self, client, game_id, value, title='INV-2 Game'):
         return client.post(f'/game/{game_id}', data={
             'action': 'edit_metadata',
-            'edit_title': 'INV-2 Game',
+            'edit_title': title,
             'edit_emulator_override_id': '',
             'edit_launch_args_override': value,
         }, headers={'X-CSRF-Token': 'test-csrf-token'})
@@ -176,8 +176,14 @@ class TestLaunchArgsOverrideNeedsManageSettings:
                                               seeded_game):
         game_id, stored = seeded_game
         client = _make_authed_client(app_module, monkeypatch, 'editor')
-        rv = self._post_edit(client, game_id, '-L /tmp/x.so')
+        rv = self._post_edit(client, game_id, '-L /tmp/x.so',
+                             title='INV-2 Edited By Editor')
         assert rv.status_code == 200
+        # The POST was processed (the editor's other field landed), so the
+        # unchanged override is the permission check, not a dropped request.
+        from services.database import query
+        assert query("SELECT title FROM games WHERE id = ?", (game_id,),
+                     one=True)['title'] == 'INV-2 Edited By Editor'
         assert stored() == '--keep-me'
 
     def test_admin_can_change_launch_args(self, app_module, monkeypatch,

@@ -20,6 +20,7 @@ _SINGLETON_NAMES = (
     'museum_generate_job', 'image_resize_job', 'steam_sync_job',
     'xbox_sync_job', 'alt_titles_backfill_job', 'hltb_bulk_job',
     'ss_region_repair_job', 'mame_names_job', 'player_cores_job',  # PASS-59-243
+    'museum_images_job', 'ai_fill_bulk_job', 'mobygames_catch_up_job',
 )
 
 

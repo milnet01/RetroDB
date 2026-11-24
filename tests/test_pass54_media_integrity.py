@@ -140,7 +140,9 @@ class TestClearMissingMediaRefs:
             assert row['fanart'] == '7001_fanart.png', \
                 "fanart ref must be preserved — its dir is empty (mass-missing guard)"
             assert cleared >= 1
-            assert {'field': 'fanart', 'count': 1} in guarded
+            # Other rows in the shared DB may hold fanart refs too: our row
+            # must be counted, not be the only one.
+            assert any(g['field'] == 'fanart' and g['count'] >= 1 for g in guarded)
         finally:
             # The row points at system 1 with FKs off; left behind, it blocks
             # a later test in this worker from deleting a system it got id 1 for.

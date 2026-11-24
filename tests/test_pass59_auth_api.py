@@ -56,6 +56,9 @@ def test_handle_api_errors_still_masks_unexpected_errors():
     with app_module.app.test_request_context('/api/x'):
         resp, status = view_boom()
     assert status == 500
+    # The reply must not leak the exception text or type.
+    leaked = resp.get_data(as_text=True)
+    assert 'boom' not in leaked and 'RuntimeError' not in leaked, leaked
 
 
 # ---------------------------------------------------------------------------
@@ -122,7 +125,8 @@ def test_forced_password_change_still_renders_the_form_for_pages(monkeypatch, se
     client = app_module.app.test_client()
     resp = client.get('/games')
     assert resp.status_code == 200
-    assert b'<form' in resp.data or b'password' in resp.data.lower()
+    assert b'id="change-password-form"' in resp.data
+    assert b'id="new_password"' in resp.data
 
 
 def test_malformed_json_body_is_a_400_envelope(monkeypatch, setup_complete):

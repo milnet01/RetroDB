@@ -29,6 +29,12 @@ def linux(monkeypatch, tmp_path):
     """A Linux x86_64 host, the profile under tmp_path, and one download body
     whose SHA-256 every pin is set to."""
     monkeypatch.setattr('config.BASE_DIR', str(tmp_path / 'base'))
+    # Every path the code reads is moved, not just BASE_DIR: the real profile
+    # (and ~/.config/retroarch) stay out of reach.
+    monkeypatch.setattr('services.player.profile_dir',
+                        lambda: (tmp_path / 'base') / 'data' / 'player')
+    monkeypatch.setattr('services.player._user_system_dir',
+                        lambda: str(tmp_path / 'ra-system'))
     monkeypatch.setattr(player_install, 'host', lambda: 'linux')
     body = b'retroarch-archive'
     sha = hashlib.sha256(body).hexdigest()

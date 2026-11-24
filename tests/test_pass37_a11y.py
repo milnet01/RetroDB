@@ -213,9 +213,10 @@ def test_37_5_game_detail_no_h1_h3_jump():
 
 
 def test_37_5_settings_h4_promoted_to_h3():
-    src = read_source('templates/settings.html')
+    # Shell plus the _settings_tabs partials: the tab content lives there.
+    src = read_settings_with_partials()
     # No <h4> opener remains outside generated/dropdown markup.
-    assert not re.search(r'<h4\b', src), 'settings.html still has <h4 tags'
+    assert not re.search(r'<h4\b', src), 'settings page still has <h4 tags'
 
 
 # -----------------------------------------------------------------------------

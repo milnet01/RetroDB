@@ -7,6 +7,7 @@ rating boards, and one explicit JSON null used to discard a whole record.
 
 import collections
 import os
+from tests._util import REPO_ROOT
 import re
 
 import pytest
@@ -84,7 +85,7 @@ def test_cross_map_leaves_given_ratings_alone():
 def test_screenscraper_single_result_is_scored():
     """`_pick_best_fallback` must be called unconditionally; the length test
     accepted a lone result with no score at all (scrapers.md §6)."""
-    src = open('scraper/hybrid_scraper.py').read()
+    src = open(os.path.join(REPO_ROOT, 'scraper/hybrid_scraper.py')).read()
     assert 'if len(ss_results) > 1 else ss_results[0]' not in src
     assert '_pick_best_fallback(ss_results, game_title)' in src
 
@@ -109,7 +110,7 @@ def test_force_rescrape_seeds_derived_fields_from_the_row():
     """region and save_type are DERIVED, not source-supplied, so force mode
     must not let a default ('USA') and a folder guess overwrite curated
     values through COALESCE."""
-    src = open('scraper/hybrid_scraper.py').read()
+    src = open(os.path.join(REPO_ROOT, 'scraper/hybrid_scraper.py')).read()
     block = src[src.index('if force_overwrite:'):]
     assert "for field in ('region', 'save_type'," in block
     assert 'metadata[field] = game.get(field) or None' in block
@@ -170,7 +171,7 @@ def test_download_image_deletes_and_fails_on_finalize_error(tmp_path, monkeypatc
 
 
 def test_download_image_no_longer_swallows_finalize_failure():
-    src = open('scraper/base_scraper.py').read()
+    src = open(os.path.join(REPO_ROOT, 'scraper/base_scraper.py')).read()
     assert "pass  # Non-critical — don't fail the download" not in src
 
 
@@ -202,7 +203,7 @@ def test_screenscraper_zombies_are_deleted():
 def test_no_screenscraper_response_url_is_returned():
     """fetch_system_media returned response.url, which carries sspassword=
     and devpassword= — handing a credential to whatever wired it up."""
-    src = open('scraper/scrape_screenscraper.py').read()
+    src = open(os.path.join(REPO_ROOT, 'scraper/scrape_screenscraper.py')).read()
     assert 'return response.url' not in src
 
 
@@ -214,7 +215,7 @@ def test_xbox_uses_the_sanctioned_http_layer():
     """scrapers.md §10/§14: every API call goes through http_get/http_post,
     which is what supplies the shared session, 429/Retry-After backoff and
     the response-size cap."""
-    src = open('scraper/scrape_xbox.py').read()
+    src = open(os.path.join(REPO_ROOT, 'scraper/scrape_xbox.py')).read()
     code = '\n'.join(l for l in src.split('\n') if not l.lstrip().startswith('#'))
     assert not re.search(r'\brequests\.(get|post)\s*\(', code)
     assert 'from scraper.base_scraper import http_get' in src
@@ -222,7 +223,7 @@ def test_xbox_uses_the_sanctioned_http_layer():
 
 def test_xbox_calls_cap_the_reply_body():
     """Every OpenXBL call goes through _get, which caps the reply (PASS-59-261)."""
-    src = open('scraper/scrape_xbox.py').read()
+    src = open(os.path.join(REPO_ROOT, 'scraper/scrape_xbox.py')).read()
     body = src[src.index('def _get('):src.index('def _json(')]
     assert 'max_bytes=' in body
     assert src.count('http_get(') == 1
@@ -281,7 +282,7 @@ def test_screenscraper_null_field_keeps_the_record():
 
 
 def test_screenscraper_has_no_remaining_null_unsafe_defaults():
-    src = open('scraper/scrape_screenscraper.py').read()
+    src = open(os.path.join(REPO_ROOT, 'scraper/scrape_screenscraper.py')).read()
     assert not re.search(r'\.get\([^)]*,\s*\{\}\)\s*\.', src)
     assert not re.search(r'\.get\([^)]*,\s*""\)\.(lower|upper)\(\)', src)
 

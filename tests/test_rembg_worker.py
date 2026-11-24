@@ -94,10 +94,12 @@ def test_the_museum_never_loads_rembg_itself(monkeypatch):
             sent.append(data)
             return b'cut'
     monkeypatch.setattr(rembg_worker, 'get', lambda: Remover())
-    before = 'rembg' in sys.modules
+    # An earlier test may have left rembg loaded; start from a clean slate so
+    # 'not loaded afterwards' means something. Restored at teardown.
+    monkeypatch.delitem(sys.modules, 'rembg', raising=False)
     assert museum._remove_background(PHOTO) == b'cut'
     assert sent == [PHOTO]
-    assert ('rembg' in sys.modules) == before
+    assert 'rembg' not in sys.modules
 
 
 def test_the_real_helper_falls_back_to_cpu_then_exits_when_idle():

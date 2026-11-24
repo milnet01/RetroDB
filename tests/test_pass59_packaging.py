@@ -59,12 +59,12 @@ class TestPass59_10StandaloneLaunchers:
 
     @pytest.mark.parametrize('name', STANDALONE)
     def test_standalone_launcher_runs_the_binary(self, name):
-        assert 'retrodb' in _read('packaging', 'standalone', name)
+        assert 'retrodb' in _code(_read('packaging', 'standalone', name))
 
     def test_build_standalone_ships_them(self):
         """build_standalone must take the launcher from packaging/standalone/,
         not the repo root."""
-        src = _read('build_dist.py')
+        src = _code(_read('build_dist.py'))
         body = src[src.index('def build_standalone'):src.index('def main(')]
         assert 'packaging/standalone/' in body
 
@@ -101,7 +101,7 @@ class TestBrowserOpening:
 
     @pytest.mark.parametrize('name', ['start.sh', 'start.command', 'start.bat'])
     def test_source_launcher_leaves_it_to_the_server(self, name):
-        src = _read(name)
+        src = _code(_read(name))
         assert 'RETRODB_OPEN_BROWSER=1' in src
         assert 'http://localhost:${SERVER_PORT}" ' not in src   # sh / command
         assert 'start "" http' not in src                       # bat
@@ -176,7 +176,7 @@ class TestPass59_12LauncherInstallPath:
 
     @pytest.mark.parametrize('name', LAUNCHERS)
     def test_delegates_to_the_installer(self, name):
-        assert 'install.py' in _read(name)
+        assert 'install.py' in _code(_read(name))
 
     def test_installer_still_prefers_the_lockfile(self):
         """The delegation is only worth anything if install.py's path is the
@@ -418,7 +418,7 @@ class TestPass59_17RocmOverrideGated:
                 pytest.fail('HSA_OVERRIDE_GFX_VERSION is exported at top level')
 
     def test_gated_on_the_card_and_the_environment(self):
-        src = _read('start.sh')
+        src = _code(_read('start.sh'))
         assert 'HSA_OVERRIDE_GFX_VERSION:-' in src, 'an explicit value must win'
         assert 'gfx1032' in src, 'the override must be gated on the card'
 

@@ -109,11 +109,14 @@ def factory_snapshot():
     test in the session (test-audit c-004 HIGH isolation finding).
     The `client` fixture already does this for its dependents — these
     three tests bypass `client`, so they need their own restore hook."""
+    import log_manager
     original = logging.getLogRecordFactory()
+    installed = log_manager._request_id_installed
     try:
         yield
     finally:
         logging.setLogRecordFactory(original)
+        log_manager._request_id_installed = installed
 
 
 class TestRequestIdFactory:
@@ -197,17 +200,24 @@ class TestSlowRequestLogging:
         assert 'GET /games' in msg
         assert 'status=204' in msg
 
-    def test_probe_endpoints_exempt_from_slow_log(self, client, caplog):
+    def test_probe_endpoints_exempt_from_slow_log(self, caplog):
+        """A probe request that is over the threshold logs nothing; the same
+        elapsed time on a normal route does. (A threshold of 0 would return
+        before the probe exemption is even checked.)"""
+        import app as app_module
         import config
+        from flask import g
 
-        # Register a probe-named route that would otherwise be slow.
-        # Can't rename /health/ready, so simulate by forcing threshold=0
-        # which short-circuits. This test confirms the threshold knob works.
-        caplog.clear()  # don't inherit records from earlier tests in the module
-        with patch.object(config, 'SLOW_REQUEST_MS', 0):
-            with caplog.at_level(logging.WARNING):
-                resp = client.get('/health')
-                assert resp.status_code == 200
+        def slow_msgs_for(path):
+            caplog.clear()
+            with patch.object(config, 'SLOW_REQUEST_MS', 100):
+                with caplog.at_level(logging.WARNING, logger='app'):
+                    with app_module.app.test_request_context(path, method='GET'):
+                        g.request_start_time = time.perf_counter() - 5.0
+                        app_module.log_slow_request(
+                            app_module.app.response_class('', status=200))
+            return [r for r in caplog.records if 'slow_request' in r.getMessage()]
 
-            slow_msgs = [r for r in caplog.records if 'slow_request' in r.getMessage()]
-            assert slow_msgs == []
+        assert slow_msgs_for('/games'), "control: a slow normal route must log"
+        assert slow_msgs_for('/health') == []
+        assert slow_msgs_for('/ready') == []

@@ -9,7 +9,6 @@
 
 import sqlite3
 import threading
-import time
 
 import pytest
 
@@ -41,23 +40,27 @@ def fallbacks(monkeypatch):
     monkeypatch.setattr(hybrid_scraper, 'load_scraper_settings', lambda: {
         'priority': ['tgdb', 'igdb'], 'api_keys': {}, 'enabled': {},
     })
-    barrier = threading.Barrier(2, timeout=2)
+    barrier = threading.Barrier(2, timeout=10)
+    igdb_done = threading.Event()
     finished = []
 
-    def _fetch(name, delay):
+    def _fetch(name, wait_for=None):
         def fetch(source_id):
             try:
                 barrier.wait()
             except threading.BrokenBarrierError:
                 return None
-            time.sleep(delay)
+            if wait_for is not None:
+                wait_for.wait(10)  # finish order by event, not by a sleep
             finished.append(name)
+            if name == 'igdb':
+                igdb_done.set()
             return {'genre': f'{name}-genre'}
         return fetch
 
     # TGDB, first in priority, finishes last.
-    monkeypatch.setattr(hybrid_scraper, 'fetch_tgdb_extended', _fetch('tgdb', 0.2))
-    monkeypatch.setattr(hybrid_scraper, 'fetch_igdb_extended', _fetch('igdb', 0))
+    monkeypatch.setattr(hybrid_scraper, 'fetch_tgdb_extended', _fetch('tgdb', igdb_done))
+    monkeypatch.setattr(hybrid_scraper, 'fetch_igdb_extended', _fetch('igdb'))
 
     applied = []
 

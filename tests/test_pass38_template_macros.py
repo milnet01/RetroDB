@@ -206,7 +206,10 @@ class TestSourceGrepRegressions:
         assert "_macros/sticky_subnav.html" in src
 
     def test_no_raw_tab_subnav_in_settings(self):
-        src = _read("settings.html")
+        # The shell and every tab partial: the tab content lives in the partials.
+        src = _read("settings.html") + "".join(
+            p.read_text(encoding="utf-8")
+            for p in sorted((TEMPLATES_DIR / "_settings_tabs").glob("*.html")))
         # The old shape was `<div class="tab-subnav sticky-subnav" ...>`.
         assert 'class="tab-subnav sticky-subnav"' not in src, (
             "settings.html still contains a raw tab-subnav block — convert it "

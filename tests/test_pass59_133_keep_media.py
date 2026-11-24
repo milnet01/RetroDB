@@ -2,7 +2,9 @@
 from scraper.hybrid_scraper import _seed_kept_media
 
 
-def test_seeds_media_on_disk_and_skips_stale_and_text_fields():
+def test_seeds_media_on_disk_and_skips_stale_and_text_fields(tmp_path, monkeypatch):
+    # An empty screenshots folder of its own, not conftest's shared one.
+    monkeypatch.setattr('scraper.hybrid_scraper.IMAGE_PATH', str(tmp_path))
     metadata = {'boxart': None, 'fanart': None, 'game_logo': None, 'video': None,
                 'screenshots': None, 'description': None}
     game = {'boxart': 'a.png', 'fanart': 'gone.png', 'game_logo': 'l.png', 'video': None,

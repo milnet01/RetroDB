@@ -73,3 +73,37 @@ class TestMuseumUploadCap:
         # (see app.py: `app.config['MAX_CONTENT_LENGTH'] = config.MAX_UPLOAD_BYTES`).
         assert hasattr(config, 'MAX_UPLOAD_BYTES')
         assert config.MUSEUM_UPLOAD_MAX_BYTES <= config.MAX_UPLOAD_BYTES
+
+    def test_oversize_upload_gets_413_from_the_route(self, monkeypatch, admin_test_client):
+        """Send a real multipart upload over the museum cap; the route itself
+        must answer 413 (not the 'too small'/'not an image' paths)."""
+        import io
+        import config
+        import routes.museum as museum
+
+        class _Row:
+            def fetchone(self):
+                return {'id': 1, 'name': 'pad'}
+
+        class _Db:
+            def execute(self, *a, **k):
+                return _Row()
+
+        monkeypatch.setattr(museum, 'get_request_db', lambda: _Db())
+        monkeypatch.setattr(config, 'MUSEUM_UPLOAD_MAX_BYTES', 1024)
+        client, csrf = admin_test_client()
+        resp = client.post(
+            '/api/museum/controller-image-upload/1',
+            data={'image': (io.BytesIO(b'x' * 4096), 'big.png')},
+            content_type='multipart/form-data',
+            headers={'X-CSRF-Token': csrf},
+        )
+        assert resp.status_code == 413, resp.get_data(as_text=True)[:200]
+        # Under the cap the same request must not be a 413.
+        resp = client.post(
+            '/api/museum/controller-image-upload/1',
+            data={'image': (io.BytesIO(b'x' * 500), 'small.png')},
+            content_type='multipart/form-data',
+            headers={'X-CSRF-Token': csrf},
+        )
+        assert resp.status_code != 413

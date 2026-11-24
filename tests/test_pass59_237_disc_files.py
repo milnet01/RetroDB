@@ -108,7 +108,9 @@ def dup_scan(rom_client, monkeypatch):  # noqa: F811
             if tools._rom_tool_tasks[task_id]['status'] != 'running':
                 break
             time.sleep(0.02)
-        return task_id, tools._rom_tool_tasks[task_id]['results']['groups']
+        task = tools._rom_tool_tasks[task_id]
+        assert task['status'] == 'completed', f"scan did not finish: {task['status']!r}"
+        return task_id, task['results']['groups']
     yield post, roms, run
     app_module.limiter.reset()
 
@@ -154,10 +156,16 @@ def test_delete_keeps_a_disc_a_playlist_lists(dup_scan):
     for f in (listed, loose):
         f.write_bytes(b'same')
     (roms / 'Game.m3u').write_text('Game/Game (Disc 1).chd\n')
-    task_id, _groups = run('hash')
+    task_id, groups = run('hash')
+    # Both copies are in the scan result, so 0 deleted can only be the
+    # playlist guard, not "the file was never offered".
+    offered = {f['path'] for g in groups for f in g['files']}
+    assert str(listed) in offered, groups
     resp = post('/api/rom-tools/duplicate-finder/delete',
                 {'task_id': task_id, 'files': [str(listed)]})
-    assert resp.get_json()['results']['deleted'] == 0
+    results = resp.get_json()['results']
+    assert results['deleted'] == 0
+    assert not any('Not in the scan results' in e for e in results.get('errors', []))
     assert listed.exists()
 
 

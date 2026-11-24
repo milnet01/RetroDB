@@ -192,8 +192,15 @@ def reloaded_app(monkeypatch):
 
     saved_app = sys.modules.get("app")
     saved_config = sys.modules.get("config")
+    modules_before = set(sys.modules)
 
     yield _reload
+
+    # Modules first imported during the reload hold the reloaded config; drop
+    # them so a later import binds to the restored one.
+    for name in set(sys.modules) - modules_before:
+        if name.split(".")[0] in ("routes", "services", "scraper", "app", "config"):
+            sys.modules.pop(name, None)
 
     # Restore the ORIGINAL module objects (not a fresh re-import) so their
     # identity is preserved for later tests. A fresh `import config` here would

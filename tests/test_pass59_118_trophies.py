@@ -72,6 +72,7 @@ def test_dashboard_achievement_totals_are_the_callers(ra_db):  # noqa: F811
     import app as app_module
     from flask import g
     conn, _sys_id, ids = ra_db
+    added_user = conn.execute("SELECT 1 FROM users WHERE id = 2").fetchone() is None
     conn.execute("INSERT OR IGNORE INTO users (id, username, password_hash, role) "
                  "VALUES (2, 'other-stub', 'x', 'user')")
     conn.execute("UPDATE game_achievement_progress SET earned_achievements = 5, "
@@ -91,6 +92,8 @@ def test_dashboard_achievement_totals_are_the_callers(ra_db):  # noqa: F811
     finally:
         conn.execute("DELETE FROM game_achievement_progress WHERE game_id = ? AND user_id = 2",
                      (ids['ra'],))
+        if added_user:
+            conn.execute("DELETE FROM users WHERE id = 2")
         conn.commit()
 
 

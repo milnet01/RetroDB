@@ -99,14 +99,19 @@ def test_failed_update_keeps_the_replaced_boxart(vdb, admin_test_client, monkeyp
     import routes.games as games_routes
     real_execute = games_routes.execute
 
+    raised = []
+
     def failing(sql, args=()):
         if 'UPDATE games SET' in sql and 'boxart_3d = NULLIF' in sql:
+            raised.append(sql)
             raise sqlite3.OperationalError('database is locked')
         return real_execute(sql, args)
     monkeypatch.setattr(games_routes, 'execute', failing)
     game_id = vdb.game('Boxed', boxart='old.png')
     client, csrf = admin_test_client()
-    _post_boxart(client, csrf, game_id)
+    resp = _post_boxart(client, csrf, game_id)
+    assert raised, 'the injected failure never fired: the test checks nothing'
+    assert resp.status_code != 200 or not (resp.get_json(silent=True) or {}).get('success', False)
     assert upload_spy == []
     assert vdb.conn.execute("SELECT boxart FROM games WHERE id = ?",
                             (game_id,)).fetchone()[0] == 'old.png'

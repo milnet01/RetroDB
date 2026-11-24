@@ -14,6 +14,7 @@ migration runner alone, so the test client's DB *is* a fresh-install schema —
 exactly what this asserts against.
 """
 
+import pathlib
 import sqlite3
 
 import pytest
@@ -96,20 +97,18 @@ def test_fresh_psn_sync_status_upsert_matches_partial_index():
     every fresh install (and on the legacy DB, which carries the same index).
     This pins the routes/trophies.py upsert against the shipped index shape.
     """
+    # Use the route's own SQL, not a copy: lift the statement out of the source.
+    import re
+    src = (pathlib.Path(__file__).resolve().parent.parent
+           / "routes" / "trophies.py").read_text(encoding="utf-8")
+    m = re.search(r"INSERT INTO psn_sync_status.*?(?=\n\s*\"\"\")", src, re.S)
+    assert m, "psn_sync_status upsert not found in routes/trophies.py"
+    sql = m.group(0)
+    assert "ON CONFLICT(user_id) WHERE user_id IS NOT NULL" in sql
     conn = sqlite3.connect(config.DB_PATH)
     try:
         for name in ("first", "second"):
-            conn.execute(
-                """
-                INSERT INTO psn_sync_status
-                    (user_id, username, sync_in_progress, last_full_sync,
-                     trophy_level, avatar_url)
-                VALUES (1, ?, 1, datetime('now'), 5, '')
-                ON CONFLICT(user_id) WHERE user_id IS NOT NULL DO UPDATE SET
-                    username = excluded.username
-                """,
-                (name,),
-            )
+            conn.execute(sql, (1, name, 5, ""))
         conn.commit()
         row = conn.execute(
             "SELECT username FROM psn_sync_status WHERE user_id = 1"

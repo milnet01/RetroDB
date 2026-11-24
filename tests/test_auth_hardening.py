@@ -72,14 +72,30 @@ class TestPasswordRequiredForAllRoles:
                     f"on empty body: {body!r}"
                 )
 
-    def test_create_user_seeds_changeme_for_non_admin(self):
-        """Pass 24.1 migration: new editor/viewer accounts now get the
-        same `changeme` + force_password_change=1 onboarding as admin."""
+    @pytest.mark.parametrize('role', ['editor', 'viewer'])
+    def test_create_user_stores_a_hash_for_non_admin(self, admin_test_client,
+                                                     monkeypatch, role):
+        """New editor/viewer accounts get a real password hash (never NULL)
+        and must change the password at first sign-in. Behaviour check: the
+        route is called and the INSERT's parameters are inspected."""
         from routes import auth as auth_mod
-        src = read_module_source(auth_mod)
-        # The legacy `password_hash = None` branch is gone; every role
-        # gets a hashed password (explicit or default).
-        assert "password_hash = None" not in src
+        inserts = []
+        monkeypatch.setattr(auth_mod, 'query', lambda *a, **kw: None)
+
+        def _execute(sql, params=()):
+            inserts.append((sql, tuple(params)))
+            return 1
+        monkeypatch.setattr(auth_mod, 'execute', _execute)
+        client, csrf = admin_test_client()
+        resp = client.post('/api/users/create', headers={'X-CSRF-Token': csrf},
+                           json={'username': 'hash-check', 'role': role,
+                                 'password': 'a-long-enough-password'})
+        assert resp.status_code == 200, resp.get_json()
+        sql, params = next(i for i in inserts if 'INSERT INTO users' in i[0])
+        username, _display, pw_hash, got_role, must_change = params
+        assert got_role == role
+        assert pw_hash and pw_hash != 'a-long-enough-password'
+        assert must_change == 1
 
 
 # =============================================================================
@@ -163,6 +179,28 @@ class TestSessionRotationOnLogin:
                     f"open-door pass — login returned 200 with success=True "
                     f"for non-existent user 999999: {body!r}"
                 )
+            # A refused login does not reach session.clear(); it must not log in.
+            with client.session_transaction() as sess:
+                assert 'user_id' not in sess
+
+    def test_successful_login_discards_planted_session_key(self, anon_client, monkeypatch):
+        """The refused-login test above cannot reach session.clear(). Drive a
+        login that succeeds (user lookup and password check stubbed) and
+        check the planted key is gone and the real user is signed in."""
+        import routes.auth as auth_mod
+        user = {'id': 7, 'password_hash': 'stub-hash', 'role': 'editor'}
+        monkeypatch.setattr(auth_mod, 'rate_limit_login', lambda ip: True)
+        monkeypatch.setattr(auth_mod, 'query', lambda *a, **k: user)
+        monkeypatch.setattr(auth_mod, 'verify_password', lambda pw, h: True)
+        monkeypatch.setattr(auth_mod, 'needs_rehash', lambda h: False)
+        monkeypatch.setattr(auth_mod, 'execute', lambda *a, **k: None)
+        with anon_client.session_transaction() as sess:
+            sess['leftover_pre_login'] = 'attacker-planted'
+        resp = anon_client.post('/api/login', json={'user_id': 7, 'password': 'pw'})
+        assert resp.status_code == 200, resp.get_data(as_text=True)[:200]
+        with anon_client.session_transaction() as sess:
+            assert 'leftover_pre_login' not in sess, "planted key survived login"
+            assert sess.get('user_id') == 7
 
 
 # =============================================================================
@@ -396,6 +434,9 @@ class TestSecretRedactorBroadened:
         # other rules might still hit it. Assert that the sensitive-field
         # rule didn't fire (no "<redacted-token>" in output).
         assert "commit marker" in redacted
+        # The long token itself must survive: a redactor that wipes every
+        # long alphanumeric run would drop it.
+        assert "AbcDefGhIjKlMnOpQrStUvWxYz123456789" in redacted
 
 
 # =============================================================================

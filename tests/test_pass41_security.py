@@ -277,6 +277,17 @@ class TestPass41_2AMigrationDeferForeignKeys:
 # -----------------------------------------------------------------------------
 # 41.2.B — connection leaks routed through teardown-managed get_request_db
 # -----------------------------------------------------------------------------
+def _calls_get_request_db(source: str) -> bool:
+    """True when the module really calls get_request_db() (an import or a
+    comment naming it does not count)."""
+    import ast
+    return any(
+        isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
+        and n.func.id == 'get_request_db'
+        for n in ast.walk(ast.parse(source))
+    )
+
+
 class TestPass41_2BConnectionLeaksClosed:
     """`get_db()` opens a fresh sqlite3.Connection that the caller must close.
     routes/museum.py (8 sites), routes/tools.py:1316, routes/trophies.py:1804
@@ -305,8 +316,8 @@ class TestPass41_2BConnectionLeaksClosed:
                     f"routes/museum.py still has bare get_db() call: {stripped!r} "
                     "(Pass 41.2.B)"
                 )
-        assert 'get_request_db' in body, (
-            "routes/museum.py must import get_request_db (Pass 41.2.B)"
+        assert _calls_get_request_db(body), (
+            "routes/museum.py must call get_request_db() (Pass 41.2.B)"
         )
 
     def test_tools_screenshot_dedup_uses_get_request_db(self):
@@ -314,16 +325,16 @@ class TestPass41_2BConnectionLeaksClosed:
         # The screenshot-dedup delete path at the previously-leaking line had
         # `db = get_db()` without a close. Confirm a get_request_db site
         # exists; the bare get_db() footprint here is shrinking on this pass.
-        assert 'get_request_db' in body, (
-            "routes/tools.py must import get_request_db (Pass 41.2.B)"
+        assert _calls_get_request_db(body), (
+            "routes/tools.py must call get_request_db() (Pass 41.2.B)"
         )
 
     def test_trophies_psn_npsso_uses_get_request_db(self):
         body = read_source('routes/trophies.py')
         # The PSN /api/psn/save-npsso handler used get_db() without close.
         # After the fix it must reach the request-scoped connection.
-        assert 'get_request_db' in body, (
-            "routes/trophies.py must import get_request_db (Pass 41.2.B)"
+        assert _calls_get_request_db(body), (
+            "routes/trophies.py must call get_request_db() (Pass 41.2.B)"
         )
 
 
@@ -1535,22 +1546,21 @@ class TestPass41_9BPerUserViews:
             "Migration 010_user_game_views must be registered (Pass 41.9.B)"
         )
 
-    def test_track_view_upserts_user_game_views(self):
-        body = read_source('routes/games.py')
-        # Strip comments so the explanatory comment doesn't false-positive.
-        code_only = '\n'.join(
-            line.split('#', 1)[0]
-            for line in body.splitlines()
-        )
-        assert 'INSERT INTO user_game_views' in code_only, (
-            "api_track_view must upsert into user_game_views (Pass 41.9.B)"
-        )
-        # And no longer touches the shared games.last_viewed column.
-        # (The legacy column survives but is not written; assert a per-user
-        # marker comment is present so a reader sees the contract.)
-        assert 'Pass 41.9' in body, (
-            "Pass 41.9 marker comment must explain the per-user move"
-        )
+    def test_track_view_upserts_user_game_views(self, admin_test_client, monkeypatch):
+        """Behaviour: the route writes one per-user upsert and never touches
+        the shared games.last_viewed column."""
+        from routes import games as games_mod
+        calls = []
+        monkeypatch.setattr(games_mod, 'execute',
+                            lambda sql, params=(): calls.append((sql, tuple(params))) or 1)
+        client, csrf = admin_test_client()
+        resp = client.post('/api/game/42/track-view', headers={'X-CSRF-Token': csrf})
+        assert resp.status_code == 200, resp.get_data(as_text=True)
+        assert len(calls) == 1, calls
+        sql, params = calls[0]
+        assert 'INSERT INTO user_game_views' in sql
+        assert 'UPDATE games' not in sql
+        assert params[:2] == (1, 42)
 
     def test_dashboard_query_keys_on_user(self):
         """Dashboard's recently-viewed query must JOIN user_game_views with

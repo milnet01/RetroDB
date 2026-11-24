@@ -57,12 +57,17 @@ def jobs(monkeypatch):
     monkeypatch.setattr(jobs_pkg.ra_refresh_job, 'get_status', lambda: dict(state['refresh']))
     monkeypatch.setattr(jobs_pkg.ra_sync_job, 'start', fake_start('sync'))
     monkeypatch.setattr(jobs_pkg.ra_refresh_job, 'start', fake_start('refresh'))
+    import sys
+    monkeypatch.setattr(sys.modules['services.jobs.ra_queue'], 'POLL_SECONDS', 0.05)
     queue = getattr(jobs_pkg, 'ra_queue', None)
     if queue is not None:
         queue._items.clear()
     yield state, started
     if queue is not None:
         queue._items.clear()
+        watcher = queue._thread
+        if watcher is not None:  # it ends on its next tick with nothing queued
+            watcher.join(2)
     conn = sqlite3.connect(os.environ['RETRODB_DB_PATH'])
     conn.execute("DELETE FROM systems WHERE id = ?", (SYSTEM_ID,))
     conn.execute("DELETE FROM job_queue WHERE job_type LIKE 'ra_%'")
@@ -130,7 +135,7 @@ def test_cancel_takes_a_waiting_job_out(jobs, admin_test_client):
     assert gone.status_code == 404
 
     state['sync'] = _idle()
-    time.sleep(2.5)  # one watcher tick
+    time.sleep(0.5)  # a few watcher ticks (POLL_SECONDS is patched down)
     assert started == []
 
 

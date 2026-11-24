@@ -2,7 +2,7 @@
 import glob
 import re
 
-from tests._util import read_source
+from tests._util import REPO_ROOT, read_source
 
 
 def _rules(css):
@@ -19,7 +19,7 @@ def test_one_focus_ring_in_the_themes_colour_that_nothing_can_hide():
 
 def test_no_focus_rule_names_a_fixed_cyan():
     fixed = re.compile(r'rgba\(76,\s*201,\s*240|#4cc9f0', re.I)
-    bad = [f"{f}: {sel.strip()}" for f in glob.glob('static/css/*/*.css')
+    bad = [f"{f}: {sel.strip()}" for f in glob.glob(f'{REPO_ROOT}/static/css/*/*.css')
            for sel, body in _rules(open(f).read()) if 'focus' in sel and fixed.search(body)]
     assert bad == []
 
@@ -52,7 +52,7 @@ def test_tag_colours_have_names_and_say_which_is_chosen():
 
 
 def test_trophy_pictures_are_named_in_full():
-    found = [f for f in glob.glob('templates/**/*.html', recursive=True)
+    found = [f for f in glob.glob(f'{REPO_ROOT}/templates/**/*.html', recursive=True)
              if re.search(r'alt="[PGSB]"', open(f).read())]
     assert found == []
 

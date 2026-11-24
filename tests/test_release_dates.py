@@ -2,6 +2,9 @@
 returns, storing it fill-only, and showing it."""
 import json
 
+from tests.test_pass59_205_esde_merge import library  # noqa: F401  (fixture)
+from tests.test_pass59_242_user_edits import _scrape
+
 from scraper.scrape_ai import AI_FILLABLE_FIELDS, _build_prompt, _validate_field
 from services.release_dates import (
     display_release_dates, parse_release_dates, release_dates_json,
@@ -52,10 +55,12 @@ def test_gap_fill_never_replaces_stored_dates():
     assert 'release_dates (AI)' in result['filled_fields']
 
 
-def test_hybrid_save_writes_the_column_fill_only():
-    from tests._util import read_source
-    src = read_source('scraper/hybrid_scraper.py')
-    assert 'release_dates = COALESCE(?, release_dates)' in src
+def test_hybrid_save_writes_the_column_fill_only(library):
+    # A scrape whose sources give no regional dates leaves the stored ones alone.
+    stored = '{"JP": "2002-11-17"}'
+    library.add_game(release_dates=stored)
+    _scrape()
+    assert library.row()['release_dates'] == stored
 
 
 def test_display_is_earliest_first_and_localised():

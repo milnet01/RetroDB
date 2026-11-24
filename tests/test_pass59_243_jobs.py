@@ -66,19 +66,35 @@ def bulk():
             release_job_singleton_lock(job._singleton_fd)
 
 
+class _PauseSignal:
+    """Stands in for `shutdown_requested`: tells the test the worker is in its pause loop."""
+
+    def __init__(self, real, in_pause):
+        self._real, self._in_pause = real, in_pause
+
+    def wait(self, timeout=None):
+        self._in_pause.set()
+        return self._real.wait(timeout)
+
+    def __getattr__(self, name):
+        return getattr(self._real, name)
+
+
 def test_a_replaced_worker_leaves_the_new_job_alone(bulk):
     """After the swap's 60 s wait the old worker kept going beside the new
     one, and its end marked the new job completed."""
-    _mod, jobs = bulk
+    mod, jobs = bulk
     job = BulkScrapeJob()
     jobs.append(job)
+    in_pause = threading.Event()
     with patch('scraper.scraper_manager.load_scraper_settings', return_value={'enabled': {}}), \
-         patch('scraper.scraper_manager.get_match_settings', return_value={}):
+         patch('scraper.scraper_manager.get_match_settings', return_value={}), \
+         patch.object(mod, 'shutdown_requested', _PauseSignal(mod.shutdown_requested, in_pause)):
         job.game_ids = [None, None, None]
         job.running, job.paused = True, True
         old = threading.Thread(target=job._run_scrape, daemon=True)
         old.start()
-        threading.Event().wait(0.3)          # the old worker waits in its pause
+        assert in_pause.wait(10), 'the old worker never reached its pause'
         with job._lock:                      # a swap that gave up waiting
             job.reset()
             job.job_id, job.running = 'new', True

@@ -18,6 +18,7 @@ and a missing file falls back to English. What these tests catch is a file
 that IS present and disagrees.
 """
 import collections
+import functools
 import glob
 import os
 import re
@@ -33,7 +34,9 @@ from tests._util import REPO_ROOT
 KNOWN_TAG_GAPS = set()
 
 
+@functools.lru_cache(maxsize=None)
 def _load_yaml(path):
+    # Parsed once per file: several tests read every changelog. Read-only.
     with open(path, encoding='utf-8') as f:
         return yaml.safe_load(f)
 

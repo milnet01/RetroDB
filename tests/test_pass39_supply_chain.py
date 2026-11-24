@@ -70,15 +70,24 @@ class TestPass39_4LockfileHashes:
             "requirements.lock has no `name==version \\` entries — lockfile "
             "shape changed; update this test."
         )
-        # Each pinned line should be followed (within a few lines) by at least
-        # one --hash=sha256: line. Cheap structural check: the file should
-        # contain at least as many `--hash=sha256:` lines as pinned packages.
-        hash_count = src.count('--hash=sha256:')
-        assert hash_count >= len(pinned_lines), (
-            f"requirements.lock has {len(pinned_lines)} pinned packages but "
-            f"only {hash_count} `--hash=sha256:` entries — at least one "
-            f"package is missing hashes (re-run pip-compile --generate-hashes)."
-        )
+        # Per package: every pin block (including pins with an environment
+        # marker, which the regex above skips) must hold its own hash line.
+        # A total count could hide one unhashed pin behind another's extras.
+        blocks, current = [], None
+        for line in src.splitlines():
+            if re.match(r'^[A-Za-z0-9_.\-]+(\[[^\]]*\])?==\S+', line):
+                current = [line]
+                blocks.append(current)
+            elif current is not None and line.strip() and not line.startswith('#'):
+                current.append(line)
+            else:
+                current = None
+        assert len(blocks) >= len(pinned_lines)
+        unhashed = [b[0] for b in blocks
+                    if not any('--hash=sha256:' in ln for ln in b)]
+        assert not unhashed, (
+            f"pinned packages without a `--hash=sha256:` entry: {unhashed} "
+            f"(re-run the compile with --generate-hashes).")
 
     def test_lockfile_header_records_generate_hashes_recipe(self):
         """The compiler writes the regeneration command into the lockfile

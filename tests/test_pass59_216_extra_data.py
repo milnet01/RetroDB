@@ -232,7 +232,9 @@ def test_approving_a_stored_match_does_not_lose_them(db):  # noqa: F811
     game_id = _game(db, 'Spider-Man 2', platform='PC')
     db.execute("UPDATE games SET hltb_id = 42, hltb_players = 613 WHERE id = ?", (game_id,))
     db.commit()
-    pending_queue.queue_stored_suspects()
+    # Something must really be queued, or approve_all has nothing to approve.
+    assert pending_queue.queue_stored_suspects() == 1
+    assert db.execute("SELECT COUNT(*) FROM hltb_pending_matches").fetchone()[0] == 1
     pending_queue.approve_all('stored')
     assert tuple(_hltb_row(db, game_id)) == (42, 613)
 

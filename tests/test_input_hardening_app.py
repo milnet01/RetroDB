@@ -61,10 +61,19 @@ class TestRateLimits:
         import app as app_module
         if not app_module.limiter:
             pytest.skip('flask-limiter not installed')
-        # Smoke assertion: the view functions exist. It does not show a limit
-        # is enforced — import succeeded for years while none was (Pass 59.73).
-        # tests/test_pass59_auth_api.py exceeds a real limit.
+        # Each view must carry a registered limit under the name the limiter
+        # looks up at request time. Removing the _rate_limit(...) call (or
+        # discarding the wrapper, Pass 59.73) leaves the list empty.
         funcs = app_module.app.view_functions
-        assert 'games_hltb.api_hltb_lookup' in funcs
-        assert 'museum.generate_system' in funcs
-        assert 'collector_trophies.refresh_trophies' in funcs
+        expected = {
+            'games_hltb.api_hltb_lookup': 'hour',
+            'museum.generate_system': 'hour',
+            'collector_trophies.refresh_trophies': 'hour',
+        }
+        for endpoint, unit in expected.items():
+            view = funcs[endpoint]
+            name = f"{view.__module__}.{view.__name__}.{view.__name__}"
+            limits = app_module.limiter.limit_manager.decorated_limits(name)
+            assert limits, f"{endpoint}: no rate limit registered under {name}"
+            assert any(unit in str(lim.limit) for lim in limits), (
+                f"{endpoint}: limits {[str(l.limit) for l in limits]}")

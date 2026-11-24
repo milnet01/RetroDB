@@ -823,28 +823,41 @@ class TestPass45_6DecompressionBomb:
     call site catches ``DecompressionBombError`` explicitly so the
     security log records bomb attempts under a distinct line."""
 
+    @staticmethod
+    def _cap_after_importing(module):
+        """Image.MAX_IMAGE_PIXELS is one Pillow-wide global, so check it in a
+        fresh interpreter where ONLY `module` has been imported."""
+        import subprocess
+        import sys
+        code = (
+            "import importlib, PIL.Image as I\n"
+            "assert I.MAX_IMAGE_PIXELS == 89478485, I.MAX_IMAGE_PIXELS\n"
+            f"importlib.import_module({module!r})\n"
+            "print(I.MAX_IMAGE_PIXELS)\n"
+        )
+        # Pillow's own default is 89478485; the module must change it.
+        out = subprocess.run(
+            [sys.executable, '-c', code], cwd=_REPO_ROOT,
+            capture_output=True, text=True, timeout=120,
+            env={**os.environ, 'PYTHONPATH': _REPO_ROOT})
+        assert out.returncode == 0, out.stderr[-500:]
+        return int(out.stdout.strip().splitlines()[-1])
+
     def test_image_utils_module_sets_max_image_pixels(self):
         """Importing services.image_utils must install the cap on the
         global Pillow Image module, not just inside one helper."""
-        import services.image_utils
-        from PIL import Image
-        # The cap is set in services/image_utils.py at import time.
-        assert Image.MAX_IMAGE_PIXELS is not None, (
-            "Image.MAX_IMAGE_PIXELS must be set after services.image_utils "
-            "is imported (Pass 45.6)"
-        )
-        assert Image.MAX_IMAGE_PIXELS <= 64_000_000, (
-            f"Image.MAX_IMAGE_PIXELS = {Image.MAX_IMAGE_PIXELS}; "
-            "must be ≤ 64 megapixels (Pass 45.6)"
-        )
+        cap = self._cap_after_importing('services.image_utils')
+        assert cap <= 64_000_000, (
+            f"Image.MAX_IMAGE_PIXELS = {cap} after importing "
+            "services.image_utils; must be <= 64 megapixels (Pass 45.6)")
 
     def test_game_media_service_module_sets_max_image_pixels(self):
         """Same contract for game_media_service — the upload validator
         runs through Pillow and needs the cap too."""
-        import services.game_media_service
-        from PIL import Image
-        assert Image.MAX_IMAGE_PIXELS is not None
-        assert Image.MAX_IMAGE_PIXELS <= 64_000_000
+        cap = self._cap_after_importing('services.game_media_service')
+        assert cap <= 64_000_000, (
+            f"Image.MAX_IMAGE_PIXELS = {cap} after importing "
+            "services.game_media_service (Pass 45.6)")
 
     def test_validate_image_bytes_rejects_oversized_bomb(self, monkeypatch):
         """Functional smoke: a synthetic image whose declared dimensions
@@ -885,20 +898,36 @@ class TestPass45_6DecompressionBomb:
         catch ``DecompressionBombError`` explicitly so the security log
         shows a distinct rejection line (mirrors the source-grep pattern
         used by Pass 40.13/45.4 for textContent default)."""
+        import ast
         path = os.path.join(_REPO_ROOT, 'services', 'image_utils.py')
         with open(path, encoding='utf-8') as f:
-            body = f.read()
-        open_count = body.count('Image.open(')
-        bomb_catches = body.count('Image.DecompressionBombError')
-        # Expect at least 4 explicit catches — one per Image.open site
-        # in the public API surface (_ensure_format_matches_extension,
-        # _make_responsive_variants, boxart_srcset, standardize_image).
-        # The lazy `from PIL import Image` lines also count as "Image.open"
-        # imports in raw count, so use a >= floor.
-        assert bomb_catches >= 4, (
-            f"Found {open_count} Image.open() sites but only "
-            f"{bomb_catches} DecompressionBombError catches; "
-            "every site must catch the bomb explicitly (Pass 45.6)"
+            tree = ast.parse(f.read())
+
+        def _is_attr(node, owner, name):
+            return (isinstance(node, ast.Attribute) and node.attr == name
+                    and isinstance(node.value, ast.Name) and node.value.id == owner)
+
+        opens = []
+        for fn in ast.walk(tree):
+            if not isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            n_open = sum(
+                isinstance(n, ast.Call) and _is_attr(n.func, 'Image', 'open')
+                for n in ast.walk(fn))
+            n_catch = sum(
+                isinstance(n, ast.ExceptHandler) and n.type is not None
+                and any(_is_attr(t, 'Image', 'DecompressionBombError')
+                        for t in ast.walk(n.type))
+                for n in ast.walk(fn))
+            if n_open:
+                opens.append((fn.name, n_open, n_catch))
+        assert opens, "no Image.open() call sites found in services/image_utils.py"
+        # Each function that opens an image must catch the bomb at least once
+        # per open site (counted in code, so comments and imports don't count).
+        missing = [o for o in opens if o[2] < o[1]]
+        assert not missing, (
+            "Image.open() sites without a DecompressionBombError catch "
+            f"(function, opens, catches): {missing} (Pass 45.6)"
         )
 
 

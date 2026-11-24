@@ -28,7 +28,11 @@ try {
   vm.runInNewContext(src, {window: any, document: any, localStorage: any, navigator: any,
     console, setTimeout() {}, setInterval() {}, fetch: () => new Promise(() => {})});
 } catch (e) {
-  if (/\b(t|tField) is not defined/.test(e.message)) { console.error(e.stack); process.exit(1); }
+  // Only a missing page-bundle global (another ReferenceError) is expected
+  // here; any other load-time throw would hide a later t() call.
+  if (e.name !== 'ReferenceError' || /\b(t|tField) is not defined/.test(e.message)) {
+    console.error(e.stack); process.exit(1);
+  }
 }
 """
 

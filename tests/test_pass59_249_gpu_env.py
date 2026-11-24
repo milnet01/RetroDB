@@ -39,7 +39,10 @@ def test_a_users_own_value_is_kept(tmp_path, monkeypatch):
 
 
 def test_set_for_an_rx_6600(tmp_path, monkeypatch):
-    monkeypatch.delenv('HSA_OVERRIDE_GFX_VERSION', raising=False)
+    # setenv first so monkeypatch records the original and restores it even
+    # when the code under test sets the variable after delenv.
+    monkeypatch.setenv('HSA_OVERRIDE_GFX_VERSION', 'placeholder')
+    monkeypatch.delenv('HSA_OVERRIDE_GFX_VERSION')
     assert gpu_env.apply_rdna2_override(_nodes(tmp_path, 0, 100302)) is True
     import os
     assert os.environ['HSA_OVERRIDE_GFX_VERSION'] == '10.3.0'

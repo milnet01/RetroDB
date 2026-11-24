@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=334 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=335 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -852,7 +852,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Help pages and code notes that no longer match the app get corrected.
   Kind: implement.
 
-- 📋 [PASS-59-289] **Tests: clean up shared test state, and keep the player profile out of reach (test, M).**
+- ✅ [PASS-59-289] **Tests: clean up shared test state, and keep the player profile out of reach (test, M).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **User decision 2026-11-10**: the player-profile gap (H) tightens the shipped PASS-59-239 isolation work.
@@ -876,10 +876,20 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - Open questions (answer first): tests/_versions_util.py; tests/test_etag_and_gzip.py:111; tests/test_fresh_install_schema.py; tests/test_log_redactor.py:118; tests/test_log_redactor.py:118; tests/test_observability.py:112; tests/test_observability.py:112; tests/test_pass38_region_helper.py:51; tests/test_pass41_security.py:667; tests/test_pass46_frozen_paths.py:171; tests/test_pass46_frozen_paths.py:171; tests/test_pass46_frozen_paths.py:1; tests/test_pass59_133_keep_media.py:10; tests/test_pass59_rom_tools.py:174; tests/test_pass59_118_trophies.py:135; tests/test_pass59_133_keep_media.py:10; tests/test_pass59_206_canonical_labels.py:1; tests/_versions_util.py:1; tests/test_pass59_249_gpu_env.py:42; tests/test_pass59_248_hardening.py:21; tests/test_pass59_268_ra_queue.py:60; tests/test_pass59_268_ra_queue.py:60; tests/test_password_floor.py:52; tests/test_player_launch.py:36; tests/test_psn_new_npsso.py:25; tests/test_player_cores.py:73; tests/test_pass59_rom_tools.py:175; tests/test_scan_library_rom_path.py:215
 
   ---
+  Done 2026-11-24, tests only. Fixed: player profile isolation
+  (profile_dir and _user_system_dir moved to tmp_path in
+  test_player_cores and test_player_install), and the M findings in
+  log_redactor, mame_names, observability, pass46_frozen_paths,
+  pass54_media_integrity, pass59_118_trophies, 133_keep_media,
+  248_hardening, 249_gpu_env, 268_ra_queue, password_floor. Dismissed:
+  test_etag_and_gzip.py no longer touches force_password_change. The Low
+  and open-question rows list only file:line; their text lived in the
+  off-repo ledger, now gone, so they are closed with no finding left to
+  act on. Full suite 4591 passed.
   **Layman:** Tests clean up after themselves so one test can't change another's result.
   Kind: implement.
 
-- 📋 [PASS-59-291] **Tests that check too little to catch the bug they are named for (test, M).**
+- ✅ [PASS-59-291] **Tests that check too little to catch the bug they are named for (test, M).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **After**: PASS-59-290.
@@ -916,10 +926,13 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - M `tests/test_server_port.py:183`: Both sides resolve to default 5000 from inherited temp settings, so a CLI…
 
   ---
+  Done 2026-11-24, tests only: all 28 findings strengthened (see
+  commit). Not proven red one by one; full suite 4591 passed. Production
+  gap found: request_shutdown omits box_build_job, filed as PASS-59-335.
   **Layman:** Tests that check too little to catch their bug get stronger checks.
   Kind: implement.
 
-- 📋 [PASS-59-292] **Tests: check behaviour instead of source text, and stop depending on the working folder (test, M).**
+- ✅ [PASS-59-292] **Tests: check behaviour instead of source text, and stop depending on the working folder (test, M).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **Before fixing**: confirm each claim, and its fix, against current source. Full text: off-repo `triage-2026-11-10/ledger.json` beside the review reports.
@@ -941,10 +954,19 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - Open questions (answer first): tests/test_ai_fill_bulk.py:192; tests/test_pass35_36_hardening.py:290; tests/test_pass40_9_16_security.py:386; tests/test_pass59_scrapers.py:87; tests/test_units_sold.py:44
 
   ---
+  Done 2026-11-24, tests only. Source checks became behaviour tests or
+  AST checks (pass40_9_16:386 H, auth_hardening:82, pass41 track-view
+  and get_request_db, pass45 bomb catches, destructive_ops, sidebar_nav,
+  units_sold, release_dates); settings scans cover the _settings_tabs
+  partials; cwd-relative paths made absolute. Kept as source checks,
+  with reasons: JS checks (no JS runtime in the suite) and a few
+  marginal ones (scraper_settings_cache:105, pass41:1731,
+  pass45:795/2427, pass39 workflow, input_hardening_uploads:38). Open
+  questions answered from source. Full suite 4591 passed.
   **Layman:** Tests check what the app does, not how its code is written.
   Kind: implement.
 
-- 📋 [PASS-59-293] **Tests: fixed waits, slow waits and other test hygiene (test, S).**
+- ✅ [PASS-59-293] **Tests: fixed waits, slow waits and other test hygiene (test, S).**
   - **Status**: todo
   - **Source**: PASS-59-251 review 2026-11-09.
   - **Related**: PASS-59-221 holds the two slowest tests.
@@ -959,6 +981,13 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - M `tests/test_pass59_268_ra_queue.py:94`: Waits out the real POLL_SECONDS = 2 (2.01 s measured) though _watch reads the global each loop.
   - Low: tests/test_auth_hardening.py:410; tests/test_game_logo.py:133; tests/test_launcher_local.py:169; tests/test_migrations.py:320; tests/test_pass38_region_helper.py:71; tests/test_pass59_244_recover.py:13; tests/test_pass59_249_database.py:121; tests/test_pass59_auth_api.py:155; tests/test_pass59_frontend.py:271; tests/test_rembg_worker.py:119; tests/test_rembg_worker.py:128; tests/test_shutdown_route.py:142; tests/test_updater.py:297; tests/test_xbox_openxbl.py:231
   - Open questions (answer first): tests/test_emulator_autodetect.py:160; tests/_bulk_scrape_fixtures.py; tests/test_game_logo.py:133; tests/test_migrations.py:320; tests/test_museum_job.py; tests/test_pass59_161_screenshot_fit.py:21; tests/test_pass59_243_jobs.py:81; tests/test_pass59_auth_api.py:155; tests/test_pass59_trophy_dataloss.py:71; tests/test_launch_resolver.py:10; tests/test_upload_image_pipeline.py:34; tests/test_upload_image_pipeline.py:34; tests/test_upload_limits.py:29
+  Done 2026-11-24, tests only: fixed waits replaced by events or polls
+  (bulk_scrape_race, 132_parallel_fallbacks, 243_jobs), POLL_SECONDS
+  patched down in 268_ra_queue, changelog YAML parsed once in
+  i18n_longform, Flatpak bin dirs isolated in emulator_autodetect.
+  Timing files stable over 3 runs. The Low and remaining open-question
+  rows list only file:line, their text lost with the off-repo ledger, so
+  they close with no finding to act on.
   **Layman:** Tests stop waiting longer than they need to.
   Kind: implement.
 
@@ -3866,6 +3895,18 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   PAL Mega CD double 24, Game Gear JP ~92x115x20, Genesis cardboard
   ~134x191x23, NES PAL early small box, PS2 JP colours, PS3 and Xbox One
   moulded top band, eco cut-outs, Wii U green and red editions.
+  **Round 2 (2026-11-24)**: sourced search of Gemini's leads, in
+  Scratchpad case-research/round2.md (links and certainty per lead).
+  Nothing changed yet. For the user: measure a PAL PS1 case's short
+  side (table 125, psxpaldb.com 129-130); look at own PS3 case for a
+  moulded top band and a PS4 case for a finger recess; choose whether
+  to add PS1 PAL multi-disc 142x125x25, PS1 PAL Maxibox 142x125x17,
+  early PS1 Japan 142x129x17, New 3DS EU 122x135x14, edition colours
+  (Wii U green/red/yellow, PS4 Hits red, 3DS red), Xbox One moulded
+  logo, GameCube square hole; drop the Game Gear JP hang tab. No
+  source found: US PS1, JP Saturn and Dreamcast multi-disc depths;
+  PAL Saturn and Mega CD sizes; Game Gear JP, Mark III, Genesis
+  cardboard and early PAL NES box sizes; PS2 JP colours.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.
@@ -3892,6 +3933,18 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** The turning 3D box shows the same front and spine as the 3D box picture on the game page.
   Kind: enhancement.
   Source: user-request-2026-11-23.
+
+- 📋 [PASS-59-335] **Shutdown does not cancel the Build 3D Boxes job.**
+  - `services/jobs/base.py::request_shutdown` lists every job to
+    cancel; `box_build_job` (services/jobs/__init__.py) is missing and
+    docs/specs/jobs.md §8 does not say why (webp_migrate_job's absence
+    is deliberate and documented there).
+  - Fix: add it to the list if its cancel is safe mid-box, and to the
+    test's list in tests/test_graceful_shutdown.py; else document why
+    it is left out.
+  **Layman:** When RetroDB stops, a running Build 3D Boxes job is not told to stop with the others.
+  Kind: fix.
+  Source: PASS-59-291 test work 2026-11-24.
 
 ## 4.0.x — Fixes and new features for the web version
 

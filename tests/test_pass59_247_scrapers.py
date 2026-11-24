@@ -202,6 +202,11 @@ def test_a_rejected_pair_never_shares_a_suggestion_through_a_third_game(vdb):  #
     b = vdb.game('Alpha', rom='Alpha (Europe).zip', igdb_id=77)
     c = vdb.game('Alpha', rom='Alpha (Japan).zip', igdb_id=77)
     vg.reject([a, c])
-    for suggestion in vg.suggest_groups(vdb.sid):
+    suggestions = vg.suggest_groups(vdb.sid)
+    # An empty result would pass the loop below; the three share an igdb_id,
+    # so something must still be suggested (b with a or c).
+    assert suggestions, 'no suggestion at all: the loop below checks nothing'
+    assert any(b in {g['id'] for g in sg['games']} for sg in suggestions)
+    for suggestion in suggestions:
         ids = {g['id'] for g in suggestion['games']}
         assert not {a, c} <= ids, ids

@@ -6,6 +6,8 @@ import pytest
 
 from scraper import scrape_ai
 from scraper.scrape_ai import parse_units_sold
+from tests.test_pass59_205_esde_merge import library  # noqa: F401  (fixture)
+from tests.test_pass59_242_user_edits import _ai_fill, _scrape
 
 
 @pytest.mark.parametrize('raw,expected', [
@@ -41,17 +43,18 @@ def test_ai_is_asked_for_sales():
     assert scrape_ai._validate_field('units_sold', 'n/a') == ''
 
 
-def test_ai_fill_uses_the_shared_field_list():
-    from services import ai_fill
-    src = inspect.getsource(ai_fill.fill_game)
-    assert 'ai_fields = AI_FILLABLE_FIELDS' in src
-    assert "'units_sold'" in src  # stored as an integer
+def test_ai_fill_stores_sales_as_an_integer(library, monkeypatch):
+    library.add_game()
+    _ai_fill(monkeypatch, {'units_sold': '2400000'})  # as scrape_ai validates it
+    assert library.row()['units_sold'] == 2400000
 
 
-def test_scrape_fills_sales_only_when_empty():
-    from scraper import hybrid_scraper
-    src = inspect.getsource(hybrid_scraper)
-    assert 'units_sold = COALESCE(?, units_sold)' in src
+@pytest.mark.parametrize('force', [False, True])
+def test_a_scrape_with_no_sales_keeps_the_stored_figure(library, force):
+    # The save wraps units_sold in COALESCE: a source with nothing never wipes it.
+    library.add_game(units_sold=5)
+    _scrape(force=force)
+    assert library.row()['units_sold'] == 5
 
 
 def test_ai_gap_fill_writes_sales_as_int():

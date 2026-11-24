@@ -166,6 +166,7 @@ def mame_db():
     conn.row_factory = sqlite3.Row
     sid = conn.execute("INSERT INTO systems (name, folder) VALUES ('MAME test', 'mame') "
                        "ON CONFLICT DO NOTHING RETURNING id").fetchone()
+    created = sid is not None
     sid = sid[0] if sid else conn.execute(
         "SELECT id FROM systems WHERE folder = 'mame'").fetchone()[0]
     ids = {}
@@ -176,6 +177,8 @@ def mame_db():
     conn.commit()
     yield conn, sid, ids
     conn.execute("DELETE FROM games WHERE id IN ({})".format(','.join(map(str, ids.values()))))
+    if created:  # only a row this fixture added; never a pre-existing system
+        conn.execute("DELETE FROM systems WHERE id = ?", (sid,))
     conn.commit()
     conn.close()
 
@@ -237,7 +240,7 @@ def test_routes_refuse_a_viewer_and_a_missing_file(admin_test_client):
     client, csrf = admin_test_client()
     page = client.get('/tools/mame-names')
     assert page.status_code == 200 and 'id="mameListPath"' in page.get_data(as_text=True)
-    assert os.path.exists('static/js/mame-names.js')
+    assert os.path.exists(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static', 'js', 'mame-names.js'))
     for body in ({}, {'list_path': '/no/such/file.xml'}):
         resp = client.post('/api/mame-names/start', json=body, headers={'X-CSRF-Token': csrf})
         assert resp.status_code == 400

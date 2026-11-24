@@ -328,19 +328,41 @@ class TestRawgScreenshotsDoNotCollide:
 
 
 class TestBatchM3uHonoursDeleteArchives:
-    def test_move_flag_is_passed_through(self):
-        import scraper.rom_tools as mod
-        src = slice_function(read_module_source(mod), 'batch_create_m3u')
-        # Previously called create_m3u_playlist(archive_path) with neither
-        # parameter, so move_to_staging defaulted True and every batch run
-        # moved the user's originals regardless of the caller's choice.
-        assert 'move_to_staging=delete_archives' in src
-        assert 'staging_folder=staging_folder' in src
+    """Behaviour: batch_create_m3u runs with a stub create_m3u_playlist and
+    the test reads what it was asked and what the batch reports."""
 
-    def test_redundant_second_move_is_gone(self):
+    @staticmethod
+    def _tools(tmp_path, calls, moved):
         import scraper.rom_tools as mod
-        src = slice_function(read_module_source(mod), 'batch_create_m3u')
-        assert 'shutil.move' not in src, (
-            "the batch must not re-do the move create_m3u_playlist already did"
-        )
-        assert 'result.get("archive_moved")' in src
+        tools = mod.ArchiveScanner(mod.ROMToolsConfig())
+        archive = tmp_path / 'game.zip'
+        archive.write_bytes(b'x')
+
+        def fake(path, move_to_staging=True, staging_folder=None):
+            calls.append((path, move_to_staging, staging_folder))
+            out = {'success': True, 'm3u_path': 'x.m3u', 'file_count': 2}
+            if moved and move_to_staging:
+                out.update(archive_moved=True, moved_to='staged/game.zip')
+            return out
+        tools.create_m3u_playlist = fake
+        return tools, str(archive)
+
+    def test_originals_stay_when_delete_archives_is_off(self, tmp_path):
+        calls = []
+        tools, archive = self._tools(tmp_path, calls, moved=True)
+        res = tools.batch_create_m3u([archive], delete_archives=False)
+        assert calls == [(archive, False, None)]
+        assert res['moved_archives'] == 0
+        assert (tmp_path / 'game.zip').exists()
+
+    def test_move_flag_and_folder_are_passed_through(self, tmp_path):
+        calls = []
+        tools, archive = self._tools(tmp_path, calls, moved=True)
+        staging = str(tmp_path / 'stage')
+        res = tools.batch_create_m3u([archive], delete_archives=True,
+                                     staging_folder=staging)
+        assert calls == [(archive, True, staging)]
+        assert res['moved_archives'] == 1
+        assert res['details'][0]['moved'] is True
+        # The batch does not move the file a second time itself.
+        assert (tmp_path / 'game.zip').exists()
