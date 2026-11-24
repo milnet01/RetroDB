@@ -1884,9 +1884,6 @@ def apply_hybrid_metadata(db_game_id, primary_source, primary_id, system_folder,
                 elif not old_value:
                     result['filled_fields'].append('controller_support (system default)')
                 logger.info(f"Using system default controller: {default_controller} (was: {old_value})")
-            elif should_use_default_controller(metadata['controller_support']):
-                # No DB default exists — only clear generic values
-                pass
 
         # =============================================
         # NORMALIZE VALUES BEFORE SAVE

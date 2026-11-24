@@ -3526,7 +3526,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** A web-safety check on followed links could be tightened further.
   Kind: implement.
 
-- 📋 [PASS-49-7] **Assorted LOW / INFO review notes (LOW, S)**
+- ✅ [PASS-49-7] **Assorted LOW / INFO review notes (LOW, S)**
   - **Status**: deferred bundle — verified-but-low; pick up opportunistically.
   - Items:
     - `services/migrations/__init__.py` — add a defensive `not conn.in_transaction`
@@ -3573,6 +3573,23 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
       silently skip the pin. Normalize/lower the host on both store and compare.
   Moved into 4.0.0 (user, 2026-11-20). Confirm each note against current
   source first.
+  Closed 2026-11-24, each note checked against source.
+  Fixed: one fsync helper (database imports atomic_io's); museum
+  status sends the jobs.md §9 names too; image_resize and
+  webp_migrate refuse to start while the other runs
+  (base.job_lock_held); trophies drops the global pyrate_limiter
+  patch for a PSNAWP-only Rate(10/s) (PSNAWP 3.x no longer has the
+  inverted check); dead generic-controller branch removed; Steam and
+  Xbox syncs keep their pace after a skipped game; ssrf pins match a
+  host whatever its case or trailing dot. Tests:
+  tests/test_pass49_7_review_notes.py and one in
+  test_xbox_openxbl.py, red on the old code.
+  Dismissed: the migrations assert (sqlite3 already refuses a nested
+  BEGIN); webp adopt verify, variant regen on skipped and RAWG
+  players (already fixed); build_dist anchoring (git ls-files walk
+  since Pass 59.13; anchoring would ship nested __pycache__/venv).
+  Open for the user: PSNAWP's own default pace is 1 request per 3 s,
+  per PSN guidance; RetroDB keeps its faster pace.
   **Layman:** A bundle of small, low-risk code notes from a review.
   Kind: implement.
 

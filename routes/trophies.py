@@ -49,22 +49,11 @@ try:
 
     PSNAWPError.__init__ = _psn_error_init
 
-    # Patch pyrate_limiter + PSNAWP compatibility issues:
-    # 1. pyrate_limiter 4.x sync _try_acquire raises NotImplementedError on timeout param
-    # 2. PSNAWP 3.x has inverted logic: `if try_acquire(): raise TooManyRequests` which
-    #    blocks ALL requests when _try_acquire is patched to actually work (returns True
-    #    on success, but PSNAWP treats True as "rate limited").
-    # Fix: make _try_acquire always return False (PSNAWP interprets as "not rate limited,
-    # proceed"). Our own 2.5s delay between games provides sufficient rate limiting.
-    try:
-        from pyrate_limiter import Limiter as _Limiter
-
-        def _patched_try_acquire(self, name, weight=1, blocking=True, timeout=-1, _force_async=False):
-            return False  # Always allow — PSNAWP checks `if try_acquire(): raise error`
-
-        _Limiter._try_acquire = _patched_try_acquire
-    except (ImportError, AttributeError):
-        pass  # pyrate_limiter not available or API changed
+    # PSNAWP paces its own requests with this limit; its default is one
+    # every 3 s. Ours: a sync already waits 2.5 s between games (PASS-49-7
+    # replaced a global pyrate_limiter patch with this).
+    from pyrate_limiter import Duration, Rate
+    _PSN_RATE = Rate(10, Duration.SECOND)
 
 except ImportError:
     PSNAWP_AVAILABLE = False
@@ -163,7 +152,7 @@ def create_psn_client(npsso, user_id=None, allow_npsso_fallback=True, use_cache=
             import time as _time
             refresh_expires = cached_tokens.get('refresh_token_expires_at', 0)
             if refresh_expires > _time.time():
-                psnawp = PSNAWP(npsso)
+                psnawp = PSNAWP(npsso, rate_limit=_PSN_RATE)
                 psnawp.authenticator.token_response = cached_tokens
                 # Validate by making a lightweight call (.online_id access
                 # triggers the auth round-trip; result intentionally unused).
@@ -198,7 +187,7 @@ def create_psn_client(npsso, user_id=None, allow_npsso_fallback=True, use_cache=
 
     # Fresh auth via NPSSO
     try:
-        psnawp = PSNAWP(npsso)
+        psnawp = PSNAWP(npsso, rate_limit=_PSN_RATE)
         # Force authentication by making a call (.online_id access triggers
         # the auth round-trip; result intentionally unused).
         _online_id = psnawp.me().online_id

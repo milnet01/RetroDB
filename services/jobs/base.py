@@ -369,6 +369,18 @@ def acquire_job_singleton_lock(job_name):
     return fd
 
 
+def job_lock_held(job_name):
+    """True when another run holds `job_name`'s singleton lock.
+
+    For jobs that must not run beside a different job (PASS-49-7:
+    image_resize and webp_migrate both rewrite the boxart tree)."""
+    fd = acquire_job_singleton_lock(job_name)
+    if fd is None:
+        return True
+    release_job_singleton_lock(fd)
+    return False
+
+
 def release_job_singleton_lock(fd):
     """Release the lock acquired by `acquire_job_singleton_lock`. Safe to
     call with `None` or the sentinel `0`."""

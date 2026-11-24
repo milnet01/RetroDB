@@ -24,6 +24,7 @@ from services.jobs.base import (
     persist_job_complete,
     resolve_terminal_status,
     acquire_job_singleton_lock,
+    job_lock_held,
     release_singleton_fd,
 )
 
@@ -78,6 +79,11 @@ class WebPMigrateJob:
         with self._lock:
             if self.running:
                 return {'success': False, 'error': 'WebP migration already in progress'}
+
+            # Both jobs rewrite the same image folders (PASS-49-7).
+            if job_lock_held('image_resize'):
+                from flask_babel import gettext as _
+                return {'success': False, 'error': _('Wait for the image resize to finish first.')}
 
             singleton_fd = acquire_job_singleton_lock('webp_migrate')
             if singleton_fd is None:

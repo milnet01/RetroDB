@@ -14,6 +14,9 @@ import time
 import config
 from flask import g, has_app_context
 
+# One copy of the fsync helper (PASS-49-7); the old private name stays.
+from services.atomic_io import fsync_path as _fsync_path
+
 logger = logging.getLogger(__name__)
 
 _WHITESPACE_RE = re.compile(r'\s+')
@@ -321,20 +324,6 @@ def execute_script(sql_script):
     finally:
         if owned:
             conn.close()
-
-
-def _fsync_path(path):
-    """Open `path` read-only and fsync its file descriptor.
-
-    Works for both regular files and directories — on POSIX, fsyncing a
-    directory flushes the directory's own metadata (i.e. the rename/create
-    entries under it) so a crash after `os.replace` can't lose the new name.
-    """
-    fd = os.open(path, os.O_RDONLY)
-    try:
-        os.fsync(fd)
-    finally:
-        os.close(fd)
 
 
 def backup_database(src_path, dst_path):

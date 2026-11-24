@@ -571,6 +571,9 @@ class SteamSyncJob:
                         if result is None:
                             with self._lock:
                                 self.skipped_count += 1
+                            if has_account:
+                                # A request was made: keep the 1 s pace (PASS-49-7).
+                                shutdown_requested.wait(1.0)
                             continue
 
                         # Upsert into game_achievement_progress (Pass 31.2 — per user).
@@ -889,6 +892,7 @@ class XboxSyncJob:
                                 break
                             with self._lock:
                                 self.skipped_count += 1
+                            shutdown_requested.wait(0.5)  # keep the pace (PASS-49-7)
                             continue
 
                         _upsert_xbox_progress(

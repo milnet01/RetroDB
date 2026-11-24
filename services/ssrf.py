@@ -99,9 +99,16 @@ _pinned = threading.local()
 _orig_getaddrinfo = None
 
 
+def _host_key(host):
+    """`Example.COM.` and `example.com` name one host (PASS-49-7)."""
+    if isinstance(host, bytes):
+        host = host.decode('ascii', 'replace')
+    return str(host).rstrip('.').lower() if host else host
+
+
 def _pinned_getaddrinfo(host, *args, **kwargs):
     pinned = getattr(_pinned, 'value', None)
-    if pinned and pinned[0] == host:
+    if pinned and pinned[0] == _host_key(host):
         ip = pinned[1]
         family = socket.AF_INET6 if ':' in ip else socket.AF_INET
         # Echo the port the caller asked for. getaddrinfo's signature is
@@ -146,7 +153,7 @@ def pin_host_ip(host, ip):
     that validate_outbound_url() just verified, defeating DNS rebinding.
     """
     previous = getattr(_pinned, 'value', None)
-    _pinned.value = (host, ip)
+    _pinned.value = (_host_key(host), ip)
     try:
         yield
     finally:

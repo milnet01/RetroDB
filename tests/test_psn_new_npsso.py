@@ -59,7 +59,7 @@ def fake_sony(monkeypatch):
     import routes.trophies as trophies
 
     class FakePSN:
-        def __init__(self, npsso):
+        def __init__(self, npsso, rate_limit=None):
             self.npsso = npsso
             self.authenticator = SimpleNamespace(token_response=None)
 

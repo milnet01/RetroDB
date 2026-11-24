@@ -229,7 +229,8 @@ def test_the_library_leaves_out_apps_and_phone_titles(admin_test_client, key_sto
 
 # --- the bulk sync job ------------------------------------------------------
 
-def test_the_sync_takes_unsynced_games_first_and_stops_at_the_limit(tmp_path, monkeypatch):
+def _xbox_sync_setup(tmp_path, monkeypatch):
+    """A small library for XboxSyncJob, its writes faked out."""
     from services.jobs import platform_sync as mod
     db = tmp_path / 'x.db'
     conn = sqlite3.connect(str(db))
@@ -262,7 +263,11 @@ def test_the_sync_takes_unsynced_games_first_and_stops_at_the_limit(tmp_path, mo
     monkeypatch.setattr(mod, 'persist_job_complete', lambda *_a, **_k: None)
     monkeypatch.setattr(mod, '_upsert_xbox_achievements', lambda *_a: 0)
     monkeypatch.setattr(scrape_xbox, 'load_tokens', lambda _uid: {'api_key': 'KEY', 'xuid': '9'})
+    return mod
 
+
+def test_the_sync_takes_unsynced_games_first_and_stops_at_the_limit(tmp_path, monkeypatch):
+    mod = _xbox_sync_setup(tmp_path, monkeypatch)
     asked = []
 
     def fake_achievements(api_key, xuid, title_id, xbox360=False):
@@ -284,3 +289,27 @@ def test_the_sync_takes_unsynced_games_first_and_stops_at_the_limit(tmp_path, mo
     status = job.get_status()
     assert status['success'] == 2 and status['skipped'] == 0
     assert 'hourly limit' in status['error']
+
+
+def test_a_game_openxbl_answers_nothing_for_still_waits_its_turn(tmp_path, monkeypatch):
+    """A skipped game made a request too, so the next one waits (PASS-49-7)."""
+    mod = _xbox_sync_setup(tmp_path, monkeypatch)
+    monkeypatch.setattr(scrape_xbox, 'get_achievements', lambda *_a, **_k: None)
+    waits = []
+
+    class _Shutdown:
+        def wait(self, seconds):
+            waits.append(seconds)
+            return False
+
+        def is_set(self):
+            return False
+
+    monkeypatch.setattr(mod, 'shutdown_requested', _Shutdown())
+    job = mod.XboxSyncJob()
+    job.user_id = 7
+    job.running = True
+    job._run_sync()
+
+    assert job.get_status()['skipped'] == 4
+    assert len(waits) == 4

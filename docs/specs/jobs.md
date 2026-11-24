@@ -365,8 +365,8 @@ it. The fields and their consumers
 |-------|------|----------|----------------|
 | `running` / `completed` / `cancelled` | bool | all jobs | state machine — drives polling cadence + cancel-button visibility |
 | `paused` | bool | bulk_scrape, psn_refresh, ss_region_repair | paused state |
-| `current` / `total` / `percent` | int | all jobs except: `museum` (sends `current_index` / `total_systems`, no `percent`); `ai_fill_bulk` and `player_cores` (no `current`; they send `processed`); `mame_names` (no `percent`) | progress bar fill |
-| `processed` / `processing` | int | bulk_scrape, ai_fill_bulk (both); psn_refresh, image_resize, museum_images, player_cores (`processed` only) (§7) | counter strings above + below the bar |
+| `current` / `total` / `percent` | int | all jobs except: `ai_fill_bulk` and `player_cores` (no `current`; they send `processed`); `mame_names` (no `percent`) | progress bar fill |
+| `processed` / `processing` | int | bulk_scrape, ai_fill_bulk, museum (both); psn_refresh, image_resize, museum_images, player_cores (`processed` only) (§7) | counter strings above + below the bar |
 | `success` / `failed` / `skipped` | int | scrape / sync jobs | result-breakdown line (icons + counts) |
 | `current_game` | string | bulk_scrape, ra_*, psn_refresh, hltb_bulk | "currently being processed" line on most job types |
 | `current_file` | string | image_resize | same line, file-rather-than-game wording |

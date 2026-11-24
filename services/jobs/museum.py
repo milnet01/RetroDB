@@ -94,10 +94,22 @@ class MuseumGenerateJob:
     def get_status(self):
         """Return current job status."""
         with self._lock:
+            total = self.total_systems
+            processed = self.success_count + self.failed_count + self.skipped_count
             return {
                 'running': self.running,
                 'cancelled': self.cancelled,
                 'completed': self.completed,
+                # The jobs.md §7/§9 contract names; the old names below
+                # stay for static/js/museum.js.
+                'current': self.current_index,
+                'total': total,
+                'percent': int(processed / total * 100) if total else 0,
+                'processed': processed,
+                'processing': min(processed + 1, total) if total else 0,
+                'success': self.success_count,
+                'failed': self.failed_count,
+                'skipped': self.skipped_count,
                 'current_index': self.current_index,
                 'total_systems': self.total_systems,
                 'current_system_name': self.current_system_name,
