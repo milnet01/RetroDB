@@ -13,3 +13,4 @@ Reviews); an empty table means no review has run.
 | impl | 2026-11-21 | none: no reviewer dispatched | - | - | - | - | PASS-59-328: §4.5 adds the `screenscraper` and `esde` disc keys; fill-only is per source, so a source merges into a record another filled |
 | impl | 2026-11-22 | none: no reviewer dispatched | - | - | - | - | Settings walk: a 429 at exactly the stated gap adds PACE_MARGIN (§4.2, INV-2); an old saved order gets `mobygames` before `ai`, as §2 already said (§4.3, §14); the gap runs from the reply (§4.2) |
 | impl | 2026-11-23 | none: no reviewer dispatched | - | - | - | - | PASS-59-331: §4.5 prefers the cover group whose front the 3D box picture shows; INV-9 added; §13 counts the probes |
+| impl | 2026-11-24 | none: no reviewer dispatched | - | - | - | - | §4.5: a `media` picture is cut off its plain backdrop and trimmed as it arrives; Build 3D Boxes cuts those stored before |

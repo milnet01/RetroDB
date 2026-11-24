@@ -847,7 +847,12 @@ def standardize_downloaded_image(path, image_type, still_wanted=None):
     if image_type == 'game_logo':
         return  # PASS-59-224: a logo is shown at its own size, never resized
     if image_type == 'box_scans':
-        return  # PASS-59-183: a scan is a texture for the 3D box, kept as scanned
+        # PASS-59-183: a scan is a texture for the 3D box, kept as scanned,
+        # but a disc or cartridge comes off its backdrop for the open box.
+        from services import box_scans
+        if box_scans.is_media_name(path):
+            box_scans.cut_out(path)
+        return
 
     if image_type in ('controllers', 'hardware'):
         target = config.IMAGE_TARGET_LONGEST_EDGE

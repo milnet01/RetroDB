@@ -43,6 +43,25 @@ def _candidates():
         conn.close()
 
 
+def _cut_out_discs():
+    """Take every stored disc or cartridge picture off its backdrop: those
+    downloaded before downloads did it. Returns how many changed."""
+    from services import box_scans
+    conn = _get_conn()
+    try:
+        rows = conn.execute(
+            "SELECT box_scans FROM games WHERE box_scans LIKE '%\\_media\\_%' ESCAPE '\\'"
+        ).fetchall()
+    finally:
+        conn.close()
+    changed = 0
+    for (value,) in rows:
+        if shutdown_requested.is_set():
+            break
+        changed += box_scans.cut_out_stored(value)
+    return changed
+
+
 def _lower_priority():
     """Lower this thread's CPU priority; Linux gives each thread its own."""
     if not hasattr(os, 'setpriority') or not hasattr(threading, 'get_native_id'):
@@ -122,6 +141,9 @@ class BoxBuildJob:
         last_persist = time.time()
         try:
             persist_id = persist_job_start('box_build', {})
+            cut = _cut_out_discs()
+            if cut:
+                logger.info(f'Build 3D boxes: took {cut} disc or cartridge pictures off their backdrop')
             games = _candidates()
             with self._lock:
                 self.total = len(games)

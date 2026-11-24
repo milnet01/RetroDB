@@ -905,7 +905,13 @@
         void main() {
             vec3 n = normalize(v_normal);
             vec3 base = u_inner;
-            if (gl_FrontFacing) base = u_use_tex ? texture(u_tex, v_uv).rgb : u_colour;
+            if (gl_FrontFacing && u_use_tex) {
+                // A disc or cartridge scan is cut off its backdrop
+                // (services/box_scans.py::cut_out): what is see-through is not there.
+                vec4 texel = texture(u_tex, v_uv);
+                if (texel.a < 0.5) discard;
+                base = texel.rgb;
+            } else if (gl_FrontFacing) base = u_colour;
             else n = -n;
             float lit = ${AMBIENT} + ${DIFFUSE} * max(0.0, dot(n, u_light));
             vec3 half_way = normalize(u_light + vec3(0.0, 0.0, 1.0));

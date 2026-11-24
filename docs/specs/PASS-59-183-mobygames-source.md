@@ -186,7 +186,10 @@ and `games.box_scans TEXT` (NULL = none). The record:
   captions differ by release (`Left 1`, `Back Cover - Spine Left`).
 - Files live in `<IMAGE_PATH>/box_scans/`, named
   `<game_id>_<kind>_<n>_<token>.webp`, downloaded through
-  `_download_and_finalize`. At most 40 items per game.
+  `_download_and_finalize`. At most 40 items per game. A `media` picture,
+  from any source, is cut off a plain backdrop and trimmed to the disc or
+  cartridge as it arrives (`box_scans.cut_out`); Build 3D Boxes does the
+  same to those stored before.
 - **Choosing one cover group.** Every item comes from one group, so the
   front, spine and back belong to the same box. Keep the groups whose
   `platforms` include this platform. Drop packaging `Electronic` and

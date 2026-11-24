@@ -176,6 +176,140 @@ def media_entry(name):
                        'width': width, 'height': height}]}
 
 
+def is_media_name(name):
+    """Whether a stored scan's file name is a disc or cartridge picture."""
+    return '_media_' in os.path.basename(name or '')
+
+
+# A disc or cartridge scan sits on a plain backdrop (white, grey or black).
+# A pixel within this much of the backdrop's colour, per channel, is backdrop.
+_BACKDROP_TOLERANCE = 40
+# How much of the picture's edge must be that colour for it to be a backdrop.
+_BACKDROP_EDGE_SHARE = 0.9
+# A crop this near square whose corners, outside the circle, are this much
+# backdrop is a disc.
+_DISC_ASPECT = (0.92, 1.08)
+_DISC_CORNERS = 0.85
+# A backdrop darker than this (its darkest channel) may match a black
+# cartridge, so only a disc is cut from it.
+_LIGHT_BACKDROP = 170
+# A row or column whose object pixels are fewer than this share of the
+# fullest one's is a speck on the scan, not the object.
+_SPECK_SHARE = 0.03
+
+
+def _backdrop(rgba):
+    """(The backdrop pixels joined to the picture's edge, as a bool array,
+    whether the backdrop is light), or None when the edge is not one plain
+    colour."""
+    import numpy as np
+    rgb = rgba[..., :3].astype(np.int16)
+    edge = np.concatenate([rgb[0], rgb[-1], rgb[:, 0], rgb[:, -1]])
+    colour = np.median(edge, axis=0)
+    near = (np.abs(rgb - colour).max(axis=2) <= _BACKDROP_TOLERANCE) | (rgba[..., 3] < 16)
+    edges = (near[0], near[-1], near[:, 0], near[:, -1])
+    if np.concatenate(edges).mean() < _BACKDROP_EDGE_SHARE:
+        return None
+    # Spread in from the edge through backdrop pixels: straight runs along
+    # each axis reach most of it, then one-pixel steps round the nooks.
+    reached = np.zeros_like(near)
+    reached[0], reached[-1], reached[:, 0], reached[:, -1] = edges
+    while True:
+        before = reached.copy()
+        for axis in (0, 1):
+            index = np.indices(near.shape)[axis]
+            for flip in (False, True):
+                def turn(a, axis=axis, flip=flip):
+                    return np.flip(a, axis) if flip else a
+                n, r, i = turn(near), turn(reached), turn(index)
+                if flip:
+                    i = i.max() - i
+                # Reached when a reached pixel lies on this run of backdrop
+                # behind it: none of the run broken since.
+                last_break = np.maximum.accumulate(np.where(n, -1, i), axis=axis)
+                last_reached = np.maximum.accumulate(np.where(r, i, -1), axis=axis)
+                reached |= turn(n & (last_reached > last_break))
+        grown = reached.copy()
+        grown[1:] |= reached[:-1]
+        grown[:-1] |= reached[1:]
+        grown[:, 1:] |= reached[:, :-1]
+        grown[:, :-1] |= reached[:, 1:]
+        reached = grown & near
+        if np.array_equal(reached, before):
+            return reached, colour.min() >= _LIGHT_BACKDROP
+
+
+def cut_out(path):
+    """Take a disc or cartridge picture off its plain backdrop: the backdrop
+    goes see-through and the picture is trimmed to the object, so the open
+    box's disc fills its texture. A disc is cut to a circle, so a white label
+    reaching its rim stays. Returns True when the file changed; a picture
+    already cut, or one with no plain backdrop, is left alone."""
+    import numpy as np
+    from PIL import Image
+    try:
+        with Image.open(path) as image:
+            rgba = np.array(image.convert('RGBA'))
+    except Exception as e:  # noqa: BLE001 - an unreadable picture is left as it is
+        logger.warning(f'Box scan {path!r} unreadable: {e}')
+        return False
+    found = _backdrop(rgba)
+    if found is None:
+        return False
+    backdrop, light = found
+    # A row or column holds the object when a share of it does; specks and
+    # smudges on the scan would otherwise widen the trim off the disc.
+    def holding(axis):
+        counts = (~backdrop).sum(axis=axis)
+        return np.flatnonzero(counts > max(2, _SPECK_SHARE * counts.max()))
+    rows, cols = holding(1), holding(0)
+    if len(rows) < 16 or len(cols) < 16:
+        return False
+    box = (slice(rows[0], rows[-1] + 1), slice(cols[0], cols[-1] + 1))
+    crop, keep = rgba[box].copy(), ~backdrop[box]
+    height, width = keep.shape
+    y, x = np.ogrid[:height, :width]
+    circle = ((2 * y + 1 - height) / height) ** 2 + ((2 * x + 1 - width) / width) ** 2 <= 1
+    if (_DISC_ASPECT[0] <= width / height <= _DISC_ASPECT[1]
+            and (~keep[~circle]).mean() >= _DISC_CORNERS):
+        keep = circle
+    elif not light:
+        return False
+    crop[..., 3] = np.where(keep, crop[..., 3], 0)
+    if crop.shape == rgba.shape and np.array_equal(crop[..., 3], rgba[..., 3]):
+        return False
+    tmp = f'{path}.tmp'
+    try:
+        Image.fromarray(crop, 'RGBA').save(tmp, 'WEBP', quality=90)
+        os.replace(tmp, path)
+    except OSError as e:
+        logger.warning(f'Could not cut out box scan {path!r}: {e}')
+        if os.path.exists(tmp):
+            os.remove(tmp)
+        return False
+    return True
+
+
+def cut_out_stored(value):
+    """Cut out every disc or cartridge picture a stored record names, passing
+    over one whose corner is already see-through. Returns how many files
+    changed."""
+    from PIL import Image
+    changed = 0
+    for name in _files(value):
+        path = _scan_path(name)
+        if not (is_media_name(name) and path and os.path.isfile(path)):
+            continue
+        try:
+            with Image.open(path) as image:
+                if image.mode == 'RGBA' and image.getpixel((0, 0))[3] == 0:
+                    continue
+        except Exception:  # noqa: BLE001 - cut_out logs an unreadable picture
+            pass
+        changed += cut_out(path)
+    return changed
+
+
 def _files(value):
     """Every file name a stored record names."""
     return [i['file'] for i in _items(value) if i.get('file')]
@@ -229,11 +363,19 @@ def scans_for(game_row):
         path = _scan_path(item.get('file'))
         if path is None or not os.path.isfile(path):
             continue
+        width, height = item.get('width'), item.get('height')
         if item['kind'] == 'media':
             media_from = source
+            # Cutting it out trimmed the file, so the record's size is stale.
+            from PIL import Image
+            try:
+                with Image.open(path) as image:
+                    width, height = image.size
+            except Exception:  # noqa: BLE001 - keep the recorded size
+                pass
         found.append({'kind': item['kind'], 'caption': item.get('caption'),
                       'url': f"images/box_scans/{item['file']}",
-                      'width': item.get('width'), 'height': item.get('height')})
+                      'width': width, 'height': height})
     return found
 
 
