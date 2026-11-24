@@ -72,3 +72,11 @@ def test_a_pin_holds_whatever_case_or_trailing_dot(pinned_as, asked_as):
     with ssrf.pin_host_ip(pinned_as, '203.0.113.7'):
         answer = socket.getaddrinfo(asked_as, 443)
     assert answer[0][4][0] == '203.0.113.7'
+
+
+def test_psn_pace_is_psnawps_own_default():
+    """PSN requests go at PSNAWP's own pace, one every 3 s (user, 2026-11-24)."""
+    trophies = pytest.importorskip('routes.trophies')
+    if not trophies.PSNAWP_AVAILABLE:
+        pytest.skip('PSNAWP not installed')
+    assert (trophies._PSN_RATE.limit, trophies._PSN_RATE.interval) == (1, 3000)

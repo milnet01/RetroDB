@@ -49,11 +49,10 @@ try:
 
     PSNAWPError.__init__ = _psn_error_init
 
-    # PSNAWP paces its own requests with this limit; its default is one
-    # every 3 s. Ours: a sync already waits 2.5 s between games (PASS-49-7
-    # replaced a global pyrate_limiter patch with this).
+    # PSNAWP paces its own requests with this limit: its own default, one
+    # every 3 s, so no user's PSN account is flagged (user, 2026-11-24).
     from pyrate_limiter import Duration, Rate
-    _PSN_RATE = Rate(10, Duration.SECOND)
+    _PSN_RATE = Rate(1, Duration.SECOND * 3)
 
 except ImportError:
     PSNAWP_AVAILABLE = False
