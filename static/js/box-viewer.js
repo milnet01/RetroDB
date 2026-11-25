@@ -822,9 +822,10 @@
         tongues: 5, tongueIn: 7.6, tongueOut: 15, slitTo: 17.5,
         disc: 60, discHole: 7.5, discAt: 2,
         wallIn: 1.5, wallWidth: 1,
-        // A booklet clip: a solid plate with a U slot round a sprung tongue (close-ups, 2026-11-25).
-        clip: {fromOpening: 22, fromEdge: 27.75, along: 25, across: 18.5, corner: 3, high: 3,
-            slotFromOpening: 14.5, slotLength: 14.5, slotWidth: 8, line: 1.5, plate: 1},
+        // A booklet clip: a flat frame on a post by the opening side, a U slot through it,
+        // and inside the U a tongue that springs down onto the booklet (photos, 2026-11-25).
+        clip: {fromOpening: 22, fromEdge: 27.75, along: 25, across: 18.5, corner: 3, high: 4.5,
+            slotFromOpening: 14.5, slotLength: 14.5, slotWidth: 8, line: 1.5, plate: 1, flat: 0.3},
         rail: {fromEdge: 10.5, start: 12, end: 128, thin: 1, thick: 2.5, high: 2},
         bookletFromOpening: 14,
         latch: {fromEnd: 22.5, length: 6, reach: 2},        // hooks inside the disc half's opening wall
@@ -942,34 +943,52 @@
             const aspect = aspectOf(manual) || 0.7, edge = w - PS5.bookletFromOpening;
             let bh = 2 * (h - rail.fromEdge) - 3, bw = Math.min(bh * aspect, edge + w - PS5.wallIn - 2);
             if (bw < bh * aspect) bh = bw / aspect;
-            out.push(...cuboid([edge - bw / 2, 0, lidInside - 0.9], [bw, bh, 1.5], 'lid', [1, 1, 1],
+            out.push(...cuboid([edge - bw / 2, 0, lidInside - 0.15 - 1.5 / 2], [bw, bh, 1.5], 'lid', [1, 1, 1],
                 {back: scanUrl(manual)}));
         }
         const zc = lidInside - clip.high;   // the clips' face, over the booklet
+        const bookletTop = 1.65;            // the booklet's face, above the lid's inside
         for (const s of [1, -1]) {
-            // A clip: a plate with rounded corners on its spine side, lying over the
-            // booklet's corner, with a U slot cut right through it round the tongue,
-            // so the booklet shows through the slot (user, 2026-11-25).
+            // A clip: a flat frame with rounded corners on its spine side, held over the
+            // booklet's corner by a post past the booklet's edge. A U slot runs right
+            // through it; the tongue inside joins the frame at the spine end, runs flat,
+            // then curves down like a tick so its tip presses the booklet (user, 2026-11-25).
             const cx = w - clip.fromOpening, cy = s * (h - clip.fromEdge);
             const x0 = cx - clip.along / 2, x1 = cx + clip.along / 2, ay = clip.across / 2, r = clip.corner;
             const sx1 = w - clip.slotFromOpening, sx0 = sx1 - clip.slotLength;
             const sh = clip.slotWidth / 2, t = clip.line;
             const round = (k, sy) => [x0 + r - r * Math.sin(Math.PI / 8 * k), cy + sy * (ay - r + r * Math.cos(Math.PI / 8 * k))];
-            // The plate in pieces round the slot: the spine end with its rounded
-            // corners and the tongue's root, the strips either side, the opening end.
+            // The frame in pieces round the slot: the rounded spine end, the strips
+            // either side, the opening end, and the post under that end.
             const spineEnd = [[sx0, cy - ay], [sx0, cy + ay]];
             for (let k = 0; k <= 4; k++) spineEnd.push(round(k, 1));
             for (let k = 4; k >= 0; k--) spineEnd.push(round(k, -1));
             const box = (a, b, c2, d2) => [[a, c2], [b, c2], [b, d2], [a, d2]];
-            // The spine end stands on the floor; the rest is a thin plate over the booklet.
-            out.push(...prism(spineEnd, zc, lidInside, 'lid', raised));
-            for (const piece of [box(sx0, x1, cy + sh, cy + ay), box(sx0, x1, cy - ay, cy - sh),
-                box(sx1, x1, cy - sh, cy + sh), box(sx0, sx1 - t, cy - sh + t, cy + sh - t)]) {
+            for (const piece of [spineEnd, box(sx0, x1, cy + sh, cy + ay), box(sx0, x1, cy - ay, cy - sh),
+                box(sx1, x1, cy - sh, cy + sh)]) {
                 out.push(...prism(piece, zc, zc + clip.plate, 'lid', raised));
             }
-            // The U is closed on the opening side; the tongue's lip shows at its open, spine end.
-            out.push(...cuboid([sx0 + 1, cy, zc - 0.43], [2, clip.slotWidth - 2 * t - 1, 0.8], 'lid',
-                lift(plastic, 0.25)));
+            out.push(...prism(box(w - PS5.bookletFromOpening + 0.5, x1, cy - ay, cy + ay), zc, lidInside,
+                'lid', raised));
+            // The tongue: flat from its root, then bending down until its tip's
+            // underside meets the booklet's face.
+            const ty0 = cy - sh + t, ty1 = cy + sh - t, tx1 = sx1 - t, steps = 8;
+            const drop = clip.high - clip.plate - bookletTop;
+            const at = i => {
+                const u = i / steps, v = Math.max(0, (u - clip.flat) / (1 - clip.flat));
+                return [sx0 + (tx1 - sx0) * u, zc + drop * v ** 1.6];
+            };
+            for (let i = 0; i < steps; i++) {
+                const [xa, za] = at(i), [xb, zb] = at(i + 1), za1 = za + clip.plate, zb1 = zb + clip.plate;
+                out.push(part([[xa, ty0, za], [xb, ty0, zb], [xb, ty1, zb], [xa, ty1, za]], [0, 0, -1], 'lid', raised));
+                out.push(part([[xa, ty0, za1], [xb, ty0, zb1], [xb, ty1, zb1], [xa, ty1, za1]], [0, 0, 1], 'lid', raised));
+                for (const [y, n] of [[ty0, -1], [ty1, 1]]) {
+                    out.push(part([[xa, y, za], [xb, y, zb], [xb, y, zb1], [xa, y, za1]], [0, n, 0], 'lid', raised));
+                }
+                if (i === steps - 1) {
+                    out.push(part([[xb, ty0, zb], [xb, ty1, zb], [xb, ty1, zb1], [xb, ty0, zb1]], [1, 0, 0], 'lid', raised));
+                }
+            }
             // A rail, thin by the clip and thicker towards the spine.
             const y = s * (h - rail.fromEdge), rx0 = w - rail.start, rx1 = w - rail.end;
             out.push(...prism([[rx0, y - rail.thin / 2], [rx0, y + rail.thin / 2],
