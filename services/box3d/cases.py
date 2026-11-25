@@ -281,9 +281,10 @@ CASE_TYPES: dict[str, CaseType] = {
         platforms=("PS4",),
         plastic=_BLUE_TINT, clear=True, texture="bluray",
     ),
+    # RetroDB: depth from the user's ruler, closed case (PASS-59-329, 2026-11-25).
     "PS5 Blu-ray Case": CaseType(
         name="PS5 Blu-ray Case",
-        width=135, height=171.5, depth=13,
+        width=135, height=171.5, depth=14,
         platforms=("PS5",),
         plastic=_BLUE_TINT, clear=True, texture="bluray",
         shape=_PS5_SHAPE,

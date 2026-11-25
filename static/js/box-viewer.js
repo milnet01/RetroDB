@@ -482,9 +482,11 @@
         }
 
         const name = c.name || '';
-        const gamecube = GAMECUBE.test(name);
+        const gamecube = GAMECUBE.test(name), ps5 = PS5_CASE.test(name);
         if (gamecube) {
             out.push(...gamecubeBase(c, floor, plastic, scans, game, !inside));
+        } else if (ps5) {
+            out.push(...ps5Base(c, floor, plastic, media));
         } else if (DISC_CASES.test(name)) {
             const r = Math.min(/GameCube/.test(name) ? 40 : 60, w - 3, h - 3);
             out.push(...annulus(0, 0, floor, floor + 1.2, r + 1, r + 2.5, 'base', plastic));
@@ -531,6 +533,10 @@
                 [mw / 2, 0, 1.5, mh], [-mw / 2, 0, 1.5, mh]]) {
                 out.push(...cuboid([mx + x, my + y, lidInside - 1.5], [sx, sy, 3], 'lid', plastic));
             }
+        }
+        if (ps5) {
+            out.push(...ps5Lid(c, lidInside, plastic, manual));
+            return out;
         }
         if (manual) {
             const aspect = aspectOf(manual) || 0.7;
@@ -794,6 +800,152 @@
             });
             out.push(part([[x1, y1, zl], [x0, y1, zl], [x0, y0, zl], [x1, y0, zl]], [0, 0, -1], 'lid',
                 plastic, tex, FULL_PICTURE));
+        }
+        return out;
+    }
+
+    // --- The PS5 case (PASS-59-329) -------------------------------------------
+    // From the user's ruler photos of their own case (2026-11-25), read to
+    // about 2 mm. The disc sits in a raised ring with four finger dips, about
+    // 51 degrees either side of the spine and of the opening side; the hub is
+    // a low round platform with five sprung tongues round a three-lobed
+    // button that fits the disc's 15 mm hole. The booklet half has a clip near
+    // each opening corner and a rail along its top and bottom edges. A wall
+    // runs round each half just inside its edge. Its small notches are not
+    // drawn: the photos do not show them clearly enough to place.
+    const PS5_CASE = /^PS5 /;
+    const PS5 = {
+        ringIn: 60.5, ringOut: 65, ringHigh: 3.5,
+        dips: [51, -51, 129, 231], dipHalf: 12.5, dipFloor: 0.8,  // degrees from the opening side
+        platform: 21, platformHigh: 0.6, button: 7.2, buttonHigh: 5.5,
+        tongues: 5, tongueIn: 7.6, tongueOut: 15, slitTo: 17.5,
+        disc: 60, discHole: 7.5, discAt: 2,
+        wallIn: 1.5, wallWidth: 1,
+        clip: {fromOpening: 22.5, fromEdge: 28, along: 25, across: 20, bar: 2, high: 2.5},
+        rail: {fromEdge: 10.5, start: 12, end: 128, thin: 1, thick: 2.5, high: 2},
+    };
+
+    // The wall round a half's inside, from z0 to z1.
+    function ps5Wall(c, z0, z1, name, colour) {
+        const x = c.width_mm / 2 - PS5.wallIn, y = c.height_mm / 2 - PS5.wallIn, t = PS5.wallWidth;
+        return [[[-x, y], [x, y]], [[x, y], [x, -y]], [[x, -y], [-x, -y]], [[-x, -y], [-x, y]]]
+            .flatMap(([a, b]) => bar(a, b, t, z0, z1, name, colour));
+    }
+
+    // The disc ring: its top drops into a rounded dip at each of PS5.dips.
+    function ps5Ring(z0, colour, segments = 120) {
+        const out = [], r0 = PS5.ringIn, r1 = PS5.ringOut;
+        const topAt = a => {
+            let z = z0 + PS5.ringHigh;
+            for (const dip of PS5.dips) {
+                const off = Math.abs(((a * 180 / Math.PI - dip) % 360 + 540) % 360 - 180);
+                if (off < PS5.dipHalf) {
+                    const t = off / PS5.dipHalf;
+                    z = Math.min(z, z0 + PS5.dipFloor + (PS5.ringHigh - PS5.dipFloor) * t * t);
+                }
+            }
+            return z;
+        };
+        const at = (r, a, z) => [r * Math.cos(a), r * Math.sin(a), z];
+        for (let i = 0; i < segments; i++) {
+            const a0 = 2 * Math.PI * i / segments, a1 = 2 * Math.PI * (i + 1) / segments;
+            const z1a = topAt(a0), z1b = topAt(a1), mid = (a0 + a1) / 2;
+            const radial = [Math.cos(mid), Math.sin(mid), 0];
+            out.push(part([at(r0, a0, z1a), at(r1, a0, z1a), at(r1, a1, z1b), at(r0, a1, z1b)],
+                [0, 0, 1], 'base', colour));
+            out.push(part([at(r1, a0, z1a), at(r1, a1, z1b), at(r1, a1, z0), at(r1, a0, z0)],
+                radial, 'base', colour));
+            out.push(part([at(r0, a0, z1a), at(r0, a1, z1b), at(r0, a1, z0), at(r0, a0, z0)],
+                radial.map(v => -v), 'base', colour));
+        }
+        return out;
+    }
+
+    // The hub's platform top: ten straight slits out from the button, evenly
+    // spaced, a tongue in every other gap, each ending in a small round hole;
+    // drawn dark on the plastic, 1 mm to a picture unit, centred on the hub.
+    function ps5HubPicture(plastic) {
+        const size = 2 * PS5.platform, cv = document.createElement('canvas');
+        cv.width = cv.height = Math.ceil(size * EMBOSS_PX);
+        const ctx = cv.getContext('2d');
+        ctx.fillStyle = `rgb(${plastic.map(v => Math.round(255 * v)).join(',')})`;
+        ctx.fillRect(0, 0, cv.width, cv.height);
+        ctx.scale(EMBOSS_PX, EMBOSS_PX);
+        ctx.translate(PS5.platform, PS5.platform);
+        ctx.strokeStyle = ctx.fillStyle = `rgb(${DARK.map(v => Math.round(255 * v)).join(',')})`;
+        ctx.lineWidth = 0.5;
+        for (let k = 0; k < 2 * PS5.tongues; k++) {
+            const a = Math.PI / 2 + Math.PI * (2 * k + 1) / (2 * PS5.tongues);
+            const [c, s] = [Math.cos(a), -Math.sin(a)];
+            ctx.beginPath();
+            ctx.moveTo(PS5.button * c, PS5.button * s);
+            ctx.lineTo(PS5.slitTo * c, PS5.slitTo * s);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(PS5.slitTo * c, PS5.slitTo * s, 0.9, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+        // The button's three fingers.
+        for (let k = 0; k < 3; k++) {
+            const a = Math.PI / 6 + 2 * Math.PI * k / 3;
+            ctx.beginPath();
+            ctx.moveTo(1.2 * Math.cos(a), -1.2 * Math.sin(a));
+            ctx.lineTo(PS5.button * Math.cos(a), -PS5.button * Math.sin(a));
+            ctx.stroke();
+        }
+        return cv.toDataURL('image/png');
+    }
+
+    // The disc half: wall, ring, hub and the disc on it.
+    function ps5Base(c, floor, plastic, media) {
+        const out = [], raised = lift(plastic, 0.1), p = PS5;
+        out.push(...ps5Wall(c, floor, -0.5, 'base', raised));
+        out.push(...ps5Ring(floor, raised));
+        const top = floor + p.platformHigh, hub = ps5HubPicture(raised);
+        out.push(...annulus(0, 0, floor, top, p.button, p.platform, 'base', raised, hub));
+        for (let k = 0; k < p.tongues; k++) {
+            const a = Math.PI / 2 + 2 * Math.PI * k / p.tongues;
+            // A wedge filling its gap between two slits, a little short of each.
+            const half = Math.PI / (2 * p.tongues) - 0.05, at = (r, da) => [r * Math.cos(a + da), r * Math.sin(a + da)];
+            out.push(...prism([at(p.tongueIn, -half), at(p.tongueOut, -half), at(p.tongueOut, half),
+                at(p.tongueIn, half)], top, floor + p.discAt, 'base', lift(plastic, 0.25)));
+        }
+        out.push(...annulus(0, 0, floor, floor + p.buttonHigh, 0.01, p.button, 'base', raised, hub, 24)
+            .map(q => (q.tex ? {...q, uv: q.corners.map(([x, y]) =>
+                [0.5 + x / (2 * p.platform), 0.5 - y / (2 * p.platform)])} : q)));
+        out.push(...annulus(0, 0, floor + p.discAt, floor + p.discAt + 1.2, p.discHole, p.disc, 'base',
+            SILVER, scanUrl(media)));
+        return out;
+    }
+
+    // The booklet half: wall, two clips by the opening corners, two rails,
+    // and the booklet held between the rails, its corners under the clips.
+    function ps5Lid(c, lidInside, plastic, manual) {
+        const out = [], w = c.width_mm / 2, h = c.height_mm / 2, raised = lift(plastic, 0.1);
+        const {clip, rail} = PS5;
+        out.push(...ps5Wall(c, 0.5, lidInside, 'lid', raised));
+        if (manual) {
+            const aspect = aspectOf(manual) || 0.7;
+            let bh = 2 * (h - rail.fromEdge) - 3, bw = bh * aspect;
+            if (bw > c.width_mm - 14) { bw = c.width_mm - 14; bh = bw / aspect; }
+            out.push(...cuboid([0, 0, lidInside - 0.9], [bw, bh, 1.5], 'lid', [1, 1, 1], {back: scanUrl(manual)}));
+        }
+        const zc = lidInside - clip.high;
+        for (const s of [1, -1]) {
+            // A clip: a frame with a sprung tongue from its spine side, a lip at its tip.
+            const cx = w - clip.fromOpening, cy = s * (h - clip.fromEdge);
+            const ax = clip.along / 2, ay = clip.across / 2, t = clip.bar;
+            for (const [a, b] of [[[cx - ax, cy - ay], [cx + ax, cy - ay]], [[cx + ax, cy - ay], [cx + ax, cy + ay]],
+                [[cx + ax, cy + ay], [cx - ax, cy + ay]], [[cx - ax, cy + ay], [cx - ax, cy - ay]]]) {
+                out.push(...bar(a, b, t, zc, lidInside, 'lid', raised));
+            }
+            out.push(...bar([cx - ax, cy], [cx + ax - 5, cy], 9, zc + 0.8, lidInside, 'lid', raised));
+            out.push(...bar([cx + ax - 6, cy], [cx + ax - 4, cy], 9, zc - 0.8, lidInside, 'lid', raised));
+            // A rail, thin by the clip and thicker towards the spine.
+            const y = s * (h - rail.fromEdge), x0 = w - rail.start, x1 = w - rail.end;
+            out.push(...prism([[x0, y - rail.thin / 2], [x0, y + rail.thin / 2],
+                [x1, y + rail.thick / 2], [x1, y - rail.thick / 2]], lidInside - rail.high, lidInside,
+            'lid', raised));
         }
         return out;
     }

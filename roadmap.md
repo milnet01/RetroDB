@@ -3945,6 +3945,14 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   button to fit the hole (~15 mm, as measured) and the ring's inside to
   clear the disc (~121 mm, as measured); use the disc's 120 mm as the
   scale check for parts measured from the photos.
+  **PS5 inside drawn 2026-11-25** (box-viewer.js ps5Base / ps5Lid; depth
+  14 in cases.py). Opening-side dips read from photo 0 (full-size crops)
+  and photos 11-12: all four dips sit about 51 degrees either side of
+  the spine and of the opening side. Hub: ten evenly spaced slits, a
+  tongue in every other gap (photo 9). Not drawn: the wall's small
+  notches and the spine's moulded text (too unclear to place or read).
+  The renderer draws the plastic opaque, so the dips show only faintly.
+  Awaiting the user's judgement of the side-by-side render.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.
