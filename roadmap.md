@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=339 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=340 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -3978,6 +3978,27 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   rounded end, runs flat, bends down onto the booklet, then curves up
   at a rounded tip so the booklet does not catch. User: other small
   differences remain, but the PS5 case is good enough. PS5 done.
+  PS3 case photos (2026-11-25, Heavenly Sword, PAL): 191 photos in
+  Scratchpad/RetroDB/ps3-case/photos, numbered in index.txt (000-190);
+  small/ and sheets/ hold survey copies. User confirmed this reading:
+  - Outside already right: 135 x 171.5 x 14, opening-edge groove (023),
+    clear top strip with Blu-ray logo (overlays.py). Nothing to add.
+  - Both halves: a low cross wall about 15 mm below the top edge closes
+    off the clear strip (044); a tiny rib mid top wall (053).
+  - Disc half: raised clear ring round the disc with finger dips, seen at
+    the top either side (140, 053, 038; check the rest while building).
+    Round raised pad (~38 mm across) holding the hub: a triangle "PUSH"
+    button (133) and three square flaps cut free by slits that end in
+    small round holes; each flap carries a rounded bump at its inner end
+    that grips the disc hole (133, 148).
+  - A catch in each half's opening-side wall, about midway (046, 127).
+  - Booklet half: two clips by the opening side's top and bottom corners
+    (083, 101, 096). User: same design as the PS5 clips, so reuse
+    ps5Lid's clip code. No rails. Top clip sits just under the cross wall.
+  - Scale: no ruler inside; use the disc (120 mm, 15 mm hole).
+  Build plan: ps3Base / ps3Lid in box-viewer.js beside ps5Base / ps5Lid,
+  pull the clip into a shared function; test on a standalone page or a
+  :5001 scratch copy (PS3 games with box_faces: ids 5116, 5138).
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.
@@ -4044,6 +4065,17 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Pairs with PASS-59-338.
   **Layman:** In the Logs page, you can show only the failed or skipped games from a scrape, or only one game's lines.
   Kind: enhancement.
+  Source: user-request-2026-11-25.
+
+- 📋 [PASS-59-340] **When no 3D box picture can be downloaded, draw one from the game's own box, in the scrapers' look and angle.**
+  Fills boxart_3d only when empty and no source has one (fill-only). Render
+  the box the viewer already builds (box faces, case shape) at the angle
+  and lighting ScreenScraper's 3D boxes use, on a transparent background,
+  and save it as the game's 3D box picture. Credit it as made by RetroDB,
+  so a later scrape that finds a real one replaces it. Related: PASS-59-326,
+  PASS-59-331.
+  **Layman:** A game with no downloadable 3D box art gets one made by RetroDB, matching the angle and style of the ones from ScreenScraper.
+  Kind: feature.
   Source: user-request-2026-11-25.
 
 ## 4.0.x — Fixes and new features for the web version
