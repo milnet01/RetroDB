@@ -461,7 +461,17 @@
         const sheet = (shape && shape.lip_height_mm) || 0;
         const floor = -d + sheet + PAPER_MM;      // the tray's inside
         const media = firstOf(scans, 'media'), manual = firstOf(scans, 'manual');
-        const inside = firstOf(scans, 'inside');
+        // The inside of the cover: one wide scan of both pages, or a page
+        // per scan, captioned Left (behind the lid) and Right (behind the tray).
+        const insides = scans.filter(s => s.kind === 'inside');
+        const pageOf = side => insides.find(s => s.caption === side) || null;
+        let inside = null, insideLeft = null;
+        if (insides.length > 1) {
+            inside = pageOf('Right') || insides[1];
+            insideLeft = pageOf('Left') || insides[0];
+        } else {
+            inside = insides[0] || null;
+        }
 
         if (kind === 'carton') {
             const ch = 0.75 * c.height_mm, ct = Math.min(0.6 * c.depth_mm, 22);
@@ -476,7 +486,7 @@
         }
 
         const lidInside = d - sheet - PAPER_MM;   // the lid's inside, facing -z
-        const spread = aspectOf(inside) > 1.2;
+        const spread = !insideLeft && aspectOf(inside) > 1.2;
         const name = c.name || '';
         const gamecube = GAMECUBE.test(name), ps5 = PS5_CASE.test(name), ps3 = PS3_CASE.test(name);
         // A PS3 cover stops at the low cross wall: the strip above it, with
@@ -485,9 +495,9 @@
         if (inside) {
             out.push(paper(-w + 2, w - 2, -h + 2, paperTop, floor, [0, 0, 1], 'base', scanUrl(inside),
                 spread ? 0.5 : 0, 1, false));
-            if (spread) {
-                out.push(paper(-w + 2, w - 2, -h + 2, paperTop, lidInside, [0, 0, -1], 'lid', scanUrl(inside),
-                    0, 0.5, true));
+            if (spread || insideLeft) {
+                out.push(paper(-w + 2, w - 2, -h + 2, paperTop, lidInside, [0, 0, -1], 'lid',
+                    scanUrl(insideLeft || inside), 0, insideLeft ? 1 : 0.5, true));
             }
         }
         if (ps3) {
@@ -499,7 +509,7 @@
             if (back && !inside) {
                 behind.push(paper(-w + 2, w - 2, -h + 2, paperTop, floor, [0, 0, 1], 'base', back, 0, 1, true));
             }
-            if (front && !spread) {
+            if (front && !spread && !insideLeft) {
                 behind.push(paper(-w + 2, w - 2, -h + 2, paperTop, lidInside, [0, 0, -1], 'lid', front, 0, 1, false));
             }
             out.push(...behind.map(q => ({...q, fade: SHOW_THROUGH})));
