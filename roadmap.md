@@ -4117,12 +4117,21 @@ After 4.0.0 the web version still gets bug fixes and, now and then, a good new f
   Kind: ux.
   Source: PASS-59-255 leftover 2026-11-24.
 
-- 📋 [PASS-59-336] **At 375px the game page and the achievement game page scroll sideways (fix, S).**
+- ✅ [PASS-59-336] **At 375px the game page and the achievement game page scroll sideways (fix, S).**
   - **Seen**: headless Chrome at 375px, `/game/9` and `/achievements/9`
     report `scrollWidth` 388, before and after PASS-59-330, so it is
     older. Other pages checked stay at 375.
   - **Next**: find the element wider than the screen, fix, recheck at
     375px.
+  - **Cause**: the title "Dragonstomper" (game 9) is one word in 2rem
+    display type with no break point; `.game-page-title` reached 388px.
+  - **Fix**: `.game-page-title` in `static/css/pages/pages.css` now uses
+    `clamp(1.5rem, 7vw, 2rem)` and `overflow-wrap: anywhere`. It covers
+    every page with that title (game, RA, Steam, Xbox, PSN, local).
+  - **Checked** 2026-11-25, headless Chrome on a :5001 scratch copy:
+    `/game/9` and `/achievements/9` went from 388 to 375 at 375px;
+    `/game/3716`, `/achievements/3716` and `/game/2` stay at 375. At
+    1280px the title is still 32px.
   **Layman:** On a phone, two pages are slightly wider than the screen and can slide sideways.
   Kind: fix.
   Source: PASS-59-330 screen check 2026-11-25.

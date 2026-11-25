@@ -19,9 +19,12 @@
     z-index: 1;
 }
 
+/* Smaller on a phone, and a long one-word title breaks rather than widening
+   the page (PASS-59-336). */
 .game-page-title {
     font-family: var(--font-display);
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 7vw, 2rem);
+    overflow-wrap: anywhere;
     color: var(--primary-cyan);
     text-shadow: 0 0 30px color-mix(in srgb, var(--primary-cyan) 30%, transparent);
     margin: 0;
