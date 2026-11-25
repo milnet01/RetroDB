@@ -824,7 +824,7 @@
         wallIn: 1.5, wallWidth: 1,
         // A booklet clip: a solid plate with a U slot round a sprung tongue (close-ups, 2026-11-25).
         clip: {fromOpening: 22, fromEdge: 27.75, along: 25, across: 18.5, corner: 3, high: 3,
-            slotFromOpening: 14.5, slotLength: 14.5, slotWidth: 8, line: 1},
+            slotFromOpening: 14.5, slotLength: 14.5, slotWidth: 8, line: 1.5, plate: 1},
         rail: {fromEdge: 10.5, start: 12, end: 128, thin: 1, thick: 2.5, high: 2},
         bookletFromOpening: 14,
         latch: {fromEnd: 22.5, length: 6, reach: 2},        // hooks inside the disc half's opening wall
@@ -948,22 +948,27 @@
         const zc = lidInside - clip.high;   // the clips' face, over the booklet
         for (const s of [1, -1]) {
             // A clip: a plate with rounded corners on its spine side, lying over the
-            // booklet's corner, and on its face the dark U slot round the tongue.
+            // booklet's corner, with a U slot cut right through it round the tongue,
+            // so the booklet shows through the slot (user, 2026-11-25).
             const cx = w - clip.fromOpening, cy = s * (h - clip.fromEdge);
             const x0 = cx - clip.along / 2, x1 = cx + clip.along / 2, ay = clip.across / 2, r = clip.corner;
+            const sx1 = w - clip.slotFromOpening, sx0 = sx1 - clip.slotLength;
+            const sh = clip.slotWidth / 2, t = clip.line;
             const round = (k, sy) => [x0 + r - r * Math.sin(Math.PI / 8 * k), cy + sy * (ay - r + r * Math.cos(Math.PI / 8 * k))];
-            const outline = [[x1, cy - ay], [x1, cy + ay]];
-            for (let k = 0; k <= 4; k++) outline.push(round(k, 1));
-            for (let k = 4; k >= 0; k--) outline.push(round(k, -1));
-            out.push(...prism(outline, zc, lidInside, 'lid', raised));
-            const face = zc - 0.03, sx1 = w - clip.slotFromOpening, sx0 = sx1 - clip.slotLength;
-            const sh = clip.slotWidth / 2, t = clip.line, dark = plastic.map(v => v * 0.35);
-            for (const [a, b, c2, d2] of [[sx0, sx1, cy + sh - t, cy + sh], [sx0, sx1, cy - sh, cy - sh + t],
-                [sx1 - t, sx1, cy - sh, cy + sh]]) {
-                out.push(part([[a, d2, face], [b, d2, face], [b, c2, face], [a, c2, face]], [0, 0, -1], 'lid', dark));
+            // The plate in pieces round the slot: the spine end with its rounded
+            // corners and the tongue's root, the strips either side, the opening end.
+            const spineEnd = [[sx0, cy - ay], [sx0, cy + ay]];
+            for (let k = 0; k <= 4; k++) spineEnd.push(round(k, 1));
+            for (let k = 4; k >= 0; k--) spineEnd.push(round(k, -1));
+            const box = (a, b, c2, d2) => [[a, c2], [b, c2], [b, d2], [a, d2]];
+            // The spine end stands on the floor; the rest is a thin plate over the booklet.
+            out.push(...prism(spineEnd, zc, lidInside, 'lid', raised));
+            for (const piece of [box(sx0, x1, cy + sh, cy + ay), box(sx0, x1, cy - ay, cy - sh),
+                box(sx1, x1, cy - sh, cy + sh), box(sx0, sx1 - t, cy - sh + t, cy + sh - t)]) {
+                out.push(...prism(piece, zc, zc + clip.plate, 'lid', raised));
             }
             // The U is closed on the opening side; the tongue's lip shows at its open, spine end.
-            out.push(...cuboid([sx0 + 1, cy, face - 0.4], [2, clip.slotWidth - 2 * t - 1, 0.8], 'lid',
+            out.push(...cuboid([sx0 + 1, cy, zc - 0.43], [2, clip.slotWidth - 2 * t - 1, 0.8], 'lid',
                 lift(plastic, 0.25)));
             // A rail, thin by the clip and thicker towards the spine.
             const y = s * (h - rail.fromEdge), rx0 = w - rail.start, rx1 = w - rail.end;
