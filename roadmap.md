@@ -4010,6 +4010,15 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Not drawn: "PUSH" on the button. Renders checked headless against
   photos 101, 140, 169 by eye; the PS5 render is unchanged (pixel diff
   at most 1 level). Awaiting the user's judgement of the render.
+  Still to do (user, 2026-11-25): the OUTSIDE of a PS3 case. The photos
+  (001, 012 in the user's PS3 photo set) show a clear strip about 13.5 mm
+  deep across the top of the front and back, with "PLAYSTATION 3" and the
+  Blu-ray logo moulded in; the cover starts below it. Downloaded PS3 covers
+  measure 0.854 wide to tall (median of 152), which fits the face below
+  the strip, so today services/box3d stretches every PS3 cover about 8%
+  taller to fill the whole face. Fix the builder (services/box3d, ported
+  from Slipcase: keep its names) and the viewer's shell, then the user
+  re-runs Build 3D Boxes. Check the spine and back in the photos too.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.
