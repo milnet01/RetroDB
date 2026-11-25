@@ -3925,6 +3925,13 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   "DOL-007(EUR)" in the hinge channel near the bottom. "INSTRUCTION
   BOOKLET" is
   printed on the booklet, not the case.
+  PS5 open case vs the user's 61 RealityScan photos (2026-11-25; photos in /mnt/Games/3D Engine Assets/Models/Props/Electronics/PS5 Case/Original scan/Photos). User's goal: 95%+ true to the real case. Differences found in box-viewer.js insideParts, by eye, no sizes yet:
+  - Booklet clips: drawn as two flat bars centred top and bottom; real = two rounded-square frames with a sprung tongue, in the corners on the opening side (top and bottom).
+  - Disc hub: drawn as a 12-point star ~15 mm, 5 mm tall; real = a raised round platform about a third of the disc's width, 8 radial slits each ending in a small round hole, centre button split into fingers.
+  - Disc ring: drawn flat and even; real ring has finger dips (count and places not readable).
+  - Missing: raised wall round each half's edge with small notches; two ridges on the spine; a rib along the top edge of the booklet half.
+  - Finger notch: not visible in these photos.
+  Sizes wait on ruler photos: open case from above, hub (top and side), each clip, finger notch, closed case side. The scan mesh is too rough to measure details (clear plastic); overall 284 x 170 mm open confirmed by the user's ruler.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.
