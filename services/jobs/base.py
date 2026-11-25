@@ -64,6 +64,7 @@ def request_shutdown(timeout=5.0):
         getattr(_jobs_pkg, 'mobygames_catch_up_job', None),
         getattr(_jobs_pkg, 'mame_names_job', None),
         getattr(_jobs_pkg, 'player_cores_job', None),
+        getattr(_jobs_pkg, 'box_build_job', None),
     ]
 
     cancelled = 0

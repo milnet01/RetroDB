@@ -21,6 +21,7 @@ _SINGLETON_NAMES = (
     'xbox_sync_job', 'alt_titles_backfill_job', 'hltb_bulk_job',
     'ss_region_repair_job', 'mame_names_job', 'player_cores_job',  # PASS-59-243
     'museum_images_job', 'ai_fill_bulk_job', 'mobygames_catch_up_job',
+    'box_build_job',  # PASS-59-335
 )
 
 

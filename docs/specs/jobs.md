@@ -304,7 +304,8 @@ two-zone progress layout and the toast detail-line table.
    `museum_generate_job`, `image_resize_job`, `steam_sync_job`,
    `xbox_sync_job`, `alt_titles_backfill_job`, `hltb_bulk_job`,
    `museum_images_job`, `ai_fill_bulk_job`,
-   `ss_region_repair_job`, `mame_names_job`. **Note:**
+   `ss_region_repair_job`, `mobygames_catch_up_job`, `mame_names_job`,
+   `player_cores_job`, `box_build_job`. **Note:**
    `webp_migrate_job` is intentionally absent today — SIGTERM mid-WebP
    migration leaves the row `running` until `mark_jobs_interrupted` flips
    it on next start, then the user re-runs the job from the top
