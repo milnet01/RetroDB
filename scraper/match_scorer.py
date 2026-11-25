@@ -20,9 +20,8 @@
 
 import logging
 import re
-import unicodedata
 
-from scraper.title_normalizer import normalize_for_matching, strip_title_noise
+from scraper.title_normalizer import normalize_for_matching, strip_title_noise, without_accents
 from services.achievement_linking import canonical_ra_word, ra_sequel_numbers
 from services.game_utils import normalize_article_for_comparison
 
@@ -118,9 +117,7 @@ def _comparable(title):
     article up front; accents, apostrophes and stray marks gone ("Pokémon" is
     "Pokemon", "Conker's" is "Conkers", "R.B.I." is "RBI"). A dot between digits
     stays: "3.5" is not "35"."""
-    title = normalize_article_for_comparison(strip_title_noise(title or ''))
-    title = unicodedata.normalize('NFKD', title)
-    title = ''.join(c for c in title if not unicodedata.combining(c))
+    title = without_accents(normalize_article_for_comparison(strip_title_noise(title or '')))
     return normalize_for_matching(re.sub(r"['’`´!?]|(?<!\d)\.|\.(?!\d)", '', title))
 
 

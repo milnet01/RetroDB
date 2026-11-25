@@ -9,9 +9,36 @@
 # largest conditional block in that file.
 # =============================================================================
 
+import functools
+import logging
 import re
+import unicodedata
 
 from scraper.base_scraper import normalize_roman_numerals
+
+logger = logging.getLogger(__name__)
+
+
+def without_accents(title):
+    """The title with its accents dropped: "Ghost of Yōtei" is "Ghost of Yotei"."""
+    title = unicodedata.normalize('NFKD', title or '')
+    return unicodedata.normalize(
+        'NFC', ''.join(c for c in title if not unicodedata.combining(c)))
+
+
+def retry_without_accents(search):
+    """A source's search, asked again without accents when the title has some
+    and the first search finds nothing. Sources spell a title differently:
+    MobyGames files "Ghost of Yōtei", others may file "Ghost of Yotei"."""
+    @functools.wraps(search)
+    def searched(title, *args, **kwargs):
+        results = search(title, *args, **kwargs)
+        plain = without_accents(title)
+        if not results and title and plain != title:
+            logger.info(f"{search.__module__}: nothing for '{title}', asking for '{plain}'")
+            results = search(plain, *args, **kwargs)
+        return results
+    return searched
 
 
 # Bracketed content: [NTSC], [USA], [PAL], etc.

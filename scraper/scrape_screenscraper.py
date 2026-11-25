@@ -21,6 +21,7 @@ from services.game_utils import is_arcade_set
 from . import service_limits
 from .base_scraper import http_get, _http_session
 from .ss_regions import by_region
+from scraper.title_normalizer import retry_without_accents
 
 logger = logging.getLogger(__name__)
 
@@ -277,6 +278,7 @@ def check_credentials(username, password, dev_id=None, dev_password=None):
         return {"valid": False, "error": str(e)}
 
 
+@retry_without_accents
 def search_game(game_title, system_folder, username, password, dev_id=None, dev_password=None):
     """
     Search for a game by title on ScreenScraper

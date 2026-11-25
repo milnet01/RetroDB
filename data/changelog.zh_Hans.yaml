@@ -2,6 +2,9 @@
   date: '2026-11-25'
   tags:
   - type: fix
+    label: "现在无论来源如何书写重音符号，抓取都能找到游戏。搜索没有结果时，会去掉重音符号再搜索一次，因此 Ghost of Yōtei 也能找到写作 Ghost of Yotei 的来源。保留重音符号的 MobyGames 也会再搜索一次，因此 Ghost of Yotei 能在那里找到 Ghost of Yōtei"
+    en: "Scraping now finds a game however a source spells its accents. When a search finds nothing, it is asked again without the accents, so Ghost of Yōtei also finds a source that writes Ghost of Yotei. MobyGames, which keeps the accents, is asked again too, so Ghost of Yotei finds Ghost of Yōtei there"
+  - type: fix
     label: "在手机上，当游戏标题是一个很长的单词时，游戏页面或成就页面不再左右滚动。标题在那里会稍小一些，如果仍放不下就会换到第二行"
     en: "On a phone, a game or achievements page no longer scrolls sideways when the game's title is one long word. The title is a little smaller there, and breaks onto a second line if it still does not fit"
   - type: fix

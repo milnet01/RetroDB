@@ -7,6 +7,7 @@ import json
 import logging
 import os
 import pathlib
+import re
 import sqlite3
 
 import pytest
@@ -373,7 +374,7 @@ def test_open_box_lists_inside_scans_on_disk(psx_library):
 def test_a_title_is_searched_with_wildcards_then_by_its_longest_word(moby, monkeypatch):
     """MobyGames matches the title letter for letter, with '%' for any letters
     (2026-11-21): words are joined by '%'. A search that still finds nothing
-    is asked once more by the title's longest word."""
+    is asked with its vowels left open, then by the title's longest word."""
     calls = []
 
     def fake_get(url, params=None, **kwargs):
@@ -385,11 +386,12 @@ def test_a_title_is_searched_with_wildcards_then_by_its_longest_word(moby, monke
     monkeypatch.setattr(scrape_mobygames, 'http_get', fake_get)
     found = scrape_mobygames.search_games('Castlevania: The New Generation', 'megadrive')
     assert [g['name'] for g in found] == ['Castlevania: Bloodlines']
-    assert calls == ['Castlevania%The%New%Generation', 'Castlevania']
-    # A one-word title that found nothing is not asked twice.
+    assert calls == ['Castlevania%The%New%Generation', 'C%stl%v%n%Th%N%w%G%n%r%t%n',
+                     'Castlevania']
+    # A one-word title that found nothing is not asked by its longest word.
     calls.clear()
     assert scrape_mobygames.search_games('Contra', 'megadrive') == []
-    assert calls == ['Contra']
+    assert calls == ['Contra', 'C%ntr%']
 
 
 def test_a_title_starting_with_capitals_is_asked_again_letter_by_letter(moby, monkeypatch):
@@ -408,7 +410,8 @@ def test_a_title_starting_with_capitals_is_asked_again_letter_by_letter(moby, mo
     found = scrape_mobygames.search_games(
         'MUSHA: Metallic Uniframe Super Hybrid Armor', 'megadrive')
     assert [g['name'] for g in found] == ['M.U.S.H.A.']
-    assert calls == ['MUSHA%Metallic%Uniframe%Super%Hybrid%Armor', 'M%U%S%H%A']
+    assert calls == ['MUSHA%Metallic%Uniframe%Super%Hybrid%Armor',
+                     'M%SH%M%t%ll%c%n%fr%m%S%p%r%Hybr%d%rm%r', 'M%U%S%H%A']
 
 
 def test_the_online_check_takes_a_place_in_line(moby, monkeypatch, admin_test_client):
@@ -442,3 +445,26 @@ def test_the_online_check_asks_for_the_light_reply(moby, monkeypatch, admin_test
     client, _csrf = admin_test_client()
     assert client.get('/api/check-scraper/mobygames').get_json()['online'] is True
     assert sent[0]['include'] == 'game_id'
+
+
+def test_a_title_written_without_its_accents_still_finds_the_game(moby, monkeypatch):
+    """MobyGames files 'Ghost of Yōtei' and matches letter for letter, so
+    'Ghost of Yotei' found nothing (2026-11-25). A search that finds nothing
+    is asked again with each vowel left open: '%' also stands for 'ō'. Its
+    longest word alone, 'Ghost', fills the reply with other games."""
+    filed = [f'Ghostrunner {n}' for n in range(30)] + ['Ghost of Yōtei']
+    calls = []
+
+    def like(pattern, title):   # MobyGames' title search, as SQL LIKE '%…%'
+        return re.search('.*'.join(map(re.escape, pattern.split('%'))), title, re.I)
+
+    def fake_get(url, params=None, **kwargs):
+        calls.append(params['title'])
+        return Reply({'games': [{'game_id': i + 1, 'title': t, 'platforms': []}
+                                for i, t in enumerate(filed)
+                                if like(params['title'], t)][:params['limit']]})
+
+    monkeypatch.setattr(scrape_mobygames, 'http_get', fake_get)
+    found = scrape_mobygames.search_games('Ghost of Yotei', 'ps5')
+    assert [g['name'] for g in found] == ['Ghost of Yōtei']
+    assert len(calls) == 2

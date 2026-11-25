@@ -15,6 +15,7 @@ import config as _config
 
 from scraper import service_limits
 from scraper.base_scraper import http_post
+from scraper.title_normalizer import retry_without_accents
 from scraper.match_scorer import EXACT_TITLE_SCORE, calculate_title_match_score
 
 logger = logging.getLogger(__name__)
@@ -401,6 +402,7 @@ def _is_someone_elses_add_on(game, title):
             and calculate_title_match_score(game.get('name', ''), title) < EXACT_TITLE_SCORE)
 
 
+@retry_without_accents
 def search_games(title, system_name=None, limit=10):
     """Search games on IGDB using proper search endpoint"""
     try:

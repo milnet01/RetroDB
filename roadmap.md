@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=336 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=337 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -4135,6 +4135,17 @@ After 4.0.0 the web version still gets bug fixes and, now and then, a good new f
   **Layman:** On a phone, two pages are slightly wider than the screen and can slide sideways.
   Kind: fix.
   Source: PASS-59-330 screen check 2026-11-25.
+
+- ✅ [PASS-59-337] **A scrape finds a game whichever way a source spells its accents (Ghost of Yōtei / Ghost of Yotei).**
+  MobyGames files "Ghost of Yōtei" and found nothing for "Ghost of
+  Yotei"; its longest-word retry ("Ghost") filled the reply with other
+  games. Every source's search now asks again without accents when it
+  finds nothing (title_normalizer.retry_without_accents), and MobyGames
+  asks again with its vowels as '%' before the longest-word retry.
+  docs/specs/scrapers.md "Search-time spelling" records both.
+  **Layman:** Scraping finds games with accented names on every source, whether the name is typed with the accents or without.
+  Kind: fix.
+  Source: user-request-2026-11-25.
 
 ## Desktop milestone 1 — browse and play
 

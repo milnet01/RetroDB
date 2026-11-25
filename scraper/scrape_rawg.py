@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from scraper import service_limits
 from scraper.base_scraper import http_get, on_one_platform, safe_json
+from scraper.title_normalizer import retry_without_accents
 import config as _config
 
 # Pass 45.14 — cap RAWG JSON response, mirroring RA + AI + ScreenScraper.
@@ -190,6 +191,7 @@ def platform_id(system_folder):
     return PLATFORM_MAP.get(system_folder.lower()) if system_folder else None
 
 
+@retry_without_accents
 def search_games(title, system_folder=None, limit=10):
     """Search for games on RAWG"""
     results = []

@@ -2,6 +2,9 @@
   date: '2026-11-25'
   tags:
   - type: fix
+    label: "スクレイピングは、ソースがアクセント記号をどう書いていてもゲームを見つけるようになりました。検索で何も見つからないときはアクセント記号を外して再検索するので、Ghost of Yōtei で Ghost of Yotei と書くソースも見つかります。アクセント記号を残す MobyGames にも再検索するので、Ghost of Yotei でそこにある Ghost of Yōtei が見つかります"
+    en: "Scraping now finds a game however a source spells its accents. When a search finds nothing, it is asked again without the accents, so Ghost of Yōtei also finds a source that writes Ghost of Yotei. MobyGames, which keeps the accents, is asked again too, so Ghost of Yotei finds Ghost of Yōtei there"
+  - type: fix
     label: "スマートフォンで、ゲームのタイトルが長い一語のとき、ゲームページや実績ページが横にスクロールしなくなりました。そこではタイトルが少し小さくなり、それでも収まらない場合は2行目に折り返します"
     en: "On a phone, a game or achievements page no longer scrolls sideways when the game's title is one long word. The title is a little smaller there, and breaks onto a second line if it still does not fit"
   - type: fix

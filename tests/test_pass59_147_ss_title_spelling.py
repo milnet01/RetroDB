@@ -13,6 +13,7 @@ import json
 import pytest
 
 from tests._util import REPO_ROOT  # noqa: F401  (ensures sys.path is set)
+from scraper.title_normalizer import without_accents
 
 
 class _Reply:
@@ -75,4 +76,5 @@ def test_the_part_before_the_colon_is_tried_when_the_whole_title_finds_nothing(s
 def test_other_punctuation_is_sent_as_written(ss, title):
     results, sent = ss(title, {})
     assert results is None
-    assert sent == [title]
+    # A title with accents that finds nothing is asked once more without them.
+    assert sent == [title] + ([without_accents(title)] if without_accents(title) != title else [])

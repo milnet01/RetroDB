@@ -17,6 +17,7 @@ from config import IMAGE_PATH
 
 from scraper import service_limits
 from scraper.base_scraper import http_get, download_image
+from scraper.title_normalizer import retry_without_accents
 import config as _config
 
 # Pass 45.14 — every scraper API response cap, mirroring RA + AI + ScreenScraper.
@@ -535,6 +536,7 @@ def get_system_id(system_name):
 # SEARCH GAMES
 # =============================================================================
 
+@retry_without_accents
 def search_games(title, system_name=None, limit=10):
     """Search games on TheGamesDB"""
     system_id = get_system_id(system_name)

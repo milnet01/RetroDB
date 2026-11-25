@@ -23,6 +23,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from scraper import service_limits
 from scraper.base_scraper import http_get, safe_json
+from scraper.title_normalizer import retry_without_accents
 import config as _config
 
 logger = logging.getLogger(__name__)
@@ -189,6 +190,7 @@ def _platform_entry(record, moby_platform):
     return None
 
 
+@retry_without_accents
 def search_games(title, system_folder=None, limit=10):
     """Games titled like `title` on this system's platform, best first as listed."""
     moby_platform = platform_id(system_folder)
@@ -201,10 +203,16 @@ def search_games(title, system_folder=None, limit=10):
     # New Generation') is asked once more by its longest word; the scorer
     # ranks what comes back. A first word in capitals is asked letter by
     # letter instead: MobyGames files MUSHA as 'M.U.S.H.A.' (2026-11-22).
+    # Before either, the title with its vowels left open finds one MobyGames
+    # files with accents: 'Gh%st%f%Y%t%' finds 'Ghost of Yōtei' (2026-11-25).
     words = re.findall(r'\w+', title or '')
-    data = _request({'title': '%'.join(words) or title, 'platform': moby_platform,
-                     'limit': limit},
+    query = '%'.join(words) or title
+    data = _request({'title': query, 'platform': moby_platform, 'limit': limit},
                     include=SEARCH_INCLUDE, timeout=_SEARCH_TIMEOUT)
+    open_vowels = re.sub('%+', '%', re.sub('[aeiouAEIOU]', '%', query))
+    if data is not None and not data.get('games') and open_vowels != query:
+        data = _request({'title': open_vowels, 'platform': moby_platform, 'limit': limit},
+                        include=SEARCH_INCLUDE, timeout=_SEARCH_TIMEOUT)
     if data is not None and not data.get('games') and len(words) > 1:
         first = words[0]
         retry = ('%'.join(first) if first.isalpha() and first.isupper() and len(first) > 1

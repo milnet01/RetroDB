@@ -18,6 +18,7 @@ from config import IMAGE_PATH, STATIC_PATH
 from scraper.base_scraper import get_scraper_conn
 from scraper.image_dedup import get_existing_screenshot_hashes, keep_screenshot_if_unique
 from scraper.match_scorer import sequel_numbers_agree
+from scraper.title_normalizer import retry_without_accents
 
 # Import settings_manager for dynamic path resolution
 # (config.py has empty defaults; actual paths live in data/settings.json)
@@ -485,6 +486,7 @@ def derive_game_modes(players_str):
     return modes_from_player_count(players_str) or 'Single-Player'
 
 
+@retry_without_accents
 def search_esde_games(title, system_folder, limit=10):
     """
     Search for a game in ES-DE's gamelist.xml
