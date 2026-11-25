@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=340 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=341 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -4086,6 +4086,19 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   so a later scrape that finds a real one replaces it. Related: PASS-59-326,
   PASS-59-331.
   **Layman:** A game with no downloadable 3D box art gets one made by RetroDB, matching the angle and style of the ones from ScreenScraper.
+  Kind: feature.
+  Source: user-request-2026-11-25.
+
+- 📋 [PASS-59-341] **Add and replace box scans (cover inside, disc, manual) from the game's edit screen.**
+  The user asked for this while reviewing the PS3 case inside (PASS-59-329).
+  Today only scrapes fill games.box_scans (services/box_scans.py); the edit
+  modal has no way to add one. Only 18 of 152 built PS3 boxes had an
+  "inside" scan on 2026-11-25. Without one, the open PS3 case shows the
+  cover's own picture faded behind the clear tray. Needs: upload per kind
+  (inside, media, manual), credited as a hand edit so a scrape does not
+  replace it, and Clear. Read docs/specs/PASS-59-183-mobygames-source.md
+  first: it owns box_scans' shape.
+  **Layman:** Lets you give a game a picture of the inside of its cover, its disc or its manual yourself, so the opened 3D box shows them when no scraper has them.
   Kind: feature.
   Source: user-request-2026-11-25.
 

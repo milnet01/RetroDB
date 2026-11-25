@@ -320,6 +320,8 @@
     const JEWEL_LID_MM = 3;     // a jewel case's lid, cut this far under the front
     const PAPER_MM = 0.4;       // paper and parts sit this far off the plastic
     const SILVER = [0.80, 0.82, 0.85];
+    const CLEAR_ALPHA = 0.5;    // how much of clear plastic's own colour shows
+    const SHOW_THROUGH = 0.55;  // a cover's picture seen through its paper: faded this far to white
     const CARDBOARD = [0.72, 0.66, 0.56];
     const CARTRIDGE = [0.12, 0.12, 0.13];   // a cartridge's bare plastic
     const DISC_CASES = /PS[2-5]|DVD|Blu-ray|Xbox|Wii|GameCube|Jewel|Long Box/;
@@ -452,7 +454,7 @@
     const scanUrl = s => (s ? `/static/${encodeURI(s.url)}` : null);
 
     // What sits inside the case, placed as it sits when the case is closed.
-    // `game` is what the record says of the game: {discs, region}.
+    // `game` is what the record says of the game: {discs, region, covers: face → picture}.
     function insideParts(kind, c, shape, plastic, scans, game = {}) {
         const out = [];
         const w = c.width_mm / 2, h = c.height_mm / 2, d = c.depth_mm / 2;
@@ -486,6 +488,20 @@
 
         const name = c.name || '';
         const gamecube = GAMECUBE.test(name), ps5 = PS5_CASE.test(name), ps3 = PS3_CASE.test(name);
+        if (ps3) {
+            // A half with no scan of the cover's inside behind it: through the
+            // clear tray the cover's own picture shows, faded, as paper seen
+            // from behind (the user, 2026-11-25).
+            const {front: f = null, back: b = null} = game.covers || {}, back = b || f, front = f || b;
+            const behind = [];
+            if (back && !inside) {
+                behind.push(paper(-w + 2, w - 2, -h + 2, h - 2, floor, [0, 0, 1], 'base', back, 0, 1, true));
+            }
+            if (front && !spread) {
+                behind.push(paper(-w + 2, w - 2, -h + 2, h - 2, lidInside, [0, 0, -1], 'lid', front, 0, 1, false));
+            }
+            out.push(...behind.map(q => ({...q, fade: SHOW_THROUGH})));
+        }
         if (gamecube) {
             out.push(...gamecubeBase(c, floor, plastic, scans, game, !inside));
         } else if (ps5) {
@@ -1048,8 +1064,11 @@
     // From the user's photos of a PAL Heavenly Sword case (2026-11-25), with
     // no ruler inside: sizes are read against the disc (120 mm, 15 mm hole).
     // Each half has a wall round its edge and a low cross wall about 15 mm
-    // below the top, closing off the clear strip; a catch stands about midway
-    // along each half's opening wall, between two ribs. The disc half has a
+    // below the top, closing off the clear strip; two catches stand on each
+    // half's opening wall, above and below the finger slot (photos 125-129,
+    // 153-161; the user, 2026-11-25): in the disc half a hook between two
+    // ribs on a raised stretch of wall, in the booklet half a tab with a
+    // window the hook snaps into. The plastic is clear. The disc half has a
     // raised ring with a finger dip either side of the top (no dips show
     // elsewhere) and a round pad holding the hub: a triangular PUSH button and
     // three flaps cut free by slits that end in small holes, each flap with a
@@ -1068,8 +1087,10 @@
         flaps: [30, 150, 270], flapWide: 11.5, slitTo: 15.8,
         grip: {rIn: 3.4, span: 32},                        // the bump on each flap's inner end
         disc: 60, discHole: 7.5, discAt: 2,
-        catchPart: {length: 8, reach: 2, rib: 1, ribReach: 3},
-        clip: PS5.clip, clipTop: 26.25, clipBottom: 19,     // clip centres in from the top and bottom
+        // Each catch's centre is `fromEnd` in from the top and the bottom.
+        catchPart: {fromEnd: 36, length: 12, reach: 2, gap: 4.5, rib: 3, ribReach: 3, raised: 39, rise: 0.9,
+            window: {length: 7, high: 2.5}, tabHigh: 4.5},
+        clip: PS5.clip, clipTop: 28.5, clipBottom: 19,      // clip centres in from the top and bottom
         bookletFromOpening: 14,
     };
 
@@ -1114,21 +1135,40 @@
         return out;
     }
 
-    // The catch midway along a half's opening wall: two ribs, and in the disc
-    // half the tab between them that reaches past the seam.
-    function ps3Catch(c, z0, z1, name, colour, tab) {
-        const p = PS3, k = p.catchPart, inner = c.width_mm / 2 - p.wallIn - p.wallWidth / 2;
-        const out = [];
-        for (const s of [1, -1]) {
-            out.push(...cuboid([inner - k.ribReach / 2, s * (k.length / 2 + k.rib), (z0 + z1) / 2],
-                [k.ribReach, k.rib, Math.abs(z1 - z0)], name, colour));
-        }
-        if (tab) {
-            out.push(...cuboid([inner - k.reach / 2, 0, (z0 + 0.8) / 2], [k.reach, k.length, 0.8 - z0],
-                name, colour));
+    // The two catches on a half's opening wall, above and below the finger
+    // slot. The disc half's: a hook reaching past the seam between two ribs,
+    // on a stretch of wall raised a little. The booklet half's: a flat tab
+    // standing past the seam, with the window the hook snaps into.
+    function ps3Catches(c, z0, z1, name, colour, hook) {
+        const p = PS3, k = p.catchPart, h = c.height_mm / 2;
+        const wallX = c.width_mm / 2 - p.wallIn, inner = wallX - p.wallWidth / 2, out = [];
+        for (const end of [1, -1]) {
+            const y = end * (h - k.fromEnd);
+            if (hook) {
+                out.push(...cuboid([wallX, y, z1 + k.rise / 2], [p.wallWidth, k.raised, k.rise], name, colour));
+                for (const s of [1, -1]) {
+                    out.push(...cuboid([inner - k.ribReach / 2, y + s * (k.length / 2 + k.gap + k.rib / 2),
+                        (z0 + z1 + k.rise) / 2], [k.ribReach, k.rib, Math.abs(z1 + k.rise - z0)], name, colour));
+                }
+                out.push(...cuboid([inner - k.reach / 2, y, (z0 + 0.8) / 2], [k.reach, k.length, 0.8 - z0],
+                    name, colour));
+            } else {
+                // A frame round the window, just inside the wall, from the
+                // wall's top (z0) down past the seam.
+                const x = inner - 0.75, zEnd = z0 - k.tabHigh, wl = k.window.length / 2;
+                const wTop = z0 - 1.2, wBottom = wTop - k.window.high;
+                out.push(...cuboid([x, y, (z1 + wTop) / 2], [1, k.length, z1 - wTop], name, colour));
+                out.push(...cuboid([x, y, (wBottom + zEnd) / 2], [1, k.length, wBottom - zEnd], name, colour));
+                for (const s of [1, -1]) {
+                    out.push(...cuboid([x, y + s * (wl + k.length / 2) / 2, (wTop + wBottom) / 2],
+                        [1, k.length / 2 - wl, k.window.high], name, colour));
+                }
+            }
         }
         return out;
     }
+
+    const glass = parts => parts.map(q => ({...q, clear: true}));
 
     // The disc half: walls, catch, ring, the hub on its pad, and the disc.
     function ps3Base(c, floor, plastic, media) {
@@ -1140,7 +1180,7 @@
         // A tiny rib on the top wall's inside, midway (photo 053).
         out.push(...cuboid([0, h - p.wallIn - p.wallWidth - 0.5, (floor - 0.5) / 2], [1, 1, -0.5 - floor],
             'base', raised));
-        out.push(...ps3Catch(c, floor, -0.5, 'base', raised, true));
+        out.push(...ps3Catches(c, floor, -0.5, 'base', raised, true));
         out.push(...ps5Ring(floor, raised, p));
         out.push(...annulus(0, 0, floor, top, 0.01, p.pad, 'base', raised, ps3HubPicture(raised), 64));
         const corner = deg => [p.button * Math.cos(rad(deg)), p.button * Math.sin(rad(deg))];
@@ -1154,9 +1194,8 @@
             out.push(...sector(p.grip.rIn, p.discHole + 0.3, a0, a1, discTop, discTop + 1, 'base', bump));
             out.push(...sector(p.grip.rIn, p.discHole - 0.5, a0, a1, discTop + 1, discTop + 1.8, 'base', bump));
         }
-        out.push(...annulus(0, 0, floor + p.discAt, discTop, p.discHole, p.disc, 'base',
-            SILVER, scanUrl(media)));
-        return out;
+        const disc = annulus(0, 0, floor + p.discAt, discTop, p.discHole, p.disc, 'base', SILVER, scanUrl(media));
+        return glass(out).concat(disc);
     }
 
     // The booklet half: walls, catch ribs, and the booklet between the cross
@@ -1167,18 +1206,19 @@
         out.push(...ps5Wall(c, 0.5, lidInside, 'lid', raised, p));
         out.push(...bar([-x, crossY], [x, crossY], p.cross.width, lidInside - p.cross.high, lidInside,
             'lid', raised));
-        out.push(...ps3Catch(c, 0.5, lidInside, 'lid', raised, false));
+        out.push(...ps3Catches(c, 0.5, lidInside, 'lid', raised, false));
+        out.push(...bookletClip(w, h - p.clipTop, p.clip, lidInside, raised));
+        out.push(...bookletClip(w, -h + p.clipBottom, p.clip, lidInside, raised));
+        const booklet = [];
         if (manual) {
             const y0 = -h + p.wallIn + p.wallWidth + 0.5, y1 = crossY - p.cross.width / 2 - 0.5;
             const aspect = aspectOf(manual) || 0.7, edge = w - p.bookletFromOpening;
             let bh = y1 - y0, bw = Math.min(bh * aspect, edge + w - p.wallIn - 2);
             if (bw < bh * aspect) bh = bw / aspect;
-            out.push(...cuboid([edge - bw / 2, (y0 + y1) / 2, lidInside - 0.15 - 1.5 / 2], [bw, bh, 1.5], 'lid',
+            booklet.push(...cuboid([edge - bw / 2, (y0 + y1) / 2, lidInside - 0.15 - 1.5 / 2], [bw, bh, 1.5], 'lid',
                 [1, 1, 1], {back: scanUrl(manual)}));
         }
-        out.push(...bookletClip(w, h - p.clipTop, p.clip, lidInside, raised));
-        out.push(...bookletClip(w, -h + p.clipBottom, p.clip, lidInside, raised));
-        return out;
+        return glass(out).concat(booklet);
     }
 
     // The square latch hole in the middle of the finger groove, seen shut:
@@ -1283,7 +1323,7 @@
         precision mediump float;
         in vec2 v_uv; in vec3 v_normal;
         uniform sampler2D u_tex; uniform bool u_use_tex; uniform vec3 u_colour, u_inner, u_light;
-        uniform float u_shine;
+        uniform float u_shine, u_alpha, u_fade;
         out vec4 colour;
         void main() {
             vec3 n = normalize(v_normal);
@@ -1293,13 +1333,14 @@
                 // (services/box_scans.py::cut_out): what is see-through is not there.
                 vec4 texel = texture(u_tex, v_uv);
                 if (texel.a < 0.5) discard;
-                base = texel.rgb;
+                base = mix(texel.rgb, vec3(1.0), u_fade);
             } else if (gl_FrontFacing) base = u_colour;
             else n = -n;
             float lit = ${AMBIENT} + ${DIFFUSE} * max(0.0, dot(n, u_light));
             vec3 half_way = normalize(u_light + vec3(0.0, 0.0, 1.0));
             float shine = u_shine * ${SHEEN} * pow(max(0.0, dot(n, half_way)), ${SHININESS}.0);
-            colour = vec4(base * lit + shine, 1.0);
+            // Premultiplied: clear plastic lets what is behind it show.
+            colour = vec4((base * lit) * u_alpha + shine, u_alpha);
         }`;
 
     let root, stage, canvas, gl = null, prog = null, loc = {};
@@ -1349,7 +1390,8 @@
         gl.linkProgram(prog);
         if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
         for (const name of ['u_rot', 'u_part', 'u_pivot', 'u_shift', 'u_scale', 'u_persp', 'u_near',
-            'u_far', 'u_half', 'u_light', 'u_tex', 'u_use_tex', 'u_colour', 'u_inner', 'u_shine']) {
+            'u_far', 'u_half', 'u_light', 'u_tex', 'u_use_tex', 'u_colour', 'u_inner', 'u_shine',
+            'u_alpha', 'u_fade']) {
             loc[name] = gl.getUniformLocation(prog, name);
         }
         buffer = gl.createBuffer();
@@ -1405,20 +1447,23 @@
             return url ? `/static/${encodeURI(url)}` : null;
         };
         // The seam's groove: plastic within its width of the middle.
+        const clearShell = PS3_CASE.test(record.case.name || '');
         const groove = shape && shape.seam_width_mm > 0 ? shape.seam_width_mm / 2 + SAME_MM : -1;
         const shell = boxPatches(record.case, shape).map(p => {
             let colour = hexColour(record.colours[p.colour]);
             if (p.face === null && p.corners.every(q => Math.abs(q[2]) <= groove)) {
                 colour = colour.map(v => v * GROOVE);
             }
+            // A PS3 case's bare plastic is clear (the user, 2026-11-25).
             return {corners: p.corners, uv: p.source, tex: faceUrl(p.face), colour, inner,
-                slide: 0, shell: true};
+                slide: 0, shell: true, clear: clearShell && p.face === null};
         });
         // Bare plastic shines; pictures, paper and cardboard do not.
         const shines = p => !p.tex && !(p.shell && kind === 'carton');
         const patches = splitShell(shell, hinge)
             .concat(insideParts(kind, record.case, shape, plastic, scans,
-                {discs: record.discs || 1, region: record.region}));
+                {discs: record.discs || 1, region: record.region,
+                    covers: {front: faceUrl('front'), back: faceUrl('back')}}));
         if (record.hanging_tab) patches.push(...hangingTab(record.case, plastic));
         if (shape && hasRecess(shape) && GAMECUBE.test(record.case.name)) {
             patches.push(...gamecubeLatch(record.case, shape));
@@ -1428,10 +1473,11 @@
         const byKey = new Map();
         let floats = 0;
         for (const p of patches) {
-            const key = [p.tex, p.colour, p.inner, p.part, p.slide, !!p.shell].join('|');
+            const key = [p.tex, p.colour, p.inner, p.part, p.slide, !!p.shell, !!p.clear, p.fade || 0].join('|');
             if (!byKey.has(key)) {
                 byKey.set(key, {tex: p.tex, colour: p.colour, inner: p.inner, part: p.part,
-                    slide: p.slide, shell: !!p.shell, shine: shines(p), patches: []});
+                    slide: p.slide, shell: !!p.shell, shine: shines(p), clear: !!p.clear,
+                    fade: p.fade || 0, patches: []});
             }
             byKey.get(key).patches.push(p);
             floats += (p.corners.length - 2) * 3 * 8;
@@ -1454,7 +1500,8 @@
                 }
             }
             groups.push({tex: g.tex, colour: g.colour, inner: g.inner, part: g.part, slide: g.slide,
-                shell: g.shell, shine: g.shine ? 1 : 0, first, count: at / 8 - first});
+                shell: g.shell, shine: g.shine ? 1 : 0, clear: g.clear, fade: g.fade, first,
+                count: at / 8 - first});
         }
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
         gl.bufferData(gl.ARRAY_BUFFER, all, gl.STATIC_DRAW);
@@ -1496,7 +1543,16 @@
         gl.uniform3fv(loc.u_light, LIGHT);
         gl.uniform3fv(loc.u_pivot, hinge.pivot);
         gl.uniform1i(loc.u_tex, 0);
-        for (const g of groups) {
+        // Solid parts first; then clear plastic over them, blended. Clear
+        // parts still hide clear parts behind them, so overlapping faces do
+        // not stack up unevenly.
+        const solid = groups.filter(g => !g.clear), clear = groups.filter(g => g.clear);
+        gl.disable(gl.BLEND);
+        for (const g of solid.concat(clear)) {
+            if (g === clear[0]) {
+                gl.enable(gl.BLEND);
+                gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+            }
             if (!g.shell && open === 0) continue;
             const tex = g.tex ? texture(g.tex) : null;
             const move = partTransform(g.part, hinge, open, g.slide);
@@ -1507,6 +1563,8 @@
             gl.uniform3fv(loc.u_colour, g.colour);
             gl.uniform3fv(loc.u_inner, g.inner);
             gl.uniform1f(loc.u_shine, g.shine);
+            gl.uniform1f(loc.u_alpha, g.clear ? CLEAR_ALPHA : 1);
+            gl.uniform1f(loc.u_fade, g.fade);
             gl.drawArrays(gl.TRIANGLES, g.first, g.count);
         }
     }
