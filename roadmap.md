@@ -3953,6 +3953,14 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   notches and the spine's moulded text (too unclear to place or read).
   The renderer draws the plastic opaque, so the dips show only faintly.
   Awaiting the user's judgement of the side-by-side render.
+  Round 2 (2026-11-25, d0b766b4), from the user's 19 photos of a full
+  case (PS5 Case/Full case photos/): booklet between the rails, its edge
+  under the clips; latch windows near each end of the closed opening
+  edge (about 22 mm from each end, 10 x 5 mm, by eye); notches in the
+  rims by the spine. User: round 1 was "close but not quite there". Free
+  online case models checked: none accurate; best is BlenderKit's DVD
+  case set, 136.5 x 190 x 13.2 (ours 135 x 190 x 14). Downloads in
+  Scratchpad/RetroDB/models-dl/.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.
@@ -4032,6 +4040,9 @@ After 4.0.0 the web version still gets bug fixes and, now and then, a good new f
   - **Cue by opacity only**: `screenshot_dedup.html` `.dup-thumb.delete`
     shows "will be deleted" by fading alone.
   - **Check**: desktop and 375px after each.
+  User decision 2026-11-25: I choose each look (readable, matching the
+  rest of RetroDB), then show before-and-after pictures for the user to
+  approve. No need to ask per fix.
   **Layman:** Small look-and-feel clean-ups where someone must first choose how it should look.
   Kind: ux.
   Source: PASS-59-282 Low list, checked 2026-11-23.
