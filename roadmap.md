@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=337 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=339 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -4020,6 +4020,31 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** When RetroDB stops, a running Build 3D Boxes job is not told to stop with the others.
   Kind: fix.
   Source: PASS-59-291 test work 2026-11-24.
+
+- 📋 [PASS-59-338] **A bulk scrape lists the games it failed or skipped, with the reason and a link to each (enhancement, M).**
+  Today services/jobs/bulk_scrape.py keeps only counts; the names
+  and reasons are only in the day's scraping log. Record each failed
+  or skipped game with its reason (no match passed the filter, no
+  results, error, all fields filled, scraped in the last 24 hours,
+  source at its limit). Show the failed list in the Bulk Scraping
+  window and the background progress card when the job ends, each
+  name linking to its game page; skipped games under their own
+  heading, closed by default. Keep the list until the next bulk
+  scrape starts, including after a page reload.
+  **Layman:** When a bulk scrape ends, you see which games failed and why, and can open each one to scrape it by hand.
+  Kind: enhancement.
+  Source: user-request-2026-11-25.
+  Evidence: /home/ants/Pictures/Screenshots/Screenshot_20261125_174811.png
+
+- 📋 [PASS-59-339] **The Logs page filters a scraping log by outcome and by game (enhancement, S).**
+  Finding failed games today means searching the raw log text for
+  "match filter" or "No results". Add filters for outcome (failed,
+  skipped, updated, errors) and a game-name search, so the reasons
+  behind a bulk scrape can be read without knowing the log wording.
+  Pairs with PASS-59-338.
+  **Layman:** In the Logs page, you can show only the failed or skipped games from a scrape, or only one game's lines.
+  Kind: enhancement.
+  Source: user-request-2026-11-25.
 
 ## 4.0.x — Fixes and new features for the web version
 
