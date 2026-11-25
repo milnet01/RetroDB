@@ -825,7 +825,7 @@
         // A booklet clip: a flat frame on a post by the opening side, a U slot through it,
         // and inside the U a tongue that springs down onto the booklet (photos, 2026-11-25).
         clip: {fromOpening: 22, fromEdge: 27.75, along: 25, across: 18.5, corner: 3, high: 4.5,
-            slotFromOpening: 14.5, slotLength: 14.5, slotWidth: 8, line: 1.5, plate: 1, flat: 0.3, low: 0.8, tipLift: 0.7},
+            slotFromOpening: 14.5, slotLength: 14.5, slotWidth: 8, line: 1.5, plate: 1, flat: 0.3, low: 0.8, tipLift: 0.7, tipRound: 2},
         rail: {fromEdge: 10.5, start: 12, end: 128, thin: 1, thick: 2.5, high: 2},
         bookletFromOpening: 14,
         latch: {fromEnd: 22.5, length: 6, reach: 2},        // hooks inside the disc half's opening wall
@@ -972,25 +972,36 @@
             out.push(...prism(box(x1 - clip.plate, x1, cy - ay, cy + ay), zc, lidInside, 'lid', raised));
             // The tongue: flat from its root, bending down until its underside meets
             // the booklet's face, then curving up a little at the tip so a booklet
-            // slides in and out without catching (user, 2026-11-25).
+            // slides in and out without catching; the tip's corners are rounded
+            // (user, 2026-11-25).
             const ty0 = cy - sh + t, ty1 = cy + sh - t, tx1 = sx1 - t, steps = 12;
+            const half = (ty1 - ty0) / 2, rr = Math.min(clip.tipRound, half), roundFrom = 1 - rr / (tx1 - sx0);
+            const halfAt = u => {
+                const past = (u - roundFrom) * (tx1 - sx0);
+                return past <= 0 ? half : half - rr + Math.sqrt(Math.max(0, rr * rr - past * past));
+            };
+            const us = [];
+            for (let i = 0; i <= steps; i++) if (i / steps < roundFrom) us.push(i / steps);
+            for (let k = 0; k <= 6; k++) us.push(roundFrom + (1 - roundFrom) * Math.sin(Math.PI / 12 * k));
             const drop = clip.high - clip.plate - bookletTop;
-            const at = i => {
-                const u = i / steps;
+            const at = u => {
                 const z = u <= clip.low
                     ? drop * Math.max(0, (u - clip.flat) / (clip.low - clip.flat)) ** 1.6
                     : drop - clip.tipLift * ((u - clip.low) / (1 - clip.low)) ** 2;
                 return [sx0 + (tx1 - sx0) * u, zc + z];
             };
-            for (let i = 0; i < steps; i++) {
-                const [xa, za] = at(i), [xb, zb] = at(i + 1), za1 = za + clip.plate, zb1 = zb + clip.plate;
-                out.push(part([[xa, ty0, za], [xb, ty0, zb], [xb, ty1, zb], [xa, ty1, za]], [0, 0, -1], 'lid', raised));
-                out.push(part([[xa, ty0, za1], [xb, ty0, zb1], [xb, ty1, zb1], [xa, ty1, za1]], [0, 0, 1], 'lid', raised));
-                for (const [y, n] of [[ty0, -1], [ty1, 1]]) {
-                    out.push(part([[xa, y, za], [xb, y, zb], [xb, y, zb1], [xa, y, za1]], [0, n, 0], 'lid', raised));
+            const tm = (ty0 + ty1) / 2;
+            for (let i = 0; i + 1 < us.length; i++) {
+                const [xa, za] = at(us[i]), [xb, zb] = at(us[i + 1]), za1 = za + clip.plate, zb1 = zb + clip.plate;
+                const ha = halfAt(us[i]), hb = halfAt(us[i + 1]);
+                out.push(part([[xa, tm - ha, za], [xb, tm - hb, zb], [xb, tm + hb, zb], [xa, tm + ha, za]], [0, 0, -1], 'lid', raised));
+                out.push(part([[xa, tm - ha, za1], [xb, tm - hb, zb1], [xb, tm + hb, zb1], [xa, tm + ha, za1]], [0, 0, 1], 'lid', raised));
+                for (const n of [-1, 1]) {
+                    out.push(part([[xa, tm + n * ha, za], [xb, tm + n * hb, zb], [xb, tm + n * hb, zb1], [xa, tm + n * ha, za1]],
+                        [xb - xa > 0 && hb < ha ? 1 : 0, n, 0], 'lid', raised));
                 }
-                if (i === steps - 1) {
-                    out.push(part([[xb, ty0, zb], [xb, ty1, zb], [xb, ty1, zb1], [xb, ty0, zb1]], [1, 0, 0], 'lid', raised));
+                if (i + 2 === us.length && hb > 0.01) {
+                    out.push(part([[xb, tm - hb, zb], [xb, tm + hb, zb], [xb, tm + hb, zb1], [xb, tm - hb, zb1]], [1, 0, 0], 'lid', raised));
                 }
             }
             // A rail, thin by the clip and thicker towards the spine.
