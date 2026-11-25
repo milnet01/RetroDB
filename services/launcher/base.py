@@ -57,6 +57,10 @@ class LaunchContext:
     on_exit: Optional[Callable[[], None]] = None
     quit_port: Optional[int] = None
     command_port: Optional[int] = None
+    # PASS-59-332: who pressed Play (set by the launch route), and for the
+    # player a check that says whether the game's save files changed.
+    user_id: Optional[int] = None
+    save_check: Optional[Callable[[], bool]] = None
 
 
 @dataclass(frozen=True)

@@ -46,22 +46,25 @@ def test_clear_scraped_data_commits_title_reset(db_path):
 
 
 # -----------------------------------------------------------------------------
-# NULL and 'not_started' completion groups overwrote each other's count
+# Games with no status row and a hand-set 'not_started' count together, and
+# only the asking person's rows count (PASS-59-332)
 # -----------------------------------------------------------------------------
-def test_analytics_counts_null_and_not_started_together(db_path):
+def test_analytics_counts_missing_and_not_started_together(db_path):
     conn = sqlite3.connect(str(db_path))
     with conn:
         conn.execute("CREATE TABLE systems (id INTEGER PRIMARY KEY)")
-        conn.execute("CREATE TABLE games (id INTEGER PRIMARY KEY, file_size INTEGER, "
-                     "completion_status TEXT)")
-        conn.executemany("INSERT INTO games (completion_status) VALUES (?)",
-                         [(None,), (None,), ('not_started',), ('completed',)])
+        conn.execute("CREATE TABLE games (id INTEGER PRIMARY KEY, file_size INTEGER)")
+        conn.execute("CREATE TABLE user_game_status (user_id INTEGER, game_id INTEGER, "
+                     "status TEXT)")
+        conn.executemany("INSERT INTO games (id) VALUES (?)", [(1,), (2,), (3,), (4,)])
+        conn.executemany("INSERT INTO user_game_status VALUES (?, ?, ?)",
+                         [(7, 3, 'not_started'), (7, 4, 'completed'), (8, 1, 'completed')])
     conn.close()
 
     from services.analytics import _get_analytics_stats
-    total, _stats, completion = _get_analytics_stats()
+    total, _stats, completion = _get_analytics_stats(7)
     assert total == 4
-    assert completion[0] == 3   # two NULL + one not_started
+    assert completion[0] == 3   # two without a row + one not_started
     assert completion[3] == 1
 
 

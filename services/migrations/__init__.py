@@ -72,6 +72,7 @@ MIGRATIONS = [
     '045_imported_system_defaults',
     '046_mobygames',
     '047_box_case',
+    '048_play_sessions',
 ]
 
 

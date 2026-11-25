@@ -55,7 +55,7 @@ guarded routes — never just one.
 | `delete_rom`       | Delete the ROM file from disk                                           | yes   | no     | no     | no     |
 | `scrape`           | Run single or bulk scrapes; sync RA / Steam / Xbox / PSN libraries      | yes   | yes    | no     | no     |
 | `launch`           | Launch a game via the configured emulator command                       | yes   | yes    | yes    | no     |
-| `track_progress`   | Toggle completion status, record last-viewed timestamps                 | yes   | yes    | yes    | yes    |
+| `track_progress`   | Set your own completion status, record last-viewed timestamps           | yes   | yes    | yes    | yes    |
 | `manage_users`     | Create / update / delete / reset users                                  | yes   | no     | no     | no     |
 | `manage_settings`  | Mutate global settings, scraper settings, rom-tools config              | yes   | no     | no     | no     |
 | `system_functions` | Log management, maintenance, restart, log rotation                      | yes   | no     | no     | no     |
@@ -66,6 +66,8 @@ guarded routes — never just one.
   not library-editing. Pass 41.9.A decorated `/api/game/<id>/track-view`
   + `/completion` without granting the permission to anyone; both
   endpoints were unreachable until Pass 45.1 (CRITICAL) fixed the matrix.
+  Each person's status is their own (PASS-59-332), so `track_progress`
+  alone sets it, with no `edit`.
 - `delete_rom` is admin-only; editor's `delete_metadata` removes the DB
   row but not the file on disk — two destructive surfaces, two perms.
 - `edit` does not cover a game's custom launch arguments

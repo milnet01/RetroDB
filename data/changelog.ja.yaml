@@ -1,6 +1,9 @@
 - version: 4.0.0
   date: '2026-11-25'
   tags:
+  - type: enhancement
+    label: "家の全員が、すべてのゲームについて自分だけの達成ステータスを持てるようになりました。ゲームをクリア済みにしても、ほかの人のライブラリは変わりません。サインインしている全員が自分の分を設定でき、Viewer も含まれます。プレイボタンでゲームを10分以上プレイし、内蔵プレイヤーがゲームを保存したか RetroAchievement を獲得した場合、未開始は自動的に進行中になります。どちらもないまま長くプレイした場合は、ゲームページが1回だけ、1クリックで尋ねます。ゲームページには、RetroDB からそのゲームをプレイした時間も表示されます。この更新より前に設定されたステータスは、最初の管理者アカウントのものになります"
+    en: "Each person in the house now has their own completion status for every game. Setting a game to Completed no longer changes anyone else's library, and everyone signed in can set their own, viewers included. When you play a game with the Play button for 10 minutes or more, and the built-in player saved the game or you earned a RetroAchievement, your Not Started moves to In Progress by itself. After a long session with neither, the game page asks you once, with one click. The game page also shows how long you have played the game from RetroDB. Statuses set before this update now belong to the first admin account"
   - type: fix
     label: "スクレイピングは、ソースがアクセント記号をどう書いていてもゲームを見つけるようになりました。検索で何も見つからないときはアクセント記号を外して再検索するので、Ghost of Yōtei で Ghost of Yotei と書くソースも見つかります。アクセント記号を残す MobyGames にも再検索するので、Ghost of Yotei でそこにある Ghost of Yōtei が見つかります"
     en: "Scraping now finds a game however a source spells its accents. When a search finds nothing, it is asked again without the accents, so Ghost of Yōtei also finds a source that writes Ghost of Yotei. MobyGames, which keeps the accents, is asked again too, so Ghost of Yotei finds Ghost of Yōtei there"

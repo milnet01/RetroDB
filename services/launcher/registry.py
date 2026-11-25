@@ -33,6 +33,8 @@ class ProcessEntry:
     on_exit: Optional[Callable[[], None]] = None  # LaunchContext.on_exit
     quit_port: Optional[int] = None  # LaunchContext.quit_port
     command_port: Optional[int] = None  # LaunchContext.command_port
+    user_id: Optional[int] = None    # LaunchContext.user_id
+    save_check: Optional[Callable[[], bool]] = None  # LaunchContext.save_check
 
 
 class ProcessRegistry:
@@ -44,7 +46,9 @@ class ProcessRegistry:
     def register(self, *, token: str, proc, game_id: int, emulator_id: int,
                  started_at: float, on_exit: Optional[Callable[[], None]] = None,
                  quit_port: Optional[int] = None,
-                 command_port: Optional[int] = None) -> LaunchHandle:
+                 command_port: Optional[int] = None,
+                 user_id: Optional[int] = None,
+                 save_check: Optional[Callable[[], bool]] = None) -> LaunchHandle:
         """Add an entry whole: a status read may mark it exited the moment
         it is listed, and its on_exit must already be there."""
         h = LaunchHandle(token=token, pid=proc.pid, game_id=game_id,
@@ -52,7 +56,8 @@ class ProcessRegistry:
         with self._lock:
             self._entries[token] = ProcessEntry(
                 handle=h, proc=proc, on_exit=on_exit,
-                quit_port=quit_port, command_port=command_port)
+                quit_port=quit_port, command_port=command_port,
+                user_id=user_id, save_check=save_check)
         return h
 
     def get(self, token: str) -> Optional[ProcessEntry]:

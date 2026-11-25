@@ -14,7 +14,9 @@
 #   wait()    -> block until the child exits; raises TimeoutExpired after timeout_s
 #
 # stderr is drained into a 4KB ring buffer (last bytes wins) so a quickly-
-# exiting emulator's failure can be surfaced to the user.
+# exiting emulator's failure can be surfaced to the user. The same thread
+# then waits for the child and records the play session (PASS-59-332), so
+# a session's end is the process's own, polled or not.
 # =============================================================================
 
 from __future__ import annotations
@@ -30,6 +32,7 @@ from services.launcher.base import (
     LaunchContext, LaunchHandle, LaunchStatus, LauncherError,
 )
 from services.launcher.registry import ProcessEntry, ProcessRegistry
+from services.play_sessions import session_ended
 from services.retroarch_command import send_quit
 
 logger = logging.getLogger(__name__)
@@ -66,6 +69,7 @@ class LocalLauncher:
             game_id=ctx.game_id, emulator_id=ctx.emulator_id,
             started_at=time.time(), on_exit=ctx.on_exit,
             quit_port=ctx.quit_port, command_port=ctx.command_port,
+            user_id=ctx.user_id, save_check=ctx.save_check,
         )
         drain = threading.Thread(target=self._drain_stderr, args=(ctx.token, proc),
                                  daemon=True)
@@ -197,7 +201,8 @@ class LocalLauncher:
                             stderr_tail=entry.stderr_tail)
 
     def _drain_stderr(self, token: str, proc):
-        """Background thread: read stderr in chunks, retain last 4KB."""
+        """Background thread: read stderr in chunks, retain last 4KB; then,
+        for a launch someone pressed Play on, record the session."""
         try:
             tail = b''
             while True:
@@ -210,3 +215,13 @@ class LocalLauncher:
                 entry.stderr_tail = tail.decode('utf-8', errors='replace')
         except Exception as e:
             logger.warning("stderr drain failed for %s: %s", token, e)
+            return
+        entry = self._registry.get(token)
+        if entry is None or entry.user_id is None:
+            return
+        try:
+            proc.wait()
+            session_ended(entry, time.time())
+        except Exception:
+            # PASS-59-332 INV-8: never out of this thread.
+            logger.exception("play session for %s not recorded", token)

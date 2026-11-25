@@ -46,14 +46,12 @@ from services.game_metadata_service import (
     apply_hybrid_metadata_to_game,
     normalize_game_edit, cross_map_ratings, edit_title_lock,
 )
-from services import apply_progress, rpcs3_compat, upscale_queue
+from services import apply_progress, game_status, rpcs3_compat, upscale_queue
 
-# Single source of truth for the completion-status whitelist, shared by the
-# single-edit endpoint (api_update_completion) and bulk-edit (Pass 48.5 — bulk
-# edit previously wrote completion_status without validating it).
-VALID_COMPLETION_STATUSES = (
-    'not_started', 'in_progress', 'played', 'completed', '100_percent',
-)
+# The completion-status whitelist, shared by the single-edit endpoint
+# (api_update_completion) and bulk edit (Pass 48.5). Each person's status
+# lives in user_game_status (PASS-59-332).
+VALID_COMPLETION_STATUSES = game_status.STATUSES
 from services.achievement_linking import (
     build_rpcs3_trophy_map, lookup_rpcs3_info,
 )
@@ -331,7 +329,7 @@ def api_games_card_data():
                g.cero_rating, g.usk_rating, g.acb_rating, g.fpb_rating,
                g.grac_rating, g.classind_rating, g.china_rating,
                g.critic_score, g.critic_score_count, g.user_score, g.user_score_count,
-               g.completion_status, g.scraped, g.has_retroachievements,
+               {game_status.STATUS_COLUMN}, g.scraped, g.has_retroachievements,
                g.is_bonus_disc, g.rom_path, g.disc_serial, g.ra_achievement_count,
                s.name AS system_name, s.folder AS system_folder, s.system_type,
                COALESCE(bc.bonus_count, 0) AS bonus_count,
@@ -352,6 +350,7 @@ def api_games_card_data():
             GROUP BY parent_game_id
         ) bc ON bc.parent_game_id = g.id
         LEFT JOIN game_achievement_progress gap ON gap.game_id = g.id AND gap.user_id = ?
+        {game_status.STATUS_JOIN}
         LEFT JOIN (
             SELECT pg.linked_game_id,
                    (pg.earned_bronze + pg.earned_silver + pg.earned_gold + pg.earned_platinum) AS psn_earned,
@@ -365,7 +364,7 @@ def api_games_card_data():
         ) psn ON psn.linked_game_id = g.id
         WHERE g.id IN ({placeholders})
     """
-    rows = query(sql, (g.user['id'], g.user['id'], *game_ids))
+    rows = query(sql, (g.user['id'], g.user['id'], g.user['id'], *game_ids))
 
     try:
         rpcs3_trophy_map = build_rpcs3_trophy_map(rows)
@@ -780,6 +779,8 @@ def game_detail(game_id):
             return redirect(url_for('games.all_games'))
 
         game_dict = dict(game)
+        # Each person's own status (PASS-59-332), not the shared column.
+        game_dict['completion_status'] = game_status.status_for(g.user['id'], game_id)
         rpcs3_compat.ensure_serial(game_dict)
         game_dict['rpcs3_compat'] = rpcs3_compat.status_for_game(game_dict)
         game_dict['rpcs3_compat_missing'] = (rpcs3_compat.applies_to(game_dict)
@@ -935,6 +936,11 @@ def game_detail(game_id):
                              psn_progress=psn_progress,
                              steam_counts=steam_counts,
                              steam_play=steam_play,
+                             # PASS-59-332 — this person's Play-button time
+                             # and the question a quiet session left.
+                             retrodb_play_minutes=game_status.play_seconds(
+                                 g.user['id'], game_id) // 60,
+                             play_question=game_status.pending_question(g.user['id'], game_id),
                              xbox_counts=xbox_counts,
                              # PASS-59-149 — the cards' rule: an imported game
                              # with no ROM file has nothing to play.
@@ -1056,7 +1062,7 @@ def api_game_detail(game_id):
             'release_dates': display_release_dates(game['release_dates'], get_locale()),
             'rpcs3_compat': rpcs3_compat.status_for_game(game),
             'players': game['players'],
-            'completion_status': game['completion_status'],
+            'completion_status': game_status.status_for(g.user['id'], game_id),
             'has_retroachievements': game['has_retroachievements'],
             'ra_achievement_count': game['ra_achievement_count'],
             'achievement_earned': gap['earned_achievements'] if gap else None,
@@ -1308,9 +1314,14 @@ def api_games_bulk_edit():
     append_fields = {}
     replace_updates = []
     replace_values = []
+    hand_status = None
 
     for field, value in fields.items():
         if field not in bulk_allowed_fields:
+            continue
+        if field == 'completion_status':
+            # Each person's own (PASS-59-332): never the shared UPDATE.
+            hand_status = value or None
             continue
         # Pass 32.12: every f-string insertion of `field` goes through
         # safe_column(). The allowlist check above already narrows the set,
@@ -1334,14 +1345,17 @@ def api_games_bulk_edit():
             replace_updates.append(f"{safe_field} = ?")
             replace_values.append(value)
 
-    if not replace_updates and not append_fields:
+    if not replace_updates and not append_fields and not hand_status:
         return error(_('No valid fields to update'), 400)
+    if hand_status:
+        game_status.set_by_hand(g.user['id'], game_ids, hand_status)
 
     from services.database import get_db_with_context
 
     with get_db_with_context() as conn:
         cursor = conn.cursor()
-        edited = {f: v for f, v in fields.items() if f in bulk_allowed_fields}
+        edited = {f: v for f, v in fields.items()
+                  if f in bulk_allowed_fields and f != 'completion_status'}
         for bulk_game_id in game_ids:
             _note_hand_edits(bulk_game_id, edited, conn)
 
@@ -1439,16 +1453,9 @@ def api_games_bulk_edit():
 @bp.route('/api/game/<int:game_id>/completion', methods=['POST'])
 @login_required
 @permission_required('track_progress')
-@permission_required('edit')
 def api_update_completion(game_id):
-    """Update game completion status.
-
-    Pass 41.9 — drop @editor_required to login + 'track_progress' permission.
-    Marking your own copy as played/completed is a self-tracking action.
-    But the completion column is still global on `games`, so a write here
-    changes every user's library: PASS-59-63 also requires 'edit' until the
-    per-user move lands, then the 'edit' line goes.
-    """
+    """Set the signed-in person's own completion status (PASS-59-332):
+    a self-tracking action, so 'track_progress' is enough."""
     try:
         data = request.get_json() or {}
         status = data.get('status', 'not_started')
@@ -1456,12 +1463,31 @@ def api_update_completion(game_id):
         if status not in VALID_COMPLETION_STATUSES:
             return error(_('Invalid status'), 400)
 
-        execute("UPDATE games SET completion_status = ? WHERE id = ?", (status, game_id))
+        game_status.set_by_hand(g.user['id'], [game_id], status)
+        invalidate_analytics_cache()
 
         return success(status=status)
     except Exception as e:
         logger.error(f"Completion update error: {e}")
         return error(_('An internal error occurred'), 500)
+
+
+@bp.route('/api/game/<int:game_id>/play-question', methods=['GET', 'POST'])
+@login_required
+@permission_required('track_progress')
+@handle_api_errors
+def api_play_question(game_id):
+    """The one-click question after a long session that showed no sign of
+    play (PASS-59-332 §4.4). GET: is it waiting, and the session's minutes.
+    POST {answer: true|false}: answer it once."""
+    uid = g.user['id']
+    if request.method == 'GET':
+        return success(question=game_status.pending_question(uid, game_id))
+    yes = bool((request.get_json(silent=True) or {}).get('answer'))
+    answered = game_status.answer(uid, game_id, yes)
+    if answered and yes:
+        invalidate_analytics_cache()
+    return success(answered=answered, status=game_status.status_for(uid, game_id))
 
 
 @bp.route('/api/game/<int:game_id>/track-view', methods=['POST'])

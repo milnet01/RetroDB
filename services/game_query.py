@@ -12,6 +12,7 @@ import threading
 import time
 
 from services.database import query
+from services.game_status import STATUS_COLUMN, STATUS_JOIN
 from services.game_utils import RATING_SYSTEM_KEYS, RATING_SYSTEMS
 from services.normalization import split_names
 
@@ -379,7 +380,7 @@ def _build_games_query(params, count_only=False, ids_only=False, user_id=None,
                    g.cero_rating, g.usk_rating, g.acb_rating, g.fpb_rating,
                    g.grac_rating, g.classind_rating, g.china_rating,
                    g.critic_score, g.critic_score_count, g.user_score, g.user_score_count,
-                   g.completion_status, g.scraped, g.has_retroachievements,
+                   {STATUS_COLUMN}, g.scraped, g.has_retroachievements,
                    g.is_bonus_disc, g.rom_path, g.disc_serial, g.ra_achievement_count,
                    s.name AS system_name, s.folder AS system_folder, s.system_type,
                    COALESCE(bc.bonus_count, 0) AS bonus_count,
@@ -400,6 +401,7 @@ def _build_games_query(params, count_only=False, ids_only=False, user_id=None,
                 GROUP BY parent_game_id
             ) bc ON bc.parent_game_id = g.id
             LEFT JOIN game_achievement_progress gap ON gap.game_id = g.id {gap_user_clause}
+            {STATUS_JOIN}
             LEFT JOIN (
                 SELECT pg.linked_game_id,
                        (pg.earned_bronze + pg.earned_silver + pg.earned_gold + pg.earned_platinum) AS psn_earned,
@@ -414,9 +416,9 @@ def _build_games_query(params, count_only=False, ids_only=False, user_id=None,
             WHERE {where}
             ORDER BY {order_by}
         """
-        # gap JOIN and psn subquery each consume one user_id bind; both land
-        # before the WHERE bindings (gap first since its clause appears
-        # earlier in the SQL).
-        values = [user_id, user_id, *values]
+        # The gap JOIN, the status JOIN (PASS-59-332) and the psn subquery
+        # each consume one user_id bind, in that order, before the WHERE
+        # bindings.
+        values = [user_id, user_id, user_id, *values]
 
     return sql, values

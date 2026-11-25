@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+import glob
 import json
 import logging
 import re
@@ -302,6 +303,34 @@ def launch_args(game: dict, sys_emu: Optional[dict], core_path: str,
         cheats.place_for_launch(game['id'], core, rom_path, profile)
     return (['--config', str(base), '--appendconfig', '|'.join(layers),
              *extras, '-L', core_path, str(rom_path)], port)
+
+
+def _save_times(rom_path: Path) -> dict:
+    """{path: modified time} of the game's save files and save states: any
+    file under the profile's saves/ or states/ named after the ROM."""
+    profile = profile_dir()
+    prefix = f'{rom_path.stem}.'
+    times = {}
+    for sub in ('saves', 'states'):
+        folder = profile / sub
+        if not folder.is_dir():
+            continue
+        for path in folder.rglob(glob.escape(prefix) + "*"):
+            try:
+                times[str(path)] = path.stat().st_mtime
+            except OSError:
+                pass
+    return times
+
+
+def save_watch(rom_path: Path):
+    """Note the game's save files now; the returned check says whether one
+    is new or newer when it is called (PASS-59-332 §4.3)."""
+    before = _save_times(rom_path)
+
+    def changed() -> bool:
+        return any(before.get(p, -1) < t for p, t in _save_times(rom_path).items())
+    return changed
 
 
 # -----------------------------------------------------------------------------

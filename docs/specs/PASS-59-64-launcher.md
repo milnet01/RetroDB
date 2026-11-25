@@ -355,7 +355,9 @@ contain `|`.
 
 Output is unchanged from `services/launcher/local.py::LocalLauncher`:
 `stdin` and `stdout` are `DEVNULL`, and stderr is drained into a tail of
-`_STDERR_TAIL_BYTES` (4096) shown to the user on exit.
+`_STDERR_TAIL_BYTES` (4096) shown to the user on exit. For a launch with a
+`user_id`, the same thread then waits for the child and records the play
+session (`docs/specs/PASS-59-332-play-sessions.md` §4.3).
 
 Stopping a player, as the fork session read its source:
 

@@ -117,8 +117,50 @@
         if (screen) screen.status.textContent = text;
     }
 
+    // PASS-59-332 — once a game was started from its own page, each time the
+    // window gets focus back ask whether a long session with no sign of play
+    // left the one-click question waiting.
+    const playQuestion = () => document.getElementById('playQuestion');
+    let watchingQuestion = false;
+
+    async function checkPlayQuestion() {
+        const el = playQuestion();
+        if (!el || !el.hidden) return;
+        const rv = await fetch(`/api/game/${el.dataset.gameId}/play-question`).catch(() => null);
+        const q = rv && rv.ok ? (await rv.json().catch(() => ({}))).question : null;
+        if (!q) return;
+        el.querySelector('.play-question-text').textContent =
+            t('You played this for {minutes} min. Mark it In Progress?', {minutes: q.minutes});
+        el.hidden = false;
+    }
+
+    document.addEventListener('click', async (e) => {
+        const el = playQuestion();
+        const btn = e.target.closest('[data-play-answer]');
+        if (!el || !btn || !el.contains(btn)) return;
+        const rv = await fetch(`/api/game/${el.dataset.gameId}/play-question`, {
+            method: 'POST',
+            headers: {'X-CSRF-Token': csrfToken(), 'Content-Type': 'application/json'},
+            body: JSON.stringify({answer: btn.dataset.playAnswer === 'yes'}),
+        }).catch(() => null);
+        const body = rv && rv.ok ? await rv.json().catch(() => null) : null;
+        if (!body) {
+            if (typeof showNotification === 'function') {
+                showNotification(t('Could not save your answer. Try again.'), 'error');
+            }
+            return;
+        }
+        el.hidden = true;
+        const select = document.getElementById('completionStatus');
+        if (select && body.status) select.value = body.status;
+    });
+
     // The game started: close on focus loss, when it quits, or at the limit.
     function screenStarted(token) {
+        if (playQuestion() && !watchingQuestion) {
+            watchingQuestion = true;
+            window.addEventListener('focus', checkPlayQuestion);
+        }
         if (!screen) return;
         const s = screen;
         window.addEventListener('blur', closeScreen);

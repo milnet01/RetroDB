@@ -4073,13 +4073,18 @@ After 4.0.0 the web version still gets bug fixes and, now and then, a good new f
   Kind: ux.
   Source: PASS-59-282 Low list, checked 2026-11-23.
 
-- 📋 [PASS-59-332] **Real play moves a game from Not Started to In Progress, and Play-button sessions keep their play time.**
+- ✅ [PASS-59-332] **Real play moves a game from Not Started to In Progress, and Play-button sessions keep their play time.**
   Today only Steam play time is saved (platform_play_time); a Play-button
   session is not. Save each session's length per user.
   Rule: a session of at least 10 minutes AND (a save file changed OR a
   RetroAchievement was earned) moves Not Started to In Progress. A long
   session with neither asks once, with one click. Never touches Played,
   Completed or a status the user set by hand. Per user.
+  Built 2026-11-25 to docs/specs/PASS-59-332-play-sessions.md: a status
+  for each person (user_game_status, migration 048; old statuses to the
+  first admin), Play sessions recorded by the launcher's stderr thread,
+  save check for the built-in player only, the one-click question on the
+  game page.
   **Layman:** After you really play a game from RetroDB, it marks the game In Progress for you and remembers how long you played.
   Kind: feature.
   Source: user-request-2026-11-23.

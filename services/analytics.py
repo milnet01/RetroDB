@@ -19,8 +19,9 @@ from services.playtime import main_story_hours
 logger = logging.getLogger(__name__)
 
 
-def _get_analytics_stats():
-    """Get basic analytics counts, storage, and completion rate."""
+def _get_analytics_stats(user_id):
+    """Get basic analytics counts, storage, and one person's completion
+    rate (PASS-59-332: each person has their own statuses)."""
     total_games = query("SELECT COUNT(*) as count FROM games", one=True)['count']
     total_systems = query("SELECT COUNT(*) as count FROM systems", one=True)['count']
 
@@ -28,17 +29,14 @@ def _get_analytics_stats():
     total_bytes = storage_row['total'] or 0
 
     completion_counts = query("""
-        SELECT completion_status, COUNT(*) as count
-        FROM games
-        GROUP BY completion_status
-    """)
-    # NULL / '' statuses count as not started. Summed, not assigned: they
-    # group apart from 'not_started', and a dict comprehension let the
-    # later group overwrite the earlier one's count.
-    completion_map = {}
-    for row in completion_counts:
-        status = row['completion_status'] or 'not_started'
-        completion_map[status] = completion_map.get(status, 0) + row['count']
+        SELECT ugs.status, COUNT(*) as count
+        FROM user_game_status ugs JOIN games g ON g.id = ugs.game_id
+        WHERE ugs.user_id = ? AND ugs.status != 'not_started'
+        GROUP BY ugs.status
+    """, (user_id,))
+    # A game with no row is Not Started.
+    completion_map = {row['status']: row['count'] for row in completion_counts}
+    completion_map['not_started'] = total_games - sum(completion_map.values())
     completed = completion_map.get('completed', 0) + completion_map.get('100_percent', 0)
     completion_rate = round((completed / total_games * 100) if total_games > 0 else 0, 1)
 
@@ -667,17 +665,18 @@ def invalidate_analytics_cache():
         _analytics_cache.clear()
 
 
-def build_analytics_context():
+def build_analytics_context(user_id):
     """Run all analytics helpers and return a single template-ready dict.
 
     Cached for 5 minutes keyed on the preferred rating system (the only
-    per-settings variable that changes what the rating chart renders).
+    per-settings variable that changes what the rating chart renders) and
+    the person asking, whose completion numbers are their own (PASS-59-332).
     Invalidated explicitly by invalidate_analytics_cache() after game edits,
     bulk scrape/edit completion, and deletes.
     """
     settings = settings_manager.load_settings()
     pref_key_hint = settings.get('preferred_rating_system', 'esrb')
-    cache_key = f"ctx_{pref_key_hint}"
+    cache_key = f"ctx_{pref_key_hint}_{user_id}"
 
     now = time.time()
     with _analytics_cache_lock:
@@ -685,7 +684,7 @@ def build_analytics_context():
         if entry and (now - entry['time']) < _ANALYTICS_CACHE_TTL:
             return entry['data']
 
-    total_games, stats, completion_data = _get_analytics_stats()
+    total_games, stats, completion_data = _get_analytics_stats(user_id)
     manufacturer_labels, manufacturer_data = _get_manufacturer_data()
     decade_labels, decade_data = _get_decade_data()
     genre_labels, genre_data = _get_genre_data()

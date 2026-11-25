@@ -20,7 +20,7 @@
 import logging
 import threading
 
-from flask import Blueprint
+from flask import Blueprint, g
 from flask_babel import gettext as _
 
 from services.api_helpers import handle_api_errors, success, error
@@ -137,6 +137,7 @@ def _launch_game(game_id):
         return error(str(e), 422)
     if ctx.is_player:
         _queue_shaders_if_needed(game_id)
+    ctx.user_id = g.user['id']   # whose session this is (PASS-59-332)
 
     # PASS-59-91 §4.6 — write the per-game settings file before the emulator
     # reads it. Never raises; a settings problem does not stop the launch.

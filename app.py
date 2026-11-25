@@ -1119,12 +1119,13 @@ def get_stats():
                 (SELECT COUNT(*) FROM games) as total_games,
                 (SELECT COUNT(*) FROM games WHERE scraped = 1) as scraped_games,
                 (SELECT SUM(COALESCE(file_size, 0)) FROM games) as total_storage,
-                (SELECT COUNT(*) FROM games WHERE completion_status IN ('completed', '100_percent')) as completed_games,
+                (SELECT COUNT(*) FROM user_game_status WHERE user_id = ?
+                 AND status IN ('completed', '100_percent')) as completed_games,
                 (SELECT SUM(earned_achievements) FROM game_achievement_progress
                  WHERE user_id = ?) as total_earned_achievements,
                 (SELECT SUM(total_achievements) FROM game_achievement_progress
                  WHERE user_id = ?) as total_available_achievements
-        """, (uid, uid), one=True)
+        """, (uid, uid, uid), one=True)
 
         total_games = stats['total_games'] or 0
         completed = stats['completed_games'] or 0
@@ -1348,10 +1349,12 @@ def dashboard():
 
         recently_viewed = query("""
             SELECT g.id, g.title, g.boxart, g.boxart_3d, g.system_id,
-                   g.completion_status, s.name AS system_name
+                   COALESCE(ugs.status, 'not_started') AS completion_status,
+                   s.name AS system_name
             FROM user_game_views v
             JOIN games g ON g.id = v.game_id
             JOIN systems s ON g.system_id = s.id
+            LEFT JOIN user_game_status ugs ON ugs.game_id = g.id AND ugs.user_id = v.user_id
             WHERE v.user_id = ?
             ORDER BY v.last_viewed DESC
             LIMIT 5
@@ -1362,13 +1365,14 @@ def dashboard():
         # navigation, not whoever viewed last globally.
         continue_playing = query("""
             SELECT g.id, g.title, g.boxart, g.boxart_3d, g.system_id,
-                   g.completion_status, g.playtime_estimate,
+                   ugs.status AS completion_status, g.playtime_estimate,
                    s.name AS system_name,
                    v.last_viewed
-            FROM games g
+            FROM user_game_status ugs
+            JOIN games g ON g.id = ugs.game_id
             JOIN systems s ON g.system_id = s.id
-            LEFT JOIN user_game_views v ON v.game_id = g.id AND v.user_id = ?
-            WHERE g.completion_status = 'in_progress'
+            LEFT JOIN user_game_views v ON v.game_id = g.id AND v.user_id = ugs.user_id
+            WHERE ugs.user_id = ? AND ugs.status = 'in_progress'
             ORDER BY v.last_viewed DESC NULLS LAST, g.title ASC
             LIMIT 5
         """, (user_id,))
@@ -1602,7 +1606,7 @@ def random_game():
 def analytics():
     """Collection analytics page with charts"""
     try:
-        ctx = build_analytics_context()
+        ctx = build_analytics_context(g.user['id'])
         return render_template('analytics.html', **ctx)
     except Exception as e:
         logger.error(f"Analytics error: {e}", exc_info=True)

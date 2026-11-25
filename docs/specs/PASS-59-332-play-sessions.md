@@ -1,7 +1,7 @@
 <!-- ants-spec-format: 1 -->
 # PASS-59-332 — Play sessions, and a status for each person
 
-**Status:** spec draft (2026-11-25).
+**Status:** built (2026-11-25).
 **Kind:** feature.
 **Source:** ROADMAP PASS-59-332 (user request 2026-11-23; scope answers
 2026-11-25).
@@ -120,21 +120,24 @@ takes `completion_status` out of its shared `UPDATE games` and calls
 ### 4.3 Sessions
 
 - `LaunchContext` and the registry entry gain `user_id`, set in
-  `routes/launch.py::_launch_game` from `g.user['id']`.
+  `routes/launch.py::_launch_game` from `g.user['id']`, and `save_check`.
 - `LocalLauncher._drain_stderr` already runs one daemon thread per launch.
-  After stderr closes it calls `proc.wait()`, takes `time.time()` as the end,
-  and calls `services/play_sessions.py::session_ended(entry, ended_at)`. This
-  runs for every kind of launch, polled or not. `on_exit` and its timing
+  After stderr closes, for a launch with a `user_id`, it calls `proc.wait()`,
+  takes `time.time()` as the end, and calls
+  `services/play_sessions.py::session_ended(entry, ended_at)`. This runs for
+  every kind of launch, polled or not. `on_exit` and its timing
   (PASS-59-64 "When the hook runs") are unchanged.
-- **Save change, built-in player only.** At launch, `player.launch_args`
-  records the modification time of each file in `<profile>/saves` and
-  `<profile>/states` whose stem is the ROM's stem. `session_ended` compares.
-  A new file or a later time is a change.
+- **Save change, built-in player only.** At launch,
+  `launch_resolver._player_context` sets `save_check` to
+  `player.save_watch(rom)`, which records the modification time of each file
+  under `<profile>/saves` and `<profile>/states` named after the ROM.
+  `session_ended` calls it. A new file or a later time is a change.
 - **Achievement.** Where the game has `ra_game_id` and the user has RA
   credentials in their `user_settings`, `session_ended` asks
   `scraper.retroachievements.get_user_game_progress_custom` once and counts
-  any `date_earned` or `date_earned_hardcore` (RA's time is UTC) inside the
-  session. Under 10 minutes it does not ask.
+  any `date_earned` or `date_earned_hardcore` inside the session, or up to
+  two minutes after it. The code reads RA's times as UTC; RA's API
+  documentation does not state their zone. Under 10 minutes it does not ask.
 - `record_session` writes the session, then applies §3's rule: 10 minutes or
   more, status Not Started and not set by hand → `save_changed or
   achievement` moves it to In Progress with `set_by = 'play'`; otherwise, if
@@ -147,9 +150,10 @@ takes `completion_status` out of its shared `UPDATE games` and calls
   Either answer calls `POST /api/game/<id>/play-question` → `answer()`, which
   clears `ask_pending` and sets `asked`. Yes also sets In Progress, `set_by =
   'hand'`.
-- `GET /api/launch/<token>/status` adds `ask_in_progress: true` once the
-  session has ended with the question pending, so `static/js/game-launch.js`
-  shows the same line without a reload.
+- After a Play from the game page, `static/js/game-launch.js` asks
+  `GET /api/game/<id>/play-question` each time the window gets focus back,
+  and shows the same line without a reload. The launch-status poll cannot
+  carry it: the Play screen stops polling after 15 seconds.
 - The game page shows "Played in RetroDB: X h Y min" beside the Steam line,
   from `play_seconds`.
 
@@ -210,8 +214,8 @@ takes `completion_status` out of its shared `UPDATE games` and calls
 
 `tests/test_pass59_332_play_sessions.py` holds INV-1 to INV-8. Each is seen
 red against the code before the change. Existing tests that pin the shared
-status change with it: `tests/test_pass59_63_routes.py::test_viewer_cannot_set_completion`
-becomes "a viewer sets only their own status", and
+status change with it: `tests/test_pass59_63_routes.py::test_viewer_sets_only_their_own_completion`
+replaces the old 403 test, and
 `tests/test_services_review_fixes.py`'s analytics test gains a user.
 
 ## 8. Alternatives considered (and rejected)

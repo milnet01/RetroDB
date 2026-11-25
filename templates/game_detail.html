@@ -296,7 +296,7 @@
                 
                 <!-- Completion Status Dropdown -->
                 <div class="completion-dropdown-wrapper">
-                    <select id="completionStatus" class="completion-select" aria-label="{{ _('Completion status') }}" data-on-change="updateCompletionStatus" data-args='[{{ game.id|tojson }}, "$this.value"]'{% if not has_permission('edit') %} disabled{% endif %}>
+                    <select id="completionStatus" class="completion-select" aria-label="{{ _('Completion status') }}" data-on-change="updateCompletionStatus" data-args='[{{ game.id|tojson }}, "$this.value"]'{% if not has_permission('track_progress') %} disabled{% endif %}>
                         <option value="not_started" {% if not game.completion_status or game.completion_status == 'not_started' %}selected{% endif %}>📋 {{ _('Not Started') }}</option>
                         <option value="in_progress" {% if game.completion_status == 'in_progress' %}selected{% endif %}>🎮 {{ _('In Progress') }}</option>
                         <option value="played" {% if game.completion_status == 'played' %}selected{% endif %}>🕹️ {{ _('Played') }}</option>
@@ -305,6 +305,13 @@
                     </select>
                 </div>
             </div>
+            {% if has_permission('track_progress') %}
+            <p id="playQuestion" class="play-question" data-game-id="{{ game.id }}"{% if not play_question %} hidden{% endif %}>
+                <span class="play-question-text">{% if play_question %}{{ _('You played this for %(minutes)s min. Mark it In Progress?', minutes=play_question.minutes) }}{% endif %}</span>
+                <button type="button" class="btn btn-sm btn-primary" data-play-answer="yes">{{ _('Yes') }}</button>
+                <button type="button" class="btn btn-sm btn-secondary" data-play-answer="no">{{ _('No') }}</button>
+            </p>
+            {% endif %}
             
             <!-- Description -->
             <div class="hero-description">
@@ -368,6 +375,9 @@
                 {% endif %}
             </div>
             
+            {% if retrodb_play_minutes %}
+            <p class="text-muted">{% if retrodb_play_minutes >= 60 %}{{ _('Played in RetroDB: %(hours)s h %(minutes)s min', hours=(retrodb_play_minutes // 60)|format_number, minutes=retrodb_play_minutes % 60) }}{% else %}{{ _('Played in RetroDB: %(minutes)s min', minutes=retrodb_play_minutes) }}{% endif %}</p>
+            {% endif %}
             {% if steam_play %}
             <p class="text-muted">{% if steam_play.minutes >= 60 %}{{ _('Played on Steam: %(hours)s h %(minutes)s min', hours=(steam_play.minutes // 60)|format_number, minutes=steam_play.minutes % 60) }}{% else %}{{ _('Played on Steam: %(minutes)s min', minutes=steam_play.minutes) }}{% endif %}{% if steam_play.last_played %} · {{ _('Last played: %(date)s', date=steam_play.last_played|timestamp_to_date) }}{% endif %}</p>
             {% endif %}
@@ -1024,6 +1034,23 @@
     background: var(--bg-medium);
     color: var(--text-primary);
     padding: 8px;
+}
+
+/* PASS-59-332 — the one-click question after a long, quiet session */
+.play-question {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin: var(--spacing-sm) 0 0;
+}
+.play-question[hidden] {
+    display: none;
+}
+@media (max-width: 768px) {
+    .play-question {
+        justify-content: center;   /* the hero centres its text on a phone */
+    }
 }
 
 /* ============================================== */

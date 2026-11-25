@@ -600,6 +600,7 @@ def _player_context(game, emu, sys_emu, binary_argv_prefix, rom_path_obj) -> Lau
         quit_port=port if player.uses_network_quit() else None,
         command_port=port,
         on_exit=lambda: player.after_session(game['id'], rom_abs, token),
+        save_check=player.save_watch(rom_abs),
     )
 
 

@@ -82,14 +82,18 @@ def test_ai_fill_sets_each_column_once(db, admin_test_client, monkeypatch):
     assert _row(db, gid)['franchise'] is None
 
 
-# 3 — a viewer cannot write the library-global completion_status.
-def test_viewer_cannot_set_completion(db, admin_test_client):
+# 3 — a viewer sets only their own status, never the shared column
+# (PASS-59-332 replaced the 403 this test once pinned).
+def test_viewer_sets_only_their_own_completion(db, admin_test_client):
     gid = _game(db, 'Shared Game', completion_status='not_started')
     client, csrf = admin_test_client(user=VIEWER)
     resp = client.post(f'/api/game/{gid}/completion', json={'status': 'completed'},
                        headers={'X-CSRF-Token': csrf})
-    assert resp.status_code == 403
+    assert resp.status_code == 200
     assert _row(db, gid)['completion_status'] == 'not_started'
+    row = db.conn.execute("SELECT status FROM user_game_status WHERE user_id = ? AND game_id = ?",
+                          (VIEWER['id'], gid)).fetchone()
+    assert row['status'] == 'completed'
 
 
 # 4 — restart drains jobs first, and the frozen argv names the binary once.

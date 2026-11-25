@@ -277,7 +277,8 @@ def _gather_collection_stats(user_id=None):
     stats['game_count']       = query("SELECT COUNT(*) AS c FROM games", one=True)['c']
     stats['system_count']     = query("SELECT COUNT(DISTINCT system_id) AS c FROM games", one=True)['c']
     stats['scraped_count']    = query("SELECT COUNT(*) AS c FROM games WHERE description IS NOT NULL AND description != ''", one=True)['c']
-    stats['completed_count']  = query("SELECT COUNT(*) AS c FROM games WHERE completion_status IN ('completed', '100_percent')", one=True)['c']
+    stats['completed_count']  = query("SELECT COUNT(*) AS c FROM user_game_status WHERE user_id = ? "
+                                      "AND status IN ('completed', '100_percent')", (user_id,), one=True)['c']
     stats['scraped_percentage'] = (
         int(round((stats['scraped_count'] / stats['game_count']) * 100))
         if stats['game_count'] > 0 else 0
