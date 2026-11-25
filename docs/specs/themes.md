@@ -26,9 +26,10 @@ Page styles name the accent only through `var(--primary-cyan)` or a
 `color-mix()` of it, never `rgba(76, 201, 240, …)` or `#4cc9f0`; card
 backgrounds likewise use `var(--card-bg)`
 (`tests/test_pass59_255_theme_colours.py`). The analytics charts read the
-theme's tokens with `getComputedStyle` as they are built. Two places still
-draw the fixed cyan, because a CSS variable cannot reach them: the
-drop-down arrows (SVG `data:` URLs) and the canvas colours in `theme.js`.
+theme's tokens with `getComputedStyle` as they are built. Drop-down arrows
+use `var(--select-arrow)` from `core/variables.css`, never an SVG `data:` URL,
+which cannot read a variable. The canvas colours in `theme.js` still draw the
+fixed cyan.
 The theme and tag-colour swatches keep their fixed colours on purpose.
 
 ---

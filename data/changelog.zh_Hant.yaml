@@ -1,6 +1,15 @@
 - version: 4.0.0
-  date: '2026-11-24'
+  date: '2026-11-25'
   tags:
+  - type: fix
+    label: "停止 RetroDB 時，正在執行的「產生 3D 盒子」工作現在會和其他工作一起停止。它會先做完手上的那個盒子，所以不會留下做到一半的盒子"
+    en: "When RetroDB is stopped, a running Build 3D Boxes job now stops with the other jobs. It finishes the box it is on first, so no box is left half built"
+  - type: fix
+    label: "在手機上，點一下遊戲庫 A-Z 列裡的字母，現在會把該字母的第一個遊戲帶到螢幕頂端，即使 RetroDB 需要先載入這些遊戲也一樣。以前，遊戲會停在螢幕底部，被底部列擋住"
+    en: "On a phone, tapping a letter in the Library's A-Z bar now brings that letter's first game to the top of the screen, even when RetroDB has to load those games first. Before, the game was left at the bottom of the screen, behind the bottom bar"
+  - type: fix
+    label: "每個下拉選單上的小箭頭現在會採用你所選色彩主題的顏色，而不再總是藍綠色"
+    en: "The small arrow on each drop-down list now takes your colour theme's colour, instead of always being blue-green"
   - type: fix
     label: "打開的 3D 盒子裡的光碟或卡匣不再顯示在白色方塊上。RetroDB 現在會把每張下載的光碟和卡匣圖片從純白、灰色或黑色背景中去背，並依光碟大小裁切。執行一次「產生 3D 盒子」即可整理之前下載的圖片"
     en: "The disc or cartridge in an open 3D box no longer sits on a white square. RetroDB now cuts each downloaded disc and cartridge picture out of its plain white, grey or black background and trims it to the disc. Run Build 3D Boxes once to clean up pictures downloaded before"

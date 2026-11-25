@@ -1003,9 +1003,10 @@
     cursor: pointer;
     appearance: none;
     box-sizing: border-box;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%234cc9f0' d='M5 7L1 3h8z'/%3E%3C/svg%3E");
+    background-image: var(--select-arrow);
     background-repeat: no-repeat;
-    background-position: right 10px center;
+    background-position: right calc(10px + 5px) center, right 10px center;
+    background-size: 5px 5px;
     transition: all 0.2s ease;
 }
 
@@ -3234,9 +3235,10 @@ body:has(.game-fanart-bg.active)::before {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234cc9f0' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-image: var(--select-arrow);
     background-repeat: no-repeat;
-    background-position: right 10px center;
+    background-position: right calc(10px + 5px) center, right 10px center;
+    background-size: 5px 5px;
     transition: border-color var(--transition-fast);
 }
 

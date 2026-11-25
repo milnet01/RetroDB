@@ -1,6 +1,15 @@
 - version: 4.0.0
-  date: '2026-11-24'
+  date: '2026-11-25'
   tags:
+  - type: fix
+    label: "Когда RetroDB останавливают, запущенная задача «Создать 3D-коробки» теперь останавливается вместе с остальными задачами. Сначала она доделывает коробку, над которой работает, поэтому ни одна коробка не остаётся недостроенной"
+    en: "When RetroDB is stopped, a running Build 3D Boxes job now stops with the other jobs. It finishes the box it is on first, so no box is left half built"
+  - type: fix
+    label: "На телефоне нажатие на букву в полосе A-Z в Библиотеке теперь выводит первую игру на эту букву в верх экрана, даже если RetroDB сначала нужно загрузить эти игры. Раньше игра оставалась внизу экрана, за нижней панелью"
+    en: "On a phone, tapping a letter in the Library's A-Z bar now brings that letter's first game to the top of the screen, even when RetroDB has to load those games first. Before, the game was left at the bottom of the screen, behind the bottom bar"
+  - type: fix
+    label: "Маленькая стрелка у каждого выпадающего списка теперь берёт цвет вашей цветовой темы, а не всегда остаётся сине-зелёной"
+    en: "The small arrow on each drop-down list now takes your colour theme's colour, instead of always being blue-green"
   - type: fix
     label: "Диск или картридж в открытой 3D-коробке больше не лежит на белом квадрате. Теперь RetroDB вырезает каждое скачанное изображение диска или картриджа из однотонного белого, серого или чёрного фона и обрезает его по диску. Запустите «Создать 3D-коробки» один раз, чтобы исправить изображения, скачанные раньше"
     en: "The disc or cartridge in an open 3D box no longer sits on a white square. RetroDB now cuts each downloaded disc and cartridge picture out of its plain white, grey or black background and trims it to the disc. Run Build 3D Boxes once to clean up pictures downloaded before"

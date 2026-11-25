@@ -1,6 +1,15 @@
 - version: 4.0.0
-  date: '2026-11-24'
+  date: '2026-11-25'
   tags:
+  - type: fix
+    label: "Når RetroDB stoppes, stopper nå en Lag 3D-esker-jobb som kjører sammen med de andre jobbene. Den gjør først ferdig esken den er i gang med, så ingen eske blir stående halvbygd"
+    en: "When RetroDB is stopped, a running Build 3D Boxes job now stops with the other jobs. It finishes the box it is on first, so no box is left half built"
+  - type: fix
+    label: "På en telefon flytter et trykk på en bokstav i A-Z-linjen i Bibliotek nå det første spillet med den bokstaven øverst på skjermen, selv når RetroDB først må laste disse spillene. Før ble spillet stående nederst på skjermen, bak bunnlinjen"
+    en: "On a phone, tapping a letter in the Library's A-Z bar now brings that letter's first game to the top of the screen, even when RetroDB has to load those games first. Before, the game was left at the bottom of the screen, behind the bottom bar"
+  - type: fix
+    label: "Den lille pilen på hver nedtrekksliste får nå fargen fra fargetemaet ditt, i stedet for alltid å være blågrønn"
+    en: "The small arrow on each drop-down list now takes your colour theme's colour, instead of always being blue-green"
   - type: fix
     label: "Platen eller kassetten i en åpen 3D-eske ligger ikke lenger på et hvitt kvadrat. RetroDB klipper nå hvert nedlastede bilde av en plate eller kassett ut av den ensfargede hvite, grå eller svarte bakgrunnen og beskjærer det til platen. Kjør Lag 3D-esker én gang for å rydde opp i bilder som ble lastet ned før"
     en: "The disc or cartridge in an open 3D box no longer sits on a white square. RetroDB now cuts each downloaded disc and cartridge picture out of its plain white, grey or black background and trims it to the disc. Run Build 3D Boxes once to clean up pictures downloaded before"

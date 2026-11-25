@@ -1368,20 +1368,7 @@ const AllGamesController = (function() {
                     }
 
                     if (targetCard) {
-                        // Found in DOM — smooth scroll to it
-                        // baseTop: the phone's fixed header covers the top too.
-                        const offset = (window.StickyScroll ? StickyScroll.baseTop() : 0) +
-                                       (StickyScroll.isPinned(filterBar) ? filterBar.offsetHeight : 0) +
-                                       (nav ? nav.offsetHeight : 0) + 20;
-                        const targetPos = targetCard.getBoundingClientRect().top +
-                                         window.pageYOffset - offset;
-                        window.scrollTo({ top: targetPos, behavior: scrollMotion() });
-
-                        // Add highlight animation
-                        targetCard.classList.add('highlight-jump');
-                        targetCard.addEventListener('animationend', () => {
-                            targetCard.classList.remove('highlight-jump');
-                        }, { once: true });
+                        scrollToJumpTarget(targetCard);
                         return;
                     }
                 }
@@ -1393,11 +1380,31 @@ const AllGamesController = (function() {
                 hasMore = true;
                 const gridEl = document.getElementById('gamesGrid');
                 if (gridEl) gridEl.innerHTML = '';
-                fetchGames(1, false);
+                fetchGames(1, false).then(() => {
+                    // The reload starts at this letter: bring its first game
+                    // into view, unless another click came first (PASS-59-333).
+                    const first = activeLetterJump === letter &&
+                        document.querySelector('#gamesGrid .game-card-wrapper');
+                    if (first) scrollToJumpTarget(first);
+                });
                 saveState();
                 updateFilterDisplay();
             });
         });
+
+        /** Scroll a card to just below the bars stuck at the top, and flash it. */
+        function scrollToJumpTarget(card) {
+            // baseTop: the phone's fixed header covers the top too.
+            const offset = (window.StickyScroll ? StickyScroll.baseTop() : 0) +
+                           (StickyScroll.isPinned(filterBar) ? filterBar.offsetHeight : 0) +
+                           (nav ? nav.offsetHeight : 0) + 20;
+            const targetPos = card.getBoundingClientRect().top + window.pageYOffset - offset;
+            window.scrollTo({ top: targetPos, behavior: scrollMotion() });
+            card.classList.add('highlight-jump');
+            card.addEventListener('animationend', () => {
+                card.classList.remove('highlight-jump');
+            }, { once: true });
+        }
     }
 
     // =========================================================================

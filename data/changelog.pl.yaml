@@ -1,6 +1,15 @@
 - version: 4.0.0
-  date: '2026-11-24'
+  date: '2026-11-25'
   tags:
+  - type: fix
+    label: "Gdy RetroDB jest zatrzymywany, działające zadanie Tworzenie pudełek 3D zatrzymuje się teraz razem z innymi zadaniami. Najpierw kończy pudełko, nad którym pracuje, więc żadne pudełko nie zostaje na wpół zbudowane"
+    en: "When RetroDB is stopped, a running Build 3D Boxes job now stops with the other jobs. It finishes the box it is on first, so no box is left half built"
+  - type: fix
+    label: "Na telefonie dotknięcie litery na pasku A-Z w Bibliotece przenosi teraz pierwszą grę na tę literę na górę ekranu, nawet gdy RetroDB musi najpierw wczytać te gry. Wcześniej gra zostawała na dole ekranu, za dolnym paskiem"
+    en: "On a phone, tapping a letter in the Library's A-Z bar now brings that letter's first game to the top of the screen, even when RetroDB has to load those games first. Before, the game was left at the bottom of the screen, behind the bottom bar"
+  - type: fix
+    label: "Mała strzałka na każdej liście rozwijanej ma teraz kolor Twojego motywu kolorów, zamiast zawsze być niebieskozielona"
+    en: "The small arrow on each drop-down list now takes your colour theme's colour, instead of always being blue-green"
   - type: fix
     label: "Płyta lub kartridż w otwartym pudełku 3D nie leży już na białym kwadracie. RetroDB wycina teraz każdy pobrany obraz płyty i kartridża z jednolitego białego, szarego lub czarnego tła i przycina go do płyty. Uruchom raz Tworzenie pudełek 3D, aby poprawić obrazy pobrane wcześniej"
     en: "The disc or cartridge in an open 3D box no longer sits on a white square. RetroDB now cuts each downloaded disc and cartridge picture out of its plain white, grey or black background and trims it to the disc. Run Build 3D Boxes once to clean up pictures downloaded before"

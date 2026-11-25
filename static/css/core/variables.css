@@ -10,6 +10,11 @@
     --primary-cyan-light: #7dd8f5;
     --primary-cyan-glow: rgba(76, 201, 240, 0.5);
 
+    /* Drop-down arrow in the theme's accent: two 5px triangles, so it takes
+       background-size: 5px 5px and two positions, 5px apart (PASS-59-334). */
+    --select-arrow: linear-gradient(45deg, transparent 50%, var(--primary-cyan) 50%),
+                    linear-gradient(135deg, var(--primary-cyan) 50%, transparent 50%);
+
     /* Secondary Colors */
     --secondary-magenta: #f72585;
     --secondary-magenta-dark: #c41d6a;

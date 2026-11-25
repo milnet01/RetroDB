@@ -1,6 +1,15 @@
 - version: 4.0.0
-  date: '2026-11-24'
+  date: '2026-11-25'
   tags:
+  - type: fix
+    label: "Wenn RetroDB beendet wird, hält jetzt auch ein laufender Auftrag 3D-Boxen erstellen zusammen mit den anderen Aufträgen an. Die Box, an der er gerade arbeitet, wird noch fertig gebaut, damit keine Box halb fertig bleibt"
+    en: "When RetroDB is stopped, a running Build 3D Boxes job now stops with the other jobs. It finishes the box it is on first, so no box is left half built"
+  - type: fix
+    label: "Auf einem Handy bringt ein Tippen auf einen Buchstaben in der A-Z-Leiste der Bibliothek jetzt das erste Spiel dieses Buchstabens an den oberen Bildschirmrand, auch wenn RetroDB diese Spiele erst laden muss. Vorher blieb das Spiel am unteren Bildschirmrand hinter der unteren Leiste"
+    en: "On a phone, tapping a letter in the Library's A-Z bar now brings that letter's first game to the top of the screen, even when RetroDB has to load those games first. Before, the game was left at the bottom of the screen, behind the bottom bar"
+  - type: fix
+    label: "Der kleine Pfeil an jeder Dropdown-Liste übernimmt jetzt die Farbe deines Farbdesigns, statt immer blaugrün zu sein"
+    en: "The small arrow on each drop-down list now takes your colour theme's colour, instead of always being blue-green"
   - type: fix
     label: "Die Disc oder das Modul in einer geöffneten 3D-Box liegt nicht mehr auf einem weißen Quadrat. RetroDB schneidet jetzt jedes heruntergeladene Bild einer Disc oder eines Moduls aus seinem einfarbigen weißen, grauen oder schwarzen Hintergrund aus und beschneidet es auf die Disc. Führe 3D-Boxen erstellen einmal aus, um früher heruntergeladene Bilder zu bereinigen"
     en: "The disc or cartridge in an open 3D box no longer sits on a white square. RetroDB now cuts each downloaded disc and cartridge picture out of its plain white, grey or black background and trims it to the disc. Run Build 3D Boxes once to clean up pictures downloaded before"

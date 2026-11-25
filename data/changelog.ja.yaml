@@ -1,6 +1,15 @@
 - version: 4.0.0
-  date: '2026-11-24'
+  date: '2026-11-25'
   tags:
+  - type: fix
+    label: "RetroDB を停止すると、実行中の3Dボックスの作成も他のジョブと一緒に止まるようになりました。作業中のボックスは先に最後まで作るので、途中のまま残るボックスはありません"
+    en: "When RetroDB is stopped, a running Build 3D Boxes job now stops with the other jobs. It finishes the box it is on first, so no box is left half built"
+  - type: fix
+    label: "スマートフォンで、ライブラリの A-Z バーの文字をタップすると、RetroDB が先にそのゲームを読み込む必要がある場合でも、その文字の最初のゲームが画面の上に表示されるようになりました。以前は、ゲームが画面下部のバーの後ろに隠れていました"
+    en: "On a phone, tapping a letter in the Library's A-Z bar now brings that letter's first game to the top of the screen, even when RetroDB has to load those games first. Before, the game was left at the bottom of the screen, behind the bottom bar"
+  - type: fix
+    label: "各ドロップダウンリストの小さな矢印が、常に青緑ではなく、選んだカラーテーマの色になりました"
+    en: "The small arrow on each drop-down list now takes your colour theme's colour, instead of always being blue-green"
   - type: fix
     label: "開いた3Dボックスの中のディスクやカートリッジが、白い四角の上に表示されなくなりました。RetroDB はダウンロードしたディスクやカートリッジの画像を、白・灰色・黒の無地の背景から切り抜き、ディスクの大きさに合わせて切り詰めます。以前にダウンロードした画像を整えるには、3Dボックスの作成を一度実行してください"
     en: "The disc or cartridge in an open 3D box no longer sits on a white square. RetroDB now cuts each downloaded disc and cartridge picture out of its plain white, grey or black background and trims it to the disc. Run Build 3D Boxes once to clean up pictures downloaded before"

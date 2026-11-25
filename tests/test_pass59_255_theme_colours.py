@@ -4,10 +4,10 @@ import re
 
 from tests._util import read_source
 
-# rgba(76, 201, 240, …) or #4cc9f0, except as a var() fallback or inside a
-# data: URL (an SVG arrow cannot read a CSS variable).
+# rgba(76, 201, 240, …) or #4cc9f0 (also %234cc9f0 in a data: URL), except
+# as a var() fallback. Drop-down arrows use var(--select-arrow) (PASS-59-334).
 FIXED = re.compile(r'rgba\(\s*(76\s*,\s*201\s*,\s*240|20\s*,\s*26\s*,\s*35)'
-                   r'|(?<!%23)(?<!--primary-cyan, )#4cc9f0', re.I)
+                   r'|(?<!--primary-cyan, )#4cc9f0|%234cc9f0', re.I)
 # The swatches show one theme's or one tag's own colour, whatever theme is on.
 SWATCH = re.compile(r'class="(theme-swatch|tag-color-swatch|tag-pill)')
 

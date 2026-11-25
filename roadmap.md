@@ -3952,7 +3952,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: enhancement.
   Source: user-request-2026-11-23.
 
-- 📋 [PASS-59-335] **Shutdown does not cancel the Build 3D Boxes job.**
+- ✅ [PASS-59-335] **Shutdown does not cancel the Build 3D Boxes job.**
   - `services/jobs/base.py::request_shutdown` lists every job to
     cancel; `box_build_job` (services/jobs/__init__.py) is missing and
     docs/specs/jobs.md §8 does not say why (webp_migrate_job's absence
@@ -3960,6 +3960,10 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - Fix: add it to the list if its cancel is safe mid-box, and to the
     test's list in tests/test_graceful_shutdown.py; else document why
     it is left out.
+  Shipped 2026-11-25 (ca3a406e): box_build_job is in request_shutdown's
+  list and the test's; it checks cancel between games, so no box is left
+  half built. jobs.md §8 list also gained mobygames_catch_up_job and
+  player_cores_job.
   **Layman:** When RetroDB stops, a running Build 3D Boxes job is not told to stop with the others.
   Kind: fix.
   Source: PASS-59-291 test work 2026-11-24.
@@ -4015,18 +4019,22 @@ After 4.0.0 the web version still gets bug fixes and, now and then, a good new f
   Kind: feature.
   Source: user-request-2026-11-23.
 
-- 📋 [PASS-59-333] **A letter jump to games not yet loaded leaves the first match at the bottom of the screen.**
+- ✅ [PASS-59-333] **A letter jump to games not yet loaded leaves the first match at the bottom of the screen.**
   Seen 2026-11-23 at 375x812: on Library, pressing C, M or S reloads
   the list from that letter but leaves the page at the top, so the first
   match starts at the bottom edge, behind the phone's bottom bar. The
   reload branch of the letter handler in `static/js/all-games-controller.js`
   never scrolls; the branch for games already loaded does. Fix: after the
   reload, scroll as that branch does.
+  Shipped 2026-11-25: the reload branch scrolls to the first card after
+  fetchGames resolves, through a shared scrollToJumpTarget. Headless
+  Chrome 375x812, letters S and M: first match top 736 px before, 110 px
+  after.
   **Layman:** Pressing a letter in the Library's A-Z bar should bring that letter's first game into view, even on a phone.
   Kind: fix.
   Source: PASS-59-167-walk-2026-11-23.
 
-- 📋 [PASS-59-334] **Drop-down arrows follow the theme colour instead of fixed cyan.**
+- ✅ [PASS-59-334] **Drop-down arrows follow the theme colour instead of fixed cyan.**
   - **Why**: the select arrows are SVG `data:` URLs with `fill='%234cc9f0'`
     (`forms.css`, and page styles in `all_games.html`, `game_detail.html`,
     `psn_trophies.html`, `settings.html`, `systems.html`). A CSS variable
@@ -4035,6 +4043,11 @@ After 4.0.0 the web version still gets bug fixes and, now and then, a good new f
     whose `background` is `var(--primary-cyan)`, or with two
     `linear-gradient` triangles. Then drop the arrows from the exception in
     `docs/specs/themes.md`.
+  Shipped 2026-11-25: --select-arrow in core/variables.css (two
+  linear-gradient triangles of var(--primary-cyan)) replaces all eight
+  SVG data: arrows; themes.md exception removed;
+  test_pass59_255_theme_colours now refuses %234cc9f0. Checked in
+  headless Chrome on cyberpunk, amber and matrix.
   **Layman:** The little arrow on each drop-down list turns the theme's colour, like the rest of the page.
   Kind: ux.
   Source: PASS-59-255 leftover 2026-11-24.
