@@ -12,7 +12,7 @@ import math
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageChops, ImageDraw
+from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
 from services.box3d.cases import CaseType
 from services.box3d.spine import _get_font
@@ -63,14 +63,15 @@ def generate_front_texture(case_type: CaseType, width: int, height: int,
         # The cover sits under a clear sleeve (SLIP-0108).
         overlay.alpha_composite(generate_lid_shine(width, height))
 
+    if case_type.top_band_mm and case_type.layout == "wrap":
+        overlay.alpha_composite(_band_moulding(case_type, width, height, logos=not back))
+
     # A clear keep case shines as a jewel lid does (SLIP-0107 § 4.3).
     if case_type.clear and case_type.layout == "wrap":
         overlay.alpha_composite(generate_lid_shine(width, height))
         overlay.alpha_composite(_lid_streak(width, height))
     if case_type.front_logo and case_type.layout == "wrap" and not back:
         overlay.alpha_composite(_front_logo(case_type, width, height))
-    if case_type.band_logo and case_type.layout == "wrap" and not back:
-        overlay.alpha_composite(_band_logo(case_type, width, height))
 
     return overlay
 
@@ -132,20 +133,63 @@ BAND_MARKS = {
     "PLAYSTATION 3": ("playstation3.png", (54.0, 7.2, 130.0, 9.8)),
     "Blu-ray": ("bluray.png", (6.5, 3.3, 22.5, 11.6)),
 }
-# The viewer draws the strip mostly see-through (box-viewer.js STRIP_ALPHA),
-# which fades the moulding with it; judged by eye.
-BAND_STRENGTH = 2.5
+# The strip is drawn as LaunchBox's PS3 boxes draw it, which read as clear
+# though nearly solid (user, 2026-11-25): milky grey, the marks as thin
+# outlines with a fainter copy below them (the far half's moulding seen
+# through), rim lines, a line where the strip ends and a bright top edge.
+# Colours as RGBA, and the copy's offset in mm; all judged by eye.
+BAND_TOP = (238, 239, 241)
+BAND_BOTTOM = (224, 226, 229)
+BAND_HIGHLIGHT = (255, 255, 255, 235)
+BAND_OUTLINE = (150, 154, 160, 210)
+BAND_ECHO = (150, 154, 160, 80)
+BAND_ECHO_MM = (-4.0, 2.5)
+BAND_RIM = (180, 184, 190, 150)
+BAND_RIM_LIT = (255, 255, 255, 150)
+BAND_END = (140, 144, 150, 200)
 
 
-def _band_logo(case_type: CaseType, w: int, h: int) -> Image.Image:
-    """An RGBA overlay of `case_type.band_logo` and the Blu-ray mark moulded
-    in the front's clear top strip."""
-    p = w / case_type.width
-    mask = Image.new("L", (w, h), 0)
-    for name in (case_type.band_logo, "Blu-ray"):
-        if name in BAND_MARKS:
-            _mark_in_box(mask, *BAND_MARKS[name], p)
-    return _emboss(mask, p, BAND_STRENGTH)
+def _band_moulding(case_type: CaseType, w: int, h: int, logos: bool = True,
+                   rim: bool = True) -> Image.Image:
+    """An RGBA overlay painting a face's clear top strip, the opening side on
+    the right. `logos` adds the marks moulded in it; `rim` the lip's inner
+    lines (a spine has none)."""
+    p = w / case_type.width if rim else h / case_type.height
+    edge = _band_edge(case_type, h)
+    overlay = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    shade = np.linspace(0, 1, edge)[:, None, None]
+    strip = np.empty((edge, w, 4), dtype=np.float32)
+    strip[..., :3] = (1 - shade) * np.array(BAND_TOP) + shade * np.array(BAND_BOTTOM)
+    strip[..., 3] = 255
+    overlay.paste(Image.fromarray(np.round(strip).astype(np.uint8), "RGBA"), (0, 0))
+
+    line = max(1, round(0.25 * p))
+    draw = ImageDraw.Draw(overlay)
+    if logos:
+        mask = Image.new("L", (w, h), 0)
+        for name in (case_type.band_logo, "Blu-ray"):
+            if name in BAND_MARKS:
+                _mark_in_box(mask, *BAND_MARKS[name], p)
+        outline = ImageChops.subtract(mask, mask.filter(ImageFilter.MinFilter(2 * line + 1)))
+        dx, dy = (round(v * p) for v in BAND_ECHO_MM)
+        echo = ImageChops.offset(outline, dx, dy)
+        echo.paste(0, (0, edge, w, h))
+        for stroke, colour in ((echo, BAND_ECHO), (outline, BAND_OUTLINE)):
+            ink = Image.new("RGBA", (w, h), colour)
+            ink.putalpha(ImageChops.multiply(stroke, Image.new("L", (w, h), colour[3])))
+            overlay.alpha_composite(ink)
+    if rim:
+        top = round(case_type.rim_mm * p)
+        right = w - round(case_type.side_rim_mm * p)
+        r = round(3 * p)
+        for shift, colour in ((0, BAND_RIM), (line, BAND_RIM_LIT)):
+            draw.line([(0, top + shift), (right - r, top + shift)], fill=colour, width=line)
+            draw.arc([right - 2 * r - shift, top + shift, right - shift, top + 2 * r + shift],
+                     270, 360, fill=colour, width=line)
+            draw.line([(right - shift, top + r), (right - shift, edge)], fill=colour, width=line)
+    draw.line([(0, edge - line), (w, edge - line)], fill=BAND_END, width=line)
+    draw.line([(0, 0), (w, 0)], fill=BAND_HIGHLIGHT, width=max(1, round(0.5 * p)))
+    return overlay
 
 
 def _mark_in_box(mask: Image.Image, file: str,
@@ -178,6 +222,8 @@ def generate_spine_texture(case_type: CaseType, width: int, height: int) -> Imag
         _draw_cardboard_spine(draw, width, height)
     elif texture in ("switch", "ds", "psp", "clamshell"):
         _draw_keepcase_spine(draw, width, height)
+    if case_type.top_band_mm and case_type.layout == "wrap":
+        overlay.alpha_composite(_band_moulding(case_type, width, height, logos=False, rim=False))
 
     return overlay
 

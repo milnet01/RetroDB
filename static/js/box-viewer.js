@@ -345,7 +345,8 @@
     const PAPER_MM = 0.4;       // paper and parts sit this far off the plastic
     const SILVER = [0.80, 0.82, 0.85];
     const CLEAR_ALPHA = 0.5;    // how much of clear plastic's own colour shows
-    const STRIP_ALPHA = 0.3;    // the same, over a PS3 face's clear top strip
+    const STRIP_ALPHA = 0.92;   // the same, over a PS3 face's clear top strip: milky, as LaunchBox draws it
+    const STRIP_GLOW = 0.8;     // how far that milky strip stays lit as it turns from the light
     const SHOW_THROUGH = 0.55;  // a cover's picture seen through its paper: faded this far to white
     const CARDBOARD = [0.72, 0.66, 0.56];
     const CARTRIDGE = [0.12, 0.12, 0.13];   // a cartridge's bare plastic
@@ -1360,7 +1361,7 @@
         precision mediump float;
         in vec2 v_uv; in vec3 v_normal;
         uniform sampler2D u_tex; uniform bool u_use_tex; uniform vec3 u_colour, u_inner, u_light;
-        uniform float u_shine, u_alpha, u_fade;
+        uniform float u_shine, u_alpha, u_fade, u_glow;
         out vec4 colour;
         void main() {
             vec3 n = normalize(v_normal);
@@ -1374,6 +1375,7 @@
             } else if (gl_FrontFacing) base = u_colour;
             else n = -n;
             float lit = ${AMBIENT} + ${DIFFUSE} * max(0.0, dot(n, u_light));
+            lit = mix(lit, 1.0, u_glow);
             vec3 half_way = normalize(u_light + vec3(0.0, 0.0, 1.0));
             float shine = u_shine * ${SHEEN} * pow(max(0.0, dot(n, half_way)), ${SHININESS}.0);
             // Premultiplied: clear plastic lets what is behind it show.
@@ -1428,7 +1430,7 @@
         if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
         for (const name of ['u_rot', 'u_part', 'u_pivot', 'u_shift', 'u_scale', 'u_persp', 'u_near',
             'u_far', 'u_half', 'u_light', 'u_tex', 'u_use_tex', 'u_colour', 'u_inner', 'u_shine',
-            'u_alpha', 'u_fade']) {
+            'u_alpha', 'u_fade', 'u_glow']) {
             loc[name] = gl.getUniformLocation(prog, name);
         }
         buffer = gl.createBuffer();
@@ -1500,7 +1502,7 @@
                 slide: 0, shell: true, clear: clearShell && p.face === null};
             if (!clearTop || !STRIP_FACES.has(p.face)) return [patch];
             const [below, above] = cutAtY(patch, stripY);
-            return [below, above && {...above, clear: true, alpha: STRIP_ALPHA}].filter(Boolean);
+            return [below, above && {...above, clear: true, alpha: STRIP_ALPHA, glow: STRIP_GLOW}].filter(Boolean);
         });
         // Bare plastic shines, clear strips over a picture too; pictures,
         // paper and cardboard do not.
@@ -1519,11 +1521,11 @@
         let floats = 0;
         for (const p of patches) {
             const alpha = p.alpha || (p.clear ? CLEAR_ALPHA : 1);
-            const key = [p.tex, p.colour, p.inner, p.part, p.slide, !!p.shell, alpha, p.fade || 0].join('|');
+            const key = [p.tex, p.colour, p.inner, p.part, p.slide, !!p.shell, alpha, p.fade || 0, p.glow || 0].join('|');
             if (!byKey.has(key)) {
                 byKey.set(key, {tex: p.tex, colour: p.colour, inner: p.inner, part: p.part,
                     slide: p.slide, shell: !!p.shell, shine: shines(p), clear: !!p.clear,
-                    alpha, fade: p.fade || 0, patches: []});
+                    alpha, fade: p.fade || 0, glow: p.glow || 0, patches: []});
             }
             byKey.get(key).patches.push(p);
             floats += (p.corners.length - 2) * 3 * 8;
@@ -1546,7 +1548,7 @@
                 }
             }
             groups.push({tex: g.tex, colour: g.colour, inner: g.inner, part: g.part, slide: g.slide,
-                shell: g.shell, shine: g.shine ? 1 : 0, clear: g.clear, alpha: g.alpha, fade: g.fade, first,
+                shell: g.shell, shine: g.shine ? 1 : 0, clear: g.clear, alpha: g.alpha, fade: g.fade, glow: g.glow, first,
                 count: at / 8 - first});
         }
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -1611,6 +1613,7 @@
             gl.uniform1f(loc.u_shine, g.shine);
             gl.uniform1f(loc.u_alpha, g.alpha);
             gl.uniform1f(loc.u_fade, g.fade);
+            gl.uniform1f(loc.u_glow, g.glow);
             gl.drawArrays(gl.TRIANGLES, g.first, g.count);
         }
     }

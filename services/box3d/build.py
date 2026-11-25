@@ -272,8 +272,9 @@ def _signature(case, row, found):
         # signature; a new or changed shape rebuilds (it changes the faces).
         parts.append(repr(case.shape))
     if case.top_band_mm:
-        # RetroDB: likewise a clear top strip and its moulded text.
-        parts.append(f'band={case.top_band_mm}:{case.band_logo}')
+        # RetroDB: likewise a clear top strip and its moulded text; the
+        # number goes up when the strip's drawing changes.
+        parts.append(f'band=2:{case.top_band_mm}:{case.band_logo}')
     for face in ('front', 'full', 'back', 'spine', 'edge', 'top', 'bottom', 'box3d'):
         path = found[face]
         parts.append(f'{face}={os.path.basename(path)}:{os.path.getsize(path)}' if path else f'{face}=')

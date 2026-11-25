@@ -4044,6 +4044,16 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   line where the strip ends; a bright highlight runs along the top edge.
   Our 78c7314f strip (30% opaque) shows the background through but looks
   like dark tinted glass on the viewer's dark background.
+  **PS3 strip redrawn LaunchBox's way 2026-11-25** (user agreed the plan;
+  logos confirmed right). overlays._band_moulding paints the strip on
+  front, back and spine: milky grey shading down, the marks as thin
+  outlines plus a faint copy 4 mm left and 2.5 mm down (front only), the
+  lip's inner line with a rounded corner on the opening side, a line where
+  the strip ends, a bright top edge. The viewer draws it nearly solid
+  (STRIP_ALPHA 0.92) and keeps it lit as it turns (STRIP_GLOW 0.8, shader
+  u_glow), so it reads ~200 grey, not ~155. Band signature now band=2, so
+  PS3 boxes rebuild. Renders checked headless next to LaunchBox's
+  Heavenly Sword crop. Awaiting the user's judgement.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.
