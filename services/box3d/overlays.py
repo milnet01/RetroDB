@@ -9,6 +9,7 @@ cartridge box fold lines, etc.
 """
 
 import math
+from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageChops, ImageDraw
@@ -101,9 +102,10 @@ def _front_logo(case_type: CaseType, w: int, h: int) -> Image.Image:
     return _emboss(mask, p)
 
 
-def _emboss(mask: Image.Image, p: float) -> Image.Image:
+def _emboss(mask: Image.Image, p: float, strength: float = 1.0) -> Image.Image:
     """An RGBA overlay raising the white of `mask` out of clear plastic:
-    a faint face, lit upper edges, shaded lower ones. `p` is pixels per mm."""
+    a faint face, lit upper edges, shaded lower ones. `p` is pixels per mm;
+    `strength` scales all three."""
     w, h = mask.size
     m = np.asarray(mask, dtype=np.float32) / 255
     step = max(1, round(0.2 * p))
@@ -111,8 +113,9 @@ def _emboss(mask: Image.Image, p: float) -> Image.Image:
     above[step:] = m[:-step]
     below = np.zeros_like(m)
     below[:-step] = m[step:]
-    light = np.clip(_EMBOSS_FACE * m + _EMBOSS_HIGHLIGHT * np.clip(m - above, 0, 1), 0, 255)
-    dark = np.clip(_EMBOSS_SHADOW * np.clip(m - below, 0, 1), 0, 255)
+    light = np.clip(strength * (_EMBOSS_FACE * m + _EMBOSS_HIGHLIGHT * np.clip(m - above, 0, 1)),
+                    0, 255)
+    dark = np.clip(strength * _EMBOSS_SHADOW * np.clip(m - below, 0, 1), 0, 255)
     rgba = np.zeros((h, w, 4), dtype=np.uint8)
     lit = light >= dark
     rgba[..., :3] = np.where(lit[..., None], 255, 0).astype(np.uint8)
@@ -121,45 +124,42 @@ def _emboss(mask: Image.Image, p: float) -> Image.Image:
 
 
 # RetroDB (PASS-59-329): the marks moulded in a PS3 case's clear top strip,
-# read from the user's photo 001 against the case's 135 mm width: mm from
-# the spine edge and the top edge. The real lettering is Sony's own; a wide
-# bold face stretched to its box stands in.
-BAND_TEXT_BOX_MM = (54.0, 7.2, 130.0, 9.8)
-BAND_DISC_BOX_MM = (6.5, 3.3, 22.5, 8.8)     # the Blu-ray disc's swoosh
-BAND_DISC_TEXT_BOX_MM = (8.0, 9.6, 21.0, 11.4)
-BAND_DISC_TEXT = "Blu-ray Disc"
+# placed from the user's photo 001 against the case's 135 mm width: boxes in
+# mm from the spine edge and the top edge. Their shapes are the logos the
+# user supplied (2026-11-25), as grey masks in marks/.
+_MARKS = Path(__file__).parent / "marks"
+BAND_MARKS = {
+    "PLAYSTATION 3": ("playstation3.png", (54.0, 7.2, 130.0, 9.8)),
+    "Blu-ray": ("bluray.png", (6.5, 3.3, 22.5, 11.6)),
+}
+# The viewer draws the strip mostly see-through (box-viewer.js STRIP_ALPHA),
+# which fades the moulding with it; judged by eye.
+BAND_STRENGTH = 2.5
 
 
 def _band_logo(case_type: CaseType, w: int, h: int) -> Image.Image:
-    """An RGBA overlay of `case_type.band_logo` and a Blu-ray mark moulded
+    """An RGBA overlay of `case_type.band_logo` and the Blu-ray mark moulded
     in the front's clear top strip."""
     p = w / case_type.width
     mask = Image.new("L", (w, h), 0)
-    _text_in_box(mask, case_type.band_logo, BAND_TEXT_BOX_MM, p)
-    _text_in_box(mask, BAND_DISC_TEXT, BAND_DISC_TEXT_BOX_MM, p)
-    x0, y0, x1, y1 = (v * p for v in BAND_DISC_BOX_MM)
-    stroke = max(1, round(0.7 * p))
-    draw = ImageDraw.Draw(mask)
-    draw.ellipse((x0, y0, x1, y1), outline=255, width=stroke)
-    # The swoosh: an inner arc with a gap at its left end.
-    inset = (y1 - y0) * 0.3
-    draw.arc((x0 + inset, y0 + inset, x1 - inset, y1 - inset), 200, 520,
-             fill=255, width=stroke)
-    return _emboss(mask, p)
+    for name in (case_type.band_logo, "Blu-ray"):
+        if name in BAND_MARKS:
+            _mark_in_box(mask, *BAND_MARKS[name], p)
+    return _emboss(mask, p, BAND_STRENGTH)
 
 
-def _text_in_box(mask: Image.Image, text: str,
+def _mark_in_box(mask: Image.Image, file: str,
                  box_mm: tuple[float, float, float, float], p: float) -> None:
-    """Draw `text` white on `mask`, stretched to fill `box_mm`."""
-    x0, y0, x1, y1 = (round(v * p) for v in box_mm)
-    if x1 <= x0 or y1 <= y0:
-        return
-    font = _get_font(max(8, (y1 - y0) * 4), bold=True)
-    left, top, right, bottom = font.getbbox(text)
-    word = Image.new("L", (right - left, bottom - top), 0)
-    ImageDraw.Draw(word).text((-left, -top), text, font=font, fill=255)
-    word = word.resize((x1 - x0, y1 - y0), Image.Resampling.LANCZOS)
-    mask.paste(ImageChops.lighter(mask.crop((x0, y0, x1, y1)), word), (x0, y0))
+    """Lay the grey mark `file` on `mask`, as large as fits `box_mm` keeping
+    its shape, centred in it."""
+    mark = Image.open(_MARKS / file).convert("L")
+    x0, y0, x1, y1 = (v * p for v in box_mm)
+    scale = min((x1 - x0) / mark.width, (y1 - y0) / mark.height)
+    size = (max(1, round(mark.width * scale)), max(1, round(mark.height * scale)))
+    mark = mark.resize(size, Image.Resampling.LANCZOS)
+    at = (round((x0 + x1 - size[0]) / 2), round((y0 + y1 - size[1]) / 2))
+    region = (*at, at[0] + size[0], at[1] + size[1])
+    mask.paste(ImageChops.lighter(mask.crop(region), mark), at)
 
 
 def generate_spine_texture(case_type: CaseType, width: int, height: int) -> Image.Image:

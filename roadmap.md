@@ -4025,11 +4025,13 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   lip + 14 mm clear strip), on front, spine and back (photo 185). That
   leaves 0.869 wide to tall, so PS3 covers (0.854-0.875) are no longer
   stretched. Moulded in the front strip: "PLAYSTATION 3" across 54-130 mm,
-  7.2-9.8 mm down; the Blu-ray mark at 6.5-22.5 mm. A stretched bold font
-  stands in for Sony's lettering. The Blu-ray ridge line moved to the
-  strip's lower edge. Only PS3 boxes rebuild (band in the build signature).
-  The strip is drawn as the rim's plastic colour, not see-through. Back
-  strip left plain (no photo shows its moulding). Awaiting the user's
+  7.2-9.8 mm down; the Blu-ray mark at 6.5-22.5 mm. Both shapes are the
+  logos the user supplied, as masks in services/box3d/marks/. The Blu-ray
+  ridge line moved to the strip's lower edge. Only PS3 boxes rebuild (band
+  in the build signature). A built record carries clear_top_mm; the viewer
+  cuts the front, spine and back there and draws the strip see-through
+  (STRIP_ALPHA 0.3; moulding 2.5x stronger to stay visible). Back strip
+  left plain (no photo shows its moulding). Awaiting the user's
   judgement of the render; then the user re-runs Build 3D Boxes.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.

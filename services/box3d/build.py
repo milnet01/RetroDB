@@ -408,6 +408,10 @@ def build_for_game(game_id):
         shape = _shape(case)
         if shape is not None:
             record['shape'] = shape
+        if case.top_band_mm:
+            # RetroDB: where the faces' clear top strip ends, lip included,
+            # so the viewer draws it see-through (PASS-59-329).
+            record['clear_top_mm'] = case.rim_mm + case.top_band_mm
         # Read again just before the write: an import may have landed while
         # the faces were drawn, and it always wins.
         latest = _game(game_id)

@@ -106,6 +106,30 @@
         };
     }
 
+    // The faces a PS3 case's clear top strip crosses.
+    const STRIP_FACES = new Set(['front', 'back', 'spine']);
+
+    // A convex patch cut by the plane at height `y`: [the part below, the
+    // part above], either null where nothing is left; uv is carried along.
+    function cutAtY(p, y) {
+        const sides = [[], []];
+        const n = p.corners.length;
+        for (let i = 0; i < n; i++) {
+            const a = p.corners[i], b = p.corners[(i + 1) % n];
+            const ua = p.uv ? p.uv[i] : null, ub = p.uv ? p.uv[(i + 1) % n] : null;
+            sides[a[1] > y ? 1 : 0].push([a, ua]);
+            if ((a[1] > y) !== (b[1] > y)) {
+                const t = (y - a[1]) / (b[1] - a[1]);
+                const q = a.map((v, k) => v + t * (b[k] - v));
+                const uq = ua && ua.map((v, k) => v + t * (ub[k] - v));
+                sides[0].push([q, uq]);
+                sides[1].push([q, uq]);
+            }
+        }
+        return sides.map(side => side.length < 3 ? null : {...p,
+            corners: side.map(c => c[0]), uv: p.uv ? side.map(c => c[1]) : p.uv});
+    }
+
     // Outward unit normal by Newell's method; [0, 0, 0] for no area.
     function patchNormal(corners) {
         let nx = 0, ny = 0, nz = 0;
@@ -321,6 +345,7 @@
     const PAPER_MM = 0.4;       // paper and parts sit this far off the plastic
     const SILVER = [0.80, 0.82, 0.85];
     const CLEAR_ALPHA = 0.5;    // how much of clear plastic's own colour shows
+    const STRIP_ALPHA = 0.3;    // the same, over a PS3 face's clear top strip
     const SHOW_THROUGH = 0.55;  // a cover's picture seen through its paper: faded this far to white
     const CARDBOARD = [0.72, 0.66, 0.56];
     const CARTRIDGE = [0.12, 0.12, 0.13];   // a cartridge's bare plastic
@@ -1461,17 +1486,25 @@
         // The seam's groove: plastic within its width of the middle.
         const clearShell = PS3_CASE.test(record.case.name || '');
         const groove = shape && shape.seam_width_mm > 0 ? shape.seam_width_mm / 2 + SAME_MM : -1;
-        const shell = boxPatches(record.case, shape).map(p => {
+        // A built PS3 box's faces have a clear strip this far down from the
+        // top, drawn see-through (PASS-59-329).
+        const clearTop = clearShell && record.clear_top_mm > 0 ? record.clear_top_mm : 0;
+        const stripY = record.case.height_mm / 2 - clearTop;
+        const shell = boxPatches(record.case, shape).flatMap(p => {
             let colour = hexColour(record.colours[p.colour]);
             if (p.face === null && p.corners.every(q => Math.abs(q[2]) <= groove)) {
                 colour = colour.map(v => v * GROOVE);
             }
             // A PS3 case's bare plastic is clear (the user, 2026-11-25).
-            return {corners: p.corners, uv: p.source, tex: faceUrl(p.face), colour, inner,
+            const patch = {corners: p.corners, uv: p.source, tex: faceUrl(p.face), colour, inner,
                 slide: 0, shell: true, clear: clearShell && p.face === null};
+            if (!clearTop || !STRIP_FACES.has(p.face)) return [patch];
+            const [below, above] = cutAtY(patch, stripY);
+            return [below, above && {...above, clear: true, alpha: STRIP_ALPHA}].filter(Boolean);
         });
-        // Bare plastic shines; pictures, paper and cardboard do not.
-        const shines = p => !p.tex && !(p.shell && kind === 'carton');
+        // Bare plastic shines, clear strips over a picture too; pictures,
+        // paper and cardboard do not.
+        const shines = p => p.clear || (!p.tex && !(p.shell && kind === 'carton'));
         const patches = splitShell(shell, hinge)
             .concat(insideParts(kind, record.case, shape, plastic, scans,
                 {discs: record.discs || 1, region: record.region,
@@ -1485,11 +1518,12 @@
         const byKey = new Map();
         let floats = 0;
         for (const p of patches) {
-            const key = [p.tex, p.colour, p.inner, p.part, p.slide, !!p.shell, !!p.clear, p.fade || 0].join('|');
+            const alpha = p.alpha || (p.clear ? CLEAR_ALPHA : 1);
+            const key = [p.tex, p.colour, p.inner, p.part, p.slide, !!p.shell, alpha, p.fade || 0].join('|');
             if (!byKey.has(key)) {
                 byKey.set(key, {tex: p.tex, colour: p.colour, inner: p.inner, part: p.part,
                     slide: p.slide, shell: !!p.shell, shine: shines(p), clear: !!p.clear,
-                    fade: p.fade || 0, patches: []});
+                    alpha, fade: p.fade || 0, patches: []});
             }
             byKey.get(key).patches.push(p);
             floats += (p.corners.length - 2) * 3 * 8;
@@ -1512,7 +1546,7 @@
                 }
             }
             groups.push({tex: g.tex, colour: g.colour, inner: g.inner, part: g.part, slide: g.slide,
-                shell: g.shell, shine: g.shine ? 1 : 0, clear: g.clear, fade: g.fade, first,
+                shell: g.shell, shine: g.shine ? 1 : 0, clear: g.clear, alpha: g.alpha, fade: g.fade, first,
                 count: at / 8 - first});
         }
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -1575,7 +1609,7 @@
             gl.uniform3fv(loc.u_colour, g.colour);
             gl.uniform3fv(loc.u_inner, g.inner);
             gl.uniform1f(loc.u_shine, g.shine);
-            gl.uniform1f(loc.u_alpha, g.clear ? CLEAR_ALPHA : 1);
+            gl.uniform1f(loc.u_alpha, g.alpha);
             gl.uniform1f(loc.u_fade, g.fade);
             gl.drawArrays(gl.TRIANGLES, g.first, g.count);
         }

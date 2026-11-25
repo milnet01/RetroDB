@@ -166,6 +166,8 @@ DATAS = [
     # PASS-59-326 — the console colours a built 3D box's spine is printed in;
     # without it every generated spine falls back to grey.
     ('services/box3d/case_colors.json', 'services/box3d'),
+    # PASS-59-329 — the logos moulded in a PS3 case's clear top strip.
+    ('services/box3d/marks', 'services/box3d/marks'),
     # Per-locale changelog translations (Pass 43.6) — the /changelog route merges
     # these over changelog.yaml by version; bundle them or non-English users see
     # English release notes. (help.<locale>.html ride the templates/ dir above.)

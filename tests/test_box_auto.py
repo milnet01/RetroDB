@@ -300,6 +300,18 @@ def test_a_ps3_cover_starts_below_the_clear_top_strip():
     assert wrap_panels_mm(case)[3] == case.height - case.top_band_mm
 
 
+def test_the_ps3_strip_carries_its_moulded_logos():
+    # PASS-59-329: the logos the user supplied, read from services/box3d/marks/.
+    import numpy as np
+    from services.box3d.cases import CASE_TYPES
+    from services.box3d.overlays import BAND_MARKS, generate_front_texture
+    case = CASE_TYPES['PS3 Blu-ray Case']
+    alpha = np.asarray(generate_front_texture(case, 1350, 1715))[..., 3]
+    for _file, (x0, y0, x1, y1) in BAND_MARKS.values():
+        box = alpha[round(y0 * 10):round(y1 * 10), round(x0 * 10):round(x1 * 10)]
+        assert (box > 100).mean() > 0.05
+
+
 def test_a_built_ps2_box_carries_its_shape(make_game, images):
     gid = make_game()
     assert build.build_for_game(gid) == 'built'
