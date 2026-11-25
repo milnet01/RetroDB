@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=335 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=336 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -4042,7 +4042,7 @@ After 4.0.0 the web version still gets bug fixes and, now and then, a good new f
   Kind: fix.
   Source: PASS-59-326 browser walk, 2026-11-21.
 
-- 📋 [PASS-59-330] **Style leftovers from PASS-59-282 that need a design choice (ux, S).**
+- ✅ [PASS-59-330] **Style leftovers from PASS-59-282 that need a design choice (ux, S).**
   - **Why not fixed now**: each is real or likely, but the fix changes how
     a page looks, so it needs a choice and a screen check.
   - **Contrast** (measure first, as PASS-59-281 did): white text on a
@@ -4060,6 +4060,15 @@ After 4.0.0 the web version still gets bug fixes and, now and then, a good new f
   User decision 2026-11-25: I choose each look (readable, matching the
   rest of RetroDB), then show before-and-after pictures for the user to
   approve. No need to ask per fix.
+  **Done** (2026-11-25, approved by the user from before/after
+  pictures at desktop and 375px): tag pills pick dark or white text by
+  contrast; Hardcore label dark on red; log line numbers unfaded.
+  `.section-title` is one rule in typography.css (pages.css copy gone;
+  game page keeps a smaller size for its Edit dialog). Settings uses the
+  shared `.form-group` / `.form-label`. The game page's unused
+  `.screenshots-grid` block, which overrode the row thumbs, is gone; the
+  thumbs look unchanged. Screenshot Dedup marks a delete with a red
+  border and a Delete badge.
   **Layman:** Small look-and-feel clean-ups where someone must first choose how it should look.
   Kind: ux.
   Source: PASS-59-282 Low list, checked 2026-11-23.
@@ -4107,6 +4116,16 @@ After 4.0.0 the web version still gets bug fixes and, now and then, a good new f
   **Layman:** The little arrow on each drop-down list turns the theme's colour, like the rest of the page.
   Kind: ux.
   Source: PASS-59-255 leftover 2026-11-24.
+
+- 📋 [PASS-59-336] **At 375px the game page and the achievement game page scroll sideways (fix, S).**
+  - **Seen**: headless Chrome at 375px, `/game/9` and `/achievements/9`
+    report `scrollWidth` 388, before and after PASS-59-330, so it is
+    older. Other pages checked stay at 375.
+  - **Next**: find the element wider than the screen, fix, recheck at
+    375px.
+  **Layman:** On a phone, two pages are slightly wider than the screen and can slide sideways.
+  Kind: fix.
+  Source: PASS-59-330 screen check 2026-11-25.
 
 ## Desktop milestone 1 — browse and play
 

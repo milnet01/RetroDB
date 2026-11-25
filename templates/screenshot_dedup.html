@@ -146,7 +146,12 @@
     box-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
 }
 
+/* Marked by a red border and a badge, not by fading alone. */
 .dup-thumb.delete {
+    border-color: var(--neon-red);
+}
+
+.dup-thumb.delete img {
     opacity: 0.5;
 }
 
@@ -196,8 +201,10 @@
     cursor: pointer;
 }
 
-.dup-thumb .keep-badge {
+.dup-thumb .keep-badge,
+.dup-thumb .delete-badge {
     position: absolute;
+    z-index: 1;
     top: 6px;
     right: 6px;
     background: var(--neon-green);
@@ -210,7 +217,13 @@
     display: none;
 }
 
-.dup-thumb.keep .keep-badge {
+.dup-thumb .delete-badge {
+    background: var(--neon-red);
+    color: #111;
+}
+
+.dup-thumb.keep .keep-badge,
+.dup-thumb.delete .delete-badge {
     display: block;
 }
 
@@ -529,7 +542,8 @@ function renderResults() {
                 html += ' data-gi="' + gi + '" data-si="' + si + '" data-fi="' + fi + '"';
                 html += ' data-on-change="updateThumbSelection" data-args="' + actionArgs(gi, si, fi) + '">';
                 html += '</div>';
-                html += '<span class="keep-badge">KEEP</span>';
+                html += '<span class="keep-badge">' + escapeHtml({{ _('Keep')|tojson }}) + '</span>';
+                html += '<span class="delete-badge">' + escapeHtml({{ _('Delete')|tojson }}) + '</span>';
                 html += '<img src="/static/images/screenshots/' + encodeURIComponent(file.filename) + '" loading="lazy" alt="">';
                 html += '<div class="dup-thumb-info">';
                 html += '<span class="filename" title="' + escapeHtml(file.filename) + '">' + escapeHtml(file.filename) + '</span>';

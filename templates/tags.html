@@ -435,7 +435,7 @@ function renderTags() {
     grid.innerHTML = allTags.map(tag => `
         <div class="tag-card" data-on-click="toggleTagGames" data-args="${actionArgs(tag.id)}" data-tag-id="${tag.id}">
             <div class="tag-card-top">
-                <button type="button" class="tag-pill" aria-controls="tagGamesPanel" style="background: ${escapeHtml(tag.color || '#4cc9f0')};">${escapeHtml(tag.name)}</button>
+                <button type="button" class="tag-pill" aria-controls="tagGamesPanel" style="background: ${escapeHtml(tag.color || '#4cc9f0')}; color: ${tagTextColor(tag.color || '#4cc9f0')};">${escapeHtml(tag.name)}</button>
                 <div class="tag-card-actions" data-on-click data-stop>
                     <button type="button" class="tag-action-btn" data-on-click="openEditTagModal" data-args="${actionArgs(tag.id)}" title="${escapeHtml({{ _('Edit tag')|tojson }})}" aria-label="${escapeHtml({{ _('Edit tag')|tojson }})}">&#9998;</button>
                     <button type="button" class="tag-action-btn danger" data-name="${escapeHtml(tag.name)}" data-on-click="confirmDeleteTag" data-args="${actionArgs(tag.id, '$this.dataset.name')}" title="${escapeHtml({{ _('Delete tag')|tojson }})}" aria-label="${escapeHtml({{ _('Delete tag')|tojson }})}">&#10005;</button>
@@ -445,6 +445,18 @@ function renderTags() {
             <div class="tag-card-label">${(tag.game_count || 0) === 1 ? {{ _('game')|tojson }} : {{ _('games')|tojson }}}</div>
         </div>
     `).join('');
+}
+
+// White or near-black, whichever reads better on the tag's colour (WCAG
+// contrast). A colour that is not #rrggbb keeps the white from the CSS.
+function tagTextColor(hex) {
+    const m = /^#([0-9a-f]{6})$/i.exec(hex || '');
+    if (!m) return '#fff';
+    const lin = c => (c /= 255) <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    const n = parseInt(m[1], 16);
+    const L = 0.2126 * lin(n >> 16) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255);
+    const dark = 0.2126 * lin(17) + 0.7152 * lin(17) + 0.0722 * lin(17);
+    return (1.05 / (L + 0.05)) >= ((L + 0.05) / (dark + 0.05)) ? '#fff' : '#111';
 }
 
 function openCreateTagModal() {
