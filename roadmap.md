@@ -3940,6 +3940,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - Finger notch: ~60 mm long cut in the middle of the booklet half's opening edge (across 50..117); groove on the closed edge ~7 mm tall (code: 59 x 6).
   - Spine: ~13 mm, two ridge lines, moulded text.
   - Closed thickness ~14 mm +-0.5 (photo 21); CASE_TYPES has depth 13.
+  Disc sizes as anchors (user, 2026-11-25): a disc is 120 mm across with
+  a 15 mm centre hole, the same for CD, DVD and Blu-ray. Build the hub
+  button to fit the hole (~15 mm, as measured) and the ring's inside to
+  clear the disc (~121 mm, as measured); use the disc's 120 mm as the
+  scale check for parts measured from the photos.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.
