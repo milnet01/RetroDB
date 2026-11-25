@@ -4019,6 +4019,18 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   taller to fill the whole face. Fix the builder (services/box3d, ported
   from Slipcase: keep its names) and the viewer's shell, then the user
   re-runs Build 3D Boxes. Check the spine and back in the photos too.
+  **PS3 outside drawn 2026-11-25** (cases.py top_band_mm / band_logo;
+  image_ops.inset_in_rim; overlays._band_logo). From photo 001 against the
+  case's 135 mm width: the sheet starts 16.5 mm below the top edge (2.5 mm
+  lip + 14 mm clear strip), on front, spine and back (photo 185). That
+  leaves 0.869 wide to tall, so PS3 covers (0.854-0.875) are no longer
+  stretched. Moulded in the front strip: "PLAYSTATION 3" across 54-130 mm,
+  7.2-9.8 mm down; the Blu-ray mark at 6.5-22.5 mm. A stretched bold font
+  stands in for Sony's lettering. The Blu-ray ridge line moved to the
+  strip's lower edge. Only PS3 boxes rebuild (band in the build signature).
+  The strip is drawn as the rim's plastic colour, not see-through. Back
+  strip left plain (no photo shows its moulding). Awaiting the user's
+  judgement of the render; then the user re-runs Build 3D Boxes.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.

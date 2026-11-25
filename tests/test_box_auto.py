@@ -282,6 +282,24 @@ def test_the_sega_case_lip_is_wider_down_the_opening_side():
     assert framed.getpixel((framed.width - 31, mid_y))[:3] == (255, 255, 255)
 
 
+def test_a_ps3_cover_starts_below_the_clear_top_strip():
+    # PASS-59-329, from the user's photos of a PAL Heavenly Sword case
+    # (2026-11-25): the sheet starts 16.5 mm down, and a PS3 cover (0.854
+    # wide to tall) fits what is left without stretching.
+    from PIL import Image
+    from services.box3d.cases import CASE_TYPES
+    from services.box3d.image_ops import inset_in_rim, wrap_panels_mm
+    case = CASE_TYPES['PS3 Blu-ray Case']
+    face = Image.new('RGB', (1350, 1715), (255, 255, 255))
+    framed = inset_in_rim(face, case, None, 'right', wall=False)
+    mid_x = framed.width // 2
+    assert framed.getpixel((mid_x, 163))[:3] != (255, 255, 255)
+    assert framed.getpixel((mid_x, 167))[:3] == (255, 255, 255)
+    art_w = (case.width - case.side_rim_mm) / (case.height - 2 * case.rim_mm - case.top_band_mm)
+    assert abs(art_w - 0.854) < 0.02
+    assert wrap_panels_mm(case)[3] == case.height - case.top_band_mm
+
+
 def test_a_built_ps2_box_carries_its_shape(make_game, images):
     gid = make_game()
     assert build.build_for_game(gid) == 'built'

@@ -129,13 +129,16 @@ def inset_in_rim(
     not cropped, as a logo often sits at its very edge. A case with no rim
     returns `face` untouched. With `wall` clear, the lip's inner wall is not
     painted: a 3D viewer drawing a real lip casts it (SLIP-0125 § 4.3).
+    RetroDB: a case's `top_band_mm` of bare plastic sits under the top lip,
+    and the art fills what is left.
     """
     if not case_type.rim_mm:
         return face
     width, height = face.size
     rim = max(1, round(case_type.rim_mm * height / case_type.height))
     side = max(1, round(case_type.side_rim_mm * height / case_type.height))
-    if height <= 2 * rim or width <= side:
+    top = rim + round(case_type.top_band_mm * height / case_type.height)
+    if height <= top + rim or width <= side:
         return face
     plastic = _case_plastic(case_type, case_color)
     framed = Image.new("RGBA", face.size, (*plastic, 255))
@@ -148,13 +151,13 @@ def inset_in_rim(
     if band:
         shade = tuple(round(c * _RIM_WALL_SHADE) for c in plastic)
         framed.paste((*shade, 255), (
-            max(0, left - band), rim - band,
+            max(0, left - band), top - band,
             min(width, right + band), height - rim + band,
         ))
     art = face if face.mode == "RGBA" else face.convert("RGBA")
-    art = art.resize((max(1, right - left), height - 2 * rim), Image.Resampling.LANCZOS)
+    art = art.resize((max(1, right - left), height - top - rim), Image.Resampling.LANCZOS)
     # Over the frame, not pasted: a transparent corner must not punch a hole.
-    framed.alpha_composite(art, (left, rim))
+    framed.alpha_composite(art, (left, top))
     return framed
 
 
@@ -167,7 +170,9 @@ def wrap_panels_mm(case_type: CaseType) -> tuple[float, float, float, float]:
     """
     jewel = case_type.jewel
     if jewel is None:
-        return case_type.width, case_type.depth, case_type.width, case_type.height
+        # RetroDB: a cover stops at the case's clear top strip.
+        return (case_type.width, case_type.depth, case_type.width,
+                case_type.height - case_type.top_band_mm)
     card_w, card_h = jewel.back_card
     return card_w - 2 * jewel.strip, jewel.strip, jewel.booklet[0], card_h
 

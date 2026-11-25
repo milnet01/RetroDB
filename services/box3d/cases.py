@@ -108,6 +108,11 @@ class CaseType:
     moulded_logo: str | None = None
     # RetroDB: text embossed in a keep case's clear front, near the top.
     front_logo: str | None = None
+    # RetroDB: a clear strip under the top lip, on every face, where the
+    # printed sheet stops (PS3); mm.
+    top_band_mm: float = 0.0
+    # RetroDB: text moulded in that strip on the front, beside a Blu-ray mark.
+    band_logo: str | None = None
     # Overlay family for the wrap layout: "dvd", "bluray", "switch", "ds",
     # "psp", "cardboard", "clamshell" (SLIP-0108), or None for no overlay
     # (SLIP-0107).
@@ -274,6 +279,10 @@ CASE_TYPES: dict[str, CaseType] = {
         platforms=("PS3",),
         plastic=(0xF0, 0xF0, 0xF0), clear=True, texture="bluray",
         shape=_PS3_SHAPE,
+        # RetroDB: the sheet starts 16.5 mm below the top edge, lip
+        # included, on the front, spine and back (user's photos 001 and
+        # 185, PASS-59-329); that leaves the 0.854 shape of a PS3 cover.
+        top_band_mm=14.0, band_logo="PLAYSTATION 3",
     ),
     "PS4 Blu-ray Case": CaseType(
         name="PS4 Blu-ray Case",

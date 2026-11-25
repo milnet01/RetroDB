@@ -11,7 +11,7 @@ cartridge box fold lines, etc.
 import math
 
 import numpy as np
-from PIL import Image, ImageDraw
+from PIL import Image, ImageChops, ImageDraw
 
 from services.box3d.cases import CaseType
 from services.box3d.spine import _get_font
@@ -49,7 +49,7 @@ def generate_front_texture(case_type: CaseType, width: int, height: int,
     elif texture == "dvd":
         _draw_dvd_front(draw, width, height)
     elif texture == "bluray":
-        _draw_bluray_front(draw, width, height)
+        _draw_bluray_front(draw, width, height, _band_edge(case_type, height))
     elif texture == "cardboard":
         _draw_cardboard_front(draw, width, height)
     elif texture == "switch":
@@ -68,6 +68,8 @@ def generate_front_texture(case_type: CaseType, width: int, height: int,
         overlay.alpha_composite(_lid_streak(width, height))
     if case_type.front_logo and case_type.layout == "wrap" and not back:
         overlay.alpha_composite(_front_logo(case_type, width, height))
+    if case_type.band_logo and case_type.layout == "wrap" and not back:
+        overlay.alpha_composite(_band_logo(case_type, width, height))
 
     return overlay
 
@@ -96,6 +98,13 @@ def _front_logo(case_type: CaseType, w: int, h: int) -> Image.Image:
         ((w - (right - left)) / 2 - left,
          FRONT_LOGO_CENTRE_MM * p - (bottom - top) / 2 - top),
         case_type.front_logo, font=font, fill=255)
+    return _emboss(mask, p)
+
+
+def _emboss(mask: Image.Image, p: float) -> Image.Image:
+    """An RGBA overlay raising the white of `mask` out of clear plastic:
+    a faint face, lit upper edges, shaded lower ones. `p` is pixels per mm."""
+    w, h = mask.size
     m = np.asarray(mask, dtype=np.float32) / 255
     step = max(1, round(0.2 * p))
     above = np.zeros_like(m)
@@ -109,6 +118,48 @@ def _front_logo(case_type: CaseType, w: int, h: int) -> Image.Image:
     rgba[..., :3] = np.where(lit[..., None], 255, 0).astype(np.uint8)
     rgba[..., 3] = np.round(np.where(lit, light, dark)).astype(np.uint8)
     return Image.fromarray(rgba, "RGBA")
+
+
+# RetroDB (PASS-59-329): the marks moulded in a PS3 case's clear top strip,
+# read from the user's photo 001 against the case's 135 mm width: mm from
+# the spine edge and the top edge. The real lettering is Sony's own; a wide
+# bold face stretched to its box stands in.
+BAND_TEXT_BOX_MM = (54.0, 7.2, 130.0, 9.8)
+BAND_DISC_BOX_MM = (6.5, 3.3, 22.5, 8.8)     # the Blu-ray disc's swoosh
+BAND_DISC_TEXT_BOX_MM = (8.0, 9.6, 21.0, 11.4)
+BAND_DISC_TEXT = "Blu-ray Disc"
+
+
+def _band_logo(case_type: CaseType, w: int, h: int) -> Image.Image:
+    """An RGBA overlay of `case_type.band_logo` and a Blu-ray mark moulded
+    in the front's clear top strip."""
+    p = w / case_type.width
+    mask = Image.new("L", (w, h), 0)
+    _text_in_box(mask, case_type.band_logo, BAND_TEXT_BOX_MM, p)
+    _text_in_box(mask, BAND_DISC_TEXT, BAND_DISC_TEXT_BOX_MM, p)
+    x0, y0, x1, y1 = (v * p for v in BAND_DISC_BOX_MM)
+    stroke = max(1, round(0.7 * p))
+    draw = ImageDraw.Draw(mask)
+    draw.ellipse((x0, y0, x1, y1), outline=255, width=stroke)
+    # The swoosh: an inner arc with a gap at its left end.
+    inset = (y1 - y0) * 0.3
+    draw.arc((x0 + inset, y0 + inset, x1 - inset, y1 - inset), 200, 520,
+             fill=255, width=stroke)
+    return _emboss(mask, p)
+
+
+def _text_in_box(mask: Image.Image, text: str,
+                 box_mm: tuple[float, float, float, float], p: float) -> None:
+    """Draw `text` white on `mask`, stretched to fill `box_mm`."""
+    x0, y0, x1, y1 = (round(v * p) for v in box_mm)
+    if x1 <= x0 or y1 <= y0:
+        return
+    font = _get_font(max(8, (y1 - y0) * 4), bold=True)
+    left, top, right, bottom = font.getbbox(text)
+    word = Image.new("L", (right - left, bottom - top), 0)
+    ImageDraw.Draw(word).text((-left, -top), text, font=font, fill=255)
+    word = word.resize((x1 - x0, y1 - y0), Image.Resampling.LANCZOS)
+    mask.paste(ImageChops.lighter(mask.crop((x0, y0, x1, y1)), word), (x0, y0))
 
 
 def generate_spine_texture(case_type: CaseType, width: int, height: int) -> Image.Image:
@@ -169,8 +220,17 @@ def _draw_dvd_spine(draw: ImageDraw.ImageDraw, w: int, h: int) -> None:
 
 # --- Blu-ray Case ---
 
-def _draw_bluray_front(draw: ImageDraw.ImageDraw, w: int, h: int) -> None:
-    """Blu-ray case: border indent + curved spine-edge groove."""
+def _band_edge(case_type: CaseType, h: int) -> int | None:
+    """RetroDB: the pixel row where a clear top strip ends, None for none."""
+    if not case_type.top_band_mm:
+        return None
+    return round((case_type.rim_mm + case_type.top_band_mm) * h / case_type.height)
+
+
+def _draw_bluray_front(draw: ImageDraw.ImageDraw, w: int, h: int,
+                       ridge_y: int | None = None) -> None:
+    """Blu-ray case: border indent + curved spine-edge groove. RetroDB:
+    `ridge_y` moves the top ridge to where a clear top strip ends."""
     margin_x = int(w * 0.025)
     margin_y = int(h * 0.018)
     lw = max(1, w // 200)
@@ -189,7 +249,8 @@ def _draw_bluray_front(draw: ImageDraw.ImageDraw, w: int, h: int) -> None:
                   fill=(255, 255, 255, 6), width=lw)
 
     # Top latch ridge
-    ridge_y = int(h * 0.04)
+    if ridge_y is None:
+        ridge_y = int(h * 0.04)
     _draw_hline_emboss(draw, margin_x + lw, w - margin_x - lw, ridge_y, lw)
 
 
