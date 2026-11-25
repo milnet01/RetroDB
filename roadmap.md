@@ -3961,6 +3961,15 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   online case models checked: none accurate; best is BlenderKit's DVD
   case set, 136.5 x 190 x 13.2 (ours 135 x 190 x 14). Downloads in
   Scratchpad/RetroDB/models-dl/.
+  Round 3 (2026-11-25, c325c8a0), from the user's 66 close-ups (PS5
+  Case/Close-ups latches and clips/). User: the closing latches are
+  inside, not windows on the closed edge; the booklet clips are smaller
+  and not thin frames. Now: two hooks on the inside of the disc half's
+  opening wall, about 22 mm from each end; each clip a solid plate 18.5
+  x 25 mm, rounded on its spine side, U slot 8 x 14.5 mm closed on the
+  opening side, lip at its spine end (measured on the straightened photo
+  0). User: the disc hub is still not quite right but a disc hides it,
+  so it can stay.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.
