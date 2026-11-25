@@ -26,7 +26,8 @@
  * or card in its holder; the manual under two clips in the lid, or with no
  * manual a PS2 case's memory-card holder. A GameCube case has its own tray,
  * holder, mouldings and latch hole (gamecubeBase, gamecubeLatch), and a
- * two-disc flap when the record's `discs` says so. Pictures come from the game's box scans
+ * two-disc flap when the record's `discs` says so. A PS5 case has its own
+ * ring, hub, booklet clips and rails, and edge marks (ps5Base, ps5Lid, ps5Edges). Pictures come from the game's box scans
  * (services/box_scans.py::scans_for): the first `media` scan on the disc or
  * cartridge, the first `manual` on the booklet, the first `inside` as the
  * paper inside (a wide scan spread over both halves). The inside of the shell
@@ -823,6 +824,9 @@
         wallIn: 1.5, wallWidth: 1,
         clip: {fromOpening: 22.5, fromEdge: 28, along: 25, across: 20, bar: 2, high: 2.5},
         rail: {fromEdge: 10.5, start: 12, end: 128, thin: 1, thick: 2.5, high: 2},
+        bookletFromOpening: 14,
+        latch: {fromEnd: 22.5, length: 10, height: 5},      // windows on the closed opening edge
+        hingeNotch: {width: 2, depth: 3},                   // cut in each half's rim by the spine
     };
 
     // The wall round a half's inside, from z0 to z1.
@@ -925,10 +929,12 @@
         const {clip, rail} = PS5;
         out.push(...ps5Wall(c, 0.5, lidInside, 'lid', raised));
         if (manual) {
-            const aspect = aspectOf(manual) || 0.7;
-            let bh = 2 * (h - rail.fromEdge) - 3, bw = bh * aspect;
-            if (bw > c.width_mm - 14) { bw = c.width_mm - 14; bh = bw / aspect; }
-            out.push(...cuboid([0, 0, lidInside - 0.9], [bw, bh, 1.5], 'lid', [1, 1, 1], {back: scanUrl(manual)}));
+            // Between the rails, its opening-side edge under the clips (photos, 2026-11-25).
+            const aspect = aspectOf(manual) || 0.7, edge = w - PS5.bookletFromOpening;
+            let bh = 2 * (h - rail.fromEdge) - 3, bw = Math.min(bh * aspect, edge + w - PS5.wallIn - 2);
+            if (bw < bh * aspect) bh = bw / aspect;
+            out.push(...cuboid([edge - bw / 2, 0, lidInside - 0.9], [bw, bh, 1.5], 'lid', [1, 1, 1],
+                {back: scanUrl(manual)}));
         }
         const zc = lidInside - clip.high;
         for (const s of [1, -1]) {
@@ -948,6 +954,28 @@
             'lid', raised));
         }
         return out;
+    }
+
+    // Marks on the PS5 shell, from the user's photos of the closed case
+    // (2026-11-25): a small square latch window near each end of the opening
+    // edge, across the seam, and a notch in each half's top and bottom rim
+    // where it meets the spine.
+    function ps5Edges(c, plastic) {
+        const out = [], w = c.width_mm / 2, h = c.height_mm / 2, d = c.depth_mm / 2;
+        const {latch, hingeNotch: n} = PS5, shade = plastic.map(v => v * 0.55), dark = plastic.map(v => v * 0.3);
+        const x = w + 0.02, half = latch.length / 2, zl = latch.height / 2;
+        for (const s of [1, -1]) {
+            const y = s * (h - latch.fromEnd);
+            for (const [name, z0, z1] of [['lid', 0, zl], ['base', -zl, 0]]) {
+                out.push(part([[x, y + half, z1], [x, y - half, z1], [x, y - half, z0], [x, y + half, z0]],
+                    [1, 0, 0], name, shade));
+            }
+            const yy = s * (h + 0.02), x0 = -w + 0.5, x1 = x0 + n.width;
+            for (const [name, z0, z1] of [['lid', d - n.depth, d], ['base', -d, -d + n.depth]]) {
+                out.push(part([[x0, yy, z1], [x1, yy, z1], [x1, yy, z0], [x0, yy, z0]], [0, s, 0], name, dark));
+            }
+        }
+        return out.map(p => ({...p, shell: true}));
     }
 
     // The square latch hole in the middle of the finger groove, seen shut:
@@ -1192,6 +1220,7 @@
         if (shape && hasRecess(shape) && GAMECUBE.test(record.case.name)) {
             patches.push(...gamecubeLatch(record.case, shape));
         }
+        if (PS5_CASE.test(record.case.name || '')) patches.push(...ps5Edges(record.case, plastic));
 
         const byKey = new Map();
         let floats = 0;
