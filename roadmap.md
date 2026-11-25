@@ -3932,6 +3932,14 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   - Missing: raised wall round each half's edge with small notches; two ridges on the spine; a rib along the top edge of the booklet half.
   - Finger notch: not visible in these photos.
   Sizes wait on ruler photos: open case from above, hub (top and side), each clip, finger notch, closed case side. The scan mesh is too rough to measure details (clear plastic); overall 284 x 170 mm open confirmed by the user's ruler.
+  PS5 ruler photos 2026-11-25 (26 photos, dark cloth, rulers): /mnt/Games/3D Engine Assets/Models/Props/Electronics/PS5 Case/Ruler photos/. Photo 0 (top-down, open) straightened to the user's 284 x 170 mm with cv2 (four outer corners to a rectangle). Readings, +-2 mm; across = 0..170 along the case's height, along = from the booklet half's opening edge (0) to the disc half's (284):
+  - Hub: flat round platform ~42 mm across, centred in the disc half; centre button ~15 mm, three-lobed, ringed by rectangular sprung tongues; 8-10 slits each ending in a round hole (photo 9).
+  - Disc ring: raised wall, ~121 mm inside, ~130 mm outside, nearly to the half's edges; clearly taller than the floor (photo 5). Two finger dips, at about 10 and 2 o'clock, both on the spine side (photos 10-13).
+  - Booklet clips: rounded-square frames ~20 x 26 mm with a U slot (sprung tongue, lip at its tip), ~8 mm in from the opening edge and ~15-19 mm in from the top and bottom edges (photos 0, 2).
+  - Booklet rails: narrow raised rails just inside the booklet half's top and bottom edges, ~80 mm long (along 40..128).
+  - Finger notch: ~60 mm long cut in the middle of the booklet half's opening edge (across 50..117); groove on the closed edge ~7 mm tall (code: 59 x 6).
+  - Spine: ~13 mm, two ridge lines, moulded text.
+  - Closed thickness ~14 mm +-0.5 (photo 21); CASE_TYPES has depth 13.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.
