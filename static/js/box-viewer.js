@@ -825,7 +825,7 @@
         // A booklet clip: a flat frame on a post by the opening side, a U slot through it,
         // and inside the U a tongue that springs down onto the booklet (photos, 2026-11-25).
         clip: {fromOpening: 22, fromEdge: 27.75, along: 25, across: 18.5, corner: 3, high: 4.5,
-            slotFromOpening: 14.5, slotLength: 14.5, slotWidth: 8, line: 1.5, plate: 1, flat: 0.3},
+            slotFromOpening: 14.5, slotLength: 14.5, slotWidth: 8, line: 1.5, plate: 1, flat: 0.3, low: 0.8, tipLift: 0.7},
         rail: {fromEdge: 10.5, start: 12, end: 128, thin: 1, thick: 2.5, high: 2},
         bookletFromOpening: 14,
         latch: {fromEnd: 22.5, length: 6, reach: 2},        // hooks inside the disc half's opening wall
@@ -968,15 +968,19 @@
                 box(sx1, x1, cy - sh, cy + sh)]) {
                 out.push(...prism(piece, zc, zc + clip.plate, 'lid', raised));
             }
-            out.push(...prism(box(w - PS5.bookletFromOpening + 0.5, x1, cy - ay, cy + ay), zc, lidInside,
-                'lid', raised));
-            // The tongue: flat from its root, then bending down until its tip's
-            // underside meets the booklet's face.
-            const ty0 = cy - sh + t, ty1 = cy + sh - t, tx1 = sx1 - t, steps = 8;
+            // The post is a wall as thin as the frame (user's photos, 2026-11-25).
+            out.push(...prism(box(x1 - clip.plate, x1, cy - ay, cy + ay), zc, lidInside, 'lid', raised));
+            // The tongue: flat from its root, bending down until its underside meets
+            // the booklet's face, then curving up a little at the tip so a booklet
+            // slides in and out without catching (user, 2026-11-25).
+            const ty0 = cy - sh + t, ty1 = cy + sh - t, tx1 = sx1 - t, steps = 12;
             const drop = clip.high - clip.plate - bookletTop;
             const at = i => {
-                const u = i / steps, v = Math.max(0, (u - clip.flat) / (1 - clip.flat));
-                return [sx0 + (tx1 - sx0) * u, zc + drop * v ** 1.6];
+                const u = i / steps;
+                const z = u <= clip.low
+                    ? drop * Math.max(0, (u - clip.flat) / (clip.low - clip.flat)) ** 1.6
+                    : drop - clip.tipLift * ((u - clip.low) / (1 - clip.low)) ** 2;
+                return [sx0 + (tx1 - sx0) * u, zc + z];
             };
             for (let i = 0; i < steps; i++) {
                 const [xa, za] = at(i), [xb, zb] = at(i + 1), za1 = za + clip.plate, zb1 = zb + clip.plate;
