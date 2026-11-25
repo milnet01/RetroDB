@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=342 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=344 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -4155,6 +4155,35 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Default on. The user noticed it as stripes on 3D box renders.
   **Layman:** A switch in your own settings to hide the faint retro screen lines drawn over every page.
   Kind: enhancement.
+  Source: user-request-2026-11-25.
+
+- 📋 [PASS-59-343] **A scrape asks the AI for sales on its own, and keeps an all-console total for the analytics page (fix, M).**
+  Measured 2026-11-25: 404 of ~5,700 non-arcade games had units_sold.
+  Of ~4,400 the AI saw, ~1,900 were asked and came back empty and ~1,700
+  were scraped before units_sold existed (2026-10-27); Fill Missing never
+  returns to them (units_sold is not in FILL_MISSING_FIELDS).
+  Paid test (Claude Haiku + web search, 10 games that came back empty):
+  asked alone, 7 got a per-console figure (Going Commando 2,966,000,
+  MK Armageddon 1,060,000, Castlevania III 850,000, JSRF 660,000, MUA2
+  740,000, Murdered 330,000, Gungrave 190,000); 2 had only an
+  all-console total (Battlefield Hardline 8M, Quantum Break 760k); 1
+  none. Asked inside the gap-fill's combined prompt: 1 of 3.
+  Do: (1) when units_sold is empty, the gap-fill and AI Fill ask it in a
+  separate call; (2) a new column keeps an all-console total with its
+  platforms, shown on the analytics page only; the per-console field
+  stays blank (user, 2026-11-25); (3) log the raw answer when
+  parse_units_sold rejects one. Script: Scratchpad sales-test/run.py.
+  **Layman:** More games get a sales figure, because the AI is asked about sales separately instead of among a dozen other questions.
+  Kind: fix.
+  Source: user-request-2026-11-25.
+
+- 📋 [PASS-59-344] **Sales figures from Wikipedia's best-selling games lists, one page per console (feature, M).**
+  User agreed 2026-11-25. One 'List of best-selling <console> video
+  games' page per system, matched to games by title; fill-only, credited
+  Wikipedia. Sends only console page names, never the library. Runs
+  before the AI so the AI is asked only for the rest.
+  **Layman:** RetroDB reads Wikipedia's free best-seller list for each console and fills in sales without any AI cost.
+  Kind: feature.
   Source: user-request-2026-11-25.
 
 ## 4.0.x — Fixes and new features for the web version
