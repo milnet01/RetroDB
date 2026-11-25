@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=344 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=345 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -4186,6 +4186,32 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: feature.
   Source: user-request-2026-11-25.
 
+- 📋 [PASS-59-181] **Console museum: three new presentations to choose from (UX, M).**
+  - **Target**: three mockups of how the console museum could be
+    presented, by Claude's own design; the user picks one.
+  - **Mockups**: `docs/mockups/museum/`. Building waits for the pick.
+  - **Status**: todo.
+  - **Source**: user, 2026-10-29.
+
+  ---
+  User, 2026-11-25: do it before v4.0.0 (moved here from desktop
+  milestone 3). Start by reviewing how the museum works today
+  (routes/museum.py, templates/museum.html, museum_system.html), then
+  three mockups. Consoles and peripherals shown in a 3D viewer like the
+  cases: PASS-59-345.
+  **Layman:** Three new looks for the console museum to choose from.
+  Kind: implement.
+
+- 📋 [PASS-59-345] **The museum shows consoles and peripherals in a 3D viewer, as the game cases are (feature, L).**
+  User, 2026-11-25: most hardware, accepting not all. Before v4.0.0,
+  with the museum redesign (PASS-59-181). Open questions for research:
+  where the 3D models come from (free licensed models, or built from
+  photos as the cases are), how box-viewer.js could show a model it did
+  not build, and which systems and peripherals are covered first.
+  **Layman:** Turn a console or controller round in 3D in the museum, the way you can with game boxes.
+  Kind: feature.
+  Source: user-request-2026-11-25.
+
 ## 4.0.x — Fixes and new features for the web version
 
 After 4.0.0 the web version still gets bug fixes and, now and then, a good new feature (user, 2026-11-21), always as 4.0.x: the 4.0 updater treats 4.1.0 and up as the desktop app. Most work after 4.0.0 goes to the desktop app.
@@ -4553,17 +4579,6 @@ Port plan phase 4.
 
   ---
   **Layman:** A timeline of a game series showing what changed from game to game.
-  Kind: implement.
-
-- 📋 [PASS-59-181] **Console museum: three new presentations to choose from (UX, M).**
-  - **Target**: three mockups of how the console museum could be
-    presented, by Claude's own design; the user picks one.
-  - **Mockups**: `docs/mockups/museum/`. Building waits for the pick.
-  - **Status**: todo.
-  - **Source**: user, 2026-10-29.
-
-  ---
-  **Layman:** Three new looks for the console museum to choose from.
   Kind: implement.
 
 - 📋 [PASS-59-187] **One place to update RetroDB's RetroArch and its cores, with a dashboard reminder when they are out of date (ENHANCEMENT, M).**
