@@ -3999,6 +3999,17 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Build plan: ps3Base / ps3Lid in box-viewer.js beside ps5Base / ps5Lid,
   pull the clip into a shared function; test on a standalone page or a
   :5001 scratch copy (PS3 games with box_faces: ids 5116, 5138).
+  **PS3 inside drawn 2026-11-25** (box-viewer.js ps3Base / ps3Lid; the
+  PS5 clip is now the shared bookletClip). Sizes read against the disc:
+  ring 60.5-65 mm, dips at 50 and 130 degrees from the opening side only
+  (none show elsewhere, photos 038, 169); pad 38 mm; triangle button
+  corners 5.8 mm out; flaps 11.5 mm wide, slits to holes about 16 mm out;
+  cross wall 15 mm below the top, 2 mm high, in both halves; catch and
+  ribs midway on the opening wall; top clip just under the cross wall,
+  bottom clip centred 19 mm from the bottom edge (photo 101, by eye).
+  Not drawn: "PUSH" on the button. Renders checked headless against
+  photos 101, 140, 169 by eye; the PS5 render is unchanged (pixel diff
+  at most 1 level). Awaiting the user's judgement of the render.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.

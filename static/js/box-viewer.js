@@ -27,7 +27,9 @@
  * manual a PS2 case's memory-card holder. A GameCube case has its own tray,
  * holder, mouldings and latch hole (gamecubeBase, gamecubeLatch), and a
  * two-disc flap when the record's `discs` says so. A PS5 case has its own
- * ring, hub, booklet clips and rails, and edge marks (ps5Base, ps5Lid, ps5Edges). Pictures come from the game's box scans
+ * ring, hub, booklet clips and rails, and edge marks (ps5Base, ps5Lid, ps5Edges);
+ * a PS3 case its ring, hub, cross walls and catches, and the PS5's clips
+ * (ps3Base, ps3Lid). Pictures come from the game's box scans
  * (services/box_scans.py::scans_for): the first `media` scan on the disc or
  * cartridge, the first `manual` on the booklet, the first `inside` as the
  * paper inside (a wide scan spread over both halves). The inside of the shell
@@ -483,11 +485,13 @@
         }
 
         const name = c.name || '';
-        const gamecube = GAMECUBE.test(name), ps5 = PS5_CASE.test(name);
+        const gamecube = GAMECUBE.test(name), ps5 = PS5_CASE.test(name), ps3 = PS3_CASE.test(name);
         if (gamecube) {
             out.push(...gamecubeBase(c, floor, plastic, scans, game, !inside));
         } else if (ps5) {
             out.push(...ps5Base(c, floor, plastic, media));
+        } else if (ps3) {
+            out.push(...ps3Base(c, floor, plastic, media));
         } else if (DISC_CASES.test(name)) {
             const r = Math.min(/GameCube/.test(name) ? 40 : 60, w - 3, h - 3);
             out.push(...annulus(0, 0, floor, floor + 1.2, r + 1, r + 2.5, 'base', plastic));
@@ -537,6 +541,10 @@
         }
         if (ps5) {
             out.push(...ps5Lid(c, lidInside, plastic, manual));
+            return out;
+        }
+        if (ps3) {
+            out.push(...ps3Lid(c, lidInside, plastic, manual));
             return out;
         }
         if (manual) {
@@ -832,23 +840,23 @@
         hingeNotch: {width: 2, depth: 3},                   // cut in each half's rim by the spine
     };
 
-    // The wall round a half's inside, from z0 to z1.
-    function ps5Wall(c, z0, z1, name, colour) {
-        const x = c.width_mm / 2 - PS5.wallIn, y = c.height_mm / 2 - PS5.wallIn, t = PS5.wallWidth;
+    // The wall round a half's inside, from z0 to z1; `p` is the case's sizes (PS5 or PS3).
+    function ps5Wall(c, z0, z1, name, colour, p = PS5) {
+        const x = c.width_mm / 2 - p.wallIn, y = c.height_mm / 2 - p.wallIn, t = p.wallWidth;
         return [[[-x, y], [x, y]], [[x, y], [x, -y]], [[x, -y], [-x, -y]], [[-x, -y], [-x, y]]]
             .flatMap(([a, b]) => bar(a, b, t, z0, z1, name, colour));
     }
 
-    // The disc ring: its top drops into a rounded dip at each of PS5.dips.
-    function ps5Ring(z0, colour, segments = 120) {
-        const out = [], r0 = PS5.ringIn, r1 = PS5.ringOut;
+    // The disc ring of a PS5 or PS3 case (`p`): its top drops into a rounded dip at each of p.dips.
+    function ps5Ring(z0, colour, p = PS5, segments = 120) {
+        const out = [], r0 = p.ringIn, r1 = p.ringOut;
         const topAt = a => {
-            let z = z0 + PS5.ringHigh;
-            for (const dip of PS5.dips) {
+            let z = z0 + p.ringHigh;
+            for (const dip of p.dips) {
                 const off = Math.abs(((a * 180 / Math.PI - dip) % 360 + 540) % 360 - 180);
-                if (off < PS5.dipHalf) {
-                    const t = off / PS5.dipHalf;
-                    z = Math.min(z, z0 + PS5.dipFloor + (PS5.ringHigh - PS5.dipFloor) * t * t);
+                if (off < p.dipHalf) {
+                    const t = off / p.dipHalf;
+                    z = Math.min(z, z0 + p.dipFloor + (p.ringHigh - p.dipFloor) * t * t);
                 }
             }
             return z;
@@ -932,6 +940,71 @@
         return out;
     }
 
+    // A booklet clip on the lid, centred `cy` across, `clip.fromOpening` in
+    // from the opening side `w`. Shared by the PS5 and PS3 cases: the user
+    // found the PS3's clips the same design (2026-11-25).
+    function bookletClip(w, cy, clip, lidInside, raised) {
+        const out = [];
+        const zc = lidInside - clip.high;   // the clips' face, over the booklet
+        const bookletTop = 1.65;            // the booklet's face, above the lid's inside
+        // A clip: a flat frame with rounded corners on its spine side, held over the
+        // booklet's corner by a post past the booklet's edge. A U slot runs right
+        // through it; the tongue inside joins the frame at the spine end, runs flat,
+        // then curves down like a tick so its tip presses the booklet (user, 2026-11-25).
+        const cx = w - clip.fromOpening;
+        const x0 = cx - clip.along / 2, x1 = cx + clip.along / 2, ay = clip.across / 2, r = clip.corner;
+        const sx1 = w - clip.slotFromOpening, sx0 = sx1 - clip.slotLength;
+        const sh = clip.slotWidth / 2, t = clip.line;
+        const round = (k, sy) => [x0 + r - r * Math.sin(Math.PI / 8 * k), cy + sy * (ay - r + r * Math.cos(Math.PI / 8 * k))];
+        // The frame in pieces round the slot: the rounded spine end, the strips
+        // either side, the opening end, and the post under that end.
+        const spineEnd = [[sx0, cy - ay], [sx0, cy + ay]];
+        for (let k = 0; k <= 4; k++) spineEnd.push(round(k, 1));
+        for (let k = 4; k >= 0; k--) spineEnd.push(round(k, -1));
+        const box = (a, b, c2, d2) => [[a, c2], [b, c2], [b, d2], [a, d2]];
+        for (const piece of [spineEnd, box(sx0, x1, cy + sh, cy + ay), box(sx0, x1, cy - ay, cy - sh),
+            box(sx1, x1, cy - sh, cy + sh)]) {
+            out.push(...prism(piece, zc, zc + clip.plate, 'lid', raised));
+        }
+        // The post is a wall as thin as the frame (user's photos, 2026-11-25).
+        out.push(...prism(box(x1 - clip.plate, x1, cy - ay, cy + ay), zc, lidInside, 'lid', raised));
+        // The tongue: flat from its root, bending down until its underside meets
+        // the booklet's face, then curving up a little at the tip so a booklet
+        // slides in and out without catching; the tip's corners are rounded
+        // (user, 2026-11-25).
+        const ty0 = cy - sh + t, ty1 = cy + sh - t, tx1 = sx1 - t, steps = 12;
+        const half = (ty1 - ty0) / 2, rr = Math.min(clip.tipRound, half), roundFrom = 1 - rr / (tx1 - sx0);
+        const halfAt = u => {
+            const past = (u - roundFrom) * (tx1 - sx0);
+            return past <= 0 ? half : half - rr + Math.sqrt(Math.max(0, rr * rr - past * past));
+        };
+        const us = [];
+        for (let i = 0; i <= steps; i++) if (i / steps < roundFrom) us.push(i / steps);
+        for (let k = 0; k <= 6; k++) us.push(roundFrom + (1 - roundFrom) * Math.sin(Math.PI / 12 * k));
+        const drop = clip.high - clip.plate - bookletTop;
+        const at = u => {
+            const z = u <= clip.low
+                ? drop * Math.max(0, (u - clip.flat) / (clip.low - clip.flat)) ** 1.6
+                : drop - clip.tipLift * ((u - clip.low) / (1 - clip.low)) ** 2;
+            return [sx0 + (tx1 - sx0) * u, zc + z];
+        };
+        const tm = (ty0 + ty1) / 2;
+        for (let i = 0; i + 1 < us.length; i++) {
+            const [xa, za] = at(us[i]), [xb, zb] = at(us[i + 1]), za1 = za + clip.plate, zb1 = zb + clip.plate;
+            const ha = halfAt(us[i]), hb = halfAt(us[i + 1]);
+            out.push(part([[xa, tm - ha, za], [xb, tm - hb, zb], [xb, tm + hb, zb], [xa, tm + ha, za]], [0, 0, -1], 'lid', raised));
+            out.push(part([[xa, tm - ha, za1], [xb, tm - hb, zb1], [xb, tm + hb, zb1], [xa, tm + ha, za1]], [0, 0, 1], 'lid', raised));
+            for (const n of [-1, 1]) {
+                out.push(part([[xa, tm + n * ha, za], [xb, tm + n * hb, zb], [xb, tm + n * hb, zb1], [xa, tm + n * ha, za1]],
+                    [xb - xa > 0 && hb < ha ? 1 : 0, n, 0], 'lid', raised));
+            }
+            if (i + 2 === us.length && hb > 0.01) {
+                out.push(part([[xb, tm - hb, zb], [xb, tm + hb, zb], [xb, tm + hb, zb1], [xb, tm - hb, zb1]], [1, 0, 0], 'lid', raised));
+            }
+        }
+        return out;
+    }
+
     // The booklet half: wall, two clips by the opening corners, two rails,
     // and the booklet held between the rails, its corners under the clips.
     function ps5Lid(c, lidInside, plastic, manual) {
@@ -946,64 +1019,8 @@
             out.push(...cuboid([edge - bw / 2, 0, lidInside - 0.15 - 1.5 / 2], [bw, bh, 1.5], 'lid', [1, 1, 1],
                 {back: scanUrl(manual)}));
         }
-        const zc = lidInside - clip.high;   // the clips' face, over the booklet
-        const bookletTop = 1.65;            // the booklet's face, above the lid's inside
         for (const s of [1, -1]) {
-            // A clip: a flat frame with rounded corners on its spine side, held over the
-            // booklet's corner by a post past the booklet's edge. A U slot runs right
-            // through it; the tongue inside joins the frame at the spine end, runs flat,
-            // then curves down like a tick so its tip presses the booklet (user, 2026-11-25).
-            const cx = w - clip.fromOpening, cy = s * (h - clip.fromEdge);
-            const x0 = cx - clip.along / 2, x1 = cx + clip.along / 2, ay = clip.across / 2, r = clip.corner;
-            const sx1 = w - clip.slotFromOpening, sx0 = sx1 - clip.slotLength;
-            const sh = clip.slotWidth / 2, t = clip.line;
-            const round = (k, sy) => [x0 + r - r * Math.sin(Math.PI / 8 * k), cy + sy * (ay - r + r * Math.cos(Math.PI / 8 * k))];
-            // The frame in pieces round the slot: the rounded spine end, the strips
-            // either side, the opening end, and the post under that end.
-            const spineEnd = [[sx0, cy - ay], [sx0, cy + ay]];
-            for (let k = 0; k <= 4; k++) spineEnd.push(round(k, 1));
-            for (let k = 4; k >= 0; k--) spineEnd.push(round(k, -1));
-            const box = (a, b, c2, d2) => [[a, c2], [b, c2], [b, d2], [a, d2]];
-            for (const piece of [spineEnd, box(sx0, x1, cy + sh, cy + ay), box(sx0, x1, cy - ay, cy - sh),
-                box(sx1, x1, cy - sh, cy + sh)]) {
-                out.push(...prism(piece, zc, zc + clip.plate, 'lid', raised));
-            }
-            // The post is a wall as thin as the frame (user's photos, 2026-11-25).
-            out.push(...prism(box(x1 - clip.plate, x1, cy - ay, cy + ay), zc, lidInside, 'lid', raised));
-            // The tongue: flat from its root, bending down until its underside meets
-            // the booklet's face, then curving up a little at the tip so a booklet
-            // slides in and out without catching; the tip's corners are rounded
-            // (user, 2026-11-25).
-            const ty0 = cy - sh + t, ty1 = cy + sh - t, tx1 = sx1 - t, steps = 12;
-            const half = (ty1 - ty0) / 2, rr = Math.min(clip.tipRound, half), roundFrom = 1 - rr / (tx1 - sx0);
-            const halfAt = u => {
-                const past = (u - roundFrom) * (tx1 - sx0);
-                return past <= 0 ? half : half - rr + Math.sqrt(Math.max(0, rr * rr - past * past));
-            };
-            const us = [];
-            for (let i = 0; i <= steps; i++) if (i / steps < roundFrom) us.push(i / steps);
-            for (let k = 0; k <= 6; k++) us.push(roundFrom + (1 - roundFrom) * Math.sin(Math.PI / 12 * k));
-            const drop = clip.high - clip.plate - bookletTop;
-            const at = u => {
-                const z = u <= clip.low
-                    ? drop * Math.max(0, (u - clip.flat) / (clip.low - clip.flat)) ** 1.6
-                    : drop - clip.tipLift * ((u - clip.low) / (1 - clip.low)) ** 2;
-                return [sx0 + (tx1 - sx0) * u, zc + z];
-            };
-            const tm = (ty0 + ty1) / 2;
-            for (let i = 0; i + 1 < us.length; i++) {
-                const [xa, za] = at(us[i]), [xb, zb] = at(us[i + 1]), za1 = za + clip.plate, zb1 = zb + clip.plate;
-                const ha = halfAt(us[i]), hb = halfAt(us[i + 1]);
-                out.push(part([[xa, tm - ha, za], [xb, tm - hb, zb], [xb, tm + hb, zb], [xa, tm + ha, za]], [0, 0, -1], 'lid', raised));
-                out.push(part([[xa, tm - ha, za1], [xb, tm - hb, zb1], [xb, tm + hb, zb1], [xa, tm + ha, za1]], [0, 0, 1], 'lid', raised));
-                for (const n of [-1, 1]) {
-                    out.push(part([[xa, tm + n * ha, za], [xb, tm + n * hb, zb], [xb, tm + n * hb, zb1], [xa, tm + n * ha, za1]],
-                        [xb - xa > 0 && hb < ha ? 1 : 0, n, 0], 'lid', raised));
-                }
-                if (i + 2 === us.length && hb > 0.01) {
-                    out.push(part([[xb, tm - hb, zb], [xb, tm + hb, zb], [xb, tm + hb, zb1], [xb, tm - hb, zb1]], [1, 0, 0], 'lid', raised));
-                }
-            }
+            out.push(...bookletClip(w, s * (h - clip.fromEdge), clip, lidInside, raised));
             // A rail, thin by the clip and thicker towards the spine.
             const y = s * (h - rail.fromEdge), rx0 = w - rail.start, rx1 = w - rail.end;
             out.push(...prism([[rx0, y - rail.thin / 2], [rx0, y + rail.thin / 2],
@@ -1025,6 +1042,143 @@
             }
         }
         return out.map(p => ({...p, shell: true}));
+    }
+
+    // --- The PS3 case (PASS-59-329) -------------------------------------------
+    // From the user's photos of a PAL Heavenly Sword case (2026-11-25), with
+    // no ruler inside: sizes are read against the disc (120 mm, 15 mm hole).
+    // Each half has a wall round its edge and a low cross wall about 15 mm
+    // below the top, closing off the clear strip; a catch stands about midway
+    // along each half's opening wall, between two ribs. The disc half has a
+    // raised ring with a finger dip either side of the top (no dips show
+    // elsewhere) and a round pad holding the hub: a triangular PUSH button and
+    // three flaps cut free by slits that end in small holes, each flap with a
+    // rounded bump at its inner end that grips the disc's hole. The booklet
+    // half has the PS5's clips by the opening corners, the top one just under
+    // the cross wall, and no rails. Not drawn: "PUSH" on the button (too small
+    // to read at any size the viewer shows).
+    const PS3_CASE = /^PS3 /;
+    const PS3 = {
+        ringIn: 60.5, ringOut: 65, ringHigh: 3.5,
+        dips: [50, 130], dipHalf: 12.5, dipFloor: 0.8,     // degrees from the opening side
+        wallIn: 1.5, wallWidth: 1,
+        cross: {fromTop: 15, width: 1, high: 2},
+        pad: 19, padHigh: 0.6,
+        button: 5.8, buttonHigh: 4.5,                      // the triangle's corners from the centre
+        flaps: [30, 150, 270], flapWide: 11.5, slitTo: 15.8,
+        grip: {rIn: 3.4, span: 32},                        // the bump on each flap's inner end
+        disc: 60, discHole: 7.5, discAt: 2,
+        catchPart: {length: 8, reach: 2, rib: 1, ribReach: 3},
+        clip: PS5.clip, clipTop: 26.25, clipBottom: 19,     // clip centres in from the top and bottom
+        bookletFromOpening: 14,
+    };
+
+    // The pad's top: the six slits, from the button's corners out along each
+    // flap's sides, each ending in a small round hole; drawn as ps5HubPicture is.
+    function ps3HubPicture(plastic) {
+        const p = PS3, size = 2 * p.pad, cv = document.createElement('canvas');
+        cv.width = cv.height = Math.ceil(size * EMBOSS_PX);
+        const ctx = cv.getContext('2d');
+        ctx.fillStyle = `rgb(${plastic.map(v => Math.round(255 * v)).join(',')})`;
+        ctx.fillRect(0, 0, cv.width, cv.height);
+        ctx.scale(EMBOSS_PX, EMBOSS_PX);
+        ctx.translate(p.pad, p.pad);
+        ctx.strokeStyle = ctx.fillStyle = `rgb(${DARK.map(v => Math.round(255 * v)).join(',')})`;
+        ctx.lineWidth = 0.6;
+        const at = (r, deg) => [r * Math.cos(rad(deg)), -r * Math.sin(rad(deg))];
+        for (const f of p.flaps) {
+            for (const side of [-1, 1]) {
+                const [vx, vy] = at(p.button, f + 60 * side);
+                const [ax, ay] = at(p.slitTo, f), [nx, ny] = at(p.flapWide / 2, f + 90 * side);
+                ctx.beginPath();
+                ctx.moveTo(vx, vy);
+                ctx.lineTo(ax + nx, ay + ny);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(ax + nx, ay + ny, 0.9, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+        }
+        return cv.toDataURL('image/png');
+    }
+
+    // Between radii r0 and r1 and angles a0..a1 (degrees), from z0 to z1:
+    // a curved block, built from convex slices.
+    function sector(r0, r1, a0, a1, z0, z1, name, colour, slices = 6) {
+        const out = [];
+        for (let i = 0; i < slices; i++) {
+            const b0 = rad(a0 + (a1 - a0) * i / slices), b1 = rad(a0 + (a1 - a0) * (i + 1) / slices);
+            const at = (r, b) => [r * Math.cos(b), r * Math.sin(b)];
+            out.push(...prism([at(r0, b0), at(r1, b0), at(r1, b1), at(r0, b1)], z0, z1, name, colour));
+        }
+        return out;
+    }
+
+    // The catch midway along a half's opening wall: two ribs, and in the disc
+    // half the tab between them that reaches past the seam.
+    function ps3Catch(c, z0, z1, name, colour, tab) {
+        const p = PS3, k = p.catchPart, inner = c.width_mm / 2 - p.wallIn - p.wallWidth / 2;
+        const out = [];
+        for (const s of [1, -1]) {
+            out.push(...cuboid([inner - k.ribReach / 2, s * (k.length / 2 + k.rib), (z0 + z1) / 2],
+                [k.ribReach, k.rib, Math.abs(z1 - z0)], name, colour));
+        }
+        if (tab) {
+            out.push(...cuboid([inner - k.reach / 2, 0, (z0 + 0.8) / 2], [k.reach, k.length, 0.8 - z0],
+                name, colour));
+        }
+        return out;
+    }
+
+    // The disc half: walls, catch, ring, the hub on its pad, and the disc.
+    function ps3Base(c, floor, plastic, media) {
+        const out = [], raised = lift(plastic, 0.1), p = PS3, h = c.height_mm / 2;
+        const x = c.width_mm / 2 - p.wallIn, top = floor + p.padHigh, discTop = floor + p.discAt + 1.2;
+        out.push(...ps5Wall(c, floor, -0.5, 'base', raised, p));
+        out.push(...bar([-x, h - p.cross.fromTop], [x, h - p.cross.fromTop], p.cross.width,
+            floor, floor + p.cross.high, 'base', raised));
+        // A tiny rib on the top wall's inside, midway (photo 053).
+        out.push(...cuboid([0, h - p.wallIn - p.wallWidth - 0.5, (floor - 0.5) / 2], [1, 1, -0.5 - floor],
+            'base', raised));
+        out.push(...ps3Catch(c, floor, -0.5, 'base', raised, true));
+        out.push(...ps5Ring(floor, raised, p));
+        out.push(...annulus(0, 0, floor, top, 0.01, p.pad, 'base', raised, ps3HubPicture(raised), 64));
+        const corner = deg => [p.button * Math.cos(rad(deg)), p.button * Math.sin(rad(deg))];
+        out.push(...prism([corner(90), corner(210), corner(330)], top, floor + p.buttonHigh, 'base',
+            lift(plastic, 0.25)));
+        for (const f of p.flaps) {
+            // The bump: through the disc's hole, wider just above the disc so
+            // it holds, then rounding in to its top.
+            const a0 = f - p.grip.span, a1 = f + p.grip.span, bump = lift(plastic, 0.25);
+            out.push(...sector(p.grip.rIn, p.discHole - 0.2, a0, a1, top, discTop, 'base', bump));
+            out.push(...sector(p.grip.rIn, p.discHole + 0.3, a0, a1, discTop, discTop + 1, 'base', bump));
+            out.push(...sector(p.grip.rIn, p.discHole - 0.5, a0, a1, discTop + 1, discTop + 1.8, 'base', bump));
+        }
+        out.push(...annulus(0, 0, floor + p.discAt, discTop, p.discHole, p.disc, 'base',
+            SILVER, scanUrl(media)));
+        return out;
+    }
+
+    // The booklet half: walls, catch ribs, and the booklet between the cross
+    // wall and the bottom wall, its opening-side edge under the two clips.
+    function ps3Lid(c, lidInside, plastic, manual) {
+        const out = [], w = c.width_mm / 2, h = c.height_mm / 2, raised = lift(plastic, 0.1), p = PS3;
+        const x = w - p.wallIn, crossY = h - p.cross.fromTop;
+        out.push(...ps5Wall(c, 0.5, lidInside, 'lid', raised, p));
+        out.push(...bar([-x, crossY], [x, crossY], p.cross.width, lidInside - p.cross.high, lidInside,
+            'lid', raised));
+        out.push(...ps3Catch(c, 0.5, lidInside, 'lid', raised, false));
+        if (manual) {
+            const y0 = -h + p.wallIn + p.wallWidth + 0.5, y1 = crossY - p.cross.width / 2 - 0.5;
+            const aspect = aspectOf(manual) || 0.7, edge = w - p.bookletFromOpening;
+            let bh = y1 - y0, bw = Math.min(bh * aspect, edge + w - p.wallIn - 2);
+            if (bw < bh * aspect) bh = bw / aspect;
+            out.push(...cuboid([edge - bw / 2, (y0 + y1) / 2, lidInside - 0.15 - 1.5 / 2], [bw, bh, 1.5], 'lid',
+                [1, 1, 1], {back: scanUrl(manual)}));
+        }
+        out.push(...bookletClip(w, h - p.clipTop, p.clip, lidInside, raised));
+        out.push(...bookletClip(w, -h + p.clipBottom, p.clip, lidInside, raised));
+        return out;
     }
 
     // The square latch hole in the middle of the finger groove, seen shut:
