@@ -477,17 +477,19 @@
 
         const lidInside = d - sheet - PAPER_MM;   // the lid's inside, facing -z
         const spread = aspectOf(inside) > 1.2;
+        const name = c.name || '';
+        const gamecube = GAMECUBE.test(name), ps5 = PS5_CASE.test(name), ps3 = PS3_CASE.test(name);
+        // A PS3 cover stops at the low cross wall: the strip above it, with
+        // the moulded logos, is bare plastic (photos 001, 012; the user, 2026-11-25).
+        const paperTop = ps3 ? h - PS3.cross.fromTop : h - 2;
         if (inside) {
-            out.push(paper(-w + 2, w - 2, -h + 2, h - 2, floor, [0, 0, 1], 'base', scanUrl(inside),
+            out.push(paper(-w + 2, w - 2, -h + 2, paperTop, floor, [0, 0, 1], 'base', scanUrl(inside),
                 spread ? 0.5 : 0, 1, false));
             if (spread) {
-                out.push(paper(-w + 2, w - 2, -h + 2, h - 2, lidInside, [0, 0, -1], 'lid', scanUrl(inside),
+                out.push(paper(-w + 2, w - 2, -h + 2, paperTop, lidInside, [0, 0, -1], 'lid', scanUrl(inside),
                     0, 0.5, true));
             }
         }
-
-        const name = c.name || '';
-        const gamecube = GAMECUBE.test(name), ps5 = PS5_CASE.test(name), ps3 = PS3_CASE.test(name);
         if (ps3) {
             // A half with no scan of the cover's inside behind it: through the
             // clear tray the cover's own picture shows, faded, as paper seen
@@ -495,10 +497,10 @@
             const {front: f = null, back: b = null} = game.covers || {}, back = b || f, front = f || b;
             const behind = [];
             if (back && !inside) {
-                behind.push(paper(-w + 2, w - 2, -h + 2, h - 2, floor, [0, 0, 1], 'base', back, 0, 1, true));
+                behind.push(paper(-w + 2, w - 2, -h + 2, paperTop, floor, [0, 0, 1], 'base', back, 0, 1, true));
             }
             if (front && !spread) {
-                behind.push(paper(-w + 2, w - 2, -h + 2, h - 2, lidInside, [0, 0, -1], 'lid', front, 0, 1, false));
+                behind.push(paper(-w + 2, w - 2, -h + 2, paperTop, lidInside, [0, 0, -1], 'lid', front, 0, 1, false));
             }
             out.push(...behind.map(q => ({...q, fade: SHOW_THROUGH})));
         }
