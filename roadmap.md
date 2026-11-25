@@ -4033,6 +4033,17 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   (STRIP_ALPHA 0.3; moulding 2.5x stronger to stay visible). Back strip
   left plain (no photo shows its moulding). Awaiting the user's
   judgement of the render; then the user re-runs Build 3D Boxes.
+  User review 2026-11-25 (after 78c7314f): the strip still does not look
+  like see-through plastic; look at LaunchBox's community 3D boxes. Eight
+  PS3 "Box - 3D" images (Metadata.zip, images.launchbox-app.com) in
+  Scratchpad/RetroDB/launchbox/img (list ps3_3d.tsv). Their strip is fully
+  opaque light grey (RGB ~225-230) yet reads as clear because: the logos
+  are thin grey outline strokes, not filled shapes; a fainter second copy
+  of the logos sits offset below (the back half's moulding seen through);
+  the back half's inner rim lines and rounded corners show through, with a
+  line where the strip ends; a bright highlight runs along the top edge.
+  Our 78c7314f strip (30% opaque) shows the background through but looks
+  like dark tinted glass on the viewer's dark background.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.
