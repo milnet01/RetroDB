@@ -3970,6 +3970,14 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   opening side, lip at its spine end (measured on the straightened photo
   0). User: the disc hub is still not quite right but a disc hides it,
   so it can stay.
+  PS5 booklet clips accepted by the user (2026-11-25, rounds 4-7, last
+  5a6f215c), from the user's spring photos (PS5 Case/Clip spring
+  photos/). Replaces round 3's solid plate: each clip is a 1 mm frame
+  on a 1 mm post by the opening side, its rounded end over the
+  booklet; a 1.5 mm U slot runs through it; the tongue joins at the
+  rounded end, runs flat, bends down onto the booklet, then curves up
+  at a rounded tip so the booklet does not catch. User: other small
+  differences remain, but the PS5 case is good enough. PS5 done.
   **Layman:** Make each kind of 3D game box look like the real case, with its edges, finger holes and hanging tabs.
   Kind: research.
   Source: user-request-2026-11-21.
