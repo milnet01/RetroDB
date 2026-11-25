@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=341 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=342 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -4144,6 +4144,17 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   first: it owns box_scans' shape.
   **Layman:** Lets you give a game a picture of the inside of its cover, its disc or its manual yourself, so the opened 3D box shows them when no scraper has them.
   Kind: feature.
+  Source: user-request-2026-11-25.
+
+- 📋 [PASS-59-342] **Each person can turn the scan-line effect off in their profile settings (enhancement, S).**
+  The CRT lines are body::after in static/css/effects/backgrounds.css,
+  tinted per theme in core/themes.css; today only a reduced-motion
+  request hides them. Add a per-user setting beside theme_preference
+  (user_settings column + migration, allowed_fields in routes/auth.py,
+  the profile page), and a class on <body> that hides body::after.
+  Default on. The user noticed it as stripes on 3D box renders.
+  **Layman:** A switch in your own settings to hide the faint retro screen lines drawn over every page.
+  Kind: enhancement.
   Source: user-request-2026-11-25.
 
 ## 4.0.x — Fixes and new features for the web version
