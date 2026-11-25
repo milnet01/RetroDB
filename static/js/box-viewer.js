@@ -822,10 +822,12 @@
         tongues: 5, tongueIn: 7.6, tongueOut: 15, slitTo: 17.5,
         disc: 60, discHole: 7.5, discAt: 2,
         wallIn: 1.5, wallWidth: 1,
-        clip: {fromOpening: 22.5, fromEdge: 28, along: 25, across: 20, bar: 2, high: 2.5},
+        // A booklet clip: a solid plate with a U slot round a sprung tongue (close-ups, 2026-11-25).
+        clip: {fromOpening: 22, fromEdge: 27.75, along: 25, across: 18.5, corner: 3, high: 3,
+            slotFromOpening: 14.5, slotLength: 14.5, slotWidth: 8, line: 1},
         rail: {fromEdge: 10.5, start: 12, end: 128, thin: 1, thick: 2.5, high: 2},
         bookletFromOpening: 14,
-        latch: {fromEnd: 22.5, length: 10, height: 5},      // windows on the closed opening edge
+        latch: {fromEnd: 22.5, length: 6, reach: 2},        // hooks inside the disc half's opening wall
         hingeNotch: {width: 2, depth: 3},                   // cut in each half's rim by the spine
     };
 
@@ -904,6 +906,13 @@
     function ps5Base(c, floor, plastic, media) {
         const out = [], raised = lift(plastic, 0.1), p = PS5;
         out.push(...ps5Wall(c, floor, -0.5, 'base', raised));
+        // The hooks that keep the case shut, on the opening wall's inside near
+        // each end; they reach up past the seam into the lid when it closes.
+        const hx = c.width_mm / 2 - p.wallIn - p.wallWidth / 2 - p.latch.reach / 2;
+        for (const s of [1, -1]) {
+            out.push(...cuboid([hx, s * (c.height_mm / 2 - p.latch.fromEnd), (floor + 1 + 0.8) / 2],
+                [p.latch.reach, p.latch.length, 0.8 - floor - 1], 'base', raised));
+        }
         out.push(...ps5Ring(floor, raised));
         const top = floor + p.platformHigh, hub = ps5HubPicture(raised);
         out.push(...annulus(0, 0, floor, top, p.button, p.platform, 'base', raised, hub));
@@ -936,40 +945,41 @@
             out.push(...cuboid([edge - bw / 2, 0, lidInside - 0.9], [bw, bh, 1.5], 'lid', [1, 1, 1],
                 {back: scanUrl(manual)}));
         }
-        const zc = lidInside - clip.high;
+        const zc = lidInside - clip.high;   // the clips' face, over the booklet
         for (const s of [1, -1]) {
-            // A clip: a frame with a sprung tongue from its spine side, a lip at its tip.
+            // A clip: a plate with rounded corners on its spine side, lying over the
+            // booklet's corner, and on its face the dark U slot round the tongue.
             const cx = w - clip.fromOpening, cy = s * (h - clip.fromEdge);
-            const ax = clip.along / 2, ay = clip.across / 2, t = clip.bar;
-            for (const [a, b] of [[[cx - ax, cy - ay], [cx + ax, cy - ay]], [[cx + ax, cy - ay], [cx + ax, cy + ay]],
-                [[cx + ax, cy + ay], [cx - ax, cy + ay]], [[cx - ax, cy + ay], [cx - ax, cy - ay]]]) {
-                out.push(...bar(a, b, t, zc, lidInside, 'lid', raised));
+            const x0 = cx - clip.along / 2, x1 = cx + clip.along / 2, ay = clip.across / 2, r = clip.corner;
+            const round = (k, sy) => [x0 + r - r * Math.sin(Math.PI / 8 * k), cy + sy * (ay - r + r * Math.cos(Math.PI / 8 * k))];
+            const outline = [[x1, cy - ay], [x1, cy + ay]];
+            for (let k = 0; k <= 4; k++) outline.push(round(k, 1));
+            for (let k = 4; k >= 0; k--) outline.push(round(k, -1));
+            out.push(...prism(outline, zc, lidInside, 'lid', raised));
+            const face = zc - 0.03, sx1 = w - clip.slotFromOpening, sx0 = sx1 - clip.slotLength;
+            const sh = clip.slotWidth / 2, t = clip.line, dark = plastic.map(v => v * 0.35);
+            for (const [a, b, c2, d2] of [[sx0, sx1, cy + sh - t, cy + sh], [sx0, sx1, cy - sh, cy - sh + t],
+                [sx1 - t, sx1, cy - sh, cy + sh]]) {
+                out.push(part([[a, d2, face], [b, d2, face], [b, c2, face], [a, c2, face]], [0, 0, -1], 'lid', dark));
             }
-            out.push(...bar([cx - ax, cy], [cx + ax - 5, cy], 9, zc + 0.8, lidInside, 'lid', raised));
-            out.push(...bar([cx + ax - 6, cy], [cx + ax - 4, cy], 9, zc - 0.8, lidInside, 'lid', raised));
+            // The U is closed on the opening side; the tongue's lip shows at its open, spine end.
+            out.push(...cuboid([sx0 + 1, cy, face - 0.4], [2, clip.slotWidth - 2 * t - 1, 0.8], 'lid',
+                lift(plastic, 0.25)));
             // A rail, thin by the clip and thicker towards the spine.
-            const y = s * (h - rail.fromEdge), x0 = w - rail.start, x1 = w - rail.end;
-            out.push(...prism([[x0, y - rail.thin / 2], [x0, y + rail.thin / 2],
-                [x1, y + rail.thick / 2], [x1, y - rail.thick / 2]], lidInside - rail.high, lidInside,
+            const y = s * (h - rail.fromEdge), rx0 = w - rail.start, rx1 = w - rail.end;
+            out.push(...prism([[rx0, y - rail.thin / 2], [rx0, y + rail.thin / 2],
+                [rx1, y + rail.thick / 2], [rx1, y - rail.thick / 2]], lidInside - rail.high, lidInside,
             'lid', raised));
         }
         return out;
     }
 
-    // Marks on the PS5 shell, from the user's photos of the closed case
-    // (2026-11-25): a small square latch window near each end of the opening
-    // edge, across the seam, and a notch in each half's top and bottom rim
-    // where it meets the spine.
+    // Marks on the PS5 shell, from the user's photos (2026-11-25): a notch in
+    // each half's top and bottom rim where it meets the spine.
     function ps5Edges(c, plastic) {
         const out = [], w = c.width_mm / 2, h = c.height_mm / 2, d = c.depth_mm / 2;
-        const {latch, hingeNotch: n} = PS5, shade = plastic.map(v => v * 0.55), dark = plastic.map(v => v * 0.3);
-        const x = w + 0.02, half = latch.length / 2, zl = latch.height / 2;
+        const n = PS5.hingeNotch, dark = plastic.map(v => v * 0.3);
         for (const s of [1, -1]) {
-            const y = s * (h - latch.fromEnd);
-            for (const [name, z0, z1] of [['lid', 0, zl], ['base', -zl, 0]]) {
-                out.push(part([[x, y + half, z1], [x, y - half, z1], [x, y - half, z0], [x, y + half, z0]],
-                    [1, 0, 0], name, shade));
-            }
             const yy = s * (h + 0.02), x0 = -w + 0.5, x1 = x0 + n.width;
             for (const [name, z0, z1] of [['lid', d - n.depth, d], ['base', -d, -d + n.depth]]) {
                 out.push(part([[x0, yy, z1], [x1, yy, z1], [x1, yy, z0], [x0, yy, z0]], [0, s, 0], name, dark));
