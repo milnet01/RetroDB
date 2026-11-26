@@ -4220,6 +4220,27 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   where the 3D models come from (free licensed models, or built from
   photos as the cases are), how box-viewer.js could show a model it did
   not build, and which systems and peripherals are covered first.
+  Research, 2026-11-26. Sources: Sketchfab is the only one found
+  with real coverage under a licence a Patreon release can use. CC BY
+  models exist for NES (Digital Heritage Australia scan of ACMI's
+  console), Famicom, SNES, N64, PS1 (+DualShock), PS2, Mega Drive /
+  Genesis, GameCube, Saturn, Master System, Atari 2600 and the Zapper;
+  PS2 and NES licences re-checked through api.sketchfab.com. NC and ND
+  models sit beside them, so check each. Sketchfab's download API needs
+  each end user's own login, so download once by hand under CC BY,
+  shrink, ship as GLB under static/, show author, licence and link.
+  Console makers' logos are a separate question, not researched.
+  Wikimedia Commons and Poly Haven: nothing useful; Smithsonian
+  refused the fetch; Thingiverse/Printables mostly NC, untextured.
+  Viewer: box-viewer.js is plain WebGL2; showing a GLB needs a small
+  reader (header, JSON, binary chunk, indices, base-colour texture
+  via a blob: URL, CCW winding, camera fit to the model's bounds).
+  three.js (MIT) or model-viewer (Apache-2.0, ~475 KB) also fit the
+  CSP if copied into static/js/vendor/. Draco/meshopt compression
+  needs 'wasm-unsafe-eval', which the CSP lacks: ship uncompressed.
+  Fallback for flat hardware with no model: a box with photo faces.
+  Data: controllers has no model column; a model file plus author,
+  licence and source URL fields would be needed.
   **Layman:** Turn a console or controller round in 3D in the museum, the way you can with game boxes.
   Kind: feature.
   Source: user-request-2026-11-25.
