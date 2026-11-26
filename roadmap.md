@@ -4273,6 +4273,19 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   that own them (beside the CC BY credit, translated). Models we build go
   on Sketchfab under CC BY, without logos, each upload asked first.
   All 21 shortlisted models downloaded (licences rechecked: CC BY).
+  Cleaning pass, 2026-11-26 (user: clean dirty models, glossy where
+  the real one is, all text legible). Mega Drive, N64, PS2, NES pad and
+  Famicom textures cleaned (grime wiped, labels kept) and given a flat
+  glossy finish; floors, posters, game carts, cards and cases removed
+  (other companies' game art). PS1 pad replaced: valdes1302
+  7a0b576162e74490a925d10eaddcd14a, reduced to about 60k faces, symbols
+  fixed. Atari joystick now cut from dark_igorek's 2600 model. Mega Drive
+  and Saturn pads built from scratch in Blender (ours, CC BY, no logos).
+  Each CC BY credit must say the model was changed. Known limit: the N64
+  badge and other tiny print are only a few pixels tall in the source.
+  Scripts are in the session scratch folder (build/); they move into
+  scripts/ if the pipeline is kept. Next: shrink files (several are 8-10
+  MB), then the GLB viewer.
   **Layman:** Turn a console or controller round in 3D in the museum, the way you can with game boxes.
   Kind: feature.
   Source: user-request-2026-11-25.
