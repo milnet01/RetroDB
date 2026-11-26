@@ -1980,6 +1980,8 @@
     width: 240px;
     height: 200px;
     display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
     align-items: center;
     justify-content: center;
     background: rgba(0, 0, 0, 0.2);
@@ -1989,6 +1991,7 @@
 }
 
 .museum-hero-image img {
+    min-height: 0;
     max-height: 100%;
     max-width: 100%;
     object-fit: contain;
@@ -2342,6 +2345,94 @@ a.museum-top-game-title:hover {
     letter-spacing: 0.5px;
 }
 
+/* --- Turnable 3D model (PASS-59-345) --- */
+.museum-model-button {
+    flex: none;
+    margin-top: var(--spacing-xs);
+}
+
+.museum-hero-image .museum-model-button {
+    margin-top: 0;
+}
+
+.museum-model-dialog {
+    justify-content: flex-start;
+    padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md);
+    gap: var(--spacing-sm);
+}
+
+.hardware-model {
+    flex: 1 1 auto;
+    width: min(100%, 1200px);
+    min-height: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.hardware-model-stage {
+    position: absolute;
+    inset: 0;
+    cursor: grab;
+    touch-action: none;
+    border-radius: var(--radius-md);
+}
+
+.hardware-model-stage:active {
+    cursor: grabbing;
+}
+
+.hardware-model-stage:focus-visible {
+    outline: 2px solid var(--primary-cyan);
+    outline-offset: 2px;
+}
+
+.hardware-model-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.hardware-model-status {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+
+.hardware-model-status[hidden] {
+    display: none;
+}
+
+.museum-model-footer {
+    flex: none;
+    max-width: 60rem;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.museum-model-title {
+    margin: 0 0 var(--spacing-xs);
+    color: var(--text-primary);
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+}
+
+.museum-model-credit,
+.museum-model-hint {
+    margin: 0 0 var(--spacing-xs);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.museum-model-credit a {
+    margin-left: var(--spacing-xs);
+}
+
 /* --- Controller Image Lightbox --- */
 .museum-lightbox {
     display: none;
@@ -2359,6 +2450,12 @@ a.museum-top-game-title:hover {
 
 .museum-lightbox.active {
     display: flex;
+}
+
+/* The lightbox sits inside .app-container's stacking context, under the
+   back-to-top button whatever its own z-index. */
+body:has(.museum-lightbox.active) .back-to-top-btn {
+    display: none;
 }
 
 .museum-lightbox-image {

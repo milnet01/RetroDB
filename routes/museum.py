@@ -20,6 +20,7 @@ import config
 from services.database import get_request_db
 from services.auth import login_required, editor_required
 from services.system_catalog import SYSTEM_SPECS
+from services import hardware_models
 
 logger = logging.getLogger(__name__)
 
@@ -351,7 +352,12 @@ def museum_system(system_id):
         ctrl = dict(ctrl)
         if ctrl.get('image') and not _controller_image_file(ctrl['image']):
             ctrl['image'] = None
+        ctrl['model'] = hardware_models.for_controller(ctrl['name'])
         controllers.append(ctrl)
+
+    # Turnable 3D models (PASS-59-345); each one's credit is written once.
+    hw_model = hardware_models.for_system(folder)
+    page_models = [m for m in [hw_model] + [c['model'] for c in controllers] if m]
 
     # Game count
     game_count = db.execute(
@@ -362,6 +368,8 @@ def museum_system(system_id):
                            system=system,
                            specs=specs,
                            hw_image=hw_image,
+                           hw_model=hw_model,
+                           page_models=list({m['key']: m for m in page_models}.values()),
                            museum_data=museum_data,
                            top_games=top_games,
                            controllers=controllers,

@@ -136,6 +136,8 @@ DATAS = [
     ('static/images/ratings', 'static/images/ratings'),
     ('static/images/systems', 'static/images/systems'),
     ('static/images/avatars', 'static/images/avatars'),
+    # Turnable 3D consoles and controllers for the museum (PASS-59-345).
+    ('static/models', 'static/models'),
     # App icons beside per-user PSN trophy art (build_dist.INCLUDE_IMAGE_FILES).
     ('static/images/trophies/bronze.png', 'static/images/trophies'),
     ('static/images/trophies/silver.png', 'static/images/trophies'),

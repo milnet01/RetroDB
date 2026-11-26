@@ -56,6 +56,7 @@ EXCLUDED = [
     'log-viewer.js',            # Page-specific
     'rom-tools.js',             # Page-specific
     'museum.js',                # Page-specific
+    'hardware-model.js',        # Page-specific (museum system page, PASS-59-345)
     'versions.js',              # Page-specific (game page + Regional Versions)
     'ai-fill-bulk.js',          # Page-specific (ROM Tools > Bulk AI Fill)
     'mame-names.js',            # Page-specific (ROM Tools > MAME Names)

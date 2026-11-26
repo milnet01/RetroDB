@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=346 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=347 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -4214,7 +4214,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Three new looks for the console museum to choose from.
   Kind: implement.
 
-- 📋 [PASS-59-345] **The museum shows consoles and peripherals in a 3D viewer, as the game cases are (feature, L).**
+- 🚧 [PASS-59-345] **The museum shows consoles and peripherals in a 3D viewer, as the game cases are (feature, L).**
   User, 2026-11-25: most hardware, accepting not all. Before v4.0.0,
   with the museum redesign (PASS-59-181). Open questions for research:
   where the 3D models come from (free licensed models, or built from
@@ -4295,6 +4295,18 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   its full shape (7 MB): simplifying it dented the lid by the reset
   button. build/webp2png.py turns WebP back to PNG for f3d previews.
   Re-run the shrink after any change from the review.
+  Viewer step (2026-11-26): the 21 models ship in static/models/hardware/
+  (models.json says which system folder or controller part number each
+  shows; services/hardware_models.py matches them; CREDITS.md). A View in
+  3D button on the museum system page's console picture and on matching
+  controllers opens static/js/hardware-model.js, a WebGL2 GLB reader, with
+  the CC BY credit, licence link and the trademark note (user's own pads:
+  no note). retrodb.spec now bundles static/models. SNES model: inserted
+  cartridge removed (game label art). User, 2026-11-26: N64 badge and
+  GameCube lid text stay as they are. Open: the user's review of the
+  models; NES, N64, PS2, GameCube, Atari 2600, Master System and SNES
+  still hold their pads and cables, which also makes them sit smaller in
+  the viewer. Placement follows PASS-59-181's pick.
   **Layman:** Turn a console or controller round in 3D in the museum, the way you can with game boxes.
   Kind: feature.
   Source: user-request-2026-11-25.
@@ -4312,6 +4324,18 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Three small museum faults: buttons only admins can use show for everyone, one filter choice never finds anything, and some controller pictures may not appear.
   Kind: fix.
   Source: PASS-59-181 museum review, 2026-11-26.
+
+- 📋 [PASS-59-347] **Translate the interface lines left in English in every language (i18n, S).**
+  Found 2026-11-26 while translating PASS-59-345's lines:
+  scripts/apply_po_translations.py reports 49 lines missing in each of
+  the 20 human-translated catalogs (de shown: "No such system or
+  emulator.", "Clear My Progress", "Select {name}", "Played in RetroDB:
+  %(minutes)s min", ...). Most are fuzzy guesses from pybabel update,
+  which Babel does not compile, so the page shows English. Fill them with
+  apply_po_translations.py (exit 0 means none missing) before v4.0.0.
+  **Layman:** Some newer buttons and messages still show in English when RetroDB is set to another language.
+  Kind: chore.
+  Source: claude-found-2026-11-26.
 
 ## 4.0.x — Fixes and new features for the web version
 

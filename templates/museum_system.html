@@ -23,6 +23,10 @@
             {% else %}
             <div class="museum-hero-placeholder">&#127918;</div>
             {% endif %}
+            {% if hw_model %}
+            <button type="button" class="btn btn-sm btn-secondary museum-model-button" data-on-click="openHardwareModel" data-args='["$this"]'
+                    data-model-key="{{ hw_model.key }}" data-model-url="{{ url_for('static', filename=hw_model.url) }}" data-model-name="{{ system.name }}">{{ _('View in 3D') }}</button>
+            {% endif %}
         </div>
         <div class="museum-hero-info">
             <h1 class="museum-hero-title">{{ system.name }}</h1>
@@ -210,6 +214,10 @@
             </div>
             <div class="museum-controller-info">
                 <h4 class="museum-controller-name">{{ ctrl.name }}</h4>
+                {% if ctrl.model %}
+                <button type="button" class="btn btn-xs btn-secondary museum-model-button" data-on-click="openHardwareModel" data-args='["$this"]'
+                        data-model-key="{{ ctrl.model.key }}" data-model-url="{{ url_for('static', filename=ctrl.model.url) }}" data-model-name="{{ ctrl.name }}">{{ _('View in 3D') }}</button>
+                {% endif %}
                 <div class="museum-controller-meta">
                     {% if ctrl.manufacturer %}
                     <span class="museum-meta-chip">{{ ctrl.manufacturer }}</span>
@@ -245,6 +253,40 @@
     <div id="museumHwLightboxTitle" class="museum-lightbox-title"></div>
 </div>
 
+{% if page_models %}
+<!-- Turnable 3D model (PASS-59-345) -->
+<div id="museumModelDialog" class="museum-lightbox museum-model-dialog" data-on-click="closeHardwareModel" data-self-only role="dialog" aria-modal="true" aria-labelledby="museumModelTitle">
+    <button type="button" class="museum-lightbox-close" data-on-click="closeHardwareModel" aria-label="{{ _('Close 3D viewer') }}">&times;</button>
+    <div id="hardwareModel" class="hardware-model" hidden
+         data-loading="{{ _('Loading the 3D model…') }}"
+         data-failed="{{ _('This 3D model could not be shown.') }}"
+         data-no-webgl="{{ _('This browser cannot show 3D models.') }}">
+        <div class="hardware-model-stage" tabindex="0" aria-label="{{ _('3D model: drag or use the arrow keys to turn it, + and - to zoom, Home to reset') }}">
+            <canvas class="hardware-model-canvas"></canvas>
+            <p class="hardware-model-status" role="status" hidden></p>
+        </div>
+    </div>
+    <div class="museum-model-footer">
+        <h2 id="museumModelTitle" class="museum-model-title"></h2>
+        {% for m in page_models %}
+        <p class="museum-model-credit" data-model-key="{{ m.key }}" hidden>
+            {% if m.ours %}
+            {{ _('3D model made for RetroDB, shared under CC BY 4.0.') }}
+            {% else %}
+            {{ _('3D model “%(title)s” by %(author)s, shared under CC BY 4.0, changed for RetroDB.', title=m.title, author=m.author) }}
+            <a href="{{ m.source }}" target="_blank" rel="noopener noreferrer">{{ _('Model page') }}</a>
+            {% endif %}
+            <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">{{ _('Licence') }}</a>
+            {% if not m.ours %}
+            <br>{{ _('All logos and trademarks belong to the companies that own them.') }}
+            {% endif %}
+        </p>
+        {% endfor %}
+        <p class="museum-model-hint">{{ _('Drag or use the arrow keys to turn • Wheel or + and - to zoom • Double-click or Home to reset • ESC to close') }}</p>
+    </div>
+</div>
+{% endif %}
+
 <!-- Controller Image Lightbox -->
 <div id="museumControllerLightbox" class="museum-lightbox" data-on-click="closeControllerLightbox" data-self-only role="dialog" aria-modal="true" aria-label="{{ _('Controller image viewer') }}">
     <button type="button" class="museum-lightbox-close" data-on-click="closeControllerLightbox" aria-label="{{ _('Close controller viewer') }}">&times;</button>
@@ -261,4 +303,7 @@
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/museum.js') }}?v={{ config.APP_VERSION }}"></script>
+{% if page_models %}
+<script src="{{ url_for('static', filename='js/hardware-model.js') }}?v={{ config.APP_VERSION }}"></script>
+{% endif %}
 {% endblock %}

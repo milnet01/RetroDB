@@ -675,6 +675,32 @@ function closeHardwareLightbox() {
 }
 
 // =============================================================================
+// TURNABLE 3D MODEL (PASS-59-345, drawn by hardware-model.js)
+// =============================================================================
+
+function openHardwareModel(button) {
+    var dialog = document.getElementById('museumModelDialog');
+    if (!dialog || !window.HardwareModel) return;
+    var key = button.dataset.modelKey;
+    document.getElementById('museumModelTitle').textContent = button.dataset.modelName || '';
+    dialog.querySelectorAll('.museum-model-credit').forEach(function (p) {
+        p.hidden = p.dataset.modelKey !== key;
+    });
+    dialog.classList.add('active');
+    if (window.ModalFocusTrap) {
+        ModalFocusTrap.activate(dialog, button, { onEscape: closeHardwareModel });
+    }
+    HardwareModel.show(button.dataset.modelUrl);
+}
+
+function closeHardwareModel() {
+    var dialog = document.getElementById('museumModelDialog');
+    if (dialog) dialog.classList.remove('active');
+    if (window.HardwareModel) HardwareModel.hide();
+    if (window.ModalFocusTrap) ModalFocusTrap.deactivate();
+}
+
+// =============================================================================
 // TAB NAVIGATION (System Page)
 // =============================================================================
 
