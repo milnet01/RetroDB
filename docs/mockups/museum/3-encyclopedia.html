@@ -8,7 +8,7 @@
 :root {
   --bg: #0a0e17; --bg2: #0f1419; --panel: #141a23; --panel2: #1a222d; --panel3: #212b38;
   --line: #2a3542; --line2: #3a4552;
-  --text: #e8eaed; --text2: #c3c8ce;
+  --text: #e8eaed; --text2: #9aa0a6;
   --cyan: #4cc9f0; --cyan-l: #7dd8f5; --magenta: #f72585; --magenta-l: #f95fa3;
   --green: #22c55e; --orange: #f59e0b; --purple: #a855f7;
   --cyan-bg: rgba(76,201,240,.15); --magenta-bg: rgba(247,37,133,.15);
@@ -17,7 +17,7 @@
   --serif: 'Noto Serif', 'Georgia', 'DejaVu Serif', serif;
 }
 * { box-sizing: border-box; }
-html { font-size: 112.5%; }
+html { font-size: 100%; }
 body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.55; }
 :focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
 a { color: var(--cyan-l); }
@@ -108,12 +108,38 @@ h2 { font-family: var(--font-head); font-size: 1.4rem; margin: 2rem 0 .9rem; }
 .ctrl-list span { color: var(--text2); font-size: 1rem; }
 .see { display: flex; flex-wrap: wrap; gap: .5rem; }
 
+/* 3D console model (planned feature, drawn in CSS) */
+.hw-tabs { display: flex; gap: .4rem; margin-bottom: .5rem; }
+.c3d { --w: 12em; --h: 2.6em; --d: 8em; font-size: clamp(11px, 3.8vw, 16px); width: 100%; height: 15em; perspective: 60em; display: grid; place-items: center; cursor: grab; touch-action: none; user-select: none; overflow: hidden; border-radius: 12px; }
+.c3d:active { cursor: grabbing; }
+.c3d-box { position: relative; width: var(--w); height: var(--h); transform-style: preserve-3d; }
+.c3d-box i { position: absolute; display: block; border: 1px solid #0a0e17; backface-visibility: hidden; background: #aeb2ba; }
+.c3d-box b { position: absolute; display: block; }
+.c3d-f, .c3d-k { width: var(--w); height: var(--h); left: 0; top: 0; }
+.c3d-f { transform: translateZ(calc(var(--d) / 2)); }
+.c3d-k { transform: rotateY(180deg) translateZ(calc(var(--d) / 2)); background: #8f939b !important; }
+.c3d-r, .c3d-l { width: var(--d); height: var(--h); top: 0; left: calc((var(--w) - var(--d)) / 2); background: #9a9ea6 !important; }
+.c3d-r { transform: rotateY(90deg) translateZ(calc(var(--w) / 2)); }
+.c3d-l { transform: rotateY(-90deg) translateZ(calc(var(--w) / 2)); }
+.c3d-t, .c3d-b { width: var(--w); height: var(--d); left: 0; top: calc((var(--h) - var(--d)) / 2); }
+.c3d-t { transform: rotateX(90deg) translateZ(calc(var(--h) / 2)); background: #c3c7ce !important; }
+.c3d-b { transform: rotateX(-90deg) translateZ(calc(var(--h) / 2)); background: #6d717a !important; }
+.c3d-f b { left: 14%; right: 14%; top: 38%; height: 24%; background: #20242b; border-radius: 2px; }
+.c3d-t .tray { width: 5.4em; height: 5.4em; left: calc(50% - 2.7em); top: .9em; border-radius: 50%; background: #2a2f38; border: .25em solid #6d717a; }
+.c3d-t .b1, .c3d-t .b2 { width: 1.2em; height: 1.2em; bottom: .8em; border-radius: 50%; }
+.c3d-t .b1 { left: 1.6em; background: #e44; }
+.c3d-t .b2 { left: 3.4em; background: #3c9; }
+.c3d-cap { margin: .5rem 0 0; font-size: .95rem; color: var(--text2); }
+.hw-pic { aspect-ratio: 4 / 3; border-radius: 10px; border: 2px solid var(--line2); background: var(--bg2); display: grid; place-items: center; position: relative; margin-bottom: .75rem; overflow: hidden; }
+.hw-pic svg { width: 60%; }
+.hw-pic small { position: absolute; bottom: .4rem; left: .6rem; font-size: .95rem; color: var(--text2); }
+.hw-pic .c3d { height: 100%; }
+
 @media (max-width: 900px) {
   .spread { grid-template-columns: 1fr; }
   .side { position: static; }
 }
 @media (max-width: 600px) {
-  html { font-size: 106.25%; }
   .page { padding: 1rem .9rem 7rem; }
   .bar-row { grid-template-columns: 1fr; gap: .2rem; }
   .entry-card { width: 11rem; }
@@ -187,6 +213,13 @@ h2 { font-family: var(--font-head); font-size: 1.4rem; margin: 2rem 0 .9rem; }
     <aside class="side">
       <section class="box">
         <h3>Fact box</h3>
+        <div class="hw-tabs" role="tablist" aria-label="Hardware picture">
+          <button type="button" class="btn" role="tab" aria-selected="true" data-hw="photo">Photo</button>
+          <button type="button" class="btn" role="tab" aria-selected="false" data-hw="3d">3D <span class="new">New</span></button>
+        </div>
+        <div class="hw-pic" data-hwpanel="photo"><svg viewBox="0 0 200 110" aria-hidden="true"><rect x="20" y="35" width="160" height="55" rx="22" fill="#cfcfd8" stroke="#05070b" stroke-width="3"/><rect x="65" y="22" width="70" height="20" rx="6" fill="#999" stroke="#05070b" stroke-width="3"/></svg><small>Hardware photo goes here</small></div>
+        <div class="hw-pic" data-hwpanel="3d" hidden><div class="c3d" id="fact-3d" tabindex="0" role="img" aria-label="Console model, drag or use arrow keys to turn"></div></div>
+        <p class="c3d-cap" data-hwpanel="3d" hidden>Turn it with your mouse or finger. Where no 3D model exists, the photo shows instead.</p>
         <dl class="facts" id="facts"></dl>
       </section>
       <section class="box">
@@ -292,6 +325,34 @@ document.getElementById('facts').innerHTML = FACTS.map(([k, v]) => `<dt>${k}</dt
 document.getElementById('rival').innerHTML = bars(['Super Nintendo', 'Mega Drive']);
 const TOP = [['The Legend of Zelda: A Link to the Past', 1], ['Super Metroid', 1], ['Chrono Trigger', 1], ['Super Mario World', 1], ['Final Fantasy VI', 1], ['Super Mario Kart', 1], ['Donkey Kong Country 2', 0], ['Street Fighter II Turbo', 1], ['Earthbound', 0], ['Yoshi’s Island', 1]];
 document.getElementById('top').innerHTML = TOP.map(([t, own]) => `<li>${own ? `<a href="#">${esc(t)}</a>` : `${esc(t)} <span class="ai">AI suggested, not in my library</span>`}</li>`).join('');
+
+/* 3D console model: drag or arrow keys turn it */
+function make3d(el, auto) {
+  el.innerHTML = '<div class="c3d-box"><i class="c3d-f"><b></b></i><i class="c3d-k"></i><i class="c3d-r"></i><i class="c3d-l"></i><i class="c3d-t"><b class="tray"></b><b class="b1"></b><b class="b2"></b></i><i class="c3d-b"></i></div>';
+  const box = el.firstChild;
+  let rx = -20, ry = -30, last = null, spin = auto && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const draw = () => { box.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`; };
+  el.addEventListener('pointerdown', e => { last = [e.clientX, e.clientY]; spin = false; el.setPointerCapture(e.pointerId); });
+  el.addEventListener('pointermove', e => {
+    if (!last) return;
+    ry += (e.clientX - last[0]) * .6;
+    rx = Math.max(-80, Math.min(80, rx - (e.clientY - last[1]) * .6));
+    last = [e.clientX, e.clientY]; draw();
+  });
+  const end = () => { last = null; };
+  el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+  el.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') ry -= 15; else if (e.key === 'ArrowRight') ry += 15; else return;
+    spin = false; e.preventDefault(); draw();
+  });
+  (function tick() { if (spin) { ry += .3; draw(); requestAnimationFrame(tick); } })();
+  draw();
+}
+make3d(document.getElementById('fact-3d'), false);
+document.querySelectorAll('[data-hw]').forEach(b => b.onclick = () => {
+  document.querySelectorAll('[data-hw]').forEach(x => x.setAttribute('aria-selected', x === b));
+  document.querySelectorAll('[data-hwpanel]').forEach(p => p.hidden = p.dataset.hwpanel !== b.dataset.hw);
+});
 
 function view(v) {
   document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-selected', b.dataset.view === v));

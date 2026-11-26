@@ -4207,6 +4207,10 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   (routes/museum.py, templates/museum.html, museum_system.html), then
   three mockups. Consoles and peripherals shown in a 3D viewer like the
   cases: PASS-59-345.
+  2026-11-26: museum reviewed (faults filed as PASS-59-346). The user
+  chose to update the three 2026-10-29 mockups rather than start over:
+  the app's normal look, and a turnable 3D console space on each
+  console page. Waiting for the user's pick.
   **Layman:** Three new looks for the console museum to choose from.
   Kind: implement.
 

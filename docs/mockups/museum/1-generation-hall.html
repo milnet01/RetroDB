@@ -8,17 +8,16 @@
 :root {
   --bg: #0a0e17; --bg2: #0f1419; --panel: #141a23; --panel2: #1a222d; --panel3: #212b38;
   --line: #2a3542; --line2: #3a4552;
-  --text: #e8eaed; --text2: #c3c8ce;
+  --text: #e8eaed; --text2: #9aa0a6;
   --cyan: #4cc9f0; --cyan-l: #7dd8f5; --magenta: #f72585; --magenta-l: #f95fa3;
   --green: #22c55e; --orange: #f59e0b; --purple: #a855f7;
   --cyan-bg: rgba(76,201,240,.15); --magenta-bg: rgba(247,37,133,.15);
   --green-bg: rgba(34,197,94,.15); --orange-bg: rgba(245,158,11,.15);
   --font: 'Rajdhani', 'Segoe UI', 'Noto Sans', system-ui, sans-serif;
   --font-head: 'Orbitron', 'Rajdhani', 'Segoe UI', system-ui, sans-serif;
-  --scale: 1;
 }
 * { box-sizing: border-box; }
-html { font-size: calc(112.5% * var(--scale)); }
+html { font-size: 100%; }
 body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.55; }
 :focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
 a { color: var(--cyan-l); }
@@ -30,7 +29,6 @@ a { color: var(--cyan-l); }
 .tabbtn[aria-selected="true"] { border-color: var(--cyan); background: var(--cyan-bg); }
 .btn.primary { border-color: var(--cyan); background: var(--cyan); color: #04121a; }
 .btn:hover, .tabbtn:hover { border-color: var(--cyan-l); }
-.textsize { margin-left: auto; display: flex; gap: .4rem; align-items: center; }
 .page { max-width: 1360px; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
 h1 { font-family: var(--font-head); font-size: clamp(1.9rem, 4.5vw, 3rem); letter-spacing: 1px; margin: 0 0 .3rem; text-shadow: 0 0 20px rgba(76,201,240,.35); }
 .lede { font-size: 1.2rem; color: var(--text2); max-width: 62ch; margin: 0 0 1.25rem; }
@@ -142,14 +140,37 @@ details summary { cursor: pointer; font-weight: 700; margin-top: .5rem; min-heig
 .lib b { font-family: var(--font-head); font-size: 1.8rem; color: var(--cyan-l); display: block; }
 .related { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.5rem; }
 
+/* 3D console model (planned feature, drawn in CSS) */
+.hw-tabs { display: flex; gap: .4rem; margin-bottom: .5rem; }
+.c3d { --w: 12em; --h: 2.6em; --d: 8em; font-size: clamp(11px, 3.8vw, 16px); width: 100%; height: 15em; perspective: 60em; display: grid; place-items: center; cursor: grab; touch-action: none; user-select: none; overflow: hidden; border-radius: 12px; }
+.c3d:active { cursor: grabbing; }
+.c3d-box { position: relative; width: var(--w); height: var(--h); transform-style: preserve-3d; }
+.c3d-box i { position: absolute; display: block; border: 1px solid #0a0e17; backface-visibility: hidden; background: #aeb2ba; }
+.c3d-box b { position: absolute; display: block; }
+.c3d-f, .c3d-k { width: var(--w); height: var(--h); left: 0; top: 0; }
+.c3d-f { transform: translateZ(calc(var(--d) / 2)); }
+.c3d-k { transform: rotateY(180deg) translateZ(calc(var(--d) / 2)); background: #8f939b !important; }
+.c3d-r, .c3d-l { width: var(--d); height: var(--h); top: 0; left: calc((var(--w) - var(--d)) / 2); background: #9a9ea6 !important; }
+.c3d-r { transform: rotateY(90deg) translateZ(calc(var(--w) / 2)); }
+.c3d-l { transform: rotateY(-90deg) translateZ(calc(var(--w) / 2)); }
+.c3d-t, .c3d-b { width: var(--w); height: var(--d); left: 0; top: calc((var(--h) - var(--d)) / 2); }
+.c3d-t { transform: rotateX(90deg) translateZ(calc(var(--h) / 2)); background: #c3c7ce !important; }
+.c3d-b { transform: rotateX(-90deg) translateZ(calc(var(--h) / 2)); background: #6d717a !important; }
+.c3d-f b { left: 14%; right: 14%; top: 38%; height: 24%; background: #20242b; border-radius: 2px; }
+.c3d-t .tray { width: 5.4em; height: 5.4em; left: calc(50% - 2.7em); top: .9em; border-radius: 50%; background: #2a2f38; border: .25em solid #6d717a; }
+.c3d-t .b1, .c3d-t .b2 { width: 1.2em; height: 1.2em; bottom: .8em; border-radius: 50%; }
+.c3d-t .b1 { left: 1.6em; background: #e44; }
+.c3d-t .b2 { left: 3.4em; background: #3c9; }
+.c3d-cap { margin: .5rem 0 0; font-size: .95rem; color: var(--text2); }
+.btn[aria-selected="true"] { border-color: var(--cyan); background: var(--cyan-bg); }
+.stage .c3d { height: 100%; }
+
 .phone-only { display: none; }
 @media (max-width: 760px) {
   .phone-only { display: inline; }
   .hero { grid-template-columns: 1fr; }
-  .textsize { margin-left: 0; }
 }
 @media (max-width: 600px) {
-  html { font-size: calc(106.25% * var(--scale)); }
   .page { padding: 1rem .9rem 3rem; }
   .top li { grid-template-columns: 2.4rem 3.4rem 1fr; }
   .lane { grid-template-columns: 8rem 1fr; }
@@ -165,11 +186,6 @@ details summary { cursor: pointer; font-weight: 700; margin-top: .5rem; min-heig
   <span class="label">Preview:</span>
   <button type="button" class="tabbtn" role="tab" aria-selected="true" data-view="browse">Museum browse page</button>
   <button type="button" class="tabbtn" role="tab" aria-selected="false" data-view="system">A console’s page</button>
-  <span class="textsize" role="group" aria-label="Text size">Text size <span class="new">New</span>
-    <button type="button" class="btn" data-scale="1">A</button>
-    <button type="button" class="btn" data-scale="1.2" style="font-size:1.2rem">A</button>
-    <button type="button" class="btn" data-scale="1.4" style="font-size:1.4rem">A</button>
-  </span>
 </div>
 
 <!-- ============ BROWSE PAGE ============ -->
@@ -207,7 +223,15 @@ details summary { cursor: pointer; font-weight: 700; margin-top: .5rem; min-heig
 <main class="page" id="view-system" hidden>
   <a href="#" class="back" data-goto="browse">Back to the Museum</a>
   <div class="hero">
-    <div class="stage" id="hero-art"><small>Hardware photo goes here</small></div>
+    <div class="hw">
+      <div class="hw-tabs" role="tablist" aria-label="Hardware picture">
+        <button type="button" class="btn" role="tab" aria-selected="true" data-hw="photo">Photo</button>
+        <button type="button" class="btn" role="tab" aria-selected="false" data-hw="3d">3D <span class="new">New</span></button>
+      </div>
+      <div class="stage" id="hero-art" data-hwpanel="photo"><small>Hardware photo goes here</small></div>
+      <div class="stage" data-hwpanel="3d" hidden><div class="c3d" id="hero-3d" tabindex="0" role="img" aria-label="Console model, drag or use arrow keys to turn"></div></div>
+      <p class="c3d-cap" data-hwpanel="3d" hidden>Turn it with your mouse or finger. Where no 3D model exists, the photo shows instead.</p>
+    </div>
     <div>
       <h1>Sony PlayStation</h1>
       <p class="summary">The CD-based console that took 3D gaming mainstream and became the first home console to sell over 100 million units.</p>
@@ -380,6 +404,34 @@ const CTRL = [['PlayStation Controller', 'SCPH-1080', 1994, 'The original pad, w
   ['DualShock', 'SCPH-1200', 1997, 'Added rumble and became the standard pad.', 'As Dual Analog, with clickable sticks (L3, R3)']];
 document.getElementById('ctrls').innerHTML = CTRL.map(([n, m, y, d, b]) => `<article class="ctrl"><div class="pic"><svg viewBox="0 0 120 70" aria-hidden="true"><path d="M20 20 Q60 5 100 20 L112 58 Q104 66 92 56 L80 44 H40 L28 56 Q16 66 8 58 Z" fill="#9a9aa2" stroke="#0a0e17" stroke-width="3"/><circle cx="88" cy="26" r="4" fill="#3c9"/><circle cx="96" cy="32" r="4" fill="#e44"/><circle cx="80" cy="32" r="4" fill="#e6c"/><circle cx="88" cy="38" r="4" fill="#4cf"/></svg></div><div class="in"><h3>${n}</h3><div class="meta"><span>Sony</span><span>${m}</span><span>${y}</span></div><p>${d}</p><details><summary>Button layout</summary><p>${b}</p></details></div></article>`).join('');
 
+/* 3D console model: drag or arrow keys turn it */
+function make3d(el, auto) {
+  el.innerHTML = '<div class="c3d-box"><i class="c3d-f"><b></b></i><i class="c3d-k"></i><i class="c3d-r"></i><i class="c3d-l"></i><i class="c3d-t"><b class="tray"></b><b class="b1"></b><b class="b2"></b></i><i class="c3d-b"></i></div>';
+  const box = el.firstChild;
+  let rx = -20, ry = -30, last = null, spin = auto && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const draw = () => { box.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`; };
+  el.addEventListener('pointerdown', e => { last = [e.clientX, e.clientY]; spin = false; el.setPointerCapture(e.pointerId); });
+  el.addEventListener('pointermove', e => {
+    if (!last) return;
+    ry += (e.clientX - last[0]) * .6;
+    rx = Math.max(-80, Math.min(80, rx - (e.clientY - last[1]) * .6));
+    last = [e.clientX, e.clientY]; draw();
+  });
+  const end = () => { last = null; };
+  el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+  el.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') ry -= 15; else if (e.key === 'ArrowRight') ry += 15; else return;
+    spin = false; e.preventDefault(); draw();
+  });
+  (function tick() { if (spin) { ry += .3; draw(); requestAnimationFrame(tick); } })();
+  draw();
+}
+make3d(document.getElementById('hero-3d'), false);
+document.querySelectorAll('[data-hw]').forEach(b => b.onclick = () => {
+  document.querySelectorAll('[data-hw]').forEach(x => x.setAttribute('aria-selected', x === b));
+  document.querySelectorAll('[data-hwpanel]').forEach(p => p.hidden = p.dataset.hwpanel !== b.dataset.hw);
+});
+
 /* View and tab switching */
 function view(v) {
   document.querySelectorAll('.tabbtn').forEach(b => b.setAttribute('aria-selected', b.dataset.view === v));
@@ -396,7 +448,6 @@ document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => {
   document.querySelectorAll('.tabs button').forEach(x => x.setAttribute('aria-selected', x === b));
   document.querySelectorAll('[data-panel]').forEach(p => p.hidden = p.dataset.panel !== b.dataset.tab);
 });
-document.querySelectorAll('[data-scale]').forEach(b => b.onclick = () => document.documentElement.style.setProperty('--scale', b.dataset.scale));
 if (location.hash === '#system') view('system');
 </script>
 </body>
