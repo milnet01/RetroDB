@@ -4286,6 +4286,15 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Scripts are in the session scratch folder (build/); they move into
   scripts/ if the pipeline is kept. Next: shrink files (several are 8-10
   MB), then the GLB viewer.
+  Shrink step (2026-11-26): the 21 cleaned models are copied, shrunk, to
+  sketchfab/small/ (89 MB → 31 MB). Pictures are WebP at most 1024 px
+  (EXT_texture_webp; the CSP already allows blob: images). There is no
+  Draco, meshopt or quantization, so the box-viewer GLB reader needs only
+  float attributes and WebP images. The PS1 shape is simplified to 30%
+  of its triangles, with no visible change close up. The Saturn keeps
+  its full shape (7 MB): simplifying it dented the lid by the reset
+  button. build/webp2png.py turns WebP back to PNG for f3d previews.
+  Re-run the shrink after any change from the review.
   **Layman:** Turn a console or controller round in 3D in the museum, the way you can with game boxes.
   Kind: feature.
   Source: user-request-2026-11-25.
