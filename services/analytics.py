@@ -601,6 +601,42 @@ def _get_collection_growth():
     return labels, cumulative
 
 
+def _get_sales_data():
+    """Best sellers: one console's figure (units_sold), and totals published
+    only across several consoles (sales_all_platforms, PASS-59-343).
+
+    Regional versions of one game count once. A total is the same on each
+    console's row, so it is listed once per title and figure.
+    """
+    games_with_sales = query(
+        "SELECT COUNT(*) AS c FROM games WHERE units_sold > 0", one=True)['c']
+    best_selling = query("""
+        SELECT g.id, g.title, MAX(g.units_sold) AS units, s.name AS system_name
+        FROM games g JOIN systems s ON g.system_id = s.id
+        WHERE g.units_sold > 0
+        GROUP BY COALESCE(g.version_group_id, -g.id)
+        ORDER BY units DESC
+        LIMIT 10
+    """)
+    rows = query("""
+        SELECT g.id, g.title,
+               json_extract(g.sales_all_platforms, '$.units') AS units,
+               json_extract(g.sales_all_platforms, '$.platforms') AS platforms
+        FROM games g
+        WHERE json_valid(g.sales_all_platforms)
+          AND json_extract(g.sales_all_platforms, '$.units') > 0
+        ORDER BY units DESC
+        LIMIT 50
+    """)
+    seen, all_platforms = set(), []
+    for r in rows:
+        key = (r['title'].casefold(), r['units'])
+        if key not in seen:
+            seen.add(key)
+            all_platforms.append(dict(r))
+    return games_with_sales, best_selling, all_platforms[:10]
+
+
 def _get_score_scatter():
     """Get critic vs user score data for scatter plot."""
     rows = query("""
@@ -710,6 +746,7 @@ def build_analytics_context(user_id):
     region_labels, region_data = _get_region_data()
     growth_labels, growth_data = _get_collection_growth()
     score_scatter = _get_score_scatter()
+    games_with_sales, best_selling, all_platform_sellers = _get_sales_data()
     save_labels, save_data, bonus_count, edition_count = _get_minor_analytics()
 
     data = {
@@ -777,6 +814,9 @@ def build_analytics_context(user_id):
         'growth_labels': growth_labels,
         'growth_data': growth_data,
         'score_scatter': score_scatter,
+        'games_with_sales': games_with_sales,
+        'best_selling': best_selling,
+        'all_platform_sellers': all_platform_sellers,
         'save_labels': save_labels,
         'save_data': save_data,
         'bonus_count': bonus_count,

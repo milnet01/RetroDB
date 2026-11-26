@@ -13,6 +13,7 @@
     <a href="#gameplay" class="analytics-nav-link" data-section="gameplay"><span class="tab-icon">🎯</span> <span class="tab-label">{{ _('Gameplay') }}</span></a>
     <a href="#playtime" class="analytics-nav-link" data-section="playtime"><span class="tab-icon">⏱️</span> <span class="tab-label">{{ _('Playtime') }}</span></a>
     <a href="#reviewscores" class="analytics-nav-link" data-section="reviewscores"><span class="tab-icon">⭐</span> <span class="tab-label">{{ _('Review Scores') }}</span></a>
+    <a href="#sales" class="analytics-nav-link" data-section="sales"><span class="tab-icon">📈</span> <span class="tab-label">{{ _('Sales') }}</span></a>
     <a href="#ageratings" class="analytics-nav-link" data-section="ageratings"><span class="tab-icon">🔞</span> <span class="tab-label">{{ _('Age Ratings') }}</span></a>
     <a href="#retroachievements" class="analytics-nav-link" data-section="retroachievements"><span class="tab-icon">🏆</span> <span class="tab-label">{{ _('Achievements') }}</span></a>
     <a href="#dataquality" class="analytics-nav-link" data-section="dataquality"><span class="tab-icon">📋</span> <span class="tab-label">{{ _('Data Quality') }}</span></a>
@@ -356,6 +357,60 @@
                         {% endif %}
                     </div>
                 </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sales Section (PASS-59-343) -->
+<div class="card analytics-card-full" id="sales">
+    <div class="card-header">
+        <h3 class="card-title">📈 {{ _('Sales') }}</h3>
+    </div>
+
+    <div class="score-stats-overview">
+        <div class="score-stat-box">
+            <div class="score-stat-value">{{ games_with_sales|format_number }}</div>
+            <div class="score-stat-label">{{ _('Games with Sales Figures') }}</div>
+        </div>
+    </div>
+
+    <div class="score-lists-grid">
+        <div class="score-list-section">
+            <h4>🏆 {{ _('Best-Selling Games') }}</h4>
+            <div class="score-list sales-list">
+                {% for game in best_selling %}
+                <a href="{{ url_for('games.game_detail', game_id=game.id) }}" class="score-list-item">
+                    <div class="score-game-info">
+                        <span class="score-game-title">{{ game.title[:40] }}{% if game.title|length > 40 %}...{% endif %}</span>
+                        <span class="score-game-system">{{ game.system_name }}</span>
+                    </div>
+                    <div class="score-game-scores">
+                        <span class="game-badge sales-badge">{{ _('%(count)s sold', count=game.units|format_number) }}</span>
+                    </div>
+                </a>
+                {% else %}
+                <p class="score-game-system">{{ _('No sales figures yet.') }}</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="score-list-section">
+            <h4>🌐 {{ _('Sold Across All Platforms') }}</h4>
+            <div class="score-list sales-list">
+                {% for game in all_platform_sellers %}
+                <a href="{{ url_for('games.game_detail', game_id=game.id) }}" class="score-list-item">
+                    <div class="score-game-info">
+                        <span class="score-game-title">{{ game.title[:40] }}{% if game.title|length > 40 %}...{% endif %}</span>
+                        <span class="score-game-system">{{ game.platforms or _('Several platforms') }}</span>
+                    </div>
+                    <div class="score-game-scores">
+                        <span class="game-badge sales-badge">{{ _('%(count)s sold', count=game.units|format_number) }}</span>
+                    </div>
+                </a>
+                {% else %}
+                <p class="score-game-system">{{ _('No all-platform totals yet. They come from the AI when only a total across consoles is published.') }}</p>
                 {% endfor %}
             </div>
         </div>
@@ -1095,6 +1150,15 @@ tr:nth-child(3) .rank-badge {
 @media (max-width: 768px) {
     .score-stats-overview {
         grid-template-columns: minmax(0, 1fr);
+    }
+    /* A sales figure is too wide to share a phone row with the title. */
+    .sales-list .score-list-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+    .sales-list .score-game-info {
+        width: 100%;
     }
 }
 

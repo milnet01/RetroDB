@@ -33,7 +33,7 @@ _SCRAPED_FIELDS = (
     'grac_rating', 'classind_rating', 'china_rating', 'region',
     'franchise', 'similar_games', 'playtime_estimate', 'controller_support',
     'save_type', 'critic_score', 'critic_score_count', 'user_score',
-    'user_score_count', 'units_sold', 'release_dates', 'boxart', 'boxart_3d', 'screenshots', 'fanart',
+    'user_score_count', 'units_sold', 'sales_all_platforms', 'release_dates', 'boxart', 'boxart_3d', 'screenshots', 'fanart',
     'game_logo', 'boxart_back', 'video', 'manual', 'moby_score', 'mobygames_id', 'box_scans',
 )
 

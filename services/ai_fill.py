@@ -193,6 +193,12 @@ def fill_game(game, fields=None):
             sets[field] = value
             filled_fields.append(field)
 
+    # A sales total across several consoles comes with the sales question,
+    # and fills only an empty one (PASS-59-343).
+    if ai_data.get('sales_all_platforms') and not game.get('sales_all_platforms'):
+        sets['sales_all_platforms'] = ai_data['sales_all_platforms']
+        filled_fields.append('sales_all_platforms')
+
     # A name spelled like one in the library apart from capitals takes the
     # library's spelling (PASS-59-298).
     from services.normalization import use_library_spellings
@@ -292,6 +298,8 @@ def fill_game(game, fields=None):
         allowed = set(fields)
         if 'title' in fields:
             allowed |= {'sort_title', 'alternate_titles'}
+        if 'units_sold' in fields:
+            allowed.add('sales_all_platforms')
         sets = {col: val for col, val in sets.items() if col in allowed}
         filled_fields = [f for f in filled_fields if f in allowed]
 

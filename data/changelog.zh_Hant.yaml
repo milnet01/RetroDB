@@ -1,6 +1,9 @@
 - version: 4.0.0
-  date: '2026-11-25'
+  date: '2026-11-26'
   tags:
+  - type: enhancement
+    label: "現在有更多遊戲能取得銷量資料。遊戲沒有銷量時，RetroDB 現在會單獨向 AI 詢問銷量，而不是夾在十幾個其他問題裡；測試中，這樣能為 10 個遊戲中的 7 個找到資料，先前是 3 個中的 1 個。如果只公布了多個主機的合計，例如 Battlefield Hardline 在 PS4、Xbox One 和 PC 上共 800 萬套，RetroDB 會把它單獨保存，並讓該主機自己的數據保持空白。分析頁面新增了銷售區塊，列出暢銷遊戲和這些全主機合計。要詢問先前抓取過的遊戲，請勾選銷量後執行 AI 填充"
+    en: "More games now get a sales figure. When a game has none, RetroDB now asks the AI about sales on their own, instead of among a dozen other questions; in a test this found a figure for 7 games in 10, against 1 in 3 before. Where only a total across several consoles is published, such as 8 million for Battlefield Hardline on PS4, Xbox One and PC, RetroDB keeps it apart and leaves the console's own figure empty. The Analytics page has a new Sales section listing the best-selling games and these all-console totals. To ask about games scraped before, run AI Fill with Copies sold ticked"
   - type: enhancement
     label: "建立的 PS3 3D 盒子內部現在與真實盒子一致，依據一個真實盒子的照片。打開後，光碟放在凸起的圓環裡，圓環頂部兩側各有一個指槽；光碟套在圓形碟芯上，碟芯有一個三角形按鈕和三片夾住光碟的彈片。每一半的開口邊上，指槽的上方和下方各有一個卡扣，一道矮牆隔開頂部的透明條。說明書一側有與 PS5 盒子相同的兩個夾子。盒子的塑膠現在是透明的；沒有封面內側掃描時，封面本身的圖片會淡淡地透過托盤顯示出來。外面，封面現在從頂部透明條的下方開始，透明條上壓印著 PLAYSTATION 3 和 Blu-ray 標誌，PS3 封面不再被拉高來填滿"
     en: "Built 3D PS3 boxes now match the inside of the real case, read from photos of one. Opened, the disc sits in a raised ring with a finger dip either side of the top, on a round hub with a triangular button and three sprung flaps that hold the disc. Two catches sit on the opening edge of each half, above and below the finger slot, and a low wall closes off the clear strip at the top. The booklet side has the same two clips as the PS5 case. The case's plastic is now see-through, and where there is no scan of the inside of the cover, the cover's own picture shows faintly through the tray"

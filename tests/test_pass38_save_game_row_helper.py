@@ -30,7 +30,7 @@ _COLUMNS = [
     'game_logo', 'boxart_back', 'video', 'manual', 'region', 'franchise', 'similar_games',
     'playtime_estimate', 'controller_support', 'save_type', 'game_structure',
     'perspective', 'dimension', 'edition', 'campaign', 'other_platforms',
-    'critic_score', 'critic_score_count', 'user_score', 'user_score_count', 'units_sold', 'release_dates',
+    'critic_score', 'critic_score_count', 'user_score', 'user_score_count', 'units_sold', 'sales_all_platforms', 'release_dates',
     'alternate_titles', 'moby_score', 'mobygames_id', 'box_scans', 'scrape_history',
 ]
 

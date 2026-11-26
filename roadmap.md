@@ -4157,7 +4157,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: enhancement.
   Source: user-request-2026-11-25.
 
-- 📋 [PASS-59-343] **A scrape asks the AI for sales on its own, and keeps an all-console total for the analytics page (fix, M).**
+- ✅ [PASS-59-343] **A scrape asks the AI for sales on its own, and keeps an all-console total for the analytics page (fix, M).**
   Measured 2026-11-25: 404 of ~5,700 non-arcade games had units_sold.
   Of ~4,400 the AI saw, ~1,900 were asked and came back empty and ~1,700
   were scraped before units_sold existed (2026-10-27); Fill Missing never
@@ -4173,6 +4173,14 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   platforms, shown on the analytics page only; the per-console field
   stays blank (user, 2026-11-25); (3) log the raw answer when
   parse_units_sold rejects one. Script: Scratchpad sales-test/run.py.
+  Done 2026-11-26. scrape_ai.get_game_details asks an empty units_sold in its
+  own call (_sales_prompt), so the gap-fill and AI Fill both get it. A total
+  published only across consoles goes to games.sales_all_platforms
+  (migration 049, JSON units + platforms), fill-only; the analytics page has
+  a Sales section with both lists. Refused answers are logged as written.
+  Smoke call: Battlefield Hardline PS4 gave the 8M all-platform total and no
+  PS4 figure. Fill Missing still does not revisit units_sold; AI Fill with
+  Copies sold ticked does.
   **Layman:** More games get a sales figure, because the AI is asked about sales separately instead of among a dozen other questions.
   Kind: fix.
   Source: user-request-2026-11-25.

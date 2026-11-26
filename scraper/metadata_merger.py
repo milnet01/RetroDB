@@ -1879,6 +1879,11 @@ def apply_ai_to_metadata(metadata, ai_data, db_game_id, result, fill_only=True):
             except (ValueError, TypeError):
                 pass
 
+    # A sales total across several consoles, JSON from scrape_ai (PASS-59-343).
+    if ai_data.get('sales_all_platforms') and _should_apply('sales_all_platforms'):
+        metadata['sales_all_platforms'] = ai_data['sales_all_platforms']
+        result['filled_fields'].append('sales_all_platforms (AI)')
+
     # Release dates by region — already JSON text from scrape_ai's validation.
     if ai_data.get('release_dates') and _should_apply('release_dates'):
         metadata['release_dates'] = ai_data['release_dates']

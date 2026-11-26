@@ -574,6 +574,7 @@ your migration — not in the runner.
 | 046 | `046_mobygames.py` | Add `games.mobygames_id` (INTEGER), `games.moby_score` (REAL) and `games.box_scans` (TEXT JSON, NULL = none); create `mobygames_pending` with a delete trigger. | PASS-59-183. Additive; filled fill-only by a scrape. The list holds games a scrape passed over for the hour. |
 | 047 | `047_box_case.py` | Add `games.box_case` (TEXT, NULL = chosen by the builder): the case a person picked for the game's built 3D box. | PASS-59-329. Set only from the Edit window. |
 | 048 | `048_play_sessions.py` | Create `user_game_status` (each person's completion status) and `play_sessions` (each Play-button session), with delete triggers on `games` and `users`; copy every set `games.completion_status` to the first admin. | PASS-59-332. Additive; `games.completion_status` stays, written by nothing. No admin: nothing is copied. |
+| 049 | `049_games_sales_all_platforms.py` | Add `games.sales_all_platforms` (TEXT, JSON `{"units", "platforms"}`, NULL = not known): a published sales total across several consoles. | PASS-59-343. Filled by the AI with `units_sold`; shown on the analytics page only. |
 
 ---
 

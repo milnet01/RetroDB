@@ -731,6 +731,7 @@ def game_detail(game_id):
                             playtime_estimate = NULL, controller_support = NULL, save_type = NULL,
                             scrape_history = NULL, critic_score = NULL, critic_score_count = NULL,
                             user_score = NULL, user_score_count = NULL, units_sold = NULL,
+                            sales_all_platforms = NULL,
                             release_dates = NULL,
                             hltb_match_name = NULL, hltb_match_platform = NULL, hltb_match_confidence = NULL,
                             hltb_id = NULL, hltb_players = NULL,

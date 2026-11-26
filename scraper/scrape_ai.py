@@ -456,6 +456,26 @@ def _sanitize_prompt_input(value, *, max_len=256):
     return cleaned[:max_len]
 
 
+def _units_sold_instruction(system_name):
+    """The prompt line asking for one platform's sales; `system_name` is
+    already sanitised."""
+    return (
+        '"units_sold": lifetime number of copies this game sold worldwide on '
+        + system_name + ' (physical and digital), as a whole number with no '
+        'commas or words (e.g., 2400000 for "2.4 million"). Use figures that are '
+        'free to read online, in priority order: the publisher\'s or developer\'s '
+        'own reports (annual reports, investor briefings, press releases), '
+        'platform-holder best-seller lists (Nintendo, Sony, Microsoft), Famitsu '
+        'and Media Create sales charts (Japan), Circana/NPD figures as reported in '
+        'the press (USA), Wikipedia\'s list of best-selling games for the platform '
+        'and the game\'s own Wikipedia article, then VGChartz. When only a '
+        'total across several platforms is published, return null rather than '
+        'that total. Return null if no figure is published. If you have a '
+        'web search tool, search for this figure before answering; never give '
+        'it from memory.'
+    )
+
+
 def _build_prompt(title, system_name, missing_fields, existing_values=None,
                   official_title_for=None, date_region=None, can_search=True):
     """Build a structured JSON-requesting prompt for the AI provider.
@@ -694,21 +714,7 @@ def _build_prompt(title, system_name, missing_fields, existing_values=None,
                 '(from the same source as user_score). Return null if unknown.'
             )
         elif field == 'units_sold':
-            field_instructions.append(
-                '"units_sold": lifetime number of copies this game sold worldwide on '
-                + system_name + ' (physical and digital), as a whole number with no '
-                'commas or words (e.g., 2400000 for "2.4 million"). Use figures that are '
-                'free to read online, in priority order: the publisher\'s or developer\'s '
-                'own reports (annual reports, investor briefings, press releases), '
-                'platform-holder best-seller lists (Nintendo, Sony, Microsoft), Famitsu '
-                'and Media Create sales charts (Japan), Circana/NPD figures as reported in '
-                'the press (USA), Wikipedia\'s list of best-selling games for the platform '
-                'and the game\'s own Wikipedia article, then VGChartz. When only a '
-                'total across several platforms is published, return null rather than '
-                'that total. Return null if no figure is published. If you have a '
-                'web search tool, search for this figure before answering; never give '
-                'it from memory.'
-            )
+            field_instructions.append(_units_sold_instruction(system_name))
 
     if official_title_for:
         from scraper.scrape_esde import extract_region_from_filename
@@ -1339,6 +1345,58 @@ def _official_title_rejected(game_id, title):
 _SEARCHED_FIELDS = {'units_sold', 'critic_score', 'user_score'}
 
 
+def _sales_prompt(title, system_name, can_search):
+    """Prompt asking for one game's sales alone (PASS-59-343)."""
+    title = _sanitize_prompt_input(title, max_len=256)
+    system_name = _sanitize_prompt_input(system_name, max_len=128)
+    search_rule = ('' if can_search else
+                   '\n- You have no web search here. Give a figure only if you clearly '
+                   'remember a published one; otherwise use null.')
+    return f"""You are a video game sales researcher.
+
+Game: "{title}"
+Platform: {system_name}
+
+Return a JSON object with ONLY these fields:
+  - {_units_sold_instruction(system_name)}
+  - "all_platforms_units": when the only published lifetime figure is a total across several platforms, that total as a whole number; otherwise null.
+  - "all_platforms": the platforms that total covers, comma-separated (e.g. "PS4, Xbox One, PC"); otherwise "".
+
+Rules:
+- Return ONLY valid JSON. No markdown, no explanation, no code fences.
+- Give published sales figures only, never an estimate of your own. Wrong data is worse than empty data.{search_rule}
+"""
+
+
+def _parse_sales(raw_text, title):
+    """units_sold and sales_all_platforms from a sales reply, in stored form.
+
+    An answer parse_units_sold refuses is logged as written, so a figure the
+    parser should have read can be found (PASS-59-343)."""
+    data = _json_object(raw_text) or {}
+    out = {}
+
+    def read(key):
+        value = data.get(key)
+        count = parse_units_sold(value)
+        if count is None and value not in (None, '') and (
+                not isinstance(value, str) or value.strip().lower() not in _PLACEHOLDER_ANSWERS):
+            logger.info(f"AI sales: refused {key} {value!r} for '{title}'")
+        return count
+
+    units = read('units_sold')
+    if units:
+        out['units_sold'] = str(units)
+    total = read('all_platforms_units')
+    platforms = data.get('all_platforms')
+    platforms = ' '.join(platforms.split())[:200] if isinstance(platforms, str) else ''
+    if total and total != units:
+        out['sales_all_platforms'] = json.dumps({'units': total, 'platforms': platforms})
+    if not data:
+        logger.info(f"AI sales: unreadable reply for '{title}': {(raw_text or '')[:200]!r}")
+    return out
+
+
 def get_game_details(game_id, title, system_name, system_folder=None, existing_metadata=None,
                      only_fields=None):
     """Fetch AI-generated metadata for a game.
@@ -1378,14 +1436,20 @@ def get_game_details(game_id, title, system_name, system_folder=None, existing_m
         missing_fields = [f for f in missing_fields if f in only_fields]
         validate_existing = {f: v for f, v in validate_existing.items() if f in only_fields}
 
+    # Sales are asked in a call of their own: in the combined prompt the AI
+    # found 1 figure in 3, alone 7 in 10 (PASS-59-343).
+    ask_sales = 'units_sold' in missing_fields
+    if ask_sales:
+        missing_fields.remove('units_sold')
+
     official_for = (_official_title_context(game_id)
                     if only_fields is None or 'title' in only_fields else None)
-    if not missing_fields and not official_for:
+    if not missing_fields and not official_for and not ask_sales:
         logger.info(f"AI scraper: no missing fields for '{title}'")
         return {}
 
     validate_count = len(validate_existing)
-    empty_count = len(missing_fields) - validate_count
+    empty_count = len(missing_fields) - validate_count + ask_sales
     logger.info(
         f"AI scraper [{provider_config['provider']}]: filling {empty_count} empty + "
         f"validating {validate_count} existing fields for '{title}' on {system_name}"
@@ -1395,16 +1459,8 @@ def get_game_details(game_id, title, system_name, system_folder=None, existing_m
     # Gemini and OpenAI always carry a search tool; Claude only if turned on.
     can_search = provider != 'claude' or bool(provider_config.get('web_search'))
 
-    # Build prompt and call provider
-    prompt = _build_prompt(title, system_name, missing_fields, existing_values=validate_existing,
-                           official_title_for=official_for,
-                           date_region=(existing_metadata or {}).get('region'),
-                           can_search=can_search)
-
     api_key = provider_config['api_key']
     model = provider_config['model']
-
-    rate_limit(delay=1.0)
 
     call_map = {
         'gemini': _call_gemini,
@@ -1420,32 +1476,55 @@ def get_game_details(game_id, title, system_name, system_folder=None, existing_m
     kwargs = {}
     if provider == 'gemini' and provider_config.get('project_id'):
         kwargs['project_id'] = provider_config['project_id']
-    # Search only for what needs it: a game whose sales figure and scores are
-    # not asked for pays for no searches.
-    if can_search and provider == 'claude' and _SEARCHED_FIELDS & set(missing_fields):
-        kwargs['web_search'] = True
 
-    raw_text = call_fn(prompt, api_key, model, **kwargs)
-    if not raw_text:
-        logger.warning(f"AI scraper: empty response from {provider}")
-        return None
+    result = {}
+    answered = False
+    if missing_fields or official_for:
+        prompt = _build_prompt(title, system_name, missing_fields,
+                               existing_values=validate_existing,
+                               official_title_for=official_for,
+                               date_region=(existing_metadata or {}).get('region'),
+                               can_search=can_search)
+        # Search only for what needs it: a game whose scores are not asked
+        # for pays for no searches.
+        search = (can_search and provider == 'claude'
+                  and bool(_SEARCHED_FIELDS & set(missing_fields)))
+        rate_limit(delay=1.0)
+        raw_text = call_fn(prompt, api_key, model, **kwargs, **({'web_search': True} if search else {}))
+        if raw_text:
+            answered = True
+            result = _parse_ai_response(raw_text)
+        else:
+            logger.warning(f"AI scraper: empty response from {provider}")
 
-    result = _parse_ai_response(raw_text)
-
-    if result and result.get('other_platforms'):
+    if result.get('other_platforms'):
         result['other_platforms'] = _drop_own_platform(result['other_platforms'], system_name)
         if not result['other_platforms']:
             result.pop('other_platforms')
 
     # Keep an official title only when it was asked for and not rejected.
-    official = result.get('official_title') if result else None
+    official = result.get('official_title')
     if official and (not official_for or _official_title_rejected(game_id, official)):
         result.pop('official_title')
         result.pop('old_title_region', None)
 
+    if ask_sales:
+        rate_limit(delay=1.0)
+        raw_text = call_fn(_sales_prompt(title, system_name, can_search), api_key, model,
+                           **kwargs, **({'web_search': True} if can_search and provider == 'claude' else {}))
+        if raw_text:
+            answered = True
+            result.update(_parse_sales(raw_text, title))
+        else:
+            logger.warning(f"AI scraper: empty sales response from {provider}")
+        missing_fields.append('units_sold')
+
+    if not answered:
+        return None
+
     if result:
-        # official_title and old_title_region are extra answers, not asked
-        # fields, so count the rejects from the list.
+        # official_title, old_title_region and sales_all_platforms are extra
+        # answers, not asked fields, so count the rejects from the list.
         rejected = [f for f in missing_fields if f not in result]
         msg = f"AI scraper: filled {len(result)}/{len(missing_fields)} fields: {list(result.keys())}"
         if rejected:
@@ -1504,8 +1583,9 @@ Respond with JSON only, in this shape:
 {{"differences": ["one short sentence per difference"]}}"""
 
 
-def _parse_differences(raw_text):
-    """The `differences` list from an AI reply; None when it cannot be read."""
+def _json_object(raw_text):
+    """The JSON object an AI reply holds, fenced or with words around it; None
+    when there is none."""
     if not raw_text:
         return None
     text = raw_text.strip()
@@ -1522,7 +1602,13 @@ def _parse_differences(raw_text):
             data = json.loads(match.group())
         except json.JSONDecodeError:
             return None
-    items = data.get('differences') if isinstance(data, dict) else None
+    return data if isinstance(data, dict) else None
+
+
+def _parse_differences(raw_text):
+    """The `differences` list from an AI reply; None when it cannot be read."""
+    data = _json_object(raw_text)
+    items = data.get('differences') if data else None
     if not isinstance(items, list):
         return None
     cleaned = [' '.join(i.split())[:_MAX_DIFFERENCE_LEN]
