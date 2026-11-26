@@ -4241,6 +4241,33 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Fallback for flat hardware with no model: a box with photo faces.
   Data: controllers has no model column; a model file plus author,
   licence and source URL fields would be needed.
+  Shortlist, 2026-11-26 (Sketchfab API, downloadable, CC BY;
+  no CC0 hit for any item). The 3d-assets MCP searches only Sketchfab's
+  CC0 models, so it misses all of these; query api.sketchfab.com
+  directly. BlenderKit "Royalty Free" models are not CC: not used.
+  Sketchfab uid, author, faces:
+  NES ffd427134d5e44b4850628030aa66236 Darren.Hogan 20k (with pad);
+   scan alt c7e91cebc2d844089dc847471a4fdd94 digitalheritageaustralia.
+  Famicom f00c88ca6216499ba05269c91f29bb04 digitalheritageaustralia 99k.
+  SNES 459939cff0f3443b946adaf8b3d0d7b8 MannyRuiz 20k;
+   alt cb62a1ddd75841e0a6b143e53c9240bd Druid_CZ 28k.
+  N64 0bec1e1ed1bf4a96af858008b72437a3 JosephRohm 16k (with pad).
+  PS1 96bed8283f2940d7bb4b1866ab0637a2 ecjhr0awipso 283k (shrink).
+  PS2 b53f858aa1584229a7f906239fc158a2 Dolgov12 53k (with pad).
+  Mega Drive d1487aa8b216490ba7c414b95531479e kaveshkoli3 63k.
+  GameCube 34ca13c57463417b825cf72604eda75d LuisAR 9k.
+  Saturn 12050d94b9264056968994a207e127fc evansharp 214k.
+  Master System 0ec998c9b9de4e7f956cab56bbca3c0f dark_igorek 58k.
+  Atari 2600 2024d933f6214117a399ad4287ede64d dark_igorek 64k.
+  Pads: NES 5f85c2e259bd4ab5845d482ff4f1c039; SNES
+  961d6215e3624c6eb861970acc953592; N64 8fb694b8c4bf4bbb8bc66f38503f4ffb;
+  DualShock f7c2b63cb5dd430bab71ec7ff4c8620e; GameCube
+  21983501bac64993ac09cdc7936ffdf2; Master System
+  ee797386dafc4775b2c36b2bc0e93f0b; 2600 stick
+  89630ecdba2d412591818a2611a539e5; Zapper 2a0e016f3deb40d3aebec797f3ac2bce.
+  None found: Mega Drive pad, Saturn pad: build in Blender.
+  Scenes holding console plus pads get split in Blender (CC BY allows
+  changes; say so in the credit).
   **Layman:** Turn a console or controller round in 3D in the museum, the way you can with game boxes.
   Kind: feature.
   Source: user-request-2026-11-25.
