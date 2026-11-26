@@ -4268,6 +4268,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   None found: Mega Drive pad, Saturn pad: build in Blender.
   Scenes holding console plus pads get split in Blender (CC BY allows
   changes; say so in the credit).
+  User, 2026-11-26: a model showing a maker's logo carries an
+  on-screen note that all logos and trademarks belong to the companies
+  that own them (beside the CC BY credit, translated). Models we build go
+  on Sketchfab under CC BY, without logos, each upload asked first.
+  All 21 shortlisted models downloaded (licences rechecked: CC BY).
   **Layman:** Turn a console or controller round in 3D in the museum, the way you can with game boxes.
   Kind: feature.
   Source: user-request-2026-11-25.
