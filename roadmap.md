@@ -1,7 +1,7 @@
 <!-- ants-roadmap-format: 1 -->
 
 <!-- Generated from the Ants Terminal roadmap store. Edit it with roadmap_log; hand edits are discarded by the next write. -->
-<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=345 PASS-60=6 -->
+<!-- ants-roadmap-id-high-water: PASS-12=5 PASS-14=2 PASS-2=9 PASS-38=8 PASS-39=12 PASS-40=16 PASS-41=14 PASS-42=9 PASS-43=6 PASS-45=20 PASS-46=3 PASS-47=6 PASS-48=5 PASS-49=9 PASS-50=4 PASS-51=2 PASS-52=3 PASS-53=13 PASS-54=2 PASS-55=4 PASS-56=2 PASS-57=10 PASS-58=6 PASS-59=346 PASS-60=6 -->
 
 # RetroDB Roadmap
 
@@ -4219,6 +4219,20 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   **Layman:** Turn a console or controller round in 3D in the museum, the way you can with game boxes.
   Kind: feature.
   Source: user-request-2026-11-25.
+
+- 📋 [PASS-59-346] **Museum: admin buttons shown to everyone, an empty "Engine" filter, controller pictures from the user folder not shown.**
+  - museum.html and museum_system.html show Generate All, Generate
+    Content, Fetch All Images, Remove BG, Search and Upload to every
+    user; only the API routes check for an admin.
+  - The type filter offers "Engine"; `_get_system_type` in
+    routes/museum.py never returns it.
+  - routes/museum.py `_controller_image_file` finds a picture in
+    IMAGE_PATH/controllers first (PASS-59-249), but museum_system.html
+    always links static/images/controllers/, so a picture kept only in
+    the user folder is a broken image. Read in the code, not seen run.
+  **Layman:** Three small museum faults: buttons only admins can use show for everyone, one filter choice never finds anything, and some controller pictures may not appear.
+  Kind: fix.
+  Source: PASS-59-181 museum review, 2026-11-26.
 
 ## 4.0.x — Fixes and new features for the web version
 
