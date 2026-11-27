@@ -4303,10 +4303,14 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   the CC BY credit, licence link and the trademark note (user's own pads:
   no note). retrodb.spec now bundles static/models. SNES model: inserted
   cartridge removed (game label art). User, 2026-11-26: N64 badge and
-  GameCube lid text stay as they are. Open: the user's review of the
-  models; NES, N64, PS2, GameCube, Atari 2600, Master System and SNES
-  still hold their pads and cables, which also makes them sit smaller in
-  the viewer. Placement follows PASS-59-181's pick.
+  GameCube lid text stay as they are. Open: the user's review of the models (2026-11-27: most look good,
+  some need work; the user names which).
+  Pads cut, 2026-11-27 (user's choice): NES, N64, PS2, GameCube, Atari
+  2600, Master System and SNES now show the console alone; pads, cables,
+  plugs and the PS2 memory card removed (clean_spec.json drop_nodes;
+  CREDITS.md says so). The shrink needs --compress false: without it
+  gltf-transform adds meshopt and quantization, which the viewer cannot
+  read. Checked in hardware-model.js headless: all seven load, no errors. Placement follows PASS-59-181's pick.
   **Layman:** Turn a console or controller round in 3D in the museum, the way you can with game boxes.
   Kind: feature.
   Source: user-request-2026-11-25.
