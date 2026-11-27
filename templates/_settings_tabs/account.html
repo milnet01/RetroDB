@@ -362,6 +362,18 @@
             <span class="form-hint">{{ _('The mist, rain or stars behind the page. It pauses when you are not using RetroDB. Turn it off to save power on this computer.') }}</span>
         </div>
 
+        <div class="form-group mb-lg">
+            <div class="toggle-item" style="display: flex; align-items: center; gap: var(--spacing-sm);">
+                <label class="toggle-switch" for="scanlinesToggle">
+                    <input type="checkbox" id="scanlinesToggle"{% if not (current_user_settings and current_user_settings.get('hide_scanlines')) %} checked{% endif %}
+                           data-on-change="ThemeManager.setScanlines" data-args='["$this.checked"]'>
+                    <span class="toggle-slider"></span>
+                </label>
+                <label class="toggle-label" for="scanlinesToggle">{{ _('Screen lines') }}</label>
+            </div>
+            <span class="form-hint">{{ _('Faint lines over every page, like an old TV screen. Your choice follows you to every device.') }}</span>
+        </div>
+
         {# Pass 43.1 — per-user UI language. Mirrors the Theme control's
            label-div + aria-labelledby pairing for an accessible name. Unlike
            Theme (instant, JS-applied) this is a plain <select> POSTed to

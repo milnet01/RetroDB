@@ -202,6 +202,14 @@ void main() {
         this.apply(localStorage.getItem(this.STORAGE_KEY) || 'cyberpunk', false);
     },
 
+    /** Show or hide the scan lines over every page, at once; saved for this
+     *  person, so it follows them to every device (PASS-59-342). */
+    setScanlines(on) {
+        document.body.classList.toggle('scanlines-off', !on);
+        API.post('/api/users/settings', { hide_scanlines: !on })
+            .catch(() => showNotification(t('Could not save the screen lines setting.'), 'error'));
+    },
+
     /**
      * Apply a theme
      * @param {string} theme - Theme name

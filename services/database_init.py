@@ -160,6 +160,9 @@ def ensure_user_tables():
             # PASS-59-311 — per-user message times, JSON {level: seconds};
             # empty falls back to the household's in settings.json.
             ('notification_timeouts', "TEXT DEFAULT ''"),
+            # PASS-59-342 — 1 hides the scan lines over every page for this
+            # person, on every device; 0 (the default) shows them.
+            ('hide_scanlines', "INTEGER DEFAULT 0"),
         ):
             _add_column_if_missing(cursor, 'user_settings', _col, _defn)
 

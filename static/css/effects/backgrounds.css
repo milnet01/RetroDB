@@ -49,6 +49,12 @@ body::after {
     z-index: 9999;
 }
 
+/* A person who turned the lines off in Settings (PASS-59-342). The theme
+   rules in core/themes.css only tint them, so this wins on every theme. */
+body.scanlines-off::after {
+    display: none;
+}
+
 /* =============================================================================
    REDUCED-MOTION (WCAG SC 2.3.3)
    The scanline can be perceived as shimmering on some displays; hide it when

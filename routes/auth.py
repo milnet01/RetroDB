@@ -402,7 +402,7 @@ def api_user_settings():
         'rpcs3_trophy_path', 'ra_username', 'ra_api_key', 'theme_preference',
         'items_per_page', 'psn_username', 'psn_npsso', 'timezone',
         'locale_preference', 'steam_api_key', 'steam_id', 'notification_timeouts',
-        'read_languages',
+        'read_languages', 'hide_scanlines',
     ]
 
     # The languages boxes and titles are chosen in; only people who scrape
@@ -437,6 +437,12 @@ def api_user_settings():
     # so only a known theme key may be saved.
     if 'theme_preference' in data and data['theme_preference'] not in ALLOWED_THEMES:
         return error(_('Invalid theme'), code=422, field='theme_preference')
+
+    # PASS-59-342 — the scan-line switch stores 1 or 0.
+    if 'hide_scanlines' in data:
+        if not isinstance(data['hide_scanlines'], bool):
+            return error(_('Invalid value'), code=422, field='hide_scanlines')
+        data['hide_scanlines'] = int(data['hide_scanlines'])
 
     # PASS-59-311 — a person's own message times, held to the household
     # setting's rules; the column stores them as JSON.

@@ -4156,13 +4156,21 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: feature.
   Source: user-request-2026-11-25.
 
-- 📋 [PASS-59-342] **Each person can turn the scan-line effect off in their profile settings (enhancement, S).**
+- ✅ [PASS-59-342] **Each person can turn the scan-line effect off in their profile settings (enhancement, S).**
   The CRT lines are body::after in static/css/effects/backgrounds.css,
   tinted per theme in core/themes.css; today only a reduced-motion
   request hides them. Add a per-user setting beside theme_preference
   (user_settings column + migration, allowed_fields in routes/auth.py,
   the profile page), and a class on <body> that hides body::after.
   Default on. The user noticed it as stripes on 3D box renders.
+  Done 2026-11-27. User chose per person over per browser (2026-11-27).
+  user_settings.hide_scanlines (added in ensure_user_tables, like the other
+  per-user columns), saved through /api/users/settings (true/false only);
+  base.html puts class scanlines-off on <body>, backgrounds.css hides
+  body::after for it. Switch "Screen lines" beside Moving background,
+  ThemeManager.setScanlines applies it at once. tests/test_pass59_342_
+  scanlines.py red 7, green 7; walked headless on a :5001 scratch copy as
+  a viewer: off at once, stays off on other pages and after reload.
   **Layman:** A switch in your own settings to hide the faint retro screen lines drawn over every page.
   Kind: enhancement.
   Source: user-request-2026-11-25.
