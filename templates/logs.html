@@ -773,6 +773,21 @@
 
     <div class="toolbar-separator"></div>
 
+    <div class="toolbar-group" id="scrapeFilterGroup">
+        <label for="logOutcomeFilter">{{ _('Outcome') }}</label>
+        <select id="logOutcomeFilter" class="log-module-select" data-on-change="LogViewer.setOutcomeFilter" data-args='["$this.value"]'>
+            <option value="">{{ _('All outcomes') }}</option>
+            <option value="success">{{ _('Updated') }}</option>
+            <option value="skipped">{{ _('Skipped') }}</option>
+            <option value="error">{{ _('Failed') }}</option>
+            <option value="has_errors">{{ _('Has errors') }}</option>
+        </select>
+        <label for="logGameFilter">{{ _('Game') }}</label>
+        <input type="search" id="logGameFilter" class="log-search" placeholder="{{ _('Game name...') }}">
+    </div>
+
+    <div class="toolbar-separator" id="scrapeFilterSep"></div>
+
     <div class="toolbar-group view-toggle-group" id="viewToggleGroup">
         <span class="group-label" id="logViewLabel">{{ _('View') }}</span>
         <div class="view-toggle" role="group" aria-labelledby="logViewLabel">

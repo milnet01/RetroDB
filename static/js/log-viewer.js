@@ -12,6 +12,9 @@ const LogViewer = {
     activeModule: '',
     searchTerm: '',
     searchDebounce: null,
+    gameDebounce: null,
+    activeOutcome: '',         // Scraping logs: 'success' | 'skipped' | 'error' | 'has_errors' | ''
+    gameTerm: '',              // Scraping logs: lower-cased game name search
     currentFile: null,
     currentCategory: '',       // Active category tab filter ('' = all)
     loadedCategory: '',        // Category of the currently loaded file
@@ -30,24 +33,37 @@ const LogViewer = {
         };
     },
 
-    // Session-start patterns (only meaningful for scraping logs)
+    // Session-start patterns (only meaningful for scraping logs). `kind`:
+    // 'search' is the scraper's own search line, 'job' a bulk scrape's
+    // per-game line, which the scraper's search line follows at once.
+    // A skipped game writes only its 'skip' line (services/jobs/bulk_scrape.py).
     SESSION_PATTERNS: [
         {
+            kind: 'search',
             regex: /Searching for: '(.+?)' on system: (.+?) \(folder:/,
-            module: 'scraper.scraper_manager',
             extract: (m) => ({ title: m[1], system: m[2] })
         },
         {
+            kind: 'job',
             regex: /Scraping: (.+?) for (.+)$/,
-            module: 'services.jobs',
             extract: (m) => ({ title: m[1], system: m[2] })
+        },
+        {
+            kind: 'skip',
+            module: 'services.jobs.bulk_scrape',
+            regex: /^Skipping (.+?) - /,
+            extract: (m) => ({ title: m[1], system: '' })
         }
     ],
 
-    // Outcome patterns
-    OUTCOME_SUCCESS: /Updated .+ with \d+ fields? from/,
-    OUTCOME_SKIPPED: /Skipping |No updates for /,
-    OUTCOME_NO_RESULTS: /No results for /,
+    // Outcome patterns. Anchored: the image dedup's "Skipping duplicate
+    // screenshot" lines are not a skipped game.
+    OUTCOME_SUCCESS: /^Updated .+ with \d+ fields? from/,
+    OUTCOME_SKIPPED: /^(Skipping (?!duplicate )|No updates for )/,
+    OUTCOME_NO_RESULTS: /^No results (for|passed match filter)/,
+    // The bulk scrape's outcome line names the game as the library knows it;
+    // a Steam game is searched by its app number.
+    OUTCOME_TITLE: /^(?:Updated (.+?) with \d+ fields? from|No updates for (.+)$|No results for (.+)$|No results passed match filter \([^)]*\) for (.+)$)/,
 
     // Line parse regex: "YYYY-MM-DD HH:MM:SS | LEVEL    | request-id | module | message"
     // (log_manager's file format). The request ID ('-' or 8 hex digits) is
@@ -69,6 +85,14 @@ const LogViewer = {
             clearTimeout(this.searchDebounce);
             this.searchDebounce = setTimeout(() => {
                 this.searchTerm = e.target.value.trim().toLowerCase();
+                this.render();
+            }, 300);
+        });
+
+        document.getElementById('logGameFilter').addEventListener('input', (e) => {
+            clearTimeout(this.gameDebounce);
+            this.gameDebounce = setTimeout(() => {
+                this.gameTerm = e.target.value.trim().toLowerCase();
                 this.render();
             }, 300);
         });
@@ -203,23 +227,13 @@ const LogViewer = {
 
     applySmartViewMode() {
         const isScrapingLog = this.loadedCategory === 'scraping';
-        const viewToggleGroup = document.getElementById('viewToggleGroup');
-        const viewToggleSep = document.getElementById('viewToggleSep');
-        const sessionsWrap = document.getElementById('statSessionsWrap');
-
-        if (isScrapingLog) {
-            // Show view toggle and sessions stat
-            viewToggleGroup.style.display = '';
-            viewToggleSep.style.display = '';
-            sessionsWrap.style.display = '';
-            this.currentView = 'grouped';
-        } else {
-            // Hide view toggle and sessions stat for non-scraping logs
-            viewToggleGroup.style.display = 'none';
-            viewToggleSep.style.display = 'none';
-            sessionsWrap.style.display = 'none';
-            this.currentView = 'flat';
-        }
+        // Game and outcome filters read sessions, which only scraping logs have
+        const scrapeOnly = ['viewToggleGroup', 'viewToggleSep', 'statSessionsWrap',
+                            'scrapeFilterGroup', 'scrapeFilterSep'];
+        scrapeOnly.forEach(id => {
+            document.getElementById(id).style.display = isScrapingLog ? '' : 'none';
+        });
+        this.currentView = isScrapingLog ? 'grouped' : 'flat';
 
         // Update button active states
         document.querySelectorAll('.view-btn').forEach(b => {
@@ -309,14 +323,23 @@ const LogViewer = {
 
         for (const line of this.rawLines) {
             let sessionStart = null;
+            let kind = null;
             for (const pattern of this.SESSION_PATTERNS) {
-                if (line.module === pattern.module || line.message.match(pattern.regex)) {
-                    const m = line.message.match(pattern.regex);
-                    if (m) {
-                        sessionStart = pattern.extract(m);
-                        break;
-                    }
+                if (pattern.module && line.module !== pattern.module) continue;
+                const m = line.message.match(pattern.regex);
+                if (m) {
+                    sessionStart = pattern.extract(m);
+                    kind = pattern.kind;
+                    break;
                 }
+            }
+
+            // A bulk scrape's game line is followed by the scraper's own
+            // search line for the same game: one game, one entry.
+            if (kind === 'search' && currentSession
+                    && currentSession.kind === 'job' && !currentSession.searched) {
+                currentSession.searched = true;
+                sessionStart = null;
             }
 
             if (sessionStart) {
@@ -326,11 +349,15 @@ const LogViewer = {
                 }
                 currentSession = {
                     title: sessionStart.title,
+                    searchedAs: '',
                     system: sessionStart.system,
+                    kind: kind,
+                    searched: false,
                     startTime: line.time,
                     endTime: line.time,
                     lines: [line],
-                    outcome: 'unknown'
+                    outcome: 'unknown',
+                    hasErrors: false
                 };
             } else if (currentSession) {
                 currentSession.lines.push(line);
@@ -338,11 +365,13 @@ const LogViewer = {
             } else {
                 currentSession = {
                     title: t('Pre-session log entries'),
+                    searchedAs: '',
                     system: '',
                     startTime: line.time,
                     endTime: line.time,
                     lines: [line],
-                    outcome: 'unknown'
+                    outcome: 'unknown',
+                    hasErrors: false
                 };
             }
         }
@@ -354,6 +383,16 @@ const LogViewer = {
     },
 
     finalizeSession(session) {
+        for (const line of session.lines) {
+            line.session = session;
+            if (line.level === 'ERROR' || line.level === 'CRITICAL') session.hasErrors = true;
+            const named = line.message.match(this.OUTCOME_TITLE);
+            const title = named && named.slice(1).find(Boolean);
+            if (title && title !== session.title) {
+                session.searchedAs = session.title;
+                session.title = title;
+            }
+        }
         for (let i = session.lines.length - 1; i >= 0; i--) {
             const line = session.lines[i];
             if (this.OUTCOME_SUCCESS.test(line.message)) {
@@ -382,9 +421,26 @@ const LogViewer = {
         if (this.activeModule && line.module !== this.activeModule) return false;
         if (timeFrom && line.time < timeFrom) return false;
         if (timeTo && line.time > timeTo) return false;
+        if (this.loadedCategory === 'scraping' && (this.activeOutcome || this.gameTerm)
+                && !(line.session && this._sessionMatches(line.session))) return false;
         if (this.searchTerm) {
             const haystack = (line.message + ' ' + line.module + ' ' + line.level).toLowerCase();
             if (!haystack.includes(this.searchTerm)) return false;
+        }
+        return true;
+    },
+
+    // The outcome and game filters pick whole games, so a game's lines show
+    // or hide together in both views.
+    _sessionMatches(session) {
+        if (this.activeOutcome === 'has_errors') {
+            if (!session.hasErrors) return false;
+        } else if (this.activeOutcome && session.outcome !== this.activeOutcome) {
+            return false;
+        }
+        if (this.gameTerm) {
+            const names = (session.title + ' ' + session.searchedAs).toLowerCase();
+            if (!names.includes(this.gameTerm)) return false;
         }
         return true;
     },
@@ -458,7 +514,8 @@ const LogViewer = {
         for (let i = 0; i < filtered.length; i++) {
             const session = filtered[i];
             const badgeClass = session.outcome;
-            const badgeLabel = session.outcome === 'unknown' ? '...' : session.outcome;
+            const badgeLabel = {success: t('Updated'), skipped: t('Skipped'),
+                                error: t('Failed')}[session.outcome] || '...';
 
             chunks.push(`<div class="log-session" data-session="${i}">`);
             chunks.push(`<button type="button" class="log-session-header" aria-expanded="false" data-on-click="LogViewer.toggleSession" data-args="${actionArgs('$this')}">`);
@@ -583,6 +640,11 @@ const LogViewer = {
         this.render();
     },
 
+    setOutcomeFilter(outcome) {
+        this.activeOutcome = outcome;
+        this.render();
+    },
+
     resetFilters() {
         // Reset levels
         this.activeLevels = new Set(['INFO', 'WARNING', 'ERROR']);
@@ -597,9 +659,13 @@ const LogViewer = {
         this.activeModule = '';
         document.getElementById('logModuleFilter').value = '';
 
-        // Reset search
+        // Reset search, outcome and game
         this.searchTerm = '';
         document.getElementById('logSearch').value = '';
+        this.activeOutcome = '';
+        document.getElementById('logOutcomeFilter').value = '';
+        this.gameTerm = '';
+        document.getElementById('logGameFilter').value = '';
 
         // Reapply smart view mode
         this.applySmartViewMode();

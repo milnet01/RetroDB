@@ -4122,12 +4122,20 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Source: user-request-2026-11-25.
   Evidence: /home/ants/Pictures/Screenshots/Screenshot_20261125_174811.png
 
-- 📋 [PASS-59-339] **The Logs page filters a scraping log by outcome and by game (enhancement, S).**
+- ✅ [PASS-59-339] **The Logs page filters a scraping log by outcome and by game (enhancement, S).**
   Finding failed games today means searching the raw log text for
   "match filter" or "No results". Add filters for outcome (failed,
   skipped, updated, errors) and a game-name search, so the reasons
   behind a bulk scrape can be read without knowing the log wording.
   Pairs with PASS-59-338.
+  Shipped 2026-11-27 in the open 4.0.0: Outcome (Updated / Skipped /
+  Failed / Has errors) and Game filters on scraping logs, both views.
+  Also fixed how the viewer reads a bulk scrape: a skipped game is its
+  own entry, the scrape's search line no longer splits a game in two,
+  "No results passed match filter" counts as failed, the image dedup's
+  "Skipping duplicate" no longer marks a game skipped, and a Steam game
+  shows the name from its outcome line.
+  tests/test_log_viewer_outcomes.py.
   **Layman:** In the Logs page, you can show only the failed or skipped games from a scrape, or only one game's lines.
   Kind: enhancement.
   Source: user-request-2026-11-25.
