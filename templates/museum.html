@@ -16,9 +16,11 @@
             <span class="count-number">{{ content_count|format_number }}</span>
             <span class="count-label">{% trans total=total_systems|format_number %}/ {{ total }} DOCUMENTED{% endtrans %}</span>
         </div>
+        {% if current_user and current_user.role in ('admin', 'editor') %}
         <button type="button" class="btn btn-primary" id="generateAllBtn" data-on-click="startBulkGenerate">
             {{ _('Generate All Content') }}
         </button>
+        {% endif %}
     </div>
 </div>
 
@@ -26,7 +28,9 @@
 <div class="museum-progress glass-panel" id="generateProgress" style="display: none;">
     <div class="museum-progress-header">
         <span class="museum-progress-title" id="progressTitle">{{ _('Generating content...') }}</span>
+        {% if current_user and current_user.role in ('admin', 'editor') %}
         <button type="button" class="btn btn-sm btn-danger" data-on-click="cancelBulkGenerate" id="cancelGenBtn">{{ _('Cancel') }}</button>
+        {% endif %}
     </div>
     <div class="progress-bar-container">
         <div class="progress-bar-fill" id="progressBar" style="width: 0%;"></div>

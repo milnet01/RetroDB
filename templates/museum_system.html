@@ -4,6 +4,8 @@
 {% block title %}{{ system.name if system else 'System' }} - Museum - RetroDB{% endblock %}
 
 {% block content %}
+{# The content and image buttons call editor-only APIs (PASS-59-346). #}
+{% set can_edit = current_user and current_user.role in ('admin', 'editor') %}
 <div class="page-box grid-4 museum-system-page">
 {% if not system %}
 <div class="empty-state glass-panel">
@@ -45,9 +47,11 @@
                 {% endif %}
             </div>
             <div class="museum-hero-actions">
+                {% if can_edit %}
                 <button type="button" class="btn btn-primary" data-on-click="generateContent" data-args='[{{ system.id|tojson }}]' id="generateBtn">
                     {% if museum_data and museum_data.history %}{{ _('Regenerate Content') }}{% else %}{{ _('Generate Content') }}{% endif %}
                 </button>
+                {% endif %}
                 {% if game_count > 0 %}
                 <a href="{{ url_for('systems.system_games', system_id=system.id) }}" class="btn btn-secondary">
                     {% trans count=game_count|format_number %}View Library ({{ count }}){% endtrans %}
@@ -174,7 +178,7 @@
 <section class="museum-section" id="controllers" style="display: none;">
     <div class="museum-section-header">
         <h2 class="museum-section-title">{{ _('Controllers') }}</h2>
-        {% if controllers %}
+        {% if controllers and can_edit %}
         <div class="museum-section-actions">
         <button type="button" class="btn btn-sm btn-secondary" id="ctrlFetchAllBtn"
                 data-system-id="{{ system.id }}" data-on-click="fetchAllControllerImages" data-args='[{{ system.id|tojson }}]'>
@@ -196,21 +200,27 @@
             <div class="museum-controller-image">
                 {% if ctrl.image %}
                 <img src="{{ url_for('static', filename='images/controllers/' ~ ctrl.image) }}" alt="{{ ctrl.name }}" title="{{ ctrl.image }}" loading="lazy" role="button" tabindex="0" aria-label="{{ _('Enlarge %(name)s', name=ctrl.name) }}" data-on-click="openControllerLightbox" data-args='["$this"]'>
+                {% if can_edit %}
                 <div class="museum-controller-image-actions">
                     <button type="button" class="btn btn-xs btn-ghost" data-on-click="removeControllerBg" data-args='[{{ ctrl.id|tojson }}]' data-stop title="{{ _('Remove background') }}">{{ _('Remove BG') }}</button>
                     <button type="button" class="btn btn-xs btn-ghost" data-on-click="fetchControllerImage" data-args='[{{ ctrl.id|tojson }}]' data-stop title="{{ _('Search for a new image') }}">{{ _('Search') }}</button>
                     <button type="button" class="btn btn-xs btn-ghost" data-on-click="uploadControllerImage" data-args='[{{ ctrl.id|tojson }}]' data-stop title="{{ _('Upload your own image') }}">{{ _('Upload') }}</button>
                 </div>
+                {% endif %}
                 {% else %}
                 <div class="museum-controller-placeholder">
                     <span>&#128377;&#65039;</span>
+                    {% if can_edit %}
                     <div class="museum-controller-image-actions">
                         <button type="button" class="btn btn-sm btn-ghost" data-on-click="fetchControllerImage" data-args='[{{ ctrl.id|tojson }}]'>{{ _('Search') }}</button>
                         <button type="button" class="btn btn-sm btn-ghost" data-on-click="uploadControllerImage" data-args='[{{ ctrl.id|tojson }}]'>{{ _('Upload') }}</button>
                     </div>
+                    {% endif %}
                 </div>
                 {% endif %}
+                {% if can_edit %}
                 <input type="file" id="ctrlUpload{{ ctrl.id }}" accept="image/*" style="display:none" data-on-change="handleControllerUpload" data-args='[{{ ctrl.id|tojson }}, "$this"]'>
+                {% endif %}
             </div>
             <div class="museum-controller-info">
                 <h4 class="museum-controller-name">{{ ctrl.name }}</h4>

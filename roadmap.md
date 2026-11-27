@@ -4315,7 +4315,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: feature.
   Source: user-request-2026-11-25.
 
-- 📋 [PASS-59-346] **Museum: admin buttons shown to everyone, an empty "Engine" filter, controller pictures from the user folder not shown.**
+- ✅ [PASS-59-346] **Museum: admin buttons shown to everyone, an empty "Engine" filter, controller pictures from the user folder not shown.**
   - museum.html and museum_system.html show Generate All, Generate
     Content, Fetch All Images, Remove BG, Search and Upload to every
     user; only the API routes check for an admin.
@@ -4325,6 +4325,12 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
     IMAGE_PATH/controllers first (PASS-59-249), but museum_system.html
     always links static/images/controllers/, so a picture kept only in
     the user folder is a broken image. Read in the code, not seen run.
+  Done 2026-11-27. Buttons calling the editor-only museum APIs now show
+  to editors and admins only (the APIs are @editor_required, not admin).
+  _get_system_type returns Engine for ENGINE_SYSTEMS. The third point was
+  not a fault: app.py's /static/images/<path> route serves IMAGE_PATH
+  first, and Flask picks it over the plain static route (checked with a
+  stand-alone app). tests/test_pass59_346_museum.py: red 5, then green 7.
   **Layman:** Three small museum faults: buttons only admins can use show for everyone, one filter choice never finds anything, and some controller pictures may not appear.
   Kind: fix.
   Source: PASS-59-181 museum review, 2026-11-26.

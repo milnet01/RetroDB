@@ -1,5 +1,5 @@
 - version: 4.0.0
-  date: '2026-11-26'
+  date: '2026-11-27'
   tags:
   - type: enhancement
     label: "У Музеї тепер є 3D-моделі, які можна обертати й збільшувати, як коробки ігор: 11 консолей (Atari 2600, NES, Famicom, SNES, Nintendo 64, GameCube, Master System, Mega Drive, Saturn, PlayStation і PlayStation 2) та 10 контролерів, серед них NES Zapper. Натисніть Дивитися в 3D під зображенням консолі або на контролері у вкладці Контролери. Перетягуйте мишею або користуйтеся стрілками, щоб обертати модель, а коліщатко миші чи + і - щоб збільшувати. Під кожною моделлю вказано автора, посилання на його сторінку та ліцензію"
@@ -7,6 +7,9 @@
   - type: fix
     label: "У Музеї кругла кнопка повернення нагору більше не з'являється поверх збільшеного зображення консолі або контролера"
     en: "In the museum, the round back-to-top button no longer shows on top of an enlarged console or controller picture"
+  - type: fix
+    label: "У музеї кнопки «Створити вміст», «Отримати всі зображення», «Пошук», «Завантажити» та «Прибрати фон» тепер бачать лише редактори й адміністратори, адже лише в них вони працюють. Варіант «Рушій» у фільтрі типів музею тепер знаходить системи-рушії, як-от ScummVM, PICO-8 і Ports"
+    en: "In the museum, the Generate Content, Fetch All Images, Search, Upload and Remove BG buttons now show only to editors and admins, who are the only ones they work for. The Engine choice in the museum's type filter now finds engine systems such as ScummVM, PICO-8 and Ports"
   - type: enhancement
     label: "Тепер більше ігор отримують дані про продажі. Якщо в гри їх немає, RetroDB тепер запитує ШІ про продажі окремо, а не серед десятка інших питань; у тесті так знайшлися дані для 7 ігор із 10 проти 1 із 3 раніше. Якщо опубліковано лише загальний підсумок для кількох консолей, наприклад 8 мільйонів для Battlefield Hardline на PS4, Xbox One і PC, RetroDB зберігає його окремо, а власне число консолі лишає порожнім. На сторінці Аналітика з'явився новий розділ Продажі зі списком найпопулярніших ігор і цими підсумками для всіх консолей. Щоб запитати про ігри, зібрані раніше, запустіть Заповнення ШІ з позначеним пунктом Продано копій"
     en: "More games now get a sales figure. When a game has none, RetroDB now asks the AI about sales on their own, instead of among a dozen other questions; in a test this found a figure for 7 games in 10, against 1 in 3 before. Where only a total across several consoles is published, such as 8 million for Battlefield Hardline on PS4, Xbox One and PC, RetroDB keeps it apart and leaves the console's own figure empty. The Analytics page has a new Sales section listing the best-selling games and these all-console totals. To ask about games scraped before, run AI Fill with Copies sold ticked"

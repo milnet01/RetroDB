@@ -200,12 +200,14 @@ def _get_top_games(system_id, museum_data):
 
 def _get_system_type(folder):
     """Determine system type from generation string."""
-    from services.game_utils import COMPUTER_SYSTEMS, HANDHELD_SYSTEMS
+    from services.game_utils import COMPUTER_SYSTEMS, ENGINE_SYSTEMS, HANDHELD_SYSTEMS
     specs = SYSTEM_SPECS.get(folder, {})
     gen = specs.get('generation', '')
 
     if folder in COMPUTER_SYSTEMS:
         return 'Computer'
+    if folder in ENGINE_SYSTEMS:
+        return 'Engine'
     if folder in HANDHELD_SYSTEMS:
         return 'Handheld'
     if 'arcade' in folder.lower() or folder in ('mame', 'fbneo', 'daphne'):

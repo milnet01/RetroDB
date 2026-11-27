@@ -1,5 +1,5 @@
 - version: 4.0.0
-  date: '2026-11-26'
+  date: '2026-11-27'
   tags:
   - type: enhancement
     label: "ミュージアムに、ゲームボックスと同じように回したり拡大したりできる3Dモデルが加わりました。11機種のゲーム機（Atari 2600, NES, Famicom, SNES, Nintendo 64, GameCube, Master System, Mega Drive, Saturn, PlayStation 、 PlayStation 2）と、NES Zapperを含む10種のコントローラーです。ゲーム機の画像の下にある「3Dで見る」を押すか、コントローラーのタブでコントローラーの「3Dで見る」を押してください。ドラッグか矢印キーでモデルを回し、マウスホイールか + と - で拡大縮小できます。各モデルの下には、作った人への謝辞、その人のページへのリンク、ライセンスが表示されます"
@@ -7,6 +7,9 @@
   - type: fix
     label: "ミュージアムで、丸い「ページ上部へ戻る」ボタンが、拡大したゲーム機やコントローラーの画像の上に表示されなくなりました"
     en: "In the museum, the round back-to-top button no longer shows on top of an enlarged console or controller picture"
+  - type: fix
+    label: "ミュージアムの「コンテンツを生成」「すべての画像を取得」「検索」「アップロード」「背景を除去」ボタンは、使える編集者と管理者にだけ表示されるようになりました。ミュージアムの種類フィルターの「エンジン」で、ScummVM、PICO-8、Ports などのエンジン系システムが見つかるようになりました"
+    en: "In the museum, the Generate Content, Fetch All Images, Search, Upload and Remove BG buttons now show only to editors and admins, who are the only ones they work for. The Engine choice in the museum's type filter now finds engine systems such as ScummVM, PICO-8 and Ports"
   - type: enhancement
     label: "販売数が分かるゲームが増えました。販売数のないゲームについて、RetroDBは他の十数個の質問に混ぜず、AIに販売数だけを単独で尋ねるようになりました。テストでは、これまで3本に1本だった販売数の取得が、10本中7本になりました。PS4、Xbox One、PCで合計800万本のBattlefield Hardlineのように、複数のゲーム機の合計しか公表されていない場合は、RetroDBはそれを別に保存し、各ゲーム機自身の数字は空のままにします。分析ページに新しい「販売」セクションができ、ベストセラーのゲームと、これらの全ゲーム機合計を一覧できます。以前に取得したゲームについて尋ねるには、「販売本数」にチェックを入れてAI補完を実行してください"
     en: "More games now get a sales figure. When a game has none, RetroDB now asks the AI about sales on their own, instead of among a dozen other questions; in a test this found a figure for 7 games in 10, against 1 in 3 before. Where only a total across several consoles is published, such as 8 million for Battlefield Hardline on PS4, Xbox One and PC, RetroDB keeps it apart and leaves the console's own figure empty. The Analytics page has a new Sales section listing the best-selling games and these all-console totals. To ask about games scraped before, run AI Fill with Copies sold ticked"

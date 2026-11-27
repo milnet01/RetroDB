@@ -1,5 +1,5 @@
 - version: 4.0.0
-  date: '2026-11-26'
+  date: '2026-11-27'
   tags:
   - type: enhancement
     label: "博物館現在有可以旋轉和縮放的 3D 模型，和遊戲盒子一樣：11 台主機（Atari 2600, NES, Famicom, SNES, Nintendo 64, GameCube, Master System, Mega Drive, Saturn, PlayStation 和 PlayStation 2）和 10 個手把，其中包括 NES Zapper。點擊主機圖片下方的以 3D 檢視，或在手把分頁中點擊某個手把的以 3D 檢視。拖曳或用方向鍵旋轉模型，用滑鼠滾輪或 + 和 - 縮放。每個模型下方有製作者的署名、其頁面連結和授權條款"
@@ -7,6 +7,9 @@
   - type: fix
     label: "在博物館中，圓形的回到頂端按鈕不再顯示在放大的主機或手把圖片上面"
     en: "In the museum, the round back-to-top button no longer shows on top of an enlarged console or controller picture"
+  - type: fix
+    label: "在博物館中，「產生內容」「取得所有圖片」「搜尋」「上傳」和「移除背景」按鈕現在只向編輯和管理員顯示，因為只有他們能使用這些按鈕。博物館類型篩選中的「引擎」選項現在能找到 ScummVM、PICO-8 和 Ports 等引擎類系統"
+    en: "In the museum, the Generate Content, Fetch All Images, Search, Upload and Remove BG buttons now show only to editors and admins, who are the only ones they work for. The Engine choice in the museum's type filter now finds engine systems such as ScummVM, PICO-8 and Ports"
   - type: enhancement
     label: "現在有更多遊戲能取得銷量資料。遊戲沒有銷量時，RetroDB 現在會單獨向 AI 詢問銷量，而不是夾在十幾個其他問題裡；測試中，這樣能為 10 個遊戲中的 7 個找到資料，先前是 3 個中的 1 個。如果只公布了多個主機的合計，例如 Battlefield Hardline 在 PS4、Xbox One 和 PC 上共 800 萬套，RetroDB 會把它單獨保存，並讓該主機自己的數據保持空白。分析頁面新增了銷售區塊，列出暢銷遊戲和這些全主機合計。要詢問先前抓取過的遊戲，請勾選銷量後執行 AI 填充"
     en: "More games now get a sales figure. When a game has none, RetroDB now asks the AI about sales on their own, instead of among a dozen other questions; in a test this found a figure for 7 games in 10, against 1 in 3 before. Where only a total across several consoles is published, such as 8 million for Battlefield Hardline on PS4, Xbox One and PC, RetroDB keeps it apart and leaves the console's own figure empty. The Analytics page has a new Sales section listing the best-selling games and these all-console totals. To ask about games scraped before, run AI Fill with Copies sold ticked"
