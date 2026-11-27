@@ -180,6 +180,15 @@ def api_bulk_scrape_job_status():
     return success(service_stops=stop_sentences(SCRAPE_SOURCES + AI_SOURCES), **status)
 
 
+@bp.route('/api/bulk-scrape-job/outcomes', methods=['GET'])
+@login_required
+@handle_api_errors
+def api_bulk_scrape_job_outcomes():
+    """The games the latest bulk scrape failed or skipped, with the reason (PASS-59-338)."""
+    from services.jobs.bulk_scrape import list_outcomes
+    return success(games=list_outcomes())
+
+
 @bp.route('/api/bulk-scrape-job/pause', methods=['POST'])
 @editor_required
 @handle_api_errors

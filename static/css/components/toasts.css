@@ -444,3 +444,55 @@ body:has(.sidebar.collapsed) .unified-toast-container {
     border-color: var(--primary-cyan);
     box-shadow: var(--shadow-lg), 0 0 15px color-mix(in srgb, var(--primary-cyan) 20%, transparent);
 }
+
+/* =============================================================================
+   Bulk scrape: the games it failed or skipped (PASS-59-338). The list shows in
+   the Bulk Scraping window and in a dialog opened from its card.
+   ============================================================================= */
+.bulk-outcomes-card .btn {
+    margin-top: var(--spacing-xs);
+}
+
+.bulk-outcomes-panel {
+    margin-top: var(--spacing-md);
+}
+
+.bulk-outcomes {
+    max-height: 50vh;
+    overflow-y: auto;
+    text-align: left;
+}
+
+.bulk-outcomes-heading {
+    font-size: 1rem;
+    margin: 0 0 var(--spacing-xs);
+    color: var(--text-primary);
+}
+
+.bulk-outcomes-list {
+    list-style: none;
+    margin: 0 0 var(--spacing-md);
+    padding: 0;
+}
+
+.bulk-outcomes-list li {
+    padding: var(--spacing-xs) 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.bulk-outcome-reason {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.bulk-outcomes-skipped summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.bulk-outcomes-list a {
+    color: var(--text-accent);
+    text-decoration: underline;
+}

@@ -29,6 +29,7 @@ from pathlib import Path
 CORE_ORDER = [
     'utils.js',
     'toast-controller.js',
+    'bulk-scrape-outcomes.js',
     'main.js',
     'global-search.js',
 ]

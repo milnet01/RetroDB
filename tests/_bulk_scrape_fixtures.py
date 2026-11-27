@@ -51,5 +51,7 @@ def bulk_scrape_persistence_patches(mem_db):
          patch.object(bulk_scrape_mod, 'persist_job_complete', return_value=None), \
          patch.object(bulk_scrape_mod, 'persist_job_queued', return_value=999), \
          patch.object(bulk_scrape_mod, 'remove_queued_job', return_value=None), \
-         patch.object(bulk_scrape_mod, 'acquire_job_singleton_lock', return_value=0):
+         patch.object(bulk_scrape_mod, 'acquire_job_singleton_lock', return_value=0), \
+         patch.object(bulk_scrape_mod, '_outcomes_sql',
+                      side_effect=lambda *a, fetch=False, **k: [] if fetch else None):
         yield bulk_scrape_mod

@@ -64,6 +64,8 @@
                     <span>{% trans count='<strong id="bulkSkippedCount">0</strong>'|safe %}Skipped: {{ count }}{% endtrans %}</span>
                 </div>
             </div>
+            <!-- The games it failed or skipped, with why (PASS-59-338) -->
+            <div id="bulkOutcomes" class="bulk-outcomes-panel" hidden></div>
         </div>
         <div class="bulk-scrape-footer" id="bulkFooter" style="display: none;">
             <button type="button" class="btn btn-primary" data-on-click="closeBulkScrapeModalAndReload">{{ _('Done') }}</button>

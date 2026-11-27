@@ -4097,7 +4097,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: fix.
   Source: PASS-59-291 test work 2026-11-24.
 
-- 📋 [PASS-59-338] **A bulk scrape lists the games it failed or skipped, with the reason and a link to each (enhancement, M).**
+- ✅ [PASS-59-338] **A bulk scrape lists the games it failed or skipped, with the reason and a link to each (enhancement, M).**
   Today services/jobs/bulk_scrape.py keeps only counts; the names
   and reasons are only in the day's scraping log. Record each failed
   or skipped game with its reason (no match passed the filter, no
@@ -4107,6 +4107,16 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   name linking to its game page; skipped games under their own
   heading, closed by default. Keep the list until the next bulk
   scrape starts, including after a page reload.
+  Done 2026-11-27. Table bulk_scrape_outcomes (migration 050) holds each
+  failed or skipped game with a reason code (OUTCOME_REASONS in
+  services/jobs/bulk_scrape.py); a fresh start empties it, queued jobs add
+  to it. GET /api/bulk-scrape-job/outcomes lists it; the status reply
+  carries the counts. static/js/bulk-scrape-outcomes.js (core bundle)
+  fills the Bulk Scraping window and shows a card on every page until it
+  is closed (per job, localStorage) or the next run starts; it survives a
+  reload and a restart. Walked headless on a :5001 scratch copy at 1400
+  and 375 px: card, dialog with links, closed skipped list, close holds
+  over reload, no console errors from this code.
   **Layman:** When a bulk scrape ends, you see which games failed and why, and can open each one to scrape it by hand.
   Kind: enhancement.
   Source: user-request-2026-11-25.

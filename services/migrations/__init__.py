@@ -74,6 +74,7 @@ MIGRATIONS = [
     '047_box_case',
     '048_play_sessions',
     '049_games_sales_all_platforms',
+    '050_bulk_scrape_outcomes',
 ]
 
 

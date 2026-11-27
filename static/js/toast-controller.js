@@ -1298,6 +1298,8 @@ const UnifiedToastController = {
         setTimeout(() => {
             this._hidingCompletion.delete(type);
             this.hideActiveToast(type);
+            // A run's failed and skipped games get a card of their own (PASS-59-338).
+            if (type === 'bulk-scrape' && window.BulkScrapeOutcomes) BulkScrapeOutcomes.refresh();
             
             // The server starts the next waiting RA job by itself (PASS-59-268);
             // poll so its toast appears, whichever kind it is.

@@ -265,6 +265,7 @@ const BulkScrapeController = {
 
         el.results.style.display = 'flex';
         el.resultsLive.style.display = 'none';
+        if (window.BulkScrapeOutcomes) BulkScrapeOutcomes.fillInto(document.getElementById('bulkOutcomes'));
         el.footer.style.display = 'flex';
         el.controlsRow.style.display = 'none';
         if (el.closeBtn) el.closeBtn.style.display = 'block';

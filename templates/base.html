@@ -36,7 +36,7 @@
     <link rel="alternate icon" type="image/png" sizes="16x16" href="{{ asset_url('favicon-16.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset_url('apple-touch-icon.png') }}">
 </head>
-<body data-mist-enabled="{{ user_settings.get('enable_mist_effect', true)|lower }}">
+<body data-mist-enabled="{{ user_settings.get('enable_mist_effect', true)|lower }}" data-signed-in="{{ 'true' if current_user else 'false' }}">
     <a href="#main-content" class="skip-link">{{ _('Skip to main content') }}</a>
     {# Present from the start: a live region added at the moment it speaks is often not read (Notifications.announce) #}
     <div id="a11y-progress-announce" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></div>

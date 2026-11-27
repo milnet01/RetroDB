@@ -41,6 +41,62 @@ def missing_fields(game):
     return [field for field in FILL_MISSING_FIELDS if not game.get(field)]
 
 
+# Why a game was failed or skipped (PASS-59-338). The browser words each one
+# (static/js/bulk-scrape-outcomes.js); `detail` carries an error's own text.
+OUTCOME_REASONS = ('not_found', 'cooldown', 'all_filled', 'no_results',
+                   'no_match', 'source_limit', 'no_updates', 'error')
+
+
+def _outcomes_sql(sql, params=(), fetch=False):
+    conn = None
+    try:
+        conn = _get_conn()
+        cursor = conn.execute(sql, params)
+        rows = cursor.fetchall() if fetch else None
+        conn.commit()
+        return rows
+    except sqlite3.Error as e:
+        # Losing the list must never stop a scrape.
+        logger.warning(f"Bulk scrape outcome list: {e}")
+        return [] if fetch else None
+    finally:
+        if conn:
+            conn.close()
+
+
+def clear_outcomes():
+    """Empty the list: a fresh bulk scrape is starting."""
+    _outcomes_sql("DELETE FROM bulk_scrape_outcomes")
+
+
+def record_outcome(job_id, game_id, title, outcome, reason, detail=None):
+    """Note one failed or skipped game and why."""
+    _outcomes_sql(
+        "INSERT INTO bulk_scrape_outcomes (job_id, game_id, title, outcome, reason, detail, created_at)"
+        " VALUES (?, ?, ?, ?, ?, ?, ?)",
+        (job_id, game_id, title, outcome, reason, (detail or '')[:300] or None,
+         datetime.now(timezone.utc).isoformat()))
+
+
+def list_outcomes():
+    """Every failed and skipped game of the latest bulk scrape, in order."""
+    rows = _outcomes_sql(
+        "SELECT game_id, title, outcome, reason, detail FROM bulk_scrape_outcomes ORDER BY id",
+        fetch=True)
+    return [dict(r) for r in rows]
+
+
+def outcome_summary():
+    """Counts, and the id of the job that began the list (a card's dismiss key)."""
+    rows = _outcomes_sql(
+        "SELECT (SELECT job_id FROM bulk_scrape_outcomes ORDER BY id LIMIT 1) AS job_id,"
+        " SUM(outcome = 'failed') AS failed, SUM(outcome = 'skipped') AS skipped"
+        " FROM bulk_scrape_outcomes", fetch=True)
+    row = dict(rows[0]) if rows else {}
+    return {'job_id': row.get('job_id'), 'failed': row.get('failed') or 0,
+            'skipped': row.get('skipped') or 0}
+
+
 def _extract_year_from_result(result):
     """Extract release year from a search result (handles all scraper formats)."""
     import re
@@ -163,6 +219,7 @@ class BulkScrapeJob:
 
     def get_status(self):
         """Get current job status including queue info"""
+        outcomes = outcome_summary()  # read outside the lock: a DB query
         with self._lock:
             total = len(self.game_ids)
             processed = self.success_count + self.failed_count + self.skipped_count
@@ -211,7 +268,10 @@ class BulkScrapeJob:
                 'error': self.error_message,
                 'queue': queue_info,
                 'queue_count': len(self._queue),
-                'recently_scraped_ids': list(self._recently_scraped)
+                'recently_scraped_ids': list(self._recently_scraped),
+                # The games the latest run failed or skipped (PASS-59-338);
+                # kept in the database, so a restart still has them.
+                'outcomes': outcomes,
             }
 
     def start(self, game_ids, system_id=None, return_url=None, scrape_mode='fill_missing'):
@@ -291,6 +351,7 @@ class BulkScrapeJob:
                 self._singleton_fd = singleton_fd
 
                 self.reset()
+                clear_outcomes()  # a fresh run; jobs queued behind it add to its list
                 self.job_id = new_job_id
                 self.game_ids = game_ids
                 self.system_id = system_id
@@ -816,14 +877,23 @@ class BulkScrapeJob:
             # Another job took over (a swap that stopped waiting for us).
             return self._run_token != _token
 
-        def _count(field, game_id=None):
+        def _count(field, game_id=None, reason=None, title=None, detail=None):
             # A replaced worker's game in flight counts for no job (PASS-59-259).
             with self._lock:
                 if _replaced():
                     return
                 setattr(self, field, getattr(self, field) + 1)
-                if game_id is not None:
+                if field == 'success_count' and game_id is not None:
                     self._recently_scraped.append(game_id)
+            if reason:  # a failed or skipped game goes on the list (PASS-59-338)
+                record_outcome(_job_id, game_id, title,
+                               'failed' if field == 'failed_count' else 'skipped',
+                               reason, detail)
+
+        def _no_match(game_id, title, reason):
+            # A source at its limit turns "nothing found" into a skip.
+            field = self._no_match_counter(game_id, enabled_scrapers)
+            _count(field, game_id, 'source_limit' if field == 'skipped_count' else reason, title)
 
         logger.info(f"Starting bulk scrape job {_job_id} with {len(_game_ids)} games")
 
@@ -938,6 +1008,7 @@ class BulkScrapeJob:
                     continue
 
                 # Fetch game info (use pre-fetched data, fall back to individual query)
+                title = None  # an error before the lookup lists the game by id
                 try:
                     game_dict = _prefetched_games.get(game_id)
 
@@ -954,13 +1025,13 @@ class BulkScrapeJob:
                         conn.close()
                         if not game:
                             logger.warning(f"Game {game_id} not found, skipping")
-                            _count('skipped_count')
+                            _count('skipped_count', game_id, 'not_found')
                             continue
                         game_dict = dict(game)
 
                     if not game_dict:
                         logger.warning(f"Game {game_id} not found, skipping")
-                        _count('skipped_count')
+                        _count('skipped_count', game_id, 'not_found')
                         continue
                     title = game_dict.get('title', 'Unknown')
 
@@ -982,7 +1053,7 @@ class BulkScrapeJob:
                                 hours_ago = (datetime.now(timezone.utc) - last_dt).total_seconds() / 3600
                                 if hours_ago < 24:
                                     logger.info(f"Skipping {title} - bulk scraped {hours_ago:.1f}h ago (cooldown 24h)")
-                                    _count('skipped_count')
+                                    _count('skipped_count', game_id, 'cooldown', title)
                                     continue
                             except (ValueError, TypeError):
                                 pass  # Invalid timestamp, proceed with scrape
@@ -993,7 +1064,7 @@ class BulkScrapeJob:
                         if not missing:
                             logger.info(f"Skipping {title} - all metadata fields populated")
                             self._stamp_bulk_scraped(game_id)
-                            _count('skipped_count')
+                            _count('skipped_count', game_id, 'all_filled', title)
                             continue
                         logger.info(f"Fill-missing for {title} - missing: {', '.join(missing)}")
 
@@ -1040,7 +1111,7 @@ class BulkScrapeJob:
 
                         if not sorted_results:
                             logger.warning(f"No results passed match filter ({match_settings['mode']} mode) for {title}")
-                            _count(self._no_match_counter(game_id, enabled_scrapers))
+                            _no_match(game_id, title, 'no_match')
                             continue
 
                         # Find best match from enabled scraper
@@ -1100,14 +1171,14 @@ class BulkScrapeJob:
                         else:
                             logger.info(f"No updates for {title}")
                             self._stamp_bulk_scraped(game_id)
-                            _count('skipped_count')
+                            _count('skipped_count', game_id, 'no_updates', title)
                     else:
                         logger.info(f"No results for {title}")
-                        _count(self._no_match_counter(game_id, enabled_scrapers))
+                        _no_match(game_id, title, 'no_results')
 
                 except Exception as e:
                     logger.error(f"Error scraping game {game_id}: {e}")
-                    _count('failed_count')
+                    _count('failed_count', game_id, 'error', title, str(e))
                 finally:
                     apply_progress.timing_end()
 
