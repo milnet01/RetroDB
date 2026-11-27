@@ -4329,7 +4329,7 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   Kind: fix.
   Source: PASS-59-181 museum review, 2026-11-26.
 
-- 📋 [PASS-59-347] **Translate the interface lines left in English in every language (i18n, S).**
+- ✅ [PASS-59-347] **Translate the interface lines left in English in every language (i18n, S).**
   Found 2026-11-26 while translating PASS-59-345's lines:
   scripts/apply_po_translations.py reports 49 lines missing in each of
   the 20 human-translated catalogs (de shown: "No such system or
@@ -4337,6 +4337,11 @@ Everything in the PASS-59-113 plan, every fix the reviews found, and the work fi
   %(minutes)s min", ...). Most are fuzzy guesses from pybabel update,
   which Babel does not compile, so the page shows English. Fill them with
   apply_po_translations.py (exit 0 means none missing) before v4.0.0.
+  Done 2026-11-27: the 49 lines filled in all 20 catalogs
+  (apply_po_translations.py exit 0 each; no fuzzy or empty entry left).
+  Each catalog's existing words reused; the "Build 3D Boxes" sentence
+  names the translated button. xh and zu are best effort: a native
+  speaker's check would help.
   **Layman:** Some newer buttons and messages still show in English when RetroDB is set to another language.
   Kind: chore.
   Source: claude-found-2026-11-26.

@@ -817,7 +817,7 @@ msgstr "system_id et emulator_id requis"
 
 #: routes/emulators.py:250
 msgid "No such system or emulator."
-msgstr ""
+msgstr "Ce système ou cet émulateur n'existe pas."
 
 #: routes/emulators.py:292
 msgid "Send at least one setting."
@@ -2338,9 +2338,8 @@ msgid "100%"
 msgstr "100%"
 
 #: services/js_i18n_strings.py:607 templates/_modals/edit_modal.html:390
-#, fuzzy
 msgid "3D box built from the scans:"
-msgstr "Boîte 3D de Slipcase"
+msgstr "Boîte 3D créée à partir des numérisations :"
 
 #: services/js_i18n_strings.py:608
 msgid "3D box imported."
@@ -2632,9 +2631,8 @@ msgid "Clear HLTB data for this game?"
 msgstr "Effacer les données HLTB de ce jeu ?"
 
 #: services/js_i18n_strings.py:669 templates/achievements_system.html:170
-#, fuzzy
 msgid "Clear My Progress"
-msgstr "Progression des trophées"
+msgstr "Effacer ma progression"
 
 #: services/js_i18n_strings.py:670 templates/achievements_system.html:182
 msgid "Clear RA Data"
@@ -2659,9 +2657,9 @@ msgid "Cleared RA data for {n} games"
 msgstr "Données RA effacées pour {n} jeux"
 
 #: services/js_i18n_strings.py:675
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Cleared your progress for {count} games"
-msgstr "Données RA effacées pour {n} jeux"
+msgstr "Votre progression a été effacée pour {count} jeux"
 
 #: services/js_i18n_strings.py:676 templates/settings.html:2916
 #: templates/settings.html:3180
@@ -2862,9 +2860,8 @@ msgstr ""
 "suivante."
 
 #: services/js_i18n_strings.py:716
-#, fuzzy
 msgid "Could not save your answer. Try again."
-msgstr "Impossible d'enregistrer vos choix d'analyse."
+msgstr "Impossible d'enregistrer votre réponse. Réessayez."
 
 #: services/js_i18n_strings.py:717
 msgid "Could not show this page of the manual."
@@ -4346,9 +4343,9 @@ msgstr "Sélectionner une source"
 #: services/js_i18n_strings.py:1031 templates/chd_converter.html:216
 #: templates/chd_verify.html:172 templates/game_imports.html:422
 #: templates/psn_trophies.html:866
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Select {name}"
-msgstr "Sélectionner le jeu 2"
+msgstr "Sélectionner {name}"
 
 #: services/js_i18n_strings.py:1032
 #, python-brace-format
@@ -4561,6 +4558,8 @@ msgid ""
 "The built box is deleted. The next scrape, or Build 3D Boxes in ROM "
 "Tools, builds it again."
 msgstr ""
+"La boîte créée est supprimée. La prochaine récupération, ou Créer des "
+"boîtes 3D dans les outils ROM, la recrée."
 
 #: services/js_i18n_strings.py:1073
 msgid "The cheats were not downloaded."
@@ -4622,13 +4621,13 @@ msgid "This copy of RetroDB is a git checkout. Update it with git pull."
 msgstr "Cette copie de RetroDB est un dépôt git. Mettez-la à jour avec git pull."
 
 #: services/js_i18n_strings.py:1084
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "This forgets which achievements you have earned in your {system} games. "
 "Sync Progress downloads them again. Continue?"
 msgstr ""
-"Télécharge les succès que vous avez obtenus dans vos jeux %(system)s. À "
-"lancer après avoir joué."
+"Cela oublie quels succès vous avez obtenus dans vos jeux {system}. "
+"Progression de la synchronisation les télécharge à nouveau. Continuer ?"
 
 #: services/js_i18n_strings.py:1085
 msgid "This game already has 3D box faces. Replace them with the ones you picked?"
@@ -4902,7 +4901,7 @@ msgstr "Vous avez la dernière version."
 #: services/js_i18n_strings.py:1137
 #, python-brace-format
 msgid "You played this for {minutes} min. Mark it In Progress?"
-msgstr ""
+msgstr "Vous avez joué à ceci {minutes} min. Le marquer comme En cours ?"
 
 #: services/js_i18n_strings.py:1138
 #, python-brace-format
@@ -5323,11 +5322,9 @@ msgstr ""
 "%(when)s, ou avant l’enregistrement des clés."
 
 #: services/service_stop_text.py:34
-#, fuzzy, python-format
+#, python-format
 msgid "%(service)s is not answering. RetroDB will try again after %(when)s."
-msgstr ""
-"%(service)s indique que sa limite est atteinte. RetroDB ne l'interrogera "
-"plus avant %(when)s."
+msgstr "%(service)s ne répond pas. RetroDB réessaiera après %(when)s."
 
 #: services/service_stop_text.py:37
 #, python-format
@@ -5391,7 +5388,7 @@ msgstr "Le lecteur n'a pas de cœur pour ce système."
 
 #: services/jobs/image_resize.py:107
 msgid "Wait for the WebP migration to finish first."
-msgstr ""
+msgstr "Attendez d'abord la fin de la migration WebP."
 
 #: services/jobs/platform_sync.py:384 services/jobs/platform_sync.py:695
 msgid "Sync already running"
@@ -5436,7 +5433,7 @@ msgstr ""
 
 #: services/jobs/webp_migrate.py:86
 msgid "Wait for the image resize to finish first."
-msgstr ""
+msgstr "Attendez d'abord la fin du redimensionnement des images."
 
 #: templates/_bulk_edit_modal.html:7
 msgid "Bulk Edit"
@@ -5846,13 +5843,13 @@ msgid "Never synced"
 msgstr "Jamais synchronisé"
 
 #: templates/achievements_system.html:173
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Forgets which achievements you have earned in your %(system)s games. "
 "Other users keep theirs."
 msgstr ""
-"Télécharge les succès que vous avez obtenus dans vos jeux %(system)s. À "
-"lancer après avoir joué."
+"Oublie quels succès vous avez obtenus dans vos jeux %(system)s. Les "
+"autres utilisateurs conservent les leurs."
 
 #: templates/achievements_system.html:185
 #, python-format
@@ -5879,9 +5876,8 @@ msgstr "Rechercher des jeux…"
 
 #: templates/achievements_system.html:202 templates/steam_achievements.html:78
 #: templates/xbox_achievements.html:78
-#, fuzzy
 msgid "Filter by progress"
-msgstr "Progression des trophées"
+msgstr "Filtrer par progression"
 
 #: templates/achievements_system.html:203 templates/all_games.html:15
 #: templates/steam_achievements.html:79 templates/xbox_achievements.html:79
@@ -7974,7 +7970,6 @@ msgid "Space Saved"
 msgstr "Espace économisé"
 
 #: templates/chd_converter.html:217 templates/chd_verify.html:173
-#, fuzzy
 msgid "Select all"
 msgstr "Tout sélectionner"
 
@@ -9142,7 +9137,7 @@ msgstr "RPCS3 : pas de liste de compatibilité"
 #: templates/game_detail.html:310
 #, python-format
 msgid "You played this for %(minutes)s min. Mark it In Progress?"
-msgstr ""
+msgstr "Vous avez joué à ceci %(minutes)s min. Le marquer comme En cours ?"
 
 #: templates/game_detail.html:321
 msgid "No description available. Click \"Scrape\" to fetch metadata."
@@ -9151,14 +9146,14 @@ msgstr ""
 " métadonnées."
 
 #: templates/game_detail.html:379
-#, fuzzy, python-format
+#, python-format
 msgid "Played in RetroDB: %(hours)s h %(minutes)s min"
-msgstr "Joué sur Steam : %(hours)s h %(minutes)s min"
+msgstr "Joué dans RetroDB : %(hours)s h %(minutes)s min"
 
 #: templates/game_detail.html:379
-#, fuzzy, python-format
+#, python-format
 msgid "Played in RetroDB: %(minutes)s min"
-msgstr "Joué sur Steam : %(minutes)s min"
+msgstr "Joué dans RetroDB : %(minutes)s min"
 
 #: templates/game_detail.html:382
 #, python-format
@@ -9272,9 +9267,8 @@ msgid "Loading recommendations..."
 msgstr "Chargement des recommandations…"
 
 #: templates/game_detail.html:605
-#, fuzzy
 msgid "Game title to look up"
-msgstr "Titre du jeu"
+msgstr "Titre du jeu à rechercher"
 
 #: templates/game_detail.html:640
 #, python-format
@@ -10824,9 +10818,8 @@ msgid "Search systems..."
 msgstr "Rechercher des systèmes…"
 
 #: templates/museum.html:57 templates/systems.html:34
-#, fuzzy
 msgid "Filter by type"
-msgstr "Filtrer par type de système"
+msgstr "Filtrer par type"
 
 #: templates/museum.html:79
 #, python-format
@@ -11736,9 +11729,8 @@ msgstr ""
 "manettes/matériel."
 
 #: templates/rom_tools_hub.html:288 templates/rom_tools_hub.html:701
-#, fuzzy
 msgid "Build 3D Boxes"
-msgstr "Boîte 3D"
+msgstr "Créer des boîtes 3D"
 
 #: templates/rom_tools_hub.html:291
 msgid ""
@@ -11746,6 +11738,10 @@ msgid ""
 "scraped game with a cover. A scrape now does this by itself; this is for "
 "games scraped before. A box imported from Slipcase is never changed."
 msgstr ""
+"Crée une boîte 3D tournante, sur le vrai boîtier de sa console, pour "
+"chaque jeu récupéré ayant une jaquette. Une récupération le fait "
+"désormais d'elle-même ; ceci sert pour les jeux récupérés auparavant. Une"
+" boîte importée de Slipcase n'est jamais modifiée."
 
 #: templates/rom_tools_hub.html:302 templates/rom_tools_hub.html:448
 msgid "Backfill Alternate Titles"
@@ -12165,11 +12161,16 @@ msgid ""
 "using RetroDB or leave the page. Games whose box is already up to date "
 "are passed over."
 msgstr ""
+"Créer une boîte 3D pour chaque jeu récupéré qui a une jaquette mais pas "
+"encore de boîte.\n"
+"\n"
+"Le traitement se fait un jeu à la fois en arrière-plan, vous pouvez donc "
+"continuer à utiliser RetroDB ou quitter la page. Les jeux dont la boîte "
+"est déjà à jour sont ignorés."
 
 #: templates/rom_tools_hub.html:713
-#, fuzzy
 msgid "Building 3D boxes started"
-msgstr "Téléchargement de la jaquette 3D…"
+msgstr "La création des boîtes 3D a commencé"
 
 #: templates/rom_tools_hub.html:729
 msgid ""
@@ -12435,7 +12436,7 @@ msgstr "Conserver le plus grand"
 
 #: templates/screenshot_dedup.html:545
 msgid "Keep"
-msgstr ""
+msgstr "Conserver"
 
 #: templates/screenshot_dedup.html:607
 msgid "Selected largest file in each group"
@@ -12944,29 +12945,27 @@ msgid "Restore error: {error}"
 msgstr "Erreur de restauration : {error}"
 
 #: templates/settings.html:2013
-#, fuzzy
 msgid "Calculating..."
-msgstr "Annulation..."
+msgstr "Calcul en cours..."
 
 #: templates/settings.html:2019
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Found the size of {count} game(s)."
-msgstr "Impossible de compter les jeux."
+msgstr "Taille trouvée pour {count} jeu(x)."
 
 #: templates/settings.html:2022
 #, python-brace-format
 msgid "{count} game(s) were skipped because their file is not on disk."
-msgstr ""
+msgstr "{count} jeu(x) ignoré(s) car leur fichier n'est pas sur le disque."
 
 #: templates/settings.html:2024
 #, python-brace-format
 msgid "{count} imported game(s) have no file, so they have no size."
-msgstr ""
+msgstr "{count} jeu(x) importé(s) n'ont pas de fichier, donc pas de taille."
 
 #: templates/settings.html:2025
-#, fuzzy
 msgid "Every game with a file already has a size."
-msgstr "Chaque nom de ce champ n'a qu'une seule graphie."
+msgstr "Chaque jeu ayant un fichier a déjà une taille."
 
 #: templates/settings.html:2028
 #, python-brace-format
@@ -14038,9 +14037,10 @@ msgid "Organize ROMs across 270+ gaming platforms"
 msgstr "Organisez vos ROM sur plus de 270 plateformes de jeu"
 
 #: templates/setup.html:45
-#, fuzzy
 msgid "Scrape metadata from TheGamesDB, IGDB, RAWG, MobyGames, ScreenScraper"
-msgstr "Récupérer les métadonnées depuis TheGamesDB, IGDB, RAWG, ScreenScraper"
+msgstr ""
+"Récupérer les métadonnées depuis TheGamesDB, IGDB, RAWG, MobyGames, "
+"ScreenScraper"
 
 #: templates/setup.html:46
 msgid "Track RetroAchievements progress and PS3 trophies"
@@ -14077,15 +14077,14 @@ msgid "Third-Party APIs:"
 msgstr "API tierces :"
 
 #: templates/setup.html:82
-#, fuzzy
 msgid ""
 "Metadata scraping uses external services (IGDB, ScreenScraper, RAWG, "
 "MobyGames, TheGamesDB, RetroAchievements) that are subject to their own "
 "terms of service and rate limits."
 msgstr ""
 "La récupération des métadonnées utilise des services externes (IGDB, "
-"ScreenScraper, RAWG, TheGamesDB, RetroAchievements) soumis à leurs "
-"propres conditions d'utilisation et limites de requêtes."
+"ScreenScraper, RAWG, MobyGames, TheGamesDB, RetroAchievements) soumis à "
+"leurs propres conditions d'utilisation et limites de débit."
 
 #: templates/setup.html:83
 msgid "No Warranty:"
@@ -14265,9 +14264,8 @@ msgid "RAWG API key"
 msgstr "Clé API RAWG"
 
 #: templates/setup.html:251
-#, fuzzy
 msgid "MobyGames API key"
-msgstr "Obtenir la clé API"
+msgstr "Clé API MobyGames"
 
 #: templates/_settings_tabs/scraping.html:273 templates/setup.html:252
 msgid ""
@@ -14275,6 +14273,9 @@ msgid ""
 "hour. Games skipped when the hour runs out are asked about again by "
 "themselves later."
 msgstr ""
+"MobyGames exige votre propre clé API. Elle autorise quelques centaines de"
+" requêtes par heure. Les jeux ignorés quand l'heure est épuisée sont "
+"redemandés plus tard automatiquement."
 
 #: templates/setup.html:259
 msgid "Sign up"
@@ -14587,14 +14588,12 @@ msgid "CONSOLES DETECTED"
 msgstr "CONSOLES DÉTECTÉES"
 
 #: templates/systems.html:30
-#, fuzzy
 msgid "Search systems"
-msgstr "Rechercher des systèmes…"
+msgstr "Rechercher des systèmes"
 
 #: templates/systems.html:42
-#, fuzzy
 msgid "Filter by feature"
-msgstr "Filtrer par plateforme"
+msgstr "Filtrer par fonctionnalité"
 
 #: templates/systems.html:43
 msgid "All Features"
@@ -15124,33 +15123,28 @@ msgstr ""
 "tourner."
 
 #: templates/_modals/boxart_zoom_modal.html:17
-#, fuzzy
 msgid "Back to the box"
-msgstr "Dos de la boîte"
+msgstr "Retour à la boîte"
 
 #: templates/_modals/boxart_zoom_modal.html:20
 msgid "Disc or cartridge"
-msgstr ""
+msgstr "Disque ou cartouche"
 
 #: templates/_modals/boxart_zoom_modal.html:20
-#, fuzzy
 msgid "Inside cover"
-msgstr "Défilement horizontal"
+msgstr "Intérieur de la jaquette"
 
 #: templates/_modals/boxart_zoom_modal.html:20
-#, fuzzy
 msgid "Extra"
-msgstr "Suivant"
+msgstr "Extra"
 
 #: templates/_modals/boxart_zoom_modal.html:23
-#, fuzzy
 msgid "Open the box"
-msgstr "Dos de la boîte"
+msgstr "Ouvrir la boîte"
 
 #: templates/_modals/boxart_zoom_modal.html:23
-#, fuzzy
 msgid "Close the box"
-msgstr "Dos de la boîte"
+msgstr "Fermer la boîte"
 
 #: templates/_modals/boxart_zoom_modal.html:24
 msgid "Drag to turn. Scroll or press + and - to zoom. Double-click to reset."
@@ -15330,14 +15324,12 @@ msgstr ""
 "modifications."
 
 #: templates/_modals/edit_modal.html:396
-#, fuzzy
 msgid "3D box case"
-msgstr "Boîte 3D de Slipcase"
+msgstr "Boîtier de la boîte 3D"
 
 #: templates/_modals/edit_modal.html:398
-#, fuzzy
 msgid "Automatic"
-msgstr "Personnalisation"
+msgstr "Automatique"
 
 #: templates/_modals/edit_modal.html:403
 msgid ""
@@ -15345,6 +15337,9 @@ msgid ""
 "from the console, region, discs and edition. A box imported from Slipcase"
 " keeps its own."
 msgstr ""
+"Le boîtier sur lequel est dessinée une boîte 3D créée à partir des "
+"numérisations. Automatique le choisit selon la console, la région, les "
+"disques et l'édition. Une boîte importée de Slipcase garde le sien."
 
 #: templates/_modals/edit_modal.html:407
 msgid "Custom Fanart"
@@ -16671,16 +16666,14 @@ msgid "Enable ScreenScraper scraper"
 msgstr "Activer le scraper ScreenScraper"
 
 #: templates/_settings_tabs/scraping.html:118
-#, fuzzy
 msgid "Game database with credits, ratings and box scans; needs your own API key"
 msgstr ""
-"Base de données en ligne de jeux avec jaquettes et descriptions "
-"(nécessite une clé)"
+"Base de données de jeux avec crédits, notes et numérisations de boîtes ; "
+"nécessite votre propre clé API"
 
 #: templates/_settings_tabs/scraping.html:125
-#, fuzzy
 msgid "Enable MobyGames scraper"
-msgstr "Activer le scraper TheGamesDB"
+msgstr "Activer le scraper MobyGames"
 
 #: templates/_settings_tabs/scraping.html:135
 msgid "AI-powered gap-filler (Gemini, OpenAI, or Claude) — fills text fields only"
@@ -16832,14 +16825,12 @@ msgid "Enter RAWG.io API key"
 msgstr "Saisissez la clé API RAWG.io"
 
 #: templates/_settings_tabs/scraping.html:267
-#, fuzzy
 msgid "MobyGames API Key"
-msgstr "Obtenir la clé API"
+msgstr "Clé API MobyGames"
 
 #: templates/_settings_tabs/scraping.html:272
-#, fuzzy
 msgid "Enter MobyGames API key"
-msgstr "Saisissez la clé API OpenAI"
+msgstr "Saisissez la clé API MobyGames"
 
 #: templates/_settings_tabs/scraping.html:280
 msgid "ScreenScraper Username"

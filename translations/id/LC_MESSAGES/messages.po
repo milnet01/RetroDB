@@ -802,7 +802,7 @@ msgstr "system_id dan emulator_id wajib diisi"
 
 #: routes/emulators.py:250
 msgid "No such system or emulator."
-msgstr ""
+msgstr "Sistem atau emulator tidak ditemukan."
 
 #: routes/emulators.py:292
 msgid "Send at least one setting."
@@ -2298,9 +2298,8 @@ msgid "100%"
 msgstr "100%"
 
 #: services/js_i18n_strings.py:607 templates/_modals/edit_modal.html:390
-#, fuzzy
 msgid "3D box built from the scans:"
-msgstr "Kotak 3D dari Slipcase"
+msgstr "Kotak 3D yang dibuat dari pindaian:"
 
 #: services/js_i18n_strings.py:608
 msgid "3D box imported."
@@ -2592,9 +2591,8 @@ msgid "Clear HLTB data for this game?"
 msgstr "Hapus data HLTB untuk game ini?"
 
 #: services/js_i18n_strings.py:669 templates/achievements_system.html:170
-#, fuzzy
 msgid "Clear My Progress"
-msgstr "Progres Trofi"
+msgstr "Hapus Progres Saya"
 
 #: services/js_i18n_strings.py:670 templates/achievements_system.html:182
 msgid "Clear RA Data"
@@ -2619,9 +2617,9 @@ msgid "Cleared RA data for {n} games"
 msgstr "Data RA dihapus untuk {n} game"
 
 #: services/js_i18n_strings.py:675
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Cleared your progress for {count} games"
-msgstr "Data RA dihapus untuk {n} game"
+msgstr "Progres Anda dihapus untuk {count} game"
 
 #: services/js_i18n_strings.py:676 templates/settings.html:2916
 #: templates/settings.html:3180
@@ -2820,9 +2818,8 @@ msgstr ""
 "berikutnya."
 
 #: services/js_i18n_strings.py:716
-#, fuzzy
 msgid "Could not save your answer. Try again."
-msgstr "Tidak dapat menyimpan pilihan pemindai Anda."
+msgstr "Tidak dapat menyimpan jawaban Anda. Coba lagi."
 
 #: services/js_i18n_strings.py:717
 msgid "Could not show this page of the manual."
@@ -4294,9 +4291,9 @@ msgstr "Pilih Sumber"
 #: services/js_i18n_strings.py:1031 templates/chd_converter.html:216
 #: templates/chd_verify.html:172 templates/game_imports.html:422
 #: templates/psn_trophies.html:866
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Select {name}"
-msgstr "Pilih Game 2"
+msgstr "Pilih {name}"
 
 #: services/js_i18n_strings.py:1032
 #, python-brace-format
@@ -4502,6 +4499,8 @@ msgid ""
 "The built box is deleted. The next scrape, or Build 3D Boxes in ROM "
 "Tools, builds it again."
 msgstr ""
+"Boks yang sudah dibuat dihapus. Scrape berikutnya, atau Buat Boks 3D di "
+"Alat ROM, akan membuatnya lagi."
 
 #: services/js_i18n_strings.py:1073
 msgid "The cheats were not downloaded."
@@ -4561,13 +4560,13 @@ msgid "This copy of RetroDB is a git checkout. Update it with git pull."
 msgstr "Salinan RetroDB ini adalah git checkout. Perbarui dengan git pull."
 
 #: services/js_i18n_strings.py:1084
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid ""
 "This forgets which achievements you have earned in your {system} games. "
 "Sync Progress downloads them again. Continue?"
 msgstr ""
-"Unduh achievement yang sudah Anda raih di game %(system)s Anda. Jalankan "
-"setelah bermain."
+"Ini akan melupakan achievement mana yang sudah Anda raih di game {system}"
+" Anda. Sinkronisasi Progres mengunduhnya lagi. Lanjutkan?"
 
 #: services/js_i18n_strings.py:1085
 msgid "This game already has 3D box faces. Replace them with the ones you picked?"
@@ -4837,6 +4836,8 @@ msgstr "Anda sudah memakai versi terbaru."
 #, python-brace-format
 msgid "You played this for {minutes} min. Mark it In Progress?"
 msgstr ""
+"Anda memainkan ini selama {minutes} menit. Tandai sebagai Sedang "
+"Berlangsung?"
 
 #: services/js_i18n_strings.py:1138
 #, python-brace-format
@@ -5251,11 +5252,9 @@ msgstr ""
 "%(when)s, atau sampai kunci disimpan."
 
 #: services/service_stop_text.py:34
-#, fuzzy, python-format
+#, python-format
 msgid "%(service)s is not answering. RetroDB will try again after %(when)s."
-msgstr ""
-"%(service)s menyatakan batasnya sudah tercapai. RetroDB tidak akan "
-"meminta lagi sampai %(when)s."
+msgstr "%(service)s tidak menjawab. RetroDB akan mencoba lagi setelah %(when)s."
 
 #: services/service_stop_text.py:37
 #, python-format
@@ -5318,7 +5317,7 @@ msgstr "Pemutar tidak memiliki core untuk sistem ini."
 
 #: services/jobs/image_resize.py:107
 msgid "Wait for the WebP migration to finish first."
-msgstr ""
+msgstr "Tunggu migrasi WebP selesai terlebih dahulu."
 
 #: services/jobs/platform_sync.py:384 services/jobs/platform_sync.py:695
 msgid "Sync already running"
@@ -5358,7 +5357,7 @@ msgstr ""
 
 #: services/jobs/webp_migrate.py:86
 msgid "Wait for the image resize to finish first."
-msgstr ""
+msgstr "Tunggu perubahan ukuran gambar selesai terlebih dahulu."
 
 #: templates/_bulk_edit_modal.html:7
 msgid "Bulk Edit"
@@ -5766,13 +5765,13 @@ msgid "Never synced"
 msgstr "Belum pernah disinkronkan"
 
 #: templates/achievements_system.html:173
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "Forgets which achievements you have earned in your %(system)s games. "
 "Other users keep theirs."
 msgstr ""
-"Unduh achievement yang sudah Anda raih di game %(system)s Anda. Jalankan "
-"setelah bermain."
+"Melupakan achievement mana yang sudah Anda raih di game %(system)s Anda. "
+"Pengguna lain tetap menyimpan miliknya."
 
 #: templates/achievements_system.html:185
 #, python-format
@@ -5799,9 +5798,8 @@ msgstr "Cari game..."
 
 #: templates/achievements_system.html:202 templates/steam_achievements.html:78
 #: templates/xbox_achievements.html:78
-#, fuzzy
 msgid "Filter by progress"
-msgstr "Progres Trofi"
+msgstr "Filter berdasarkan progres"
 
 #: templates/achievements_system.html:203 templates/all_games.html:15
 #: templates/steam_achievements.html:79 templates/xbox_achievements.html:79
@@ -7891,9 +7889,8 @@ msgid "Space Saved"
 msgstr "Ruang yang Dihemat"
 
 #: templates/chd_converter.html:217 templates/chd_verify.html:173
-#, fuzzy
 msgid "Select all"
-msgstr "Pilih Semua"
+msgstr "Pilih semua"
 
 #: templates/chd_converter.html:318
 msgid "Conversion failed"
@@ -9050,6 +9047,8 @@ msgstr "RPCS3: tidak ada daftar kompatibilitas"
 #, python-format
 msgid "You played this for %(minutes)s min. Mark it In Progress?"
 msgstr ""
+"Anda memainkan ini selama %(minutes)s menit. Tandai sebagai Sedang "
+"Berlangsung?"
 
 #: templates/game_detail.html:321
 msgid "No description available. Click \"Scrape\" to fetch metadata."
@@ -9058,14 +9057,14 @@ msgstr ""
 "metadata."
 
 #: templates/game_detail.html:379
-#, fuzzy, python-format
+#, python-format
 msgid "Played in RetroDB: %(hours)s h %(minutes)s min"
-msgstr "Dimainkan di Steam: %(hours)s j %(minutes)s mnt"
+msgstr "Dimainkan di RetroDB: %(hours)s j %(minutes)s mnt"
 
 #: templates/game_detail.html:379
-#, fuzzy, python-format
+#, python-format
 msgid "Played in RetroDB: %(minutes)s min"
-msgstr "Dimainkan di Steam: %(minutes)s mnt"
+msgstr "Dimainkan di RetroDB: %(minutes)s mnt"
 
 #: templates/game_detail.html:382
 #, python-format
@@ -9178,9 +9177,8 @@ msgid "Loading recommendations..."
 msgstr "Memuat rekomendasi..."
 
 #: templates/game_detail.html:605
-#, fuzzy
 msgid "Game title to look up"
-msgstr "Judul Game"
+msgstr "Judul game yang dicari"
 
 #: templates/game_detail.html:640
 #, python-format
@@ -10720,9 +10718,8 @@ msgid "Search systems..."
 msgstr "Cari sistem..."
 
 #: templates/museum.html:57 templates/systems.html:34
-#, fuzzy
 msgid "Filter by type"
-msgstr "Filter berdasarkan jenis sistem"
+msgstr "Filter berdasarkan jenis"
 
 #: templates/museum.html:79
 #, python-format
@@ -11617,9 +11614,8 @@ msgstr ""
 "1280px untuk kontroler/perangkat keras."
 
 #: templates/rom_tools_hub.html:288 templates/rom_tools_hub.html:701
-#, fuzzy
 msgid "Build 3D Boxes"
-msgstr "Boks 3D"
+msgstr "Buat Boks 3D"
 
 #: templates/rom_tools_hub.html:291
 msgid ""
@@ -11627,6 +11623,10 @@ msgid ""
 "scraped game with a cover. A scrape now does this by itself; this is for "
 "games scraped before. A box imported from Slipcase is never changed."
 msgstr ""
+"Membuat boks 3D yang berputar, pada casing asli konsolnya, untuk setiap "
+"game hasil scrape yang punya sampul. Scrape sekarang melakukannya "
+"sendiri; ini untuk game yang di-scrape sebelumnya. Boks yang diimpor dari"
+" Slipcase tidak pernah diubah."
 
 #: templates/rom_tools_hub.html:302 templates/rom_tools_hub.html:448
 msgid "Backfill Alternate Titles"
@@ -12037,11 +12037,16 @@ msgid ""
 "using RetroDB or leave the page. Games whose box is already up to date "
 "are passed over."
 msgstr ""
+"Buat boks 3D untuk setiap game hasil scrape yang punya sampul dan belum "
+"punya boks.\n"
+"\n"
+"Proses berjalan satu game demi satu di latar belakang, jadi Anda tetap "
+"bisa memakai RetroDB atau meninggalkan halaman. Game yang boksnya sudah "
+"terbaru dilewati."
 
 #: templates/rom_tools_hub.html:713
-#, fuzzy
 msgid "Building 3D boxes started"
-msgstr "Mengunduh boxart 3D…"
+msgstr "Pembuatan boks 3D dimulai"
 
 #: templates/rom_tools_hub.html:729
 msgid ""
@@ -12302,7 +12307,7 @@ msgstr "Simpan yang Terbesar"
 
 #: templates/screenshot_dedup.html:545
 msgid "Keep"
-msgstr ""
+msgstr "Simpan"
 
 #: templates/screenshot_dedup.html:607
 msgid "Selected largest file in each group"
@@ -12810,29 +12815,27 @@ msgid "Restore error: {error}"
 msgstr "Kesalahan pemulihan: {error}"
 
 #: templates/settings.html:2013
-#, fuzzy
 msgid "Calculating..."
-msgstr "Membatalkan..."
+msgstr "Menghitung..."
 
 #: templates/settings.html:2019
-#, fuzzy, python-brace-format
+#, python-brace-format
 msgid "Found the size of {count} game(s)."
-msgstr "Tidak dapat menghitung game."
+msgstr "Ukuran {count} game berhasil ditemukan."
 
 #: templates/settings.html:2022
 #, python-brace-format
 msgid "{count} game(s) were skipped because their file is not on disk."
-msgstr ""
+msgstr "{count} game dilewati karena filenya tidak ada di disk."
 
 #: templates/settings.html:2024
 #, python-brace-format
 msgid "{count} imported game(s) have no file, so they have no size."
-msgstr ""
+msgstr "{count} game yang diimpor tidak punya file, jadi tidak punya ukuran."
 
 #: templates/settings.html:2025
-#, fuzzy
 msgid "Every game with a file already has a size."
-msgstr "Setiap nama di kolom ini memiliki satu ejaan."
+msgstr "Setiap game yang punya file sudah memiliki ukuran."
 
 #: templates/settings.html:2028
 #, python-brace-format
@@ -13885,9 +13888,8 @@ msgid "Organize ROMs across 270+ gaming platforms"
 msgstr "Atur ROM di lebih dari 270 platform game"
 
 #: templates/setup.html:45
-#, fuzzy
 msgid "Scrape metadata from TheGamesDB, IGDB, RAWG, MobyGames, ScreenScraper"
-msgstr "Scrape metadata dari TheGamesDB, IGDB, RAWG, ScreenScraper"
+msgstr "Scrape metadata dari TheGamesDB, IGDB, RAWG, MobyGames, ScreenScraper"
 
 #: templates/setup.html:46
 msgid "Track RetroAchievements progress and PS3 trophies"
@@ -13924,15 +13926,14 @@ msgid "Third-Party APIs:"
 msgstr "API Pihak Ketiga:"
 
 #: templates/setup.html:82
-#, fuzzy
 msgid ""
 "Metadata scraping uses external services (IGDB, ScreenScraper, RAWG, "
 "MobyGames, TheGamesDB, RetroAchievements) that are subject to their own "
 "terms of service and rate limits."
 msgstr ""
 "Scrape metadata menggunakan layanan eksternal (IGDB, ScreenScraper, RAWG,"
-" TheGamesDB, RetroAchievements) yang tunduk pada ketentuan layanan dan "
-"batas laju masing-masing."
+" MobyGames, TheGamesDB, RetroAchievements) yang tunduk pada ketentuan "
+"layanan dan batas lajunya sendiri."
 
 #: templates/setup.html:83
 msgid "No Warranty:"
@@ -14110,9 +14111,8 @@ msgid "RAWG API key"
 msgstr "Kunci API RAWG"
 
 #: templates/setup.html:251
-#, fuzzy
 msgid "MobyGames API key"
-msgstr "Dapatkan kunci API"
+msgstr "Kunci API MobyGames"
 
 #: templates/_settings_tabs/scraping.html:273 templates/setup.html:252
 msgid ""
@@ -14120,6 +14120,9 @@ msgid ""
 "hour. Games skipped when the hour runs out are asked about again by "
 "themselves later."
 msgstr ""
+"MobyGames memerlukan kunci API milik Anda sendiri. Kunci ini mengizinkan "
+"beberapa ratus permintaan per jam. Game yang dilewati saat jatah jam "
+"habis akan ditanyakan lagi dengan sendirinya nanti."
 
 #: templates/setup.html:259
 msgid "Sign up"
@@ -14428,14 +14431,12 @@ msgid "CONSOLES DETECTED"
 msgstr "KONSOL TERDETEKSI"
 
 #: templates/systems.html:30
-#, fuzzy
 msgid "Search systems"
-msgstr "Cari sistem..."
+msgstr "Cari sistem"
 
 #: templates/systems.html:42
-#, fuzzy
 msgid "Filter by feature"
-msgstr "Filter berdasarkan platform"
+msgstr "Filter berdasarkan fitur"
 
 #: templates/systems.html:43
 msgid "All Features"
@@ -14952,33 +14953,28 @@ msgid "3D box. Drag or use the arrow keys to turn it."
 msgstr "Kotak 3D. Seret atau gunakan tombol panah untuk memutarnya."
 
 #: templates/_modals/boxart_zoom_modal.html:17
-#, fuzzy
 msgid "Back to the box"
-msgstr "Sisi belakang boks"
+msgstr "Kembali ke boks"
 
 #: templates/_modals/boxart_zoom_modal.html:20
 msgid "Disc or cartridge"
-msgstr ""
+msgstr "Disk atau kartrid"
 
 #: templates/_modals/boxart_zoom_modal.html:20
-#, fuzzy
 msgid "Inside cover"
-msgstr "Side-Scroller"
+msgstr "Sampul dalam"
 
 #: templates/_modals/boxart_zoom_modal.html:20
-#, fuzzy
 msgid "Extra"
-msgstr "Berikutnya"
+msgstr "Tambahan"
 
 #: templates/_modals/boxart_zoom_modal.html:23
-#, fuzzy
 msgid "Open the box"
-msgstr "Sisi belakang boks"
+msgstr "Buka boks"
 
 #: templates/_modals/boxart_zoom_modal.html:23
-#, fuzzy
 msgid "Close the box"
-msgstr "Sisi belakang boks"
+msgstr "Tutup boks"
 
 #: templates/_modals/boxart_zoom_modal.html:24
 msgid "Drag to turn. Scroll or press + and - to zoom. Double-click to reset."
@@ -15148,14 +15144,12 @@ msgid "This saves straight away, without Save Changes."
 msgstr "Ini langsung tersimpan, tanpa Simpan Perubahan."
 
 #: templates/_modals/edit_modal.html:396
-#, fuzzy
 msgid "3D box case"
-msgstr "Kotak 3D dari Slipcase"
+msgstr "Casing boks 3D"
 
 #: templates/_modals/edit_modal.html:398
-#, fuzzy
 msgid "Automatic"
-msgstr "Kustomisasi"
+msgstr "Otomatis"
 
 #: templates/_modals/edit_modal.html:403
 msgid ""
@@ -15163,6 +15157,9 @@ msgid ""
 "from the console, region, discs and edition. A box imported from Slipcase"
 " keeps its own."
 msgstr ""
+"Casing tempat boks 3D yang dibuat dari pindaian digambar. Otomatis "
+"memilihnya dari konsol, wilayah, disk, dan edisi. Boks yang diimpor dari "
+"Slipcase memakai casing miliknya sendiri."
 
 #: templates/_modals/edit_modal.html:407
 msgid "Custom Fanart"
@@ -16467,14 +16464,14 @@ msgid "Enable ScreenScraper scraper"
 msgstr "Aktifkan scraper ScreenScraper"
 
 #: templates/_settings_tabs/scraping.html:118
-#, fuzzy
 msgid "Game database with credits, ratings and box scans; needs your own API key"
-msgstr "Database game online dengan gambar boks dan deskripsi (perlu kunci)"
+msgstr ""
+"Database game dengan kredit, rating, dan pindaian boks; memerlukan kunci "
+"API milik Anda sendiri"
 
 #: templates/_settings_tabs/scraping.html:125
-#, fuzzy
 msgid "Enable MobyGames scraper"
-msgstr "Aktifkan scraper TheGamesDB"
+msgstr "Aktifkan scraper MobyGames"
 
 #: templates/_settings_tabs/scraping.html:135
 msgid "AI-powered gap-filler (Gemini, OpenAI, or Claude) — fills text fields only"
@@ -16625,14 +16622,12 @@ msgid "Enter RAWG.io API key"
 msgstr "Masukkan kunci API RAWG.io"
 
 #: templates/_settings_tabs/scraping.html:267
-#, fuzzy
 msgid "MobyGames API Key"
-msgstr "Dapatkan kunci API"
+msgstr "Kunci API MobyGames"
 
 #: templates/_settings_tabs/scraping.html:272
-#, fuzzy
 msgid "Enter MobyGames API key"
-msgstr "Masukkan kunci API OpenAI"
+msgstr "Masukkan kunci API MobyGames"
 
 #: templates/_settings_tabs/scraping.html:280
 msgid "ScreenScraper Username"
